@@ -75,8 +75,7 @@ function rrze_faudir_api_key_render()
     if (FaudirUtils::isUsingNetworkKey()) {
         echo '<p>' . __('The API key is being used from the network installation.', 'rrze-faudir') . '</p>';
     } else {
-        $options = get_option('rrze_faudir_options');
-        $apiKey = isset($options['api_key']) ? esc_attr($options['api_key']) : '';
+        $apiKey = FaudirUtils::getKey();
         echo '<input type="text" name="rrze_faudir_options[api_key]" value="' . $apiKey . '" size="50">';
         echo '<p class="description">' . __('Enter your API key here.', 'rrze-faudir') . '</p>';
     }
