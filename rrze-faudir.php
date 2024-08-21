@@ -24,6 +24,8 @@ require_once plugin_dir_path(__FILE__) . 'src/includes/shortcodes/fau_dir_shortc
 require_once plugin_dir_path(__FILE__) . 'src/includes/blocks/fau_dir_block.php';
 require_once plugin_dir_path(__FILE__) . 'src/includes/utils/enqueue_scripts.php';
 require_once plugin_dir_path(__FILE__) . 'src/includes/utils/faudir_utils.php';
+require_once plugin_dir_path(__FILE__) . 'src/includes/utils/api-functions.php';
+
 EnqueueScripts::register();
 
 // Add admin menu

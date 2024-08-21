@@ -2,6 +2,8 @@
 
 class FaudirUtils
 {
+    const API_BASE_URL = 'https://api.fau.de/pub/v1/opendir/';
+
     public static function isUsingNetworkKey()
     {
         if (is_multisite()) {
@@ -22,5 +24,10 @@ class FaudirUtils
             $options = get_option('rrze_faudir_options');
             return isset($options['api_key']) ? $options['api_key'] : '';
         }
+    }
+
+    public static function getApiBaseUrl()
+    {
+        return self::API_BASE_URL;
     }
 }

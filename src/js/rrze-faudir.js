@@ -1,15 +1,14 @@
-// Additional JavaScript functionalities for RRZE FAUDIR
-
 jQuery(document).ready(function($) {
     console.log('RRZE FAUDIR JS from src directory');
 
     $('#test-api-call').click(function() {
         $.ajax({
-            url: rrze_faudir_ajax.ajax_url,
-            type: 'POST',
-            data: {
-                action: 'rrze_faudir_test_api_call',
-                security: rrze_faudir_ajax.api_nonce
+            url: 'https://api.fau.de/pub/v1/opendir/persons?limit=10&offset=1',
+            type: 'GET',
+            headers: {
+                'X-API-KEY': rrze_faudir_ajax.api_key,
+                'Content-Type': 'application/json',
+         
             },
             success: function(response) {
                 $('#api-response').html('<pre>' + JSON.stringify(response, null, 2) + '</pre>');
