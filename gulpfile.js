@@ -12,12 +12,19 @@ gulp.task('css', function() {
     .pipe(gulp.dest('assets/css'));
 });
 
-// Define the JS task
-gulp.task('js', function() {
+// Define the JS task for main JavaScript files
+gulp.task('js-main', function() {
   return gulp.src('src/js/*.js')
     .pipe(concat('rrze-faudir.js'))
     .pipe(gulp.dest('assets/js'));
 });
 
-// Define the default task that runs both 'css' and 'js' tasks in series
-gulp.task('default', gulp.series('css', 'js'));
+// Define the JS task for admin-specific JavaScript files
+gulp.task('js-admin', function() {
+  return gulp.src('src/js/admin/*.js')  // Adjust the path as needed
+    .pipe(concat('admin.js')) // Output will be admin.js
+    .pipe(gulp.dest('assets/js'));
+});
+
+// Define the default task that runs all tasks in series
+gulp.task('default', gulp.series('css', 'js-main', 'js-admin'));

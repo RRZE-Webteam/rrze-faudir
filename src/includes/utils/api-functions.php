@@ -4,7 +4,7 @@
 // Fetch data from the FAU persons API
 
 
-function fetch_fau_persons($limit = 10, $offset = 1) {
+function fetch_fau_persons($limit = 100, $offset = 1) {
     $api_key = FaudirUtils::getKey();
     $url = FaudirUtils::getApiBaseUrl() . 'persons?limit=' . $limit . '&offset=' . $offset;
 
@@ -31,7 +31,7 @@ function fetch_fau_persons($limit = 10, $offset = 1) {
         return 'Error decoding JSON data.';
     }
 
-    return $data;
+    return $data ?? [];
 }
 
 // Fetch data from the FAU organizations API
