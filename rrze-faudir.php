@@ -24,6 +24,7 @@ require_once plugin_dir_path(__FILE__) . 'src/includes/shortcodes/fau_dir_shortc
 require_once plugin_dir_path(__FILE__) . 'src/includes/blocks/fau_dir_block.php';
 require_once plugin_dir_path(__FILE__) . 'src/includes/utils/enqueue_scripts.php';
 require_once plugin_dir_path(__FILE__) . 'src/includes/utils/faudir_utils.php';
+EnqueueScripts::register();
 
 // Add admin menu
 function rrze_faudir_add_admin_menu()
@@ -81,6 +82,20 @@ function rrze_faudir_api_key_render()
     }
 }
 
+function rrze_faudir_test_api_call() {
+    check_ajax_referer('rrze_faudir_api_nonce', 'security');
+
+    // Replace with the actual API call logic
+    $api_response = wp_remote_get('https://api.fau.de/pub/v1/opendir/contacts/');
+
+    if (is_wp_error($api_response)) {
+        wp_send_json_error($api_response->get_error_message());
+    } else {
+        wp_send_json_success(json_decode(wp_remote_retrieve_body($api_response), true));
+    }
+}
+add_action('wp_ajax_rrze_faudir_test_api_call', 'rrze_faudir_test_api_call');
+
 // Settings page display
 function rrze_faudir_settings_page()
 {
@@ -94,6 +109,8 @@ function rrze_faudir_settings_page()
             submit_button();
             ?>
         </form>
+        <button id="test-api-call" class="button button-primary"><?php echo __('Test API Call', 'rrze-faudir'); ?></button>
+        <div id="api-response"></div>
     </div>
 <?php
 }
