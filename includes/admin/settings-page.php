@@ -61,7 +61,8 @@ function rrze_faudir_api_key_render()
 }
 
 // AJAX API search call
-function rrze_faudir_search_person() {
+function rrze_faudir_search_person()
+{
     if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'rrze_faudir_api_nonce')) {
         wp_send_json_error('Invalid security token.');
         return;
@@ -96,8 +97,8 @@ function rrze_faudir_search_person() {
 
     $persons = is_array($results) ? $results : []; // Ensure $persons is always an array
 
-    $filtered_results = array_filter($persons, function($person) use ($email, $idm_kennung, $first_name, $last_name) {
-        $matches_email = empty($email); 
+    $filtered_results = array_filter($persons, function ($person) use ($email, $idm_kennung, $first_name, $last_name) {
+        $matches_email = empty($email);
         $matches_idm_kennung = empty($idm_kennung) || (isset($person['identifier']) && stripos($person['identifier'], $idm_kennung) !== false);
         $matches_first_name = empty($first_name) || (isset($person['givenName']) && stripos($person['givenName'], $first_name) !== false);
         $matches_last_name = empty($last_name) || (isset($person['familyName']) && stripos($person['familyName'], $last_name) !== false);

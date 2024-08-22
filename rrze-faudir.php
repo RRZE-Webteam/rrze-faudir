@@ -20,14 +20,14 @@ function rrze_faudir_load_textdomain()
 add_action('plugins_loaded', 'rrze_faudir_load_textdomain');
 
 // Include necessary files
-require_once plugin_dir_path(__FILE__) . 'src/includes/shortcodes/fau_dir_shortcode.php';
-require_once plugin_dir_path(__FILE__) . 'src/includes/blocks/fau_dir_block.php';
-require_once plugin_dir_path(__FILE__) . 'src/includes/utils/enqueue_scripts.php';
-require_once plugin_dir_path(__FILE__) . 'src/includes/utils/faudir_utils.php';
-require_once plugin_dir_path(__FILE__) . 'src/includes/utils/api-functions.php';
+require_once plugin_dir_path(__FILE__) . 'includes/shortcodes/fau_dir_shortcode.php';
+require_once plugin_dir_path(__FILE__) . 'includes/blocks/fau_dir_block.php';
+require_once plugin_dir_path(__FILE__) . 'includes/utils/enqueue_scripts.php';
+require_once plugin_dir_path(__FILE__) . 'includes/utils/faudir_utils.php';
+require_once plugin_dir_path(__FILE__) . 'includes/utils/api-functions.php';
 
 // Include the new settings page file
-require_once plugin_dir_path(__FILE__) . 'src/includes/admin/settings-page.php';
+require_once plugin_dir_path(__FILE__) . 'includes/admin/settings-page.php';
 
 // Register and enqueue scripts
 EnqueueScripts::register();

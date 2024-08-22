@@ -11,8 +11,8 @@ class EnqueueScripts
 
     public static function enqueue_frontend()
     {
-        wp_enqueue_style('rrze-faudir', plugin_dir_url(__FILE__) . '../../../assets/css/rrze-faudir.css');
-        wp_enqueue_script('rrze-faudir', plugin_dir_url(__FILE__) . '../../../assets/js/rrze-faudir.js', ['jquery'], false, true);
+        wp_enqueue_style('rrze-faudir', plugin_dir_url(__FILE__) . '../../assets/css/rrze-faudir.css');
+        wp_enqueue_script('rrze-faudir', plugin_dir_url(__FILE__) . '../../assets/js/rrze-faudir.js', ['jquery'], false, true);
 
         // Retrieve API key from settings
         $api_key = get_option('rrze_faudir_api_key', '');
@@ -31,10 +31,10 @@ class EnqueueScripts
         }
     
         // Enqueue CSS for the admin page
-        wp_enqueue_style('rrze-faudir', plugin_dir_url(__FILE__) . '../../../assets/css/rrze-faudir.css');
+        wp_enqueue_style('rrze-faudir', plugin_dir_url(__FILE__) . '../../assets/css/rrze-faudir.css');
     
         // Enqueue the admin.js script
-        wp_enqueue_script('rrze-faudir-admin-js', plugin_dir_url(__FILE__) . '../../../assets/js/admin.js', ['jquery'], false, true);
+        wp_enqueue_script('rrze-faudir-admin-js', plugin_dir_url(__FILE__) . '../../assets/js/admin.js', ['jquery'], false, true);
     
         // Get the API key from the options table
         $api_key = get_option('rrze_faudir_api_key', '');
