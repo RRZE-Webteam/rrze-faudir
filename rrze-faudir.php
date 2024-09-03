@@ -31,3 +31,29 @@ require_once plugin_dir_path(__FILE__) . 'includes/admin/settings-page.php';
 
 // Register and enqueue scripts
 EnqueueScripts::register();
+add_action('wp_ajax_rrze_faudir_search_contacts', 'rrze_faudir_search_contacts');
+function rrze_faudir_search_contacts() {
+    check_ajax_referer('rrze_faudir_api_nonce', 'security');
+
+    $identifier = sanitize_text_field($_POST['identifier']);
+
+    // Example: Fetching contacts by identifier
+    global $wpdb;
+    $contacts = $wpdb->get_results($wpdb->prepare("
+        SELECT * FROM {$wpdb->prefix}contacts WHERE identifier LIKE %s", '%' . $wpdb->esc_like($identifier) . '%'));
+
+    if (!empty($contacts)) {
+        // Format the results for the frontend
+        $formatted_contacts = array();
+        foreach ($contacts as $contact) {
+            $formatted_contacts[] = array(
+                'name' => $contact->name,
+                'identifier' => $contact->identifier,
+                'additional_info' => $contact->additional_info
+            );
+        }
+        wp_send_json_success($formatted_contacts);
+    } else {
+        wp_send_json_error(__('No contacts found with the provided identifier.', 'rrze-faudir'));
+    }
+}

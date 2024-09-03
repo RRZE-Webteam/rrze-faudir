@@ -22,7 +22,8 @@ class EnqueueScripts
             'ajax_url' => admin_url('admin-ajax.php'),
             'api_nonce' => wp_create_nonce('rrze_faudir_api_nonce'),
             'api_key' => $api_key // Pass API key to JavaScript
-        ));
+        )
+        );
     }
     public static function enqueue_admin($hook)
     {
@@ -34,17 +35,17 @@ class EnqueueScripts
         wp_enqueue_style('rrze-faudir', plugin_dir_url(__FILE__) . '../../assets/css/rrze-faudir.css');
     
         // Enqueue the admin.js script
-        wp_enqueue_script('rrze-faudir-admin-js', plugin_dir_url(__FILE__) . '../../assets/js/admin.js', ['jquery'], false, true);
-    
-        // Get the API key from the options table
-        $api_key = get_option('rrze_faudir_api_key', '');
+        wp_enqueue_script('rrze-faudir-admin-js', plugin_dir_url(__FILE__) . '../../assets/js/admin.js', ['jquery'], null, true);
     
         // Localize the script with relevant data
-        wp_localize_script('rrze-faudir-admin-js', 'rrze_faudir_ajax', array(
+        wp_localize_script('rrze-faudir-admin-js', 'rrzeFaudirAjax', array(
             'ajax_url' => admin_url('admin-ajax.php'),
             'api_nonce' => wp_create_nonce('rrze_faudir_api_nonce'),
-            'api_key' => $api_key // Pass API key to JavaScript
+            'api_key' => get_option('rrze_faudir_api_key', ''),
+            'confirm_clear_cache' => __('Are you sure you want to clear the cache?', 'rrze-faudir')
         ));
     }
     
+    
+
 }
