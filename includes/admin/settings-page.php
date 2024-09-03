@@ -235,16 +235,18 @@ function rrze_faudir_business_card_title_render() {
     
                 <!-- Contacts Search Tab -->
                 <div id="tab-5" class="tab-content" style="display:none;">
-                    <h2><?php echo __('Search Contacts by Identifier', 'rrze-faudir'); ?></h2>
-                    <form id="contacts-search-form">
-                        <label for="contact-id"><?php echo __('Enter Identifier:', 'rrze-faudir'); ?></label>
-                        <input type="text" id="contact-id" name="contact-id" />
-                        <button type="button" id="search-contacts" class="button button-primary"><?php echo __('Search', 'rrze-faudir'); ?></button>
-                    </form>
-                    <div id="contacts-list">
-                        <?php echo rrze_faudir_display_all_contacts(); ?>
-                    </div>
-                </div>
+    <h2><?php echo __('Search Contacts by Identifier', 'rrze-faudir'); ?></h2>
+
+    <form id="search-person-form">
+    <label for="person-id"><?php echo __('Enter Person IdM-Kennung:', 'rrze-faudir'); ?></label>
+    <input type="text" id="person-id" name="person-id" />
+    <button type="button" id="search-person-by-id" class="button button-primary"><?php echo __('Search by ID', 'rrze-faudir'); ?></button>
+</form>
+    <div id="contacts-list">
+        <?php echo rrze_faudir_display_all_contacts(); ?>
+    </div>
+</div>
+
     
                 <?php submit_button(); ?>
             </form>
@@ -292,14 +294,16 @@ function rrze_faudir_business_card_title_render() {
         </script>
         <?php
     }
-    function rrze_faudir_display_all_contacts() {
-        $contacts_data = fetch_fau_persons(); // Fetch data from the FAU API
+    function rrze_faudir_display_all_contacts($page = 1) {
+        $limit = 60;
+        $offset = ($page - 1) * $limit;
+        $contacts_data = fetch_fau_persons($limit, $offset);
     
         if (is_string($contacts_data)) {
             return '<p>' . esc_html($contacts_data) . '</p>'; // Handle error message
         }
     
-        $contacts = $contacts_data['data'] ?? []; // Adjust this line according to your API response format
+        $contacts = $contacts_data['data'] ?? [];
     
         if (!empty($contacts)) {
             $output = '<div class="contacts-wrapper">';
@@ -319,6 +323,12 @@ function rrze_faudir_business_card_title_render() {
                 }
                 $output .= '</div>';
             }
+            $output .= '</div>';
+    
+            // Add pagination controls
+            $output .= '<div class="pagination">';
+            $output .= '<button class="prev-page">Previous</button>';
+            $output .= '<button class="next-page">Next</button>';
             $output .= '</div>';
         } else {
             $output = '<p>No contacts found.</p>';
@@ -329,90 +339,59 @@ function rrze_faudir_business_card_title_render() {
     
     
     
+    function rrze_faudir_fetch_contacts_handler() {
+        check_ajax_referer('rrze_faudir_api_nonce', 'security');
+    
+        $page = intval($_POST['page']);
+        $output = rrze_faudir_display_all_contacts($page);
+    
+        wp_send_json_success($output);
+    }
+    
+    add_action('wp_ajax_rrze_faudir_fetch_contacts', 'rrze_faudir_fetch_contacts_handler');
+    
     // AJAX handler for filtering contacts
-    function rrze_faudir_search_contacts_handler() {
+
+
+    function rrze_faudir_search_person_by_id_handler() {
         check_ajax_referer('rrze_faudir_api_nonce', 'security');
         
-        $identifier = sanitize_text_field($_POST['identifier']);
-        $contacts_data = fetch_fau_persons(); // Fetch all contacts from the API
+        $personId = sanitize_text_field($_POST['personId']);
+        
+        $response = fetch_fau_person_by_id($personId);
     
-        if (is_string($contacts_data)) {
-            wp_send_json_error($contacts_data);
+        if (is_string($response)) {
+            wp_send_json_error($response);
         }
     
-        $contacts = $contacts_data['data'] ?? []; // Adjust this line according to your API response format
+        $contact = $response;
     
-        // Filter contacts based on the identifier or name
-        $filtered_contacts = array_filter($contacts, function($contact) use ($identifier) {
-            $full_name = strtolower($contact['givenName'] . ' ' . $contact['familyName']);
-            return stripos($contact['identifier'], $identifier) !== false ||
-                   stripos($full_name, $identifier) !== false;
-        });
-    
-        if (!empty($filtered_contacts)) {
+        if ($contact) {
             $output = '<div class="contacts-wrapper">';
-            foreach ($filtered_contacts as $contact) {
-                $name = esc_html($contact['personalTitle'] . ' ' . $contact['givenName'] . ' ' . $contact['familyName']);
-                $identifier = esc_html($contact['identifier']);
-                $output .= '<div class="contact-card">';
-                $output .= "<h2 class='contact-name'>{$name}</h2>";
-                $output .= "<p><strong>IdM-Kennung:</strong> {$identifier}</p>";
-                $output .= "<h3>Contacts:</h3>";
-                if (!empty($contact['contacts'])) {
-                    foreach ($contact['contacts'] as $contactDetail) {
-                        $orgName = esc_html($contactDetail['organization']['name']);
-                        $functionLabel = esc_html($contactDetail['functionLabel']['en']);
-                        $output .= "<p><strong>Organization:</strong> {$orgName} ({$functionLabel})</p>";
-                    }
+            $name = esc_html($contact['personalTitle'] . ' ' . $contact['givenName'] . ' ' . $contact['familyName']);
+            $identifier = esc_html($contact['identifier']);
+            $output .= '<div class="contact-card">';
+            $output .= "<h2 class='contact-name'>{$name}</h2>";
+            $output .= "<p><strong>IdM-Kennung:</strong> {$identifier}</p>";
+            $output .= "<p><strong>Email:</strong> " . esc_html($contact['email']) . "</p>";
+            $output .= "<h3>Contacts:</h3>";
+            if (!empty($contact['contacts'])) {
+                foreach ($contact['contacts'] as $contactDetail) {
+                    $orgName = esc_html($contactDetail['organization']['name']);
+                    $functionLabel = esc_html($contactDetail['functionLabel']['en']);
+                    $output .= "<p><strong>Organization:</strong> {$orgName} ({$functionLabel})</p>";
                 }
-                $output .= '</div>';
             }
+            $output .= '</div>';
             $output .= '</div>';
             wp_send_json_success($output);
         } else {
-            wp_send_json_error('No contacts found with the provided identifier.');
+            wp_send_json_error('Person not found.');
         }
     }
+    add_action('wp_ajax_search_person_by_id', 'rrze_faudir_search_person_by_id_handler');
     
-    add_action('wp_ajax_rrze_faudir_search_contacts', 'rrze_faudir_search_contacts_handler');
     
-
-
-    function rrze_faudir_refresh_contacts_handler() {
-        $contacts_data = fetch_fau_persons(); // Fetch all contacts from the API
-    
-        if (is_string($contacts_data)) {
-            wp_send_json_error($contacts_data);
-        }
-    
-        $contacts = $contacts_data['data'] ?? []; // Adjust this line according to your API response format
-    
-        if (!empty($contacts)) {
-            $output = '<div class="contacts-wrapper">';
-            foreach ($contacts as $contact) {
-                $name = esc_html($contact['personalTitle'] . ' ' . $contact['givenName'] . ' ' . $contact['familyName']);
-                $identifier = esc_html($contact['identifier']);
-                $output .= '<div class="contact-card">';
-                $output .= "<h2 class='contact-name'>{$name}</h2>";
-                $output .= "<p><strong>IdM-Kennung:</strong> {$identifier}</p>";
-                $output .= "<h3>Contacts:</h3>";
-                if (!empty($contact['contacts'])) {
-                    foreach ($contact['contacts'] as $contactDetail) {
-                        $orgName = esc_html($contactDetail['organization']['name']);
-                        $functionLabel = esc_html($contactDetail['functionLabel']['en']);
-                        $output .= "<p><strong>Organization:</strong> {$orgName} ({$functionLabel})</p>";
-                    }
-                }
-                $output .= '</div>';
-            }
-            $output .= '</div>';
-            wp_send_json_success($output);
-        } else {
-            wp_send_json_error('No contacts found.');
-        }
-    }
-    
-    add_action('wp_ajax_rrze_faudir_refresh_contacts', 'rrze_faudir_refresh_contacts_handler');
     
 // Clear Cache Function
 function rrze_faudir_clear_cache() {
