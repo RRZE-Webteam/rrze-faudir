@@ -213,9 +213,11 @@ function rrze_faudir_business_card_title_render() {
             <form action="options.php" method="post">
                 <?php settings_fields('rrze_faudir_settings'); ?>
                 
+                
                 <!-- API Settings Tab -->
                 <div id="tab-1" class="tab-content">
                     <?php do_settings_sections('rrze_faudir_settings'); ?>
+                <?php submit_button(); ?>
                 </div>
                 
                 <!-- Cache Settings Tab -->
@@ -235,20 +237,17 @@ function rrze_faudir_business_card_title_render() {
     
                 <!-- Contacts Search Tab -->
                 <div id="tab-5" class="tab-content" style="display:none;">
-    <h2><?php echo __('Search Contacts by Identifier', 'rrze-faudir'); ?></h2>
+                    <h2><?php echo __('Search Contacts by Identifier', 'rrze-faudir'); ?></h2>
 
-    <form id="search-person-form">
-    <label for="person-id"><?php echo __('Enter Person IdM-Kennung:', 'rrze-faudir'); ?></label>
-    <input type="text" id="person-id" name="person-id" />
-    <button type="button" id="search-person-by-id" class="button button-primary"><?php echo __('Search by ID', 'rrze-faudir'); ?></button>
-</form>
-    <div id="contacts-list">
-        <?php echo rrze_faudir_display_all_contacts(); ?>
-    </div>
-</div>
-
-    
-                <?php submit_button(); ?>
+                    <form id="search-person-form">
+                        <label for="person-id"><?php echo __('Enter Person IdM-Kennung:', 'rrze-faudir'); ?></label>
+                        <input type="text" id="person-id" name="person-id" />
+                        <button type="button" id="search-person-by-id" class="button button-primary"><?php echo __('Search by ID', 'rrze-faudir'); ?></button>
+                    </form>
+                    <div id="contacts-list">
+                        <?php echo rrze_faudir_display_all_contacts(); ?>
+                    </div>
+                </div>
             </form>
         </div>
         
