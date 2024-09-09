@@ -98,3 +98,31 @@ function fetch_fau_person_by_id($personId) {
 
     return $data ?? [];
 }
+
+// Fetch data from the FAU contacts API
+function fetch_fau_contacts($limit = 20, $offset = 0) {
+    $api_key = FaudirUtils::getKey();
+    $url = FaudirUtils::getApiBaseUrl() . 'contacts?limit=' . $limit . '&offset=' . $offset;
+
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => array(
+            'accept: application/json',
+            'X-API-KEY: ' . $api_key,
+        ),
+    ));
+    $response = curl_exec($curl);
+    $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    if ($response === false || $http_code !== 200) {
+        curl_close($curl);
+        return 'Error retrieving data or contacts not found.';
+    }
+    curl_close($curl);
+    $data = json_decode($response, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        return 'Error decoding JSON data.';
+    }
+    return $data ?? [];
+}
