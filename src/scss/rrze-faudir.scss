@@ -50,6 +50,35 @@ body {
     }
 }
 
+.shortcode-contacts-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+}
+.shortcode-contact-card {
+    background-color: #ffffff; 
+    padding: 20px; 
+    width: calc(33.333% - 40px); 
+    box-sizing: border-box; 
+    transition: transform 0.2s ease-in-out; 
+    text-align: center;
+}
+.shortcode-contact-card img{
+    border-radius: 50%;
+    max-width: 70%;
+}
+.shortcode-contact-card h2{
+    display: block; 
+    font-size: 18px; 
+    margin-bottom: 10px;
+}
+.shortcode-contact-card h3{
+    display: block;
+    font-size: 16px; 
+    color: #666;
+ }
+
 // Responsive styles
 @media (max-width: 768px) {
     #wpbody-content .wrap .contact-card {
