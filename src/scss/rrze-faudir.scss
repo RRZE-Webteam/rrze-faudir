@@ -16,9 +16,9 @@ body {
 }
 
 #wpbody-content .wrap .contact-card {
-    background-color: #ffffff;
+    background-color: var(--color-white);
     border-radius: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 6px var(--color-ContentBorders);
     padding: 20px;
     width: calc(33.333% - 20px);
     box-sizing: border-box;
@@ -31,22 +31,22 @@ body {
     h2.contact-name {
         font-size: 1.5em;
         margin-bottom: 10px;
-        color: #333333;
+        color: var(--color-KontrastDunkel);
     }
 
     p {
         margin: 5px 0;
-        color: #666666;
+        color: var(--color-MetaTextDefault);
 
         strong {
-            color: #000000;
+            color: var(--color-black);
         }
     }
 
     h3 {
         font-size: 1.2em;
         margin-top: 15px;
-        color: #444444;
+        color: var(--color-MetaTextDefault);
     }
 }
 
@@ -57,7 +57,7 @@ body {
     padding: 20px;
 }
 .shortcode-contact-card {
-    background-color: #ffffff; 
+    background-color: var(--color-white); 
     padding: 20px; 
     width: calc(33.333% - 40px); 
     box-sizing: border-box; 
@@ -76,17 +76,31 @@ body {
 .shortcode-contact-card h3{
     display: block;
     font-size: 16px; 
-    color: #666;
+    color: var(--color-MetaTextDefault);
  }
+ .contact-page{
+    align-items: center; 
+    gap: 20px; padding: 20px; 
+    background-color: var(--color-white); 
+    box-shadow: 0 4px 8px var(--color-ContentBorders); 
+    margin-bottom: 20px; border-radius: 8px;
+}
+.contact-page-img-container{
+    display: flex; 
+}
  .shortcode-contact-kompakt {
     display: flex; 
     align-items: center; 
     gap: 20px; padding: 20px; 
-    background-color: #fff; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    background-color: var(--color-white);
+    box-shadow: 0 4px 8px var(--color-ContentBorders);
     margin-bottom: 20px; border-radius: 8px;
 }
  .shortcode-contact-kompakt img{
+   width: 20%; 
+   object-fit: cover;
+ }
+  .contact-page-img-container img{
    width: 20%; 
    object-fit: cover;
  }
@@ -98,7 +112,7 @@ body {
 .shortcode-contact-kompakt  h3{
     display: block;
     font-size: 16px; 
-    color: #000;
+    color: var(--color-black);
  }
 
 // Responsive styles

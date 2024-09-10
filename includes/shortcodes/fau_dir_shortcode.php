@@ -116,6 +116,7 @@ function fetch_fau_data($atts) {
 
 // Helper function to format person data
 function format_person_data($person, $show_fields, $hide_fields, $format) {
+    $person_id = isset($person['identifier']) ? esc_html($person['identifier']) : 'N/A';
     $givenName = isset($person['givenName']) ? esc_html($person['givenName']) : 'N/A';
     $familyName = isset($person['familyName']) ? esc_html($person['familyName']) : 'N/A';
     $personalTitle = isset($person['personalTitle']) ? esc_html($person['personalTitle']) : '';
@@ -154,6 +155,25 @@ function format_person_data($person, $show_fields, $hide_fields, $format) {
         if (in_array('name', $show_fields) && !in_array('name', $hide_fields)) $output .=  '<h2>' . $fullName . ' </h2>';
         if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) $output .= '<h3>' . $function. '</h3>';
         $output .= '</div>';
+    }elseif($format ==='page' ){
+        $output .= '<div class="contact-page"><div class="contact-page-img-container">';
+        $output .= '<div style="flex-grow: 1; max-width:70%">'; 
+        if (in_array('name', $show_fields) && !in_array('name', $hide_fields)) $output .=  '<h2>' . $fullName . ' </h2>';
+        if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) $output .= '<h3>' . $function. '</h3>';
+        if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) $output .= '<p>Organization: ' . $organization_name . '</p>';
+        if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) $output .= '<p>Email: ' . $email . '</p>';
+        if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)) $output .= '<p>Phone: ' . $phone . '</p>';
+        if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) $output .= '<p>Email: ' . $email . '</p>';
+        if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) $output .= '<h3>Meine Sprechzeiten </h3>';
+        if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)) $output .= '<p>Überall dieselbe alte Leier. Das Layout ist fertig, der Text lässt auf sich warten. Damit das Layout nun nicht nackt im Raume steht und sich klein und leer vorkommt, springe ich ein: der Blindtext.
+        Täglich Mo, 08:00 - 10:00, Raum 00.456, Bitte vorher anmelden! ' . $phone . '</p>';$output .= '</div>'; 
+        $output .= '<img src="/wp-content/uploads/2024/09//V20210305LJ-0043-cropped.webp">';
+       $output .= '</div>';
+       if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) $output .= '<h3>Mustertext Biographie:</h3>';
+       if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)) $output .= '<p>Überall dieselbe alte Leier. Das Layout ist fertig, der Text lässt auf sich warten. Damit das Layout nun nicht nackt im Raume steht und sich klein und leer vorkommt, springe ich ein: der Blindtext. Genau zu diesem Zwecke erschaffen, immer im Schatten meines großen Bruders »Lorem Ipsum«, freue ich mich jedes Mal, wenn Sie ein paar Zeilen lesen. Denn esse est percipi – Sein ist wahrgenommen werden. Und weil Sie nun schon die Güte haben, mich ein paar weitere Sätze lang zu begleiten, möchte ich diese Gelegenheit nutzen, Ihnen nicht nur als Lückenfüller zu dienen, sondern auf etwas hinzuweisen, das es ebenso verdient wahrgenommen zu werden: Webstandards nämlich. Sehen Sie, Webstandards sind das Regelwerk, auf dem Webseiten aufbauen. So gibt es Regeln für HTML, CSS, JavaScript oder auch XML; Worte, die Sie vielleicht schon einmal von Ihrem Entwickler gehört haben. Diese Standards sorgen dafür, dass alle Beteiligten aus einer Webseite den größten Nutzen ziehen. Im Gegensatz zu früheren Webseiten müssen wir zum Beispiel nicht mehr zwei verschiedene Webseiten für den Internet Explorer und einen anderen Browser programmieren. Es reicht eine Seite, die – richtig angelegt – sowohl auf verschiedenen Browsern im Netz funktioniert, aber ebenso gut für den Ausdruck oder die Darstellung auf einem Handy geeignet ist. Wohlgemerkt: Eine Seite für alle Formate. Was für eine Erleichterung. Standards sparen Zeit bei den Entwicklungskosten und sorgen dafür, dass sich Webseiten später leichter pflegen lassen. Natürlich nur dann, wenn sich alle an diese Standards halten. Das gilt für Browser wie Firefox, Opera: ' . $phone . '</p>';
+       
+       $output .= '</div>';
+        
     }
     else{
         $output .= '<div  class="shortcode-contact-kompakt">';
@@ -164,7 +184,9 @@ function format_person_data($person, $show_fields, $hide_fields, $format) {
         if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) $output .= '<p>Organization: ' . $organization_name . '</p>';
         if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) $output .= '<p>Email: ' . $email . '</p>';
         if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)) $output .= '<p>Phone: ' . $phone . '</p>';
-        $output .= '<button>More</button>';
+        //to be implemented after CPT
+        $output .= '<a href="?id=' . $person_id . '"><button>More</button></a>';
+
         $output .= '</div>';
         $output .= '</div>';
     }
