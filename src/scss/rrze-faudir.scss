@@ -78,6 +78,28 @@ body {
     font-size: 16px; 
     color: #666;
  }
+ .shortcode-contact-kompakt {
+    display: flex; 
+    align-items: center; 
+    gap: 20px; padding: 20px; 
+    background-color: #fff; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    margin-bottom: 20px; border-radius: 8px;
+}
+ .shortcode-contact-kompakt img{
+   width: 20%; 
+   object-fit: cover;
+ }
+ .shortcode-contact-kompakt h2{
+    display: block; 
+    font-size: 18px; 
+    margin-bottom: 0px;
+}
+.shortcode-contact-kompakt  h3{
+    display: block;
+    font-size: 16px; 
+    color: #000;
+ }
 
 // Responsive styles
 @media (max-width: 768px) {

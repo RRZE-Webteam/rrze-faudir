@@ -47,9 +47,11 @@ function fetch_fau_data($atts) {
         $output .= '</tr></thead><tbody>';
     } elseif ($atts['format'] === 'list')  {
         $output .= '<ul class="fau-contacts-list-custom">';
+    }elseif ($atts['format'] === 'card') {
+        $output .= '<div class="shortcode-contacts-wrapper">';
     }
     else {
-        $output .= '<div class="shortcode-contacts-wrapper">';
+        $output .= '<div>';
     }
 
     // Fetch data based on identifier, category, or all if neither is provided
@@ -146,11 +148,24 @@ function format_person_data($person, $show_fields, $hide_fields, $format) {
         if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) $output .= 'Organization: ' . $organization_name . '<br />';
         if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) $output .= 'Function: ' . $function;
         $output .= '</li>';
-    }else{
+    }elseif($format ==='card'){
         $output .= '<div class="shortcode-contact-card">';
-        $output .= '<img src="/wp-content/uploads/2024/09/image.jpg">';
+        $output .= '<img src="/wp-content/uploads/2024/09/V20210305LJ-0043-cropped-e1725968539245.webp">';
         if (in_array('name', $show_fields) && !in_array('name', $hide_fields)) $output .=  '<h2>' . $fullName . ' </h2>';
         if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) $output .= '<h3>' . $function. '</h3>';
+        $output .= '</div>';
+    }
+    else{
+        $output .= '<div  class="shortcode-contact-kompakt">';
+        $output .= '<img src="/wp-content/uploads/2024/09/V20210305LJ-0043-cropped.webp">';
+        $output .= '<div style="flex-grow: 1;">'; 
+        if (in_array('name', $show_fields) && !in_array('name', $hide_fields)) $output .=  '<h2>' . $fullName . ' </h2>';
+        if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) $output .= '<h3>' . $function. '</h3>';
+        if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) $output .= '<p>Organization: ' . $organization_name . '</p>';
+        if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) $output .= '<p>Email: ' . $email . '</p>';
+        if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)) $output .= '<p>Phone: ' . $phone . '</p>';
+        $output .= '<button>More</button>';
+        $output .= '</div>';
         $output .= '</div>';
     }
     return $output;
