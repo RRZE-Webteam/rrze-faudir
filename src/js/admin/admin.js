@@ -68,63 +68,7 @@ $(document).on('click', '.next-page', function(e) {
     if (activeTab === '#tab-5') {
         loadContacts(currentPage);
     }
-
-    // Existing search by identifier
-    $('#search-contacts').click(function() {
-        var identifier = $('#contact-id').val();
-
-        $.ajax({
-            url: rrzeFaudirAjax.ajax_url,
-            method: 'POST',
-            data: {
-                action: 'rrze_faudir_search_contacts',
-                security: rrzeFaudirAjax.api_nonce,
-                identifier: identifier
-            },
-            success: function(response) {
-                if (response.success) {
-                    $('#contacts-list').html(response.data);
-                } else {
-                    $('#contacts-list').html('<p>' + response.data + '</p>');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('AJAX request failed:', status, error);
-                $('#contacts-list').html('<p>An error occurred during the request.</p>');
-            }
-        });
-    });
-
-    // Search by ID
-    $('#search-person-by-id').click(function() {
-        var personId = $('#person-id').val().trim();
-
-        if (personId.length > 0) {
-            $.ajax({
-                url: rrzeFaudirAjax.ajax_url,
-                method: 'POST',
-                data: {
-                    action: 'search_person_by_id',
-                    security: rrzeFaudirAjax.api_nonce,
-                    personId: personId
-                },
-                success: function(response) {
-                    if (response.success) {
-                        $('#contacts-list').html(response.data);
-                    } else {
-                        $('#contacts-list').html('<p>' + response.data + '</p>');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('AJAX request failed:', status, error);
-                    $('#contacts-list').html('<p>An error occurred during the request.</p>');
-                }
-            });
-        } else {
-            $('#contacts-list').html('<p>Please enter a valid ID.</p>');
-        }
-    });
-
+    
     // Clear cache button handler
     $('#clear-cache-button').on('click', function() {
         if (confirm(rrzeFaudirAjax.confirm_clear_cache)) {
@@ -140,4 +84,46 @@ $(document).on('click', '.next-page', function(e) {
             });
         }
     });
+});
+jQuery(document).ready(function($) {
+
+    // Search by name or ID
+    $('#search-person-by-id').click(function() {
+        var personId = $('#person-id').val().trim();
+        var givenName = $('#given-name').val().trim();
+        var familyName = $('#family-name').val().trim();
+    
+        console.log('Person ID:', personId);
+        console.log('Given Name:', givenName);
+        console.log('Family Name:', familyName);
+    
+        if (personId.length > 0 || givenName.length > 0 || familyName.length > 0) {
+            $.ajax({
+                url: rrzeFaudirAjax.ajax_url,
+                method: 'POST',
+                data: {
+                    action: 'search_person_by_id',
+                    security: rrzeFaudirAjax.api_nonce,
+                    personId: personId,
+                    givenName: givenName,
+                    familyName: familyName
+                },
+                success: function(response) {
+                    console.log('Response:', response); // Log the response
+                    if (response.success) {
+                        $('#contacts-list').html(response.data);
+                    } else {
+                        $('#contacts-list').html('<p>' + response.data + '</p>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX request failed:', status, error);
+                    $('#contacts-list').html('<p>An error occurred during the request.</p>');
+                }
+            });
+        } else {
+            $('#contacts-list').html('<p>Please enter a valid search term.</p>');
+        }
+    });
+    
 });

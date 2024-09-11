@@ -5,22 +5,30 @@ if (!defined('ABSPATH')) {
 }
 
 // Add admin menu
-function rrze_faudir_add_admin_menu() {
+function rrze_faudir_add_admin_menu()
+{
     add_menu_page(
-        __('FAU Directory Settings', 'rrze-faudir'),  // Page title
-        __('FAU Directory', 'rrze-faudir'),           // Menu title
-        'manage_options',                             // Capability
-        'rrze-faudir',                                // Menu slug
-        'rrze_faudir_settings_page',                  // Callback function
-        'dashicons-admin-generic',                    // Icon
-        81                                            // Position
+        __('FAU Directory Settings', 'rrze-faudir'),
+        // Page title
+        __('FAU Directory', 'rrze-faudir'),
+        // Menu title
+        'manage_options',
+        // Capability
+        'rrze-faudir',
+        // Menu slug
+        'rrze_faudir_settings_page',
+        // Callback function
+        'dashicons-admin-generic',
+        // Icon
+        81 // Position
     );
 }
 add_action('admin_menu', 'rrze_faudir_add_admin_menu');
 
 // Register settings
 // Register settings
-function rrze_faudir_settings_init() {
+function rrze_faudir_settings_init()
+{
     register_setting('rrze_faudir_settings', 'rrze_faudir_options');
 
     // API Settings Section
@@ -126,24 +134,29 @@ add_action('admin_init', 'rrze_faudir_settings_init');
 
 
 // Callback functions
-function rrze_faudir_api_section_callback() {
+function rrze_faudir_api_section_callback()
+{
     echo '<p>' . __('Configure the API settings for accessing the FAU person and institution directory.', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_cache_section_callback() {
+function rrze_faudir_cache_section_callback()
+{
     echo '<p>' . __('Configure caching settings for the plugin.', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_error_section_callback() {
+function rrze_faudir_error_section_callback()
+{
     echo '<p>' . __('Handle error messages for invalid contact entries.', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_business_card_section_callback() {
+function rrze_faudir_business_card_section_callback()
+{
     echo '<p>' . __('Configure the business card link settings.', 'rrze-faudir') . '</p>';
 }
 
 // Render functions
-function rrze_faudir_api_key_render() {
+function rrze_faudir_api_key_render()
+{
     if (FaudirUtils::isUsingNetworkKey()) {
         echo '<p>' . __('The API key is being used from the network installation.', 'rrze-faudir') . '</p>';
     } else {
@@ -154,40 +167,46 @@ function rrze_faudir_api_key_render() {
     }
 }
 
-function rrze_faudir_no_cache_logged_in_render() {
+function rrze_faudir_no_cache_logged_in_render()
+{
     $options = get_option('rrze_faudir_options');
     $checked = isset($options['no_cache_logged_in']) ? 'checked' : '';
     echo '<input type="checkbox" name="rrze_faudir_options[no_cache_logged_in]" value="1" ' . $checked . '>';
     echo '<p class="description">' . __('Disable caching for logged-in editors.', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_cache_timeout_render() {
+function rrze_faudir_cache_timeout_render()
+{
     $options = get_option('rrze_faudir_options');
     $value = isset($options['cache_timeout']) ? intval($options['cache_timeout']) : 15;
     echo '<input type="number" name="rrze_faudir_options[cache_timeout]" value="' . $value . '" min="15">';
     echo '<p class="description">' . __('Set the cache timeout in minutes (minimum 15 minutes).', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_cache_org_timeout_render() {
+function rrze_faudir_cache_org_timeout_render()
+{
     $options = get_option('rrze_faudir_options');
     $value = isset($options['cache_org_timeout']) ? intval($options['cache_org_timeout']) : 1;
     echo '<input type="number" name="rrze_faudir_options[cache_org_timeout]" value="' . $value . '" min="1">';
     echo '<p class="description">' . __('Set the cache timeout in days for organization identifiers.', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_clear_cache_render() {
+function rrze_faudir_clear_cache_render()
+{
     echo '<button type="button" class="button button-secondary" id="clear-cache-button">' . __('Clear Cache Now', 'rrze-faudir') . '</button>';
     echo '<p class="description">' . __('Click the button to clear all cached data.', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_error_message_render() {
+function rrze_faudir_error_message_render()
+{
     $options = get_option('rrze_faudir_options');
     $checked = isset($options['show_error_message']) ? 'checked' : '';
     echo '<input type="checkbox" name="rrze_faudir_options[show_error_message]" value="1" ' . $checked . '>';
     echo '<p class="description">' . __('Show error messages for incorrect contact entries.', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_business_card_title_render() {
+function rrze_faudir_business_card_title_render()
+{
     $options = get_option('rrze_faudir_options');
     $value = isset($options['business_card_title']) ? sanitize_text_field($options['business_card_title']) : __('Call up business card', 'rrze-faudir');
     echo '<input type="text" name="rrze_faudir_options[business_card_title]" value="' . $value . '" size="50">';
@@ -195,185 +214,159 @@ function rrze_faudir_business_card_title_render() {
 }
 
 // Settings page display
-    function rrze_faudir_settings_page() {
-        ?>
-        <div class="wrap">
-            <h1><?php echo esc_html(__('FAU Directory Settings', 'rrze-faudir')); ?></h1>
-            
-            <!-- Tabs Navigation -->
-            <h2 class="nav-tab-wrapper">
-                <a href="#tab-1" class="nav-tab nav-tab-active"><?php echo __('API Settings', 'rrze-faudir'); ?></a>
-                <a href="#tab-2" class="nav-tab"><?php echo __('Cache Settings', 'rrze-faudir'); ?></a>
-                <a href="#tab-3" class="nav-tab"><?php echo __('Error Handling', 'rrze-faudir'); ?></a>
-                <a href="#tab-4" class="nav-tab"><?php echo __('Business Card Link', 'rrze-faudir'); ?></a>
-                <a href="#tab-5" class="nav-tab"><?php echo __('Search Contacts', 'rrze-faudir'); ?></a>
-            </h2>
-    
-            <!-- Tabs Content -->
-            <form action="options.php" method="post">
-                <?php settings_fields('rrze_faudir_settings'); ?>
-                
-                
-                <!-- API Settings Tab -->
-                <div id="tab-1" class="tab-content">
-                    <?php do_settings_sections('rrze_faudir_settings'); ?>
+function rrze_faudir_settings_page()
+{
+    ?>
+    <div class="wrap">
+        <h1>
+            <?php echo esc_html(__('FAU Directory Settings', 'rrze-faudir')); ?>
+        </h1>
+
+        <!-- Tabs Navigation -->
+        <h2 class="nav-tab-wrapper">
+            <a href="#tab-1" class="nav-tab nav-tab-active">
+                <?php echo __('API Settings', 'rrze-faudir'); ?>
+            </a>
+            <a href="#tab-2" class="nav-tab">
+                <?php echo __('Cache Settings', 'rrze-faudir'); ?>
+            </a>
+            <a href="#tab-3" class="nav-tab">
+                <?php echo __('Error Handling', 'rrze-faudir'); ?>
+            </a>
+            <a href="#tab-4" class="nav-tab">
+                <?php echo __('Business Card Link', 'rrze-faudir'); ?>
+            </a>
+            <a href="#tab-5" class="nav-tab">
+                <?php echo __('Search Contacts', 'rrze-faudir'); ?>
+            </a>
+        </h2>
+
+        <!-- Tabs Content -->
+        <form action="options.php" method="post">
+            <?php settings_fields('rrze_faudir_settings'); ?>
+
+
+            <!-- API Settings Tab -->
+            <div id="tab-1" class="tab-content">
+                <?php do_settings_sections('rrze_faudir_settings'); ?>
                 <?php submit_button(); ?>
-                </div>
-                
-                <!-- Cache Settings Tab -->
-                <div id="tab-2" class="tab-content" style="display:none;">
-                    <?php do_settings_sections('rrze_faudir_settings_cache'); ?>
-                </div>
-                
-                <!-- Error Handling Tab -->
-                <div id="tab-3" class="tab-content" style="display:none;">
-                    <?php do_settings_sections('rrze_faudir_settings_error'); ?>
-                </div>
-                
-                <!-- Business Card Link Tab -->
-                <div id="tab-4" class="tab-content" style="display:none;">
-                    <?php do_settings_sections('rrze_faudir_settings_business_card'); ?>
-                </div>
-    
-                <!-- Contacts Search Tab -->
-                <div id="tab-5" class="tab-content" style="display:none;">
-                    <h2><?php echo __('Search Contacts by Identifier', 'rrze-faudir'); ?></h2>
+            </div>
 
-                    <form id="search-person-form">
-                        <label for="person-id"><?php echo __('Enter Person IdM-Kennung:', 'rrze-faudir'); ?></label>
-                        <input type="text" id="person-id" name="person-id" />
-                        <button type="button" id="search-person-by-id" class="button button-primary"><?php echo __('Search by ID', 'rrze-faudir'); ?></button>
-                    </form>
-                    <div id="contacts-list">
-                        <?php echo rrze_faudir_display_all_contacts(); ?>
-                    </div>
+            <!-- Cache Settings Tab -->
+            <div id="tab-2" class="tab-content" style="display:none;">
+                <?php do_settings_sections('rrze_faudir_settings_cache'); ?>
+            </div>
+
+            <!-- Error Handling Tab -->
+            <div id="tab-3" class="tab-content" style="display:none;">
+                <?php do_settings_sections('rrze_faudir_settings_error'); ?>
+            </div>
+
+            <!-- Business Card Link Tab -->
+            <div id="tab-4" class="tab-content" style="display:none;">
+                <?php do_settings_sections('rrze_faudir_settings_business_card'); ?>
+            </div>
+
+            <!-- Contacts Search Tab -->
+            <div id="tab-5" class="tab-content" style="display:none;">
+                <h2>
+                    <?php echo __('Search Contacts by Identifier', 'rrze-faudir'); ?>
+                </h2>
+
+                <form id="search-person-form">
+                    <label for="person-id">Person IdM-Kennung:</label>
+                    <input type="text" id="person-id" name="person-id" />
+
+                    <label for="given-name">Given Name:</label>
+                    <input type="text" id="given-name" name="given-name" />
+
+                    <label for="family-name">Family Name:</label>
+                    <input type="text" id="family-name" name="family-name" />
+
+                    <button type="button" id="search-person-by-id" class="button button-primary">Search</button>
+                </form>
+
+                <div id="contacts-list">
+                   
                 </div>
-            </form>
-        </div>
-        
-        <script type="text/javascript">
-            jQuery(document).ready(function($) {
-                $('.nav-tab').click(function(e) {
-                    e.preventDefault();
-                    $('.nav-tab').removeClass('nav-tab-active');
-                    $(this).addClass('nav-tab-active');
-    
-                    $('.tab-content').hide();
-                    $($(this).attr('href')).show();
-                });
-    
-                $('#search-contacts').click(function() {
-                    var identifier = $('#contact-id').val();
-                    if (identifier.trim() === '') {
-                        return; // Prevent empty searches
-                    }
-    
-                    $.ajax({
-                        url: rrze_faudir_ajax.ajax_url,
-                        method: 'POST',
-                        data: {
-                            action: 'rrze_faudir_search_contacts',
-                            security: rrze_faudir_ajax.api_nonce,
-                            identifier: identifier
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                $('#contacts-list').html(response.data);
-                            } else {
-                                $('#contacts-list').html('<p>' + response.data + '</p>');
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('AJAX request failed:', status, error); // Log errors
-                            $('#contacts-list').html('<p>An error occurred during the request.</p>');
-                        }
-                    });
-                });
-            });
-        </script>
-        <?php
-    }
-    function rrze_faudir_display_all_contacts($page = 1) {
-        $limit = 60;
-        $offset = ($page - 1) * $limit;
-        $contacts_data = fetch_fau_persons($limit, $offset);
-    
-        if (is_string($contacts_data)) {
-            return '<p>' . esc_html($contacts_data) . '</p>'; // Handle error message
-        }
-    
-        $contacts = $contacts_data['data'] ?? [];
-    
-        if (!empty($contacts)) {
-            $output = '<div class="contacts-wrapper">';
-            foreach ($contacts as $contact) {
-                $name = esc_html($contact['personalTitle'] . ' ' . $contact['givenName'] . ' ' . $contact['familyName']);
-                $identifier = esc_html($contact['identifier']);
-                $output .= '<div class="contact-card">';
-                $output .= "<h2 class='contact-name'>{$name}</h2>";
-                $output .= "<p><strong>IdM-Kennung:</strong> {$identifier}</p>";
-                $output .= "<h3>Contacts:</h3>";
-                if (!empty($contact['contacts'])) {
-                    foreach ($contact['contacts'] as $contactDetail) {
-                        $orgName = esc_html($contactDetail['organization']['name']);
-                        $functionLabel = esc_html($contactDetail['functionLabel']['en']);
-                        $output .= "<p><strong>Organization:</strong> {$orgName} ({$functionLabel})</p>";
-                    }
-                }
-                $output .= '</div>';
-            }
-            $output .= '</div>';
-    
-            // Add pagination controls
-            $output .= '<div class="pagination">';
-            $output .= '<button class="prev-page">Previous</button>';
-            $output .= '<button class="next-page">Next</button>';
-            $output .= '</div>';
-        } else {
-            $output = '<p>No contacts found.</p>';
-        }
-    
-        return $output;
-    }
-    
-    
-    
-    function rrze_faudir_fetch_contacts_handler() {
-        check_ajax_referer('rrze_faudir_api_nonce', 'security');
-    
-        $page = intval($_POST['page']);
-        $output = rrze_faudir_display_all_contacts($page);
-    
-        wp_send_json_success($output);
-    }
-    
-    add_action('wp_ajax_rrze_faudir_fetch_contacts', 'rrze_faudir_fetch_contacts_handler');
-    
-    // AJAX handler for filtering contacts
+            </div>
+        </form>
+    </div>
+
+    <script type="text/javascript">
+      
+    </script>
+    <?php
+}
 
 
-    function rrze_faudir_search_person_by_id_handler() {
-        check_ajax_referer('rrze_faudir_api_nonce', 'security');
-        
-        $personId = sanitize_text_field($_POST['personId']);
-        
+
+function rrze_faudir_fetch_contacts_handler()
+{
+    check_ajax_referer('rrze_faudir_api_nonce', 'security');
+
+    $page = intval($_POST['page']);
+    $output = rrze_faudir_display_all_contacts($page);
+
+    wp_send_json_success($output);
+}
+
+add_action('wp_ajax_rrze_faudir_fetch_contacts', 'rrze_faudir_fetch_contacts_handler');
+
+// AJAX handler for filtering contacts
+
+
+
+// Clear Cache Function
+function rrze_faudir_clear_cache()
+{
+    global $wpdb;
+    $wpdb->query("DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '%_transient_rrze_faudir%'");
+    wp_send_json_success(__('All cache cleared successfully.', 'rrze-faudir'));
+}
+
+
+function rrze_faudir_search_person_by_id_handler()
+{
+    check_ajax_referer('rrze_faudir_api_nonce', 'security');
+
+    $personId = sanitize_text_field($_POST['personId']);
+    $givenName = sanitize_text_field($_POST['givenName']);
+    $familyName = sanitize_text_field($_POST['familyName']);
+
+    $params = [];
+
+    // If searching by person ID
+    if (!empty($personId)) {
+        error_log("Searching by person ID: " . $personId); // Log message when person ID is not empty
+
         $response = fetch_fau_person_by_id($personId);
-    
-        if (is_string($response)) {
-            wp_send_json_error($response);
-        }
-    
-        $contact = $response;
-    
-        if ($contact) {
-            $output = '<div class="contacts-wrapper">';
+
+
+    } else if(empty($personId)) {
+        // If searching by name, pass the givenName and familyName as parameters
+        $params = [
+            'givenName' => $givenName,
+            'familyName' => $familyName
+        ];
+        $response = fetch_fau_persons_atributes(60, 0, $params); // Call the API using the name search
+    }
+
+    if (is_string($response)) {
+        wp_send_json_error($response);
+    }
+
+    $contacts = $response['data'] ?? [];
+
+    if (!empty($contacts)) {
+        $output = '<div class="contacts-wrapper">';
+        foreach ($contacts as $contact) {
             $name = esc_html($contact['personalTitle'] . ' ' . $contact['givenName'] . ' ' . $contact['familyName']);
             $identifier = esc_html($contact['identifier']);
             $output .= '<div class="contact-card">';
             $output .= "<h2 class='contact-name'>{$name}</h2>";
             $output .= "<p><strong>IdM-Kennung:</strong> {$identifier}</p>";
             $output .= "<p><strong>Email:</strong> " . esc_html($contact['email']) . "</p>";
-            $output .= "<h3>Contacts:</h3>";
             if (!empty($contact['contacts'])) {
                 foreach ($contact['contacts'] as $contactDetail) {
                     $orgName = esc_html($contactDetail['organization']['name']);
@@ -382,19 +375,11 @@ function rrze_faudir_business_card_title_render() {
                 }
             }
             $output .= '</div>';
-            $output .= '</div>';
-            wp_send_json_success($output);
-        } else {
-            wp_send_json_error('Person not found.');
         }
+        $output .= '</div>';
+        wp_send_json_success($output);
+    } else {
+        wp_send_json_error('No contacts found.');
     }
-    add_action('wp_ajax_search_person_by_id', 'rrze_faudir_search_person_by_id_handler');
-    
-    
-    
-// Clear Cache Function
-function rrze_faudir_clear_cache() {
-    global $wpdb;
-    $wpdb->query("DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '%_transient_rrze_faudir%'");
-    wp_send_json_success(__('All cache cleared successfully.', 'rrze-faudir'));
 }
+add_action('wp_ajax_search_person_by_id', 'rrze_faudir_search_person_by_id_handler');
