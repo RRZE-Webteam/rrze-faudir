@@ -25,6 +25,7 @@ require_once plugin_dir_path(__FILE__) . 'includes/blocks/fau_dir_block.php';
 require_once plugin_dir_path(__FILE__) . 'includes/utils/enqueue_scripts.php';
 require_once plugin_dir_path(__FILE__) . 'includes/utils/faudir_utils.php';
 require_once plugin_dir_path(__FILE__) . 'includes/utils/api-functions.php';
+require_once plugin_dir_path(__FILE__) . 'includes/utils/Template.php';
 
 // Include the new settings page file
 require_once plugin_dir_path(__FILE__) . 'includes/admin/settings-page.php';
