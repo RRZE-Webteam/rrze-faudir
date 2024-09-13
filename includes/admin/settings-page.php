@@ -63,6 +63,10 @@ function rrze_faudir_settings_init()
         'rrze_faudir_cache_section'
     );
 
+
+
+
+
     add_settings_field(
         'rrze_faudir_cache_timeout',
         __('Cache Timeout (in minutes)', 'rrze-faudir'),
@@ -70,15 +74,6 @@ function rrze_faudir_settings_init()
         'rrze_faudir_settings_cache',
         'rrze_faudir_cache_section'
     );
-
-    add_settings_field(
-        'rrze_faudir_cache_org_timeout',
-        __('Organization Cache Timeout (in days)', 'rrze-faudir'),
-        'rrze_faudir_cache_org_timeout_render',
-        'rrze_faudir_settings_cache',
-        'rrze_faudir_cache_section'
-    );
-
     add_settings_field(
         'rrze_faudir_clear_cache',
         __('Clear All Cache', 'rrze-faudir'),
@@ -86,6 +81,7 @@ function rrze_faudir_settings_init()
         'rrze_faudir_settings_cache',
         'rrze_faudir_cache_section'
     );
+    
 
     // Error Handling Section
     add_settings_section(
@@ -128,6 +124,8 @@ function rrze_faudir_settings_init()
     );
 
     // Note: The search form will be handled in the settings page itself, no need for a settings field here.
+
+    
 }
 add_action('admin_init', 'rrze_faudir_settings_init');
 
@@ -175,12 +173,11 @@ function rrze_faudir_no_cache_logged_in_render()
     echo '<p class="description">' . __('Disable caching for logged-in editors.', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_cache_timeout_render()
-{
+function rrze_faudir_cache_timeout_render() {
     $options = get_option('rrze_faudir_options');
-    $value = isset($options['cache_timeout']) ? intval($options['cache_timeout']) : 15;
-    echo '<input type="number" name="rrze_faudir_options[cache_timeout]" value="' . $value . '" min="15">';
-    echo '<p class="description">' . __('Set the cache timeout in minutes (minimum 15 minutes).', 'rrze-faudir') . '</p>';
+    $value = isset($options['cache_timeout']) ? intval($options['cache_timeout']) : 15; // Default to 15 minutes
+    echo '<input type="number" name="rrze_faudir_options[cache_timeout]" value="' . $value . '" min="1">';
+    echo '<p class="description">' . __('Set the cache timeout in minutes (minimum 1 minute).', 'rrze-faudir') . '</p>';
 }
 
 function rrze_faudir_cache_org_timeout_render()
@@ -191,11 +188,11 @@ function rrze_faudir_cache_org_timeout_render()
     echo '<p class="description">' . __('Set the cache timeout in days for organization identifiers.', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_clear_cache_render()
-{
+function rrze_faudir_clear_cache_render() {
     echo '<button type="button" class="button button-secondary" id="clear-cache-button">' . __('Clear Cache Now', 'rrze-faudir') . '</button>';
     echo '<p class="description">' . __('Click the button to clear all cached data.', 'rrze-faudir') . '</p>';
 }
+
 
 function rrze_faudir_error_message_render()
 {
@@ -301,6 +298,7 @@ function rrze_faudir_settings_page()
 
 
 
+
 function rrze_faudir_fetch_contacts_handler()
 {
     check_ajax_referer('rrze_faudir_api_nonce', 'security');
@@ -318,12 +316,15 @@ add_action('wp_ajax_rrze_faudir_fetch_contacts', 'rrze_faudir_fetch_contacts_han
 
 
 // Clear Cache Function
-function rrze_faudir_clear_cache()
-{
+function rrze_faudir_clear_cache() {
     global $wpdb;
+    // Delete all transients related to the plugin's cache
     $wpdb->query("DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '%_transient_rrze_faudir%'");
+
     wp_send_json_success(__('All cache cleared successfully.', 'rrze-faudir'));
 }
+add_action('wp_ajax_rrze_faudir_clear_cache', 'rrze_faudir_clear_cache');
+
 
 
 function rrze_faudir_search_person_by_id_handler()
@@ -334,26 +335,24 @@ function rrze_faudir_search_person_by_id_handler()
     $givenName = sanitize_text_field($_POST['givenName']);
     $familyName = sanitize_text_field($_POST['familyName']);
 
-    $params = [];
+    // Initialize the response
+    $response = '';
 
-    // If searching by person ID
-    if (!empty($personId)) {
-        error_log("Searching by person ID: " . $personId); // Log message when person ID is not empty
-
-        $response = fetch_fau_person_by_id($personId);
-
-
-    } else if(empty($personId)) {
+    // Check if searching by person ID
+    
+   if (!empty($givenName) || !empty($familyName) || !empty($personId)) {
         // If searching by name, pass the givenName and familyName as parameters
         $params = [
             'givenName' => $givenName,
-            'familyName' => $familyName
+            'familyName' => $familyName,
+            'identifier'=> $personId
         ];
-        $response = fetch_fau_persons_atributes(60, 0, $params); // Call the API using the name search
+        $response = fetch_fau_persons_atributes(60, 0, $params);
     }
 
+    // Check if the response is a valid array (success), otherwise return an error
     if (is_string($response)) {
-        wp_send_json_error($response);
+        wp_send_json_error(__('Error: ' . $response, 'rrze-faudir'));
     }
 
     $contacts = $response['data'] ?? [];
@@ -379,7 +378,9 @@ function rrze_faudir_search_person_by_id_handler()
         $output .= '</div>';
         wp_send_json_success($output);
     } else {
-        wp_send_json_error('No contacts found.');
+        wp_send_json_error(__('No contacts found. Please verify the IdM-Kennung or names provided.', 'rrze-faudir'));
     }
 }
+
 add_action('wp_ajax_search_person_by_id', 'rrze_faudir_search_person_by_id_handler');
+
