@@ -65,7 +65,9 @@
                         <p>Überall dieselbe alte Leier. Das Layout ist fertig, der Text lässt auf sich warten. Damit das Layout nun nicht nackt im Raume steht und sich klein und leer vorkommt, springe ich ein: der Blindtext.
                         Täglich Mo, 08:00 - 10:00, Raum 00.456, Bitte vorher anmelden!
                     </div>
-                    <img src="/wp-content/uploads/2024/09/V20210305LJ-0043-cropped-e1725968539245.webp" alt="Profile Image">
+                    <?php if (!empty($image_url)) : ?>
+                        <img src="<?php echo esc_url($image_url); ?>" alt="Person Image" />
+                    <?php endif; ?>
 
                 </div>
                 <h3>Mustertext Biographie:</h3>

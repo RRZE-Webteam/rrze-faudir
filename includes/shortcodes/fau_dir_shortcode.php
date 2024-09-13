@@ -23,6 +23,7 @@ function fetch_fau_data($atts) {
             'format' => 'list',  // Output format (list, table, card)
             'show' => 'name, email, phone, organization, function',  // Fields to show
             'hide' => '',  // Fields to hide
+            'image' => '',  // Image ID from Media Library
         ),
         $atts
     );
@@ -34,6 +35,7 @@ function fetch_fau_data($atts) {
     // Prepare parameters for fetching data
     $identifiers = empty($atts['identifier']) ? [] : explode(',', $atts['identifier']);
     $category = $atts['category'];
+    $image_id = $atts['image'];  // Get the image ID from the shortcode
 
     // Fetch data logic
     $persons = []; // This will hold the fetched data
@@ -64,6 +66,12 @@ function fetch_fau_data($atts) {
         }
     }
 
+    // Fetch the image URL if an image ID is provided
+    $image_url = '';
+    if (!empty($image_id) && is_numeric($image_id)) {
+        $image_url = wp_get_attachment_image_url($image_id, 'full');
+    }
+
     // Load the template and pass the data
     $template_dir = plugin_dir_path(__FILE__) . '../../templates/';
     $template = new Template($template_dir);
@@ -73,6 +81,7 @@ function fetch_fau_data($atts) {
         'show_fields' => $show_fields,
         'hide_fields' => $hide_fields,
         'persons' => $persons,
+        'image_url' => $image_url,  // Pass the image URL to the template
     ]);
 
     return $output;
