@@ -37,6 +37,19 @@ function fetch_fau_data($atts) {
     $category = $atts['category'];
     $image_id = $atts['image'];  // Get the image ID from the shortcode
 
+    // Generate a unique cache key based on the shortcode attributes
+    $cache_key = 'faudir_shortcode_' . md5(serialize($atts));
+
+    // Retrieve cache timeout from plugin settings (use default if not set)
+    $options = get_option('rrze_faudir_options');
+    $cache_timeout = isset($options['cache_timeout']) ? intval($options['cache_timeout']) * 60 : 900; // Default to 15 minutes
+
+    // Check if cached data exists
+    $cached_data = get_transient($cache_key);
+    if ($cached_data !== false) {
+        return $cached_data; // Return cached data if available
+    }
+
     // Fetch data logic
     $persons = []; // This will hold the fetched data
 
@@ -84,8 +97,13 @@ function fetch_fau_data($atts) {
         'image_url' => $image_url,  // Pass the image URL to the template
     ]);
 
+    // Cache the rendered output using Transients API
+    set_transient($cache_key, $output, $cache_timeout);
+
     return $output;
 }
 add_shortcode('faudir', 'fetch_fau_data');
+
+
 
 ?>

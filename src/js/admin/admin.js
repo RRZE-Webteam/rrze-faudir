@@ -46,29 +46,29 @@ jQuery(document).ready(function($) {
         localStorage.setItem('activeTab', $(this).attr('href'));
     });
 
-// Initial load
-loadContacts(currentPage);
-
-// Event listeners for pagination buttons
-$(document).on('click', '.prev-page', function(e) {
-    e.preventDefault(); // Prevent the default link behavior
-    if (currentPage > 1) {
-        currentPage--;
-        loadContacts(currentPage);
-    }
-});
-
-$(document).on('click', '.next-page', function(e) {
-    e.preventDefault(); // Prevent the default link behavior
-    currentPage++;
-    loadContacts(currentPage);
-});
-
     // Initial load
+    loadContacts(currentPage);
+
+    // Event listeners for pagination buttons
+    $(document).on('click', '.prev-page', function(e) {
+        e.preventDefault(); // Prevent the default link behavior
+        if (currentPage > 1) {
+            currentPage--;
+            loadContacts(currentPage);
+        }
+    });
+
+    $(document).on('click', '.next-page', function(e) {
+        e.preventDefault(); // Prevent the default link behavior
+        currentPage++;
+        loadContacts(currentPage);
+    });
+
+    // Initial load for contacts when on the right tab
     if (activeTab === '#tab-5') {
         loadContacts(currentPage);
     }
-    
+
     // Clear cache button handler
     $('#clear-cache-button').on('click', function() {
         if (confirm(rrzeFaudirAjax.confirm_clear_cache)) {
@@ -84,19 +84,17 @@ $(document).on('click', '.next-page', function(e) {
             });
         }
     });
-});
-jQuery(document).ready(function($) {
 
     // Search by name or ID
     $('#search-person-by-id').click(function() {
         var personId = $('#person-id').val().trim();
         var givenName = $('#given-name').val().trim();
         var familyName = $('#family-name').val().trim();
-    
+
         console.log('Person ID:', personId);
         console.log('Given Name:', givenName);
         console.log('Family Name:', familyName);
-    
+
         if (personId.length > 0 || givenName.length > 0 || familyName.length > 0) {
             $.ajax({
                 url: rrzeFaudirAjax.ajax_url,
@@ -125,5 +123,4 @@ jQuery(document).ready(function($) {
             $('#contacts-list').html('<p>Please enter a valid search term.</p>');
         }
     });
-    
 });

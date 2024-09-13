@@ -17,7 +17,26 @@ class FaudirBlock {
     }
 
     public static function render($attributes) {
-        return fetch_fau_data($attributes); // Pass the attributes, including image, to the shortcode function
+        // Generate a unique cache key based on block attributes
+        $cache_key = 'faudir_block_' . md5(serialize($attributes));
+
+        // Retrieve cache timeout from plugin settings (default to 15 minutes if not set)
+        $options = get_option('rrze_faudir_options');
+        $cache_timeout = isset($options['cache_timeout']) ? intval($options['cache_timeout']) * 60 : 900; // Cache timeout in seconds
+
+        // Check if cached data exists
+        $cached_data = get_transient($cache_key);
+        if ($cached_data !== false) {
+            return $cached_data; // Return cached data if available
+        }
+
+        // Call the function from shortcode to fetch data
+        $output = fetch_fau_data($attributes);
+
+        // Cache the rendered output using Transients API
+        set_transient($cache_key, $output, $cache_timeout);
+
+        return $output;
     }
 }
 
@@ -26,4 +45,5 @@ class FaudirBlock {
 add_action('init', function() {
     FaudirBlock::register();
 });
+
 ?>
