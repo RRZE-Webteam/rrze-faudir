@@ -271,7 +271,7 @@ function rrze_faudir_settings_page()
                 </h2>
 
                 <form id="search-person-form">
-                    <label for="person-id">Person IdM-Kennung:</label>
+                    <label for="person-id">Search by Name, Surbame, Email or ID</label>
                     <input type="text" id="person-id" name="person-id" />
 
                     <label for="given-name">Given Name:</label>
@@ -279,6 +279,8 @@ function rrze_faudir_settings_page()
 
                     <label for="family-name">Family Name:</label>
                     <input type="text" id="family-name" name="family-name" />
+                    <label for="email">Email:</label>
+                    <input type="text" id="email" name="email" />
 
                     <button type="button" id="search-person-by-id" class="button button-primary">Search</button>
                 </form>
@@ -334,18 +336,20 @@ function rrze_faudir_search_person_by_id_handler()
     $personId = sanitize_text_field($_POST['personId']);
     $givenName = sanitize_text_field($_POST['givenName']);
     $familyName = sanitize_text_field($_POST['familyName']);
+    $email = sanitize_text_field($_POST['email']);
 
     // Initialize the response
     $response = '';
 
     // Check if searching by person ID
     
-   if (!empty($givenName) || !empty($familyName) || !empty($personId)) {
+   if (!empty($givenName) || !empty($familyName) || !empty($personId)|| !empty($email)) {
         // If searching by name, pass the givenName and familyName as parameters
         $params = [
             'givenName' => $givenName,
             'familyName' => $familyName,
-            'identifier'=> $personId
+            'identifier'=> $personId,
+            'email'=> $email,
         ];
         $response = fetch_fau_persons_atributes(60, 0, $params);
     }

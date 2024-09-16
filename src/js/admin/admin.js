@@ -90,12 +90,15 @@ jQuery(document).ready(function($) {
         var personId = $('#person-id').val().trim();
         var givenName = $('#given-name').val().trim();
         var familyName = $('#family-name').val().trim();
+        var email = $('#email').val().trim();
 
         console.log('Person ID:', personId);
         console.log('Given Name:', givenName);
         console.log('Family Name:', familyName);
+        console.log('Email:', email);
 
-        if (personId.length > 0 || givenName.length > 0 || familyName.length > 0) {
+
+        if (personId.length > 0 || givenName.length > 0 || familyName.length > 0 || email.length > 0)  {
             $.ajax({
                 url: rrzeFaudirAjax.ajax_url,
                 method: 'POST',
@@ -104,7 +107,8 @@ jQuery(document).ready(function($) {
                     security: rrzeFaudirAjax.api_nonce,
                     personId: personId,
                     givenName: givenName,
-                    familyName: familyName
+                    familyName: familyName,
+                    email:email
                 },
                 success: function(response) {
                     console.log('Response:', response); // Log the response

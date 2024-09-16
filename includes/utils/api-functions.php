@@ -120,6 +120,9 @@ function fetch_fau_persons_atributes($limit = 60, $offset = 0, $params = []) {
     if (!empty($params['identifier'])) {
         $url .= '&q=' . urlencode('^' . $params['identifier']);
     }
+    if (!empty($params['email'])) {
+        $url .= '&q=' . urlencode('^' . $params['email']);
+    }
     $curl = curl_init();
     curl_setopt_array($curl, array(
         CURLOPT_URL => $url,
