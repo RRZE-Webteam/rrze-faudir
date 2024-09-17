@@ -26,5 +26,9 @@ gulp.task('js-admin', function() {
     .pipe(gulp.dest('assets/js'));
 });
 
+gulp.task('watch', function() {
+  gulp.watch('src/scss/*.scss', gulp.series('css'));
+  gulp.watch('src/js/*.js', gulp.series('js-main'));
+});
 // Define the default task that runs all tasks in series
 gulp.task('default', gulp.series('css', 'js-main', 'js-admin'));

@@ -1,6 +1,7 @@
 // Main SCSS file for RRZE FAUDIR
 
 @import 'blocks/block-specific.scss';
+@import '../../../FAU-Einrichtungen/src/sass/variables';
 
 // Add global styles here
 body {
@@ -94,6 +95,7 @@ body {
     background-color: var(--color-white);
     box-shadow: 0 4px 8px var(--color-ContentBorders);
     margin-bottom: 20px; border-radius: 8px;
+    
 }
  .shortcode-contact-kompakt img{
    width: 20%; 
@@ -103,17 +105,13 @@ body {
    width: 20%; 
    object-fit: cover;
  }
- .shortcode-contact-kompakt h2{
-    display: block; 
-    font-size: 18px; 
-    margin-bottom: 0px;
-}
-.shortcode-contact-kompakt  h3{
-    display: block;
-    font-size: 16px; 
+ .page-section-title,
+ .card-section-title,
+ .kompakt-section-title{
+    font-size:#{$font-size-h2}px;
+    font-weight: 600;
     color: var(--color-black);
- }
-
+}
 // Responsive styles
 @media (max-width: 768px) {
     #wpbody-content .wrap .contact-card {

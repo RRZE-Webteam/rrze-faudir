@@ -11,7 +11,8 @@
                 <?php
                 $fullName = trim($person['personalTitle'] . ' ' . $person['givenName'] . ' ' . $person['familyName']);
                 ?>
-                <h2><?php echo esc_html($fullName); ?></h2>
+                <section class="kompakt-section-title" aria-label="<?php echo esc_html($fullName); ?>"><?php echo esc_html($fullName); ?></section>
+
 
                 <?php
                 // Initialize output strings for email and phone
