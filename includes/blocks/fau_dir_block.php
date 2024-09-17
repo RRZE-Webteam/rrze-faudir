@@ -17,12 +17,19 @@ class FaudirBlock {
     }
 
     public static function render($attributes) {
+        $options = get_option('rrze_faudir_options');
+        $no_cache_logged_in = isset($options['no_cache_logged_in']) && $options['no_cache_logged_in'];
+
+        // If user is logged in and no-cache option is enabled, always fetch fresh data
+        if ($no_cache_logged_in && is_user_logged_in()) {
+            return fetch_fau_data($attributes);
+        }
+
         // Generate a unique cache key based on block attributes
         $cache_key = 'faudir_block_' . md5(serialize($attributes));
 
         // Retrieve cache timeout from plugin settings (default to 15 minutes if not set)
-        $options = get_option('rrze_faudir_options');
-        $cache_timeout = isset($options['cache_timeout']) ? intval($options['cache_timeout']) * 60 : 900; // Cache timeout in seconds
+        $cache_timeout = isset($options['cache_timeout']) ? intval($options['cache_timeout']) * 60 : 900;
 
         // Check if cached data exists
         $cached_data = get_transient($cache_key);
