@@ -1,0 +1,163 @@
+# Copyright (C) 2024 rrze-faudir
+# This file is distributed under the same license as the rrze-faudir package.
+msgid ""
+msgstr ""
+"Project-Id-Version: rrze-faudir\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language-Team: German\n"
+"Last-Translator: \n"
+"POT-Creation-Date: 2024-09-17 12:57+0000\n"
+"Report-Msgid-Bugs-To: https://your-plugin-url.com/support\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:"
+"1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;"
+"esc_html_x:1,2c\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"PO-Revision-Date: 2024-09-17 13:38+0000\n"
+"Language: de_DE\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.6.11; wp-6.6.2"
+
+#: rrze-faudir.php:58
+msgid "No contacts found with the provided identifier."
+msgstr "Keine Kontakte mit der angegebenen Kennung gefunden."
+
+#: includes/admin/settings-page.php:11, includes/admin/settings-page.php:219
+msgid "FAU Directory Settings"
+msgstr "FAU-Verzeichnis-Einstellungen"
+
+#: includes/admin/settings-page.php:13
+msgid "FAU Directory"
+msgstr "FAU-Verzeichnis"
+
+#: includes/admin/settings-page.php:37, includes/admin/settings-page.php:225
+msgid "API Settings"
+msgstr "API-Einstellungen"
+
+#: includes/admin/settings-page.php:44
+msgid "API Key"
+msgstr "API-Schlüssel"
+
+#: includes/admin/settings-page.php:53, includes/admin/settings-page.php:228
+msgid "Cache Settings"
+msgstr "Cache-Einstellungen"
+
+#: includes/admin/settings-page.php:60
+msgid "No Caching for Logged-in Editors"
+msgstr "Kein Caching für angemeldete Redakteure"
+
+#: includes/admin/settings-page.php:72
+msgid "Cache Timeout (in minutes)"
+msgstr "Cache Timeout (in Minuten)"
+
+#: includes/admin/settings-page.php:79
+msgid "Clear All Cache"
+msgstr "Alle Caches löschen"
+
+#: includes/admin/settings-page.php:89, includes/admin/settings-page.php:231
+msgid "Error Handling"
+msgstr "Fehlerbehandlung"
+
+#: includes/admin/settings-page.php:96
+msgid "Show Error Message for Invalid Contacts"
+msgstr "Fehlermeldung für ungültige Kontakte anzeigen"
+
+#: includes/admin/settings-page.php:105, includes/admin/settings-page.php:234
+msgid "Business Card Link"
+msgstr "Visitenkarte Link"
+
+#: includes/admin/settings-page.php:112
+msgid "Business Card Link Title"
+msgstr "Visitenkarte Link Titel"
+
+#: includes/admin/settings-page.php:121, includes/admin/settings-page.php:270
+msgid "Search Contacts by Identifier"
+msgstr "Kontakte nach Kennung suchen"
+
+#: includes/admin/settings-page.php:137
+msgid ""
+"Configure the API settings for accessing the FAU person and institution "
+"directory."
+msgstr ""
+"Konfigurieren Sie die API-Einstellungen für den Zugriff auf das Personen- "
+"und Institutionsverzeichnis der FAU."
+
+#: includes/admin/settings-page.php:142
+msgid "Configure caching settings for the plugin."
+msgstr "Konfigurieren Sie die Caching-Einstellungen für das Plugin."
+
+#: includes/admin/settings-page.php:147
+msgid "Handle error messages for invalid contact entries."
+msgstr "Behandlung von Fehlermeldungen für ungültige Kontakteinträge."
+
+#: includes/admin/settings-page.php:152
+msgid "Configure the business card link settings."
+msgstr "Konfigurieren Sie die Einstellungen für den Visitenkartenlink."
+
+#: includes/admin/settings-page.php:164
+msgid "Enter your API key here."
+msgstr "Geben Sie hier Ihren API-Schlüssel ein."
+
+#: includes/admin/settings-page.php:159
+msgid "The API key is being used from the network installation."
+msgstr "Der API-Schlüssel wird von der Netzwerkinstallation verwendet."
+
+#: includes/admin/settings-page.php:173
+msgid "Disable caching for logged-in editors."
+msgstr "Deaktivieren Sie die Zwischenspeicherung für eingeloggte Redakteure."
+
+#: includes/admin/settings-page.php:180
+msgid "Set the cache timeout in minutes (minimum 1 minute)."
+msgstr ""
+"Legen Sie die Cache-Zeitüberschreitung in Minuten fest (mindestens 1 Minute)."
+
+#: includes/admin/settings-page.php:188
+msgid "Set the cache timeout in days for organization identifiers."
+msgstr ""
+"Legen Sie die Cache-Zeitüberschreitung in Tagen für Organisationskennungen "
+"fest."
+
+#: includes/admin/settings-page.php:192
+msgid "Clear Cache Now"
+msgstr "Cache jetzt löschen"
+
+#: includes/admin/settings-page.php:193
+msgid "Click the button to clear all cached data."
+msgstr ""
+"Klicken Sie auf die Schaltfläche , um alle zwischengespeicherten Daten zu "
+"löschen."
+
+#: includes/admin/settings-page.php:202
+msgid "Show error messages for incorrect contact entries."
+msgstr "Fehlermeldungen für fehlerhafte Kontakteinträge anzeigen."
+
+#: includes/admin/settings-page.php:208
+msgid "Call up business card"
+msgstr "Visitenkarte abrufen"
+
+#: includes/admin/settings-page.php:210
+msgid "Enter the title for the business card link."
+msgstr "Geben Sie den Titel für den Visitenkartenlink ein."
+
+#: includes/admin/settings-page.php:237
+msgid "Search Contacts"
+msgstr "Kontakte suchen"
+
+#: includes/admin/settings-page.php:326
+msgid "All cache cleared successfully."
+msgstr "Der gesamte Cache wurde erfolgreich gelöscht."
+
+#: includes/admin/settings-page.php:385
+msgid "No contacts found. Please verify the IdM-Kennung or names provided."
+msgstr ""
+"Keine Kontakte gefunden. Bitte überprüfen Sie die IdM-Kennung oder Namen "
+"versehen."
+
+#: includes/utils/enqueue_scripts.php:48
+msgid "Are you sure you want to clear the cache?"
+msgstr "Sind Sie sicher, dass Sie den Cache löschen wollen?"
