@@ -2,7 +2,12 @@
     <div class="shortcode-contacts-wrapper"> <!-- Flex container for the cards -->
         <?php foreach ($persons as $person) : ?>
             <div class="shortcode-contact-card">
+                <?php  if (count($persons) === 1 && !empty($image_url)) : ?>
+                    <img src="<?php echo esc_url($image_url); ?>" alt="Person Image" />
+                <?php else: ?>
+                <!--To be implemented after CPT-->
                 <img src="/wp-content/uploads/2024/09/V20210305LJ-0043-cropped-e1725968539245.webp" alt="Profile Image">
+                <?php endif; ?>
                 
                 <!-- Full name with title -->
                 <?php
