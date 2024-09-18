@@ -66,6 +66,13 @@ function rrze_faudir_settings_init()
         'rrze_faudir_cache_section'
     );
     add_settings_field(
+        'rrze_faudir_transient_time_for_org_id',
+        __('Transient Time for Organization ID (in days)', 'rrze-faudir'),
+        'rrze_faudir_transient_time_for_org_id_render',
+        'rrze_faudir_settings_cache',
+        'rrze_faudir_cache_section'
+    );
+    add_settings_field(
         'rrze_faudir_clear_cache',
         __('Clear All Cache', 'rrze-faudir'),
         'rrze_faudir_clear_cache_render',
@@ -189,6 +196,13 @@ function rrze_faudir_cache_timeout_render() {
     $value = isset($options['cache_timeout']) ? max(intval($options['cache_timeout']), 15) : 15; // Ensure minimum value is 15
     echo '<input type="number" name="rrze_faudir_options[cache_timeout]" value="' . $value . '" min="15">';
     echo '<p class="description">' . __('Set the cache timeout in minutes (minimum 15 minutes).', 'rrze-faudir') . '</p>';
+}
+
+function rrze_faudir_transient_time_for_org_id_render() {
+    $options = get_option('rrze_faudir_options');
+    $value = isset($options['transient_time_for_org_id']) ? max(intval($options['transient_time_for_org_id']), 1) : 1; // Ensure minimum value is 1
+    echo '<input type="number" name="rrze_faudir_options[transient_time_for_org_id]" value="' . $value . '" min="1">';
+    echo '<p class="description">' . __('Set the transient time in days for intermediate stored organization identifiers (minimum 1 day).', 'rrze-faudir') . '</p>';
 }
 
 function rrze_faudir_cache_org_timeout_render()
