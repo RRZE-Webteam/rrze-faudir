@@ -66,6 +66,13 @@ function rrze_faudir_settings_init()
         'rrze_faudir_cache_section'
     );
     add_settings_field(
+        'rrze_faudir_transient_time_for_org_id',
+        __('Transient Time for Organization ID (in days)', 'rrze-faudir'),
+        'rrze_faudir_transient_time_for_org_id_render',
+        'rrze_faudir_settings_cache',
+        'rrze_faudir_cache_section'
+    );
+    add_settings_field(
         'rrze_faudir_clear_cache',
         __('Clear All Cache', 'rrze-faudir'),
         'rrze_faudir_clear_cache_render',
@@ -120,6 +127,13 @@ function rrze_faudir_settings_init()
         __('Shortcode Settings', 'rrze-faudir'),
         'rrze_faudir_shortcode_section_callback',
         'rrze_faudir_settings_shortcode'
+    );
+    add_settings_field(
+        'rrze_faudir_default_output_fields',
+        __('Default Output Fields', 'rrze-faudir'),
+        'rrze_faudir_default_output_fields_render',
+        'rrze_faudir_settings_shortcode',
+        'rrze_faudir_shortcode_section'
     );
 
     // Note: The search form will be handled in the settings page itself, no need for a settings field here.
@@ -179,9 +193,16 @@ function rrze_faudir_no_cache_logged_in_render()
 
 function rrze_faudir_cache_timeout_render() {
     $options = get_option('rrze_faudir_options');
-    $value = isset($options['cache_timeout']) ? intval($options['cache_timeout']) : 15; // Default to 15 minutes
-    echo '<input type="number" name="rrze_faudir_options[cache_timeout]" value="' . $value . '" min="1">';
-    echo '<p class="description">' . __('Set the cache timeout in minutes (minimum 1 minute).', 'rrze-faudir') . '</p>';
+    $value = isset($options['cache_timeout']) ? max(intval($options['cache_timeout']), 15) : 15; // Ensure minimum value is 15
+    echo '<input type="number" name="rrze_faudir_options[cache_timeout]" value="' . $value . '" min="15">';
+    echo '<p class="description">' . __('Set the cache timeout in minutes (minimum 15 minutes).', 'rrze-faudir') . '</p>';
+}
+
+function rrze_faudir_transient_time_for_org_id_render() {
+    $options = get_option('rrze_faudir_options');
+    $value = isset($options['transient_time_for_org_id']) ? max(intval($options['transient_time_for_org_id']), 1) : 1; // Ensure minimum value is 1
+    echo '<input type="number" name="rrze_faudir_options[transient_time_for_org_id]" value="' . $value . '" min="1">';
+    echo '<p class="description">' . __('Set the transient time in days for intermediate stored organization identifiers (minimum 1 day).', 'rrze-faudir') . '</p>';
 }
 
 function rrze_faudir_cache_org_timeout_render()
@@ -232,6 +253,30 @@ function rrze_faudir_get_business_card_title() {
         : __('Call up business card', 'rrze-faudir');
 }
 
+function rrze_faudir_default_output_fields_render() {
+    $options = get_option('rrze_faudir_options');
+    $default_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : array(); // Assuming default_output_fields is an array of field names
+    
+    $available_fields = array(
+        'academic_title' => __('Academic Title', 'rrze-faudir'),
+        'first_name' => __('First Name', 'rrze-faudir'),
+        'last_name' => __('Last Name', 'rrze-faudir'),
+        'academic_suffix' => __('Academic Suffix', 'rrze-faudir'),
+        'email' => __('Email', 'rrze-faudir'),
+        'phone' => __('Phone', 'rrze-faudir'),
+    );
+
+    echo '<fieldset>';
+    foreach ($available_fields as $field => $label) {
+        $checked = in_array($field, $default_fields); // Check if the field is in the default fields array
+        echo "<label for='rrze_faudir_default_output_fields_$field'>";
+        echo "<input type='checkbox' id='rrze_faudir_default_output_fields_$field' name='rrze_faudir_options[default_output_fields][]' value='$field' " . checked($checked, true, false) . ">";
+        echo "$label</label><br>";
+    }
+    echo '</fieldset>';
+    echo '<p class="description">' . __('Select the fields to display by default in shortcodes and blocks.', 'rrze-faudir') . '</p>';
+}
+
 // Settings page display
 function rrze_faudir_settings_page()
 {
@@ -267,7 +312,6 @@ function rrze_faudir_settings_page()
         <form action="options.php" method="post">
             <?php settings_fields('rrze_faudir_settings'); ?>
 
-
             <!-- API Settings Tab -->
             <div id="tab-1" class="tab-content">
                 <?php do_settings_sections('rrze_faudir_settings'); ?>
@@ -289,6 +333,12 @@ function rrze_faudir_settings_page()
             <!-- Business Card Link Tab -->
             <div id="tab-4" class="tab-content" style="display:none;">
                 <?php do_settings_sections('rrze_faudir_settings_business_card'); ?>
+                <?php submit_button(); ?>
+            </div>
+
+            <!-- Shortcode Settings Tab -->
+            <div id="tab-6" class="tab-content" style="display:none;">
+                <?php do_settings_sections('rrze_faudir_settings_shortcode'); ?>
                 <?php submit_button(); ?>
             </div>
 
@@ -316,12 +366,6 @@ function rrze_faudir_settings_page()
                 <div id="contacts-list">
                    
                 </div>
-            </div>
-
-            <!-- Shortcode Settings Tab -->
-            <div id="tab-6" class="tab-content" style="display:none;">
-                <?php do_settings_sections('rrze_faudir_settings_shortcode'); ?>
-                <?php submit_button(); ?>
             </div>
         </form>
     </div>
