@@ -252,16 +252,19 @@ function rrze_faudir_settings_page()
             <!-- Cache Settings Tab -->
             <div id="tab-2" class="tab-content" style="display:none;">
                 <?php do_settings_sections('rrze_faudir_settings_cache'); ?>
+                <?php submit_button(); ?>
             </div>
 
             <!-- Error Handling Tab -->
             <div id="tab-3" class="tab-content" style="display:none;">
                 <?php do_settings_sections('rrze_faudir_settings_error'); ?>
+                <?php submit_button(); ?>
             </div>
 
             <!-- Business Card Link Tab -->
             <div id="tab-4" class="tab-content" style="display:none;">
                 <?php do_settings_sections('rrze_faudir_settings_business_card'); ?>
+                <?php submit_button(); ?>
             </div>
 
             <!-- Contacts Search Tab -->
