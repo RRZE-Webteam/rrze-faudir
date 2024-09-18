@@ -30,7 +30,7 @@ class EnqueueScripts
     // Enqueue admin scripts and styles for specific admin pages
     public static function enqueue_admin($hook)
     {
-        if ($hook !== 'toplevel_page_rrze-faudir') {
+        if ($hook !== 'settings_page_rrze-faudir') {
             return;
         }
 

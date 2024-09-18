@@ -7,20 +7,12 @@ if (!defined('ABSPATH')) {
 // Add admin menu
 function rrze_faudir_add_admin_menu()
 {
-    add_menu_page(
-        __('FAU Directory Settings', 'rrze-faudir'),
-        // Page title
-        __('FAU Directory', 'rrze-faudir'),
-        // Menu title
+    add_options_page(
+        __('RRZE-FAUdir Settings', 'rrze-faudir'),
+        __('RRZE-FAUdir', 'rrze-faudir'),
         'manage_options',
-        // Capability
         'rrze-faudir',
-        // Menu slug
-        'rrze_faudir_settings_page',
-        // Callback function
-        'dashicons-admin-generic',
-        // Icon
-        81 // Position
+        'rrze_faudir_settings_page'
     );
 }
 add_action('admin_menu', 'rrze_faudir_add_admin_menu');
