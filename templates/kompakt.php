@@ -58,7 +58,14 @@
                     <?php endforeach; ?>
                 <?php endif; ?>
                 <!-- to be implemented after CPT -->
-                <a href="?id=' . $person_id . '"><button>More</button></a>
+                 <?php
+                // Inside your shortcode template
+                $business_card_title = rrze_faudir_get_business_card_title();
+
+                // Use $business_card_title where needed, for example:
+                echo '<a href="?id=' . esc_attr($person['id']) . '" class="business-card-link"><button>' . esc_html($business_card_title) . '</button></a>';
+                ?>
+                <!-- <a href="?id=<?php echo esc_attr($person['id']); ?>"><button>More</button></a> -->
                         </div>
             </div>
         <?php endforeach; ?>

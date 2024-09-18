@@ -100,7 +100,7 @@ function rrze_faudir_settings_init()
 
     add_settings_field(
         'rrze_faudir_business_card_title',
-        __('Business Card Link Title', 'rrze-faudir'),
+        __('Kompakt Card Button Title', 'rrze-faudir'),
         'rrze_faudir_business_card_title_render',
         'rrze_faudir_settings_business_card',
         'rrze_faudir_business_card_section'
@@ -209,9 +209,27 @@ function rrze_faudir_error_message_render()
 function rrze_faudir_business_card_title_render()
 {
     $options = get_option('rrze_faudir_options');
-    $value = isset($options['business_card_title']) ? sanitize_text_field($options['business_card_title']) : __('Call up business card', 'rrze-faudir');
-    echo '<input type="text" name="rrze_faudir_options[business_card_title]" value="' . $value . '" size="50">';
-    echo '<p class="description">' . __('Enter the title for the business card link.', 'rrze-faudir') . '</p>';
+    $default_title = __('Call up business card', 'rrze-faudir');
+    $value = isset($options['business_card_title']) && !empty($options['business_card_title']) 
+        ? sanitize_text_field($options['business_card_title']) 
+        : $default_title;
+    
+    // Save the default value if it's not set
+    if (!isset($options['business_card_title']) || empty($options['business_card_title'])) {
+        $options['business_card_title'] = $default_title;
+        update_option('rrze_faudir_options', $options);
+    }
+
+    echo '<input type="text" name="rrze_faudir_options[business_card_title]" value="' . esc_attr($value) . '" size="50">';
+    echo '<p class="description">' . __('Enter the title for the kompakt card read more button.', 'rrze-faudir') . '</p>';
+}
+
+// Add this function after the render function
+function rrze_faudir_get_business_card_title() {
+    $options = get_option('rrze_faudir_options');
+    return isset($options['business_card_title']) && !empty($options['business_card_title'])
+        ? sanitize_text_field($options['business_card_title'])
+        : __('Call up business card', 'rrze-faudir');
 }
 
 // Settings page display
@@ -235,7 +253,7 @@ function rrze_faudir_settings_page()
                 <?php echo __('Error Handling', 'rrze-faudir'); ?>
             </a>
             <a href="#tab-4" class="nav-tab">
-                <?php echo __('Business Card Link', 'rrze-faudir'); ?>
+                <?php echo __('Kompakt Card Button', 'rrze-faudir'); ?>
             </a>
             <a href="#tab-5" class="nav-tab">
                 <?php echo __('Search Contacts', 'rrze-faudir'); ?>
@@ -326,7 +344,6 @@ function rrze_faudir_fetch_contacts_handler()
 
     wp_send_json_success($output);
 }
-
 add_action('wp_ajax_rrze_faudir_fetch_contacts', 'rrze_faudir_fetch_contacts_handler');
 
 // AJAX handler for filtering contacts
