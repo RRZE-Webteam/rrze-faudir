@@ -18,7 +18,6 @@ function rrze_faudir_add_admin_menu()
 add_action('admin_menu', 'rrze_faudir_add_admin_menu');
 
 // Register settings
-// Register settings
 function rrze_faudir_settings_init()
 {
     register_setting('rrze_faudir_settings', 'rrze_faudir_options');
@@ -115,6 +114,14 @@ function rrze_faudir_settings_init()
         'rrze_faudir_settings_contacts_search'
     );
 
+    // Shortcode Settings Section
+    add_settings_section(
+        'rrze_faudir_shortcode_section',
+        __('Shortcode Settings', 'rrze-faudir'),
+        'rrze_faudir_shortcode_section_callback',
+        'rrze_faudir_settings_shortcode'
+    );
+
     // Note: The search form will be handled in the settings page itself, no need for a settings field here.
 
     
@@ -142,6 +149,11 @@ function rrze_faudir_error_section_callback()
 function rrze_faudir_business_card_section_callback()
 {
     echo '<p>' . __('Configure the business card link settings.', 'rrze-faudir') . '</p>';
+}
+
+function rrze_faudir_shortcode_section_callback()
+{
+    echo '<p>' . __('Configure the shortcode settings.', 'rrze-faudir') . '</p>';
 }
 
 // Render functions
@@ -228,6 +240,9 @@ function rrze_faudir_settings_page()
             <a href="#tab-5" class="nav-tab">
                 <?php echo __('Search Contacts', 'rrze-faudir'); ?>
             </a>
+            <a href="#tab-6" class="nav-tab">
+                <?php echo __('Shortcode Settings', 'rrze-faudir'); ?>
+            </a>
         </h2>
 
         <!-- Tabs Content -->
@@ -283,6 +298,12 @@ function rrze_faudir_settings_page()
                 <div id="contacts-list">
                    
                 </div>
+            </div>
+
+            <!-- Shortcode Settings Tab -->
+            <div id="tab-6" class="tab-content" style="display:none;">
+                <?php do_settings_sections('rrze_faudir_settings_shortcode'); ?>
+                <?php submit_button(); ?>
             </div>
         </form>
     </div>
