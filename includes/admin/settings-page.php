@@ -186,9 +186,9 @@ function rrze_faudir_no_cache_logged_in_render()
 
 function rrze_faudir_cache_timeout_render() {
     $options = get_option('rrze_faudir_options');
-    $value = isset($options['cache_timeout']) ? intval($options['cache_timeout']) : 15; // Default to 15 minutes
-    echo '<input type="number" name="rrze_faudir_options[cache_timeout]" value="' . $value . '" min="1">';
-    echo '<p class="description">' . __('Set the cache timeout in minutes (minimum 1 minute).', 'rrze-faudir') . '</p>';
+    $value = isset($options['cache_timeout']) ? max(intval($options['cache_timeout']), 15) : 15; // Ensure minimum value is 15
+    echo '<input type="number" name="rrze_faudir_options[cache_timeout]" value="' . $value . '" min="15">';
+    echo '<p class="description">' . __('Set the cache timeout in minutes (minimum 15 minutes).', 'rrze-faudir') . '</p>';
 }
 
 function rrze_faudir_cache_org_timeout_render()
