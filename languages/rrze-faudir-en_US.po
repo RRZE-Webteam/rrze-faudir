@@ -3,83 +3,99 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: rrze-faudir\n"
+"Report-Msgid-Bugs-To: https://your-plugin-url.com/support\n"
+"POT-Creation-Date: 2024-09-19 16:16+0200\n"
+"PO-Revision-Date: 2024-09-19 16:19+0200\n"
+"Last-Translator: \n"
+"Language-Team: English (United States)\n"
+"Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language-Team: English (United States)\n"
-"Last-Translator: \n"
-"POT-Creation-Date: 2024-09-17 12:57+0000\n"
-"Report-Msgid-Bugs-To: https://your-plugin-url.com/support\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Poedit-Basepath: ..\n"
-"X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:"
-"1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;"
-"esc_html_x:1,2c\n"
+"X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;"
+"_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;"
+"esc_html_e;esc_html_x:1,2c\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Generator: Poedit 3.5\n"
+"X-Loco-Version: 2.6.11; wp-6.6.2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"PO-Revision-Date: 2024-09-17 13:22+0000\n"
-"Language: en_US\n"
-"X-Generator: Loco https://localise.biz/\n"
-"X-Loco-Version: 2.6.11; wp-6.6.2"
 
-#: rrze-faudir.php:58
-msgid "No contacts found with the provided identifier."
-msgstr "No contacts found with the provided identifier."
-
-#: includes/admin/settings-page.php:11, includes/admin/settings-page.php:219
-msgid "FAU Directory Settings"
+#: includes/admin/settings-page.php:11
+#, fuzzy
+#| msgid "FAU Directory Settings"
+msgid "RRZE-FAUdir Settings"
 msgstr "FAU Directory Settings"
 
-#: includes/admin/settings-page.php:13
-msgid "FAU Directory"
-msgstr "FAU Directory"
+#: includes/admin/settings-page.php:12
+msgid "RRZE-FAUdir"
+msgstr ""
 
-#: includes/admin/settings-page.php:37, includes/admin/settings-page.php:225
+#: includes/admin/settings-page.php:28 includes/admin/settings-page.php:308
 msgid "API Settings"
 msgstr "API Settings"
 
-#: includes/admin/settings-page.php:44
+#: includes/admin/settings-page.php:35
 msgid "API Key"
 msgstr "API Key"
 
-#: includes/admin/settings-page.php:53, includes/admin/settings-page.php:228
+#: includes/admin/settings-page.php:44 includes/admin/settings-page.php:311
 msgid "Cache Settings"
 msgstr "Cache Settings"
 
-#: includes/admin/settings-page.php:60
+#: includes/admin/settings-page.php:51
 msgid "No Caching for Logged-in Editors"
 msgstr "No Caching for Logged-in Editors"
 
-#: includes/admin/settings-page.php:72
+#: includes/admin/settings-page.php:63
 msgid "Cache Timeout (in minutes)"
 msgstr "Cache Timeout (in minutes)"
 
-#: includes/admin/settings-page.php:79
+#: includes/admin/settings-page.php:70
+msgid "Transient Time for Organization ID (in days)"
+msgstr ""
+
+#: includes/admin/settings-page.php:77
 msgid "Clear All Cache"
 msgstr "Clear All Cache"
 
-#: includes/admin/settings-page.php:89, includes/admin/settings-page.php:231
+#: includes/admin/settings-page.php:87 includes/admin/settings-page.php:314
 msgid "Error Handling"
 msgstr "Error Handling"
 
-#: includes/admin/settings-page.php:96
+#: includes/admin/settings-page.php:94
 msgid "Show Error Message for Invalid Contacts"
 msgstr "Show Error Message for Invalid Contacts"
 
-#: includes/admin/settings-page.php:105, includes/admin/settings-page.php:234
+#: includes/admin/settings-page.php:103
 msgid "Business Card Link"
 msgstr "Business Card Link"
 
-#: includes/admin/settings-page.php:112
-msgid "Business Card Link Title"
-msgstr "Business Card Link Title"
+#: includes/admin/settings-page.php:110
+msgid "Kompakt Card Button Title"
+msgstr ""
 
-#: includes/admin/settings-page.php:121, includes/admin/settings-page.php:270
+#: includes/admin/settings-page.php:117
+msgid "Hard Sanitize"
+msgstr ""
+
+#: includes/admin/settings-page.php:126 includes/admin/settings-page.php:364
 msgid "Search Contacts by Identifier"
 msgstr "Search Contacts by Identifier"
 
-#: includes/admin/settings-page.php:137
+#: includes/admin/settings-page.php:134 includes/admin/settings-page.php:323
+#, fuzzy
+#| msgid "Cache Settings"
+msgid "Shortcode Settings"
+msgstr "Cache Settings"
+
+#: includes/admin/settings-page.php:140
+msgid "Default Output Fields"
+msgstr ""
+
+#: includes/admin/settings-page.php:157
 msgid ""
 "Configure the API settings for accessing the FAU person and institution "
 "directory."
@@ -87,70 +103,195 @@ msgstr ""
 "Configure the API settings for accessing the FAU person and institution "
 "directory."
 
-#: includes/admin/settings-page.php:142
+#: includes/admin/settings-page.php:162
 msgid "Configure caching settings for the plugin."
 msgstr "Configure caching settings for the plugin."
 
-#: includes/admin/settings-page.php:147
+#: includes/admin/settings-page.php:167
 msgid "Handle error messages for invalid contact entries."
 msgstr "Handle error messages for invalid contact entries."
 
-#: includes/admin/settings-page.php:152
+#: includes/admin/settings-page.php:172
 msgid "Configure the business card link settings."
 msgstr "Configure the business card link settings."
 
-#: includes/admin/settings-page.php:164
-msgid "Enter your API key here."
-msgstr "Enter your API key here."
+#: includes/admin/settings-page.php:177
+#, fuzzy
+#| msgid "Configure the business card link settings."
+msgid "Configure the shortcode settings."
+msgstr "Configure the business card link settings."
 
-#: includes/admin/settings-page.php:159
+#: includes/admin/settings-page.php:184
 msgid "The API key is being used from the network installation."
 msgstr "The API key is being used from the network installation."
 
-#: includes/admin/settings-page.php:173
+#: includes/admin/settings-page.php:189
+msgid "Enter your API key here."
+msgstr "Enter your API key here."
+
+#: includes/admin/settings-page.php:198
 msgid "Disable caching for logged-in editors."
 msgstr "Disable caching for logged-in editors."
 
-#: includes/admin/settings-page.php:180
-msgid "Set the cache timeout in minutes (minimum 1 minute)."
+#: includes/admin/settings-page.php:205
+#, fuzzy
+#| msgid "Set the cache timeout in minutes (minimum 1 minute)."
+msgid "Set the cache timeout in minutes (minimum 15 minutes)."
 msgstr "Set the cache timeout in minutes (minimum 1 minute)."
 
-#: includes/admin/settings-page.php:188
+#: includes/admin/settings-page.php:212
+#, fuzzy
+#| msgid "Set the cache timeout in days for organization identifiers."
+msgid ""
+"Set the transient time in days for intermediate stored organization "
+"identifiers (minimum 1 day)."
+msgstr "Set the cache timeout in days for organization identifiers."
+
+#: includes/admin/settings-page.php:220
 msgid "Set the cache timeout in days for organization identifiers."
 msgstr "Set the cache timeout in days for organization identifiers."
 
-#: includes/admin/settings-page.php:192
+#: includes/admin/settings-page.php:224
 msgid "Clear Cache Now"
 msgstr "Clear Cache Now"
 
-#: includes/admin/settings-page.php:193
+#: includes/admin/settings-page.php:225
 msgid "Click the button to clear all cached data."
 msgstr "Click the button to clear all cached data."
 
-#: includes/admin/settings-page.php:202
+#: includes/admin/settings-page.php:234
 msgid "Show error messages for incorrect contact entries."
 msgstr "Show error messages for incorrect contact entries."
 
-#: includes/admin/settings-page.php:208
+#: includes/admin/settings-page.php:240 includes/admin/settings-page.php:269
 msgid "Call up business card"
 msgstr "Call up business card"
 
-#: includes/admin/settings-page.php:210
-msgid "Enter the title for the business card link."
+#: includes/admin/settings-page.php:252
+#, fuzzy
+#| msgid "Enter the title for the business card link."
+msgid "Enter the title for the kompakt card read more button."
 msgstr "Enter the title for the business card link."
 
-#: includes/admin/settings-page.php:237
+#: includes/admin/settings-page.php:260
+msgid "Hard Sanitize abbreviations."
+msgstr ""
+
+#: includes/admin/settings-page.php:277
+msgid "Academic Title"
+msgstr ""
+
+#: includes/admin/settings-page.php:278
+msgid "First Name"
+msgstr ""
+
+#: includes/admin/settings-page.php:279
+msgid "Last Name"
+msgstr ""
+
+#: includes/admin/settings-page.php:280
+msgid "Academic Suffix"
+msgstr ""
+
+#: includes/admin/settings-page.php:281
+msgid "Email"
+msgstr ""
+
+#: includes/admin/settings-page.php:282
+msgid "Phone"
+msgstr ""
+
+#: includes/admin/settings-page.php:293
+msgid "Select the fields to display by default in shortcodes and blocks."
+msgstr ""
+
+#: includes/admin/settings-page.php:302
+msgid "FAU Directory Settings"
+msgstr "FAU Directory Settings"
+
+#: includes/admin/settings-page.php:317
+msgid "Kompakt Card Button"
+msgstr ""
+
+#: includes/admin/settings-page.php:320
 msgid "Search Contacts"
 msgstr "Search Contacts"
 
-#: includes/admin/settings-page.php:326
+#: includes/admin/settings-page.php:419
 msgid "All cache cleared successfully."
 msgstr "All cache cleared successfully."
 
-#: includes/admin/settings-page.php:385
+#: includes/admin/settings-page.php:452
+msgid "Error: "
+msgstr ""
+
+#: includes/admin/settings-page.php:478
 msgid "No contacts found. Please verify the IdM-Kennung or names provided."
 msgstr "No contacts found. Please verify the IdM-Kennung or names provided."
 
 #: includes/utils/enqueue_scripts.php:48
 msgid "Are you sure you want to clear the cache?"
 msgstr "Are you sure you want to clear the cache?"
+
+#: rrze-faudir.php:58
+msgid "No contacts found with the provided identifier."
+msgstr "No contacts found with the provided identifier."
+
+#: templates/card.php:19 templates/kompakt.php:18 templates/list.php:13
+#: templates/page.php:15 templates/table.php:32
+msgid "Keine Angabe"
+msgstr ""
+
+#: templates/card.php:20 templates/kompakt.php:19 templates/list.php:14
+#: templates/page.php:16 templates/table.php:33
+msgid "Doktor"
+msgstr "Doctor"
+
+#: templates/card.php:21 templates/kompakt.php:20 templates/list.php:15
+#: templates/page.php:17 templates/table.php:34
+msgid "Professor"
+msgstr "Professor"
+
+#: templates/card.php:22 templates/kompakt.php:21 templates/list.php:16
+#: templates/page.php:18 templates/table.php:35
+msgid "Professor Doktor"
+msgstr "Professor Doctor"
+
+#: templates/card.php:23 templates/kompakt.php:22 templates/list.php:17
+#: templates/page.php:19 templates/table.php:36
+msgid "Professor (Emeritus)"
+msgstr "Professor (Emeritus)"
+
+#: templates/card.php:24 templates/kompakt.php:23 templates/list.php:18
+#: templates/page.php:20 templates/table.php:37
+msgid "Professor Doktor (Emeritus)"
+msgstr "Professor Doctor (Emeritus)"
+
+#: templates/card.php:25 templates/kompakt.php:24 templates/list.php:19
+#: templates/page.php:21 templates/table.php:38
+msgid "Privatdozent"
+msgstr ""
+
+#: templates/card.php:26 templates/kompakt.php:25 templates/list.php:20
+#: templates/page.php:22 templates/table.php:39
+msgid "Privatdozent Doktor"
+msgstr ""
+
+#: templates/card.php:29 templates/kompakt.php:29 templates/list.php:24
+#: templates/page.php:25 templates/table.php:42
+msgid "Unbekannt"
+msgstr ""
+
+#: templates/list.php:79
+msgid "Organization:"
+msgstr "Organization:"
+
+#: templates/list.php:82
+msgid "Functions:"
+msgstr "Functions:"
+
+#~ msgid "FAU Directory"
+#~ msgstr "FAU Directory"
+
+#~ msgid "Business Card Link Title"
+#~ msgstr "Business Card Link Title"
