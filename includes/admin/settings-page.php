@@ -112,6 +112,13 @@ function rrze_faudir_settings_init()
         'rrze_faudir_settings_business_card',
         'rrze_faudir_business_card_section'
     );
+    add_settings_field(
+        'rrze_faudir_hard_sanitize',
+        __('Hard Sanitize', 'rrze-faudir'),
+        'rrze_faudir_hard_sanitize_render',
+        'rrze_faudir_settings_business_card',
+        'rrze_faudir_business_card_section'
+    );
 
     // Contacts Search Section
     add_settings_section(
@@ -244,6 +251,15 @@ function rrze_faudir_business_card_title_render()
     echo '<input type="text" name="rrze_faudir_options[business_card_title]" value="' . esc_attr($value) . '" size="50">';
     echo '<p class="description">' . __('Enter the title for the kompakt card read more button.', 'rrze-faudir') . '</p>';
 }
+
+function rrze_faudir_hard_sanitize_render()
+{
+    $options = get_option('rrze_faudir_options');
+    $checked = isset($options['hard_sanitize']) ? 'checked' : '';
+    echo '<input type="checkbox" name="rrze_faudir_options[hard_sanitize]" value="1" ' . $checked . '>';
+    echo '<p class="description">' . __('Hard Sanitize abbreviations.', 'rrze-faudir') . '</p>';
+}
+
 
 // Add this function after the render function
 function rrze_faudir_get_business_card_title() {

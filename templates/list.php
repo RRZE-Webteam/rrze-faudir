@@ -4,7 +4,27 @@
             <li>
                 <!-- Full name with title -->
                 <?php
-                $fullName = trim($person['personalTitle'] . ' ' . $person['givenName'] . ' ' . $person['familyName']);
+                 $options = get_option('rrze_faudir_options');
+                 $hard_sanitize = isset($options['hard_sanitize']) && $options['hard_sanitize'];
+             
+                if($hard_sanitize){
+                    $prefix = $person['personalTitle'];
+                    $prefixes = array(
+                        '' => __('Keine Angabe', 'fau-person'),
+                        'Dr.' => __('Doktor', 'fau-person'),
+                        'Prof.' => __('Professor', 'fau-person'),
+                        'Prof. Dr.' => __('Professor Doktor', 'fau-person'),
+                        'Prof. em.' => __('Professor (Emeritus)', 'fau-person'),
+                        'Prof. Dr. em.' => __('Professor Doktor (Emeritus)', 'fau-person'),
+                        'PD' => __('Privatdozent', 'fau-person'),
+                        'PD Dr.' => __('Privatdozent Doktor', 'fau-person')
+                    );
+                    
+                    // Check if the prefix exists in the array and display the long version
+                    $longVersion = isset($prefixes[$prefix]) ? $prefixes[$prefix] : __('Unbekannt', 'fau-person');
+                    
+                }
+                $fullName = trim(($longVersion ? $longVersion : $person['personalTitle'] ). ' ' . $person['givenName'] . ' ' . $person['familyName']);
                 ?>
                 <strong><?php echo esc_html($fullName); ?></strong>
 
