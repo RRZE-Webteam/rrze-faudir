@@ -37,12 +37,12 @@
                 
                         // Check if email should be shown and include N/A if it is not available
                         if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) {
-                            echo $email_output = '<p>Email: ' . (isset($person['email']) && !empty($person['email']) ? esc_html($person['email']) : 'N/A');
+                            echo $email_output = '<p>' . __('Email:', 'rrze-faudir') . (isset($person['email']) && !empty($person['email']) ? esc_html($person['email']) : 'N/A');
                         }
                     
                         // Check if phone should be shown and include N/A if it is not available
                         if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)) {
-                           echo $phone_output = '<p>Phone: ' . (isset($person['telephone']) && !empty($person['telephone']) ? esc_html($person['telephone']) : 'N/A');
+                           echo $phone_output = '<p>' . __('Phone:', 'rrze-faudir') . (isset($person['telephone']) && !empty($person['telephone']) ? esc_html($person['telephone']) : 'N/A');
                         }
                     
                      
@@ -64,9 +64,9 @@
                                     $displayedOrganizations[] = $organizationName;
                                 ?>
                                         <!-- Organization name -->
-                                <strong><p>Organization:</strong> <?php echo esc_html($organizationName); ?><p><br />
+                                <strong><p><?php echo __('Organization:', 'rrze-faudir');?></strong> <?php echo esc_html($organizationName); ?><p><br />
                                 <!-- Show functions associated with this organization -->
-                                <strong>Functions:</strong> 
+                                <strong><?php echo __('Functions:', 'rrze-faudir');?></strong> 
                                 <ul>
                                     <?php foreach ($person['contacts'] as $sameOrgContact) : ?>
                                         <?php if (isset($sameOrgContact['organization']['name']) && $sameOrgContact['organization']['name'] === $organizationName) : ?>

@@ -41,12 +41,12 @@
 
                 // Check if email should be shown and include N/A if it is not available
                 if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) {
-                    $email_output = 'Email: ' . (isset($person['email']) && !empty($person['email']) ? esc_html($person['email']) : 'N/A');
+                    $email_output = __('Email:', 'rrze-faudir') . (isset($person['email']) && !empty($person['email']) ? esc_html($person['email']) : 'N/A');
                 }
 
                 // Check if phone should be shown and include N/A if it is not available
                 if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)) {
-                    $phone_output = 'Phone: ' . (isset($person['telephone']) && !empty($person['telephone']) ? esc_html($person['telephone']) : 'N/A');
+                    $phone_output = __('Phone:', 'rrze-faudir') . (isset($person['telephone']) && !empty($person['telephone']) ? esc_html($person['telephone']) : 'N/A');
                 }
 
                 // Build the final output based on what's available
@@ -75,7 +75,7 @@
                             // Add the organization to the displayed list to prevent duplicates
                             $displayedOrganizations[] = $organizationName;
                         ?>
-                            <p><strong>Organization:</strong> <?php echo esc_html($organizationName); ?></p>
+                            <p><strong><?php echo __('Organization:', 'rrze-faudir');?></strong> <?php echo esc_html($organizationName); ?></p>
                         <?php endif; ?>
                     <?php endforeach; ?>
                 <?php endif; ?>

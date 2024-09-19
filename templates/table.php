@@ -29,17 +29,17 @@
                         if($hard_sanitize){
                            $prefix = $person['personalTitle'];
                            $prefixes = array(
-                               '' => __('Keine Angabe', 'fau-person'),
-                               'Dr.' => __('Doktor', 'fau-person'),
-                               'Prof.' => __('Professor', 'fau-person'),
-                               'Prof. Dr.' => __('Professor Doktor', 'fau-person'),
-                               'Prof. em.' => __('Professor (Emeritus)', 'fau-person'),
-                               'Prof. Dr. em.' => __('Professor Doktor (Emeritus)', 'fau-person'),
-                               'PD' => __('Privatdozent', 'fau-person'),
-                               'PD Dr.' => __('Privatdozent Doktor', 'fau-person')
+                               '' => __('Keine Angabe', 'rrze-faudir'),
+                               'Dr.' => __('Doktor', 'rrze-faudir'),
+                               'Prof.' => __('Professor', 'rrze-faudir'),
+                               'Prof. Dr.' => __('Professor Doktor', 'rrze-faudir'),
+                               'Prof. em.' => __('Professor (Emeritus)', 'rrze-faudir'),
+                               'Prof. Dr. em.' => __('Professor Doktor (Emeritus)', 'rrze-faudir'),
+                               'PD' => __('Privatdozent', 'rrze-faudir'),
+                               'PD Dr.' => __('Privatdozent Doktor', 'rrze-faudir')
                            );
                            // Check if the prefix exists in the array and display the long version
-                           $longVersion = isset($prefixes[$prefix]) ? $prefixes[$prefix] : __('Unbekannt', 'fau-person');
+                           $longVersion = isset($prefixes[$prefix]) ? $prefixes[$prefix] : __('Unbekannt', 'rrze-faudir');
                 
                         }
                         $fullName = trim(($longVersion ? $longVersion : $person['personalTitle'] ). ' ' . $person['givenName'] . ' ' . $person['familyName']);
