@@ -26,7 +26,8 @@
                 }
                 $fullName = trim(($longVersion ? $longVersion : $person['personalTitle'] ). ' ' . $person['givenName'] . ' ' . $person['familyName']);
                 ?>
-                <strong><?php echo esc_html($fullName); ?></strong>
+                <!-- We need to add condition for url when we add CPT -->
+                <section class="list-section-title" aria-label="<?php echo esc_html($fullName); ?>"><a href="<?php echo esc_html($url); ?>"><?php echo esc_html($fullName); ?></a></section>
 
                 <?php
                 // Initialize output strings for email and phone

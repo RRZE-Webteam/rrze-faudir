@@ -44,7 +44,9 @@
                         }
                         $fullName = trim(($longVersion ? $longVersion : $person['personalTitle'] ). ' ' . $person['givenName'] . ' ' . $person['familyName']);
                         ?>
-                    <td><strong><?php echo esc_html($fullName); ?></strong></td>
+                    <!-- We need to add condition for url when we add CPT -->
+                    <td><section class="table-section-title" aria-label="<?php echo esc_html($fullName); ?>">
+                    <a href="<?php echo esc_html($url); ?>"><?php echo esc_html($fullName); ?></a></section></td>
                 <?php endif; ?>
 
                 <!-- Email (if available) -->

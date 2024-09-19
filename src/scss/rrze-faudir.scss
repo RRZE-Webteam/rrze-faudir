@@ -111,6 +111,22 @@ body {
     font-size:#{$font-size-h2}px;
     font-weight: 600;
     color: var(--color-black);
+
+    & a, a:hover, a:active, a:focus{
+    text-decoration: none;
+    }
+
+}
+.list-section-title, 
+.table-section-title {
+    font-size:#{$font-size-h5}px;
+    font-weight: 600;
+    color: var(--color-black);
+
+    & a, a:hover, a:active, a:focus{
+    text-decoration: none;
+    }
+
 }
 // Responsive styles
 @media (max-width: 768px) {

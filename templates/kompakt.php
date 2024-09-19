@@ -31,7 +31,8 @@
                 }
                 $fullName = trim(($longVersion ? $longVersion : $person['personalTitle'] ). ' ' . $person['givenName'] . ' ' . $person['familyName']);
                 ?>
-                <section class="kompakt-section-title" aria-label="<?php echo esc_html($fullName); ?>"><?php echo esc_html($fullName); ?></section>
+                <!-- We need to add condition for url when we add CPT -->
+                <section class="kompakt-section-title" aria-label="<?php echo esc_html($fullName); ?>"><a href="<?php echo esc_html($url); ?>"><?php echo esc_html($fullName); ?></a></section>
 
 
                 <?php
@@ -77,13 +78,11 @@
                         <?php endif; ?>
                     <?php endforeach; ?>
                 <?php endif; ?>
-                <!-- to be implemented after CPT -->
+            <!-- We need to add condition for url when we add CPT -->
                  <?php
-                // Inside your shortcode template
                 $business_card_title = rrze_faudir_get_business_card_title();
 
-                // Use $business_card_title where needed, for example:
-                echo '<a href="?id=' . esc_attr($person['id']) . '" class="business-card-link"><button>' . esc_html($business_card_title) . '</button></a>';
+                echo '<a href="' .esc_html($url) . '" class="business-card-link"><button>' . esc_html($business_card_title) . '</button></a>';
                 ?>
                 <!-- <a href="?id=<?php echo esc_attr($person['id']); ?>"><button>More</button></a> -->
                         </div>

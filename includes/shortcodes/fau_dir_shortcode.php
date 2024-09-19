@@ -21,6 +21,7 @@ function fetch_fau_data($atts) {
             'category' => '',
             'identifier' => '',
             'format' => 'list',
+            'url' => '',
             'show' => 'name, email, phone, organization, function',
             'hide' => '',
             'image' => '',
@@ -68,6 +69,7 @@ function fetch_and_render_fau_data($atts) {
     $identifiers = empty($atts['identifier']) ? [] : explode(',', $atts['identifier']);
     $category = $atts['category'];
     $image_id = $atts['image'];
+    $url = $atts['url'];
 
     // Fetch data logic
     $persons = []; // This will hold the fetched data
@@ -114,6 +116,7 @@ function fetch_and_render_fau_data($atts) {
         'hide_fields' => $hide_fields,
         'persons' => $persons,
         'image_url' => $image_url,
+        'url' => $url,
     ]);
 }
 
