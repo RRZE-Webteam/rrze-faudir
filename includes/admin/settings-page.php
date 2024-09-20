@@ -16,10 +16,26 @@ function rrze_faudir_add_admin_menu()
     );
 }
 add_action('admin_menu', 'rrze_faudir_add_admin_menu');
+// Load default values from config.php
+function rrze_faudir_get_default_config() {
+    $config_path = plugin_dir_path(__FILE__) . 'config/config.php';
+    if (file_exists($config_path)) {
+        return include $config_path;
+    }
+    return [];
+}
 
-// Register settings
 function rrze_faudir_settings_init()
 {
+    // Load the default settings
+    $default_settings = rrze_faudir_get_default_config();
+    $options = get_option('rrze_faudir_options', []);
+
+    // Merge the default settings with the saved options
+    $settings = wp_parse_args($options, $default_settings);
+    update_option('rrze_faudir_options', $settings);
+
+    // Your existing register_setting and add_settings_field calls go here
     register_setting('rrze_faudir_settings', 'rrze_faudir_options');
 
     // API Settings Section
@@ -322,9 +338,11 @@ function rrze_faudir_settings_page()
             <a href="#tab-6" class="nav-tab">
                 <?php echo __('Shortcode Settings', 'rrze-faudir'); ?>
             </a>
+            <a href="#tab-7" class="nav-tab">
+                <?php echo __('Reset Settings', 'rrze-faudir'); ?>
+            </a>
         </h2>
 
-        <!-- Tabs Content -->
         <form action="options.php" method="post">
             <?php settings_fields('rrze_faudir_settings'); ?>
 
@@ -352,47 +370,77 @@ function rrze_faudir_settings_page()
                 <?php submit_button(); ?>
             </div>
 
+            <!-- Contacts Search Tab -->
+            <div id="tab-5" class="tab-content" style="display:none;">
+                <h2><?php echo __('Search Contacts by Identifier', 'rrze-faudir'); ?></h2>
+                <!-- Search form content -->
+                <div id="contacts-list"></div>
+            </div>
+
             <!-- Shortcode Settings Tab -->
             <div id="tab-6" class="tab-content" style="display:none;">
                 <?php do_settings_sections('rrze_faudir_settings_shortcode'); ?>
                 <?php submit_button(); ?>
             </div>
 
-            <!-- Contacts Search Tab -->
-            <div id="tab-5" class="tab-content" style="display:none;">
-                <h2>
-                    <?php echo __('Search Contacts by Identifier', 'rrze-faudir'); ?>
-                </h2>
-
-                <form id="search-person-form">
-                    <label for="person-id">Search by Name, Surbame, Email or ID</label>
-                    <input type="text" id="person-id" name="person-id" />
-
-                    <label for="given-name">Given Name:</label>
-                    <input type="text" id="given-name" name="given-name" />
-
-                    <label for="family-name">Family Name:</label>
-                    <input type="text" id="family-name" name="family-name" />
-                    <label for="email">Email:</label>
-                    <input type="text" id="email" name="email" />
-
-                    <button type="button" id="search-person-by-id" class="button button-primary">Search</button>
-                </form>
-
-                <div id="contacts-list">
-                   
-                </div>
+            <!-- Reset Settings Tab -->
+            <div id="tab-7" class="tab-content" style="display:none;">
+                <h3><?php echo __('Reset to Default Settings', 'rrze-faudir'); ?></h3>
+                <p><?php echo __('Click the button below to reset all settings to their default values.', 'rrze-faudir'); ?></p>
+                <button type="button" class="button button-secondary" id="reset-to-defaults-button">
+                    <?php echo __('Reset to Default Values', 'rrze-faudir'); ?>
+                </button>
             </div>
         </form>
-    </div>
 
-    <script type="text/javascript">
-      
-    </script>
+        <script type="text/javascript">
+            // Show and hide tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('nav-tab-active'));
+                    this.classList.add('nav-tab-active');
+                    document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+                    document.querySelector(this.getAttribute('href')).style.display = 'block';
+                });
+            });
+
+            // Handle reset button click
+            document.getElementById('reset-to-defaults-button').addEventListener('click', function () {
+                if (confirm('<?php echo __('Are you sure you want to reset all settings to their default values?', 'rrze-faudir'); ?>')) {
+                    // Trigger AJAX call to reset settings
+                    jQuery.post(ajaxurl, {
+                        action: 'rrze_faudir_reset_defaults',
+                        security: '<?php echo wp_create_nonce('rrze_faudir_reset_defaults_nonce'); ?>'
+                    }, function (response) {
+                        if (response.success) {
+                            alert('<?php echo __('Settings have been reset to default values.', 'rrze-faudir'); ?>');
+                            location.reload();
+                        } else {
+                            alert('<?php echo __('Failed to reset settings. Please try again.', 'rrze-faudir'); ?>');
+                        }
+                    });
+                }
+            });
+        </script>
+    </div>
     <?php
 }
 
 
+// Function to reset settings to defaults
+function rrze_faudir_reset_defaults() {
+    check_ajax_referer('rrze_faudir_reset_defaults_nonce', 'security');
+
+    // Load default values from config.php
+    $default_settings = rrze_faudir_get_default_config();
+
+    // Update the plugin options with the default values
+    update_option('rrze_faudir_options', $default_settings);
+
+    wp_send_json_success(__('Settings have been reset to default values.', 'rrze-faudir'));
+}
+add_action('wp_ajax_rrze_faudir_reset_defaults', 'rrze_faudir_reset_defaults');
 
 
 function rrze_faudir_fetch_contacts_handler()
