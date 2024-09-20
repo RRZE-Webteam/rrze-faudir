@@ -59,7 +59,6 @@ function fetch_fau_data($atts) {
     return $output;
 }
 
-// New function to fetch and render data
 function fetch_and_render_fau_data($atts) {
     // Convert 'show' and 'hide' attributes into arrays
     $show_fields = array_map('trim', explode(',', $atts['show']));
@@ -74,8 +73,8 @@ function fetch_and_render_fau_data($atts) {
     // Fetch data logic
     $persons = []; // This will hold the fetched data
 
+    // Fetch data based on the given attributes
     if (!empty($identifiers)) {
-        // Fetch data by identifiers
         foreach ($identifiers as $identifier) {
             $identifier = trim($identifier);
             $params = ['identifier' => $identifier];
@@ -85,7 +84,6 @@ function fetch_and_render_fau_data($atts) {
             }
         }
     } elseif (!empty($category)) {
-        // Fetch data by category (organization name)
         $lq = 'contacts.organization.name[eq]=' . urlencode($category);
         $params = ['lq' => $lq];
         $data = fetch_fau_persons_atributes(0, 0, $params);
@@ -93,7 +91,6 @@ function fetch_and_render_fau_data($atts) {
             $persons = $data['data'];
         }
     } else {
-        // Fetch all persons if no identifier or category is provided
         $data = fetch_fau_persons_atributes(0, 0);
         if (!empty($data['data'])) {
             $persons = $data['data'];
@@ -106,7 +103,46 @@ function fetch_and_render_fau_data($atts) {
         $image_url = wp_get_attachment_image_url($image_id, 'full');
     }
 
-    // Load the template and pass the data
+    // Sorting logic based on the specified sorting options
+    $sort_option = $atts['sort'] ?? 'last_name'; // Default sorting option is by last name
+
+    // Create a collator object for locale-based sorting
+    $collator = collator_create('de_DE'); // German locale; adjust as needed
+
+    // Sorting function based on the chosen option
+    usort($persons, function ($a, $b) use ($sort_option, $collator, $identifiers) {
+        switch ($sort_option) {
+            case 'title_last_name':
+                // Sorting first by academic titles, then by last name
+                $academic_titles = ['Prof. Dr.', 'Dr.', 'Prof.', '']; // Define title order
+
+                $a_title = $a['personalTitle'] ?? '';
+                $b_title = $b['personalTitle'] ?? '';
+
+                $a_title_pos = array_search($a_title, $academic_titles) !== false ? array_search($a_title, $academic_titles) : count($academic_titles);
+                $b_title_pos = array_search($b_title, $academic_titles) !== false ? array_search($b_title, $academic_titles) : count($academic_titles);
+
+                // First, compare academic titles
+                if ($a_title_pos !== $b_title_pos) {
+                    return $a_title_pos - $b_title_pos;
+                }
+
+                // If titles are the same, compare last names
+                return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');
+
+            case 'identifier_order':
+                // Sorting by the order of identifiers
+                $a_index = array_search($a['identifier'] ?? '', $identifiers);
+                $b_index = array_search($b['identifier'] ?? '', $identifiers);
+                return $a_index - $b_index;
+
+            default:
+                // Default sorting by last name, considering special characters
+                return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');
+        }
+    });
+
+    // Load the template and pass the sorted data
     $template_dir = plugin_dir_path(__FILE__) . '../../templates/';
     $template = new Template($template_dir);
 
@@ -119,6 +155,7 @@ function fetch_and_render_fau_data($atts) {
         'url' => $url,
     ]);
 }
+
 
 add_shortcode('faudir', 'fetch_fau_data');
 
