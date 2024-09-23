@@ -25,7 +25,8 @@ function fetch_fau_data($atts) {
             'show' => 'name, email, phone, organization, function',
             'hide' => '',
             'image' => '',
-            'groupid' => '', // New attribute
+            'groupid' => '',
+            'orgnr' => '',
         ),
         $atts
     );
@@ -71,6 +72,7 @@ function fetch_and_render_fau_data($atts) {
     $image_id = $atts['image'];
     $url = $atts['url'];
     $groupid = $atts['groupid'];
+    $orgnr = $atts['orgnr'];
     $persons = []; // This will hold the fetched data
 
     // Fetch data based on the given attributes
@@ -96,6 +98,21 @@ function fetch_and_render_fau_data($atts) {
         $data = fetch_fau_persons_atributes(0, 0, $params);
         if (!empty($data['data'])) {
             $persons = $data['data'];
+        }
+    } elseif (!empty($orgnr)) {
+        $lq = 'disambiguatingDescription[eq]=' . urlencode($orgnr);
+        $params = ['lq' => $lq];
+        $data = fetch_fau_organizations(0, 0, $params);
+        if (!empty($data['data'])) {
+            $orgname = $data['data'][0]['name'];
+            $lq = 'contacts.organization.name[eq]=' . urlencode($orgname);
+            $params = ['lq' => $lq];
+            $data = fetch_fau_persons_atributes(0, 0, $params);
+            if (!empty($data['data'])) {
+                $persons = $data['data'];
+            } // Assuming 'name' is within the first element of 'data'
+        } else {
+            error_log('No data found for orgnr: ' . $orgnr); // Debugging statement
         }
     } else {
         $data = fetch_fau_persons_atributes(0, 0);

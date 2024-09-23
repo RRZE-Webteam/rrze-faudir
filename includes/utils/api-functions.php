@@ -35,10 +35,23 @@ function fetch_fau_persons($limit = 60, $offset = 0) {
 
 
 // Fetch data from the FAU organizations API
-function fetch_fau_organizations($limit = 100, $offset = 1) {
+function fetch_fau_organizations($limit = 100, $offset = 1, $params=[]) {
     $api_key = FaudirUtils::getKey();
     $url = FaudirUtils::getApiBaseUrl() .'organizations?limit=' . $limit . '&offset=' . $offset;
 
+    $query_params = [
+        'q', 'sort', 'attrs', 'lq', 'rq', 'view', 'lf'
+    ];
+    // Loop through the parameters and append them to the URL if they exist in $params
+    foreach ($query_params as $param) {
+        if (!empty($params[$param])) {
+            $url .= '&' . $param . '=' . urlencode($params[$param]);
+        }
+    }
+    // Handle givenName and familyName as special cases to be combined into the 'q' parameter
+    if (!empty($params['orgnr'])) {
+        $url .= '&q=' . urlencode('^' . $params['orgnr']);
+    }
     $curl = curl_init();
 
     curl_setopt_array($curl, array(

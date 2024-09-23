@@ -13,6 +13,7 @@ class FaudirBlock {
                 'hide' => ['type' => 'string', 'default' => ''],
                 'image' => ['type' => 'number', 'default' => 0], // Add the image attribute
                 'groupid' =>['type'=> 'string', 'default' => ''],
+                'orgnr' =>['type'=> 'string', 'default' => ''],
             ],
         ]);
     }

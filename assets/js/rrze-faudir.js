@@ -9,11 +9,12 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
         show: { type: 'string', default: 'name, email, phone, organization, function' },
         hide: { type: 'string', default: '' },
         groupid: { type: 'string', default: '' },
+        orgnr: { type: 'string', default: '' },
         image: { type: 'number', default: 0 }, // Image ID attribute
     },
     edit: function(props) {
         const {
-            attributes: { category, identifier, format, show, hide, groupid, image },
+            attributes: { category, identifier, format, show, hide, groupid, orgnr, image },
             setAttributes
         } = props;
 
@@ -103,6 +104,19 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
                     value: groupid,
                     onChange: function(event) {
                         setAttributes({ groupid: event.target.value });
+                    }
+                })
+            ),
+             // Orgnr field input
+             wp.element.createElement(
+                'label',
+                null,
+                'Orgnr',
+                wp.element.createElement('input', {
+                    type: 'text',
+                    value: orgnr,
+                    onChange: function(event) {
+                        setAttributes({ orgnr: event.target.value });
                     }
                 })
             ),
