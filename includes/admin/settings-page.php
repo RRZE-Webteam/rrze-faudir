@@ -35,7 +35,6 @@ function rrze_faudir_settings_init()
     $settings = wp_parse_args($options, $default_settings);
     update_option('rrze_faudir_options', $settings);
 
-    // Your existing register_setting and add_settings_field calls go here
     register_setting('rrze_faudir_settings', 'rrze_faudir_options');
 
     // API Settings Section
@@ -343,6 +342,7 @@ function rrze_faudir_settings_page()
             </a>
         </h2>
 
+        <!-- Tabs Content -->
         <form action="options.php" method="post">
             <?php settings_fields('rrze_faudir_settings'); ?>
 
@@ -370,19 +370,38 @@ function rrze_faudir_settings_page()
                 <?php submit_button(); ?>
             </div>
 
-            <!-- Contacts Search Tab -->
-            <div id="tab-5" class="tab-content" style="display:none;">
-                <h2><?php echo __('Search Contacts by Identifier', 'rrze-faudir'); ?></h2>
-                <!-- Search form content -->
-                <div id="contacts-list"></div>
-            </div>
-
             <!-- Shortcode Settings Tab -->
             <div id="tab-6" class="tab-content" style="display:none;">
                 <?php do_settings_sections('rrze_faudir_settings_shortcode'); ?>
                 <?php submit_button(); ?>
             </div>
 
+            <!-- Contacts Search Tab -->
+            <div id="tab-5" class="tab-content" style="display:none;">
+                <h2>
+                    <?php echo __('Search Contacts by Identifier', 'rrze-faudir'); ?>
+                </h2>
+
+                <form id="search-person-form">
+                    <label for="person-id">Search by Name, Surbame, Email or ID</label>
+                    <input type="text" id="person-id" name="person-id" />
+
+                    <label for="given-name">Given Name:</label>
+                    <input type="text" id="given-name" name="given-name" />
+
+                    <label for="family-name">Family Name:</label>
+                    <input type="text" id="family-name" name="family-name" />
+                    <label for="email">Email:</label>
+                    <input type="text" id="email" name="email" />
+
+                    <button type="button" id="search-person-by-id" class="button button-primary">Search</button>
+                </form>
+
+                <div id="contacts-list">
+                   
+                </div>
+            </div>
+            
             <!-- Reset Settings Tab -->
             <div id="tab-7" class="tab-content" style="display:none;">
                 <h3><?php echo __('Reset to Default Settings', 'rrze-faudir'); ?></h3>
@@ -390,10 +409,10 @@ function rrze_faudir_settings_page()
                 <button type="button" class="button button-secondary" id="reset-to-defaults-button">
                     <?php echo __('Reset to Default Values', 'rrze-faudir'); ?>
                 </button>
-            </div>
         </form>
+    </div>
 
-        <script type="text/javascript">
+    <script type="text/javascript">
             // Show and hide tabs
             document.querySelectorAll('.nav-tab').forEach(tab => {
                 tab.addEventListener('click', function (e) {
@@ -422,7 +441,7 @@ function rrze_faudir_settings_page()
                     });
                 }
             });
-        </script>
+    </script>
     </div>
     <?php
 }
