@@ -95,5 +95,5 @@
         <?php endforeach; ?>
     </div> <!-- End of shortcode-contacts-wrapper -->
 <?php else : ?>
-    <p>No data available.</p>
+    <div><?php echo __('Es konnte kein Kontakteintrag gefunden werden.', 'rrze-faudir') ?> </div>
 <?php endif; ?>

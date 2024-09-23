@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rrze-faudir\n"
 "Report-Msgid-Bugs-To: https://your-plugin-url.com/support\n"
-"POT-Creation-Date: 2024-09-19 16:11+0200\n"
-"PO-Revision-Date: 2024-09-19 16:14+0200\n"
+"POT-Creation-Date: 2024-09-23 14:12+0200\n"
+"PO-Revision-Date: 2024-09-23 14:14+0200\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -33,69 +33,69 @@ msgstr "FAU-Verzeichnis-Einstellungen"
 msgid "RRZE-FAUdir"
 msgstr "RRZE-FAUdir"
 
-#: includes/admin/settings-page.php:28 includes/admin/settings-page.php:308
+#: includes/admin/settings-page.php:44 includes/admin/settings-page.php:324
 msgid "API Settings"
 msgstr "API-Einstellungen"
 
-#: includes/admin/settings-page.php:35
+#: includes/admin/settings-page.php:51
 msgid "API Key"
 msgstr "API-Schlüssel"
 
-#: includes/admin/settings-page.php:44 includes/admin/settings-page.php:311
+#: includes/admin/settings-page.php:60 includes/admin/settings-page.php:327
 msgid "Cache Settings"
 msgstr "Cache-Einstellungen"
 
-#: includes/admin/settings-page.php:51
+#: includes/admin/settings-page.php:67
 msgid "No Caching for Logged-in Editors"
 msgstr "Kein Caching für angemeldete Redakteure"
 
-#: includes/admin/settings-page.php:63
+#: includes/admin/settings-page.php:79
 msgid "Cache Timeout (in minutes)"
 msgstr "Cache Timeout (in Minuten)"
 
-#: includes/admin/settings-page.php:70
+#: includes/admin/settings-page.php:86
 msgid "Transient Time for Organization ID (in days)"
 msgstr ""
 
-#: includes/admin/settings-page.php:77
+#: includes/admin/settings-page.php:93
 msgid "Clear All Cache"
 msgstr "Alle Caches löschen"
 
-#: includes/admin/settings-page.php:87 includes/admin/settings-page.php:314
+#: includes/admin/settings-page.php:103 includes/admin/settings-page.php:330
 msgid "Error Handling"
 msgstr "Fehlerbehandlung"
 
-#: includes/admin/settings-page.php:94
+#: includes/admin/settings-page.php:110
 msgid "Show Error Message for Invalid Contacts"
 msgstr "Fehlermeldung für ungültige Kontakte anzeigen"
 
-#: includes/admin/settings-page.php:103
+#: includes/admin/settings-page.php:119
 msgid "Business Card Link"
 msgstr "Visitenkarte Link"
 
-#: includes/admin/settings-page.php:110
+#: includes/admin/settings-page.php:126
 msgid "Kompakt Card Button Title"
 msgstr ""
 
-#: includes/admin/settings-page.php:117
+#: includes/admin/settings-page.php:133
 msgid "Hard Sanitize"
 msgstr ""
 
-#: includes/admin/settings-page.php:126 includes/admin/settings-page.php:364
+#: includes/admin/settings-page.php:142 includes/admin/settings-page.php:375
 msgid "Search Contacts by Identifier"
 msgstr "Kontakte nach Kennung suchen"
 
-#: includes/admin/settings-page.php:134 includes/admin/settings-page.php:323
+#: includes/admin/settings-page.php:150 includes/admin/settings-page.php:339
 #, fuzzy
 #| msgid "Cache Settings"
 msgid "Shortcode Settings"
 msgstr "Cache-Einstellungen"
 
-#: includes/admin/settings-page.php:140
+#: includes/admin/settings-page.php:156
 msgid "Default Output Fields"
 msgstr ""
 
-#: includes/admin/settings-page.php:157
+#: includes/admin/settings-page.php:173
 msgid ""
 "Configure the API settings for accessing the FAU person and institution "
 "directory."
@@ -103,44 +103,44 @@ msgstr ""
 "Konfigurieren Sie die API-Einstellungen für den Zugriff auf das Personen- "
 "und Institutionsverzeichnis der FAU."
 
-#: includes/admin/settings-page.php:162
+#: includes/admin/settings-page.php:178
 msgid "Configure caching settings for the plugin."
 msgstr "Konfigurieren Sie die Caching-Einstellungen für das Plugin."
 
-#: includes/admin/settings-page.php:167
+#: includes/admin/settings-page.php:183
 msgid "Handle error messages for invalid contact entries."
 msgstr "Behandlung von Fehlermeldungen für ungültige Kontakteinträge."
 
-#: includes/admin/settings-page.php:172
+#: includes/admin/settings-page.php:188
 msgid "Configure the business card link settings."
 msgstr "Konfigurieren Sie die Einstellungen für den Visitenkartenlink."
 
-#: includes/admin/settings-page.php:177
+#: includes/admin/settings-page.php:193
 #, fuzzy
 #| msgid "Configure the business card link settings."
 msgid "Configure the shortcode settings."
 msgstr "Konfigurieren Sie die Einstellungen für den Visitenkartenlink."
 
-#: includes/admin/settings-page.php:184
+#: includes/admin/settings-page.php:200
 msgid "The API key is being used from the network installation."
 msgstr "Der API-Schlüssel wird von der Netzwerkinstallation verwendet."
 
-#: includes/admin/settings-page.php:189
+#: includes/admin/settings-page.php:205
 msgid "Enter your API key here."
 msgstr "Geben Sie hier Ihren API-Schlüssel ein."
 
-#: includes/admin/settings-page.php:198
+#: includes/admin/settings-page.php:214
 msgid "Disable caching for logged-in editors."
 msgstr "Deaktivieren Sie die Zwischenspeicherung für eingeloggte Redakteure."
 
-#: includes/admin/settings-page.php:205
+#: includes/admin/settings-page.php:221
 #, fuzzy
 #| msgid "Set the cache timeout in minutes (minimum 1 minute)."
 msgid "Set the cache timeout in minutes (minimum 15 minutes)."
 msgstr ""
 "Legen Sie die Cache-Zeitüberschreitung in Minuten fest (mindestens 1 Minute)."
 
-#: includes/admin/settings-page.php:212
+#: includes/admin/settings-page.php:228
 #, fuzzy
 #| msgid "Set the cache timeout in days for organization identifiers."
 msgid ""
@@ -150,89 +150,127 @@ msgstr ""
 "Legen Sie die Cache-Zeitüberschreitung in Tagen für Organisationskennungen "
 "fest."
 
-#: includes/admin/settings-page.php:220
+#: includes/admin/settings-page.php:236
 msgid "Set the cache timeout in days for organization identifiers."
 msgstr ""
 "Legen Sie die Cache-Zeitüberschreitung in Tagen für Organisationskennungen "
 "fest."
 
-#: includes/admin/settings-page.php:224
+#: includes/admin/settings-page.php:240
 msgid "Clear Cache Now"
 msgstr "Cache jetzt löschen"
 
-#: includes/admin/settings-page.php:225
+#: includes/admin/settings-page.php:241
 msgid "Click the button to clear all cached data."
 msgstr ""
 "Klicken Sie auf die Schaltfläche , um alle zwischengespeicherten Daten zu "
 "löschen."
 
-#: includes/admin/settings-page.php:234
+#: includes/admin/settings-page.php:250
 msgid "Show error messages for incorrect contact entries."
 msgstr "Fehlermeldungen für fehlerhafte Kontakteinträge anzeigen."
 
-#: includes/admin/settings-page.php:240 includes/admin/settings-page.php:269
+#: includes/admin/settings-page.php:256 includes/admin/settings-page.php:285
+#: includes/config/config.php:14
 msgid "Call up business card"
 msgstr "Visitenkarte abrufen"
 
-#: includes/admin/settings-page.php:252
+#: includes/admin/settings-page.php:268
 #, fuzzy
 #| msgid "Enter the title for the business card link."
 msgid "Enter the title for the kompakt card read more button."
 msgstr "Geben Sie den Titel für den Visitenkartenlink ein."
 
-#: includes/admin/settings-page.php:260
+#: includes/admin/settings-page.php:276
 msgid "Hard Sanitize abbreviations."
-msgstr ""
-
-#: includes/admin/settings-page.php:277
-msgid "Academic Title"
-msgstr ""
-
-#: includes/admin/settings-page.php:278
-msgid "First Name"
-msgstr ""
-
-#: includes/admin/settings-page.php:279
-msgid "Last Name"
-msgstr ""
-
-#: includes/admin/settings-page.php:280
-msgid "Academic Suffix"
-msgstr ""
-
-#: includes/admin/settings-page.php:281
-msgid "Email"
-msgstr ""
-
-#: includes/admin/settings-page.php:282
-msgid "Phone"
-msgstr ""
+msgstr "Hard Sanitize abbreviations."
 
 #: includes/admin/settings-page.php:293
-msgid "Select the fields to display by default in shortcodes and blocks."
-msgstr ""
+msgid "Academic Title"
+msgstr "Academic Title"
 
-#: includes/admin/settings-page.php:302
+#: includes/admin/settings-page.php:294
+msgid "First Name"
+msgstr "First Name"
+
+#: includes/admin/settings-page.php:295
+msgid "Last Name"
+msgstr "Last Name"
+
+#: includes/admin/settings-page.php:296
+msgid "Academic Suffix"
+msgstr "Academic Suffix"
+
+#: includes/admin/settings-page.php:297
+msgid "Email"
+msgstr "Email"
+
+#: includes/admin/settings-page.php:298
+msgid "Phone"
+msgstr "Phone"
+
+#: includes/admin/settings-page.php:309
+#, fuzzy
+msgid "Select the fields to display by default in shortcodes and blocks."
+msgstr "Select the fields to display by default in shortcodes and blocks."
+
+#: includes/admin/settings-page.php:318
 msgid "FAU Directory Settings"
 msgstr "FAU-Verzeichnis-Einstellungen"
 
-#: includes/admin/settings-page.php:317
+#: includes/admin/settings-page.php:333
 msgid "Kompakt Card Button"
 msgstr ""
 
-#: includes/admin/settings-page.php:320
+#: includes/admin/settings-page.php:336
 msgid "Search Contacts"
 msgstr "Kontakte suchen"
 
-#: includes/admin/settings-page.php:419
+#: includes/admin/settings-page.php:342
+#, fuzzy
+#| msgid "Cache Settings"
+msgid "Reset Settings"
+msgstr "Cache-Einstellungen"
+
+#: includes/admin/settings-page.php:388
+msgid "Reset to Default Settings"
+msgstr "Reset to Default Settings"
+
+#: includes/admin/settings-page.php:389
+#, fuzzy
+#| msgid "Click the button to clear all cached data."
+msgid "Click the button below to reset all settings to their default values."
+msgstr ""
+"Klicken Sie auf die Schaltfläche , um alle zwischengespeicherten Daten zu "
+"löschen."
+
+#: includes/admin/settings-page.php:391
+msgid "Reset to Default Values"
+msgstr "Reset to Default Values"
+
+#: includes/admin/settings-page.php:410
+#, fuzzy
+#| msgid "Are you sure you want to clear the cache?"
+msgid "Are you sure you want to reset all settings to their default values?"
+msgstr "Sind Sie sicher, dass Sie den Cache löschen wollen?"
+
+#: includes/admin/settings-page.php:417 includes/admin/settings-page.php:441
+msgid "Settings have been reset to default values."
+msgstr "Settings have been reset to default values."
+
+#: includes/admin/settings-page.php:420
+msgid "Failed to reset settings. Please try again."
+msgstr "Failed to reset settings. Please try again."
+
+#: includes/admin/settings-page.php:467
 msgid "All cache cleared successfully."
 msgstr "Der gesamte Cache wurde erfolgreich gelöscht."
 
-#: includes/admin/settings-page.php:452
+#: includes/admin/settings-page.php:500
 msgid "Error: "
 msgstr "Fehler: "
 
-#: includes/admin/settings-page.php:478
+#: includes/admin/settings-page.php:526
 msgid "No contacts found. Please verify the IdM-Kennung or names provided."
 msgstr ""
 "Keine Kontakte gefunden. Bitte überprüfen Sie die IdM-Kennung oder Namen "
@@ -286,16 +324,32 @@ msgstr "Privatdozent"
 msgid "Privatdozent Doktor"
 msgstr "Privatdozent Doktor"
 
-#: templates/card.php:29 templates/kompakt.php:29 templates/list.php:24
+#: templates/card.php:29 templates/kompakt.php:29 templates/list.php:23
 #: templates/page.php:25 templates/table.php:42
 msgid "Unbekannt"
 msgstr "Unbekannt"
 
-#: templates/list.php:79
+#: templates/card.php:44 templates/kompakt.php:45 templates/list.php:38
+#: templates/page.php:40
+msgid "Email:"
+msgstr "Email:"
+
+#: templates/card.php:49 templates/kompakt.php:50 templates/list.php:43
+#: templates/page.php:45
+msgid "Phone:"
+msgstr "Phone:"
+
+#: templates/card.php:78 templates/kompakt.php:67 templates/list.php:78
+#: templates/page.php:67
 msgid "Organization:"
 msgstr "Organisation:"
 
-#: templates/list.php:82
+#: templates/card.php:87 templates/kompakt.php:92 templates/list.php:99
+#: templates/page.php:98
+msgid "Es konnte kein Kontakteintrag gefunden werden."
+msgstr "Es konnte kein Kontakteintrag gefunden werden."
+
+#: templates/kompakt.php:70 templates/list.php:81 templates/page.php:69
 msgid "Functions:"
 msgstr "Funktionen:"
 

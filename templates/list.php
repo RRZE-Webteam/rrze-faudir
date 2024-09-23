@@ -96,6 +96,6 @@
             </li>
         <?php endforeach; ?>
     <?php else : ?>
-        <li>No data available.</li>
+    <div><?php echo __('Es konnte kein Kontakteintrag gefunden werden.', 'rrze-faudir') ?> </div>
     <?php endif; ?>
 </ul>
