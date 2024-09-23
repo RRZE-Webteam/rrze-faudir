@@ -25,6 +25,7 @@ function fetch_fau_data($atts) {
             'show' => 'name, email, phone, organization, function',
             'hide' => '',
             'image' => '',
+            'groupid' => '', // New attribute
         ),
         $atts
     );
@@ -69,8 +70,7 @@ function fetch_and_render_fau_data($atts) {
     $category = $atts['category'];
     $image_id = $atts['image'];
     $url = $atts['url'];
-
-    // Fetch data logic
+    $groupid = $atts['groupid'];
     $persons = []; // This will hold the fetched data
 
     // Fetch data based on the given attributes
@@ -85,6 +85,13 @@ function fetch_and_render_fau_data($atts) {
         }
     } elseif (!empty($category)) {
         $lq = 'contacts.organization.name[eq]=' . urlencode($category);
+        $params = ['lq' => $lq];
+        $data = fetch_fau_persons_atributes(0, 0, $params);
+        if (!empty($data['data'])) {
+            $persons = $data['data'];
+        }
+    } elseif (!empty($groupid)) {
+        $lq = 'contacts.organization.identifier[eq]=' . urlencode($groupid);
         $params = ['lq' => $lq];
         $data = fetch_fau_persons_atributes(0, 0, $params);
         if (!empty($data['data'])) {

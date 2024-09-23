@@ -12,6 +12,7 @@ class FaudirBlock {
                 'show' => ['type' => 'string', 'default' => 'name, email, phone, organization, function'],
                 'hide' => ['type' => 'string', 'default' => ''],
                 'image' => ['type' => 'number', 'default' => 0], // Add the image attribute
+                'groupid' =>['type'=> 'string', 'default' => ''],
             ],
         ]);
     }
