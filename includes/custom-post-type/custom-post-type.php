@@ -159,8 +159,13 @@ function fetch_person_attributes() {
                 wp_send_json_success(array(
                     'person_name' => sanitize_text_field($contact['givenName'] . ' ' . $contact['familyName']),
                     'person_email' => sanitize_email($contact['email'] ?? ''),
+                    'person_given_name' => sanitize_text_field($contact['givenName'] ?? ''),
+                    'person_family_name' => sanitize_text_field($contact['familyName'] ?? ''),
                     'person_title' => sanitize_text_field($contact['personalTitle'] ?? ''),
-                    'person_function' => sanitize_text_field($contact['functionLabel']['en'] ?? ''),
+                    'person_organization' => sanitize_text_field($contact['contacts'][0]['organization']['name'] ?? ''),
+                    'person_function' => sanitize_text_field($contact['contacts'][0]['functionLabel']['en'] ?? ''),
+                    
+
                     // Add other fields as needed
                 ));
             } else {
