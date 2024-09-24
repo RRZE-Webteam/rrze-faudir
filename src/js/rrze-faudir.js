@@ -1,3 +1,30 @@
 jQuery(document).ready(function ($) {
     console.log('RRZE FAUDIR JS from src directory');
+    $('#person_id').on('change', function() {
+        var personId = $(this).val();
+
+        if (personId) {
+            $.ajax({
+                url: customPerson.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'fetch_person_attributes',
+                    person_id: personId,
+                    nonce: customPerson.nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        var data = response.data;
+                        $('#person_name').val(data.person_name);
+                        $('#person_email').val(data.person_email);
+                        $('#person_title').val(data.person_title);
+                        $('#person_function').val(data.person_function);
+                        // Update other fields as needed
+                    } else {
+                        alert(response.data);
+                    }
+                }
+            });
+        }
+    });
 });

@@ -8,13 +8,11 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
         format: { type: 'string', default: 'list' },
         show: { type: 'string', default: 'name, email, phone, organization, function' },
         hide: { type: 'string', default: '' },
-        groupid: { type: 'string', default: '' },
-        orgnr: { type: 'string', default: '' },
         image: { type: 'number', default: 0 }, // Image ID attribute
     },
     edit: function(props) {
         const {
-            attributes: { category, identifier, format, show, hide, groupid, orgnr, image },
+            attributes: { category, identifier, format, show, hide, image },
             setAttributes
         } = props;
 
@@ -94,32 +92,6 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
                     }
                 })
             ),
-            // GroupId field input
-            wp.element.createElement(
-                'label',
-                null,
-                'GroupId',
-                wp.element.createElement('input', {
-                    type: 'text',
-                    value: groupid,
-                    onChange: function(event) {
-                        setAttributes({ groupid: event.target.value });
-                    }
-                })
-            ),
-             // Orgnr field input
-             wp.element.createElement(
-                'label',
-                null,
-                'Orgnr',
-                wp.element.createElement('input', {
-                    type: 'text',
-                    value: orgnr,
-                    onChange: function(event) {
-                        setAttributes({ orgnr: event.target.value });
-                    }
-                })
-            ),
             // MediaUpload for selecting an image
             wp.element.createElement(
                 wp.blockEditor.MediaUpload,
@@ -158,4 +130,31 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
 
 jQuery(document).ready(function ($) {
     console.log('RRZE FAUDIR JS from src directory');
+    $('#person_id').on('change', function() {
+        var personId = $(this).val();
+
+        if (personId) {
+            $.ajax({
+                url: customPerson.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'fetch_person_attributes',
+                    person_id: personId,
+                    nonce: customPerson.nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        var data = response.data;
+                        $('#person_name').val(data.person_name);
+                        $('#person_email').val(data.person_email);
+                        $('#person_title').val(data.person_title);
+                        $('#person_function').val(data.person_function);
+                        // Update other fields as needed
+                    } else {
+                        alert(response.data);
+                    }
+                }
+            });
+        }
+    });
 });

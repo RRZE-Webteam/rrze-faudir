@@ -134,4 +134,45 @@ function save_person_additional_fields($post_id) {
 
 add_action('save_post', 'save_person_additional_fields');
 
+function enqueue_custom_person_scripts() {
+    wp_enqueue_script('custom-person-script', get_template_directory_uri() . '/js/custom-person.js', array('jquery'), null, true);
+    wp_localize_script('custom-person-script', 'customPerson', array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce'    => wp_create_nonce('custom_person_nonce')
+    ));
+}
+add_action('admin_enqueue_scripts', 'enqueue_custom_person_scripts');
+
+function fetch_person_attributes() {
+    check_ajax_referer('custom_person_nonce', 'nonce');
+
+    $person_id = sanitize_text_field($_POST['person_id']);
+
+    if (!empty($person_id)) {
+        $params = ['identifier' => $person_id];
+        $response = fetch_fau_persons_atributes(60, 0, $params);
+
+        if (is_array($response) && isset($response['data'])) {
+            $contact = $response['data'][0] ?? null;
+
+            if ($contact) {
+                wp_send_json_success(array(
+                    'person_name' => sanitize_text_field($contact['givenName'] . ' ' . $contact['familyName']),
+                    'person_email' => sanitize_email($contact['email'] ?? ''),
+                    'person_title' => sanitize_text_field($contact['personalTitle'] ?? ''),
+                    'person_function' => sanitize_text_field($contact['functionLabel']['en'] ?? ''),
+                    // Add other fields as needed
+                ));
+            } else {
+                wp_send_json_error(__('No contact found.', 'text-domain'));
+            }
+        } else {
+            wp_send_json_error(__('Error fetching person attributes.', 'text-domain'));
+        }
+    } else {
+        wp_send_json_error(__('Invalid person ID.', 'text-domain'));
+    }
+}
+add_action('wp_ajax_fetch_person_attributes', 'fetch_person_attributes');
+
 ?>
