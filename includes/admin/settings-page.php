@@ -547,4 +547,96 @@ function rrze_faudir_search_person_by_id_handler()
 }
 
 add_action('wp_ajax_search_person_by_id', 'rrze_faudir_search_person_by_id_handler');
+// Register the Custom Post Type
+function register_custom_person_post_type() {
+    $args = array(
+        'labels' => array(
+            'name'               => __('Persons', 'text-domain'),
+            'singular_name'      => __('Person', 'text-domain'),
+            'menu_name'          => __('Persons', 'text-domain'),
+            'add_new_item'       => __('Add New Person', 'text-domain'),
+            'edit_item'          => __('Edit Person', 'text-domain'),
+            'view_item'          => __('View Person', 'text-domain'),
+            'all_items'          => __('All Persons', 'text-domain'),
+            'search_items'       => __('Search Persons', 'text-domain'),
+            'not_found'          => __('No persons found.', 'text-domain'),
+        ),
+        'public'             => true,
+        'has_archive'        => true,
+        'rewrite'            => array('slug' => 'person'),
+        'supports'           => array('title', 'editor', 'thumbnail'),
+        'show_in_rest'       => true,
+        'menu_position'      => 5,
+        'capability_type'    => 'post',
+    );
+    register_post_type('custom_person', $args);
+}
+add_action('init', 'register_custom_person_post_type');
 
+// Add Meta Boxes
+function add_custom_person_meta_boxes() {
+    add_meta_box(
+        'person_additional_fields',
+        __('Additional Fields', 'text-domain'),
+        'render_person_additional_fields',
+        'custom_person',
+        'normal',
+        'high'
+    );
+}
+add_action('add_meta_boxes', 'add_custom_person_meta_boxes');
+
+// Render Meta Box Fields
+function render_person_additional_fields($post) {
+    wp_nonce_field('save_person_additional_fields', 'person_additional_fields_nonce');
+
+    $fields = [
+        '_content_lang' => __('Content (Second Language)', 'text-domain'),
+        '_teasertext_lang' => __('Teaser Text (Second Language)', 'text-domain'),
+        'person_id' => __('Person ID', 'text-domain'),
+        'person_name' => __('Name', 'text-domain'),
+        'person_email' => __('Email', 'text-domain'),
+        'person_telephone' => __('Telephone', 'text-domain'),
+        'person_given_name' => __('Given Name', 'text-domain'),
+        'person_family_name' => __('Family Name', 'text-domain'),
+        'person_title' => __('Title', 'text-domain'),
+        'person_pronoun' => __('Pronoun', 'text-domain'),
+        'person_function' => __('Function', 'text-domain'),
+    ];
+
+    foreach ($fields as $meta_key => $label) {
+        $value = get_post_meta($post->ID, $meta_key, true);
+        echo "<label for='{$meta_key}'>{$label}</label>";
+        echo "<input type='text' name='{$meta_key}' id='{$meta_key}' value='" . esc_attr($value) . "' style='width: 100%;' /><br><br>";
+    }
+}
+
+function save_person_additional_fields($post_id) {
+    // Verify nonce
+    if (!isset($_POST['person_additional_fields_nonce']) || !wp_verify_nonce($_POST['person_additional_fields_nonce'], 'save_person_additional_fields')) {
+        return;
+    }
+
+    // List of fields to save
+    $fields = [
+        '_content_lang',
+        '_teasertext_lang',
+        'person_id',
+        'person_name',
+        'person_email',
+        'person_telephone',
+        'person_given_name',
+        'person_family_name',
+        'person_title',
+        'person_pronoun',
+        'person_function',
+    ];
+
+    // Save each field
+    foreach ($fields as $field) {
+        if (isset($_POST[$field])) {
+            update_post_meta($post_id, $field, sanitize_text_field($_POST[$field]));
+        }
+    }
+}
+add_action('save_post', 'save_person_additional_fields');
