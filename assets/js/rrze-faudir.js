@@ -6,13 +6,14 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
         category: { type: 'string', default: '' },
         identifier: { type: 'string', default: '' },
         format: { type: 'string', default: 'list' },
-        show: { type: 'string', default: 'personalTitle, firstName, familyName, email, phone, organization, function'},
+        url: { type: 'string', default: '' },
+        show: { type: 'string', default: 'personalTitle, firstName, familyName, name, email, phone, organization, function' },
         hide: { type: 'string', default: '' },
         image: { type: 'number', default: null }, // Image ID attribute
     },
     edit: function(props) {
         const {
-            attributes: { category, identifier, format, show, hide, image },
+            attributes: { category, identifier, format, url, show, hide, image },
             setAttributes
         } = props;
 
@@ -65,6 +66,19 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
                 wp.element.createElement('option', { value: 'card' }, 'Card'),
                 wp.element.createElement('option', { value: 'page' }, 'Page')
                 )
+            ),
+             // Url field input
+             wp.element.createElement(
+                'label',
+                null,
+                'Url',
+                wp.element.createElement('input', {
+                    type: 'text',
+                    value: url,
+                    onChange: function(event) {
+                        setAttributes({ url: event.target.value });
+                    }
+                })
             ),
             // Show fields input
             wp.element.createElement(
