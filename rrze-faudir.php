@@ -59,3 +59,33 @@ function rrze_faudir_search_contacts() {
         wp_send_json_error(__('No contacts found with the provided identifier.', 'rrze-faudir'));
     }
 }
+
+// Hook into 'init' to check plugin status and register the alias shortcode
+add_action('init', 'register_kontakt_as_faudir_shortcode_alias');
+
+function register_kontakt_as_faudir_shortcode_alias() {
+    // Check if the FAU-person plugin is active
+    if (!is_plugin_active('fau-person/fau-person.php')) { // Replace with the correct path to the FAU-person plugin file
+        // Register the [kontakt] shortcode as an alias for [faudir]
+        add_shortcode('kontakt', 'kontakt_to_faudir_shortcode_alias');
+    }
+}
+
+// Function to handle the [kontakt] shortcode and redirect to [faudir]
+function kontakt_to_faudir_shortcode_alias($atts, $content = null) {
+    // Simply pass all attributes and content to the [faudir] shortcode
+    return do_shortcode(shortcode_unautop('[faudir ' . shortcode_parse_atts_to_string($atts) . ']' . $content . '[/faudir]'));
+}
+
+// Helper function to convert attributes array to string
+function shortcode_parse_atts_to_string($atts) {
+    $output = '';
+    foreach ($atts as $key => $value) {
+        if (is_numeric($key)) {
+            $output .= " $value";
+        } else {
+            $output .= sprintf(' %s="%s"', $key, esc_attr($value));
+        }
+    }
+    return trim($output);
+}
