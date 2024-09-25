@@ -22,7 +22,7 @@ function fetch_fau_data($atts) {
             'identifier' => '',
             'format' => 'list',
             'url' => '',
-            'show' => 'name, email, phone, organization, function',
+            'show' => 'personalTitle, firstName, familyName, name, email, phone, organization, function',
             'hide' => '',
             'image' => '',
             'groupid' => '',

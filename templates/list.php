@@ -23,7 +23,16 @@
                     $longVersion = isset($prefixes[$prefix]) ? $prefixes[$prefix] : __('Unbekannt', 'rrze-faudir');
                     
                 }
-                $fullName = trim(($longVersion ? $longVersion : $person['personalTitle'] ). ' ' . $person['givenName'] . ' ' . $person['familyName']);
+                if (in_array('personalTitle', $show_fields) && !in_array('personalTitle', $hide_fields)) {
+                    $personal_title = (isset($person['personalTitle']) && !empty($person['personalTitle']) ? esc_html($person['personalTitle']) : 'N/A');
+                }
+                if (in_array('firstName', $show_fields) && !in_array('firstName', $hide_fields)) {
+                    $first_name = (isset($person['givenName']) && !empty($person['givenName']) ? esc_html($person['givenName']) : 'N/A');
+                }
+                if (in_array('familyName', $show_fields) && !in_array('familyName', $hide_fields)) {
+                    $last_name = (isset($person['familyName']) && !empty($person['familyName']) ? esc_html($person['familyName']) : 'N/A');
+                }
+                $fullName = trim(($longVersion ? $longVersion : $personal_title ). ' ' . $first_name. ' ' . $last_name);
                 ?>
                 <!-- We need to add condition for url when we add CPT -->
                 <section class="list-section-title" aria-label="<?php echo esc_html($fullName); ?>"><a href="<?php echo esc_html($url); ?>"><?php echo esc_html($fullName); ?></a></section>
@@ -67,8 +76,9 @@
                         <?php foreach ($person['contacts'] as $contact) : ?>
                             <?php
                             // Check if the organization has already been displayed
-                            $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : null;
-
+                            if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) {
+                                $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : null;
+                            }
                             if ($organizationName && !in_array($organizationName, $displayedOrganizations)) :
                                 // Add the organization to the displayed list
                                 $displayedOrganizations[] = $organizationName;
@@ -77,8 +87,13 @@
                                     <!-- Organization name -->
                                     <strong><?php echo __('Organization:', 'rrze-faudir');?></strong> <?php echo esc_html($organizationName); ?><br />
                                     
-                                    <!-- Show functions associated with this organization -->
-                                    <strong><?php echo __('Functions:', 'rrze-faudir');?></strong> 
+                                    <?php 
+                                    if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) {
+                                        $function = isset($contact['functionLabel']['en']) ? $contact['functionLabel']['en'] : null ?>
+                                        <!-- Show functions associated with this organization -->
+                                        <strong><?php echo __('Functions:', 'rrze-faudir');?></strong>
+
+                                    <?php  } ?>
                                     <ul>
                                         <?php foreach ($person['contacts'] as $sameOrgContact) : ?>
                                             <?php if (isset($sameOrgContact['organization']['name']) && $sameOrgContact['organization']['name'] === $organizationName) : ?>

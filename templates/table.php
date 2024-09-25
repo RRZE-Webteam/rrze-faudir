@@ -42,7 +42,16 @@
                            $longVersion = isset($prefixes[$prefix]) ? $prefixes[$prefix] : __('Unbekannt', 'rrze-faudir');
                 
                         }
-                        $fullName = trim(($longVersion ? $longVersion : $person['personalTitle'] ). ' ' . $person['givenName'] . ' ' . $person['familyName']);
+                        if (in_array('personalTitle', $show_fields) && !in_array('personalTitle', $hide_fields)) {
+                            $personal_title = (isset($person['personalTitle']) && !empty($person['personalTitle']) ? esc_html($person['personalTitle']) : 'N/A');
+                        }
+                        if (in_array('firstName', $show_fields) && !in_array('firstName', $hide_fields)) {
+                            $first_name = (isset($person['givenName']) && !empty($person['givenName']) ? esc_html($person['givenName']) : 'N/A');
+                        }
+                        if (in_array('familyName', $show_fields) && !in_array('familyName', $hide_fields)) {
+                            $last_name = (isset($person['familyName']) && !empty($person['familyName']) ? esc_html($person['familyName']) : 'N/A');
+                        }
+                        $fullName = trim(($longVersion ? $longVersion : $personal_title ). ' ' . $first_name. ' ' . $last_name);
                         ?>
                     <!-- We need to add condition for url when we add CPT -->
                     <td><section class="table-section-title" aria-label="<?php echo esc_html($fullName); ?>">
@@ -67,14 +76,16 @@
                     $functionCell = '';
 
                     foreach ($person['contacts'] as $contact) {
-                        $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : 'N/A';
-
+                        if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) {
+                            $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : null;
+                        }
                         // Only show each organization once
                         if (!in_array($organizationName, $displayedOrganizations)) {
                             $displayedOrganizations[] = $organizationName;
 
                             // Add organization and its functions to the cells
                             $organizationCell .= esc_html($organizationName) . '<br>';
+                            if(in_array('function', $show_fields) && !in_array('function', $hide_fields)){
                             $functionCell .= '<ul>';
 
                             // Loop again to list all functions for this organization
@@ -84,7 +95,7 @@
                                 }
                             }
 
-                            $functionCell .= '</ul>';
+                            $functionCell .= '</ul>';}
                         }
                     }
                     ?>

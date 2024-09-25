@@ -6,9 +6,9 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
         category: { type: 'string', default: '' },
         identifier: { type: 'string', default: '' },
         format: { type: 'string', default: 'list' },
-        show: { type: 'string', default: 'name, email, phone, organization, function' },
+        show: { type: 'string', default: 'personalTitle, firstName, familyName, email, phone, organization, function'},
         hide: { type: 'string', default: '' },
-        image: { type: 'number', default: 0 }, // Image ID attribute
+        image: { type: 'number', default: null }, // Image ID attribute
     },
     edit: function(props) {
         const {
