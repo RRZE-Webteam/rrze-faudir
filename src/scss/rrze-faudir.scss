@@ -128,6 +128,12 @@ body {
     }
 
 }
+.block-label{
+    font-family:$fontStack;
+    border-radius: 3px!important;
+    width: clamp(10rem,25rem,100%)!important;
+    padding:5px;
+}
 // Responsive styles
 @media (max-width: 768px) {
     #wpbody-content .wrap .contact-card {
