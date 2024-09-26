@@ -12,6 +12,7 @@
                 <!-- Full name with title -->
                 <?php
                 $options = get_option('rrze_faudir_options');
+                $longVersion = "";
                 $hard_sanitize = isset($options['hard_sanitize']) && $options['hard_sanitize'];
                 if($hard_sanitize){
                    $prefix = $person['personalTitle'];
@@ -29,6 +30,9 @@
                    $longVersion = isset($prefixes[$prefix]) ? $prefixes[$prefix] : __('Unbekannt', 'fau-person');
         
                 }
+                $personal_title = "";
+                $first_name= "";
+                $last_name ="";
                 if (in_array('personalTitle', $show_fields) && !in_array('personalTitle', $hide_fields)) {
                     $personal_title = (isset($person['personalTitle']) && !empty($person['personalTitle']) ? esc_html($person['personalTitle']) : 'N/A');
                 }

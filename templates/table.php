@@ -26,6 +26,7 @@
                     <?php
                         $options = get_option('rrze_faudir_options');
                         $hard_sanitize = isset($options['hard_sanitize']) && $options['hard_sanitize'];
+                        $longVersion = "";
                         if($hard_sanitize){
                            $prefix = $person['personalTitle'];
                            $prefixes = array(
@@ -42,6 +43,9 @@
                            $longVersion = isset($prefixes[$prefix]) ? $prefixes[$prefix] : __('Unbekannt', 'rrze-faudir');
                 
                         }
+                        $personal_title = "";
+                        $first_name= "";
+                        $last_name ="";
                         if (in_array('personalTitle', $show_fields) && !in_array('personalTitle', $hide_fields)) {
                             $personal_title = (isset($person['personalTitle']) && !empty($person['personalTitle']) ? esc_html($person['personalTitle']) : 'N/A');
                         }
