@@ -4,11 +4,12 @@
             <li>
                 <!-- Full name with title -->
                 <?php
-                 $options = get_option('rrze_faudir_options');
-                 $hard_sanitize = isset($options['hard_sanitize']) && $options['hard_sanitize'];
-             
+                $options = get_option('rrze_faudir_options');
+                $hard_sanitize = isset($options['hard_sanitize']) && $options['hard_sanitize'];
+
+                $longVersion = '';
                 if($hard_sanitize){
-                    $prefix = $person['personalTitle'];
+                    $prefix = $person['personalTitle'] ?? '';
                     $prefixes = array(
                         '' => __('Keine Angabe', 'rrze-faudir'),
                         'Dr.' => __('Doktor', 'rrze-faudir'),
@@ -21,19 +22,23 @@
                     );
                     // Check if the prefix exists in the array and display the long version
                     $longVersion = isset($prefixes[$prefix]) ? $prefixes[$prefix] : __('Unbekannt', 'rrze-faudir');
-                    
                 }
+
+                $personal_title = '';
                 if (in_array('personalTitle', $show_fields) && !in_array('personalTitle', $hide_fields)) {
                     $personal_title = (isset($person['personalTitle']) && !empty($person['personalTitle']) ? esc_html($person['personalTitle']) : 'N/A');
                 }
+                $first_name = '';
                 if (in_array('firstName', $show_fields) && !in_array('firstName', $hide_fields)) {
                     $first_name = (isset($person['givenName']) && !empty($person['givenName']) ? esc_html($person['givenName']) : 'N/A');
                 }
+                $last_name = '';
                 if (in_array('familyName', $show_fields) && !in_array('familyName', $hide_fields)) {
                     $last_name = (isset($person['familyName']) && !empty($person['familyName']) ? esc_html($person['familyName']) : 'N/A');
                 }
-                $fullName = trim(($longVersion ? $longVersion : $personal_title ). ' ' . $first_name. ' ' . $last_name);
+                $fullName = trim(($longVersion ? $longVersion : $personal_title) . ' ' . $first_name . ' ' . $last_name);
                 ?>
+
                 <!-- We need to add condition for url when we add CPT -->
                 <section class="list-section-title" aria-label="<?php echo esc_html($fullName); ?>"><a href="<?php echo esc_html($url); ?>"><?php echo esc_html($fullName); ?></a></section>
 

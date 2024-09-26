@@ -286,7 +286,7 @@ function rrze_faudir_get_business_card_title() {
 
 function rrze_faudir_default_output_fields_render() {
     $options = get_option('rrze_faudir_options');
-    $default_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : array(); // Assuming default_output_fields is an array of field names
+    $default_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : array();
     
     $available_fields = array(
         'academic_title' => __('Academic Title', 'rrze-faudir'),
