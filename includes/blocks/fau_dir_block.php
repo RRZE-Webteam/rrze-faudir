@@ -3,6 +3,12 @@
 // Block handler for RRZE FAUDIR
 class FaudirBlock {
     public static function register() {
+        // Get the default output fields using the utility function
+        $default_show_fields = FaudirUtils::getDefaultOutputFields();
+
+        // Convert to comma-separated string
+        $default_show = implode(', ', $default_show_fields);
+
         register_block_type('rrze/faudir-block', [
             'render_callback' => [self::class, 'render'],
             'attributes' => [
@@ -10,9 +16,10 @@ class FaudirBlock {
                 'identifier' => ['type' => 'string', 'default' => ''],
                 'format' => ['type' => 'string', 'default' => 'list'],
                 'url' => ['type' => 'string', 'default' => ''],
-                'show' => ['type' => 'string', 'default' => 'personalTitle, firstName, familyName, name, email, phone, organization, function'],
+                // 'show' => ['type' => 'string', 'default' => 'personalTitle, firstName, familyName, name, email, phone, organization, function'],
+                'show' => ['type' => 'string', 'default' => $default_show],
                 'hide' => ['type' => 'string', 'default' => ''],
-                'image' => ['type' => 'number', 'default' => 0], // Add the image attribute
+                'image' => ['type' => 'number', 'default' => 0],
                 'groupid' =>['type'=> 'string', 'default' => ''],
                 'orgnr' =>['type'=> 'string', 'default' => ''],
             ],

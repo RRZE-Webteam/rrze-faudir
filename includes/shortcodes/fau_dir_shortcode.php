@@ -15,6 +15,13 @@ include_once plugin_dir_path(__FILE__) . '../utils/Template.php';
 
 // Shortcode function
 function fetch_fau_data($atts) {
+
+    // Get the default output fields using the utility function
+    $default_show_fields = FaudirUtils::getDefaultOutputFields();
+
+    // Convert to comma-separated string
+    $default_show = implode(', ', $default_show_fields);
+
     // Extract the attributes from the shortcode
     $atts = shortcode_atts(
         array(
@@ -22,7 +29,9 @@ function fetch_fau_data($atts) {
             'identifier' => '',
             'format' => 'list',
             'url' => '',
-            'show' => 'personalTitle, firstName, familyName, name, email, phone, organization, function',
+            'show' => '',
+            // 'show' => 'personalTitle, firstName, familyName, name, email, phone, organization, function',
+            'show' => $default_show,
             'hide' => '',
             'image' => '',
             'groupid' => '',

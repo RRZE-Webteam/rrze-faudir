@@ -30,4 +30,25 @@ class FaudirUtils
     {
         return self::API_BASE_URL;
     }
+
+    public static function getDefaultOutputFields()
+    {
+        $options = get_option('rrze_faudir_options');
+        $default_output_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : [];
+
+        $field_mapping = [
+            'academic_title' => 'personalTitle',
+            'first_name' => 'firstName',
+            'last_name' => 'familyName',
+            'academic_suffix' => 'academicSuffix',
+        ];
+
+        $default_show_fields = array_map(function($field) use ($field_mapping) {
+            return isset($field_mapping[$field]) ? $field_mapping[$field] : $field;
+        }, $default_output_fields);
+
+        $default_show_fields = array_merge($default_show_fields, ['name', 'organization', 'function']);
+        
+        return array_unique($default_show_fields);
+    }
 }
