@@ -1,12 +1,12 @@
 <?php if (!empty($persons)) : ?>
     <div class="shortcode-contacts-wrapper"> <!-- Flex container for the cards -->
         <?php foreach ($persons as $person) : ?>
-            <div class="shortcode-contact-card">
+            <div class="shortcode-contact-card" itemscope itemtype="https://schema.org/Person">
                 <?php  if (count($persons) === 1 && !empty($image_url)) : ?>
-                    <img src="<?php echo esc_url($image_url); ?>" alt="Person Image" />
+                    <img src="<?php echo esc_url($image_url); ?>" alt="Person Image" itemprop="image" />
                 <?php else: ?>
                 <!--To be implemented after CPT-->
-                <img src="/wp-content/uploads/2024/09/V20210305LJ-0043-cropped-e1725968539245.webp" alt="Profile Image">
+                <img src="/wp-content/uploads/2024/09/V20210305LJ-0043-cropped-e1725968539245.webp" alt="Profile Image" itemprop="image">
                 <?php endif; ?>
                 
                 <!-- Full name with title -->
@@ -53,7 +53,11 @@
                 $fullName = trim(($longVersion ? $longVersion : $personal_title ). ' ' . $first_name. ' '. $nobility_title . ' ' . $last_name . ' ' . $title_suffix);
                 ?>
                 <!-- We need to add condition for url when we add CPT -->
-                <section class="card-section-title" aria-label="<?php echo esc_html($fullName); ?>"><a href="<?php echo esc_html($url); ?>"><?php echo esc_html($fullName); ?></a></section>
+                <section class="card-section-title" aria-label="<?php echo esc_html($fullName); ?>">
+                    <a href="<?php echo esc_url($url); ?>" itemprop="url">
+                        <span itemprop="name"><?php echo esc_html($fullName); ?></span>
+                    </a>
+                </section>
 
                 <?php
                 // Initialize output strings for email and phone
@@ -101,6 +105,13 @@
                             <p><strong><?php echo __('Organization:', 'rrze-faudir');?></strong> <?php echo esc_html($organizationName); ?></p>
                         <?php endif; ?>
                     <?php endforeach; ?>
+                <?php endif; ?>
+
+                <?php
+                // Add job title if available
+                if (isset($person['jobTitle']) && !empty($person['jobTitle'])) :
+                ?>
+                    <meta itemprop="jobTitle" content="<?php echo esc_attr($person['jobTitle']); ?>">
                 <?php endif; ?>
 
             </div> <!-- End of shortcode-contact-card -->
