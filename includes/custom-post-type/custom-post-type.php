@@ -43,8 +43,9 @@ function render_person_additional_fields($post) {
     wp_nonce_field('save_person_additional_fields', 'person_additional_fields_nonce');
 
     $fields = [
-        '_content_lang' => __('Content (Second Language)', 'text-domain'),
-        '_teasertext_lang' => __('Teaser Text (Second Language)', 'text-domain'),
+        '_content_en' => __('Content (Second Language)', 'text-domain'),
+        '_teasertext_en' => __('Teaser Text (English)', 'text-domain'),
+        '_teasertext_de' => __('Teaser Text (German)', 'text-domain'),
         'person_id' => __('Person ID', 'text-domain'),
         'person_name' => __('Name', 'text-domain'),
         'person_email' => __('Email', 'text-domain'),
@@ -52,15 +53,24 @@ function render_person_additional_fields($post) {
         'person_given_name' => __('Given Name', 'text-domain'),
         'person_family_name' => __('Family Name', 'text-domain'),
         'person_title' => __('Title', 'text-domain'),
-        'person_pronoun' => __('Pronoun', 'text-domain'),
+        'person_suffix' => __('Suffix', 'text-domain'),
+        'person_nobility_name' => __('Nobility Name', 'text-domain'),
+        'person_organization' => __('Organization', 'text-domain'),
         'person_function' => __('Function', 'text-domain'),
     ];
 
     foreach ($fields as $meta_key => $label) {
         $value = get_post_meta($post->ID, $meta_key, true);
-        echo "<label for='{$meta_key}'>{$label}</label>";
-        echo "<input type='text' name='{$meta_key}' id='{$meta_key}' value='" . esc_attr($value) . "' style='width: 100%;' /><br><br>";
-    }
+        // Check if the field should be rendered as a textarea
+        if ($meta_key === '_content_en' || $meta_key === '_teasertext_en' || $meta_key === '_teasertext_de') {
+            echo "<label for='{$meta_key}'>{$label}</label>";
+            echo "<textarea name='{$meta_key}' id='{$meta_key}' style='width: 100%; height: 100px;'>" . esc_textarea($value) . "</textarea><br><br>";
+        } else {
+            // Render as a regular text input field
+            echo "<label for='{$meta_key}'>{$label}</label>";
+            echo "<input type='text' name='{$meta_key}' id='{$meta_key}' value='" . esc_attr($value) . "' style='width: 100%;' /><br><br>";
+        }
+    }    
 }
 
 function save_person_additional_fields($post_id) {
@@ -111,8 +121,9 @@ function save_person_additional_fields($post_id) {
 
     // List of fields to save from the form
     $fields = [
-        '_content_lang',
-        '_teasertext_lang',
+        '_content_en',
+        '_teasertext_en',
+        '_teasertext_de',
         'person_id',
         'person_name',
         'person_email',
@@ -120,7 +131,9 @@ function save_person_additional_fields($post_id) {
         'person_given_name',
         'person_family_name',
         'person_title',
-        'person_pronoun',
+        'person_suffix',
+        'person_nobility_name',
+        'person_organization',
         'person_function',
     ];
 
