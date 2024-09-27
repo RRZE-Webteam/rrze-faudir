@@ -1,7 +1,7 @@
 <ul class="fau-contacts-list-custom">
     <?php if (!empty($persons)) : ?>
         <?php foreach ($persons as $person) : ?>
-            <li>
+            <li itemscope itemtype="https://schema.org/Person">
                 <!-- Full name with title -->
                 <?php
                 $options = get_option('rrze_faudir_options');
@@ -47,7 +47,11 @@
                 ?>
 
                 <!-- We need to add condition for url when we add CPT -->
-                <section class="list-section-title" aria-label="<?php echo esc_html($fullName); ?>"><a href="<?php echo esc_html($url); ?>"><?php echo esc_html($fullName); ?></a></section>
+                <section class="list-section-title" aria-label="<?php echo esc_html($fullName); ?>">
+                    <a href="<?php echo esc_html($url); ?>" itemprop="url">
+                        <span itemprop="name"><?php echo esc_html($fullName); ?></span>
+                    </a>
+                </section>
 
                 <?php
                 // Initialize output strings for email and phone
@@ -77,8 +81,6 @@
                 }
                 ?>
 
-            
-                <!-- Array to track displayed organizations -->
                 <?php
                 $displayedOrganizations = []; // To track displayed organizations
                 ?>
@@ -95,9 +97,9 @@
                                 // Add the organization to the displayed list
                                 $displayedOrganizations[] = $organizationName;
                             ?>
-                                <li>
-                                    <!-- Organization name -->
-                                    <strong><?php echo __('Organization:', 'rrze-faudir');?></strong> <?php echo esc_html($organizationName); ?><br />
+                                <li itemprop="affiliation" itemscope itemtype="https://schema.org/Organization">
+                                    <strong><?php echo __('Organization:', 'rrze-faudir');?></strong> 
+                                    <span itemprop="name"><?php echo esc_html($organizationName); ?></span><br />
                                     
                                     <?php 
                                     if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) {
@@ -109,7 +111,7 @@
                                     <ul>
                                         <?php foreach ($person['contacts'] as $sameOrgContact) : ?>
                                             <?php if (isset($sameOrgContact['organization']['name']) && $sameOrgContact['organization']['name'] === $organizationName) : ?>
-                                                <li>
+                                                <li itemprop="jobTitle">
                                                     <?php echo esc_html($sameOrgContact['functionLabel']['en']); ?>
                                                 </li>
                                             <?php endif; ?>
