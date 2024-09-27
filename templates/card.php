@@ -107,13 +107,6 @@
                     <?php endforeach; ?>
                 <?php endif; ?>
 
-                <?php
-                // Add job title if available
-                if (isset($person['jobTitle']) && !empty($person['jobTitle'])) :
-                ?>
-                    <meta itemprop="jobTitle" content="<?php echo esc_attr($person['jobTitle']); ?>">
-                <?php endif; ?>
-
             </div> <!-- End of shortcode-contact-card -->
         <?php endforeach; ?>
     </div> <!-- End of shortcode-contacts-wrapper -->

@@ -1,11 +1,11 @@
 <?php if (!empty($persons)) : ?>
         <?php foreach ($persons as $person) : ?>
-            <div  class="shortcode-contact-kompakt">
-                <?php  if (count($persons) === 1 && !empty($image_url)) : ?>
-                    <img src="<?php echo esc_url($image_url); ?>" alt="Person Image" />
+            <div class="shortcode-contact-kompakt" itemscope itemtype="https://schema.org/Person">
+                <?php if (count($persons) === 1 && !empty($image_url)) : ?>
+                    <img src="<?php echo esc_url($image_url); ?>" alt="Person Image" itemprop="image" />
                 <?php else: ?>
                 <!--To be implemented after CPT-->
-                <img src="/wp-content/uploads/2024/09/V20210305LJ-0043-cropped-e1725968539245.webp" alt="Profile Image">
+                <img src="/wp-content/uploads/2024/09/V20210305LJ-0043-cropped-e1725968539245.webp" alt="Profile Image" itemprop="image">
                 <?php endif; ?><div style="flex-grow: 1;">
                 <!-- Full name with title -->
                 <?php
@@ -52,8 +52,11 @@
                 $fullName = trim(($longVersion ? $longVersion : $personal_title ). ' ' . $first_name. ' '. $nobility_title . ' ' . $last_name . ' ' . $title_suffix);
                 ?>
                 <!-- We need to add condition for url when we add CPT -->
-                <section class="kompakt-section-title" aria-label="<?php echo esc_html($fullName); ?>"><a href="<?php echo esc_html($url); ?>"><?php echo esc_html($fullName); ?></a></section>
-
+                <section class="kompakt-section-title" aria-label="<?php echo esc_html($fullName); ?>">
+                    <a href="<?php echo esc_html($url); ?>" itemprop="url">
+                        <span itemprop="name"><?php echo esc_html($fullName); ?></span>
+                    </a>
+                </section>
 
                 <?php
                 // Initialize output strings for email and phone
@@ -62,14 +65,26 @@
 
                 // Check if email should be shown and include N/A if it is not available
                 if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) {
-                    echo $email_output = '<p>' . __('Email:', 'rrze-faudir') . (isset($person['email']) && !empty($person['email']) ? esc_html($person['email']) : 'N/A');
+                    $email_output = '<p>' . __('Email:', 'rrze-faudir') . ' <span itemprop="email">' . (isset($person['email']) && !empty($person['email']) ? esc_html($person['email']) : 'N/A') . '</span></p>';
                 }
 
                 // Check if phone should be shown and include N/A if it is not available
                 if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)) {
-                    echo $phone_output = '<p>' . __('Phone:', 'rrze-faudir') . (isset($person['telephone']) && !empty($person['telephone']) ? esc_html($person['telephone']) : 'N/A');
+                    $phone_output = '<p>' . __('Phone:', 'rrze-faudir') . ' <span itemprop="telephone">' . (isset($person['phone']) && !empty($person['phone']) ? esc_html($person['phone']) : 'N/A') . '</span></p>';
                 }
+
+                // Output email and phone if they are set
+                echo $email_output;
+                echo $phone_output;
                 ?>
+
+                <?php if (in_array('org', $show_fields) && !in_array('org', $hide_fields)) : ?>
+                    <p itemprop="affiliation"><?php echo (isset($person['org']) && !empty($person['org']) ? esc_html($person['org']) : 'N/A'); ?></p>
+                <?php endif; ?>
+
+                <?php if (in_array('job', $show_fields) && !in_array('job', $hide_fields)) : ?>
+                    <p itemprop="jobTitle"><?php echo (isset($person['job']) && !empty($person['job']) ? esc_html($person['job']) : 'N/A'); ?></p>
+                <?php endif; ?>
   <?php
                 $displayedOrganizations = []; // To track displayed organizations
                 ?>
