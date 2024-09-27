@@ -124,3 +124,18 @@ function shortcode_parse_atts_to_string($atts) {
     }
     return trim($output);
 }
+
+
+function load_custom_person_template($template) {
+    if (get_query_var('custom_person') || is_singular('custom_person')) {
+        $plugin_template = plugin_dir_path(__FILE__) . 'templates/single-custom_person.php';
+        if (file_exists($plugin_template)) {
+            error_log('Loading custom person template: ' . $plugin_template);
+            return $plugin_template;
+        } else {
+            error_log('Custom person template not found at: ' . $plugin_template);
+        }
+    }
+    return $template;
+}
+add_filter('template_include', 'load_custom_person_template', 99);
