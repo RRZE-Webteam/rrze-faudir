@@ -20,7 +20,7 @@
     </thead>
     <tbody>
         <?php foreach ($persons as $person) : ?>
-            <tr>
+            <tr itemscope itemtype="https://schema.org/Person">
                 <!-- Full Name -->
                 <?php if (in_array('name', $show_fields) && !in_array('name', $hide_fields)) : ?>
                     <?php
@@ -66,56 +66,66 @@
                         $fullName = trim(($longVersion ? $longVersion : $personal_title ). ' ' . $first_name. ' '. $nobility_title . ' ' . $last_name . ' ' . $title_suffix);
                         ?>
                     <!-- We need to add condition for url when we add CPT -->
-                    <td><section class="table-section-title" aria-label="<?php echo esc_html($fullName); ?>">
-                    <a href="<?php echo esc_html($url); ?>"><?php echo esc_html($fullName); ?></a></section></td>
+                    <td>
+                        <section class="table-section-title" aria-label="<?php echo esc_attr($fullName); ?>">
+                            <a href="<?php echo esc_url($url); ?>" itemprop="url">
+                                <span itemprop="name"><?php echo esc_html($fullName); ?></span>
+                            </a>
+                        </section>
+                    </td>
                 <?php endif; ?>
 
                 <!-- Email (if available) -->
                 <?php if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) : ?>
-                    <td><?php echo isset($person['email']) ? esc_html($person['email']) : 'N/A'; ?></td>
+                    <td>
+                        <?php if (isset($person['email']) && !empty($person['email'])) : ?>
+                            <span itemprop="email"><?php echo esc_html($person['email']); ?></span>
+                        <?php else : ?>
+                            N/A
+                        <?php endif; ?>
+                    </td>
                 <?php endif; ?>
 
                 <!-- Phone (if available) -->
                 <?php if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)) : ?>
-                    <td><?php echo isset($person['telephone']) ? esc_html($person['telephone']) : 'N/A'; ?></td>
+                    <td>
+                        <?php if (isset($person['telephone']) && !empty($person['telephone'])) : ?>
+                            <span itemprop="telephone"><?php echo esc_html($person['telephone']); ?></span>
+                        <?php else : ?>
+                            N/A
+                        <?php endif; ?>
+                    </td>
                 <?php endif; ?>
 
                 <!-- Organizations and Functions -->
                 <?php if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) : ?>
-                    <?php
-                    $displayedOrganizations = []; // Track displayed organizations
-                    $organizationCell = '';
-                    $functionCell = '';
+                    <td>
+                        <?php
+                        $displayedOrganizations = [];
+                        foreach ($person['contacts'] as $contact) :
+                            if (isset($contact['organization']['name']) && !in_array($contact['organization']['name'], $displayedOrganizations)) :
+                                $displayedOrganizations[] = $contact['organization']['name'];
+                        ?>
+                                <div itemprop="affiliation" itemscope itemtype="https://schema.org/Organization">
+                                    <span itemprop="name"><?php echo esc_html($contact['organization']['name']); ?></span>
+                                </div>
+                        <?php
+                            endif;
+                        endforeach;
+                        ?>
+                    </td>
+                <?php endif; ?>
 
-                    foreach ($person['contacts'] as $contact) {
-                        if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) {
-                            $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : null;
-                        }
-                        // Only show each organization once
-                        if (!in_array($organizationName, $displayedOrganizations)) {
-                            $displayedOrganizations[] = $organizationName;
-
-                            // Add organization and its functions to the cells
-                            $organizationCell .= esc_html($organizationName) . '<br>';
-                            if(in_array('function', $show_fields) && !in_array('function', $hide_fields)){
-                            $functionCell .= '<ul>';
-
-                            // Loop again to list all functions for this organization
-                            foreach ($person['contacts'] as $sameOrgContact) {
-                                if (isset($sameOrgContact['organization']['name']) && $sameOrgContact['organization']['name'] === $organizationName) {
-                                    $functionCell .= '<li>' . esc_html($sameOrgContact['functionLabel']['en']) . '</li>';
-                                }
-                            }
-
-                            $functionCell .= '</ul>';}
-                        }
-                    }
-                    ?>
-                    <!-- Display organizations -->
-                    <td><?php echo $organizationCell; ?></td>
-
-                    <!-- Display functions -->
-                    <td><?php echo $functionCell; ?></td>
+                <?php if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) : ?>
+                    <td>
+                        <ul>
+                            <?php foreach ($person['contacts'] as $contact) : ?>
+                                <?php if (isset($contact['functionLabel']['en'])) : ?>
+                                    <li itemprop="jobTitle"><?php echo esc_html($contact['functionLabel']['en']); ?></li>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </ul>
+                    </td>
                 <?php endif; ?>
             </tr>
         <?php endforeach; ?>
