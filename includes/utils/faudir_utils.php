@@ -40,7 +40,7 @@ class FaudirUtils
             'academic_title' => 'personalTitle',
             'first_name' => 'firstName',
             'last_name' => 'familyName',
-            'academic_suffix' => 'academicSuffix',
+            'academic_suffix' => 'personalTitleSuffix',
         ];
 
         $default_show_fields = array_map(function($field) use ($field_mapping) {
