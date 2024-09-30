@@ -139,3 +139,88 @@ function load_custom_person_template($template) {
     return $template;
 }
 add_filter('template_include', 'load_custom_person_template', 99);
+
+// Hook into plugin activation
+register_activation_hook(__FILE__, 'migrate_person_data_on_activation');
+
+function migrate_person_data_on_activation() {
+    // Fetch all 'person' posts
+    $contact_posts = get_posts([
+        'post_type' => 'person',
+        'posts_per_page' => -1,
+    ]);
+
+    if (!empty($contact_posts)) {
+        foreach ($contact_posts as $post) {
+            // Check if the post has a UnivIS ID, which will be used as the person_id
+            $univisid = get_post_meta($post->ID, 'fau_person_univis_id', true);
+
+            if ($univisid) {
+                // Check if the person already exists in 'custom_person' based on person_id (UnivIS ID)
+                $existing_person = get_posts([
+                    'post_type' => 'custom_person',
+                    'meta_key' => 'person_id',
+                    'meta_value' => $univisid,
+                    'posts_per_page' => 1,
+                ]);
+
+                if (!$existing_person) {
+                    // API call to fetch additional data
+                    $params = ['identifier' => $univisid];
+                    $response = fetch_fau_persons_atributes(60, 0, $params);
+
+                    if (is_array($response) && isset($response['data'])) {
+                        $contact = $response['data'][0] ?? null; // Assuming first contact is needed
+
+                        // Create a new 'custom_person' post
+                        $new_post_id = wp_insert_post([
+                            'post_type' => 'custom_person',
+                            'post_title' => $post->post_title, // Use the title from the 'person' post
+                            'post_content' => $post->post_content, // Copy the content from the 'person' post
+                            'post_status' => 'publish',
+                        ]);
+
+                        if ($new_post_id && $contact) {
+                            // Set the featured image if the original post has one
+                            $thumbnail_id = get_post_thumbnail_id($post->ID);
+                            if ($thumbnail_id) {
+                                set_post_thumbnail($new_post_id, $thumbnail_id);
+                            }
+
+                            // Migrate all relevant meta fields from API to the new 'custom_person' post
+                            update_post_meta($new_post_id, 'person_id', $univisid);
+                            update_post_meta($new_post_id, 'person_name', sanitize_text_field($contact['givenName'] . ' ' . $contact['familyName']));
+                            update_post_meta($new_post_id, 'person_given_name', sanitize_text_field($contact['givenName'] ?? ''));
+                            update_post_meta($new_post_id, 'person_family_name', sanitize_text_field($contact['familyName'] ?? ''));
+                            update_post_meta($new_post_id, 'person_email', sanitize_email($contact['email'] ?? ''));
+                            update_post_meta($new_post_id, 'person_title', sanitize_text_field($contact['personalTitle'] ?? ''));
+                            update_post_meta($new_post_id, 'person_function', sanitize_text_field($contact['functionLabel']['en'] ?? ''));
+                            update_post_meta($new_post_id, 'person_organization', sanitize_text_field($contact['contacts'][0]['organization']['name'] ?? ''));
+                          
+
+                            // Optional: log success for debugging
+                            error_log("Successfully migrated person with UnivIS ID: $univisid to custom_person.");
+                        } else {
+                            // Optional: log failure for debugging
+                            error_log("Failed to create custom_person for UnivIS ID: $univisid.");
+                        }
+                    } else {
+                        // Log API error if response isn't successful
+                        error_log("Error fetching person attributes for UnivIS ID: $univisid. Response: " . json_encode($response));
+                    }
+                } else {
+                    // Optional: log that the person already exists
+                    error_log("Person with UnivIS ID: $univisid already exists in custom_person.");
+                }
+            } else {
+                // Optional: log if UnivIS ID is missing
+                error_log("No UnivIS ID found for post ID: {$post->ID}");
+            }
+        }
+    } else {
+        // Optional: log if no contact posts were found
+        error_log('No posts found for post type "person".');
+    }
+}
+
+
