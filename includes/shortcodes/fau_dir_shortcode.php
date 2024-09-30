@@ -19,9 +19,6 @@ function fetch_fau_data($atts) {
     // Get the default output fields using the utility function
     $default_show_fields = FaudirUtils::getDefaultOutputFields();
 
-    // Convert to comma-separated string
-    $default_show = implode(', ', $default_show_fields);
-
     // Extract the attributes from the shortcode
     $atts = shortcode_atts(
         array(
@@ -30,8 +27,6 @@ function fetch_fau_data($atts) {
             'format' => 'list',
             'url' => '',
             'show' => '',
-            // 'show' => 'personalTitle, firstName, familyName, name, email, phone, organization, function',
-            'show' => $default_show,
             'hide' => '',
             'image' => '',
             'groupid' => '',
@@ -39,6 +34,11 @@ function fetch_fau_data($atts) {
         ),
         $atts
     );
+
+    // Convert explicitly set 'show' values to an array and merge with default fields
+    $explicit_show_fields = array_filter(array_map('trim', explode(',', $atts['show'])));
+    $merged_show_fields = array_unique(array_merge($default_show_fields, $explicit_show_fields));
+    $atts['show'] = implode(', ', $merged_show_fields);
 
     // Retrieve plugin options
     $options = get_option('rrze_faudir_options');

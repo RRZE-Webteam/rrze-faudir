@@ -63,13 +63,14 @@
                         if (in_array('personalTitleSuffix', $show_fields) && !in_array('personalTitleSuffix', $hide_fields)) {
                             $title_suffix = (isset($person['personalTitleSuffix']) && !empty($person['personalTitleSuffix']) ? esc_html($person['personalTitleSuffix']) : 'N/A');
                         }
-                        $fullName = trim(($longVersion ? $longVersion : $personal_title ). ' ' . $first_name. ' '. $nobility_title . ' ' . $last_name . ' ' . $title_suffix);
+                        $fullName = trim(($longVersion ? $longVersion : $personal_title ). ' ' . $first_name. ' '. $nobility_title . ' ' . $last_name);
+                        $fullNameWithSuffix = $fullName . ($title_suffix !== '' ? ' <span class="title-suffix">' . $title_suffix . '</span>' : '');
                         ?>
                     <!-- We need to add condition for url when we add CPT -->
                     <td>
-                        <section class="table-section-title" aria-label="<?php echo esc_attr($fullName); ?>">
+                        <section class="table-section-title" aria-label="<?php echo esc_attr($fullName . ' ' . $title_suffix); ?>">
                             <a href="<?php echo esc_url($url); ?>" itemprop="url">
-                                <span itemprop="name"><?php echo esc_html($fullName); ?></span>
+                                <span itemprop="name"><?php echo wp_kses_post($fullNameWithSuffix); ?></span>
                             </a>
                         </section>
                     </td>
