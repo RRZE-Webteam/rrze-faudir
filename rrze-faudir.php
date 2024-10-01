@@ -1,4 +1,5 @@
 <?php
+
 /*
 Plugin Name: RRZE FAU Directory
 Plugin URI: https://github.com/RRZE-Webteam/rrze-faudir
@@ -67,6 +68,78 @@ if (rrze_faudir_system_requirements()) {
 
     // Register and enqueue scripts
     EnqueueScripts::register();
+
+    // Cron Schedule Setup
+    // Add custom schedule interval for every 5 minutes
+    add_filter('cron_schedules', 'custom_five_minute_interval');
+    function custom_five_minute_interval($schedules) {
+        $schedules['five_minutes'] = array(
+            'interval' => 30, // 300 seconds = 5 minutes
+            'display' => __('Every 5 Minutes'),
+        );
+        return $schedules;
+    }
+
+    // Schedule the event on plugin activation
+    register_activation_hook(__FILE__, 'schedule_check_person_availability');
+    function schedule_check_person_availability() {
+        if (!wp_next_scheduled('check_person_availability')) {
+            wp_schedule_event(time(), 'five_minutes', 'check_person_availability');
+        }
+    }
+
+    // Unschedule the event on plugin deactivation
+    register_deactivation_hook(__FILE__, 'unschedule_check_person_availability');
+    function unschedule_check_person_availability() {
+        $timestamp = wp_next_scheduled('check_person_availability');
+        if ($timestamp) {
+            wp_unschedule_event($timestamp, 'check_person_availability');
+        }
+    }
+
+    // Hook the function to check availability
+    add_action('check_person_availability', 'check_api_person_availability');
+    function check_api_person_availability() {
+        $args = array(
+            'post_type' => 'custom_person',
+            'post_status' => 'any', // Change to 'any' to include drafts and other statuses
+            'posts_per_page' => -1,
+        );
+        $posts = get_posts($args);
+
+        // Log the number of posts being checked
+        error_log('Checking availability for ' . count($posts) . ' persons.');
+
+        foreach ($posts as $post) {
+            $person_id = get_post_meta($post->ID, 'person_id', true);
+
+            // Log the person ID being checked
+            error_log('Checking person ID: ' . $person_id);
+
+            // Check if person_id is empty
+            if (empty($person_id)) {
+                wp_update_post(array(
+                    'ID' => $post->ID,
+                    'post_status' => 'draft',
+                ));
+                continue; // Skip to the next post
+            }
+
+            // Make API request to check if person is accessible
+            $person_data = fetch_fau_person_by_id($person_id);
+
+            // If the response indicates an error with status code 404, update the post to draft
+            if (empty($person_data) || (isset($person_data['code']) && $person_data['code'] == 404)) 
+                {
+                wp_update_post(array(
+                    'ID' => $post->ID,
+                    'post_status' => 'draft',
+                ));
+                // Log the ID of the person that was updated
+                error_log('Person with ID ' . $person_id . ' updated to draft.');
+            }
+        }
+    }
 
     // AJAX search function
     add_action('wp_ajax_rrze_faudir_search_contacts', 'rrze_faudir_search_contacts');
@@ -230,62 +303,3 @@ function migrate_person_data_on_activation() {
 
 
 
-
-// Add custom schedule interval for every 5 minutes
-add_filter('cron_schedules', 'custom_five_minute_interval');
-function custom_five_minute_interval($schedules) {
-    $schedules['five_minutes'] = array(
-        'interval' => 60, // 300 seconds = 5 minutes
-        'display' => __('Every 5 Minutes'),
-    );
-    return $schedules;
-}
-
-// Schedule the event if not already scheduled
-if (!wp_next_scheduled('check_person_availability')) {
-    wp_schedule_event(time(), 'five_minutes', 'check_person_availability');
-}
-
-// Hook the function to check availability
-add_action('check_person_availability', 'check_api_person_availability');
-// Function to check if a person is still accessible
-function check_api_person_availability() {
-    $args = array(
-        'post_type' => 'custom_person',
-        'post_status' => 'any', // Change to 'any' to include drafts and other statuses
-        'posts_per_page' => -1,
-    );
-    $posts = get_posts($args);
-    
-    // Log the number of posts being checked
-    error_log('Checking availability for ' . count($posts) . ' persons.');
-
-    foreach ($posts as $post) {
-        $person_id = get_post_meta($post->ID, 'person_id', true);
-        
-        // Log the person ID being checked
-        error_log('Checking person ID: ' . $person_id);
-
-        // Check if person_id is empty
-        if (empty($person_id)) {
-            wp_update_post(array(
-                'ID' => $post->ID,
-                'post_status' => 'draft',
-            ));
-            continue; // Skip to the next post
-        }
-
-        // Make API request to check if person is accessible
-        $person_data = fetch_fau_person_by_id($person_id);
-
-        // If the response indicates an error with status code 404, update the post to draft
-        if (isset($person_data['error']) && $person_data['code'] === 404) {
-            wp_update_post(array(
-                'ID' => $post->ID,
-                'post_status' => 'draft',
-            ));
-            // Log the ID of the person that was updated
-            error_log('Person with ID ' . $person_id . ' updated to draft.');
-        }
-    }
-}

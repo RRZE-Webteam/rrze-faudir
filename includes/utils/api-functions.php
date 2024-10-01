@@ -78,8 +78,12 @@ function fetch_fau_organizations($limit = 100, $offset = 1, $params=[]) {
     return $data;
 }
 
+
 //search person by id
 function fetch_fau_person_by_id($personId) {
+    // Log the function call
+    error_log("fetch_fau_person_by_id called with personId: {$personId}");
+
     $api_key = FaudirUtils::getKey();
     $url = FaudirUtils::getApiBaseUrl() . "persons/{$personId}";
 
@@ -99,8 +103,12 @@ function fetch_fau_person_by_id($personId) {
 
     curl_close($curl);
 
+    // Log the response
+    error_log("Response for personId {$personId}: " . $response);
+
     if ($http_code !== 200) {
         return array('error' => true, 'code' => $http_code);
+        error_log("kodi eshte " . $http_code);
     }
 
     $data = json_decode($response, true);
