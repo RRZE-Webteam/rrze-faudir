@@ -16,6 +16,11 @@ Requires PHP: 8.2
 
 defined('ABSPATH') || exit;
 
+// Check if the function exists before using it
+if ( ! function_exists( 'is_plugin_active' ) ) {
+    include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+}
+
 // Constants
 const RRZE_PHP_VERSION = '8.2';
 const RRZE_WP_VERSION = '6.5';
@@ -117,7 +122,7 @@ if (rrze_faudir_system_requirements()) {
             error_log('Checking person ID: ' . $person_id);
 
             // Check if person_id is empty
-            if ($response === false || empty($response)) {
+            if (empty($person_id)) {
                 wp_update_post(array(
                     'ID' => $post->ID,
                     'post_status' => 'draft',
