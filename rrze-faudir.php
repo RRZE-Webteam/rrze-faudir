@@ -117,7 +117,7 @@ if (rrze_faudir_system_requirements()) {
             error_log('Checking person ID: ' . $person_id);
 
             // Check if person_id is empty
-            if (empty($person_id)) {
+            if ($response === false || empty($response)) {
                 wp_update_post(array(
                     'ID' => $post->ID,
                     'post_status' => 'draft',
@@ -129,7 +129,7 @@ if (rrze_faudir_system_requirements()) {
             $person_data = fetch_fau_person_by_id($person_id);
 
             // If the response indicates an error with status code 404, update the post to draft
-            if (empty($person_data) || (isset($person_data['code']) && $person_data['code'] == 404)) 
+            if (  $person_data === false || empty(  $person_data)) 
                 {
                 wp_update_post(array(
                     'ID' => $post->ID,
