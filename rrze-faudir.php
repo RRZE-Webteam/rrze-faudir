@@ -258,6 +258,16 @@ function check_api_person_availability() {
     $posts = get_posts($args);
     foreach ($posts as $post) {
         $person_id = get_post_meta($post->ID, 'person_id', true);
+        
+        // Check if person_id is empty
+        if (empty($person_id)) {
+            wp_update_post(array(
+                'ID' => $post->ID,
+                'post_status' => 'draft',
+            ));
+            continue; // Skip to the next post
+        }
+
         // Make API request to check if person is accessible
         $person_data = fetch_fau_person_by_id($person_id);
 
