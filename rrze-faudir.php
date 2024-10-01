@@ -181,6 +181,10 @@ function migrate_person_data_on_activation() {
                         ]);
 
                         if ($new_post_id && $contact) {
+                            $short_description = get_post_meta($post->ID, 'fau_person_description', true);
+                            if ($short_description) {
+                                update_post_meta($new_post_id, '_teasertext_en', sanitize_text_field($short_description));
+                            }
                             // Set the featured image if the original post has one
                             $thumbnail_id = get_post_thumbnail_id($post->ID);
                             if ($thumbnail_id) {
