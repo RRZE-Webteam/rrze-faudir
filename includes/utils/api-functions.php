@@ -97,19 +97,20 @@ function fetch_fau_person_by_id($personId) {
     $response = curl_exec($curl);
     $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
-    if ($response === false || $http_code !== 200) {
-        return 'Error retrieving data or person not found.';
-    }
-
     curl_close($curl);
+
+    if ($http_code !== 200) {
+        return array('error' => true, 'code' => $http_code);
+    }
 
     $data = json_decode($response, true);
     if (json_last_error() !== JSON_ERROR_NONE) {
-        return 'Error decoding JSON data.';
+        return array('error' => true, 'message' => 'Error decoding JSON data');
     }
 
-    return $data ?? [];
+    return $data;
 }
+
 function fetch_fau_persons_atributes($limit = 60, $offset = 0, $params = []) {
     $api_key = FaudirUtils::getKey();
     $url = FaudirUtils::getApiBaseUrl() . 'persons?limit=' . $limit . '&offset=' . $offset;

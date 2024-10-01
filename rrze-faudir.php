@@ -228,3 +228,45 @@ function migrate_person_data_on_activation() {
 }
 
 
+
+
+
+// Add custom schedule interval for every 5 minutes
+add_filter('cron_schedules', 'custom_five_minute_interval');
+function custom_five_minute_interval($schedules) {
+    $schedules['five_minutes'] = array(
+        'interval' => 60, // 300 seconds = 5 minutes
+        'display' => __('Every 5 Minutes'),
+    );
+    return $schedules;
+}
+
+// Schedule the event if not already scheduled
+if (!wp_next_scheduled('check_person_availability')) {
+    wp_schedule_event(time(), 'five_minutes', 'check_person_availability');
+}
+
+// Hook the function to check availability
+add_action('check_person_availability', 'check_api_person_availability');
+// Function to check if a person is still accessible
+function check_api_person_availability() {
+    $args = array(
+        'post_type' => 'custom_person',
+        'post_status' => 'publish',
+        'posts_per_page' => -1,
+    );
+    $posts = get_posts($args);
+    foreach ($posts as $post) {
+        $person_id = get_post_meta($post->ID, 'person_id', true);
+        // Make API request to check if person is accessible
+        $person_data = fetch_fau_person_by_id($person_id);
+
+        // If the response indicates an error with status code 404, update the post to draft
+        if (isset($person_data['error']) && $person_data['code'] === 404) {
+            wp_update_post(array(
+                'ID' => $post->ID,
+                'post_status' => 'draft',
+            ));
+        }
+    }
+}
