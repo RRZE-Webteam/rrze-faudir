@@ -252,13 +252,20 @@ add_action('check_person_availability', 'check_api_person_availability');
 function check_api_person_availability() {
     $args = array(
         'post_type' => 'custom_person',
-        'post_status' => 'publish',
+        'post_status' => 'any', // Change to 'any' to include drafts and other statuses
         'posts_per_page' => -1,
     );
     $posts = get_posts($args);
+    
+    // Log the number of posts being checked
+    error_log('Checking availability for ' . count($posts) . ' persons.');
+
     foreach ($posts as $post) {
         $person_id = get_post_meta($post->ID, 'person_id', true);
         
+        // Log the person ID being checked
+        error_log('Checking person ID: ' . $person_id);
+
         // Check if person_id is empty
         if (empty($person_id)) {
             wp_update_post(array(
@@ -277,6 +284,8 @@ function check_api_person_availability() {
                 'ID' => $post->ID,
                 'post_status' => 'draft',
             ));
+            // Log the ID of the person that was updated
+            error_log('Person with ID ' . $person_id . ' updated to draft.');
         }
     }
 }
