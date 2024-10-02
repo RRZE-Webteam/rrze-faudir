@@ -74,22 +74,11 @@ if (rrze_faudir_system_requirements()) {
     // Register and enqueue scripts
     EnqueueScripts::register();
 
-    // Cron Schedule Setup
-    // Add custom schedule interval for every 5 minutes
-    add_filter('cron_schedules', 'custom_five_minute_interval');
-    function custom_five_minute_interval($schedules) {
-        $schedules['five_minutes'] = array(
-            'interval' => 30, // 300 seconds = 5 minutes
-            'display' => __('Every 5 Minutes'),
-        );
-        return $schedules;
-    }
-
     // Schedule the event on plugin activation
     register_activation_hook(__FILE__, 'schedule_check_person_availability');
     function schedule_check_person_availability() {
         if (!wp_next_scheduled('check_person_availability')) {
-            wp_schedule_event(time(), 'five_minutes', 'check_person_availability');
+            wp_schedule_event(time(), 'daily', 'check_person_availability');
         }
     }
 
@@ -112,14 +101,9 @@ if (rrze_faudir_system_requirements()) {
         );
         $posts = get_posts($args);
 
-        // Log the number of posts being checked
-        error_log('Checking availability for ' . count($posts) . ' persons.');
-
         foreach ($posts as $post) {
             $person_id = get_post_meta($post->ID, 'person_id', true);
 
-            // Log the person ID being checked
-            error_log('Checking person ID: ' . $person_id);
 
             // Check if person_id is empty
             if (empty($person_id)) {
@@ -140,8 +124,6 @@ if (rrze_faudir_system_requirements()) {
                     'ID' => $post->ID,
                     'post_status' => 'draft',
                 ));
-                // Log the ID of the person that was updated
-                error_log('Person with ID ' . $person_id . ' updated to draft.');
             }
         }
     }

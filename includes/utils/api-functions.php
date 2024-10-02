@@ -101,13 +101,9 @@ function fetch_fau_person_by_id($personId) {
     $response = curl_exec($curl);
     $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     curl_close($curl);
-    error_log("Response for personId {$personId}: " . $response);
-    // Log the response
-    error_log("http_code" . $http_code);
 
     // Check if the response is empty
     if ($response === false || empty($response)) {
-        error_log("Empty response or error occurred.");
         return $response;
     }
 
