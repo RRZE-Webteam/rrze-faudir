@@ -2,17 +2,32 @@
     <div itemscope itemtype="https://schema.org/ProfilePage">
         <?php foreach ($persons as $person) : ?>
             <?php
-            // Check if a CPT with the same ID exists
-            $contact_posts = get_posts([
-                'post_type' => 'custom_person',
-                'posts_per_page' => -1,
-            ]);
+             $personal_title_cpt = '';
+             $first_name_cpt = '';
+             $nobility_title_cpt = '';
+             $last_name_cpt = '';
+             $title_suffix_cpt = '';
+             $email_output_cpt = '';
+             $phone_output_cpt = '';
+             $function_label_cpt = '';
+             $organization_name_cpt = '';
+             $content_en = '';
+             $content = '';
+             $teaser_lang = '';
+             $featured_image_url = '';
+             
+             // Check if a CPT with the same ID exists
+             $contact_posts = get_posts([
+                 'post_type' => 'custom_person',
+                 'meta_key' => 'person_id',
+                 'meta_value' => $person['identifier'],
+                 'posts_per_page' => 1, // Only fetch one post matching the person ID
+             ]);
+ 
             // If there are contact posts, process them
         if (!empty($contact_posts)) {
-            // Loop through each person in the $persons array
-            foreach ($persons as $person) : 
                 // Loop through each contact post
-                foreach ($contact_posts as $post) {
+                foreach ($contact_posts as $post) : {
                     // Check if the post has a UnivIS ID (person_id)
                     $identifier = get_post_meta($post->ID, 'person_id', true);
                     
