@@ -113,6 +113,7 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
                 wp.element.createElement('option', { value: 'list' }, 'List'),
                 wp.element.createElement('option', { value: 'table' }, 'Table'),
                 wp.element.createElement('option', { value: 'card' }, 'Card'),
+                wp.element.createElement('option', { value: 'kompakt' }, 'Kompakt'),
                 wp.element.createElement('option', { value: 'page' }, 'Page')
                 )
             ),
