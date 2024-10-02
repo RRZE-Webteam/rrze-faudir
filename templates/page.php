@@ -181,7 +181,7 @@
                         <?php
                         if (!empty($teaser_lang)) :
                             ?>
-                                <h2><?php _e('Teaser Text', 'text-domain'); ?></h2>
+                                <h2><?php _e('Teaser Text', 'rrze-faudir'); ?></h2>
                                 <div class="teaser-second-language">
                                     <?php echo wp_kses_post($teaser_lang); ?>
                                 </div>
@@ -200,7 +200,7 @@
                 </div>
                         
                 <?php if (!empty($content_en) || !empty($content_de)) : ?>
-                    <h2><?php _e('Content', 'text-domain'); ?></h2>
+                    <h2><?php _e('Content', 'rrze-faudir'); ?></h2>
                     <div class="content-second-language">
                         <?php echo wp_kses_post(($locale === 'de_DE') ? $content_de : $content_en); ?>
                     </div>

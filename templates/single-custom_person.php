@@ -10,7 +10,8 @@ get_header();
         ?>
 
     <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-        <div>
+        <div id="content">
+            <div class="content-container">
             <div class="contact-page">
                 <div class="contact-page-img-container">
                     <div style="flex-grow: 1; max-width:70%">
@@ -18,17 +19,17 @@ get_header();
                         <?php
 
                             $fields = [
-                                'person_id' => __('Person ID', 'text-domain'),
-                                'person_name' => __('Name', 'text-domain'),
-                                'person_email' => __('Email', 'text-domain'),
-                                'person_telephone' => __('Telephone', 'text-domain'),
-                                'person_given_name' => __('Given Name', 'text-domain'),
-                                'person_family_name' => __('Family Name', 'text-domain'),
-                                'person_title' => __('Title', 'text-domain'),
-                                'person_suffix' => __('Suffix', 'text-domain'),
-                                'person_nobility_name' => __('Nobility Name', 'text-domain'),
-                                'person_organization' => __('Organization', 'text-domain'),
-                                'person_function' => __('Function', 'text-domain'),
+                                'person_id' => __('Person ID', 'rrze-faudir'),
+                                'person_name' => __('Name', 'rrze-faudir'),
+                                'person_email' => __('Email', 'rrze-faudir'),
+                                'person_telephone' => __('Telephone', 'rrze-faudir'),
+                                'person_given_name' => __('Given Name', 'rrze-faudir'),
+                                'person_family_name' => __('Family Name', 'rrze-faudir'),
+                                'person_title' => __('Title', 'rrze-faudir'),
+                                'person_suffix' => __('Suffix', 'rrze-faudir'),
+                                'person_nobility_name' => __('Nobility Name', 'rrze-faudir'),
+                                'person_organization' => __('Organization', 'rrze-faudir'),
+                                'person_function' => __('Function', 'rrze-faudir'),
                             ];
                             $personal_title = get_post_meta(get_the_ID(), 'person_title', true);
                             $first_name = get_post_meta(get_the_ID(), 'person_given_name', true);
@@ -63,18 +64,12 @@ get_header();
                             $content_de = get_the_content();
                             $content_en = isset($content_en) ? $content_en : ''; // Ensure $content_en is set
                                                     
-                            if (!empty($content_en) || !empty($content_de)) : ?>
-                                <h2><?php _e('Content', 'text-domain'); ?></h2>
-                                <div class="content-second-language">
-                                    <?php echo wp_kses_post(($locale === 'de_DE') ? $content_de : $content_en); ?>
-                                </div>
-                            <?php endif; ?>
-                            <?php
+                            
                             $teaser_text_key = ($locale === 'de_DE') ? '_teasertext_de' : '_teasertext_en';
                             $teaser_lang = get_post_meta(get_the_ID(), $teaser_text_key, true);
                             if (!empty($teaser_lang)) :
                             ?>
-                                <h2><?php _e('Teaser Text', 'text-domain'); ?></h2>
+                                <h2><?php _e('Teaser Text', 'rrze-faudir'); ?></h2>
                                 <div class="teaser-second-language">
                                     <?php echo wp_kses_post($teaser_lang); ?>
                                 </div>
@@ -88,7 +83,17 @@ get_header();
                     <?php if (!empty($image_url)) : ?>
                         <img src="<?php echo esc_url($image_url); ?>" alt="Person Image" />
                     <?php endif; ?>
+                    </div>
+                    <?php
+
+                    if (!empty($content_en) || !empty($content_de)) : ?>
+                                <h2><?php _e('Content', 'rrze-faudir'); ?></h2>
+                                <div class="content-second-language">
+                                    <?php echo wp_kses_post(($locale === 'de_DE') ? $content_de : $content_en); ?>
+                                </div>
+                            <?php endif; ?>
                 </div>
+            </div>
             </div>
         </div>
     </article>

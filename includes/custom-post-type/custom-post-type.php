@@ -3,15 +3,15 @@
 function register_custom_person_post_type() {
     $args = array(
         'labels' => array(
-            'name'               => __('Persons', 'text-domain'),
-            'singular_name'      => __('Person', 'text-domain'),
-            'menu_name'          => __('Persons', 'text-domain'),
-            'add_new_item'       => __('Add New Person', 'text-domain'),
-            'edit_item'          => __('Edit Person', 'text-domain'),
-            'view_item'          => __('View Person', 'text-domain'),
-            'all_items'          => __('All Persons', 'text-domain'),
-            'search_items'       => __('Search Persons', 'text-domain'),
-            'not_found'          => __('No persons found.', 'text-domain'),
+            'name'               => __('Persons', 'rrze-faudir'),
+            'singular_name'      => __('Person', 'rrze-faudir'),
+            'menu_name'          => __('Persons', 'rrze-faudir'),
+            'add_new_item'       => __('Add New Person', 'rrze-faudir'),
+            'edit_item'          => __('Edit Person', 'rrze-faudir'),
+            'view_item'          => __('View Person', 'rrze-faudir'),
+            'all_items'          => __('All Persons', 'rrze-faudir'),
+            'search_items'       => __('Search Persons', 'rrze-faudir'),
+            'not_found'          => __('No persons found.', 'rrze-faudir'),
         ),
         'public'             => true,
         'has_archive'        => true,
@@ -29,7 +29,7 @@ add_action('init', 'register_custom_person_post_type');
 function add_custom_person_meta_boxes() {
     add_meta_box(
         'person_additional_fields',
-        __('Additional Fields', 'text-domain'),
+        __('Additional Fields', 'rrze-faudir'),
         'render_person_additional_fields',
         'custom_person',
         'normal',
@@ -43,20 +43,20 @@ function render_person_additional_fields($post) {
     wp_nonce_field('save_person_additional_fields', 'person_additional_fields_nonce');
 
     $fields = [
-        '_content_en' => __('Content (Second Language)', 'text-domain'),
-        '_teasertext_en' => __('Teaser Text (English)', 'text-domain'),
-        '_teasertext_de' => __('Teaser Text (German)', 'text-domain'),
-        'person_id' => __('Person ID', 'text-domain'),
-        'person_name' => __('Name', 'text-domain'),
-        'person_email' => __('Email', 'text-domain'),
-        'person_telephone' => __('Telephone', 'text-domain'),
-        'person_given_name' => __('Given Name', 'text-domain'),
-        'person_family_name' => __('Family Name', 'text-domain'),
-        'person_title' => __('Title', 'text-domain'),
-        'person_suffix' => __('Suffix', 'text-domain'),
-        'person_nobility_name' => __('Nobility Name', 'text-domain'),
-        'person_organization' => __('Organization', 'text-domain'),
-        'person_function' => __('Function', 'text-domain'),
+        '_content_en' => __('Content (Second Language)', 'rrze-faudir'),
+        '_teasertext_en' => __('Teaser Text (English)', 'rrze-faudir'),
+        '_teasertext_de' => __('Teaser Text (German)', 'rrze-faudir'),
+        'person_id' => __('Person ID', 'rrze-faudir'),
+        'person_name' => __('Name', 'rrze-faudir'),
+        'person_email' => __('Email', 'rrze-faudir'),
+        'person_telephone' => __('Telephone', 'rrze-faudir'),
+        'person_given_name' => __('Given Name', 'rrze-faudir'),
+        'person_family_name' => __('Family Name', 'rrze-faudir'),
+        'person_title' => __('Title', 'rrze-faudir'),
+        'person_suffix' => __('Suffix', 'rrze-faudir'),
+        'person_nobility_name' => __('Nobility Name', 'rrze-faudir'),
+        'person_organization' => __('Organization', 'rrze-faudir'),
+        'person_function' => __('Function', 'rrze-faudir'),
     ];
 
     foreach ($fields as $meta_key => $label) {
@@ -182,13 +182,13 @@ function fetch_person_attributes() {
                     // Add other fields as needed
                 ));
             } else {
-                wp_send_json_error(__('No contact found.', 'text-domain'));
+                wp_send_json_error(__('No contact found.', 'rrze-faudir'));
             }
         } else {
-            wp_send_json_error(__('Error fetching person attributes.', 'text-domain'));
+            wp_send_json_error(__('Error fetching person attributes.', 'rrze-faudir'));
         }
     } else {
-        wp_send_json_error(__('Invalid person ID.', 'text-domain'));
+        wp_send_json_error(__('Invalid person ID.', 'rrze-faudir'));
     }
 }
 add_action('wp_ajax_fetch_person_attributes', 'fetch_person_attributes');
