@@ -68,11 +68,15 @@
                         ?>
                     <!-- We need to add condition for url when we add CPT -->
                     <td>
-                        <section class="table-section-title" aria-label="<?php echo esc_attr($fullName . ' ' . $title_suffix); ?>">
-                            <a href="<?php echo esc_url($url); ?>" itemprop="url">
-                                <span itemprop="name"><?php echo wp_kses_post($fullNameWithSuffix); ?></span>
-                            </a>
-                        </section>
+                    <section class="card-section-title" aria-label="<?php echo esc_html($fullName); ?>">
+                    <?php if (!empty($url)) : ?>
+                        <a href="<?php echo esc_url($url); ?>" itemprop="url">
+                            <span itemprop="name"><?php echo esc_html($fullName); ?></span>
+                        </a>
+                    <?php else : ?>
+                        <span itemprop="name"><?php echo esc_html($fullName); ?></span>
+                    <?php endif; ?>
+                </section>
                     </td>
                 <?php endif; ?>
 

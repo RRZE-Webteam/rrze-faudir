@@ -69,7 +69,6 @@ get_header();
                             $teaser_lang = get_post_meta(get_the_ID(), $teaser_text_key, true);
                             if (!empty($teaser_lang)) :
                             ?>
-                                <h2><?php _e('Teaser Text', 'rrze-faudir'); ?></h2>
                                 <div class="teaser-second-language">
                                     <?php echo wp_kses_post($teaser_lang); ?>
                                 </div>
@@ -85,14 +84,19 @@ get_header();
                     <?php endif; ?>
                     </div>
                     <?php
+                     if ($locale === 'de_DE' && !empty($content_de)): ?>
+                        <section class="card-section-title"><?php _e('Content', 'rrze-faudir'); ?></section>
+                        <div class="content-second-language">
+                            <?php echo wp_kses_post($content_de); ?>
+                        </div>
+                    <?php elseif ($locale !== 'de_DE' && !empty($content_en)): ?>
+                        <section class="card-section-title"><?php _e('Content', 'rrze-faudir'); ?></section>
+                        <div class="content-second-language">
+                            <?php echo wp_kses_post($content_en); ?>
+                        </div>
+                    <?php endif; ?>
 
-                    if (!empty($content_en) || !empty($content_de)) : ?>
-                                <h2><?php _e('Content', 'rrze-faudir'); ?></h2>
-                                <div class="content-second-language">
-                                    <?php echo wp_kses_post(($locale === 'de_DE') ? $content_de : $content_en); ?>
-                                </div>
-                            <?php endif; ?>
-                </div>
+                    </div>
             </div>
             </div>
         </div>

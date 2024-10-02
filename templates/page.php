@@ -107,9 +107,14 @@
                         ?>
                         
                         <section class="card-section-title" aria-label="<?php echo esc_html($fullName); ?>">
-                            <a href="<?php echo esc_html($url); ?>" itemprop="url"><?php echo esc_html($fullName); ?></a>
+                        <?php if (!empty($url)) : ?>
+                            <a href="<?php echo esc_url($url); ?>" itemprop="url">
+                                <span itemprop="name"><?php echo esc_html($fullName); ?></span>
+                            </a>
+                        <?php else : ?>
+                        <span itemprop="name"><?php echo esc_html($fullName); ?></span>
+                        <?php endif; ?>
                         </section>
-
                         <?php
                         // Initialize output strings for email and phone
                         $email_output = '';
@@ -181,7 +186,6 @@
                         <?php
                         if (!empty($teaser_lang)) :
                             ?>
-                                <h2><?php _e('Teaser Text', 'rrze-faudir'); ?></h2>
                                 <div class="teaser-second-language">
                                     <?php echo wp_kses_post($teaser_lang); ?>
                                 </div>
@@ -199,12 +203,17 @@
                         endif; ?>
                 </div>
                         
-                <?php if (!empty($content_en) || !empty($content_de)) : ?>
-                    <h2><?php _e('Content', 'rrze-faudir'); ?></h2>
+                <?php if ($locale === 'de_DE' && !empty($content_de)): ?>
+                    <section class="card-section-title"><?php _e('Content', 'rrze-faudir'); ?></section>
                     <div class="content-second-language">
-                        <?php echo wp_kses_post(($locale === 'de_DE') ? $content_de : $content_en); ?>
+                        <?php echo wp_kses_post($content_de); ?>
                     </div>
-                <?php endif;?>
+                <?php elseif ($locale !== 'de_DE' && !empty($content_en)): ?>
+                    <section class="card-section-title"><?php _e('Content', 'rrze-faudir'); ?></section>
+                    <div class="content-second-language">
+                        <?php echo wp_kses_post($content_en); ?>
+                    </div>
+                <?php endif; ?>
 
             </div> <!-- End of shortcode-contact-card -->
         <?php endforeach; ?>

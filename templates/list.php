@@ -47,10 +47,14 @@
                 ?>
 
                 <!-- We need to add condition for url when we add CPT -->
-                <section class="list-section-title" aria-label="<?php echo esc_html($fullName); ?>">
-                    <a href="<?php echo esc_html($url); ?>" itemprop="url">
+                <section class="card-section-title" aria-label="<?php echo esc_html($fullName); ?>">
+                    <?php if (!empty($url)) : ?>
+                        <a href="<?php echo esc_url($url); ?>" itemprop="url">
+                            <span itemprop="name"><?php echo esc_html($fullName); ?></span>
+                        </a>
+                    <?php else : ?>
                         <span itemprop="name"><?php echo esc_html($fullName); ?></span>
-                    </a>
+                    <?php endif; ?>
                 </section>
 
                 <?php
