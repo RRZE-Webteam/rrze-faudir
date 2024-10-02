@@ -156,18 +156,7 @@
                             echo '<p>' . __('Phone:', 'rrze-faudir') . ' <span itemprop="phone">' . $phone . '</span></p>';
                         }
                     }
-                
-                // Build the final output based on what's available
-                if (!empty($email_output) && !empty($phone_output)) {
-                    // If both email and phone should be shown
-                    echo '(' . $email_output . ', ' . $phone_output . ')';
-                } elseif (!empty($email_output)) {
-                    // If only email should be shown
-                    echo '(' . $email_output . ')';
-                } elseif (!empty($phone_output)) {
-                    // If only phone should be shown
-                    echo '(' . $phone_output . ')';
-                }
+            
                 ?>
 
                 <?php
