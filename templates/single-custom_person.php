@@ -60,17 +60,21 @@ get_header();
                             $locale = get_locale();
                             $content_en = get_post_meta(get_the_ID(), '_content_en', true);
 
-                            ?>
-                                <h2><?php _e('Content (Second Language)', 'text-domain'); ?></h2>
+                            $content_de = get_the_content();
+                            $content_en = isset($content_en) ? $content_en : ''; // Ensure $content_en is set
+                                                    
+                            if (!empty($content_en) || !empty($content_de)) : ?>
+                                <h2><?php _e('Content', 'text-domain'); ?></h2>
                                 <div class="content-second-language">
-                                    <?php echo wp_kses_post((($locale === 'de_DE') ? get_the_content() : $content_en)); ?>
+                                    <?php echo wp_kses_post(($locale === 'de_DE') ? $content_de : $content_en); ?>
                                 </div>
+                            <?php endif; ?>
                             <?php
                             $teaser_text_key = ($locale === 'de_DE') ? '_teasertext_de' : '_teasertext_en';
                             $teaser_lang = get_post_meta(get_the_ID(), $teaser_text_key, true);
                             if (!empty($teaser_lang)) :
                             ?>
-                                <h2><?php _e('Teaser Text (Second Language)', 'text-domain'); ?></h2>
+                                <h2><?php _e('Teaser Text', 'text-domain'); ?></h2>
                                 <div class="teaser-second-language">
                                     <?php echo wp_kses_post($teaser_lang); ?>
                                 </div>
