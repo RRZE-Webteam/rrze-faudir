@@ -30,10 +30,6 @@
              $phone_output_cpt = '';
              $function_label_cpt = '';
              $organization_name_cpt = '';
-             $content_en = '';
-             $content = '';
-             $teaser_lang = '';
-             $featured_image_url = '';
              
              // Check if a CPT with the same ID exists
              $contact_posts = get_posts([
@@ -62,25 +58,7 @@
                         $phone_output_cpt = get_post_meta($post->ID, 'person_telephone', true);
                         $function_label_cpt = get_post_meta($post->ID, 'person_function', true);
                         $organization_name_cpt = get_post_meta($post->ID, 'person_organization', true);
-                        $content_en = get_post_meta($post->ID, '_content_en', true);
-                        $content = apply_filters('the_content', $post->post_content);
-                        $featured_image_url = get_the_post_thumbnail_url($post->ID, 'full');
-        
-                        // Log the relevant information for debugging
-                        error_log($content_en);
-                        error_log('Nob' . $nobility_title_cpt);
-                        error_log('Suffix: ' . $title_suffix_cpt);
-                        error_log('Post content: ' . $content);
-                        
-                        // New Code to Add: Handling multiple languages (de_DE and en)
-                        $locale = get_locale(); // Get the current locale
-                        $content_en = get_post_meta($post->ID, '_content_en', true); // English content from post meta
-                        $content_de = apply_filters('the_content', $post->post_content); // Default post content (assumed to be in German)
-
-                        // Ensure $content_en is set
-                        $content_en = isset($content_en) ? $content_en : '';
-                        $teaser_text_key = ($locale === 'de_DE') ? '_teasertext_de' : '_teasertext_en';
-                        $teaser_lang = get_post_meta($post->ID, $teaser_text_key, true);    
+                       
                     }
                 }
             endforeach;
@@ -196,7 +174,14 @@
                         <?php
                             endif;
                         endforeach;
-                        ?>
+                        if (empty($displayedOrganizations)) :
+                            ?>
+                                    <div>
+                                        <span><?php echo esc_html($organization_name_cpt) ?></span>
+                                    </div>
+                            <?php
+                                endif;
+                            ?>
                     </td>
                 <?php endif; ?>
 
@@ -206,6 +191,8 @@
                             <?php foreach ($person['contacts'] as $contact) : ?>
                                 <?php if (isset($contact['functionLabel']['en'])) : ?>
                                     <li itemprop="jobTitle"><?php echo esc_html($contact['functionLabel']['en']); ?></li>
+                                <?php else: ?>
+                                <li itemprop="jobTitle"><?php echo esc_html($function_label_cpt); ?></li>
                                 <?php endif; ?>
                             <?php endforeach; ?>
                         </ul>

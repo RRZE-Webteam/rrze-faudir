@@ -9,11 +9,7 @@
              $title_suffix_cpt = '';
              $email_output_cpt = '';
              $phone_output_cpt = '';
-             $function_label_cpt = '';
              $organization_name_cpt = '';
-             $content_en = '';
-             $content = '';
-             $teaser_lang = '';
              $featured_image_url = '';
              
              // Check if a CPT with the same ID exists
@@ -41,38 +37,21 @@
                         $title_suffix_cpt = get_post_meta($post->ID, 'person_suffix', true);
                         $email_output_cpt = get_post_meta($post->ID, 'person_email', true);
                         $phone_output_cpt = get_post_meta($post->ID, 'person_telephone', true);
-                        $function_label_cpt = get_post_meta($post->ID, 'person_function', true);
                         $organization_name_cpt = get_post_meta($post->ID, 'person_organization', true);
-                        $content_en = get_post_meta($post->ID, '_content_en', true);
-                        $content = apply_filters('the_content', $post->post_content);
                         $featured_image_url = get_the_post_thumbnail_url($post->ID, 'full');
         
-                        // Log the relevant information for debugging
-                        error_log($content_en);
-                        error_log('Nob' . $nobility_title_cpt);
-                        error_log('Suffix: ' . $title_suffix_cpt);
-                        error_log('Post content: ' . $content);
-                        
-                        // New Code to Add: Handling multiple languages (de_DE and en)
-                        $locale = get_locale(); // Get the current locale
-                        $content_en = get_post_meta($post->ID, '_content_en', true); // English content from post meta
-                        $content_de = apply_filters('the_content', $post->post_content); // Default post content (assumed to be in German)
-
-                        // Ensure $content_en is set
-                        $content_en = isset($content_en) ? $content_en : '';
-                        $teaser_text_key = ($locale === 'de_DE') ? '_teasertext_de' : '_teasertext_en';
-                        $teaser_lang = get_post_meta($post->ID, $teaser_text_key, true);    
-                    }
+                       }
                 }
             endforeach;
         }?>
             <div class="shortcode-contact-card" itemscope itemtype="https://schema.org/Person">
                 <?php  if (count($persons) === 1 && !empty($image_url)) : ?>
                     <img src="<?php echo esc_url($image_url); ?>" alt="Person Image" itemprop="image" />
-                <?php else: ?>
-                <!--To be implemented after CPT-->
-                <img src="/wp-content/uploads/2024/09/V20210305LJ-0043-cropped-e1725968539245.webp" alt="Profile Image" itemprop="image">
-                <?php endif; ?>
+                <?php else :
+                    if (!empty($featured_image_url)) : ?>
+                        <img src="<?php echo esc_url($featured_image_url); ?>" alt="Person Image" itemprop="image" />
+                    <?php endif;
+                endif; ?>                     
                 
                 <!-- Full name with title -->
                 <?php
