@@ -9,11 +9,13 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
         url: { type: 'string', default: '' },
         show: { type: 'string', default: 'personalTitle, firstName, familyName, name, email, phone, organization, function' },
         hide: { type: 'string', default: '' },
+        groupid: { type: 'string', default: '' },
+        orgnr: { type: 'string', default: '' },
         image: { type: 'number', default: null }, // Image ID attribute
     },
     edit: function (props) {
         const {
-            attributes: { category, identifier, format, url, show, hide, image },
+            attributes: { category, identifier, format, url, show, hide, groupid, orgnr, image },
             setAttributes
         } = props;
 
@@ -113,6 +115,7 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
                 wp.element.createElement('option', { value: 'list' }, 'List'),
                 wp.element.createElement('option', { value: 'table' }, 'Table'),
                 wp.element.createElement('option', { value: 'card' }, 'Card'),
+                wp.element.createElement('option', { value: 'kompakt' }, 'Kompakt'),
                 wp.element.createElement('option', { value: 'page' }, 'Page')
                 )
             ),
@@ -172,6 +175,46 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
                     value: hide,
                     onChange: function(event) {
                         setAttributes({ hide: event.target.value });
+                    }
+                })
+            ),
+             // GroupId field input
+             wp.element.createElement(
+                'label',
+                { className: 'block-label' },
+                null,
+                'Group Id',
+                wp.element.createElement('label', {
+                    className: 'block-label',
+                    type: 'text',
+                    value: 'Group Id',
+                }), 
+                wp.element.createElement('input', {
+                    className: 'block-label',
+                    type: 'text',
+                    value: groupid,
+                    onChange: function(event) {
+                        setAttributes({ groupid: event.target.value });
+                    }
+                })
+            ),
+            // Organization number field input
+            wp.element.createElement(
+                'label',
+                { className: 'block-label' },
+                null,
+                'Organization number',
+                wp.element.createElement('label', {
+                    className: 'block-label',
+                    type: 'text',
+                    value: 'Organization number',
+                }), 
+                wp.element.createElement('input', {
+                    className: 'block-label',
+                    type: 'text',
+                    value: orgnr,
+                    onChange: function(event) {
+                        setAttributes({ orgnr: event.target.value });
                     }
                 })
             ),

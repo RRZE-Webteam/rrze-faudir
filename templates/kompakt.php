@@ -182,10 +182,6 @@
                                 <p>
                                 <?php echo esc_html($sameOrgContact['functionLabel']['en']); ?>
                             </p>
-                            <?php else: ?>
-                                <p>
-                                <?php echo esc_html($function_label_cpt); ?>
-                            </p>
                             <?php endif; ?>
                         <?php endforeach; ?>
                         <?php endif; ?>

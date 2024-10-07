@@ -172,10 +172,6 @@
                                                 <li itemprop="jobTitle">
                                                     <?php echo esc_html($sameOrgContact['functionLabel']['en']); ?>
                                                 </li>
-                                                <?php else: ?>
-                                                    <li itemprop="jobTitle">
-                                                    <?php echo esc_html($function_label_cpt); ?>
-                                                </li>
                                             <?php endif; ?>
                                         <?php endforeach; ?>
                                     </ul>

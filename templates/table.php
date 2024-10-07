@@ -191,8 +191,6 @@
                             <?php foreach ($person['contacts'] as $contact) : ?>
                                 <?php if (isset($contact['functionLabel']['en'])) : ?>
                                     <li itemprop="jobTitle"><?php echo esc_html($contact['functionLabel']['en']); ?></li>
-                                <?php else: ?>
-                                <li itemprop="jobTitle"><?php echo esc_html($function_label_cpt); ?></li>
                                 <?php endif; ?>
                             <?php endforeach; ?>
                         </ul>
