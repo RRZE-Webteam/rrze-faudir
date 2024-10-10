@@ -143,43 +143,43 @@
                 $displayedOrganizations = []; // To track displayed organizations
                 ?>
 
-                <?php if (!empty($person['contacts'])) : ?>
-                    <ul>
-                        <?php foreach ($person['contacts'] as $contact) : ?>
-                            <?php
-                            // Check if the organization has already been displayed
-                            if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) {
-                                $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : $organization_name_cpt;
-                            }
-                            if ($organizationName && !in_array($organizationName, $displayedOrganizations)) :
-                                // Add the organization to the displayed list
-                                $displayedOrganizations[] = $organizationName;
-                            ?>
-                                <li itemprop="affiliation" itemscope itemtype="https://schema.org/Organization">
-                                    <strong><?php echo __('Organization:', 'rrze-faudir');?></strong> 
-                                    <span itemprop="name"><?php echo esc_html($organizationName); ?></span><br />
-                                    
-                                    <?php 
-                                    if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) {
-                                    $function = isset($contact['functionLabel']['en']) ? $contact['functionLabel']['en'] : $function_label_cpt; ?>
-                                        <!-- Show functions associated with this organization -->
-                                        <strong><?php echo __('Functions:', 'rrze-faudir');?></strong>
+<?php if (!empty($person['contacts'])) : ?>
+    <ul>
+        <?php foreach ($person['contacts'] as $contact) : ?>
+            <?php
+            $organizationName = ''; // Default to an empty string if not found
+            
+            // Check if the organization is allowed to be shown
+            if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) {
+                $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : $organization_name_cpt;
+            }
 
-                                    <?php  } ?>
-                                    <ul>
-                                        <?php foreach ($person['contacts'] as $sameOrgContact) : ?>
-                                            <?php if (isset($sameOrgContact['organization']['name']) && $sameOrgContact['organization']['name'] === $organizationName) : ?>
-                                                <li itemprop="jobTitle">
-                                                    <?php echo esc_html($sameOrgContact['functionLabel']['en']); ?>
-                                                </li>
-                                            <?php endif; ?>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                </li>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php endif; ?>
+            // Only display the organization if it is allowed
+            if ($organizationName && !in_array($organizationName, $displayedOrganizations)) :
+                // Add the organization to the displayed list
+                $displayedOrganizations[] = $organizationName;
+            ?>
+                <li itemprop="affiliation" itemscope itemtype="https://schema.org/Organization">
+                    <strong><?php echo __('Organization:', 'rrze-faudir'); ?></strong> 
+                    <span itemprop="name"><?php echo esc_html($organizationName); ?></span><br />
+                </li>
+            <?php endif; // End organization check ?>
+
+            <?php
+            // Check if the function field should be shown, independent of the organization
+            if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) :
+                $function = isset($contact['functionLabel']['en']) ? $contact['functionLabel']['en'] : $function_label_cpt;
+            ?>
+                <li itemprop="jobTitle">
+                    <strong><?php echo __('Function:', 'rrze-faudir'); ?></strong>
+                    <?php echo esc_html($function); ?>
+                </li>
+            <?php endif; // End function check ?>
+
+        <?php endforeach; ?>
+    </ul>
+<?php endif; ?>
+
             </li>
         <?php endforeach; ?>
     <?php else : ?>

@@ -295,6 +295,8 @@ function rrze_faudir_default_output_fields_render() {
         'academic_suffix' => __('Academic Suffix', 'rrze-faudir'),
         'email' => __('Email', 'rrze-faudir'),
         'phone' => __('Phone', 'rrze-faudir'),
+        'organization' => __('Organization', 'rrze-faudir'),
+        'function' => __('Function', 'rrze-faudir'),
     );
 
     echo '<fieldset>';

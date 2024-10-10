@@ -2,19 +2,17 @@
     <thead>
         <tr>
             <?php if (in_array('name', $show_fields) && !in_array('name', $hide_fields)) : ?>
-                <th>Name</th>
+                <th><?php  echo __('Name', 'rrze-faudir') ?></th>
             <?php endif; ?>
             <?php if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) : ?>
-                <th>Email</th>
+                <th><?php  echo __('Email', 'rrze-faudir') ?></th>
             <?php endif; ?>
             <?php if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)) : ?>
-                <th>Phone</th>
+                <th><?php  echo __('Phone', 'rrze-faudir') ?></th>
             <?php endif; ?>
-            <?php if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) : ?>
-                <th>Organization</th>
-            <?php endif; ?>
-            <?php if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) : ?>
-                <th>Function</th>
+            <?php if ((in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) || 
+                          (in_array('function', $show_fields) && !in_array('function', $hide_fields))) : ?>
+                    <th><?php  echo __('Organization / Function', 'rrze-faudir') ?></th>
             <?php endif; ?>
         </tr>
     </thead>
@@ -140,7 +138,7 @@
                                 echo '<td> <span itemprop="email">' . $email . '</span></td>';
                             }
                             else{
-                                echo '<td></td>';
+                                echo '<td> N/A </td>';
                             }
                         }
 
@@ -155,47 +153,60 @@
                                 echo '<td><span itemprop="phone">' . $phone . '</span></td>';
                             }
                             else{
-                                echo '<td></td>';
+                                echo '<td> N/A </td>';
                             }
                         }?>
 
-                <!-- Organizations and Functions -->
-                <?php if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) : ?>
-                    <td>
-                        <?php
-                        $displayedOrganizations = [];
-                        foreach ($person['contacts'] as $contact) :
-                            if (isset($contact['organization']['name']) && !in_array($contact['organization']['name'], $displayedOrganizations)) :
-                                $displayedOrganizations[] = $contact['organization']['name'];
-                        ?>
-                                <div itemprop="affiliation" itemscope itemtype="https://schema.org/Organization">
-                                    <span itemprop="name"><?php echo esc_html($contact['organization']['name']); ?></span>
-                                </div>
-                        <?php
-                            endif;
-                        endforeach;
-                        if (empty($displayedOrganizations)) :
-                            ?>
-                                    <div>
-                                        <span><?php echo esc_html($organization_name_cpt) ?></span>
-                                    </div>
-                            <?php
-                                endif;
-                            ?>
-                    </td>
-                <?php endif; ?>
+             
+               <!-- Organization / Function (Merged) -->
+<?php if ((in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) || 
+          (in_array('function', $show_fields) && !in_array('function', $hide_fields))) : ?>
+    <td>
+        <?php
+        // Display organizations and their functions
+        $displayedOrganizations = [];
+        foreach ($person['contacts'] as $contact) :
+            $organizationName = $contact['organization']['name'] ?? null;
+            $functionLabel = $contact['functionLabel']['en'] ?? null;
 
-                <?php if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) : ?>
-                    <td>
-                        <ul>
-                            <?php foreach ($person['contacts'] as $contact) : ?>
-                                <?php if (isset($contact['functionLabel']['en'])) : ?>
-                                    <li itemprop="jobTitle"><?php echo esc_html($contact['functionLabel']['en']); ?></li>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </ul>
-                    </td>
-                <?php endif; ?>
+            // If an organization is present and hasn't been displayed yet
+            if ($organizationName && !in_array($organizationName, $displayedOrganizations)) :
+                $displayedOrganizations[] = $organizationName; // Mark this organization as displayed
+
+                // Display the organization name
+                ?>
+                <div itemprop="affiliation" itemscope itemtype="https://schema.org/Organization">
+                    <strong itemprop="name"><?php echo esc_html($organizationName); ?></strong>
+                </div>
+
+                <!-- Display all functions related to this organization -->
+                <ul>
+                    <?php
+                    // Loop through all contacts again to list all functions for the same organization
+                    foreach ($person['contacts'] as $innerContact) :
+                        if (isset($innerContact['organization']['name']) && $innerContact['organization']['name'] === $organizationName) :
+                            if (isset($innerContact['functionLabel']['en'])) : ?>
+                                <li itemprop="jobTitle"><?php echo esc_html($innerContact['functionLabel']['en']); ?></li>
+                            <?php endif; 
+                        endif;
+                    endforeach; ?>
+                </ul>
+                <?php
+            endif;
+        endforeach;
+
+        // Display organization and function from custom post type if no organization is found
+        if (empty($displayedOrganizations)) : ?>
+            <div>
+                <strong><?php echo esc_html($organization_name_cpt); ?></strong>
+            </div>
+            <ul>
+                <li itemprop="jobTitle"><?php echo esc_html($function_label_cpt); ?></li>
+            </ul>
+        <?php endif; ?>
+    </td>
+<?php endif; ?>
+
             </tr>
         <?php endforeach; ?>
     </tbody>

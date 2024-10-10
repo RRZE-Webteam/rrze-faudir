@@ -7,7 +7,7 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
         identifier: { type: 'string', default: '' },
         format: { type: 'string', default: 'list' },
         url: { type: 'string', default: '' },
-        show: { type: 'string', default: 'personalTitle, firstName, familyName, name, email, phone, organization, function' },
+        show: { type: 'string', default: '' },
         hide: { type: 'string', default: '' },
         groupid: { type: 'string', default: '' },
         orgnr: { type: 'string', default: '' },
