@@ -88,13 +88,20 @@ function fetch_and_render_fau_data($atts) {
     if (!empty($identifiers)) {
         foreach ($identifiers as $identifier) {
             $identifier = trim($identifier);
+            
+            // Skip if identifier is empty
+            if (empty($identifier)) {
+                continue;
+            }
+    
             $params = ['identifier' => $identifier];
             $data = fetch_fau_persons_atributes(0, 0, $params);
+            
             if (!empty($data['data'])) {
                 $persons[] = $data['data'][0];
             }
         }
-    } elseif (!empty($category)) {
+    }elseif (!empty($category)) {
         $lq = 'contacts.organization.name[eq]=' . urlencode($category);
         $params = ['lq' => $lq];
         $data = fetch_fau_persons_atributes(0, 0, $params);
