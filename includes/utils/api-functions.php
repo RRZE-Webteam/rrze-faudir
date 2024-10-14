@@ -7,25 +7,20 @@ function fetch_fau_persons($limit = 60, $offset = 0) {
     $api_key = FaudirUtils::getKey();
     $url = FaudirUtils::getApiBaseUrl() . 'persons?limit=' . $limit . '&offset=' . $offset;
 
-    $curl = curl_init();
-
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => $url,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HTTPHEADER => array(
-            'accept: application/json',
-            'X-API-KEY: ' . $api_key,
+    $response = wp_remote_get($url, array(
+        'headers' => array(
+            'accept' => 'application/json',
+            'X-API-KEY' => $api_key,
         ),
     ));
 
-    $response = curl_exec($curl);
-    curl_close($curl);
-
-    if ($response === false) {
-        return 'Error retrieving data.';
+    if (is_wp_error($response)) {
+        return 'Error retrieving data: ' . $response->get_error_message();
     }
 
-    $data = json_decode($response, true);
+    $body = wp_remote_retrieve_body($response);
+    $data = json_decode($body, true);
+
     if (json_last_error() !== JSON_ERROR_NONE) {
         return 'Error decoding JSON data.';
     }
@@ -52,25 +47,20 @@ function fetch_fau_organizations($limit = 100, $offset = 1, $params=[]) {
     if (!empty($params['orgnr'])) {
         $url .= '&q=' . urlencode('^' . $params['orgnr']);
     }
-    $curl = curl_init();
-
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => $url,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HTTPHEADER => array(
-            'accept: application/json',
-            'X-API-KEY: ' . $api_key,
+    $response = wp_remote_get($url, array(
+        'headers' => array(
+            'accept' => 'application/json',
+            'X-API-KEY' => $api_key,
         ),
     ));
 
-    $response = curl_exec($curl);
-    curl_close($curl);
-
-    if ($response === false) {
-        return 'Error retrieving data.';
+    if (is_wp_error($response)) {
+        return 'Error retrieving data: ' . $response->get_error_message();
     }
 
-    $data = json_decode($response, true);
+    $body = wp_remote_retrieve_body($response);
+    $data = json_decode($body, true);
+
     if (json_last_error() !== JSON_ERROR_NONE) {
         return 'Error decoding JSON data.';
     }
@@ -87,27 +77,23 @@ function fetch_fau_person_by_id($personId) {
     $api_key = FaudirUtils::getKey();
     $url = FaudirUtils::getApiBaseUrl() . "persons/{$personId}";
 
-    $curl = curl_init();
-
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => $url,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HTTPHEADER => array(
-            'accept: application/json',
-            'X-API-KEY: ' . $api_key,
+    $response = wp_remote_get($url, array(
+        'headers' => array(
+            'accept' => 'application/json',
+            'X-API-KEY' => $api_key,
         ),
     ));
 
-    $response = curl_exec($curl);
-    $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-    curl_close($curl);
-
-    // Check if the response is empty
-    if ($response === false || empty($response)) {
-        return $response;
+    if (is_wp_error($response)) {
+        return array('error' => true, 'message' => 'Error retrieving data: ' . $response->get_error_message());
     }
 
-    $data = json_decode($response, true);
+    $body = wp_remote_retrieve_body($response);
+    if (empty($body)) {
+        return $body;
+    }
+
+    $data = json_decode($body, true);
     if (json_last_error() !== JSON_ERROR_NONE) {
         return array('error' => true, 'message' => 'Error decoding JSON data');
     }
@@ -141,21 +127,17 @@ function fetch_fau_persons_atributes($limit = 60, $offset = 0, $params = []) {
     if (!empty($params['email'])) {
         $url .= '&q=' . urlencode('^' . $params['email']);
     }
-    $curl = curl_init();
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => $url,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HTTPHEADER => array(
-            'accept: application/json',
-            'X-API-KEY: ' . $api_key,
+    $response = wp_remote_get($url, array(
+        'headers' => array(
+            'accept' => 'application/json',
+            'X-API-KEY' => $api_key,
         ),
     ));
-    $response = curl_exec($curl);
-    curl_close($curl);
-    if ($response === false) {
-        return 'Error retrieving data.';
+    if (is_wp_error($response)) {
+        return 'Error retrieving data: ' . $response->get_error_message();
     }
-    $data = json_decode($response, true);
+    $body = wp_remote_retrieve_body($response);
+    $data = json_decode($body, true);
     if (json_last_error() !== JSON_ERROR_NONE) {
         return 'Error decoding JSON data.';
     }
@@ -166,25 +148,28 @@ function fetch_fau_contacts($limit = 20, $offset = 0) {
     $api_key = FaudirUtils::getKey();
     $url = FaudirUtils::getApiBaseUrl() . 'contacts?limit=' . $limit . '&offset=' . $offset;
 
-    $curl = curl_init();
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => $url,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HTTPHEADER => array(
-            'accept: application/json',
-            'X-API-KEY: ' . $api_key,
+    $response = wp_remote_get($url, array(
+        'headers' => array(
+            'accept' => 'application/json',
+            'X-API-KEY' => $api_key,
         ),
     ));
-    $response = curl_exec($curl);
-    $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-    if ($response === false || $http_code !== 200) {
-        curl_close($curl);
+
+    if (is_wp_error($response)) {
+        return 'Error retrieving data: ' . $response->get_error_message();
+    }
+
+    $http_code = wp_remote_retrieve_response_code($response);
+    if ($http_code !== 200) {
         return 'Error retrieving data or contacts not found.';
     }
-    curl_close($curl);
-    $data = json_decode($response, true);
+
+    $body = wp_remote_retrieve_body($response);
+    $data = json_decode($body, true);
+
     if (json_last_error() !== JSON_ERROR_NONE) {
         return 'Error decoding JSON data.';
     }
+
     return $data ?? [];
 }
