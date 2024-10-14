@@ -122,7 +122,7 @@
 
                         // Only display the email if it's not empty
                         if (!empty($email)) {
-                            echo '<p>' . __('Email:', 'rrze-faudir') . ' <span itemprop="email">' . $email . '</span></p>';
+                            echo '<p>' . esc_html__('Email:', 'rrze-faudir') . ' <span itemprop="email">' . esc_html($email) . '</span></p>';
                         }
                     }
                     // Check if phone should be shown and include N/A if not available
@@ -133,7 +133,7 @@
                         : esc_html($phone_output_cpt));
                         // Only display the email if it's not empty
                         if (!empty($phone)) {
-                            echo '<p>' . __('Phone:', 'rrze-faudir') . ' <span itemprop="phone">' . $phone . '</span></p>';
+                            echo '<p>' . esc_html__('Phone:', 'rrze-faudir') . ' <span itemprop="phone">' . esc_html($phone) . '</span></p>';
                         }
                     }
             
@@ -160,7 +160,7 @@
                 $displayedOrganizations[] = $organizationName;
             ?>
                 <li itemprop="affiliation" itemscope itemtype="https://schema.org/Organization">
-                    <strong><?php echo __('Organization:', 'rrze-faudir'); ?></strong> 
+                    <strong><?php echo esc_html__('Organization:', 'rrze-faudir'); ?></strong> 
                     <span itemprop="name"><?php echo esc_html($organizationName); ?></span><br />
                 </li>
             <?php endif; // End organization check ?>
@@ -171,7 +171,7 @@
                 $function = isset($contact['functionLabel']['en']) ? $contact['functionLabel']['en'] : $function_label_cpt;
             ?>
                 <li itemprop="jobTitle">
-                    <strong><?php echo __('Function:', 'rrze-faudir'); ?></strong>
+                    <strong><?php echo esc_html__('Function:', 'rrze-faudir'); ?></strong>
                     <?php echo esc_html($function); ?>
                 </li>
             <?php endif; // End function check ?>
@@ -183,6 +183,6 @@
             </li>
         <?php endforeach; ?>
     <?php else : ?>
-    <div><?php echo __('Es konnte kein Kontakteintrag gefunden werden.', 'rrze-faudir') ?> </div>
+    <div><?php echo esc_html__('Es konnte kein Kontakteintrag gefunden werden.', 'rrze-faudir') ?> </div>
     <?php endif; ?>
 </ul>

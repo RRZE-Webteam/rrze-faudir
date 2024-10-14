@@ -1,5 +1,5 @@
 <?php if (!empty($persons)) : ?>
-    <div class="shortcode-contacts-wrapper"> <!-- Flex container for the cards -->
+    <div class="shortcode-contacts-wrapper" role="list"> <!-- Flex container for the cards -->
         <?php foreach ($persons as $person) : ?>
             <?php
              $personal_title_cpt = '';
@@ -44,12 +44,14 @@
                 }
             endforeach;
         }?>
-            <div class="shortcode-contact-card" itemscope itemtype="https://schema.org/Person">
+            <article class="shortcode-contact-card" itemscope itemtype="https://schema.org/Person" role="listitem">
+                
+                <!-- Image Section -->
                 <?php  if (count($persons) === 1 && !empty($image_url)) : ?>
-                    <img src="<?php echo esc_url($image_url); ?>" alt="Person Image" itemprop="image" />
+                    <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
                 <?php else :
                     if (!empty($featured_image_url)) : ?>
-                        <img src="<?php echo esc_url($featured_image_url); ?>" alt="Person Image" itemprop="image" />
+                        <img src="<?php echo esc_url($featured_image_url); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
                     <?php endif;
                 endif; ?>                     
                 
@@ -61,17 +63,17 @@
                 if($hard_sanitize){
                    $prefix = $person['personalTitle'];
                    $prefixes = array(
-                       '' => __('Keine Angabe', 'fau-person'),
-                       'Dr.' => __('Doktor', 'fau-person'),
-                       'Prof.' => __('Professor', 'fau-person'),
-                       'Prof. Dr.' => __('Professor Doktor', 'fau-person'),
-                       'Prof. em.' => __('Professor (Emeritus)', 'fau-person'),
-                       'Prof. Dr. em.' => __('Professor Doktor (Emeritus)', 'fau-person'),
-                       'PD' => __('Privatdozent', 'fau-person'),
-                       'PD Dr.' => __('Privatdozent Doktor', 'fau-person')
+                       '' => __('Keine Angabe', 'rrze-faudir'),
+                       'Dr.' => __('Doktor', 'rrze-faudir'),
+                       'Prof.' => __('Professor', 'rrze-faudir'),
+                       'Prof. Dr.' => __('Professor Doktor', 'rrze-faudir'),
+                       'Prof. em.' => __('Professor (Emeritus)', 'rrze-faudir'),
+                       'Prof. Dr. em.' => __('Professor Doktor (Emeritus)', 'rrze-faudir'),
+                       'PD' => __('Privatdozent', 'rrze-faudir'),
+                       'PD Dr.' => __('Privatdozent Doktor', 'rrze-faudir')
                    );
                    // Check if the prefix exists in the array and display the long version
-                   $longVersion = isset($prefixes[$prefix]) ? $prefixes[$prefix] : __('Unbekannt', 'fau-person');
+                   $longVersion = isset($prefixes[$prefix]) ? $prefixes[$prefix] : __('Unbekannt', 'rrze-faudir');
         
                 }
                 $personal_title = "";
@@ -101,24 +103,24 @@
                 . ($last_name ? $last_name : $last_name_cpt) . ' ' 
                 . ($title_suffix ? $title_suffix : $title_suffix_cpt));
                 ?>
-                <!-- We need to add condition for url when we add CPT -->
-                <section class="card-section-title" aria-label="<?php echo esc_html($fullName); ?>">
+                <section class="card-section-title" aria-label="<?php echo esc_attr($fullName); ?>">
                     <?php if (!empty($url)) : ?>
-                        <a href="<?php echo esc_url($url); ?>" itemprop="url">
-                            <span itemprop="name"><?php echo esc_html($fullName); ?></span>
+                        <a href="<?php echo esc_url($url); ?>" itemprop="url" aria-labelledby="name-<?php echo esc_attr($person['identifier']); ?>">
+                            <span id="name-<?php echo esc_attr($person['identifier']); ?>" itemprop="name"><?php echo esc_html($fullName); ?></span>
                         </a>
                     <?php else : ?>
-                        <span itemprop="name"><?php echo esc_html($fullName); ?></span>
+                        <span id="name-<?php echo esc_attr($person['identifier']); ?>" itemprop="name"><?php echo esc_html($fullName); ?></span>
                     <?php endif; ?>
                 </section>
 
+                <!-- Contact details (email, phone) -->
                 <?php
                 // Initialize output strings for email and phone
                 $email_output = '';
                 $phone_output = '';
 
-                   // Check if email should be shown and output only if an email is available
-                   if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) {
+                // Check if email should be shown and output only if an email is available
+                if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) {
                     // Get the email from $person array or fallback to custom post type
                     $email = (isset($person['email']) && !empty($person['email'])) 
                         ? esc_html($person['email']) 
@@ -126,18 +128,20 @@
 
                     // Only display the email if it's not empty
                     if (!empty($email)) {
-                        echo '<p>' . __('Email:', 'rrze-faudir') . ' <span itemprop="email">' . $email . '</span></p>';
+                        echo '<p>' . esc_html__('Email:', 'rrze-faudir') . ' <a href="mailto:' . esc_url($email) . '" itemprop="email">' . esc_html($email) . '</a></p>';
                     }
+                    
                 }
+
                 // Check if phone should be shown and include N/A if not available
                 if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)) {
-                    // Get the email from $person array or fallback to custom post type
+                    // Get the phone from $person array or fallback to custom post type
                     $phone = (isset($person['telephone']) && !empty($person['telephone']) 
                     ? esc_html($person['telephone']) 
                     : esc_html($phone_output_cpt));
-                    // Only display the email if it's not empty
+                    // Only display the phone if it's not empty
                     if (!empty($phone)) {
-                        echo '<p>' . __('Phone:', 'rrze-faudir') . ' <span itemprop="phone">' . $phone . '</span></p>';
+                        echo '<p>' . esc_html__('Phone:', 'rrze-faudir') . ' <a href="tel:' . esc_html($phone) . '" itemprop="telephone">' . esc_html($phone) . '</a></p>';
                     }
                 }
                 ?>
@@ -157,14 +161,14 @@
                             // Add the organization to the displayed list to prevent duplicates
                             $displayedOrganizations[] = $organizationName;
                         ?>
-                            <p><strong><?php echo __('Organization:', 'rrze-faudir');?></strong> <?php echo esc_html($organizationName); ?></p>
+                            <p><strong><?php echo esc_html__('Organization:', 'rrze-faudir');?></strong> <?php echo esc_html($organizationName); ?></p>
                         <?php endif; ?>
                     <?php endforeach; ?>
                 <?php endif; ?>
 
-            </div> <!-- End of shortcode-contact-card -->
+            </article> <!-- End of shortcode-contact-card -->
         <?php endforeach; ?>
     </div> <!-- End of shortcode-contacts-wrapper -->
 <?php else : ?>
-    <div><?php echo __('Es konnte kein Kontakteintrag gefunden werden.', 'rrze-faudir') ?> </div>
+    <div><?php echo esc_html__('Es konnte kein Kontakteintrag gefunden werden.', 'rrze-faudir') ?> </div>
 <?php endif; ?>

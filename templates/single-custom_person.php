@@ -49,13 +49,17 @@ get_header();
                             $function_label = get_post_meta(get_the_ID(), 'person_function', true);
                             $organization_name = get_post_meta(get_the_ID(), 'person_telephone', true);
                         
-                            echo $email_output = '<strong><p>' . __('Email:', 'rrze-faudir') .'</strong>'. esc_html($email_output) .'</p>';
-                            echo $phone_output = '<strong><p>' . __('Phone:', 'rrze-faudir') . '</strong>'. esc_html($phone_output) .'</p>';                    
-
+                            if (!empty($email_output)) {
+                                echo '<p><strong>' . esc_html__('Email:', 'rrze-faudir') . '</strong> ' . esc_html($email_output) . '</p>';
+                            }
+                            
+                            if (!empty($phone_output)) {
+                                echo '<p><strong>' . esc_html__('Phone:', 'rrze-faudir') . '</strong> ' . esc_html($phone_output) . '</p>';
+                            }
                             ?>
 
-                            <strong><p><?php echo __('Organization:', 'rrze-faudir');?></strong> <?php echo esc_html($organization_name); ?><p>
-                            <strong><p><?php echo __('Functions:', 'rrze-faudir');?></strong> <?php echo esc_html($function_label); ?><p>
+                            <strong><p><?php echo esc_html__('Organization:', 'rrze-faudir');?></strong> <?php echo esc_html($organization_name); ?><p>
+                            <strong><p><?php echo esc_html__('Functions:', 'rrze-faudir');?></strong> <?php echo esc_html($function_label); ?><p>
 
                             <?php
                             $locale = get_locale();
@@ -85,12 +89,12 @@ get_header();
                     </div>
                     <?php
                      if ($locale === 'de_DE' || $locale === 'de_SIE' && !empty($content_de)): ?>
-                        <section class="card-section-title"><?php _e('Content', 'rrze-faudir'); ?></section>
+                        <section class="card-section-title"><?php esc_html__('Content', 'rrze-faudir'); ?></section>
                         <div class="content-second-language">
                             <?php echo wp_kses_post($content_de); ?>
                         </div>
                     <?php elseif ($locale === 'de_DE' || $locale === 'de_SIE' && !empty($content_en)): ?>
-                        <section class="card-section-title"><?php _e('Content', 'rrze-faudir'); ?></section>
+                        <section class="card-section-title"><?php esc_html__('Content', 'rrze-faudir'); ?></section>
                         <div class="content-second-language">
                             <?php echo wp_kses_post($content_en); ?>
                         </div>

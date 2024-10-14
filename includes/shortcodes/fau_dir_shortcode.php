@@ -127,8 +127,6 @@ function fetch_and_render_fau_data($atts) {
             if (!empty($data['data'])) {
                 $persons = $data['data'];
             } // Assuming 'name' is within the first element of 'data'
-        } else {
-            error_log('No data found for orgnr: ' . $orgnr); // Debugging statement
         }
     } else {
         $data = fetch_fau_persons_atributes(0, 0);

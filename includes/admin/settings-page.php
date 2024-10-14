@@ -167,41 +167,41 @@ add_action('admin_init', 'rrze_faudir_settings_init');
 
 
 // Callback functions
-function rrze_faudir_api_section_callback()
-{
-    echo '<p>' . __('Configure the API settings for accessing the FAU person and institution directory.', 'rrze-faudir') . '</p>';
+function rrze_faudir_api_section_callback() {
+    echo '<p>' . esc_html__('Configure the API settings for accessing the FAU person and institution directory.', 'rrze-faudir') . '</p>';
 }
+
 
 function rrze_faudir_cache_section_callback()
 {
-    echo '<p>' . __('Configure caching settings for the plugin.', 'rrze-faudir') . '</p>';
+    echo '<p>' . esc_html__('Configure caching settings for the plugin.', 'rrze-faudir') . '</p>';
 }
 
 function rrze_faudir_error_section_callback()
 {
-    echo '<p>' . __('Handle error messages for invalid contact entries.', 'rrze-faudir') . '</p>';
+    echo '<p>' . esc_html__('Handle error messages for invalid contact entries.', 'rrze-faudir') . '</p>';
 }
 
 function rrze_faudir_business_card_section_callback()
 {
-    echo '<p>' . __('Configure the business card link settings.', 'rrze-faudir') . '</p>';
+    echo '<p>' . esc_html__('Configure the business card link settings.', 'rrze-faudir') . '</p>';
 }
 
 function rrze_faudir_shortcode_section_callback()
 {
-    echo '<p>' . __('Configure the shortcode settings.', 'rrze-faudir') . '</p>';
+    echo '<p>' . esc_html__('Configure the shortcode settings.', 'rrze-faudir') . '</p>';
 }
 
 // Render functions
 function rrze_faudir_api_key_render()
 {
     if (FaudirUtils::isUsingNetworkKey()) {
-        echo '<p>' . __('The API key is being used from the network installation.', 'rrze-faudir') . '</p>';
+        echo '<p>' . esc_html__('The API key is being used from the network installation.', 'rrze-faudir') . '</p>';
     } else {
         $options = get_option('rrze_faudir_options');
         $apiKey = isset($options['api_key']) ? esc_attr($options['api_key']) : '';
-        echo '<input type="text" name="rrze_faudir_options[api_key]" value="' . $apiKey . '" size="50">';
-        echo '<p class="description">' . __('Enter your API key here.', 'rrze-faudir') . '</p>';
+        echo '<input type="text" name="rrze_faudir_options[api_key]" value="' .  esc_attr($apiKey) . '" size="50">';
+        echo '<p class="description">' . esc_html__('Enter your API key here.', 'rrze-faudir') . '</p>';
     }
 }
 
@@ -209,35 +209,35 @@ function rrze_faudir_no_cache_logged_in_render()
 {
     $options = get_option('rrze_faudir_options');
     $checked = isset($options['no_cache_logged_in']) ? 'checked' : '';
-    echo '<input type="checkbox" name="rrze_faudir_options[no_cache_logged_in]" value="1" ' . $checked . '>';
-    echo '<p class="description">' . __('Disable caching for logged-in editors.', 'rrze-faudir') . '</p>';
+    echo '<input type="checkbox" name="rrze_faudir_options[no_cache_logged_in]" value="1" ' .  esc_attr($checked) . '>';
+    echo '<p class="description">' . esc_html__('Disable caching for logged-in editors.', 'rrze-faudir') . '</p>';
 }
 
 function rrze_faudir_cache_timeout_render() {
     $options = get_option('rrze_faudir_options');
     $value = isset($options['cache_timeout']) ? max(intval($options['cache_timeout']), 15) : 15; // Ensure minimum value is 15
-    echo '<input type="number" name="rrze_faudir_options[cache_timeout]" value="' . $value . '" min="15">';
-    echo '<p class="description">' . __('Set the cache timeout in minutes (minimum 15 minutes).', 'rrze-faudir') . '</p>';
+    echo '<input type="number" name="rrze_faudir_options[cache_timeout]" value="' . esc_attr($value) . '" min="15">';
+    echo '<p class="description">' . esc_html__('Set the cache timeout in minutes (minimum 15 minutes).', 'rrze-faudir') . '</p>';
 }
 
 function rrze_faudir_transient_time_for_org_id_render() {
     $options = get_option('rrze_faudir_options');
     $value = isset($options['transient_time_for_org_id']) ? max(intval($options['transient_time_for_org_id']), 1) : 1; // Ensure minimum value is 1
-    echo '<input type="number" name="rrze_faudir_options[transient_time_for_org_id]" value="' . $value . '" min="1">';
-    echo '<p class="description">' . __('Set the transient time in days for intermediate stored organization identifiers (minimum 1 day).', 'rrze-faudir') . '</p>';
+    echo '<input type="number" name="rrze_faudir_options[transient_time_for_org_id]" value="' . esc_attr($value) . '" min="1">';
+    echo '<p class="description">' . esc_html__('Set the transient time in days for intermediate stored organization identifiers (minimum 1 day).', 'rrze-faudir') . '</p>';
 }
 
 function rrze_faudir_cache_org_timeout_render()
 {
     $options = get_option('rrze_faudir_options');
     $value = isset($options['cache_org_timeout']) ? intval($options['cache_org_timeout']) : 1;
-    echo '<input type="number" name="rrze_faudir_options[cache_org_timeout]" value="' . $value . '" min="1">';
-    echo '<p class="description">' . __('Set the cache timeout in days for organization identifiers.', 'rrze-faudir') . '</p>';
+    echo '<input type="number" name="rrze_faudir_options[cache_org_timeout]" value="' . esc_attr($value) . '" min="1">';
+    echo '<p class="description">' . esc_html__('Set the cache timeout in days for organization identifiers.', 'rrze-faudir') . '</p>';
 }
 
 function rrze_faudir_clear_cache_render() {
-    echo '<button type="button" class="button button-secondary" id="clear-cache-button">' . __('Clear Cache Now', 'rrze-faudir') . '</button>';
-    echo '<p class="description">' . __('Click the button to clear all cached data.', 'rrze-faudir') . '</p>';
+    echo '<button type="button" class="button button-secondary" id="clear-cache-button">' . esc_html__('Clear Cache Now', 'rrze-faudir') . '</button>';
+    echo '<p class="description">' . esc_html__('Click the button to clear all cached data.', 'rrze-faudir') . '</p>';
 }
 
 
@@ -245,14 +245,14 @@ function rrze_faudir_error_message_render()
 {
     $options = get_option('rrze_faudir_options');
     $checked = isset($options['show_error_message']) ? 'checked' : '';
-    echo '<input type="checkbox" name="rrze_faudir_options[show_error_message]" value="1" ' . $checked . '>';
-    echo '<p class="description">' . __('Show error messages for incorrect contact entries.', 'rrze-faudir') . '</p>';
+    echo '<input type="checkbox" name="rrze_faudir_options[show_error_message]" value="1" ' . esc_attr($checked) . '>';
+    echo '<p class="description">' . esc_html__('Show error messages for incorrect contact entries.', 'rrze-faudir') . '</p>';
 }
 
 function rrze_faudir_business_card_title_render()
 {
     $options = get_option('rrze_faudir_options');
-    $default_title = __('Call up business card', 'rrze-faudir');
+    $default_title = esc_html__('Call up business card', 'rrze-faudir');
     $value = isset($options['business_card_title']) && !empty($options['business_card_title']) 
         ? sanitize_text_field($options['business_card_title']) 
         : $default_title;
@@ -264,15 +264,15 @@ function rrze_faudir_business_card_title_render()
     }
 
     echo '<input type="text" name="rrze_faudir_options[business_card_title]" value="' . esc_attr($value) . '" size="50">';
-    echo '<p class="description">' . __('Enter the title for the kompakt card read more button.', 'rrze-faudir') . '</p>';
+    echo '<p class="description">' . esc_html__('Enter the title for the kompakt card read more button.', 'rrze-faudir') . '</p>';
 }
 
 function rrze_faudir_hard_sanitize_render()
 {
     $options = get_option('rrze_faudir_options');
     $checked = isset($options['hard_sanitize']) ? 'checked' : '';
-    echo '<input type="checkbox" name="rrze_faudir_options[hard_sanitize]" value="1" ' . $checked . '>';
-    echo '<p class="description">' . __('Hard Sanitize abbreviations.', 'rrze-faudir') . '</p>';
+    echo '<input type="checkbox" name="rrze_faudir_options[hard_sanitize]" value="1" ' . esc_attr($checked) . '>';
+    echo '<p class="description">' . esc_html__('Hard Sanitize abbreviations.', 'rrze-faudir') . '</p>';
 }
 
 
@@ -281,7 +281,7 @@ function rrze_faudir_get_business_card_title() {
     $options = get_option('rrze_faudir_options');
     return isset($options['business_card_title']) && !empty($options['business_card_title'])
         ? sanitize_text_field($options['business_card_title'])
-        : __('Call up business card', 'rrze-faudir');
+        : esc_html__('Call up business card', 'rrze-faudir');
 }
 
 function rrze_faudir_default_output_fields_render() {
@@ -302,12 +302,13 @@ function rrze_faudir_default_output_fields_render() {
     echo '<fieldset>';
     foreach ($available_fields as $field => $label) {
         $checked = in_array($field, $default_fields); // Check if the field is in the default fields array
-        echo "<label for='rrze_faudir_default_output_fields_$field'>";
-        echo "<input type='checkbox' id='rrze_faudir_default_output_fields_$field' name='rrze_faudir_options[default_output_fields][]' value='$field' " . checked($checked, true, false) . ">";
-        echo "$label</label><br>";
+        echo "<label for='" . esc_attr('rrze_faudir_default_output_fields_' . $field) . "'>";
+        echo "<input type='checkbox' id='" . esc_attr('rrze_faudir_default_output_fields_' . $field) . "' name='rrze_faudir_options[default_output_fields][]' value='" . esc_attr($field) . "' " . checked($checked, true, false) . ">";
+        echo esc_html($label) . "</label><br>";
     }
     echo '</fieldset>';
-    echo '<p class="description">' . __('Select the fields to display by default in shortcodes and blocks.', 'rrze-faudir') . '</p>';
+    echo '<p class="description">' . esc_html__('Select the fields to display by default in shortcodes and blocks.', 'rrze-faudir') . '</p>';
+    
 }
 
 // Settings page display
@@ -322,25 +323,25 @@ function rrze_faudir_settings_page()
         <!-- Tabs Navigation -->
         <h2 class="nav-tab-wrapper">
             <a href="#tab-1" class="nav-tab nav-tab-active">
-                <?php echo __('API Settings', 'rrze-faudir'); ?>
+                <?php echo esc_html__('API Settings', 'rrze-faudir'); ?>
             </a>
             <a href="#tab-2" class="nav-tab">
-                <?php echo __('Cache Settings', 'rrze-faudir'); ?>
+                <?php echo esc_html__('Cache Settings', 'rrze-faudir'); ?>
             </a>
             <a href="#tab-3" class="nav-tab">
-                <?php echo __('Error Handling', 'rrze-faudir'); ?>
+                <?php echo esc_html__('Error Handling', 'rrze-faudir'); ?>
             </a>
             <a href="#tab-4" class="nav-tab">
-                <?php echo __('Kompakt Card Button', 'rrze-faudir'); ?>
+                <?php echo esc_html__('Kompakt Card Button', 'rrze-faudir'); ?>
             </a>
             <a href="#tab-5" class="nav-tab">
-                <?php echo __('Search Contacts', 'rrze-faudir'); ?>
+                <?php echo esc_html__('Search Contacts', 'rrze-faudir'); ?>
             </a>
             <a href="#tab-6" class="nav-tab">
-                <?php echo __('Shortcode Settings', 'rrze-faudir'); ?>
+                <?php echo esc_html__('Shortcode Settings', 'rrze-faudir'); ?>
             </a>
             <a href="#tab-7" class="nav-tab">
-                <?php echo __('Reset Settings', 'rrze-faudir'); ?>
+                <?php echo esc_html__('Reset Settings', 'rrze-faudir'); ?>
             </a>
         </h2>
 
@@ -381,22 +382,22 @@ function rrze_faudir_settings_page()
             <!-- Contacts Search Tab -->
             <div id="tab-5" class="tab-content" style="display:none;">
                 <h2>
-                    <?php echo __('Search Contacts by Identifier', 'rrze-faudir'); ?>
+                    <?php echo esc_html__('Search Contacts by Identifier', 'rrze-faudir'); ?>
                 </h2>
 
                 <form id="search-person-form">
-                    <label for="person-id">Search by Name, Surbame, Email or ID</label>
+                    <label for="person-id"><?php echo esc_html__('Search by Name, Surbame, Email or ID', 'rrze-faudir'); ?></label>
                     <input type="text" id="person-id" name="person-id" />
 
-                    <label for="given-name">Given Name:</label>
+                    <label for="given-name"><?php echo esc_html__('Given Name:', 'rrze-faudir'); ?></label>
                     <input type="text" id="given-name" name="given-name" />
 
-                    <label for="family-name">Family Name:</label>
+                    <label for="family-name"><?php echo esc_html__('Family Name:', 'rrze-faudir'); ?></label>
                     <input type="text" id="family-name" name="family-name" />
-                    <label for="email">Email:</label>
+                    <label for="email"><?php echo esc_html__('Email:', 'rrze-faudir'); ?></label>
                     <input type="text" id="email" name="email" />
 
-                    <button type="button" id="search-person-by-id" class="button button-primary">Search</button>
+                    <button type="button" id="search-person-by-id" class="button button-primary"><?php echo esc_html__('Search','rrze-faudir')?></button>
                 </form>
 
                 <div id="contacts-list">
@@ -406,10 +407,10 @@ function rrze_faudir_settings_page()
             
             <!-- Reset Settings Tab -->
             <div id="tab-7" class="tab-content" style="display:none;">
-                <h3><?php echo __('Reset to Default Settings', 'rrze-faudir'); ?></h3>
-                <p><?php echo __('Click the button below to reset all settings to their default values.', 'rrze-faudir'); ?></p>
+                <h3><?php echo esc_html__('Reset to Default Settings', 'rrze-faudir'); ?></h3>
+                <p><?php echo esc_html__('Click the button below to reset all settings to their default values.', 'rrze-faudir'); ?></p>
                 <button type="button" class="button button-secondary" id="reset-to-defaults-button">
-                    <?php echo __('Reset to Default Values', 'rrze-faudir'); ?>
+                    <?php echo esc_html__('Reset to Default Values', 'rrze-faudir'); ?>
                 </button>
         </form>
     </div>
@@ -428,21 +429,22 @@ function rrze_faudir_settings_page()
 
             // Handle reset button click
             document.getElementById('reset-to-defaults-button').addEventListener('click', function () {
-                if (confirm('<?php echo __('Are you sure you want to reset all settings to their default values?', 'rrze-faudir'); ?>')) {
-                    // Trigger AJAX call to reset settings
-                    jQuery.post(ajaxurl, {
-                        action: 'rrze_faudir_reset_defaults',
-                        security: '<?php echo wp_create_nonce('rrze_faudir_reset_defaults_nonce'); ?>'
-                    }, function (response) {
-                        if (response.success) {
-                            alert('<?php echo __('Settings have been reset to default values.', 'rrze-faudir'); ?>');
-                            location.reload();
-                        } else {
-                            alert('<?php echo __('Failed to reset settings. Please try again.', 'rrze-faudir'); ?>');
-                        }
-                    });
-                }
-            });
+            if (confirm('<?php echo esc_js(esc_html__('Are you sure you want to reset all settings to their default values?', 'rrze-faudir')); ?>')) {
+                // Trigger AJAX call to reset settings
+                jQuery.post(ajaxurl, {
+                    action: 'rrze_faudir_reset_defaults',
+                    security: '<?php echo esc_js(wp_create_nonce('rrze_faudir_reset_defaults_nonce')); ?>'
+                }, function (response) {
+                    if (response.success) {
+                        alert('<?php echo esc_js(esc_html__('Settings have been reset to default values.', 'rrze-faudir')); ?>');
+                        location.reload();
+                    } else {
+                        alert('<?php echo esc_js(esc_html__('Failed to reset settings. Please try again.', 'rrze-faudir')); ?>');
+                    }
+                });
+            }
+        });
+
     </script>
     </div>
     <?php
@@ -518,7 +520,8 @@ function rrze_faudir_search_person_by_id_handler()
 
     // Check if the response is a valid array (success), otherwise return an error
     if (is_string($response)) {
-        wp_send_json_error(__('Error: ' . $response, 'rrze-faudir'));
+         /* translators: %s: Error message from response */
+        wp_send_json_error(sprintf(__('Error: %s', 'rrze-faudir'), $response));
     }
 
     $contacts = $response['data'] ?? [];

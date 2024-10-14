@@ -63,21 +63,22 @@ function render_person_additional_fields($post) {
         $value = get_post_meta($post->ID, $meta_key, true);
         // Check if the field should be rendered as a textarea
         if ($meta_key === '_content_en' || $meta_key === '_teasertext_en' || $meta_key === '_teasertext_de') {
-            echo "<label for='{$meta_key}'>{$label}</label>";
-            echo "<textarea name='{$meta_key}' id='{$meta_key}' style='width: 100%; height: 100px;'>" . esc_textarea($value) . "</textarea><br><br>";
-        } else {
+            echo "<label for='" . esc_attr($meta_key) . "'>" . esc_html($label) . "</label>";
+            echo "<textarea name='" . esc_attr($meta_key) . "' id='" . esc_attr($meta_key) . "' style='width: 100%; height: 100px;'>" . esc_textarea($value) . "</textarea><br><br>";
+        }        
+         else {
             // Render as a regular text input field
-            echo "<label for='{$meta_key}'>{$label}</label>";
-            echo "<input type='text' name='{$meta_key}' id='{$meta_key}' value='" . esc_attr($value) . "' style='width: 100%;' /><br><br>";
-        }
+            echo "<label for='" . esc_attr($meta_key) . "'>" . esc_html($label) . "</label>";
+            echo "<input type='text' name='" . esc_attr($meta_key) . "' id='" . esc_attr($meta_key) . "' value='" . esc_attr($value) . "' style='width: 100%;' /><br><br>";           
+        }  
     }    
 }
 
 function save_person_additional_fields($post_id) {
     // Verify nonce
-    if (!isset($_POST['person_additional_fields_nonce']) || !wp_verify_nonce($_POST['person_additional_fields_nonce'], 'save_person_additional_fields')) {
+    if (!isset($_POST['person_additional_fields_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['person_additional_fields_nonce'])), 'save_person_additional_fields')) {
         return;
-    }
+    }    
 
     // Check if we are performing an autosave
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
@@ -90,7 +91,7 @@ function save_person_additional_fields($post_id) {
     }
 
     // Get the person ID
-    $person_id = sanitize_text_field($_POST['person_id'] ?? '');
+    $person_id = sanitize_text_field(wp_unslash($_POST['person_id'] ?? ''));
     
     // If person_id is not empty, make an API call to fetch attributes
     if (!empty($person_id)) {
@@ -115,8 +116,10 @@ function save_person_additional_fields($post_id) {
             }
         } else {
             // If API response is not successful, log error or notify the user as needed
-            error_log(__('Error fetching person attributes: ' . json_encode($response), 'rrze-faudir'));
-        }
+            /* translators: %s: JSON-encoded response */
+            /* error_log(sprintf(__('Error fetching person attributes: %s', 'rrze-faudir'), wp_json_encode($response)));*/
+
+        }        
     }
 
     // List of fields to save from the form
@@ -140,7 +143,7 @@ function save_person_additional_fields($post_id) {
     // Save each field
     foreach ($fields as $field) {
         if (isset($_POST[$field])) {
-            update_post_meta($post_id, $field, sanitize_text_field($_POST[$field]));
+            update_post_meta($post_id, $field, sanitize_text_field(wp_unslash($_POST[$field])));
         }
     }
 }
@@ -159,7 +162,9 @@ add_action('admin_enqueue_scripts', 'enqueue_custom_person_scripts');
 function fetch_person_attributes() {
     check_ajax_referer('custom_person_nonce', 'nonce');
 
-    $person_id = sanitize_text_field($_POST['person_id']);
+    if (isset($_POST['person_id'])) {
+        $person_id = sanitize_text_field(wp_unslash($_POST['person_id']));
+    }    
 
     if (!empty($person_id)) {
         $params = ['identifier' => $person_id];

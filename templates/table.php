@@ -2,17 +2,17 @@
     <thead>
         <tr>
             <?php if (in_array('name', $show_fields) && !in_array('name', $hide_fields)) : ?>
-                <th><?php  echo __('Name', 'rrze-faudir') ?></th>
+                <th><?php  echo esc_html__('Name', 'rrze-faudir') ?></th>
             <?php endif; ?>
             <?php if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) : ?>
-                <th><?php  echo __('Email', 'rrze-faudir') ?></th>
+                <th><?php  echo esc_html__('Email', 'rrze-faudir') ?></th>
             <?php endif; ?>
             <?php if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)) : ?>
-                <th><?php  echo __('Phone', 'rrze-faudir') ?></th>
+                <th><?php  echo esc_html__('Phone', 'rrze-faudir') ?></th>
             <?php endif; ?>
             <?php if ((in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) || 
                           (in_array('function', $show_fields) && !in_array('function', $hide_fields))) : ?>
-                    <th><?php  echo __('Organization / Function', 'rrze-faudir') ?></th>
+                    <th><?php  echo esc_html__('Organization / Function', 'rrze-faudir') ?></th>
             <?php endif; ?>
         </tr>
     </thead>
@@ -135,7 +135,7 @@
 
                             // Only display the email if it's not empty
                             if (!empty($email)) {
-                                echo '<td> <span itemprop="email">' . $email . '</span></td>';
+                                echo '<td> <span itemprop="email">' . esc_html($email) . '</span></td>';
                             }
                             else{
                                 echo '<td> N/A </td>';
@@ -150,7 +150,7 @@
                             : esc_html($phone_output_cpt));
                             // Only display the email if it's not empty
                             if (!empty($phone)) {
-                                echo '<td><span itemprop="phone">' . $phone . '</span></td>';
+                                echo '<td><span itemprop="phone">' . esc_html($phone) . '</span></td>';
                             }
                             else{
                                 echo '<td> N/A </td>';

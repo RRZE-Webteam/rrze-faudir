@@ -46,12 +46,6 @@
                         $content_en = get_post_meta($post->ID, '_content_en', true);
                         $content = apply_filters('the_content', $post->post_content);
                         $featured_image_url = get_the_post_thumbnail_url($post->ID, 'full');
-        
-                        // Log the relevant information for debugging
-                        error_log($content_en);
-                        error_log('Nob' . $nobility_title_cpt);
-                        error_log('Suffix: ' . $title_suffix_cpt);
-                        error_log('Post content: ' . $content);
                         
                         // New Code to Add: Handling multiple languages (de_DE and en)
                         $locale = get_locale(); // Get the current locale
@@ -78,17 +72,17 @@
                         if ($hard_sanitize) {
                             $prefix = $person['personalTitle'];
                             $prefixes = array(
-                                '' => __('Keine Angabe', 'fau-person'),
-                                'Dr.' => __('Doktor', 'fau-person'),
-                                'Prof.' => __('Professor', 'fau-person'),
-                                'Prof. Dr.' => __('Professor Doktor', 'fau-person'),
-                                'Prof. em.' => __('Professor (Emeritus)', 'fau-person'),
-                                'Prof. Dr. em.' => __('Professor Doktor (Emeritus)', 'fau-person'),
-                                'PD' => __('Privatdozent', 'fau-person'),
-                                'PD Dr.' => __('Privatdozent Doktor', 'fau-person')
+                                '' => __('Keine Angabe', 'rrze-faudir'),
+                                'Dr.' => __('Doktor', 'rrze-faudir'),
+                                'Prof.' => __('Professor', 'rrze-faudir'),
+                                'Prof. Dr.' => __('Professor Doktor', 'rrze-faudir'),
+                                'Prof. em.' => __('Professor (Emeritus)', 'rrze-faudir'),
+                                'Prof. Dr. em.' => __('Professor Doktor (Emeritus)', 'rrze-faudir'),
+                                'PD' => __('Privatdozent', 'rrze-faudir'),
+                                'PD Dr.' => __('Privatdozent Doktor', 'rrze-faudir')
                             );
                             // Check if the prefix exists in the array and display the long version
-                            $longVersion = isset($prefixes[$prefix]) ? $prefixes[$prefix] : __('Unbekannt', 'fau-person');
+                            $longVersion = isset($prefixes[$prefix]) ? $prefixes[$prefix] : __('Unbekannt', 'rrze-faudir');
                         }
 
                         // Define fields for structured data
@@ -144,7 +138,7 @@
 
                             // Only display the email if it's not empty
                             if (!empty($email)) {
-                                echo '<p>' . __('Email:', 'rrze-faudir') . ' <span itemprop="email">' . $email . '</span></p>';
+                                echo '<p>' . esc_html__('Email:', 'rrze-faudir') . ' <span itemprop="email">' . esc_html($email) . '</span></p>';
                             }
                         }
                         // Check if phone should be shown and include N/A if not available
@@ -155,7 +149,7 @@
                             : esc_html($phone_output_cpt));
                             // Only display the email if it's not empty
                             if (!empty($phone)) {
-                                echo '<p>' . __('Phone:', 'rrze-faudir') . ' <span itemprop="phone">' . $phone . '</span></p>';
+                                echo '<p>' . esc_html__('Phone:', 'rrze-faudir') . ' <span itemprop="phone">' . esc_html($phone) . '</span></p>';
                             }
                         }
                         ?>
@@ -176,7 +170,7 @@
                                     // Add the organization to the displayed list
                                     $displayedOrganizations[] = $organizationName;
                                 ?>
-                                <strong><p><?php echo __('Organization:', 'rrze-faudir');?></strong> 
+                                <strong><p><?php echo esc_html__('Organization:', 'rrze-faudir');?></strong> 
                                     <span itemprop="affiliation" itemscope itemtype="https://schema.org/Organization">
                                         <span itemprop="name"><?php echo esc_html($organizationName); ?></span>
                                     </span>
@@ -186,7 +180,7 @@
                                 if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) {
                                     $function = isset($contact['functionLabel']['en']) ? $contact['functionLabel']['en'] : $function_label_cpt; ?>
                                     <!-- Show functions associated with this organization -->
-                                    <strong><?php echo __('Functions:', 'rrze-faudir');?></strong>
+                                    <strong><?php echo esc_html__('Functions:', 'rrze-faudir');?></strong>
                                     <ul>
                                         <?php foreach ($person['contacts'] as $sameOrgContact) : ?>
                                             <?php if (isset($sameOrgContact['organization']['name']) && $sameOrgContact['organization']['name'] === $organizationName) : ?>
@@ -219,12 +213,12 @@
                 </div>
                         
                 <?php if ($locale === 'de_DE' || $locale === 'de_SIE' && !empty($content_de)): ?>
-                    <section class="card-section-title"><?php _e('Content', 'rrze-faudir'); ?></section>
+                    <section class="card-section-title"><?php esc_html__('Content', 'rrze-faudir'); ?></section>
                     <div class="content-second-language">
                         <?php echo wp_kses_post($content_de); ?>
                     </div>
                 <?php elseif ($locale === 'de_DE' || $locale === 'de_SIE' && !empty($content_en)): ?>
-                    <section class="card-section-title"><?php _e('Content', 'rrze-faudir'); ?></section>
+                    <section class="card-section-title"><?php esc_html__('Content', 'rrze-faudir'); ?></section>
                     <div class="content-second-language">
                         <?php echo wp_kses_post($content_en); ?>
                     </div>
@@ -234,5 +228,5 @@
         <?php endforeach; ?>
     </div> <!-- End of shortcode-contacts-wrapper -->
 <?php else : ?>
-    <div><?php echo __('Es konnte kein Kontakteintrag gefunden werden.', 'rrze-faudir'); ?> </div>
+    <div><?php echo esc_html__('Es konnte kein Kontakteintrag gefunden werden.', 'rrze-faudir'); ?> </div>
 <?php endif; ?>

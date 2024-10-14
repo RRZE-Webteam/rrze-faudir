@@ -46,8 +46,8 @@ function rrze_faudir_system_requirements() {
     
     if (!empty($error)) {
         add_action('admin_notices', function() use ($error) {
-            printf('<div class="notice notice-error"><p>%s</p></div>', $error);
-        });
+            printf('<div class="notice notice-error"><p>%s</p></div>', esc_html($error));
+        });        
         return false;
     }
     return true;
