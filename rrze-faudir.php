@@ -133,8 +133,10 @@ if (rrze_faudir_system_requirements()) {
     add_action('wp_ajax_nopriv_rrze_faudir_search_contacts', 'rrze_faudir_search_contacts');
     function rrze_faudir_search_contacts() {
         check_ajax_referer('rrze_faudir_api_nonce', 'security');
-
-        $identifier = sanitize_text_field($_POST['identifier']);
+        
+        if (isset($_POST['identifier'])) {
+            $identifier = sanitize_text_field(wp_unslash($_POST['identifier']));
+        }
 
         global $wpdb;
         $contacts = $wpdb->get_results($wpdb->prepare("
@@ -190,10 +192,10 @@ function load_custom_person_template($template) {
     if (get_query_var('custom_person') || is_singular('custom_person')) {
         $plugin_template = plugin_dir_path(__FILE__) . 'templates/single-custom_person.php';
         if (file_exists($plugin_template)) {
-            error_log('Loading custom person template: ' . $plugin_template);
+            //error_log('Loading custom person template: ' . $plugin_template);
             return $plugin_template;
         } else {
-            error_log('Custom person template not found at: ' . $plugin_template);
+            //error_log('Custom person template not found at: ' . $plugin_template);
         }
     }
     return $template;
@@ -263,27 +265,27 @@ function migrate_person_data_on_activation() {
                           
 
                             // Optional: log success for debugging
-                            error_log("Successfully migrated person with UnivIS ID: $univisid to custom_person.");
+                           // error_log("Successfully migrated person with UnivIS ID: $univisid to custom_person.");
                         } else {
                             // Optional: log failure for debugging
-                            error_log("Failed to create custom_person for UnivIS ID: $univisid.");
+                            //error_log("Failed to create custom_person for UnivIS ID: $univisid.");
                         }
                     } else {
                         // Log API error if response isn't successful
-                        error_log("Error fetching person attributes for UnivIS ID: $univisid. Response: " . json_encode($response));
+                       // error_log("Error fetching person attributes for UnivIS ID: $univisid. Response: " . json_encode($response));
                     }
                 } else {
                     // Optional: log that the person already exists
-                    error_log("Person with UnivIS ID: $univisid already exists in custom_person.");
+                   // error_log("Person with UnivIS ID: $univisid already exists in custom_person.");
                 }
             } else {
                 // Optional: log if UnivIS ID is missing
-                error_log("No UnivIS ID found for post ID: {$post->ID}");
+                //error_log("No UnivIS ID found for post ID: {$post->ID}");
             }
         }
     } else {
         // Optional: log if no contact posts were found
-        error_log('No posts found for post type "person".');
+        //error_log('No posts found for post type "person".');
     }
 }
 

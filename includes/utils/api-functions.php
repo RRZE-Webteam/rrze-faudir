@@ -72,7 +72,7 @@ function fetch_fau_organizations($limit = 100, $offset = 1, $params=[]) {
 //search person by id
 function fetch_fau_person_by_id($personId) {
     // Log the function call
-    error_log("fetch_fau_person_by_id called with personId: {$personId}");
+    //error_log("fetch_fau_person_by_id called with personId: {$personId}");
 
     $api_key = FaudirUtils::getKey();
     $url = FaudirUtils::getApiBaseUrl() . "persons/{$personId}";

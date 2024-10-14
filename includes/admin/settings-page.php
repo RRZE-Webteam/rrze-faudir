@@ -469,8 +469,8 @@ add_action('wp_ajax_rrze_faudir_reset_defaults', 'rrze_faudir_reset_defaults');
 function rrze_faudir_fetch_contacts_handler()
 {
     check_ajax_referer('rrze_faudir_api_nonce', 'security');
-
-    $page = intval($_POST['page']);
+    
+    $page = isset($_POST['page']) ? intval(wp_unslash($_POST['page'])) : 0;
     $output = rrze_faudir_display_all_contacts($page);
 
     wp_send_json_success($output);
@@ -497,11 +497,10 @@ function rrze_faudir_search_person_by_id_handler()
 {
     check_ajax_referer('rrze_faudir_api_nonce', 'security');
 
-    $personId = sanitize_text_field($_POST['personId']);
-    $givenName = sanitize_text_field($_POST['givenName']);
-    $familyName = sanitize_text_field($_POST['familyName']);
-    $email = sanitize_text_field($_POST['email']);
-
+    $personId = isset($_POST['personId']) ? sanitize_text_field(wp_unslash($_POST['personId'])) : '';
+    $givenName = isset($_POST['givenName']) ? sanitize_text_field(wp_unslash($_POST['givenName'])) : '';
+    $familyName = isset($_POST['familyName']) ? sanitize_text_field(wp_unslash($_POST['familyName'])) : '';
+    $email = isset($_POST['email']) ? sanitize_text_field(wp_unslash($_POST['email'])) : '';
     // Initialize the response
     $response = '';
 
