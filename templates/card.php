@@ -45,18 +45,8 @@
             endforeach;
         }?>
             <article class="shortcode-contact-card" itemscope itemtype="https://schema.org/Person" role="listitem">
-                
-                <!-- Image Section -->
-                <?php  if (count($persons) === 1 && !empty($image_url)) : ?>
-                    <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
-                <?php else :
-                    if (!empty($featured_image_url)) : ?>
-                        <img src="<?php echo esc_url($featured_image_url); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
-                    <?php endif;
-                endif; ?>                     
-                
-                <!-- Full name with title -->
-                <?php
+           <!-- Get Full name with title -->
+           <?php
                 $options = get_option('rrze_faudir_options');
                 $longVersion = "";
                 $hard_sanitize = isset($options['hard_sanitize']) && $options['hard_sanitize'];
@@ -103,6 +93,17 @@
                 . ($last_name ? $last_name : $last_name_cpt) . ' ' 
                 . ($title_suffix ? $title_suffix : $title_suffix_cpt));
                 ?>
+                <!-- Image Section -->
+                <?php  if (count($persons) === 1 && !empty($image_url)) : ?>
+                    <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
+                <?php else :
+                    if (!empty($featured_image_url)) : ?>
+                        <img src="<?php echo esc_url($featured_image_url); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
+                    <?php endif;
+                endif; ?>                     
+                
+                
+                
                 <section class="card-section-title" aria-label="<?php echo esc_attr($fullName); ?>">
                     <?php if (!empty($url)) : ?>
                         <a href="<?php echo esc_url($url); ?>" itemprop="url" aria-labelledby="name-<?php echo esc_attr($person['identifier']); ?>">
@@ -149,7 +150,8 @@
                 <!-- Organizations and functions -->
                 <?php if (!empty($person['contacts'])) : ?>
                     <?php
-                    $displayedOrganizations = []; // To track displayed organizations
+                    $displayedOrganizations = [];
+                    $organizationName = '';
                     ?>
                     <?php foreach ($person['contacts'] as $contact) : ?>
                         <?php
