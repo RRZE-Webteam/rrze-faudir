@@ -153,7 +153,8 @@
                     <p itemprop="jobTitle"><?php echo (isset($person['job']) && !empty($person['job']) ? esc_html($person['job']) : 'N/A'); ?></p>
                 <?php endif; ?>
   <?php
-                $displayedOrganizations = []; // To track displayed organizations
+                $displayedOrganizations = [];
+                $organizationName = ''; // To track displayed organizations
                 ?>
 
                 <?php if (!empty($person['contacts'])) : ?>
@@ -187,12 +188,12 @@
                         <?php endif; ?>
                     <?php endforeach; ?>
                 <?php endif; ?>
-            <!-- We need to add condition for url when we add CPT -->
                  <?php
                 $business_card_title = rrze_faudir_get_business_card_title();
-
-                echo '<a href="' .esc_html($url) . '" class="business-card-link"><button>' . esc_html($business_card_title) . '</button></a>';
-                ?>
+                if (!empty($url)) {
+                    echo '<a href="' . esc_url($url) . '" itemprop="url" class="business-card-link button-link">' . esc_html($business_card_title) . '</a>';
+                }
+            ?>
                         </div>
             </div>
         <?php endforeach; ?>
