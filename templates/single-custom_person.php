@@ -47,7 +47,7 @@ get_header();
                             $email_output = get_post_meta(get_the_ID(), 'person_email', true);
                             $phone_output = get_post_meta(get_the_ID(), 'person_telephone', true);
                             $function_label = get_post_meta(get_the_ID(), 'person_function', true);
-                            $organization_name = get_post_meta(get_the_ID(), 'person_telephone', true);
+                            $organization_name = get_post_meta(get_the_ID(), 'person_organization', true);
                         
                             if (!empty($email_output)) {
                                 echo '<p><strong>' . esc_html__('Email:', 'rrze-faudir') . '</strong> ' . esc_html($email_output) . '</p>';
@@ -58,8 +58,8 @@ get_header();
                             }
                             ?>
 
-                            <strong><p><?php echo esc_html__('Organization:', 'rrze-faudir');?></strong> <?php echo esc_html($organization_name); ?><p>
-                            <strong><p><?php echo esc_html__('Functions:', 'rrze-faudir');?></strong> <?php echo esc_html($function_label); ?><p>
+                            <p><strong><?php echo esc_html__('Organization:', 'rrze-faudir');?></strong> <?php echo esc_html($organization_name); ?><p>
+                            <p><strong><?php echo esc_html__('Functions:', 'rrze-faudir');?></strong> <?php echo esc_html($function_label); ?><p>
 
                             <?php
                             $locale = get_locale();

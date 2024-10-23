@@ -168,7 +168,7 @@
                             $displayedOrganizations[] = $organizationName;
                         ?>
                         <!-- Organization name -->
-                        <strong><p><?php echo esc_html__('Organization:', 'rrze-faudir');?></strong> <?php echo esc_html($organizationName); ?><p>
+                        <p><strong><?php echo esc_html__('Organization:', 'rrze-faudir');?></strong> <?php echo esc_html($organizationName); ?><p>
                         
                         <?php if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) {
                             $function = isset($contact['functionLabel']['en']) ? $contact['functionLabel']['en'] : $function_label_cpt; ?>

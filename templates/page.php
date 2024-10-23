@@ -170,7 +170,7 @@
                                     // Add the organization to the displayed list
                                     $displayedOrganizations[] = $organizationName;
                                 ?>
-                                <strong><p><?php echo esc_html__('Organization:', 'rrze-faudir');?></strong> 
+                                <p><strong><?php echo esc_html__('Organization:', 'rrze-faudir');?></strong> 
                                     <span itemprop="affiliation" itemscope itemtype="https://schema.org/Organization">
                                         <span itemprop="name"><?php echo esc_html($organizationName); ?></span>
                                     </span>
