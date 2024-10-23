@@ -197,5 +197,5 @@
             </div>
         <?php endforeach; ?>
 <?php else : ?>
-    <div><?php echo esc_html__('Es konnte kein Kontakteintrag gefunden werden.', 'rrze-faudir') ?> </div>
+    <div><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir') ?> </div>
 <?php endif; ?>

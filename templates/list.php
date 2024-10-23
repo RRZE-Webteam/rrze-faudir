@@ -144,8 +144,9 @@
                 ?>
 
 <?php if (!empty($person['contacts'])) : ?>
-    <ul>
+    
         <?php foreach ($person['contacts'] as $contact) : ?>
+            
             <?php
             $organizationName = ''; // Default to an empty string if not found
             
@@ -159,10 +160,12 @@
                 // Add the organization to the displayed list
                 $displayedOrganizations[] = $organizationName;
             ?>
+            <ul>
                 <li itemprop="affiliation" itemscope itemtype="https://schema.org/Organization">
                     <strong><?php echo esc_html__('Organization:', 'rrze-faudir'); ?></strong> 
                     <span itemprop="name"><?php echo esc_html($organizationName); ?></span><br />
                 </li>
+                </ul>
             <?php endif; // End organization check ?>
 
             <?php
@@ -170,19 +173,21 @@
             if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) :
                 $function = isset($contact['functionLabel']['en']) ? $contact['functionLabel']['en'] : $function_label_cpt;
             ?>
+            <ul>
                 <li itemprop="jobTitle">
                     <strong><?php echo esc_html__('Function:', 'rrze-faudir'); ?></strong>
                     <?php echo esc_html($function); ?>
                 </li>
+                </ul>
             <?php endif; // End function check ?>
-
+            
         <?php endforeach; ?>
-    </ul>
+    
 <?php endif; ?>
 
             </li>
         <?php endforeach; ?>
     <?php else : ?>
-    <div><?php echo esc_html__('Es konnte kein Kontakteintrag gefunden werden.', 'rrze-faudir') ?> </div>
+    <div><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir') ?> </div>
     <?php endif; ?>
 </ul>
