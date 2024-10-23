@@ -73,7 +73,7 @@
                     );
                     
                     // Check if the prefix exists in the array and display the long version
-                    $longVersion = isset($prefixes[$prefix]) ? $prefixes[$prefix] : __('Unbekannt', 'rrze-faudir');
+                    $longVersion = isset($prefixes[$prefix]) ? $prefixes[$prefix] : __('Unknown', 'rrze-faudir');
                     
                 }
                 $personal_title = "";
