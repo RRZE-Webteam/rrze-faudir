@@ -465,7 +465,48 @@ function rrze_faudir_reset_defaults() {
 }
 add_action('wp_ajax_rrze_faudir_reset_defaults', 'rrze_faudir_reset_defaults');
 
-
+function rrze_faudir_display_all_contacts($page = 1) {
+        $limit = 60;
+        $offset = ($page - 1) * $limit;
+        $contacts_data = fetch_fau_persons($limit, $offset);
+    
+        if (is_string($contacts_data)) {
+            return '<p>' . esc_html($contacts_data) . '</p>'; // Handle error message
+        }
+    
+        $contacts = $contacts_data['data'] ?? [];
+    
+        if (!empty($contacts)) {
+            $output = '<div class="contacts-wrapper">';
+            foreach ($contacts as $contact) {
+                $name = esc_html($contact['personalTitle'] . ' ' . $contact['givenName'] . ' ' . $contact['familyName']);
+                $identifier = esc_html($contact['identifier']);
+                $output .= '<div class="contact-card">';
+                $output .= "<h2 class='contact-name'>{$name}</h2>";
+                $output .= "<p><strong>IdM-Kennung:</strong> {$identifier}</p>";
+                $output .= "<h3>Contacts:</h3>";
+                if (!empty($contact['contacts'])) {
+                    foreach ($contact['contacts'] as $contactDetail) {
+                        $orgName = esc_html($contactDetail['organization']['name']);
+                        $functionLabel = esc_html($contactDetail['functionLabel']['en']);
+                        $output .= "<p><strong>Organization:</strong> {$orgName} ({$functionLabel})</p>";
+                    }
+                }
+                $output .= '</div>';
+            }
+            $output .= '</div>';
+    
+            // Add pagination controls
+            $output .= '<div class="pagination">';
+            $output .= '<button class="prev-page">Previous</button>';
+            $output .= '<button class="next-page">Next</button>';
+            $output .= '</div>';
+        } else {
+            $output = '<p>No contacts found.</p>';
+        }
+    
+        return $output;
+    }
 function rrze_faudir_fetch_contacts_handler()
 {
     check_ajax_referer('rrze_faudir_api_nonce', 'security');
