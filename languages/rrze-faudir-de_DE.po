@@ -188,7 +188,7 @@ msgstr "Akademischer Suffix"
 
 #: includes/admin/settings-page.php:296
 #: includes/custom-post-type/custom-post-type.php:51
-#: templates/single-custom_person.php:24
+#: templates/single-custom_person.php:24 includes/admin/settings-page.php:411
 msgid "Email"
 msgstr "E-Mail"
 
@@ -217,6 +217,10 @@ msgstr "Kontakte suchen"
 #: includes/admin/settings-page.php:341
 msgid "Reset Settings"
 msgstr "Einstellungen zurücksetzen"
+
+#: includes/admin/settings-page.php:402
+msgid "Search by Name, Surname, Email or ID"
+msgstr "Suche via Vorname, Nachname, E-Mail oder ID"
 
 #: includes/admin/settings-page.php:407
 msgid "Reset to Default Settings"
@@ -261,6 +265,22 @@ msgid "No contacts found. Please verify the IdM-Kennung or names provided."
 msgstr ""
 "Keine Kontakte gefunden. Bitte überprüfen Sie die IdM-Kennung oder die "
 "angegebenen Namen."
+
+#: includes/admin/settings-page.php:513
+msgid "No contacts found."
+msgstr "Keine Kontakte gefunden."
+
+#: includes/admin/settings-page.php:414
+msgid "Search"
+msgstr "Suchen"
+
+#: includes/admin/settings-page.php:508
+msgid "Previous"
+msgstr "Vorherige"
+
+#: includes/admin/settings-page.php:509
+msgid "Next"
+msgstr "Nächste"
 
 #: includes/custom-post-type/custom-post-type.php:6
 #: includes/custom-post-type/custom-post-type.php:8
@@ -331,10 +351,18 @@ msgstr "Telefon"
 msgid "Given Name"
 msgstr "Vorname"
 
+#: includes/admin/settings-page.php:405
+msgid "Given Name:"
+msgstr "Vorname:"
+
 #: includes/custom-post-type/custom-post-type.php:54
-#: templates/single-custom_person.php:27
+#: templates/single-custom_person.php:27 includes/admin/settings-page.php:408
 msgid "Family Name"
 msgstr "Nachname"
+
+#: includes/admin/settings-page.php:408
+msgid "Family Name:"
+msgstr "Nachname:"
 
 #: includes/custom-post-type/custom-post-type.php:55
 #: templates/single-custom_person.php:28

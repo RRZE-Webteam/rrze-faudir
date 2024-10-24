@@ -68,6 +68,8 @@ body {
 .shortcode-contact-card img{
     border-radius: 50%;
     max-width: 70%;
+    aspect-ratio: 1;
+    object-fit: cover;
 }
 .shortcode-contact-card h2{
     display: block; 

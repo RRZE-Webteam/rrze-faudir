@@ -1,6 +1,7 @@
 <?php if (!empty($persons)) : ?>
     <div class="shortcode-contacts-wrapper" role="list"> <!-- Flex container for the cards -->
         <?php foreach ($persons as $person) : ?>
+            <?php if (!empty($person)) : ?>
             <?php
              $personal_title_cpt = '';
              $first_name_cpt = '';
@@ -224,6 +225,9 @@
                 <?php endif; ?>
 
             </article> <!-- End of shortcode-contact-card -->
+            <?php else : ?>
+                <article itemscope><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?></article>
+            <?php endif; ?>
         <?php endforeach; ?>
     </div> <!-- End of shortcode-contacts-wrapper -->
 <?php else : ?>
