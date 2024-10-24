@@ -498,6 +498,7 @@ function rrze_faudir_display_all_contacts($page = 1) {
                         $output .= "<p><strong>Organization:</strong> {$orgName} ({$functionLabel})</p>";
                     }
                 }
+                $output .= "<button class='add-person' data-name='" . esc_attr($name) . "' data-id='" . esc_attr($identifier) . "'><span class='dashicons dashicons-plus'></span></button>";
                 $output .= '</div>';
             }
             $output .= '</div>';
@@ -538,120 +539,120 @@ function rrze_faudir_clear_cache() {
 }
 add_action('wp_ajax_rrze_faudir_clear_cache', 'rrze_faudir_clear_cache');
 
+// function rrze_faudir_search_person_by_id_handler()
+// {
+//     check_ajax_referer('rrze_faudir_api_nonce', 'security');
 
+//     $personId = isset($_POST['personId']) ? sanitize_text_field(wp_unslash($_POST['personId'])) : '';
+//     $givenName = isset($_POST['givenName']) ? sanitize_text_field(wp_unslash($_POST['givenName'])) : '';
+//     $familyName = isset($_POST['familyName']) ? sanitize_text_field(wp_unslash($_POST['familyName'])) : '';
+//     $email = isset($_POST['email']) ? sanitize_text_field(wp_unslash($_POST['email'])) : '';
+//     // Initialize the response
+//     $response = '';
 
-function rrze_faudir_search_person_by_id_handler()
-{
-    check_ajax_referer('rrze_faudir_api_nonce', 'security');
-
-    $personId = isset($_POST['personId']) ? sanitize_text_field(wp_unslash($_POST['personId'])) : '';
-    $givenName = isset($_POST['givenName']) ? sanitize_text_field(wp_unslash($_POST['givenName'])) : '';
-    $familyName = isset($_POST['familyName']) ? sanitize_text_field(wp_unslash($_POST['familyName'])) : '';
-    $email = isset($_POST['email']) ? sanitize_text_field(wp_unslash($_POST['email'])) : '';
-    // Initialize the response
-    $response = '';
-
-    // Check if searching by person ID
+//     // Check if searching by person ID
     
-   if (!empty($givenName) || !empty($familyName) || !empty($personId)|| !empty($email)) {
-        // If searching by name, pass the givenName and familyName as parameters
-        $params = [
-            'givenName' => $givenName,
-            'familyName' => $familyName,
-            'identifier'=> $personId,
-            'email'=> $email,
-        ];
-        $response = fetch_fau_persons_atributes(60, 0, $params);
-    }
+//    if (!empty($givenName) || !empty($familyName) || !empty($personId)|| !empty($email)) {
+//         // If searching by name, pass the givenName and familyName as parameters
+//         $params = [
+//             'givenName' => $givenName,
+//             'familyName' => $familyName,
+//             'identifier'=> $personId,
+//             'email'=> $email,
+//         ];
+//         $response = fetch_fau_persons_atributes(60, 0, $params);
+//     }
 
-    // Check if the response is a valid array (success), otherwise return an error
-    if (is_string($response)) {
-         /* translators: %s: Error message from response */
-        wp_send_json_error(sprintf(__('Error: %s', 'rrze-faudir'), $response));
-    }
+//     // Check if the response is a valid array (success), otherwise return an error
+//     if (is_string($response)) {
+//          /* translators: %s: Error message from response */
+//         wp_send_json_error(sprintf(__('Error: %s', 'rrze-faudir'), $response));
+//     }
 
-    $contacts = $response['data'] ?? [];
+//     $contacts = $response['data'] ?? [];
 
-    if (!empty($contacts)) {
-        $output = '<div class="contacts-wrapper">';
-        foreach ($contacts as $contact) {
-            $name = esc_html($contact['personalTitle'] . ' ' . $contact['givenName'] . ' ' . $contact['familyName']);
-            $identifier = esc_html($contact['identifier']);
-            $output .= '<div class="contact-card">';
-            $output .= "<h2 class='contact-name'>{$name}</h2>";
-            $output .= "<p><strong>IdM-Kennung:</strong> {$identifier}</p>";
-            $output .= "<p><strong>Email:</strong> " . esc_html($contact['email']) . "</p>";
-            if (!empty($contact['contacts'])) {
-                foreach ($contact['contacts'] as $contactDetail) {
-                    $orgName = esc_html($contactDetail['organization']['name']);
-                    $functionLabel = esc_html($contactDetail['functionLabel']['en']);
-                    $output .= "<p><strong>Organization:</strong> {$orgName} ({$functionLabel})</p>";
-                }
-            }
-            $output .= '</div>';
-        }
-        $output .= '</div>';
-        wp_send_json_success($output);
-    } else {
-        wp_send_json_error(__('No contacts found. Please verify the IdM-Kennung or names provided.', 'rrze-faudir'));
-    }
-}
+//     if (!empty($contacts)) {
+//         $output = '<div class="contacts-wrapper">';
+//         foreach ($contacts as $contact) {
+//             $name = esc_html($contact['personalTitle'] . ' ' . $contact['givenName'] . ' ' . $contact['familyName']);
+//             $identifier = esc_html($contact['identifier']);
+//             $output .= '<div class="contact-card">';
+//             $output .= "<h2 class='contact-name'>{$name}</h2>";
+//             $output .= "<p><strong>IdM-Kennung:</strong> {$identifier}</p>";
+//             $output .= "<p><strong>Email:</strong> " . esc_html($contact['email']) . "</p>";
+//             if (!empty($contact['contacts'])) {
+//                 foreach ($contact['contacts'] as $contactDetail) {
+//                     $orgName = esc_html($contactDetail['organization']['name']);
+//                     $functionLabel = esc_html($contactDetail['functionLabel']['en']);
+//                     $output .= "<p><strong>Organization:</strong> {$orgName} ({$functionLabel})</p>";
+//                 }
+//             }
+//             $output .= "<button class='add-person' data-name='" . esc_attr($name) . "' data-id='" . esc_attr($identifier) . "'><span class='dashicons dashicons-plus'></span></button>";
+//             $output .= '</div>';
+//         }
+//         $output .= '</div>';
+//         wp_send_json_success($output);
+//     } else {
+//         wp_send_json_error(__('No contacts found. Please verify the IdM-Kennung or names provided.', 'rrze-faudir'));
+//     }
+// }
 
-add_action('wp_ajax_search_person_by_id', 'rrze_faudir_search_person_by_id_handler');
+// add_action('wp_ajax_search_person_by_id', 'rrze_faudir_search_person_by_id_handler');
 
 // Add this function at the end of the file
-function rrze_faudir_handle_search_person() {
-    if (!isset($_POST['rrze_faudir_search_nonce']) || !wp_verify_nonce($_POST['rrze_faudir_search_nonce'], 'rrze_faudir_search_person')) {
-        wp_die(__('Security check failed', 'rrze-faudir'));
-    }
+// function rrze_faudir_handle_search_person() {
+//     if (!isset($_POST['rrze_faudir_search_nonce']) || !wp_verify_nonce($_POST['rrze_faudir_search_nonce'], 'rrze_faudir_search_person')) {
+//         wp_die(__('Security check failed', 'rrze-faudir'));
+//     }
 
-    $personId = isset($_POST['person-id']) ? sanitize_text_field($_POST['person-id']) : '';
-    $givenName = isset($_POST['given-name']) ? sanitize_text_field($_POST['given-name']) : '';
-    $familyName = isset($_POST['family-name']) ? sanitize_text_field($_POST['family-name']) : '';
-    $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
+//     $personId = isset($_POST['person-id']) ? sanitize_text_field($_POST['person-id']) : '';
+//     $givenName = isset($_POST['given-name']) ? sanitize_text_field($_POST['given-name']) : '';
+//     $familyName = isset($_POST['family-name']) ? sanitize_text_field($_POST['family-name']) : '';
+//     $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
 
-    $params = [
-        'givenName' => $givenName,
-        'familyName' => $familyName,
-        'identifier' => $personId,
-        'email' => $email,
-    ];
+//     $params = [
+//         'givenName' => $givenName,
+//         'familyName' => $familyName,
+//         'identifier' => $personId,
+//         'email' => $email,
+//     ];
 
-    $response = fetch_fau_persons_atributes(60, 0, $params);
+//     $response = fetch_fau_persons_atributes(60, 0, $params);
 
-    if (is_string($response)) {
-        $output = sprintf(__('Error: %s', 'rrze-faudir'), $response);
-    } else {
-        $contacts = $response['data'] ?? [];
-        if (!empty($contacts)) {
-            $output = '<div class="contacts-wrapper">';
-            foreach ($contacts as $contact) {
-                $name = esc_html($contact['personalTitle'] . ' ' . $contact['givenName'] . ' ' . $contact['familyName']);
-                $identifier = esc_html($contact['identifier']);
-                $output .= '<div class="contact-card">';
-                $output .= "<h2 class='contact-name'>{$name}</h2>";
-                $output .= "<p><strong>IdM-Kennung:</strong> {$identifier}</p>";
-                $output .= "<p><strong>Email:</strong> " . esc_html($contact['email']) . "</p>";
-                if (!empty($contact['contacts'])) {
-                    foreach ($contact['contacts'] as $contactDetail) {
-                        $orgName = esc_html($contactDetail['organization']['name']);
-                        $functionLabel = esc_html($contactDetail['functionLabel']['en']);
-                        $output .= "<p><strong>Organization:</strong> {$orgName} ({$functionLabel})</p>";
-                    }
-                }
-                $output .= '</div>';
-            }
-            $output .= '</div>';
-        } else {
-            $output = __('No contacts found. Please verify the IdM-Kennung or names provided.', 'rrze-faudir');
-        }
-    }
+//     if (is_string($response)) {
+//         $output = sprintf(__('Error: %s', 'rrze-faudir'), $response);
+//     } else {
+//         $contacts = $response['data'] ?? [];
+//         if (!empty($contacts)) {
+//             $output = '<div class="contacts-wrapper">';
+//             foreach ($contacts as $contact) {
+//                 $name = esc_html($contact['personalTitle'] . ' ' . $contact['givenName'] . ' ' . $contact['familyName']);
+//                 $identifier = esc_html($contact['identifier']);
+//                 $output .= '<div class="contact-card">';
+//                 $output .= "<h2 class='contact-name'>{$name}</h2>";
+//                 $output .= "<p><strong>IdM-Kennung:</strong> {$identifier}</p>";
+//                 $output .= "<p><strong>Email:</strong> " . esc_html($contact['email']) . "</p>";
+//                 if (!empty($contact['contacts'])) {
+//                     foreach ($contact['contacts'] as $contactDetail) {
+//                         $orgName = esc_html($contactDetail['organization']['name']);
+//                         $functionLabel = esc_html($contactDetail['functionLabel']['en']);
+//                         $output .= "<p><strong>Organization:</strong> {$orgName} ({$functionLabel})</p>";
+//                     }
+//                 }
+//                 $output .= "<button class='add-person' data-name='" . esc_attr($name) . "' data-id='" . esc_attr($identifier) . "'><span class='dashicons dashicons-plus'></span></button>";
+//                 $output .= '</div>';
+//             }
+//             $output .= '</div>';
+//         } else {
+//             $output = __('No contacts found. Please verify the IdM-Kennung or names provided.', 'rrze-faudir');
+//         }
+//     }
 
-    $redirect_url = add_query_arg('search_results', urlencode($output), wp_get_referer());
-    wp_safe_redirect($redirect_url);
-    exit;
-}
-add_action('admin_post_rrze_faudir_search_person', 'rrze_faudir_handle_search_person');
+//     $redirect_url = add_query_arg('search_results', urlencode($output), wp_get_referer());
+//     wp_safe_redirect($redirect_url);
+//     exit;
+// }
+// add_action('admin_post_rrze_faudir_search_person', 'rrze_faudir_handle_search_person');
 
 // Add this function at the end of the file
 function rrze_faudir_search_person_ajax() {
