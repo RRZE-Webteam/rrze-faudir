@@ -505,11 +505,12 @@ function rrze_faudir_display_all_contacts($page = 1) {
     
             // Add pagination controls
             $output .= '<div class="pagination">';
-            $output .= '<button class="prev-page">Previous</button>';
-            $output .= '<button class="next-page">Next</button>';
+            $output .= '<button class="prev-page">' . __('Previous', 'rrze-faudir') . '</button>';
+            $output .= '<button class="next-page">' . __('Next', 'rrze-faudir') . '</button>';
+
             $output .= '</div>';
         } else {
-            $output = '<p>No contacts found.</p>';
+            $output = '<p>' . __('No contacts found.', 'rrze-faudir') . '</p>';
         }
     
         return $output;
