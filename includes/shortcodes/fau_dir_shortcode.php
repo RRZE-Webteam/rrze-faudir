@@ -97,9 +97,7 @@ function fetch_and_render_fau_data($atts) {
             $params = ['identifier' => $identifier];
             $data = fetch_fau_persons_atributes(0, 0, $params);
             
-            if (!empty($data['data'])) {
-                $persons[] = $data['data'][0];
-            }
+            $persons[] = $data['data'][0];
         }
     }elseif (!empty($category)) {
         $lq = 'contacts.organization.name[eq]=' . urlencode($category);
@@ -146,6 +144,7 @@ function fetch_and_render_fau_data($atts) {
 
     // Create a collator object for locale-based sorting
     $collator = collator_create('de_DE'); // German locale; adjust as needed
+
 
     // Sorting function based on the chosen option
     usort($persons, function ($a, $b) use ($sort_option, $collator, $identifiers) {
