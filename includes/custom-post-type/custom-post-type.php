@@ -102,6 +102,16 @@ add_action('add_meta_boxes', 'add_custom_person_meta_boxes');
 function render_person_additional_fields($post) {
     wp_nonce_field('save_person_additional_fields', 'person_additional_fields_nonce');
 
+    $api_fields = [
+        'person_name',
+        'person_email',
+        'person_given_name',
+        'person_family_name',
+        'person_title',
+        'person_organization',
+        'person_function',
+    ];
+
     $fields = [
         '_content_en' => __('Content (English)', 'rrze-faudir'),
         '_teasertext_en' => __('Teaser Text (English)', 'rrze-faudir'),
@@ -116,23 +126,27 @@ function render_person_additional_fields($post) {
         'person_suffix' => __('Suffix', 'rrze-faudir'),
         'person_nobility_name' => __('Nobility Name', 'rrze-faudir'),
         'person_organization' => __('Organization', 'rrze-faudir'),
-        'person_function' => __('Function', 'rrze-faudir'),
+        'person_function' => __('Function (English)', 'rrze-faudir'),
     ];
 
     foreach ($fields as $meta_key => $label) {
         $value = get_post_meta($post->ID, $meta_key, true);
+
+        // Determine if the field should be readonly
+        $readonly = in_array($meta_key, $api_fields) ? 'readonly' : '';
+
         // Check if the field should be rendered as a textarea
-        if ($meta_key === '_content_en' || $meta_key === '_teasertext_en' || $meta_key === '_teasertext_de') {
+        if (in_array($meta_key, ['_content_en', '_teasertext_en', '_teasertext_de'])) {
             echo "<label for='" . esc_attr($meta_key) . "'>" . esc_html($label) . "</label>";
-            echo "<textarea name='" . esc_attr($meta_key) . "' id='" . esc_attr($meta_key) . "' style='width: 100%; height: 100px;'>" . esc_textarea($value) . "</textarea><br><br>";
-        }        
-         else {
+            echo "<textarea name='" . esc_attr($meta_key) . "' id='" . esc_attr($meta_key) . "' style='width: 100%; height: 100px;' $readonly>" . esc_textarea($value) . "</textarea><br><br>";
+        } else {
             // Render as a regular text input field
             echo "<label for='" . esc_attr($meta_key) . "'>" . esc_html($label) . "</label>";
-            echo "<input type='text' name='" . esc_attr($meta_key) . "' id='" . esc_attr($meta_key) . "' value='" . esc_attr($value) . "' style='width: 100%;' /><br><br>";           
-        }  
-    }    
+            echo "<input type='text' name='" . esc_attr($meta_key) . "' id='" . esc_attr($meta_key) . "' value='" . esc_attr($value) . "' style='width: 100%;' $readonly /><br><br>";
+        }
+    }
 }
+
 
 function save_person_additional_fields($post_id) {
     // Verify nonce
