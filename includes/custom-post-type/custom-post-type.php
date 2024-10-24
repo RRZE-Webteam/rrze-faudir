@@ -258,4 +258,52 @@ function fetch_person_attributes() {
 }
 add_action('wp_ajax_fetch_person_attributes', 'fetch_person_attributes');
 
+// Add this function at the end of the file
+function rrze_faudir_create_custom_person() {
+    check_ajax_referer('rrze_faudir_api_nonce', 'security');
+
+    $person_name = isset($_POST['person_name']) ? sanitize_text_field($_POST['person_name']) : '';
+    $person_id = isset($_POST['person_id']) ? sanitize_text_field($_POST['person_id']) : '';
+
+    if (empty($person_name) || empty($person_id)) {
+        wp_send_json_error('Invalid person data');
+        return;
+    }
+
+    $post_id = wp_insert_post(array(
+        'post_title'    => $person_name,
+        'post_type'     => 'custom_person',
+        'post_status'   => 'publish'
+    ));
+
+    if (is_wp_error($post_id)) {
+        wp_send_json_error($post_id->get_error_message());
+        return;
+    }
+
+    // Set the person_id meta field
+    update_post_meta($post_id, 'person_id', $person_id);
+
+    // Fetch additional person attributes
+    $params = ['identifier' => $person_id];
+    $response = fetch_fau_persons_atributes(60, 0, $params);
+
+    if (is_array($response) && isset($response['data'])) {
+        $contact = $response['data'][0] ?? null;
+
+        if ($contact) {
+            // Update post meta with fetched data
+            update_post_meta($post_id, 'person_name', sanitize_text_field($contact['givenName'] . ' ' . $contact['familyName']));
+            update_post_meta($post_id, 'person_email', sanitize_email($contact['email'] ?? ''));
+            update_post_meta($post_id, 'person_given_name', sanitize_text_field($contact['givenName'] ?? ''));
+            update_post_meta($post_id, 'person_family_name', sanitize_text_field($contact['familyName'] ?? ''));
+            update_post_meta($post_id, 'person_title', sanitize_text_field($contact['personalTitle'] ?? ''));
+            update_post_meta($post_id, 'person_organization', sanitize_text_field($contact['contacts'][0]['organization']['name'] ?? ''));
+            update_post_meta($post_id, 'person_function', sanitize_text_field($contact['contacts'][0]['functionLabel']['en'] ?? ''));
+        }
+    }
+
+    wp_send_json_success(array('post_id' => $post_id));
+}
+add_action('wp_ajax_rrze_faudir_create_custom_person', 'rrze_faudir_create_custom_person');
 ?>

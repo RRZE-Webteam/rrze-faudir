@@ -379,32 +379,6 @@ function rrze_faudir_settings_page()
                 <?php submit_button(); ?>
             </div>
 
-            <!-- Contacts Search Tab -->
-            <div id="tab-5" class="tab-content" style="display:none;">
-                <h2>
-                    <?php echo esc_html__('Search Contacts by Identifier', 'rrze-faudir'); ?>
-                </h2>
-
-                <form id="search-person-form">
-                    <label for="person-id"><?php echo esc_html__('Search by Name, Surbame, Email or ID', 'rrze-faudir'); ?></label>
-                    <input type="text" id="person-id" name="person-id" />
-
-                    <label for="given-name"><?php echo esc_html__('Given Name:', 'rrze-faudir'); ?></label>
-                    <input type="text" id="given-name" name="given-name" />
-
-                    <label for="family-name"><?php echo esc_html__('Family Name:', 'rrze-faudir'); ?></label>
-                    <input type="text" id="family-name" name="family-name" />
-                    <label for="email"><?php echo esc_html__('Email:', 'rrze-faudir'); ?></label>
-                    <input type="text" id="email" name="email" />
-
-                    <button type="button" id="search-person-by-id" class="button button-primary"><?php echo esc_html__('Search','rrze-faudir')?></button>
-                </form>
-
-                <div id="contacts-list">
-                   
-                </div>
-            </div>
-            
             <!-- Reset Settings Tab -->
             <div id="tab-7" class="tab-content" style="display:none;">
                 <h3><?php echo esc_html__('Reset to Default Settings', 'rrze-faudir'); ?></h3>
@@ -412,41 +386,73 @@ function rrze_faudir_settings_page()
                 <button type="button" class="button button-secondary" id="reset-to-defaults-button">
                     <?php echo esc_html__('Reset to Default Values', 'rrze-faudir'); ?>
                 </button>
+            </div>
         </form>
+
+        <!-- Contacts Search Tab -->
+        <div id="tab-5" class="tab-content" style="display:none;">
+            <h2>
+                <?php echo esc_html__('Search Contacts by Identifier', 'rrze-faudir'); ?>
+            </h2>
+
+            <form id="search-person-form" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+                <input type="hidden" name="action" value="rrze_faudir_search_person">
+                <?php wp_nonce_field('rrze_faudir_search_person', 'rrze_faudir_search_nonce'); ?>
+
+                <label for="person-id"><?php echo esc_html__('Search by Name, Surname, Email or ID', 'rrze-faudir'); ?></label>
+                <input type="text" id="person-id" name="person-id" />
+
+                <label for="given-name"><?php echo esc_html__('Given Name:', 'rrze-faudir'); ?></label>
+                <input type="text" id="given-name" name="given-name" />
+
+                <label for="family-name"><?php echo esc_html__('Family Name:', 'rrze-faudir'); ?></label>
+                <input type="text" id="family-name" name="family-name" />
+
+                <label for="email"><?php echo esc_html__('Email:', 'rrze-faudir'); ?></label>
+                <input type="text" id="email" name="email" />
+
+                <button type="submit" class="button button-primary"><?php echo esc_html__('Search','rrze-faudir')?></button>
+            </form>
+
+            <div id="contacts-list">
+                <?php
+                if (isset($_GET['search_results'])) {
+                    echo wp_kses_post(urldecode($_GET['search_results']));
+                }
+                ?>
+            </div>
+        </div>
     </div>
 
     <script type="text/javascript">
+        jQuery(document).ready(function($) {
             // Show and hide tabs
-            document.querySelectorAll('.nav-tab').forEach(tab => {
-                tab.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('nav-tab-active'));
-                    this.classList.add('nav-tab-active');
-                    document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
-                    document.querySelector(this.getAttribute('href')).style.display = 'block';
-                });
+            $('.nav-tab').on('click', function(e) {
+                e.preventDefault();
+                $('.nav-tab').removeClass('nav-tab-active');
+                $(this).addClass('nav-tab-active');
+                $('.tab-content').hide();
+                $($(this).attr('href')).show();
             });
 
             // Handle reset button click
-            document.getElementById('reset-to-defaults-button').addEventListener('click', function () {
-            if (confirm('<?php echo esc_js(esc_html__('Are you sure you want to reset all settings to their default values?', 'rrze-faudir')); ?>')) {
-                // Trigger AJAX call to reset settings
-                jQuery.post(ajaxurl, {
-                    action: 'rrze_faudir_reset_defaults',
-                    security: '<?php echo esc_js(wp_create_nonce('rrze_faudir_reset_defaults_nonce')); ?>'
-                }, function (response) {
-                    if (response.success) {
-                        alert('<?php echo esc_js(esc_html__('Settings have been reset to default values.', 'rrze-faudir')); ?>');
-                        location.reload();
-                    } else {
-                        alert('<?php echo esc_js(esc_html__('Failed to reset settings. Please try again.', 'rrze-faudir')); ?>');
-                    }
-                });
-            }
+            $('#reset-to-defaults-button').on('click', function() {
+                if (confirm('<?php echo esc_js(esc_html__('Are you sure you want to reset all settings to their default values?', 'rrze-faudir')); ?>')) {
+                    $.post(ajaxurl, {
+                        action: 'rrze_faudir_reset_defaults',
+                        security: '<?php echo esc_js(wp_create_nonce('rrze_faudir_reset_defaults_nonce')); ?>'
+                    }, function(response) {
+                        if (response.success) {
+                            alert('<?php echo esc_js(esc_html__('Settings have been reset to default values.', 'rrze-faudir')); ?>');
+                            location.reload();
+                        } else {
+                            alert('<?php echo esc_js(esc_html__('Failed to reset settings. Please try again.', 'rrze-faudir')); ?>');
+                        }
+                    });
+                }
+            });
         });
-
     </script>
-    </div>
     <?php
 }
 
@@ -592,3 +598,109 @@ function rrze_faudir_search_person_by_id_handler()
 }
 
 add_action('wp_ajax_search_person_by_id', 'rrze_faudir_search_person_by_id_handler');
+
+// Add this function at the end of the file
+function rrze_faudir_handle_search_person() {
+    if (!isset($_POST['rrze_faudir_search_nonce']) || !wp_verify_nonce($_POST['rrze_faudir_search_nonce'], 'rrze_faudir_search_person')) {
+        wp_die(__('Security check failed', 'rrze-faudir'));
+    }
+
+    $personId = isset($_POST['person-id']) ? sanitize_text_field($_POST['person-id']) : '';
+    $givenName = isset($_POST['given-name']) ? sanitize_text_field($_POST['given-name']) : '';
+    $familyName = isset($_POST['family-name']) ? sanitize_text_field($_POST['family-name']) : '';
+    $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
+
+    $params = [
+        'givenName' => $givenName,
+        'familyName' => $familyName,
+        'identifier' => $personId,
+        'email' => $email,
+    ];
+
+    $response = fetch_fau_persons_atributes(60, 0, $params);
+
+    if (is_string($response)) {
+        $output = sprintf(__('Error: %s', 'rrze-faudir'), $response);
+    } else {
+        $contacts = $response['data'] ?? [];
+        if (!empty($contacts)) {
+            $output = '<div class="contacts-wrapper">';
+            foreach ($contacts as $contact) {
+                $name = esc_html($contact['personalTitle'] . ' ' . $contact['givenName'] . ' ' . $contact['familyName']);
+                $identifier = esc_html($contact['identifier']);
+                $output .= '<div class="contact-card">';
+                $output .= "<h2 class='contact-name'>{$name}</h2>";
+                $output .= "<p><strong>IdM-Kennung:</strong> {$identifier}</p>";
+                $output .= "<p><strong>Email:</strong> " . esc_html($contact['email']) . "</p>";
+                if (!empty($contact['contacts'])) {
+                    foreach ($contact['contacts'] as $contactDetail) {
+                        $orgName = esc_html($contactDetail['organization']['name']);
+                        $functionLabel = esc_html($contactDetail['functionLabel']['en']);
+                        $output .= "<p><strong>Organization:</strong> {$orgName} ({$functionLabel})</p>";
+                    }
+                }
+                $output .= '</div>';
+            }
+            $output .= '</div>';
+        } else {
+            $output = __('No contacts found. Please verify the IdM-Kennung or names provided.', 'rrze-faudir');
+        }
+    }
+
+    $redirect_url = add_query_arg('search_results', urlencode($output), wp_get_referer());
+    wp_safe_redirect($redirect_url);
+    exit;
+}
+add_action('admin_post_rrze_faudir_search_person', 'rrze_faudir_handle_search_person');
+
+// Add this function at the end of the file
+function rrze_faudir_search_person_ajax() {
+    check_ajax_referer('rrze_faudir_api_nonce', 'security');
+
+    $personId = isset($_POST['person_id']) ? sanitize_text_field($_POST['person_id']) : '';
+    $givenName = isset($_POST['given_name']) ? sanitize_text_field($_POST['given_name']) : '';
+    $familyName = isset($_POST['family_name']) ? sanitize_text_field($_POST['family_name']) : '';
+    $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
+
+    $params = [
+        'givenName' => $givenName,
+        'familyName' => $familyName,
+        'identifier' => $personId,
+        'email' => $email,
+    ];
+
+    $response = fetch_fau_persons_atributes(60, 0, $params);
+
+    if (is_string($response)) {
+        wp_send_json_error(sprintf(__('Error: %s', 'rrze-faudir'), $response));
+    } else {
+        $contacts = $response['data'] ?? [];
+        if (!empty($contacts)) {
+            $output = '<div class="contacts-wrapper">';
+            foreach ($contacts as $contact) {
+                $name = esc_html($contact['personalTitle'] . ' ' . $contact['givenName'] . ' ' . $contact['familyName']);
+                $identifier = esc_html($contact['identifier']);
+                $output .= '<div class="contact-card">';
+                $output .= "<h2 class='contact-name'>{$name}</h2>";
+                $output .= "<p><strong>IdM-Kennung:</strong> {$identifier}</p>";
+                $output .= "<p><strong>Email:</strong> " . esc_html($contact['email']) . "</p>";
+                if (!empty($contact['contacts'])) {
+                    foreach ($contact['contacts'] as $contactDetail) {
+                        $orgName = esc_html($contactDetail['organization']['name']);
+                        $functionLabel = esc_html($contactDetail['functionLabel']['en']);
+                        $output .= "<p><strong>Organization:</strong> {$orgName} ({$functionLabel})</p>";
+                    }
+                }
+                // Add the plus icon
+                $output .= "<button class='add-person' data-name='" . esc_attr($name) . "' data-id='" . esc_attr($identifier) . "'><span class='dashicons dashicons-plus'></span></button>";
+                $output .= '</div>';
+            }
+            $output .= '</div>';
+            wp_send_json_success($output);
+        } else {
+            wp_send_json_error(__('No contacts found. Please verify the IdM-Kennung or names provided.', 'rrze-faudir'));
+        }
+    }
+}
+add_action('wp_ajax_rrze_faudir_search_person', 'rrze_faudir_search_person_ajax');
+
