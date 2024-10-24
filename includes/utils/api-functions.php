@@ -144,10 +144,32 @@ function fetch_fau_persons_atributes($limit = 60, $offset = 0, $params = []) {
     return $data ?? [];
 }
 // Fetch data from the FAU contacts API
-function fetch_fau_contacts($limit = 20, $offset = 0) {
+function fetch_fau_contacts($limit = 20, $offset = 0, $params = []) {
     $api_key = FaudirUtils::getKey();
     $url = FaudirUtils::getApiBaseUrl() . 'contacts?limit=' . $limit . '&offset=' . $offset;
-
+    // Define allowed query parameters and map them to their corresponding keys
+    $query_params = [
+        'q', 'sort', 'attrs', 'lq', 'rq', 'view', 'lf'
+    ];
+    // Loop through the parameters and append them to the URL if they exist in $params
+    foreach ($query_params as $param) {
+        if (!empty($params[$param])) {
+            $url .= '&' . $param . '=' . urlencode($params[$param]);
+        }
+    }
+    // Handle givenName and familyName as special cases to be combined into the 'q' parameter
+    if (!empty($params['givenName'])) {
+        $url .= '&q=' . urlencode('^' . $params['givenName']);
+    }
+    if (!empty($params['familyName'])) {
+        $url .= '&q=' . urlencode('^' . $params['familyName']);
+    }
+    if (!empty($params['identifier'])) {
+        $url .= '&q=' . urlencode('^' . $params['identifier']);
+    }
+    if (!empty($params['email'])) {
+        $url .= '&q=' . urlencode('^' . $params['email']);
+    }
     $response = wp_remote_get($url, array(
         'headers' => array(
             'accept' => 'application/json',
@@ -172,4 +194,44 @@ function fetch_fau_contacts($limit = 20, $offset = 0) {
     }
 
     return $data ?? [];
+}
+
+// Fetch contact by ID
+function fetch_fau_contact_by_id($contactId) {
+    $api_key = FaudirUtils::getKey();
+    $url = FaudirUtils::getApiBaseUrl() . "contacts/{$contactId}";
+
+    $response = wp_remote_get($url, array(
+        'headers' => array(
+            'accept' => 'application/json',
+            'X-API-KEY' => $api_key,
+        ),
+    ));
+
+    if (is_wp_error($response)) {
+        return null;
+    }
+
+    $body = wp_remote_retrieve_body($response);
+    return json_decode($body, true) ?? [];
+}
+
+// Fetch organization by ID
+function fetch_fau_organization_by_id($organizationId) {
+    $api_key = FaudirUtils::getKey();
+    $url = FaudirUtils::getApiBaseUrl() . "organizations/{$organizationId}";
+
+    $response = wp_remote_get($url, array(
+        'headers' => array(
+            'accept' => 'application/json',
+            'X-API-KEY' => $api_key,
+        ),
+    ));
+
+    if (is_wp_error($response)) {
+        return null;
+    }
+
+    $body = wp_remote_retrieve_body($response);
+    return json_decode($body, true) ?? [];
 }
