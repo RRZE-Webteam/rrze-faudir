@@ -103,7 +103,7 @@ function render_person_additional_fields($post) {
     wp_nonce_field('save_person_additional_fields', 'person_additional_fields_nonce');
 
     $fields = [
-        '_content_en' => __('Content (Second Language)', 'rrze-faudir'),
+        '_content_en' => __('Content (English)', 'rrze-faudir'),
         '_teasertext_en' => __('Teaser Text (English)', 'rrze-faudir'),
         '_teasertext_de' => __('Teaser Text (German)', 'rrze-faudir'),
         'person_id' => __('Person ID', 'rrze-faudir'),
