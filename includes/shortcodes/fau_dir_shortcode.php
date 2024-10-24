@@ -84,57 +84,25 @@ function fetch_and_render_fau_data($atts) {
     $orgnr = $atts['orgnr'];
     $persons = []; // This will hold the fetched data
 
-    // Fetch data based on the given attributes
+    // Fetch and process the data based on parameters
     if (!empty($identifiers)) {
-        foreach ($identifiers as $identifier) {
-            $identifier = trim($identifier);
-            
-            // Skip if identifier is empty
-            if (empty($identifier)) {
-                continue;
-            }
-    
-            $params = ['identifier' => $identifier];
-            $data = fetch_fau_persons_atributes(0, 0, $params);
-            
-            if (!empty($data['data'])) {
-                $persons[] = $data['data'][0];
-            }
-        }
-    }elseif (!empty($category)) {
+        $persons = process_persons_by_identifiers($identifiers);
+    } elseif (!empty($category)) {
         $lq = 'contacts.organization.name[eq]=' . urlencode($category);
-        $params = ['lq' => $lq];
-        $data = fetch_fau_persons_atributes(0, 0, $params);
-        if (!empty($data['data'])) {
-            $persons = $data['data'];
-        }
+        $persons = fetch_and_process_persons($lq);
     } elseif (!empty($groupid)) {
         $lq = 'contacts.organization.identifier[eq]=' . urlencode($groupid);
-        $params = ['lq' => $lq];
-        $data = fetch_fau_persons_atributes(0, 0, $params);
-        if (!empty($data['data'])) {
-            $persons = $data['data'];
-        }
+        $persons = fetch_and_process_persons($lq);
     } elseif (!empty($orgnr)) {
-        $lq = 'disambiguatingDescription[eq]=' . urlencode($orgnr);
-        $params = ['lq' => $lq];
-        $data = fetch_fau_organizations(0, 0, $params);
-        if (!empty($data['data'])) {
-            $orgname = $data['data'][0]['name'];
+        $orgData = fetch_fau_organizations(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
+        if (!empty($orgData['data'])) {
+            $orgname = $orgData['data'][0]['name'];
             $lq = 'contacts.organization.name[eq]=' . urlencode($orgname);
-            $params = ['lq' => $lq];
-            $data = fetch_fau_persons_atributes(0, 0, $params);
-            if (!empty($data['data'])) {
-                $persons = $data['data'];
-            } // Assuming 'name' is within the first element of 'data'
+            $persons = fetch_and_process_persons($lq);
         }
     } else {
-        $data = fetch_fau_persons_atributes(0, 0);
-        if (!empty($data['data'])) {
-            $persons = $data['data'];
-        }
+        $persons = fetch_and_process_persons();
     }
-
     // Fetch the image URL if an image ID is provided
     $image_url = '';
     if (!empty($image_id) && is_numeric($image_id)) {
@@ -142,40 +110,31 @@ function fetch_and_render_fau_data($atts) {
     }
 
     // Sorting logic based on the specified sorting options
-    $sort_option = $atts['sort'] ?? 'last_name'; // Default sorting option is by last name
+    $sort_option = $atts['sort'] ?? 'last_name'; // Default sorting by last name
+    $collator = collator_create('de_DE'); // German locale for sorting
 
-    // Create a collator object for locale-based sorting
-    $collator = collator_create('de_DE'); // German locale; adjust as needed
-
-    // Sorting function based on the chosen option
+    // Sort the persons array
     usort($persons, function ($a, $b) use ($sort_option, $collator, $identifiers) {
         switch ($sort_option) {
             case 'title_last_name':
-                // Sorting first by academic titles, then by last name
-                $academic_titles = ['Prof. Dr.', 'Dr.', 'Prof.', '']; // Define title order
-
+                $academic_titles = ['Prof. Dr.', 'Dr.', 'Prof.', ''];
                 $a_title = $a['personalTitle'] ?? '';
                 $b_title = $b['personalTitle'] ?? '';
 
                 $a_title_pos = array_search($a_title, $academic_titles) !== false ? array_search($a_title, $academic_titles) : count($academic_titles);
                 $b_title_pos = array_search($b_title, $academic_titles) !== false ? array_search($b_title, $academic_titles) : count($academic_titles);
 
-                // First, compare academic titles
                 if ($a_title_pos !== $b_title_pos) {
                     return $a_title_pos - $b_title_pos;
                 }
-
-                // If titles are the same, compare last names
                 return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');
 
             case 'identifier_order':
-                // Sorting by the order of identifiers
                 $a_index = array_search($a['identifier'] ?? '', $identifiers);
                 $b_index = array_search($b['identifier'] ?? '', $identifiers);
                 return $a_index - $b_index;
 
             default:
-                // Default sorting by last name, considering special characters
                 return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');
         }
     });
@@ -184,7 +143,6 @@ function fetch_and_render_fau_data($atts) {
     $template_dir = plugin_dir_path(__FILE__) . '../../templates/';
     $template = new Template($template_dir);
 
-    // Render the template based on the format
     return $template->render($atts['format'], [
         'show_fields' => $show_fields,
         'hide_fields' => $hide_fields,
@@ -193,6 +151,75 @@ function fetch_and_render_fau_data($atts) {
         'url' => $url,
     ]);
 }
+
+/**
+ * Process persons by a list of identifiers.
+ */
+function process_persons_by_identifiers($identifiers) {
+    $persons = [];
+
+    foreach ($identifiers as $identifier) {
+        $identifier = trim($identifier);
+        if (!empty($identifier)) {
+            $personData = fetch_fau_persons_atributes(0, 0, ['identifier' => $identifier]);
+            if (!empty($personData['data'])) {
+                $persons[] = enrich_person_with_contacts($personData['data'][0]);
+            }
+        }
+    }
+
+    return $persons;
+}
+
+/**
+ * Fetch and process persons based on query parameters.
+ */
+function fetch_and_process_persons($lq = null) {
+    $params = $lq ? ['lq' => $lq] : [];
+    $data = fetch_fau_persons_atributes(0, 0, $params);
+
+    $persons = [];
+    if (!empty($data['data'])) {
+        foreach ($data['data'] as $person) {
+            $persons[] = enrich_person_with_contacts($person);
+        }
+    }
+
+    return $persons;
+}
+
+/**
+ * Enrich a person's data with their contacts and organization details.
+ */
+function enrich_person_with_contacts($person) {
+    $personContacts = [];
+
+    if (!empty($person['contacts'])) {
+        foreach ($person['contacts'] as $contact) {
+            $contactIdentifier = $contact['identifier'] ?? null;
+            if ($contactIdentifier) {
+                $contactData = fetch_fau_contacts(0, 0, ['identifier' => $contactIdentifier]);
+                if (!empty($contactData['data'])) {
+                    $contact = $contactData['data'][0];
+                    $organizationId = $contact['organization']['identifier'] ?? null;
+                    $organizationAddress = null;
+
+                    if ($organizationId) {
+                        $organizationData = fetch_fau_organization_by_id($organizationId);
+                        $organizationAddress = $organizationData['address'] ?? 'Address not available';
+                    }
+
+                    $contact['organization_address'] = $organizationAddress;
+                    $personContacts[] = $contact;
+                }
+            }
+        }
+    }
+
+    $person['contacts'] = $personContacts;
+    return $person;
+}
+
 
 
 add_shortcode('faudir', 'fetch_fau_data');
