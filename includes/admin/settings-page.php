@@ -662,11 +662,23 @@ function rrze_faudir_search_person_ajax() {
     $familyName = isset($_POST['family_name']) ? sanitize_text_field($_POST['family_name']) : '';
     $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
 
+    $queryParts = [];
+    
+    if (!empty($personId)) {
+        $queryParts[] = 'identifier=' . urlencode($personId);
+    }
+    if (!empty($givenName)) {
+        $queryParts[] = 'givenName=' . urlencode($givenName);
+    }
+    if (!empty($familyName)) {
+        $queryParts[] = 'familyName=' . urlencode($familyName);
+    }
+    if (!empty($email)) {
+        $queryParts[] = 'email=' . urlencode($email);
+    }
+
     $params = [
-        'givenName' => $givenName,
-        'familyName' => $familyName,
-        'identifier' => $personId,
-        'email' => $email,
+        'lq' => implode('&', $queryParts)
     ];
 
     $response = fetch_fau_persons_atributes(60, 0, $params);
