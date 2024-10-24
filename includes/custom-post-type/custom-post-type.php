@@ -17,6 +17,7 @@ function register_custom_person_post_type() {
         'has_archive'        => true,
         'rewrite'            => array('slug' => 'person'),
         'supports'           => array('title', 'editor', 'thumbnail'),
+        'taxonomies'   => array('custom_taxonomy'),
         'show_in_rest'       => true,
         'menu_position'      => 5,
         'capability_type'    => 'post',
@@ -25,6 +26,65 @@ function register_custom_person_post_type() {
 }
 add_action('init', 'register_custom_person_post_type');
 
+function register_custom_taxonomy() {
+    // Register the taxonomy
+    register_taxonomy(
+        'custom_taxonomy', // Taxonomy slug
+        'custom_person', // Custom Post Type to attach the taxonomy
+        array(
+            'labels' => array(
+                'name'              => __( 'Categories', 'text-domain' ),
+                'singular_name'     => __( 'Category', 'text-domain' ),
+                'search_items'      => __( 'Search Categories', 'text-domain' ),
+                'all_items'         => __( 'All Categories', 'text-domain' ),
+                'parent_item'       => __( 'Parent Category', 'text-domain' ),
+                'parent_item_colon' => __( 'Parent Category:', 'text-domain' ),
+                'edit_item'         => __( 'Edit Category', 'text-domain' ),
+                'update_item'       => __( 'Update Category', 'text-domain' ),
+                'add_new_item'      => __( 'Add New Category', 'text-domain' ),
+                'new_item_name'     => __( 'New Category Name', 'text-domain' ),
+                'menu_name'         => __( 'Categories', 'text-domain' ),
+            ),
+            'hierarchical'      => true, // Set true for a category-like taxonomy, false for tags.
+            'public'            => true,
+            'show_ui'           => true,
+            'show_in_menu'      => true,
+            'show_in_nav_menus' => true,
+            'show_tagcloud'     => true,
+            'show_in_quick_edit'=> true,
+            'meta_box_cb'       => null, // Use default meta box
+            'show_admin_column' => true, // Show taxonomy in the admin list table.
+            'query_var'         => true,
+            'rewrite'           => array( 'slug' => 'category' ),
+        )
+    );
+}
+add_action( 'init', 'register_custom_taxonomy' );
+
+function add_taxonomy_meta_box() {
+    add_meta_box(
+        'custom_taxonomydiv',
+        __('Categories', 'text-domain'),
+        'post_categories_meta_box',
+        'custom_person',
+        'side',
+        'default',
+        array('taxonomy' => 'custom_taxonomy')
+    );
+}
+add_action('add_meta_boxes', 'add_taxonomy_meta_box');
+
+
+function rrze_faudir_maybe_flush_rewrite_rules() {
+    $saved_slug = get_option('custom_person_slug', 'person');
+    $new_slug = isset($_POST['custom_person_slug']) ? $_POST['custom_person_slug'] : $saved_slug;
+
+    if ($new_slug !== $saved_slug) {
+        update_option('custom_person_slug', $new_slug);
+        flush_rewrite_rules(); // Flush rules when the slug changes
+    }
+}
+add_action('update_option_custom_person_slug', 'rrze_faudir_maybe_flush_rewrite_rules');
 // Add Meta Boxes
 function add_custom_person_meta_boxes() {
     add_meta_box(
