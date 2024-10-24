@@ -88,15 +88,29 @@ get_header();
                     <?php endif; ?>
                     </div>
                     <?php
+                    $allowed_tags = array_merge(
+                        wp_kses_allowed_html('post'),
+                        [
+                            'img' => [
+                                'src'    => true,
+                                'alt'    => true,
+                                'class'  => true,
+                                'width'  => true,
+                                'height' => true,
+                                'loading' => true,
+                            ],
+                        ]
+                    );
                      if ($locale === 'de_DE' || $locale === 'de_SIE' && !empty($content_de)): ?>
                         <section class="card-section-title"><?php esc_html__('Content', 'rrze-faudir'); ?></section>
                         <div class="content-second-language">
-                            <?php echo wp_kses_post($content_de); ?>
+                            <?php echo wp_kses(do_shortcode($content_de), $allowed_tags); ?>
                         </div>
-                    <?php elseif ($locale === 'de_DE' || $locale === 'de_SIE' && !empty($content_en)): ?>
+                    <?php elseif ($locale === 'en_US' || $locale === 'en_GB' && !empty($content_en)): ?>
                         <section class="card-section-title"><?php esc_html__('Content', 'rrze-faudir'); ?></section>
                         <div class="content-second-language">
-                            <?php echo wp_kses_post($content_en); ?>
+                    
+                            <?php echo wp_kses(do_shortcode($content_en), $allowed_tags); ?>
                         </div>
                     <?php endif; ?>
 
