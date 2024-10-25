@@ -1,6 +1,12 @@
 <?php 
 // Register the Custom Post Type
 function register_custom_person_post_type() {
+    // Get the slug from the options; fallback to 'person' if not set.
+    $options = get_option('rrze_faudir_options');
+    $slug = isset($options['person_slug']) && !empty($options['person_slug']) 
+        ? sanitize_title($options['person_slug']) 
+        : 'person'; // Default to 'person'
+
     $args = array(
         'labels' => array(
             'name'               => __('Persons', 'rrze-faudir'),
@@ -15,16 +21,21 @@ function register_custom_person_post_type() {
         ),
         'public'             => true,
         'has_archive'        => true,
-        'rewrite'            => array('slug' => 'person'),
+        'rewrite'            => array(
+            'slug' => $slug, // Use dynamic slug
+            'with_front' => false // Optional: Disable prefix (like /blog/)
+        ),
         'supports'           => array('title', 'editor', 'thumbnail'),
-        'taxonomies'   => array('custom_taxonomy'),
+        'taxonomies'         => array('custom_taxonomy'),
         'show_in_rest'       => true,
         'menu_position'      => 5,
         'capability_type'    => 'post',
     );
-    register_post_type('custom_person', $args);
+
+    register_post_type('custom_person', $args); // Keep 'custom_person' as the post type key
 }
 add_action('init', 'register_custom_person_post_type', 15);
+
 
 function register_custom_taxonomy() {
     // Register the taxonomy
@@ -74,17 +85,6 @@ function add_taxonomy_meta_box() {
 }
 add_action('add_meta_boxes', 'add_taxonomy_meta_box');
 
-
-function rrze_faudir_maybe_flush_rewrite_rules() {
-    $saved_slug = get_option('custom_person_slug', 'person');
-    $new_slug = isset($_POST['custom_person_slug']) ? $_POST['custom_person_slug'] : $saved_slug;
-
-    if ($new_slug !== $saved_slug) {
-        update_option('custom_person_slug', $new_slug);
-        flush_rewrite_rules(); // Flush rules when the slug changes
-    }
-}
-add_action('update_option_custom_person_slug', 'rrze_faudir_maybe_flush_rewrite_rules');
 // Add Meta Boxes
 function add_custom_person_meta_boxes() {
     add_meta_box(

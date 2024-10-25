@@ -288,6 +288,20 @@ function migrate_person_data_on_activation() {
         //error_log('No posts found for post type "person".');
     }
 }
+function rrze_faudir_flush_rewrite_on_slug_change($old_value, $value, $option) {
+    if ($option === 'rrze_faudir_options' && $old_value['person_slug'] !== $value['person_slug']) {
+        flush_rewrite_rules(); // Flush rewrite rules if the slug changes
+    }
+}
+add_action('update_option_rrze_faudir_options', 'rrze_faudir_flush_rewrite_on_slug_change', 10, 3);
+
+function rrze_faudir_save_permalink_settings() {
+    // Simulate visiting the Permalinks page to refresh rewrite rules
+    global $wp_rewrite;
+    $wp_rewrite->flush_rules();
+}
+add_action('admin_init', 'rrze_faudir_save_permalink_settings');
+
 function rrze_faudir_activate() {
     register_custom_person_post_type(); // Register your post type
     flush_rewrite_rules(); // Clear and regenerate rewrite rules

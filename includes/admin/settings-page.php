@@ -134,6 +134,13 @@ function rrze_faudir_settings_init()
         'rrze_faudir_settings_business_card',
         'rrze_faudir_business_card_section'
     );
+    add_settings_field(
+        'rrze_faudir_person_slug',
+        __('Person Slug', 'rrze-faudir'),
+        'rrze_faudir_person_slug_field',
+        'rrze_faudir_settings_business_card',
+        'rrze_faudir_business_card_section'
+    );
 
     // Contacts Search Section
     add_settings_section(
@@ -274,15 +281,25 @@ function rrze_faudir_hard_sanitize_render()
     echo '<input type="checkbox" name="rrze_faudir_options[hard_sanitize]" value="1" ' . esc_attr($checked) . '>';
     echo '<p class="description">' . esc_html__('Hard Sanitize abbreviations.', 'rrze-faudir') . '</p>';
 }
+function rrze_faudir_person_slug_field() {
+    $options = get_option('rrze_faudir_options'); // Get all plugin options
+    $default_slug = 'person'; // Default slug value
 
+    // Retrieve the saved slug or use the default if not set
+    $slug = isset($options['person_slug']) && !empty($options['person_slug']) 
+        ? sanitize_text_field($options['person_slug']) 
+        : $default_slug;
 
-// Add this function after the render function
-function rrze_faudir_get_business_card_title() {
-    $options = get_option('rrze_faudir_options');
-    return isset($options['business_card_title']) && !empty($options['business_card_title'])
-        ? sanitize_text_field($options['business_card_title'])
-        : esc_html__('Call up business card', 'rrze-faudir');
+    // Save the default slug if not already set
+    if (!isset($options['person_slug']) || empty($options['person_slug'])) {
+        $options['person_slug'] = $default_slug;
+        update_option('rrze_faudir_options', $options);
+    }
+
+    echo '<input type="text" id="rrze_faudir_person_slug" name="rrze_faudir_options[person_slug]" value="' . esc_attr($slug) . '" size="50">';
+    echo '<p class="description">' . esc_html__('Enter the slug for the person post type.', 'rrze-faudir') . '</p>';
 }
+
 
 function rrze_faudir_default_output_fields_render() {
     $options = get_option('rrze_faudir_options');
