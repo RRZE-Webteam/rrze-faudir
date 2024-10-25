@@ -24,7 +24,7 @@ function register_custom_person_post_type() {
     );
     register_post_type('custom_person', $args);
 }
-add_action('init', 'register_custom_person_post_type');
+add_action('init', 'register_custom_person_post_type', 15);
 
 function register_custom_taxonomy() {
     // Register the taxonomy

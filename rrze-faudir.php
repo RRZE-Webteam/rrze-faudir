@@ -288,7 +288,8 @@ function migrate_person_data_on_activation() {
         //error_log('No posts found for post type "person".');
     }
 }
-
-
-
-
+function rrze_faudir_activate() {
+    register_custom_person_post_type(); // Register your post type
+    flush_rewrite_rules(); // Clear and regenerate rewrite rules
+}
+register_activation_hook(__FILE__, 'rrze_faudir_activate');
