@@ -141,6 +141,8 @@ jQuery(document).ready(function($) {
     $(document).on('click', '.add-person', function() {
         var personName = $(this).data('name');
         var personId = $(this).data('id');
+        var organizations = $(this).data('organizations') || [];
+        var functions = $(this).data('functions') || [];
 
         $.ajax({
             url: rrzeFaudirAjax.ajax_url,
@@ -149,12 +151,14 @@ jQuery(document).ready(function($) {
                 action: 'rrze_faudir_create_custom_person',
                 security: rrzeFaudirAjax.api_nonce,
                 person_name: personName,
-                person_id: personId
+                person_id: personId,
+                organizations: organizations,
+                functions: functions
             },
             success: function(response) {
                 if (response.success) {
                     alert('Custom person created successfully!');
-                    // Optionally, you can refresh the search results or update the UI
+                    // Optionally refresh the search results or update the UI
                 } else {
                     alert('Error creating custom person: ' + (response.data || 'Unknown error'));
                 }
@@ -162,6 +166,67 @@ jQuery(document).ready(function($) {
             error: function(jqXHR, textStatus, errorThrown) {
                 console.error('AJAX error:', textStatus, errorThrown);
                 alert('An error occurred while creating the custom person. Please check the console for more details.');
+            }
+        });
+    });
+
+    // Handle person ID input changes
+    $('#person_id').on('change', function() {
+        var personId = $(this).val();
+        if (!personId) return;
+
+        // Show loading indicator if needed
+        
+        $.ajax({
+            url: customPerson.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'fetch_person_attributes',
+                nonce: customPerson.nonce,
+                person_id: personId
+            },
+            success: function(response) {
+                if (response.success) {
+                    const data = response.data;
+                    
+                    // Update regular fields
+                    $('#person_name').val(data.person_name);
+                    $('#person_email').val(data.person_email);
+                    $('#person_given_name').val(data.person_given_name);
+                    $('#person_family_name').val(data.person_family_name);
+                    $('#person_title').val(data.person_title);
+                    
+                    // Update organizations and functions
+                    const organizationsWrapper = $('.organizations-wrapper');
+                    organizationsWrapper.empty();
+                    
+                    data.organizations.forEach((org, index) => {
+                        const orgBlock = `
+                            <div class="organization-block">
+                                <div class="organization-header">
+                                    <h4>Organization ${index + 1}</h4>
+                                    ${index > 0 ? '<button type="button" class="remove-organization button-link-delete">Remove Organization</button>' : ''}
+                                </div>
+                                <input type="text" name="person_organizations[${index}][organization]" value="${org.organization}" class="widefat" readonly />
+                                <div class="functions-wrapper">
+                                    <h5>Functions</h5>
+                                    ${org.functions.map(func => `
+                                        <div class="function-block">
+                                            <input type="text" name="person_organizations[${index}][functions][]" value="${func}" class="widefat" readonly />
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                        organizationsWrapper.append(orgBlock);
+                    });
+                } else {
+                    alert('Error fetching person data: ' + (response.data || 'Unknown error'));
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', status, error);
+                alert('Error fetching person data. Please check the console for details.');
             }
         });
     });
