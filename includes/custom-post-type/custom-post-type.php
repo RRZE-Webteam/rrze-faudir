@@ -153,7 +153,8 @@ function render_person_additional_fields($post) {
     if (empty($organizations)) {
         $organizations = array(array(
             'organization' => '',
-            'functions' => array('')
+            'functions_en' => array(''),
+            'functions_de' => array('')
         ));
     }
 
@@ -168,16 +169,26 @@ function render_person_additional_fields($post) {
         
         echo '<input type="text" name="person_organizations[' . $index . '][organization]" value="' . esc_attr($org['organization']) . '" class="widefat" readonly />';
         
-        echo '<div class="functions-wrapper">';
-        echo '<h5>' . __('Functions', 'rrze-faudir') . '</h5>';
-        
-        foreach ($org['functions'] as $func_index => $function) {
-            echo '<div class="function-block">';
-            echo '<input type="text" name="person_organizations[' . $index . '][functions][]" value="' . esc_attr($function) . '" class="widefat" readonly />';
-            echo '</div>';
-        }
-        
-        echo '</div>'; // .functions-wrapper
+       // English Functions
+       echo '<div class="functions-wrapper">';
+       echo '<h5>' . __('Functions (English)', 'rrze-faudir') . '</h5>';
+       foreach ($org['functions_en'] as $func_index => $function) {
+           echo '<div class="function-block">';
+           echo '<input type="text" name="person_organizations[' . $index . '][functions_en][]" value="' . esc_attr($function) . '" class="widefat" readonly />';
+           echo '</div>';
+       }
+       echo '</div>';
+
+       // German Functions
+       echo '<div class="functions-wrapper">';
+       echo '<h5>' . __('Functions (German)', 'rrze-faudir') . '</h5>';
+       foreach ($org['functions_de'] as $func_index => $function) {
+           echo '<div class="function-block">';
+           echo '<input type="text" name="person_organizations[' . $index . '][functions_de][]" value="' . esc_attr($function) . '" class="widefat" readonly />';
+           echo '</div>';
+       }
+       echo '</div>';
+       
         echo '</div>'; // .organization-block
     }
     
@@ -214,22 +225,61 @@ function save_person_additional_fields($post_id) {
 
         // Check if the response is a valid array
         if (is_array($response) && isset($response['data'])) {
-            $contact = $response['data'][0] ?? null; // Assuming you need the first contact from the response
+            $contact = $response['data'][0] ?? null;
 
             // If contact is found, update relevant post meta fields
             if ($contact) {
+                // Update basic information
                 update_post_meta($post_id, 'person_name', sanitize_text_field($contact['givenName'] . ' ' . $contact['familyName']));
                 update_post_meta($post_id, 'person_email', sanitize_email($contact['email'] ?? ''));
+                update_post_meta($post_id, 'person_given_name', sanitize_text_field($contact['givenName'] ?? ''));
+                update_post_meta($post_id, 'person_family_name', sanitize_text_field($contact['familyName'] ?? ''));
                 update_post_meta($post_id, 'person_title', sanitize_text_field($contact['personalTitle'] ?? ''));
-                update_post_meta($post_id, 'person_function', sanitize_text_field($contact['functionLabel']['en'] ?? ''));
 
-                // If more fields need updating based on API response, add them here
+                // Process organizations and functions
+                $organizations = array();
+                if (isset($contact['contacts']) && is_array($contact['contacts'])) {
+                    foreach ($contact['contacts'] as $contactInfo) {
+                        $org_name = $contactInfo['organization']['name'] ?? '';
+                        $function_en = $contactInfo['functionLabel']['en'] ?? '';
+                        $function_de = $contactInfo['functionLabel']['de'] ?? '';
+                        
+                        // Find if organization already exists in our array
+                        $org_index = -1;
+                        foreach ($organizations as $index => $org) {
+                            if ($org['organization'] === $org_name) {
+                                $org_index = $index;
+                                break;
+                            }
+                        }
+                        
+                        if ($org_index >= 0) {
+                            // Add functions to existing organization
+                            if (!empty($function_en)) {
+                                $organizations[$org_index]['functions_en'][] = $function_en;
+                            }
+                            if (!empty($function_de)) {
+                                $organizations[$org_index]['functions_de'][] = $function_de;
+                            }
+                        } else {
+                            // Add new organization with functions
+                            $organizations[] = array(
+                                'organization' => $org_name,
+                                'functions_en' => !empty($function_en) ? array($function_en) : array(),
+                                'functions_de' => !empty($function_de) ? array($function_de) : array()
+                            );
+                        }
+                    }
+                }
+
+                // Save the organizations array as post meta
+                update_post_meta($post_id, 'person_organizations', $organizations);
+
+            } else {
+                // If API response is not successful, log error or notify the user as needed
+                /* translators: %s: JSON-encoded response */
+                /* error_log(sprintf(__('Error fetching person attributes: %s', 'rrze-faudir'), wp_json_encode($response)));*/
             }
-        } else {
-            // If API response is not successful, log error or notify the user as needed
-            /* translators: %s: JSON-encoded response */
-            /* error_log(sprintf(__('Error fetching person attributes: %s', 'rrze-faudir'), wp_json_encode($response)));*/
-
         }        
     }
 
@@ -247,8 +297,6 @@ function save_person_additional_fields($post_id) {
         'person_title',
         'person_suffix',
         'person_nobility_name',
-        'person_organization',
-        'person_function',
     ];
 
     // Save each field
@@ -285,9 +333,7 @@ add_action('admin_enqueue_scripts', 'enqueue_custom_person_scripts');
 function fetch_person_attributes() {
     check_ajax_referer('custom_person_nonce', 'nonce');
 
-    if (isset($_POST['person_id'])) {
-        $person_id = sanitize_text_field(wp_unslash($_POST['person_id']));
-    }    
+    $person_id = sanitize_text_field($_POST['person_id']);
 
     if (!empty($person_id)) {
         $params = ['identifier' => $person_id];
@@ -297,12 +343,13 @@ function fetch_person_attributes() {
             $contact = $response['data'][0] ?? null;
 
             if ($contact) {
-                // Prepare organizations and functions data
+                // Process organizations and functions
                 $organizations = array();
                 if (isset($contact['contacts']) && is_array($contact['contacts'])) {
                     foreach ($contact['contacts'] as $contactInfo) {
                         $org_name = $contactInfo['organization']['name'] ?? '';
-                        $function = $contactInfo['functionLabel']['en'] ?? '';
+                        $function_en = $contactInfo['functionLabel']['en'] ?? '';
+                        $function_de = $contactInfo['functionLabel']['de'] ?? '';
                         
                         // Find if organization already exists in our array
                         $org_index = -1;
@@ -314,15 +361,19 @@ function fetch_person_attributes() {
                         }
                         
                         if ($org_index >= 0) {
-                            // Add function to existing organization
-                            if (!empty($function)) {
-                                $organizations[$org_index]['functions'][] = $function;
+                            // Add functions to existing organization
+                            if (!empty($function_en)) {
+                                $organizations[$org_index]['functions_en'][] = $function_en;
+                            }
+                            if (!empty($function_de)) {
+                                $organizations[$org_index]['functions_de'][] = $function_de;
                             }
                         } else {
-                            // Add new organization with function
+                            // Add new organization with functions
                             $organizations[] = array(
                                 'organization' => $org_name,
-                                'functions' => !empty($function) ? array($function) : array()
+                                'functions_en' => !empty($function_en) ? array($function_en) : array(),
+                                'functions_de' => !empty($function_de) ? array($function_de) : array()
                             );
                         }
                     }
@@ -337,13 +388,13 @@ function fetch_person_attributes() {
                     'organizations' => $organizations
                 ));
             } else {
-                wp_send_json_error(__('No contact found.', 'rrze-faudir'));
+                wp_send_json_error(__('No contact found.', 'text-domain'));
             }
         } else {
-            wp_send_json_error(__('Error fetching person attributes.', 'rrze-faudir'));
+            wp_send_json_error(__('Error fetching person attributes.', 'text-domain'));
         }
     } else {
-        wp_send_json_error(__('Invalid person ID.', 'rrze-faudir'));
+        wp_send_json_error(__('Invalid person ID.', 'text-domain'));
     }
 }
 add_action('wp_ajax_fetch_person_attributes', 'fetch_person_attributes');
@@ -394,7 +445,8 @@ function rrze_faudir_create_custom_person() {
             if (isset($contact['contacts']) && is_array($contact['contacts'])) {
                 foreach ($contact['contacts'] as $contactInfo) {
                     $org_name = $contactInfo['organization']['name'] ?? '';
-                    $function = $contactInfo['functionLabel']['en'] ?? '';
+                    $function_en = $contactInfo['functionLabel']['en'] ?? '';
+                    $function_de = $contactInfo['functionLabel']['de'] ?? '';
                     
                     // Find if organization already exists in our array
                     $org_index = -1;
@@ -407,14 +459,18 @@ function rrze_faudir_create_custom_person() {
                     
                     if ($org_index >= 0) {
                         // Add function to existing organization
-                        if (!empty($function)) {
-                            $organizations[$org_index]['functions'][] = $function;
+                        if (!empty($function_en)) {
+                            $organizations[$org_index]['functions_en'][] = $function_en;
+                        }
+                        if (!empty($function_de)) {
+                            $organizations[$org_index]['functions_de'][] = $function_de;
                         }
                     } else {
                         // Add new organization with function
                         $organizations[] = array(
                             'organization' => $org_name,
-                            'functions' => !empty($function) ? array($function) : array()
+                            'functions_en' => !empty($function_en) ? array($function_en) : array(),
+                            'functions_de' => !empty($function_de) ? array($function_de) : array()
                         );
                     }
                 }
