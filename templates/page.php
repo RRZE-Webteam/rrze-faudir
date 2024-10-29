@@ -252,21 +252,33 @@
                     
                         if (!empty($organizationName)) {
                             $locale = get_locale();
-                            $functionLabel = ($locale === 'de_DE' || $locale === 'de_SIE') 
-                                ? $contact['functionLabel']['de'] 
-                                : $contact['functionLabel']['en'];
+                            $isGerman = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_SIE') !== false;
+                            
+                            // Get function label from either contact or CPT
+                            $functionLabel = '';
+                            if (!empty($contact['functionLabel'])) {
+                                // Get from contact array based on language
+                                $functionLabel = $isGerman ? 
+                                    (isset($contact['functionLabel']['de']) ? $contact['functionLabel']['de'] : '') : 
+                                    (isset($contact['functionLabel']['en']) ? $contact['functionLabel']['en'] : '');
+                            } elseif (!empty($function_label_cpt)) {
+                                // Fallback to CPT function label
+                                $functionLabel = $function_label_cpt;
+                            }
                         
                             // Initialize organization entry if not already set
                             if (!isset($organizations[$organizationName])) {
                                 $organizations[$organizationName] = [
                                     'functions' => [],
                                     'workplaces' => [],
-                                    'organization_address' => [] // Initialize organization address
+                                    'organization_address' => []
                                 ];
                             }
                         
-                            // Add function labels
-                            $organizations[$organizationName]['functions'][] = $functionLabel;
+                            // Add function label only if it's not empty and not already in the array
+                            if (!empty($functionLabel) && !in_array($functionLabel, $organizations[$organizationName]['functions'])) {
+                                $organizations[$organizationName]['functions'][] = $functionLabel;
+                            }
                         
                             // Merge workplaces
                             if (!empty($contact['workplaces'])) {
@@ -290,15 +302,16 @@
                                 <span itemprop="name"><?php echo esc_html($organizationName); ?></span>
                             </span>
                         </p>
-                    
-                        <?php if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) : ?>
-                            <strong><?php echo esc_html__('Functions:', 'rrze-faudir'); ?></strong>
-                            <ul>
-                                <?php foreach ($data['functions'] as $function) : ?>
-                                    <li itemprop="jobTitle"><?php echo esc_html($function); ?></li>
-                                <?php endforeach; ?>
-                            </ul>
-                        <?php endif; ?>
+                    <?php if (!empty($data['functions'])) : ?>
+                    <strong><?php echo esc_html__('Functions:', 'rrze-faudir'); ?></strong>
+                    <ul>
+                        <?php foreach ($data['functions'] as $function) : ?>
+                            <li itemprop="jobTitle"><?php echo esc_html($function); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                    <?php else : ?>
+                        <p><?php echo esc_html__('No functions available.', 'rrze-faudir'); ?></p>
+                    <?php endif; ?>
                         <h3><?php echo esc_html__('Organization Address:', 'rrze-faudir'); ?></h3>
                         <div>
                             <?php foreach ($data['organization_address'] as $address) : ?>
