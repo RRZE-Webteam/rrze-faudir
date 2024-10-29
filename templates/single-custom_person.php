@@ -65,7 +65,8 @@ get_header();
                                     'workplace' => '',
                                     'address' => '',
                                     'functions_en' => array(''),
-                                    'functions_de' => array('')
+                                    'functions_de' => array(''),
+                                    'socials' => array('')
                                 ));
                             }
                             $locale = get_locale();
@@ -76,6 +77,65 @@ get_header();
                                 <div class="organization-block">
                                     <h4><?php echo esc_html__('Organization: ', 'rrze-faudir') . ' ' . esc_html($org['organization']); ?></h4>
                                     
+                                    <div class="social-wrapper">
+                                        <h5><?php echo esc_html__('Social Media:', 'rrze-faudir'); ?></h5>
+                                        <?php 
+                                        // Parse each line to extract platform and URL
+                                        $socials_line = explode("\n", $org['socials'] ?? '');
+
+                                        // Define a map of platform names to their icons (you can customize the paths or use Font Awesome classes)
+                                        $social_icons = [
+                                            'Github' => '<i class="fab fa-github"></i>',
+                                            'Xing' => '<i class="fab fa-xing"></i>',
+                                            'Bluesky' => '<i class="fab fa-twitter"></i>', // Adjust icon if needed
+                                        ];
+                                        $social_icons = [
+                                            'Github' => '<i class="fab fa-github"></i>',
+                                            'Xing' => '<i class="fab fa-xing"></i>',
+                                            'Bluesky' => '<i class="fas fa-cloud"></i>',
+                                            'Twitter' => '<i class="fab fa-twitter"></i>',
+                                            'Facebook' => '<i class="fab fa-facebook"></i>',
+                                            'Linkedin' => '<i class="fab fa-linkedin"></i>',
+                                            'Instagram' => '<i class="fab fa-instagram"></i>',
+                                            'Youtube' => '<i class="fab fa-youtube"></i>',
+                                            'Tiktok' => '<i class="fab fa-tiktok"></i>',
+                                            'Whatsapp' => '<i class="fab fa-whatsapp"></i>',
+                                            'Snapchat' => '<i class="fab fa-snapchat-ghost"></i>',
+                                            'Reddit' => '<i class="fab fa-reddit"></i>',
+                                            'Pinterest' => '<i class="fab fa-pinterest"></i>',
+                                            'Telegram' => '<i class="fab fa-telegram"></i>',
+                                            'Discord' => '<i class="fab fa-discord"></i>',
+                                            'Medium' => '<i class="fab fa-medium"></i>',
+                                            'Vimeo' => '<i class="fab fa-vimeo"></i>',
+                                            'Twitch' => '<i class="fab fa-twitch"></i>',
+                                            'Spotify' => '<i class="fab fa-spotify"></i>',
+                                            'Slack' => '<i class="fab fa-slack"></i>',
+                                            'Dribbble' => '<i class="fab fa-dribbble"></i>',
+                                            'Behance' => '<i class="fab fa-behance"></i>',
+                                            'Flickr' => '<i class="fab fa-flickr"></i>',
+                                            'Mastodon' => '<i class="fab fa-mastodon"></i>',
+                                            'Goodreads' => '<i class="fas fa-book"></i>',
+                                            'Strava' => '<i class="fab fa-strava"></i>',
+                                            'Rss' => '<i class="fas fa-rss"></i>',
+                                            'Zoom' => '<i class="fas fa-video"></i>',
+                                            'Bsky' => '<i class="fas fa-cloud"></i>', 
+                                        ];
+                                    
+                                        foreach ($socials_line as $line) :
+                                            if (trim($line) !== '') :
+                                                // Split the line into platform and URL using ':' delimiter
+                                                list($platform, $url) = array_map('trim', explode(':', $line, 2));
+                                                $icon = $social_icons[$platform] ?? ''; // Get the icon if available
+                                                ?>
+                                                <p>
+                                                    <a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener noreferrer">
+                                                        <?php echo $icon . ' ' . esc_html($platform); ?>
+                                                    </a>
+                                                </p>
+                                            <?php endif; 
+                                        endforeach; ?>
+                                    </div>
+
                                     <div class="address-wrapper">
                                         <h5><?php echo esc_html__('Organization Address:', 'rrze-faudir'); ?></h5>
                                         <?php 
