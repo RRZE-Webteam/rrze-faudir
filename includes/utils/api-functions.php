@@ -314,7 +314,7 @@ function fetch_and_format_address($contactIdentifier) {
     error_log('Fetching address for contact identifier: ' . $contactIdentifier);
 
     // Fetch contact data
-    $contactData = fetch_fau_contacts(1, 0, ['identifier' => $contactIdentifier]);
+    $contactData = fetch_fau_organizations(1, 0, ['identifier' => $contactIdentifier]);
     error_log('Contact data response: ' . print_r($contactData, true));
 
     if (empty($contactData['data'])) {

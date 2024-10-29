@@ -252,12 +252,13 @@ function save_person_additional_fields($post_id) {
                 if (isset($contact['contacts']) && is_array($contact['contacts'])) {
                     foreach ($contact['contacts'] as $contactInfo) {
                         $org_name = $contactInfo['organization']['name'] ?? '';
+                        $org_identifier = $contactInfo['organization']['identifier'] ?? '';
                         $function_en = $contactInfo['functionLabel']['en'] ?? '';
                         $function_de = $contactInfo['functionLabel']['de'] ?? '';
                         
                         // Fetch workplace and address for this contact
                         $workplace = fetch_and_format_workplaces($contactInfo['identifier'] ?? '');
-                        $address = fetch_and_format_address($contactInfo['identifier'] ?? '');
+                        $address = fetch_and_format_address($org_identifier);
                         
                         // Find if organization already exists in our array
                         $org_index = -1;
@@ -287,6 +288,7 @@ function save_person_additional_fields($post_id) {
                             // Add new organization
                             $organizations[] = array(
                                 'organization' => $org_name,
+                                'organization_id' => $org_identifier,
                                 'functions_en' => !empty($function_en) ? array($function_en) : array(),
                                 'functions_de' => !empty($function_de) ? array($function_de) : array(),
                                 'workplace' => $workplace,
@@ -372,6 +374,7 @@ function fetch_person_attributes() {
                 if (isset($contact['contacts']) && is_array($contact['contacts'])) {
                     foreach ($contact['contacts'] as $contactInfo) {
                         $org_name = $contactInfo['organization']['name'] ?? '';
+                        $org_identifier = $contactInfo['organization']['identifier'] ?? '';
                         $function_en = $contactInfo['functionLabel']['en'] ?? '';
                         $function_de = $contactInfo['functionLabel']['de'] ?? '';
                         
@@ -396,6 +399,7 @@ function fetch_person_attributes() {
                             // Add new organization with functions
                             $organizations[] = array(
                                 'organization' => $org_name,
+                                'organization_id' => $org_identifier,
                                 'functions_en' => !empty($function_en) ? array($function_en) : array(),
                                 'functions_de' => !empty($function_de) ? array($function_de) : array()
                             );
@@ -469,12 +473,13 @@ function rrze_faudir_create_custom_person() {
             if (isset($contact['contacts']) && is_array($contact['contacts'])) {
                 foreach ($contact['contacts'] as $contactInfo) {
                     $org_name = $contactInfo['organization']['name'] ?? '';
+                    $org_identifier = $contactInfo['organization']['identifier'] ?? '';
                     $function_en = $contactInfo['functionLabel']['en'] ?? '';
                     $function_de = $contactInfo['functionLabel']['de'] ?? '';
                     
                     // Fetch workplace and address for this contact
                     $workplace = fetch_and_format_workplaces($contactInfo['identifier'] ?? '');
-                    $address = fetch_and_format_address($contactInfo['identifier'] ?? '');
+                    $address = fetch_and_format_address($org_identifier);
                     
                     // Find if organization already exists in our array
                     $org_index = -1;
@@ -504,6 +509,7 @@ function rrze_faudir_create_custom_person() {
                         // Add new organization
                         $organizations[] = array(
                             'organization' => $org_name,
+                            'organization_id' => $org_identifier,
                             'functions_en' => !empty($function_en) ? array($function_en) : array(),
                             'functions_de' => !empty($function_de) ? array($function_de) : array(),
                             'workplace' => $workplace,
