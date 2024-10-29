@@ -227,8 +227,47 @@ function migrate_person_data_on_activation() {
                 ]);
 
                 if (!$existing_person) {
-                    // API call to fetch additional data
-                    $params = ['identifier' => $univisid];
+
+                    // make api call to http://univis.uni-erlangen.de/prg?search=persons&id=$univisid&show=json using univisid
+                    $url = 'http://univis.uni-erlangen.de/prg?search=persons&id=' . $univisid . '&show=json';
+                    $response = wp_remote_get($url);
+                    $body = wp_remote_retrieve_body($response);
+                    $data = json_decode($body, true);
+
+                    // Extract person data
+                    $person = $data['Person'][0];
+
+                    $identifier = $person['idm_id'] ?? null;
+                    // log the value
+                    error_log('Identifier: ' . $identifier);
+                    $email = $person['location'][0]['email'] ?? null;
+                    $givenName = $person['firstname'] ?? null;
+                    $familyName = $person['lastname'] ?? null;
+
+                    // Determine search parameters
+                    $queryParts = [];
+
+    
+                    if (!empty($identifier)) {
+                        $queryParts[] = 'identifier=' . urlencode($identifier);
+                    }
+                    // if (!empty($givenName)) {
+                    //     $queryParts[] = 'givenName=' . urlencode($givenName);
+                    // }
+                    // if (!empty($familyName)) {
+                    //     $queryParts[] = 'familyName=' . urlencode($familyName);
+                    // }
+                    // if (!empty($email)) {
+                    //     $queryParts[] = 'email=' . urlencode($email);
+                    // }
+
+                    $params = [
+                        'lq' => implode('&', $queryParts)
+                    ];
+
+                    $params = ['identifier' => 'b51a219844'];
+
+                    // fetch data from api using univis api data
                     $response = fetch_fau_persons_atributes(60, 0, $params);
 
                     if (is_array($response) && isset($response['data'])) {
