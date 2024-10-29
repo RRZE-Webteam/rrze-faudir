@@ -235,3 +235,125 @@ function fetch_fau_organization_by_id($organizationId) {
     $body = wp_remote_retrieve_body($response);
     return json_decode($body, true) ?? [];
 }
+
+function fetch_and_format_workplaces($contactIdentifier) {
+    error_log('Fetching workplaces for contact identifier: ' . $contactIdentifier);
+
+    // Fetch contact data
+    $contactData = fetch_fau_contacts(1, 0, ['identifier' => $contactIdentifier]);
+    error_log('Contact data response: ' . print_r($contactData, true));
+
+    if (empty($contactData['data'])) {
+        error_log('No contact data found for identifier: ' . $contactIdentifier);
+        return 'No workplaces available';
+    }
+
+    $detailedContact = $contactData['data'][0];
+    $workplaces = $detailedContact['workplaces'] ?? [];
+
+    if (empty($workplaces)) {
+        error_log('No workplaces found in contact data');
+        return 'No workplaces available';
+    }
+
+    // Format workplaces into a string
+    $formattedWorkplaces = [];
+    foreach ($workplaces as $workplace) {
+        $workplaceDetails = [];
+
+        if (!empty($workplace['room'])) {
+            $workplaceDetails[] = 'Room: ' . $workplace['room'];
+        }
+        if (!empty($workplace['floor'])) {
+            $workplaceDetails[] = 'Floor: ' . $workplace['floor'];
+        }
+        if (!empty($workplace['street'])) {
+            $workplaceDetails[] = 'Street: ' . $workplace['street'];
+        }
+        if (!empty($workplace['zip'])) {
+            $workplaceDetails[] = 'ZIP: ' . $workplace['zip'];
+        }
+        if (!empty($workplace['city'])) {
+            $workplaceDetails[] = 'City: ' . $workplace['city'];
+        }
+        if (!empty($workplace['faumap'])) {
+            $workplaceDetails[] = 'FAU Map: ' . $workplace['faumap'];
+        }
+        if (!empty($workplace['phones'])) {
+            $workplaceDetails[] = 'Phones: ' . implode(', ', $workplace['phones']);
+        }
+        if (!empty($workplace['fax'])) {
+            $workplaceDetails[] = 'Fax: ' . $workplace['fax'];
+        }
+        if (!empty($workplace['url'])) {
+            $workplaceDetails[] = 'URL: ' . $workplace['url'];
+        }
+        if (!empty($workplace['mails'])) {
+            $workplaceDetails[] = 'Emails: ' . implode(', ', $workplace['mails']);
+        }
+        if (!empty($workplace['officeHours'])) {
+            $officeHours = array_map(function($hours) {
+                return 'Weekday ' . $hours['weekday'] . ': ' . $hours['from'] . ' - ' . $hours['to'];
+            }, $workplace['officeHours']);
+            $workplaceDetails[] = 'Office Hours: ' . implode('; ', $officeHours);
+        }
+        if (!empty($workplace['consultationHours'])) {
+            $consultationHours = array_map(function($hours) {
+                return 'Weekday ' . $hours['weekday'] . ': ' . $hours['from'] . ' - ' . $hours['to'] . ' (' . $hours['comment'] . ')';
+            }, $workplace['consultationHours']);
+            $workplaceDetails[] = 'Consultation Hours: ' . implode('; ', $consultationHours);
+        }
+
+        $formattedWorkplaces[] = implode("\n", $workplaceDetails);
+    }
+
+    return implode("\n\n", $formattedWorkplaces);
+}
+
+function fetch_and_format_address($contactIdentifier) {
+    error_log('Fetching address for contact identifier: ' . $contactIdentifier);
+
+    // Fetch contact data
+    $contactData = fetch_fau_contacts(1, 0, ['identifier' => $contactIdentifier]);
+    error_log('Contact data response: ' . print_r($contactData, true));
+
+    if (empty($contactData['data'])) {
+        error_log('No contact data found for identifier: ' . $contactIdentifier);
+        return 'No address available';
+    }
+
+    $detailedContact = $contactData['data'][0];
+    $address = $detailedContact['address'] ?? [];
+
+    if (empty($address)) {
+        error_log('No address found in contact data');
+        return 'No address available';
+    }
+
+    // Format address into a string
+    $addressDetails = [];
+
+    if (!empty($address['phone'])) {
+        $addressDetails[] = 'Phone: ' . $address['phone'];
+    }
+    if (!empty($address['mail'])) {
+        $addressDetails[] = 'Email: ' . $address['mail'];
+    }
+    if (!empty($address['url'])) {
+        $addressDetails[] = 'URL: ' . $address['url'];
+    }
+    if (!empty($address['street'])) {
+        $addressDetails[] = 'Street: ' . $address['street'];
+    }
+    if (!empty($address['zip'])) {
+        $addressDetails[] = 'ZIP: ' . $address['zip'];
+    }
+    if (!empty($address['city'])) {
+        $addressDetails[] = 'City: ' . $address['city'];
+    }
+    if (!empty($address['faumap'])) {
+        $addressDetails[] = 'FAU Map: ' . $address['faumap'];
+    }
+
+    return implode("\n", $addressDetails);
+}
