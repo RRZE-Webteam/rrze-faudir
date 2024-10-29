@@ -170,6 +170,11 @@ function render_person_additional_fields($post) {
         
         echo '<input type="text" name="person_organizations[' . $index . '][organization]" value="' . esc_attr($org['organization']) . '" class="widefat" readonly />';
         
+         // Add socials fields
+         echo '<div class="workplace-wrapper">';
+         echo '<h5>' . __('Socials', 'rrze-faudir') . '</h5>';
+         echo '<textarea name="person_organizations[' . $index . '][socials]" class="widefat" readonly rows="5">' . esc_textarea($org['socials'] ?? '') . '</textarea>';
+         echo '</div>';
         // Add workplace and address fields
         echo '<div class="workplace-wrapper">';
         echo '<h5>' . __('Workplace', 'rrze-faudir') . '</h5>';
@@ -261,6 +266,7 @@ function save_person_additional_fields($post_id) {
                         // Fetch workplace and address for this contact
                         $workplace = fetch_and_format_workplaces($contactInfo['identifier'] ?? '');
                         $address = fetch_and_format_address($org_identifier);
+                        $socials = fetch_and_format_socials($contactInfo['identifier'] ?? '');
                         
                         // Find if organization already exists in our array
                         $org_index = -1;
@@ -286,6 +292,9 @@ function save_person_additional_fields($post_id) {
                             if (empty($organizations[$org_index]['address'])) {
                                 $organizations[$org_index]['address'] = $address;
                             }
+                            if (empty($organizations[$org_index]['socials'])) {
+                                $organizations[$org_index]['socials'] = $socials;
+                            }
                         } else {
                             // Add new organization
                             $organizations[] = array(
@@ -294,7 +303,8 @@ function save_person_additional_fields($post_id) {
                                 'functions_en' => !empty($function_en) ? array($function_en) : array(),
                                 'functions_de' => !empty($function_de) ? array($function_de) : array(),
                                 'workplace' => $workplace,
-                                'address' => $address
+                                'address' => $address,
+                                'socials' => $socials,
                             );
                         }
                     }
@@ -484,6 +494,7 @@ function rrze_faudir_create_custom_person() {
                     // Fetch workplace and address for this contact
                     $workplace = fetch_and_format_workplaces($contactInfo['identifier'] ?? '');
                     $address = fetch_and_format_address($org_identifier);
+                    $socials = fetch_and_format_socials($contactInfo['identifier'] ?? '');
                     
                     // Find if organization already exists in our array
                     $org_index = -1;
@@ -508,6 +519,9 @@ function rrze_faudir_create_custom_person() {
                         }
                         if (empty($organizations[$org_index]['address'])) {
                             $organizations[$org_index]['address'] = $address;
+                        }
+                        if (empty($organizations[$org_index]['socials'])) {
+                            $organizations[$org_index]['socials'] = $socials;
                         }
                     } else {
                         // Add new organization

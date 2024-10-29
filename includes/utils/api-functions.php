@@ -357,3 +357,33 @@ function fetch_and_format_address($contactIdentifier) {
 
     return implode("\n", $addressDetails);
 }
+function fetch_and_format_socials($contactIdentifier) {
+    error_log('Fetching social media for contact identifier: ' . $contactIdentifier);
+
+    // Fetch contact data
+    $contactData = fetch_fau_contacts(1, 0, ['identifier' => $contactIdentifier]);
+    error_log('Contact data response: ' . print_r($contactData, true));
+
+    if (empty($contactData['data'])) {
+        error_log('No contact data found for identifier: ' . $contactIdentifier);
+        return 'No social media available';
+    }
+
+    $detailedContact = $contactData['data'][0];
+    $socials = $detailedContact['socials'] ?? [];
+
+    if (empty($socials)) {
+        error_log('No social media found in contact data');
+        return 'No social media available';
+    }
+
+    // Format social media into a string
+    $formattedSocials = [];
+    foreach ($socials as $social) {
+        if (!empty($social['platform']) && !empty($social['url'])) {
+            $formattedSocials[] = ucfirst($social['platform']) . ': ' . $social['url'];
+        }
+    }
+
+    return implode("\n", $formattedSocials);
+}
