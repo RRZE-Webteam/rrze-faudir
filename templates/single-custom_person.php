@@ -46,8 +46,6 @@ get_header();
                             // Initialize output strings for email and phone
                             $email_output = get_post_meta(get_the_ID(), 'person_email', true);
                             $phone_output = get_post_meta(get_the_ID(), 'person_telephone', true);
-                            $function_label = get_post_meta(get_the_ID(), 'person_function', true);
-                            $organization_name = get_post_meta(get_the_ID(), 'person_organization', true);
                         
                             if (!empty($email_output)) {
                                 echo '<p><strong>' . esc_html__('Email:', 'rrze-faudir') . '</strong> ' . esc_html($email_output) . '</p>';
@@ -57,9 +55,66 @@ get_header();
                                 echo '<p><strong>' . esc_html__('Phone:', 'rrze-faudir') . '</strong> ' . esc_html($phone_output) . '</p>';
                             }
                             ?>
+                            <?php 
+                            // Get organizations meta
+                            $organizations = get_post_meta(get_the_ID(), 'person_organizations', true) ?: array();
 
-                            <p><strong><?php echo esc_html__('Organization:', 'rrze-faudir');?></strong> <?php echo esc_html($organization_name); ?><p>
-                            <p><strong><?php echo esc_html__('Functions:', 'rrze-faudir');?></strong> <?php echo esc_html($function_label); ?><p>
+                            if (empty($organizations)) {
+                                $organizations = array(array(
+                                    'organization' => '',
+                                    'workplace' => '',
+                                    'address' => '',
+                                    'functions_en' => array(''),
+                                    'functions_de' => array('')
+                                ));
+                            }
+                            $locale = get_locale();
+                            $show_german = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_SIE' ) !== false;
+
+                            // Iterate through organizations and display the data
+                            foreach ($organizations as $index => $org) : ?>
+                                <div class="organization-block">
+                                    <h4><?php echo esc_html__('Organization: ', 'rrze-faudir') . ' ' . esc_html($org['organization']); ?></h4>
+                                    
+                                    <div class="address-wrapper">
+                                        <h5><?php echo esc_html__('Organization Address:', 'rrze-faudir'); ?></h5>
+                                        <?php 
+                                        $address_lines = explode("\n", $org['address'] ?? '');
+                                        foreach ($address_lines as $line) :
+                                            if (trim($line) !== '') : ?>
+                                                <p><?php echo esc_html($line); ?></p>
+                                            <?php endif; 
+                                        endforeach; ?>
+                                    </div>
+                                    <div class="workplace-wrapper">
+                                        <h5><?php echo esc_html__('Workplace:', 'rrze-faudir'); ?></h5>
+                                        <?php 
+                                        $workplace_lines = explode("\n", $org['workplace'] ?? '');
+                                        foreach ($workplace_lines as $line) :
+                                            if (trim($line) !== '') : ?>
+                                                <p><?php echo esc_html($line); ?></p>
+                                            <?php endif; 
+                                        endforeach; ?>
+                                    </div>
+                                    
+                                    <?php if (!$show_german) : ?>
+                                    <div class="functions-wrapper">
+                                        <h5><?php echo esc_html__('Functions', 'rrze-faudir'); ?></h5>
+                                        <?php foreach ($org['functions_en'] as $function) : ?>
+                                            <p><?php echo esc_html($function); ?></p>
+                                        <?php endforeach; ?>
+                                    </div>
+                                    <?php elseif ($show_german) : ?>
+                                    <div class="functions-wrapper">
+                                        <h5><?php echo esc_html__('Functions', 'rrze-faudir'); ?></h5>
+                                        <?php foreach ($org['functions_de'] as $function) : ?>
+                                            <p><?php echo esc_html($function); ?></p>
+                                        <?php endforeach; ?>
+                                    </div>
+                                    <?php endif ;?>
+                                </div>
+                                <hr>
+                            <?php endforeach; ?>
 
                             <?php
                             $locale = get_locale();
@@ -67,8 +122,7 @@ get_header();
 
                             $content_de = get_the_content();
                             $content_en = isset($content_en) ? $content_en : ''; // Ensure $content_en is set
-                                                    
-                            
+                                                        
                             $teaser_text_key = ($locale === 'de_DE' || $locale === 'de_SIE' ) ? '_teasertext_de' : '_teasertext_en';
                             $teaser_lang = get_post_meta(get_the_ID(), $teaser_text_key, true);
                             if (!empty($teaser_lang)) :

@@ -105,6 +105,7 @@ function render_person_additional_fields($post) {
     $api_fields = [
         'person_name',
         'person_email',
+        'person_telephone',
         'person_given_name',
         'person_family_name',
         'person_title',
@@ -243,6 +244,7 @@ function save_person_additional_fields($post_id) {
                 // Update basic information
                 update_post_meta($post_id, 'person_name', sanitize_text_field($contact['givenName'] . ' ' . $contact['familyName']));
                 update_post_meta($post_id, 'person_email', sanitize_email($contact['email'] ?? ''));
+                update_post_meta($post_id, 'person_telephone', sanitize_email($contact['telephone'] ?? ''));
                 update_post_meta($post_id, 'person_given_name', sanitize_text_field($contact['givenName'] ?? ''));
                 update_post_meta($post_id, 'person_family_name', sanitize_text_field($contact['familyName'] ?? ''));
                 update_post_meta($post_id, 'person_title', sanitize_text_field($contact['personalTitle'] ?? ''));
@@ -410,6 +412,7 @@ function fetch_person_attributes() {
                 wp_send_json_success(array(
                     'person_name' => sanitize_text_field($contact['givenName'] . ' ' . $contact['familyName']),
                     'person_email' => sanitize_email($contact['email'] ?? ''),
+                    'person_telephone' => sanitize_email($contact['telephone'] ?? ''),
                     'person_given_name' => sanitize_text_field($contact['givenName'] ?? ''),
                     'person_family_name' => sanitize_text_field($contact['familyName'] ?? ''),
                     'person_title' => sanitize_text_field($contact['personalTitle'] ?? ''),
@@ -464,6 +467,7 @@ function rrze_faudir_create_custom_person() {
             // Update basic post meta
             update_post_meta($post_id, 'person_name', sanitize_text_field($contact['givenName'] . ' ' . $contact['familyName']));
             update_post_meta($post_id, 'person_email', sanitize_email($contact['email'] ?? ''));
+            update_post_meta($post_id, 'person_telephone', sanitize_email($contact['telephone'] ?? ''));
             update_post_meta($post_id, 'person_given_name', sanitize_text_field($contact['givenName'] ?? ''));
             update_post_meta($post_id, 'person_family_name', sanitize_text_field($contact['familyName'] ?? ''));
             update_post_meta($post_id, 'person_title', sanitize_text_field($contact['personalTitle'] ?? ''));
