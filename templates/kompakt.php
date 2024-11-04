@@ -1,7 +1,7 @@
 <?php if (!empty($persons)) : ?>
     <?php foreach ($persons as $person) : ?>
         <?php if (!empty($person)) : ?>
-                <?php
+            <?php
                 $personal_title_cpt = '';
                 $first_name_cpt = '';
                 $nobility_title_cpt = '';
@@ -12,16 +12,16 @@
                 $function_label_cpt = '';
                 $organization_name_cpt = '';
                 $featured_image_url = '';
-                
-                // Check if a CPT with the same ID exists
-                $contact_posts = get_posts([
-                    'post_type' => 'custom_person',
-                    'meta_key' => 'person_id',
-                    'meta_value' => $person['identifier'],
-                    'posts_per_page' => 1, // Only fetch one post matching the person ID
-                ]);
-    
-                // If there are contact posts, process them
+
+            // Check if a custom post type (CPT) with the same ID exists
+            $contact_posts = get_posts([
+                'post_type' => 'custom_person',
+                'meta_key' => 'person_id',
+                'meta_value' => $person['identifier'],
+                'posts_per_page' => 1, // Only fetch one post matching the person ID
+            ]);
+
+            // If there are contact posts, populate the CPT variables
             if (!empty($contact_posts)) {
                     // Loop through each contact post
                     foreach ($contact_posts as $post) : {
@@ -31,16 +31,16 @@
                         // Compare the identifier with the current person's identifier
                         if ($identifier === $person['identifier']) {
                             // Use $post->ID instead of get_the_ID() to get the correct metadata
-                            $personal_title_cpt = get_post_meta($post->ID, 'person_title', true);
-                            $first_name_cpt = get_post_meta($post->ID, 'person_given_name', true);
-                            $nobility_title_cpt = get_post_meta($post->ID, 'person_nobility_name', true);
-                            $last_name_cpt = get_post_meta($post->ID, 'person_family_name', true);
-                            $title_suffix_cpt = get_post_meta($post->ID, 'person_suffix', true);
-                            $email_output_cpt = get_post_meta($post->ID, 'person_email', true);
-                            $phone_output_cpt = get_post_meta($post->ID, 'person_telephone', true);
-                            $function_label_cpt = get_post_meta($post->ID, 'person_function', true);
-                            $organization_name_cpt = get_post_meta($post->ID, 'person_organization', true);
-                            $featured_image_url = get_the_post_thumbnail_url($post->ID, 'full');
+                $personal_title_cpt = get_post_meta($post->ID, 'person_title', true);
+                $first_name_cpt = get_post_meta($post->ID, 'person_given_name', true);
+                $nobility_title_cpt = get_post_meta($post->ID, 'person_nobility_name', true);
+                $last_name_cpt = get_post_meta($post->ID, 'person_family_name', true);
+                $title_suffix_cpt = get_post_meta($post->ID, 'person_suffix', true);
+                $email_output_cpt = get_post_meta($post->ID, 'person_email', true);
+                $phone_output_cpt = get_post_meta($post->ID, 'person_telephone', true);
+                $function_label_cpt = get_post_meta($post->ID, 'person_function', true);
+                $organization_name_cpt = get_post_meta($post->ID, 'person_organization', true);
+                $featured_image_url = get_the_post_thumbnail_url($post->ID, 'full');
             
                         }
                     }
@@ -57,20 +57,20 @@
                     <div style="flex-grow: 1;">
                     <!-- Full name with title -->
                     <?php
-                    $options = get_option('rrze_faudir_options');
-                    $hard_sanitize = isset($options['hard_sanitize']) && $options['hard_sanitize'];
+            $options = get_option('rrze_faudir_options');
+            $hard_sanitize = isset($options['hard_sanitize']) && $options['hard_sanitize'];
                     $longVersion = "";
                     if($hard_sanitize){
                         $prefix = $person['personalTitle'];
                         $prefixes = array(
-                            '' => __('Keine Angabe', 'rrze-faudir'),
-                            'Dr.' => __('Doktor', 'rrze-faudir'),
-                            'Prof.' => __('Professor', 'rrze-faudir'),
-                            'Prof. Dr.' => __('Professor Doktor', 'rrze-faudir'),
-                            'Prof. em.' => __('Professor (Emeritus)', 'rrze-faudir'),
-                            'Prof. Dr. em.' => __('Professor Doktor (Emeritus)', 'rrze-faudir'),
-                            'PD' => __('Privatdozent', 'rrze-faudir'),
-                            'PD Dr.' => __('Privatdozent Doktor', 'rrze-faudir')
+                '' => __('Keine Angabe', 'rrze-faudir'),
+                'Dr.' => __('Doktor', 'rrze-faudir'),
+                'Prof.' => __('Professor', 'rrze-faudir'),
+                'Prof. Dr.' => __('Professor Doktor', 'rrze-faudir'),
+                'Prof. em.' => __('Professor (Emeritus)', 'rrze-faudir'),
+                'Prof. Dr. em.' => __('Professor Doktor (Emeritus)', 'rrze-faudir'),
+                'PD' => __('Privatdozent', 'rrze-faudir'),
+                'PD Dr.' => __('Privatdozent Doktor', 'rrze-faudir')
                         );
                         
                         // Check if the prefix exists in the array and display the long version
@@ -103,8 +103,8 @@
                     . ($last_name ? $last_name : $last_name_cpt) . ' ' 
                     . ($title_suffix ? $title_suffix : $title_suffix_cpt));
                     ?>
-                    
-                    <!-- We need to add condition for url when we add CPT -->
+
+                <div style="flex-grow: 1;">
                     <section class="card-section-title" aria-label="<?php echo esc_html($fullName); ?>">
                         <?php if (!empty($url)) : ?>
                             <a href="<?php echo esc_url($url); ?>" itemprop="url">
@@ -130,7 +130,7 @@
                         // Only display the email if it's not empty
                         if (!empty($email)) {
                             echo '<p>' . esc_html__('Email:', 'rrze-faudir') . ' <span itemprop="email">' .esc_html($email) . '</span></p>';
-                        }
+                    }
                     }
                     // Check if phone should be shown and include N/A if not available
                     if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)) {
@@ -161,46 +161,44 @@
                     <?php if (!empty($person['contacts'])) : ?>
                         <?php foreach ($person['contacts'] as $contact) : ?>
                             <?php
-                            // Check if the organization has already been displayed
+                             $functionLabel = '';
+                             if (!empty($contact['functionLabel'])) {
+                                 $functionLabel = $isGerman ? 
+                                     (isset($contact['functionLabel']['de']) ? $contact['functionLabel']['de'] : '') : 
+                                     (isset($contact['functionLabel']['en']) ? $contact['functionLabel']['en'] : '');
+                             } elseif (!empty($function_label_cpt)) {
+                                 $functionLabel = $function_label_cpt;
+                             }
+                             
+                            // Get organization name if allowed by show/hide fields
                             if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) {
                                 $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : $organization_name_cpt;
                             }
-                            if ($organizationName && !in_array($organizationName, $displayedOrganizations)) :
-                                // Add the organization to the displayed list
-                                $displayedOrganizations[] = $organizationName;
+                            
+                            // Remove the uniqueness check and always display if there's an organization name
+                            if (!empty($organizationName)) :
                             ?>
-                            <!-- Organization name -->
-                            <p><strong><?php echo esc_html__('Organization:', 'rrze-faudir');?></strong> <?php echo esc_html($organizationName); ?><p>
-                            
-                            <?php if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) {
-                                $function = isset($contact['functionLabel']['en']) ? $contact['functionLabel']['en'] : $function_label_cpt; ?>
-                                <!-- Show functions associated with this organization -->
-                            <strong><?php echo esc_html__('Functions:', 'rrze-faudir');?></strong>
-
-                            <?php  } ?>
-                            
-                            <?php foreach ($person['contacts'] as $sameOrgContact) : ?>
-                                <?php if (isset($sameOrgContact['organization']['name']) && $sameOrgContact['organization']['name'] === $organizationName) : ?>
-                                    <p>
-                                    <?php echo esc_html($sameOrgContact['functionLabel']['en']); ?>
-                                </p>
+                                <p><strong><?php echo esc_html__('Organization:', 'rrze-faudir'); ?></strong> <?php echo esc_html($organizationName); ?></p>
+                                <?php if (!empty($functionLabel)) : ?>
+                                    <?php if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) : ?>
+                                        <!-- Show functions associated with this organization -->
+                                        <p><strong><?php echo esc_html__('Function:', 'rrze-faudir'); ?></strong> <?php echo esc_html($functionLabel); ?></p>
+                                    <?php endif; ?>
                                 <?php endif; ?>
-                            <?php endforeach; ?>
                             <?php endif; ?>
                         <?php endforeach; ?>
                     <?php endif; ?>
+
                     <?php
                     $business_card_title = rrze_faudir_get_business_card_title();
                     if (!empty($url)) {
                         echo '<a href="' . esc_url($url) . '" itemprop="url" class="business-card-link button-link">' . esc_html($business_card_title) . '</a>';
                     }
-                ?>
-                            </div>
+                    ?>
                 </div>
-            <?php else : ?>
-                <div class="shortcode-contact-kompakt"><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?> </div>
-            <?php endif; ?>
-        <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+    <?php endforeach; ?>
 <?php else : ?>
-    <div><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir') ?> </div>
+    <div><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?></div>
 <?php endif; ?>

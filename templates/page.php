@@ -230,189 +230,154 @@
                 <?php
                 $displayedOrganizations = []; // To track displayed organizations
                 ?>
-                <?php if (!empty($person['contacts'])) : ?>
-                    <?php 
-                    $weekdayMap = [
-                        1 => 'Monday',
-                        2 => 'Tuesday',
-                        3 => 'Wednesday',
-                        4 => 'Thursday',
-                        5 => 'Friday',
-                        6 => 'Saturday',
-                        7 => 'Sunday',
-                    ];
+           <?php if (!empty($person['contacts'])) : ?>
+            <?php 
+            $weekdayMap = [
+                1 => 'Monday',
+                2 => 'Tuesday',
+                3 => 'Wednesday',
+                4 => 'Thursday',
+                5 => 'Friday',
+                6 => 'Saturday',
+                7 => 'Sunday',
+            ];
+        
+            foreach ($person['contacts'] as $contact) {
+                $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : $organization_name_cpt;
+                $locale = get_locale();
+                $isGerman = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_SIE') !== false;
                 
-                    $organizations = []; // Initialize an array to group contacts by organization
+                // Determine function label
+                $functionLabel = '';
+                if (!empty($contact['functionLabel'])) {
+                    $functionLabel = $isGerman ? 
+                        (isset($contact['functionLabel']['de']) ? $contact['functionLabel']['de'] : '') : 
+                        (isset($contact['functionLabel']['en']) ? $contact['functionLabel']['en'] : '');
+                } elseif (!empty($function_label_cpt)) {
+                    $functionLabel = $function_label_cpt;
+                }
                 
-                    // Group contacts by their organization names and gather workplaces
-                    foreach ($person['contacts'] as $contact) {
-                        $organizationName = isset($contact['organization']['name']) 
-                            ? $contact['organization']['name'] 
-                            : $organization_name_cpt;
-                    
-                        if (!empty($organizationName)) {
-                            $locale = get_locale();
-                            $isGerman = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_SIE') !== false;
+                // Display each organization and associated details
+            ?>
+                <p><strong><?php echo esc_html__('Organization:', 'rrze-faudir'); ?></strong> 
+                    <span itemprop="affiliation" itemscope itemtype="https://schema.org/Organization">
+                        <span itemprop="name"><?php echo esc_html($organizationName); ?></span>
+                    </span>
+                </p>
+                
+                <?php if (!empty($functionLabel)) : ?>
+                    <strong><?php echo esc_html__('Function:', 'rrze-faudir'); ?></strong>
+                    <p itemprop="jobTitle"><?php echo esc_html($functionLabel); ?></p>
+                <?php else : ?>
+                    <p><?php echo esc_html__('No function available.', 'rrze-faudir'); ?></p>
+                <?php endif; ?>
+                
+                <h3><?php echo esc_html__('Organization Address:', 'rrze-faudir'); ?></h3>
+                <div>
+                    <?php if (!empty($contact['organization_address'])) : ?>
+                        <p>
+                            <?php if (!empty($contact['organization_address']['phone'])) : ?>
+                                <strong><?php echo esc_html__('Phone:', 'rrze-faudir'); ?></strong>
+                                <?php echo esc_html($contact['organization_address']['phone']); ?><br>
+                            <?php endif; ?>
                             
-                            // Get function label from either contact or CPT
-                            $functionLabel = '';
-                            if (!empty($contact['functionLabel'])) {
-                                // Get from contact array based on language
-                                $functionLabel = $isGerman ? 
-                                    (isset($contact['functionLabel']['de']) ? $contact['functionLabel']['de'] : '') : 
-                                    (isset($contact['functionLabel']['en']) ? $contact['functionLabel']['en'] : '');
-                            } elseif (!empty($function_label_cpt)) {
-                                // Fallback to CPT function label
-                                $functionLabel = $function_label_cpt;
-                            }
-                        
-                            // Initialize organization entry if not already set
-                            if (!isset($organizations[$organizationName])) {
-                                $organizations[$organizationName] = [
-                                    'functions' => [],
-                                    'workplaces' => [],
-                                    'organization_address' => []
-                                ];
-                            }
-                        
-                            // Add function label only if it's not empty and not already in the array
-                            if (!empty($functionLabel) && !in_array($functionLabel, $organizations[$organizationName]['functions'])) {
-                                $organizations[$organizationName]['functions'][] = $functionLabel;
-                            }
-                        
-                            // Merge workplaces
-                            if (!empty($contact['workplaces'])) {
-                                $organizations[$organizationName]['workplaces'] = array_merge(
-                                    $organizations[$organizationName]['workplaces'], 
-                                    $contact['workplaces']
-                                );
-                            }
-                        
-                            // Add organization address if available
-                            if (!empty($contact['organization_address'])) {
-                                $organizations[$organizationName]['organization_address'][] = $contact['organization_address'];
-                            }
-                        }
-                    }
-                    ?>
-
-                    <?php foreach ($organizations as $organizationName => $data) : ?>
-                        <p><strong><?php echo esc_html__('Organization:', 'rrze-faudir'); ?></strong> 
-                            <span itemprop="affiliation" itemscope itemtype="https://schema.org/Organization">
-                                <span itemprop="name"><?php echo esc_html($organizationName); ?></span>
-                            </span>
+                            <?php if (!empty($contact['organization_address']['mail'])) : ?>
+                                <strong><?php echo esc_html__('Mail:', 'rrze-faudir'); ?></strong>
+                                <?php echo esc_html($contact['organization_address']['mail']); ?><br>
+                            <?php endif; ?>
+                            
+                            <?php if (!empty($contact['organization_address']['url'])) : ?>
+                                <strong><?php echo esc_html__('Url:', 'rrze-faudir'); ?></strong>
+                                <?php echo esc_html($contact['organization_address']['url']); ?><br>
+                            <?php endif; ?>
+                            <?php if (!empty($contact['organization_address']['street'])) : ?>
+                                <strong><?php echo esc_html__('Street:', 'rrze-faudir'); ?></strong>
+                                <?php echo esc_html($contact['organization_address']['street']); ?><br>
+                            <?php endif; ?>
+                            <?php if (!empty($contact['organization_address']['zip'])) : ?>
+                                <strong><?php echo esc_html__('ZIP Code:', 'rrze-faudir'); ?></strong>
+                                <?php echo esc_html($contact['organization_address']['zip']); ?><br>
+                            <?php endif; ?>
+                            <?php if (!empty($contact['organization_address']['city'])) : ?>
+                                <strong><?php echo esc_html__('City:', 'rrze-faudir'); ?></strong>
+                                <?php echo esc_html($contact['organization_address']['city']); ?><br>
+                            <?php endif; ?>
+                            <?php if (!empty($contact['organization_address']['faumap'])) : ?>
+                                <strong><?php echo esc_html__('Map:', 'rrze-faudir'); ?></strong>
+                                <a href="<?php echo esc_url($contact['organization_address']['faumap']); ?>" target="_blank">
+                                    <?php echo esc_html__('View on Map', 'rrze-faudir'); ?>
+                                </a><br>
+                            <?php endif; ?>
                         </p>
-                    <?php if (!empty($data['functions'])) : ?>
-                    <strong><?php echo esc_html__('Functions:', 'rrze-faudir'); ?></strong>
-                    <ul>
-                        <?php foreach ($data['functions'] as $function) : ?>
-                            <li itemprop="jobTitle"><?php echo esc_html($function); ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                    <?php else : ?>
-                        <p><?php echo esc_html__('No functions available.', 'rrze-faudir'); ?></p>
                     <?php endif; ?>
-                        <h3><?php echo esc_html__('Organization Address:', 'rrze-faudir'); ?></h3>
-                        <div>
-                            <?php foreach ($data['organization_address'] as $address) : ?>
-                                <p>
-                                    <?php if (!empty($address['phone'])) : ?>
-                                        <strong><?php echo esc_html__('Phone:', 'rrze-faudir'); ?></strong>
-                                        <?php echo esc_html($address['phone']); ?><br>
-                                    <?php endif; ?>
+                </div>
+                            
+                <h3><?php echo esc_html__('Workplaces:', 'rrze-faudir'); ?></h3>
+                <div>
+                <?php if (empty($contact['workplaces'])) : ?>
+                    <p><?php echo esc_html__('No workplaces available.', 'rrze-faudir'); ?></p>
+                <?php else : ?>
+                    <?php foreach ($contact['workplaces'] as $workplace) : ?>
+                        <p>
+                            <?php if (!empty($workplace['street'])) : ?>
+                                <strong><?php echo esc_html__('Street:', 'rrze-faudir'); ?></strong>
+                                <?php echo esc_html($workplace['street']); ?><br>
+                            <?php endif; ?>
+                            
+                            <?php if (!empty($workplace['zip'])) : ?>
+                                <strong><?php echo esc_html__('ZIP Code:', 'rrze-faudir'); ?></strong>
+                                <?php echo esc_html($workplace['zip']); ?><br>
+                            <?php endif; ?>
+                            
+                            <?php if (!empty($workplace['city'])) : ?>
+                                <strong><?php echo esc_html__('City:', 'rrze-faudir'); ?></strong>
+                                <?php echo esc_html($workplace['city']); ?><br>
+                            <?php endif; ?>
+                            
+                            <?php if (!empty($workplace['faumap'])) : ?>
+                                <strong><?php echo esc_html__('Map:', 'rrze-faudir'); ?></strong>
+                                <a href="<?php echo esc_url($workplace['faumap']); ?>" target="_blank">
+                                    <?php echo esc_html__('View on Map', 'rrze-faudir'); ?>
+                                </a><br>
+                            <?php endif; ?>
+                            
+                            <?php if (!empty($workplace['mails'])) : ?>
+                                <strong><?php echo esc_html__('Emails:', 'rrze-faudir'); ?></strong>
+                                <ul>
+                                    <?php foreach ($workplace['mails'] as $email) : ?>
+                                        <li><a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email); ?></a></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php endif; ?>
                                     
-                                    <?php if (!empty($address['mail'])) : ?>
-                                        <strong><?php echo esc_html__('Mail:', 'rrze-faudir'); ?></strong>
-                                        <?php echo esc_html($address['mail']); ?><br>
-                                    <?php endif; ?>
+                            <?php if (!empty($workplace['phones'])) : ?>
+                                <strong><?php echo esc_html__('Phone numbers:', 'rrze-faudir'); ?></strong>
+                                <ul>
+                                    <?php foreach ($workplace['phones'] as $phone) : ?>
+                                        <li><?php echo esc_html($phone); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php endif; ?>
                                     
-                                    <?php if (!empty($address['url'])) : ?>
-                                        <strong><?php echo esc_html__('Url:', 'rrze-faudir'); ?></strong>
-                                        <?php echo esc_html($address['url']); ?><br>
-                                    <?php endif; ?>
-                                    <?php if (!empty($address['street'])) : ?>
-                                        <strong><?php echo esc_html__('Street:', 'rrze-faudir'); ?></strong>
-                                        <?php echo esc_html($address['street']); ?><br>
-                                    <?php endif; ?>
-                                    <?php if (!empty($address['zip'])) : ?>
-                                        <strong><?php echo esc_html__('ZIP Code:', 'rrze-faudir'); ?></strong>
-                                        <?php echo esc_html($address['zip']); ?><br>
-                                    <?php endif; ?>
-                                    <?php if (!empty($address['city'])) : ?>
-                                        <strong><?php echo esc_html__('City:', 'rrze-faudir'); ?></strong>
-                                        <?php echo esc_html($address['city']); ?><br>
-                                    <?php endif; ?>
-                                    <?php if (!empty($address['faumap'])) : ?>
-                                        <strong><?php echo esc_html__('Map:', 'rrze-faudir'); ?></strong>
-                                        <a href="<?php echo esc_url($address['faumap']); ?>" target="_blank">
-                                            <?php echo esc_html__('View on Map', 'rrze-faudir'); ?>
-                                        </a><br>
-                                    <?php endif; ?>
-                                </p>
-                            <?php endforeach; ?>
-                        </div>
-                                    
-                        <h3><?php echo esc_html__('Workplaces:', 'rrze-faudir'); ?></h3>
-                        <div>
-                            <?php foreach ($data['workplaces'] as $workplace) : ?>
-                                <p>
-                                    <?php if (!empty($workplace['street'])) : ?>
-                                        <strong><?php echo esc_html__('Street:', 'rrze-faudir'); ?></strong>
-                                        <?php echo esc_html($workplace['street']); ?><br>
-                                    <?php endif; ?>
-                                    
-                                    <?php if (!empty($workplace['zip'])) : ?>
-                                        <strong><?php echo esc_html__('ZIP Code:', 'rrze-faudir'); ?></strong>
-                                        <?php echo esc_html($workplace['zip']); ?><br>
-                                    <?php endif; ?>
-                                    
-                                    <?php if (!empty($workplace['city'])) : ?>
-                                        <strong><?php echo esc_html__('City:', 'rrze-faudir'); ?></strong>
-                                        <?php echo esc_html($workplace['city']); ?><br>
-                                    <?php endif; ?>
-
-                                    <?php if (!empty($workplace['faumap'])) : ?>
-                                        <strong><?php echo esc_html__('Map:', 'rrze-faudir'); ?></strong>
-                                        <a href="<?php echo esc_url($workplace['faumap']); ?>" target="_blank">
-                                            <?php echo esc_html__('View on Map', 'rrze-faudir'); ?>
-                                        </a><br>
-                                    <?php endif; ?>
-
-                                    <?php if (!empty($workplace['mails'])) : ?>
-                                        <strong><?php echo esc_html__('Emails:', 'rrze-faudir'); ?></strong>
-                                        <ul>
-                                            <?php foreach ($workplace['mails'] as $email) : ?>
-                                                <li><a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email); ?></a></li>
-                                            <?php endforeach; ?>
-                                        </ul>
-                                    <?php endif; ?>
-
-                                    <?php if (!empty($workplace['phones'])) : ?>
-                                        <strong><?php echo esc_html__('Phone numbers:', 'rrze-faudir'); ?></strong>
-                                        <ul>
-                                            <?php foreach ($workplace['phones'] as $phone) : ?>
-                                                <li><?php echo esc_html($phone); ?></li>
-                                            <?php endforeach; ?>
-                                        </ul>
-                                    <?php endif; ?>
-
-                                    <?php if (!empty($workplace['officeHours'])) : ?>
-                                        <strong><?php echo esc_html__('Office Hours:', 'rrze-faudir'); ?></strong>
-                                        <ul>
-                                            <?php foreach ($workplace['officeHours'] as $officeHour) : ?>
-                                                <li>
-                                                    <strong><?php echo esc_html($weekdayMap[$officeHour['weekday']] ?? 'Unknown'); ?>:</strong>
-                                                    <?php echo esc_html($officeHour['from'] . ' - ' . $officeHour['to']); ?>
-                                                </li>
-                                            <?php endforeach; ?>
-                                        </ul>
-                                    <?php endif; ?>
-                                </p>
-                                <hr>
-                            <?php endforeach; ?>
-                        </div>
+                            <?php if (!empty($workplace['officeHours'])) : ?>
+                                <strong><?php echo esc_html__('Office Hours:', 'rrze-faudir'); ?></strong>
+                                <ul>
+                                    <?php foreach ($workplace['officeHours'] as $officeHour) : ?>
+                                        <li>
+                                            <strong><?php echo esc_html($weekdayMap[$officeHour['weekday']] ?? 'Unknown'); ?>:</strong>
+                                            <?php echo esc_html($officeHour['from'] . ' - ' . $officeHour['to']); ?>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php endif; ?>
+                        </p>
+                        <hr>
                     <?php endforeach; ?>
                 <?php endif; ?>
+                </div>
+            <?php } ?>
+        <?php endif; ?>
+
                       
                 <?php if ($locale === 'de_DE' || $locale === 'de_SIE' && !empty($content_de)): ?>
                     <section class="card-section-title"><?php esc_html__('Content', 'rrze-faudir'); ?></section>
