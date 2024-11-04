@@ -31,6 +31,7 @@ function fetch_fau_data($atts) {
             'image' => '',
             'groupid' => '',
             'orgnr' => '',
+            'sort' => 'last_name',
         ),
         $atts
     );
@@ -84,12 +85,36 @@ function fetch_and_render_fau_data($atts) {
     $orgnr = $atts['orgnr'];
     $persons = []; // This will hold the fetched data
 
-    // Fetch and process the data based on parameters
-    if (!empty($identifiers)) {
+    // Check for category in CPT first
+    if (!empty($category)) {
+        // Get persons from CPT with specified category
+        $args = array(
+            'post_type' => 'custom_person',
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'custom_taxonomy',
+                    'field'    => 'slug',
+                    'terms'    => $category,
+                ),
+            ),
+            'posts_per_page' => -1,
+        );
+        
+        $person_posts = get_posts($args);
+        $person_identifiers = array();
+        
+        foreach ($person_posts as $person_post) {
+            $person_id = get_post_meta($person_post->ID, 'person_id', true);
+            if (!empty($person_id)) {
+                $person_identifiers[] = $person_id;
+            }
+        }
+        
+        if (!empty($person_identifiers)) {
+            $persons = process_persons_by_identifiers($person_identifiers);
+        }
+    } elseif (!empty($identifiers)) {
         $persons = process_persons_by_identifiers($identifiers);
-    } elseif (!empty($category)) {
-        $lq = 'contacts.organization.name[eq]=' . urlencode($category);
-        $persons = fetch_and_process_persons($lq);
     } elseif (!empty($groupid)) {
         $lq = 'contacts.organization.identifier[eq]=' . urlencode($groupid);
         $persons = fetch_and_process_persons($lq);
@@ -103,6 +128,7 @@ function fetch_and_render_fau_data($atts) {
     } else {
         $persons = fetch_and_process_persons();
     }
+
     // Fetch the image URL if an image ID is provided
     $image_url = '';
     if (!empty($image_id) && is_numeric($image_id)) {
@@ -130,9 +156,14 @@ function fetch_and_render_fau_data($atts) {
                 return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');
 
             case 'identifier_order':
-                $a_index = array_search($a['identifier'] ?? '', $identifiers);
-                $b_index = array_search($b['identifier'] ?? '', $identifiers);
-                return $a_index - $b_index;
+                if (!empty($identifiers)) {
+                    $a_index = array_search($a['identifier'] ?? '', $identifiers);
+                    $b_index = array_search($b['identifier'] ?? '', $identifiers);
+                    if ($a_index !== false && $b_index !== false) {
+                        return $a_index - $b_index;
+                    }
+                }
+                return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');
 
             default:
                 return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');

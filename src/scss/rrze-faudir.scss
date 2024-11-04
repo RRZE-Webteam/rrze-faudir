@@ -67,7 +67,8 @@ body {
 }
 .shortcode-contact-card img{
     border-radius: 50%;
-    max-width: 70%;
+    width: 50%;
+    height: auto;
     aspect-ratio: 1;
     object-fit: cover;
 }
