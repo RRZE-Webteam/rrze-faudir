@@ -155,9 +155,6 @@ function render_person_additional_fields($post) {
         echo '<div class="organization-block">';
         echo '<div class="organization-header">';
         echo '<h4>' . __('Contact', 'rrze-faudir') . ' ' . ($index + 1) . '</h4>';
-        if ($index > 0) {
-            echo '<button type="button" class="remove-organization button-link-delete">' . __('Remove Organization', 'rrze-faudir') . '</button>';
-        }
         echo '</div>';
         
         echo '<input type="text" name="person_organizations[' . $index . '][organization]" value="' . esc_attr($org['organization']) . '" class="widefat" readonly />';

@@ -205,7 +205,6 @@ jQuery(document).ready(function($) {
                             <div class="organization-block">
                                 <div class="organization-header">
                                     <h4>Organization ${index + 1}</h4>
-                                    ${index > 0 ? '<button type="button" class="remove-organization button-link-delete">Remove Organization</button>' : ''}
                                 </div>
                                 <input type="text" name="person_organizations[${index}][organization]" value="${org.organization}" class="widefat" readonly />
                                 <div class="functions-wrapper">

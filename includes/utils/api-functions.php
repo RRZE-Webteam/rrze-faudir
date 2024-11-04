@@ -109,7 +109,8 @@ function fetch_fau_persons_atributes($limit = 60, $offset = 0, $params = []) {
     // Loop through the parameters and append them to the URL if they exist in $params
     foreach ($query_params as $param) {
         if (!empty($params[$param])) {
-            $url .= '&' . $param . '=' . urlencode($params[$param]);
+            // $url .= '&' . $param . '=' . urlencode($params[$param]);
+            $url .= '&' . $param . '=' . $params[$param];
         }
     }
     // Handle givenName and familyName as special cases to be combined into the 'q' parameter
