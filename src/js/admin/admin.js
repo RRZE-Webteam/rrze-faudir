@@ -197,7 +197,7 @@ jQuery(document).ready(function($) {
                     $('#person_title').val(data.person_title);
                     
                     // Update organizations and functions
-                    const organizationsWrapper = $('.organizations-wrapper');
+                    const organizationsWrapper = $('.contacts-wrapper');
                     organizationsWrapper.empty();
                     
                     data.organizations.forEach((org, index) => {
@@ -205,14 +205,13 @@ jQuery(document).ready(function($) {
                             <div class="organization-block">
                                 <div class="organization-header">
                                     <h4>Organization ${index + 1}</h4>
-                                    ${index > 0 ? '<button type="button" class="remove-organization button-link-delete">Remove Organization</button>' : ''}
                                 </div>
-                                <input type="text" name="person_organizations[${index}][organization]" value="${org.organization}" class="widefat" readonly />
+                                <input type="text" name="person_contacts[${index}][organization]" value="${org.organization}" class="widefat" readonly />
                                 <div class="functions-wrapper">
                                     <h5>Functions</h5>
                                     ${org.functions.map(func => `
                                         <div class="function-block">
-                                            <input type="text" name="person_organizations[${index}][functions][]" value="${func}" class="widefat" readonly />
+                                            <input type="text" name="person_contacts[${index}][functions][]" value="${func}" class="widefat" readonly />
                                         </div>
                                     `).join('')}
                                 </div>

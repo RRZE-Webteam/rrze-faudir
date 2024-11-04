@@ -25,9 +25,10 @@ function register_custom_person_post_type() {
             'slug' => $slug, // Use dynamic slug
             'with_front' => false // Optional: Disable prefix (like /blog/)
         ),
-        'supports'           => array('title', 'editor', 'thumbnail'),
+        'supports'           => array('title', 'editor', 'thumbnail', 'custom-fields'),
         'taxonomies'         => array('custom_taxonomy'),
         'show_in_rest'       => true,
+        'rest_base'          => 'custom_person',
         'menu_position'      => 5,
         'capability_type'    => 'post',
     );
@@ -66,7 +67,11 @@ function register_custom_taxonomy() {
             'meta_box_cb'       => null, // Use default meta box
             'show_admin_column' => true, // Show taxonomy in the admin list table.
             'query_var'         => true,
-            'rewrite'           => array( 'slug' => 'category' ),
+            'rewrite'           => array( 'slug' => 'custom-taxonomy' ),
+            'show_in_rest'      => true,
+            'rest_base'         => 'custom_taxonomy',
+            'rest_controller_class' => 'WP_REST_Terms_Controller',
+
         )
     );
 }
@@ -140,56 +145,57 @@ function render_person_additional_fields($post) {
         }
     }
 
-    // Render organizations and functions section
-    echo '<div class="organizations-wrapper">';
-    echo '<h3>' . __('Organizations and Functions', 'rrze-faudir') . '</h3>';
+    // Render contacts section
+    echo '<div class="contacts-wrapper">';
+    echo '<h3>' . __('Contacts', 'rrze-faudir') . '</h3>';
     
-    $organizations = get_post_meta($post->ID, 'person_organizations', true) ?: array();
+    $contacts = get_post_meta($post->ID, 'person_contacts', true) ?: array();
 
-    foreach ($organizations as $index => $org) {
+    foreach ($contacts as $index => $contact) {
         echo '<div class="organization-block">';
         echo '<div class="organization-header">';
         echo '<h4>' . __('Contact', 'rrze-faudir') . ' ' . ($index + 1) . '</h4>';
-        if ($index > 0) {
-            echo '<button type="button" class="remove-organization button-link-delete">' . __('Remove Organization', 'rrze-faudir') . '</button>';
-        }
         echo '</div>';
         
-        echo '<input type="text" name="person_organizations[' . $index . '][organization]" value="' . esc_attr($org['organization']) . '" class="widefat" readonly />';
+        // Add organization field
+        echo '<div class="organization-wrapper">';
+        echo '<h5>' . __('Organization', 'rrze-faudir') . '</h5>';
+        echo '<input type="text" name="person_contacts[' . $index . '][organization]" value="' . esc_attr($contact['organization']) . '" class="widefat" readonly />';
+        echo '</div>';
 
         // Add socials field
         echo '<div class="socials-wrapper">';
         echo '<h5>' . __('Socials', 'rrze-faudir') . '</h5>';
-        echo '<textarea name="person_organizations[' . $index . '][socials]" class="widefat" readonly rows="5">' . esc_textarea($org['socials'] ?? '') . '</textarea>';
+        echo '<textarea name="person_contacts[' . $index . '][socials]" class="widefat" readonly rows="5">' . esc_textarea($contact['socials'] ?? '') . '</textarea>';
         echo '</div>';
 
         // Add workplace and address fields
         echo '<div class="workplace-wrapper">';
         echo '<h5>' . __('Workplace', 'rrze-faudir') . '</h5>';
-        echo '<textarea name="person_organizations[' . $index . '][workplace]" class="widefat" readonly rows="5">' . esc_textarea($org['workplace'] ?? '') . '</textarea>';
+        echo '<textarea name="person_contacts[' . $index . '][workplace]" class="widefat" readonly rows="5">' . esc_textarea($contact['workplace'] ?? '') . '</textarea>';
         echo '</div>';
 
         echo '<div class="address-wrapper">';
         echo '<h5>' . __('Address', 'rrze-faudir') . '</h5>';
-        echo '<textarea name="person_organizations[' . $index . '][address]" class="widefat" readonly rows="5">' . esc_textarea($org['address'] ?? '') . '</textarea>';
+        echo '<textarea name="person_contacts[' . $index . '][address]" class="widefat" readonly rows="5">' . esc_textarea($contact['address'] ?? '') . '</textarea>';
         echo '</div>';
 
         // English Function
         echo '<div class="function-wrapper">';
         echo '<h5>' . __('Function (English)', 'rrze-faudir') . '</h5>';
-        echo '<input type="text" name="person_organizations[' . $index . '][function_en]" value="' . esc_attr($org['function_en'] ?? '') . '" class="widefat" readonly />';
+        echo '<input type="text" name="person_contacts[' . $index . '][function_en]" value="' . esc_attr($contact['function_en'] ?? '') . '" class="widefat" readonly />';
         echo '</div>';
 
         // German Function
         echo '<div class="function-wrapper">';
         echo '<h5>' . __('Function (German)', 'rrze-faudir') . '</h5>';
-        echo '<input type="text" name="person_organizations[' . $index . '][function_de]" value="' . esc_attr($org['function_de'] ?? '') . '" class="widefat" readonly />';
+        echo '<input type="text" name="person_contacts[' . $index . '][function_de]" value="' . esc_attr($contact['function_de'] ?? '') . '" class="widefat" readonly />';
         echo '</div>';
 
         echo '</div>'; // .organization-block
     }
 
-    echo '</div>'; // .organizations-wrapper
+    echo '</div>'; // .contacts-wrapper
 }
 
 
@@ -222,22 +228,22 @@ function save_person_additional_fields($post_id) {
 
         // Check if the response is a valid array
         if (is_array($response) && isset($response['data'])) {
-            $contact = $response['data'][0] ?? null;
+            $person = $response['data'][0] ?? null;
 
             // If contact is found, update relevant post meta fields
-            if ($contact) {
+            if ($person) {
                 // Update basic information
-                update_post_meta($post_id, 'person_name', sanitize_text_field($contact['givenName'] . ' ' . $contact['familyName']));
-                update_post_meta($post_id, 'person_email', sanitize_email($contact['email'] ?? ''));
-                update_post_meta($post_id, 'person_telephone', sanitize_text_field($contact['telephone'] ?? ''));
-                update_post_meta($post_id, 'person_given_name', sanitize_text_field($contact['givenName'] ?? ''));
-                update_post_meta($post_id, 'person_family_name', sanitize_text_field($contact['familyName'] ?? ''));
-                update_post_meta($post_id, 'person_title', sanitize_text_field($contact['personalTitle'] ?? ''));
+                update_post_meta($post_id, 'person_name', sanitize_text_field($person['givenName'] . ' ' . $person['familyName']));
+                update_post_meta($post_id, 'person_email', sanitize_email($person['email'] ?? ''));
+                update_post_meta($post_id, 'person_telephone', sanitize_text_field($person['telephone'] ?? ''));
+                update_post_meta($post_id, 'person_given_name', sanitize_text_field($person['givenName'] ?? ''));
+                update_post_meta($post_id, 'person_family_name', sanitize_text_field($person['familyName'] ?? ''));
+                update_post_meta($post_id, 'person_title', sanitize_text_field($person['personalTitle'] ?? ''));
 
                 // Process organizations, functions, workplaces, and addresses
-                $organizations = array();
-                if (isset($contact['contacts']) && is_array($contact['contacts'])) {
-                    foreach ($contact['contacts'] as $contactInfo) {
+                $contacts = array();
+                if (isset($person['contacts']) && is_array($person['contacts'])) {
+                    foreach ($person['contacts'] as $contactInfo) {
                         $org_name = $contactInfo['organization']['name'] ?? '';
                         $org_identifier = $contactInfo['organization']['identifier'] ?? '';
                         $function_en = $contactInfo['functionLabel']['en'] ?? '';
@@ -249,7 +255,7 @@ function save_person_additional_fields($post_id) {
                         $socials = fetch_and_format_socials($contactInfo['identifier'] ?? '');
 
                         // Add each organization as a separate entry
-                        $organizations[] = array(
+                        $contacts[] = array(
                             'organization' => $org_name,
                             'organization_id' => $org_identifier,
                             'function_en' => $function_en,
@@ -262,7 +268,7 @@ function save_person_additional_fields($post_id) {
                 }
 
                 // Save the organizations array as post meta
-                update_post_meta($post_id, 'person_organizations', $organizations);
+                update_post_meta($post_id, 'person_contacts', $contacts);
             } else {
                 // If API response is not successful, log error or notify the user as needed
                 // error_log(sprintf(__('Error fetching person attributes: %s', 'rrze-faudir'), wp_json_encode($response)));
@@ -328,20 +334,20 @@ function fetch_person_attributes() {
         $response = fetch_fau_persons_atributes(60, 0, $params);
 
         if (is_array($response) && isset($response['data'])) {
-            $contact = $response['data'][0] ?? null;
+            $person = $response['data'][0] ?? null;
 
-            if ($contact) {
+            if ($person) {
                 // Process organizations and functions
-                $organizations = array();
-                if (isset($contact['contacts']) && is_array($contact['contacts'])) {
-                    foreach ($contact['contacts'] as $contactInfo) {
+                $contacts = array();
+                if (isset($person['contacts']) && is_array($person['contacts'])) {
+                    foreach ($person['contacts'] as $contactInfo) {
                         $org_name = $contactInfo['organization']['name'] ?? '';
                         $org_identifier = $contactInfo['organization']['identifier'] ?? '';
                         $function_en = $contactInfo['functionLabel']['en'] ?? '';
                         $function_de = $contactInfo['functionLabel']['de'] ?? '';
 
                         // Add each organization with its functions as a new entry
-                        $organizations[] = array(
+                        $contacts[] = array(
                             'organization' => $org_name,
                             'organization_id' => $org_identifier,
                             'function_en' => $function_en,
@@ -351,13 +357,13 @@ function fetch_person_attributes() {
                 }
 
                 wp_send_json_success(array(
-                    'person_name' => sanitize_text_field($contact['givenName'] . ' ' . $contact['familyName']),
-                    'person_email' => sanitize_email($contact['email'] ?? ''),
-                    'person_telephone' => sanitize_email($contact['telephone'] ?? ''),
-                    'person_given_name' => sanitize_text_field($contact['givenName'] ?? ''),
-                    'person_family_name' => sanitize_text_field($contact['familyName'] ?? ''),
-                    'person_title' => sanitize_text_field($contact['personalTitle'] ?? ''),
-                    'organizations' => $organizations
+                    'person_name' => sanitize_text_field($person['givenName'] . ' ' . $person['familyName']),
+                    'person_email' => sanitize_email($person['email'] ?? ''),
+                    'person_telephone' => sanitize_email($person['telephone'] ?? ''),
+                    'person_given_name' => sanitize_text_field($person['givenName'] ?? ''),
+                    'person_family_name' => sanitize_text_field($person['familyName'] ?? ''),
+                    'person_title' => sanitize_text_field($person['personalTitle'] ?? ''),
+                    'organizations' => $contacts
                 ));
             } else {
                 wp_send_json_error(__('No contact found.', 'text-domain'));
@@ -402,21 +408,21 @@ function rrze_faudir_create_custom_person() {
     $response = fetch_fau_persons_atributes(60, 0, $params);
 
     if (is_array($response) && isset($response['data'])) {
-        $contact = $response['data'][0] ?? null;
+        $person = $response['data'][0] ?? null;
 
-        if ($contact) {
+        if ($person) {
             // Update basic post meta
-            update_post_meta($post_id, 'person_name', sanitize_text_field($contact['givenName'] . ' ' . $contact['familyName']));
-            update_post_meta($post_id, 'person_email', sanitize_email($contact['email'] ?? ''));
-            update_post_meta($post_id, 'person_telephone', sanitize_email($contact['telephone'] ?? ''));
-            update_post_meta($post_id, 'person_given_name', sanitize_text_field($contact['givenName'] ?? ''));
-            update_post_meta($post_id, 'person_family_name', sanitize_text_field($contact['familyName'] ?? ''));
-            update_post_meta($post_id, 'person_title', sanitize_text_field($contact['personalTitle'] ?? ''));
+            update_post_meta($post_id, 'person_name', sanitize_text_field($person['givenName'] . ' ' . $person['familyName']));
+            update_post_meta($post_id, 'person_email', sanitize_email($person['email'] ?? ''));
+            update_post_meta($post_id, 'person_telephone', sanitize_email($person['telephone'] ?? ''));
+            update_post_meta($post_id, 'person_given_name', sanitize_text_field($person['givenName'] ?? ''));
+            update_post_meta($post_id, 'person_family_name', sanitize_text_field($person['familyName'] ?? ''));
+            update_post_meta($post_id, 'person_title', sanitize_text_field($person['personalTitle'] ?? ''));
 
             // Process organizations and functions
-            $organizations = array();
-            if (isset($contact['contacts']) && is_array($contact['contacts'])) {
-                foreach ($contact['contacts'] as $contactInfo) {
+            $contacts = array();
+            if (isset($person['contacts']) && is_array($person['contacts'])) {
+                foreach ($person['contacts'] as $contactInfo) {
                     $org_name = $contactInfo['organization']['name'] ?? '';
                     $org_identifier = $contactInfo['organization']['identifier'] ?? '';
                     $function_en = $contactInfo['functionLabel']['en'] ?? '';
@@ -429,8 +435,8 @@ function rrze_faudir_create_custom_person() {
                     
                     // Find if organization already exists in our array
                     $org_index = -1;
-                    foreach ($organizations as $index => $org) {
-                        if ($org['organization'] === $org_name) {
+                    foreach ($contacts as $index => $contact) {
+                        if ($contact['organization'] === $org_name) {
                             $org_index = $index;
                             break;
                         }
@@ -439,24 +445,24 @@ function rrze_faudir_create_custom_person() {
                     if ($org_index >= 0) {
                         // Add to existing organization
                         if (!empty($function_en)) {
-                            $organizations[$org_index]['functions_en'][] = $function_en;
+                            $contacts[$org_index]['functions_en'][] = $function_en;
                         }
                         if (!empty($function_de)) {
-                            $organizations[$org_index]['functions_de'][] = $function_de;
+                            $contacts[$org_index]['functions_de'][] = $function_de;
                         }
                         // Update workplace and address if not already set
-                        if (empty($organizations[$org_index]['workplace'])) {
-                            $organizations[$org_index]['workplace'] = $workplace;
+                        if (empty($contacts[$org_index]['workplace'])) {
+                            $contacts[$org_index]['workplace'] = $workplace;
                         }
-                        if (empty($organizations[$org_index]['address'])) {
-                            $organizations[$org_index]['address'] = $address;
+                        if (empty($contacts[$org_index]['address'])) {
+                            $contacts[$org_index]['address'] = $address;
                         }
-                        if (empty($organizations[$org_index]['socials'])) {
-                            $organizations[$org_index]['socials'] = $socials;
+                        if (empty($contacts[$org_index]['socials'])) {
+                            $contacts[$org_index]['socials'] = $socials;
                         }
                     } else {
                         // Add new organization
-                        $organizations[] = array(
+                        $contacts[] = array(
                             'organization' => $org_name,
                             'organization_id' => $org_identifier,
                             'functions_en' => !empty($function_en) ? array($function_en) : array(),
@@ -469,11 +475,54 @@ function rrze_faudir_create_custom_person() {
             }
 
             // Save the organizations array as post meta
-            update_post_meta($post_id, 'person_organizations', $organizations);
+            update_post_meta($post_id, 'person_contacts', $contacts);
         }
     }
 
     wp_send_json_success(array('post_id' => $post_id));
 }
 add_action('wp_ajax_rrze_faudir_create_custom_person', 'rrze_faudir_create_custom_person');
+
+// Add this function to register the meta field for REST API
+function register_person_meta() {
+    register_post_meta('custom_person', 'person_id', array(
+        'show_in_rest' => true,
+        'single' => true,
+        'type' => 'string',
+        'auth_callback' => function() {
+            return current_user_can('edit_posts');
+        }
+    ));
+}
+add_action('init', 'register_person_meta');
+// Make sure categories are visible in REST API
+// Update the REST API response to include custom taxonomy
+function add_taxonomy_to_person_rest($response, $post, $request) {
+    if ($post->post_type === 'custom_person') {
+        // Get custom taxonomy terms
+        $terms = wp_get_object_terms($post->ID, 'custom_taxonomy');
+        $term_ids = array_map(function($term) {
+            return $term->term_id;
+        }, $terms);
+        
+        // Add taxonomy terms to response
+        $response->data['custom_taxonomy'] = $term_ids;
+        
+        // Add other meta data
+        $person_id = get_post_meta($post->ID, 'person_id', true);
+        $person_name = get_post_meta($post->ID, 'person_name', true);
+        
+        $response->data['meta'] = array_merge(
+            $response->data['meta'] ?? [],
+            [
+                'person_id' => $person_id,
+                'person_name' => $person_name
+            ]
+        );
+    }
+    return $response;
+}
+add_filter('rest_prepare_custom_person', 'add_taxonomy_to_person_rest', 10, 3);
+
+
 ?>

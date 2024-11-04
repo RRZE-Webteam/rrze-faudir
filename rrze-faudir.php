@@ -227,8 +227,7 @@ function migrate_person_data_on_activation() {
                 ]);
 
                 if (!$existing_person) {
-
-                    // make api call to http://univis.uni-erlangen.de/prg?search=persons&id=$univisid&show=json using univisid
+                    // Make univis api call
                     $url = 'http://univis.uni-erlangen.de/prg?search=persons&id=' . $univisid . '&show=json';
                     $response = wp_remote_get($url);
                     $body = wp_remote_retrieve_body($response);
@@ -238,8 +237,6 @@ function migrate_person_data_on_activation() {
                     $person = $data['Person'][0];
 
                     $identifier = $person['idm_id'] ?? null;
-                    // log the value
-                    error_log('Identifier: ' . $identifier);
                     $email = $person['location'][0]['email'] ?? null;
                     $givenName = $person['firstname'] ?? null;
                     $familyName = $person['lastname'] ?? null;
@@ -247,15 +244,14 @@ function migrate_person_data_on_activation() {
                     // Determine search parameters
                     $queryParts = [];
 
-    
-                    // if (!empty($identifier)) {
-                    //     $queryParts[] = 'identifier=' . urlencode($identifier);
-                    // }
+                    if (!empty($identifier)) {
+                        $queryParts[] = 'uid=' . $identifier;
+                    }
                     if (!empty($givenName)) {
-                        $queryParts[] = 'givenName=' . urlencode($givenName);
+                        $queryParts[] = 'givenName=' . $givenName;
                     }
                     if (!empty($familyName)) {
-                        $queryParts[] = 'familyName=' . urlencode($familyName);
+                        $queryParts[] = 'familyName=' . $familyName;
                     }
                     if (!empty($email)) {
                         $queryParts[] = 'email=' . urlencode($email);
@@ -280,6 +276,7 @@ function migrate_person_data_on_activation() {
                         ]);
 
                         if ($new_post_id && $person) {
+
                             $short_description = get_post_meta($post->ID, 'fau_person_description', true);
                             if ($short_description) {
                                 update_post_meta($new_post_id, '_teasertext_en', sanitize_text_field($short_description));
@@ -298,27 +295,27 @@ function migrate_person_data_on_activation() {
                             update_post_meta($new_post_id, 'person_given_name', sanitize_text_field($person['givenName'] ?? ''));
                             update_post_meta($new_post_id, 'person_family_name', sanitize_text_field($person['familyName'] ?? ''));
                             update_post_meta($new_post_id, 'person_title', sanitize_text_field($person['personalTitle'] ?? ''));
-                            update_post_meta($new_post_id, 'person_suffix', sanitize_text_field($person['suffix'] ?? ''));
+                            update_post_meta($new_post_id, 'person_suffix', sanitize_text_field($person['personalTitleSuffix'] ?? ''));
                             update_post_meta($new_post_id, 'person_nobility_name', sanitize_text_field($person['titleOfNobility'] ?? ''));
 
                             // loot through $person['contacts'][0] and store the function in an array
-                            $organizations = array();
+                            $contacts = array();
                             foreach ($person['contacts'] as $contact) {
                                 // get the identifier
                                 $contactIdentifier = $contact['identifier'];
                                 $organizationIdentifier = $contact['organization']['identifier'];
                                     
-                                $organizations[] = array(
+                                $contacts[] = array(
                                     'organization' => sanitize_text_field($contact['organization']['name'] ?? ''),
                                     'socials' => fetch_and_format_socials($contactIdentifier),
                                     'workplace' => fetch_and_format_workplaces($contactIdentifier),
                                     'address' => fetch_and_format_address($organizationIdentifier),
-                                    'function_en' => array($contact['functionLabel']['en'] ?? ''),
-                                    'function_de' => array($contact['functionLabel']['de'] ?? ''),
+                                    'function_en' => $contact['functionLabel']['en'] ?? '',
+                                    'function_de' => $contact['functionLabel']['de'] ?? '',
                                 ); 
                             }
 
-                            update_post_meta($new_post_id, 'person_organizations', $organizations);
+                            update_post_meta($new_post_id, 'person_contacts', $contacts);
 
                             // Optional: log success for debugging
                             // error_log("Successfully migrated person with UnivIS ID: $univisid to custom_person.");

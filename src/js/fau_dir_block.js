@@ -1,18 +1,141 @@
+function fetchPersons() {
+    return wp.apiFetch({
+        path: '/wp/v2/custom_person?per_page=100&_fields=id,title,meta.person_id'
+    }).then(persons => {
+        console.log('Raw persons data:', persons);
+        
+        if (!Array.isArray(persons)) {
+            console.error('Expected array of persons, got:', typeof persons);
+            return [];
+        }
+
+        return persons.map(person => {
+            const personName = person.meta?.person_name || 'Unnamed Person';
+            const personId = person.meta?.person_id || '';
+            
+            return {
+                label: personName,
+                value: personId
+            };
+        });
+    }).catch(error => {
+        console.error('Error fetching persons:', error);
+        return [];
+    });
+}
+
+function fetchCategories() {
+    return wp.apiFetch({
+        path: '/wp/v2/custom_taxonomy?per_page=100'
+    }).then(categories => {
+        console.log('Raw categories data:', categories);
+        return categories.map(category => ({
+            label: category.name,
+            value: category.id.toString()
+        }));
+    }).catch(error => {
+        console.error('Error fetching categories:', error);
+        return [];
+    });
+}
+
 wp.blocks.registerBlockType('rrze/faudir-block', {
+    apiVersion: 2,
     title: 'FAUDIR Block',
     icon: 'admin-users',
-    category: 'common',
+    category: 'rrze-blocks',
     attributes: {
-        category: { type: 'string', default: '' },
-        identifier: { type: 'string', default: '' },
+
+        identifier: { 
+            type: 'array',
+            default: []
+        },
         format: { type: 'string', default: 'list' },
         url: { type: 'string', default: '' },
         show: { type: 'string', default: '' },
+        hide: { type: 'string', default: '' },
+        image: { type: 'number', default: 0 },
         groupid: { type: 'string', default: '' },
-        orgnr: { type: 'string', default: '' },
-        image: { type: 'number', default: null }, // Image ID attribute
+        orgnr: { type: 'string', default: '' }
     },
     edit: function (props) {
+        const [persons, setPersons] = wp.element.useState([]);
+        const [filteredPersons, setFilteredPersons] = wp.element.useState([]);
+        const [categories, setCategories] = wp.element.useState([]);
+        const [isLoading, setIsLoading] = wp.element.useState(true);
+        const [error, setError] = wp.element.useState(null);
+        const [manualIdentifier, setManualIdentifier] = wp.element.useState('');
+
+        // Fetch data when component mounts
+        wp.element.useEffect(() => {
+            setIsLoading(true);
+            setError(null);
+
+            // Fetch persons with custom taxonomy information
+            wp.apiFetch({
+                path: '/wp/v2/custom_person?per_page=100&_fields=id,title,meta.person_id,meta.person_name,custom_taxonomy'
+            }).then(response => {
+                console.log('Persons response:', response);
+                const formattedPersons = response.map(person => ({
+                    label: person.meta?.person_name || person.title.rendered,
+                    value: person.meta?.person_id || '',
+                    categories: person.custom_taxonomy || []
+                })).filter(person => person.value);
+                setPersons(formattedPersons);
+                setFilteredPersons(formattedPersons);
+                setIsLoading(false);
+            }).catch(err => {
+                console.error('Error fetching persons:', err);
+                setError('Error loading persons data');
+                setIsLoading(false);
+            });
+
+            // Fetch custom taxonomy terms
+            wp.apiFetch({
+                path: '/wp/v2/custom_taxonomy?per_page=100'
+            }).then(response => {
+                const formattedCategories = response.map(cat => ({
+                    label: cat.name,
+                    value: cat.id.toString()
+                }));
+                setCategories(formattedCategories);
+            }).catch(err => {
+                console.error('Error fetching categories:', err);
+            });
+        }, []);
+
+        // Filter and select persons when category changes
+        const handleCategoryChange = (categoryId) => {
+    
+                // If no category selected, clear all selections
+                props.setAttributes({ identifier: [] });
+        
+                // Find all persons in this category and add them to selections
+                const personsInCategory = persons.filter(person => 
+                    person.categories.includes(parseInt(categoryId))
+                );
+                const personIds = personsInCategory.map(person => person.value);
+                
+                // Keep existing selections that aren't in the category
+                const existingSelections = props.attributes.identifier || [];
+                const uniqueSelections = [...new Set([...existingSelections, ...personIds])];
+                
+                props.setAttributes({ identifier: uniqueSelections });
+            
+        };
+
+        // Handle individual person selection
+        const handlePersonSelection = (value) => {
+            if (value) {
+                const currentIdentifiers = [...props.attributes.identifier];
+                if (!currentIdentifiers.includes(value)) {
+                    props.setAttributes({ 
+                        identifier: [...currentIdentifiers, value]
+                    });
+                }
+            }
+        };
+
         const {
             attributes: { category, identifier, format, url, show, groupid, orgnr, image },
             setAttributes
@@ -50,48 +173,116 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
             // Update the show attribute with the new values as a string
             setAttributes({ show: updatedValues.join(', ') });
         };
+
+        // Handle manual identifier input
+        const handleManualInput = (event) => {
+            const value = event.target.value;
+            setManualIdentifier(value);
+        };
+
+        // Add manual identifier to the list
+        const addManualIdentifier = () => {
+            if (manualIdentifier && !identifier.includes(manualIdentifier)) {
+                const newIdentifiers = [...identifier, manualIdentifier];
+                setAttributes({ identifier: newIdentifiers });
+                setManualIdentifier(''); // Clear the input
+            }
+        };
+
+        // Remove identifier from the list
+        const removeIdentifier = (idToRemove) => {
+            const newIdentifiers = identifier.filter(id => id !== idToRemove);
+            setAttributes({ identifier: newIdentifiers });
+        };
+
+        // Return loading state
+        if (isLoading) {
+            return wp.element.createElement(
+                'div',
+                { className: 'wp-block-rrze-faudir-block loading' },
+                'Loading...'
+            );
+        }
+
+        // Return error state
+        if (error) {
+            return wp.element.createElement(
+                'div',
+                { className: 'wp-block-rrze-faudir-block error' },
+                error
+            );
+        }
+
         return wp.element.createElement(
             'div',
-            null,
-            // Category input field
+            { className: 'wp-block-rrze-faudir-block' },
+            // Category dropdown
             wp.element.createElement(
-                'label',
+                'div',
                 { className: 'block-label' },
-                null,
-                'Category',
-                wp.element.createElement('label', {
-                    className: 'block-label',
-                    type: 'text',
-                    value: 'Category',
-                }),
-                wp.element.createElement('input', {
-                    className: 'block-label',
-                    type: 'text',
-                    value: category,
-                    onChange: function(event) {
-                        setAttributes({ category: event.target.value });
+                wp.element.createElement(
+                    wp.components.SelectControl,
+                    {
+                        label: 'Category',
+                        value: props.attributes.category,
+                        options: [
+                            { label: 'Select a category...', value: '' },
+                            ...categories
+                        ],
+                        onChange: handleCategoryChange
                     }
-                })
+                )
             ),
-            // Identifier input field
+            // Person dropdown (showing all persons)
             wp.element.createElement(
-                'label',
+                'div',
                 { className: 'block-label' },
-                null,
-                'Identifier',
-                wp.element.createElement('label', {
-                    className: 'block-label',
-                    type: 'text',
-                    value: 'Identifier',
-                }),
-                wp.element.createElement('input', {
-                    className: 'block-label',
-                    type: 'text',
-                    value: identifier,
-                    onChange: function(event) {
-                        setAttributes({ identifier: event.target.value });
+                wp.element.createElement(
+                    wp.components.SelectControl,
+                    {
+                        label: 'Add Person',
+                        value: '',
+                        options: [
+                            { label: 'Select a person...', value: '' },
+                            ...persons // Show all persons
+                        ],
+                        onChange: handlePersonSelection
                     }
-                })
+                )
+            ),
+            // Display selected persons with remove option
+            wp.element.createElement(
+                'div',
+                { className: 'selected-persons' },
+                wp.element.createElement('h4', null, 'Selected Persons:'),
+                props.attributes.identifier.length > 0 
+                    ? props.attributes.identifier.map(id => {
+                        const person = persons.find(p => p.value === id);
+                        const isInCategory = person?.categories?.includes(parseInt(props.attributes.category));
+                        return wp.element.createElement(
+                            'div',
+                            { 
+                                key: id,
+                                className: `selected-person${isInCategory ? ' in-category' : ''}`
+                            },
+                            wp.element.createElement('span', null, 
+                                person ? person.label : id
+                            ),
+                            wp.element.createElement(
+                                'button',
+                                {
+                                    onClick: () => {
+                                        const newIdentifiers = props.attributes.identifier
+                                            .filter(identifier => identifier !== id);
+                                        props.setAttributes({ identifier: newIdentifiers });
+                                    },
+                                    className: 'remove-person'
+                                },
+                                '×'
+                            )
+                        );
+                    })
+                    : wp.element.createElement('p', null, 'No persons selected')
             ),
             // Format selection dropdown
             wp.element.createElement(

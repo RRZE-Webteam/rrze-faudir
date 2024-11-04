@@ -190,7 +190,10 @@
                     <?php endif; ?>
 
                     <?php
-                    $business_card_title = rrze_faudir_get_business_card_title();
+                    $business_card_title = function_exists('rrze_faudir_get_business_card_title') 
+                        ? rrze_faudir_get_business_card_title() 
+                        : __('Default Business Card Title', 'rrze-faudir');
+
                     if (!empty($url)) {
                         echo '<a href="' . esc_url($url) . '" itemprop="url" class="business-card-link button-link">' . esc_html($business_card_title) . '</a>';
                     }
