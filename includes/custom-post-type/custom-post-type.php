@@ -109,7 +109,6 @@ function render_person_additional_fields($post) {
         'person_given_name',
         'person_family_name',
         'person_title',
-        // Remove single organization and function from API fields
     ];
 
     $fields = [
@@ -130,16 +129,12 @@ function render_person_additional_fields($post) {
     // Render regular fields
     foreach ($fields as $meta_key => $label) {
         $value = get_post_meta($post->ID, $meta_key, true);
-
-        // Determine if the field should be readonly
         $readonly = in_array($meta_key, $api_fields) ? 'readonly' : '';
 
-        // Check if the field should be rendered as a textarea
         if (in_array($meta_key, ['_content_en', '_teasertext_en', '_teasertext_de'])) {
             echo "<label for='" . esc_attr($meta_key) . "'>" . esc_html($label) . "</label>";
             echo "<textarea name='" . esc_attr($meta_key) . "' id='" . esc_attr($meta_key) . "' style='width: 100%; height: 100px;' $readonly>" . esc_textarea($value) . "</textarea><br><br>";
         } else {
-            // Render as a regular text input field
             echo "<label for='" . esc_attr($meta_key) . "'>" . esc_html($label) . "</label>";
             echo "<input type='text' name='" . esc_attr($meta_key) . "' id='" . esc_attr($meta_key) . "' value='" . esc_attr($value) . "' style='width: 100%;' $readonly /><br><br>";
         }
@@ -150,31 +145,24 @@ function render_person_additional_fields($post) {
     echo '<h3>' . __('Organizations and Functions', 'rrze-faudir') . '</h3>';
     
     $organizations = get_post_meta($post->ID, 'person_organizations', true) ?: array();
-    
-    if (empty($organizations)) {
-        $organizations = array(array(
-            'organization' => '',
-            'functions_en' => array(''),
-            'functions_de' => array('')
-        ));
-    }
 
     foreach ($organizations as $index => $org) {
         echo '<div class="organization-block">';
         echo '<div class="organization-header">';
-        echo '<h4>' . __('Organization', 'rrze-faudir') . ' ' . ($index + 1) . '</h4>';
+        echo '<h4>' . __('Contact', 'rrze-faudir') . ' ' . ($index + 1) . '</h4>';
         if ($index > 0) {
             echo '<button type="button" class="remove-organization button-link-delete">' . __('Remove Organization', 'rrze-faudir') . '</button>';
         }
         echo '</div>';
         
         echo '<input type="text" name="person_organizations[' . $index . '][organization]" value="' . esc_attr($org['organization']) . '" class="widefat" readonly />';
-        
-         // Add socials fields
-         echo '<div class="workplace-wrapper">';
-         echo '<h5>' . __('Socials', 'rrze-faudir') . '</h5>';
-         echo '<textarea name="person_organizations[' . $index . '][socials]" class="widefat" readonly rows="5">' . esc_textarea($org['socials'] ?? '') . '</textarea>';
-         echo '</div>';
+
+        // Add socials field
+        echo '<div class="socials-wrapper">';
+        echo '<h5>' . __('Socials', 'rrze-faudir') . '</h5>';
+        echo '<textarea name="person_organizations[' . $index . '][socials]" class="widefat" readonly rows="5">' . esc_textarea($org['socials'] ?? '') . '</textarea>';
+        echo '</div>';
+
         // Add workplace and address fields
         echo '<div class="workplace-wrapper">';
         echo '<h5>' . __('Workplace', 'rrze-faudir') . '</h5>';
@@ -186,29 +174,21 @@ function render_person_additional_fields($post) {
         echo '<textarea name="person_organizations[' . $index . '][address]" class="widefat" readonly rows="5">' . esc_textarea($org['address'] ?? '') . '</textarea>';
         echo '</div>';
 
-        // English Functions
-        echo '<div class="functions-wrapper">';
-        echo '<h5>' . __('Functions (English)', 'rrze-faudir') . '</h5>';
-        foreach ($org['functions_en'] as $func_index => $function) {
-            echo '<div class="function-block">';
-            echo '<input type="text" name="person_organizations[' . $index . '][functions_en][]" value="' . esc_attr($function) . '" class="widefat" readonly />';
-            echo '</div>';
-        }
+        // English Function
+        echo '<div class="function-wrapper">';
+        echo '<h5>' . __('Function (English)', 'rrze-faudir') . '</h5>';
+        echo '<input type="text" name="person_organizations[' . $index . '][function_en]" value="' . esc_attr($org['function_en'] ?? '') . '" class="widefat" readonly />';
         echo '</div>';
 
-        // German Functions
-        echo '<div class="functions-wrapper">';
-        echo '<h5>' . __('Functions (German)', 'rrze-faudir') . '</h5>';
-        foreach ($org['functions_de'] as $func_index => $function) {
-            echo '<div class="function-block">';
-            echo '<input type="text" name="person_organizations[' . $index . '][functions_de][]" value="' . esc_attr($function) . '" class="widefat" readonly />';
-            echo '</div>';
-        }
+        // German Function
+        echo '<div class="function-wrapper">';
+        echo '<h5>' . __('Function (German)', 'rrze-faudir') . '</h5>';
+        echo '<input type="text" name="person_organizations[' . $index . '][function_de]" value="' . esc_attr($org['function_de'] ?? '') . '" class="widefat" readonly />';
         echo '</div>';
-        
+
         echo '</div>'; // .organization-block
     }
-    
+
     echo '</div>'; // .organizations-wrapper
 }
 
@@ -249,7 +229,7 @@ function save_person_additional_fields($post_id) {
                 // Update basic information
                 update_post_meta($post_id, 'person_name', sanitize_text_field($contact['givenName'] . ' ' . $contact['familyName']));
                 update_post_meta($post_id, 'person_email', sanitize_email($contact['email'] ?? ''));
-                update_post_meta($post_id, 'person_telephone', sanitize_email($contact['telephone'] ?? ''));
+                update_post_meta($post_id, 'person_telephone', sanitize_text_field($contact['telephone'] ?? ''));
                 update_post_meta($post_id, 'person_given_name', sanitize_text_field($contact['givenName'] ?? ''));
                 update_post_meta($post_id, 'person_family_name', sanitize_text_field($contact['familyName'] ?? ''));
                 update_post_meta($post_id, 'person_title', sanitize_text_field($contact['personalTitle'] ?? ''));
@@ -262,61 +242,30 @@ function save_person_additional_fields($post_id) {
                         $org_identifier = $contactInfo['organization']['identifier'] ?? '';
                         $function_en = $contactInfo['functionLabel']['en'] ?? '';
                         $function_de = $contactInfo['functionLabel']['de'] ?? '';
-                        
-                        // Fetch workplace and address for this contact
+
+                        // Fetch workplace, address, and socials for this contact
                         $workplace = fetch_and_format_workplaces($contactInfo['identifier'] ?? '');
                         $address = fetch_and_format_address($org_identifier);
                         $socials = fetch_and_format_socials($contactInfo['identifier'] ?? '');
-                        
-                        // Find if organization already exists in our array
-                        $org_index = -1;
-                        foreach ($organizations as $index => $org) {
-                            if ($org['organization'] === $org_name) {
-                                $org_index = $index;
-                                break;
-                            }
-                        }
-                        
-                        if ($org_index >= 0) {
-                            // Add to existing organization
-                            if (!empty($function_en)) {
-                                $organizations[$org_index]['functions_en'][] = $function_en;
-                            }
-                            if (!empty($function_de)) {
-                                $organizations[$org_index]['functions_de'][] = $function_de;
-                            }
-                            // Update workplace and address if not already set
-                            if (empty($organizations[$org_index]['workplace'])) {
-                                $organizations[$org_index]['workplace'] = $workplace;
-                            }
-                            if (empty($organizations[$org_index]['address'])) {
-                                $organizations[$org_index]['address'] = $address;
-                            }
-                            if (empty($organizations[$org_index]['socials'])) {
-                                $organizations[$org_index]['socials'] = $socials;
-                            }
-                        } else {
-                            // Add new organization
-                            $organizations[] = array(
-                                'organization' => $org_name,
-                                'organization_id' => $org_identifier,
-                                'functions_en' => !empty($function_en) ? array($function_en) : array(),
-                                'functions_de' => !empty($function_de) ? array($function_de) : array(),
-                                'workplace' => $workplace,
-                                'address' => $address,
-                                'socials' => $socials,
-                            );
-                        }
+
+                        // Add each organization as a separate entry
+                        $organizations[] = array(
+                            'organization' => $org_name,
+                            'organization_id' => $org_identifier,
+                            'function_en' => $function_en,
+                            'function_de' => $function_de,
+                            'workplace' => $workplace,
+                            'address' => $address,
+                            'socials' => $socials,
+                        );
                     }
                 }
 
                 // Save the organizations array as post meta
                 update_post_meta($post_id, 'person_organizations', $organizations);
-
             } else {
                 // If API response is not successful, log error or notify the user as needed
-                /* translators: %s: JSON-encoded response */
-                /* error_log(sprintf(__('Error fetching person attributes: %s', 'rrze-faudir'), wp_json_encode($response)));*/
+                // error_log(sprintf(__('Error fetching person attributes: %s', 'rrze-faudir'), wp_json_encode($response)));
             }
         }        
     }
@@ -344,6 +293,7 @@ function save_person_additional_fields($post_id) {
         }
     }
 }
+
 
 add_action('save_post', 'save_person_additional_fields');
 
@@ -389,33 +339,14 @@ function fetch_person_attributes() {
                         $org_identifier = $contactInfo['organization']['identifier'] ?? '';
                         $function_en = $contactInfo['functionLabel']['en'] ?? '';
                         $function_de = $contactInfo['functionLabel']['de'] ?? '';
-                        
-                        // Find if organization already exists in our array
-                        $org_index = -1;
-                        foreach ($organizations as $index => $org) {
-                            if ($org['organization'] === $org_name) {
-                                $org_index = $index;
-                                break;
-                            }
-                        }
-                        
-                        if ($org_index >= 0) {
-                            // Add functions to existing organization
-                            if (!empty($function_en)) {
-                                $organizations[$org_index]['functions_en'][] = $function_en;
-                            }
-                            if (!empty($function_de)) {
-                                $organizations[$org_index]['functions_de'][] = $function_de;
-                            }
-                        } else {
-                            // Add new organization with functions
-                            $organizations[] = array(
-                                'organization' => $org_name,
-                                'organization_id' => $org_identifier,
-                                'functions_en' => !empty($function_en) ? array($function_en) : array(),
-                                'functions_de' => !empty($function_de) ? array($function_de) : array()
-                            );
-                        }
+
+                        // Add each organization with its functions as a new entry
+                        $organizations[] = array(
+                            'organization' => $org_name,
+                            'organization_id' => $org_identifier,
+                            'function_en' => $function_en,
+                            'function_de' => $function_de
+                        );
                     }
                 }
 

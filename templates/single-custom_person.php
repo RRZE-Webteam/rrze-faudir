@@ -64,8 +64,8 @@ get_header();
                                     'organization' => '',
                                     'workplace' => '',
                                     'address' => '',
-                                    'functions_en' => array(''),
-                                    'functions_de' => array(''),
+                                    'function_en' => '',
+                                    'function_de' => '',
                                     'socials' => array('')
                                 ));
                             }
@@ -159,17 +159,13 @@ get_header();
                                     
                                     <?php if (!$show_german) : ?>
                                     <div class="functions-wrapper">
-                                        <h5><?php echo esc_html__('Functions', 'rrze-faudir'); ?></h5>
-                                        <?php foreach ($org['functions_en'] as $function) : ?>
-                                            <p><?php echo esc_html($function); ?></p>
-                                        <?php endforeach; ?>
+                                        <h5><?php echo esc_html__('Function', 'rrze-faudir'); ?></h5>
+                                            <p><?php echo esc_html($org['function_en']); ?></p>
                                     </div>
                                     <?php elseif ($show_german) : ?>
                                     <div class="functions-wrapper">
-                                        <h5><?php echo esc_html__('Functions', 'rrze-faudir'); ?></h5>
-                                        <?php foreach ($org['functions_de'] as $function) : ?>
-                                            <p><?php echo esc_html($function); ?></p>
-                                        <?php endforeach; ?>
+                                        <h5><?php echo esc_html__('Function', 'rrze-faudir'); ?></h5>
+                                            <p><?php echo esc_html($org['function_de']); ?></p>
                                     </div>
                                     <?php endif ;?>
                                 </div>
