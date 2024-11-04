@@ -57,10 +57,10 @@ get_header();
                             ?>
                             <?php 
                             // Get organizations meta
-                            $organizations = get_post_meta(get_the_ID(), 'person_organizations', true) ?: array();
+                            $contacts = get_post_meta(get_the_ID(), 'person_contacts', true) ?: array();
 
-                            if (empty($organizations)) {
-                                $organizations = array(array(
+                            if (empty($contacts)) {
+                                $contacts = array(array(
                                     'organization' => '',
                                     'workplace' => '',
                                     'address' => '',
@@ -73,7 +73,7 @@ get_header();
                             $show_german = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_SIE' ) !== false;
 
                             // Iterate through organizations and display the data
-                            foreach ($organizations as $index => $org) : ?>
+                            foreach ($contacts as $index => $org) : ?>
                                 <div class="organization-block">
                                     <h4><?php echo esc_html__('Organization: ', 'rrze-faudir') . ' ' . esc_html($org['organization']); ?></h4>
                                     

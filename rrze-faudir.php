@@ -315,7 +315,7 @@ function migrate_person_data_on_activation() {
                                 ); 
                             }
 
-                            update_post_meta($new_post_id, 'person_organizations', $contacts);
+                            update_post_meta($new_post_id, 'person_contacts', $contacts);
 
                             // Optional: log success for debugging
                             // error_log("Successfully migrated person with UnivIS ID: $univisid to custom_person.");
