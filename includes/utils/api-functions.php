@@ -28,7 +28,6 @@ function fetch_fau_persons($limit = 60, $offset = 0) {
     return $data ?? [];
 }
 
-
 // Fetch data from the FAU organizations API
 function fetch_fau_organizations($limit = 100, $offset = 1, $params=[]) {
     $api_key = FaudirUtils::getKey();
@@ -67,7 +66,6 @@ function fetch_fau_organizations($limit = 100, $offset = 1, $params=[]) {
 
     return $data;
 }
-
 
 //search person by id
 function fetch_fau_person_by_id($personId) {
@@ -357,6 +355,7 @@ function fetch_and_format_address($contactIdentifier) {
 
     return implode("\n", $addressDetails);
 }
+
 function fetch_and_format_socials($contactIdentifier) {
     error_log('Fetching social media for contact identifier: ' . $contactIdentifier);
 
