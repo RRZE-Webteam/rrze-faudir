@@ -190,3 +190,168 @@ body {
 .social-media-list li{
     list-style: none; 
 }
+
+.manual-identifier {
+    margin: 15px 0;
+}
+
+.manual-identifier-input {
+    display: flex;
+    gap: 10px;
+}
+
+.manual-identifier-input input {
+    flex: 1;
+}
+
+.selected-identifiers {
+    margin: 15px 0;
+    padding: 10px;
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+.selected-identifier {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    margin: 5px 0;
+    background: white;
+    border-radius: 3px;
+}
+
+.remove-identifier {
+    background: none;
+    border: none;
+    color: #cc0000;
+    cursor: pointer;
+    padding: 0 5px;
+    font-size: 18px;
+}
+
+.remove-identifier:hover {
+    color: #990000;
+}
+
+.block-label {
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.manual-identifier-input {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.selected-identifiers {
+    margin: 15px 0;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+.selected-identifier {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    margin: 5px 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.remove-identifier {
+    border: none;
+    background: none;
+    color: #cc0000;
+    cursor: pointer;
+    padding: 0 8px;
+}
+
+.selected-person {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    margin: 3px 0;
+    background: #f0f0f0;
+    border-radius: 3px;
+}
+
+.selected-person.in-category {
+    background: #e0f0e0; /* Slightly different background for category members */
+}
+
+.remove-person {
+    background: none;
+    border: none;
+    color: #cc0000;
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+.remove-person:hover {
+    color: #ff0000;
+}
+.faudir-block-preview {
+    padding: 20px;
+    background: #f8f9f9;
+    border: 1px solid #e2e4e7;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+}
+
+.faudir-block-preview:hover {
+    background: #f0f0f0;
+}
+
+.preview-content {
+    margin-bottom: 15px;
+}
+
+.preview-content h3 {
+    margin: 0 0 10px 0;
+    color: #1e1e1e;
+}
+
+.preview-persons,
+.preview-format,
+.preview-fields {
+    margin: 5px 0;
+    color: #555;
+}
+
+.edit-button {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: #007cba;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.faudir-block-preview:hover .edit-button {
+    opacity: 1;
+}
+
+.editor-controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+}
+
+.wp-block-rrze-faudir-block.editor {
+    padding: 20px;
+    background: white;
+    border: 1px solid #e2e4e7;
+    border-radius: 4px;
+}

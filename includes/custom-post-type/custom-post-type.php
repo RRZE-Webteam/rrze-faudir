@@ -25,9 +25,10 @@ function register_custom_person_post_type() {
             'slug' => $slug, // Use dynamic slug
             'with_front' => false // Optional: Disable prefix (like /blog/)
         ),
-        'supports'           => array('title', 'editor', 'thumbnail'),
+        'supports'           => array('title', 'editor', 'thumbnail', 'custom-fields'),
         'taxonomies'         => array('custom_taxonomy'),
         'show_in_rest'       => true,
+        'rest_base'          => 'custom_person',
         'menu_position'      => 5,
         'capability_type'    => 'post',
     );
@@ -66,7 +67,11 @@ function register_custom_taxonomy() {
             'meta_box_cb'       => null, // Use default meta box
             'show_admin_column' => true, // Show taxonomy in the admin list table.
             'query_var'         => true,
-            'rewrite'           => array( 'slug' => 'category' ),
+            'rewrite'           => array( 'slug' => 'custom-taxonomy' ),
+            'show_in_rest'      => true,
+            'rest_base'         => 'custom_taxonomy',
+            'rest_controller_class' => 'WP_REST_Terms_Controller',
+
         )
     );
 }
@@ -476,4 +481,47 @@ function rrze_faudir_create_custom_person() {
     wp_send_json_success(array('post_id' => $post_id));
 }
 add_action('wp_ajax_rrze_faudir_create_custom_person', 'rrze_faudir_create_custom_person');
+
+// Add this function to register the meta field for REST API
+function register_person_meta() {
+    register_post_meta('custom_person', 'person_id', array(
+        'show_in_rest' => true,
+        'single' => true,
+        'type' => 'string',
+        'auth_callback' => function() {
+            return current_user_can('edit_posts');
+        }
+    ));
+}
+add_action('init', 'register_person_meta');
+// Make sure categories are visible in REST API
+// Update the REST API response to include custom taxonomy
+function add_taxonomy_to_person_rest($response, $post, $request) {
+    if ($post->post_type === 'custom_person') {
+        // Get custom taxonomy terms
+        $terms = wp_get_object_terms($post->ID, 'custom_taxonomy');
+        $term_ids = array_map(function($term) {
+            return $term->term_id;
+        }, $terms);
+        
+        // Add taxonomy terms to response
+        $response->data['custom_taxonomy'] = $term_ids;
+        
+        // Add other meta data
+        $person_id = get_post_meta($post->ID, 'person_id', true);
+        $person_name = get_post_meta($post->ID, 'person_name', true);
+        
+        $response->data['meta'] = array_merge(
+            $response->data['meta'] ?? [],
+            [
+                'person_id' => $person_id,
+                'person_name' => $person_name
+            ]
+        );
+    }
+    return $response;
+}
+add_filter('rest_prepare_custom_person', 'add_taxonomy_to_person_rest', 10, 3);
+
+
 ?>
