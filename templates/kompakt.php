@@ -161,6 +161,7 @@
                     <?php if (!empty($person['contacts'])) : ?>
                         <?php foreach ($person['contacts'] as $contact) : ?>
                             <?php
+                            $isGerman = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_SIE') !== false;
                              $functionLabel = '';
                              if (!empty($contact['functionLabel'])) {
                                  $functionLabel = $isGerman ? 

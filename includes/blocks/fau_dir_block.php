@@ -8,24 +8,6 @@ class FaudirBlock {
 
         // Convert to comma-separated string
         $default_show = implode(', ', $default_show_fields);
-
-        register_block_type('rrze/faudir-block', [
-            'render_callback' => [self::class, 'render'],
-            'attributes' => [
-
-                'identifier' => ['type' => 'array', 'default' => []],
-                'format' => ['type' => 'string', 'default' => 'list'],
-                'url' => ['type' => 'string', 'default' => ''],
-                'show' => ['type' => 'string', 'default' => $default_show],
-                'hide' => ['type' => 'string', 'default' => ''],
-                'image' => ['type' => 'number', 'default' => 0],
-                'groupid' =>['type'=> 'string', 'default' => ''],
-                'orgnr' =>['type'=> 'string', 'default' => ''],
-            ],
-            'supports' => [
-                'html' => false
-            ],
-        ]);
     }
 
     public static function render($attributes) {
