@@ -157,65 +157,65 @@ get_header();
                                         endforeach; ?>
                                     </div>
                                     <div class="workplace-wrapper">
-    <h5><?php echo esc_html__('Workplace:', 'rrze-faudir'); ?></h5>
-    <?php 
-    // Define weekday mapping
-    $weekdayMap = [
-        1 => 'Monday',
-        2 => 'Tuesday',
-        3 => 'Wednesday',
-        4 => 'Thursday',
-        5 => 'Friday',
-        6 => 'Saturday',
-        7 => 'Sunday',
-    ];
-    
-    // Separate workplace lines and office hours
-    $workplace_lines = explode("\n", $org['workplace'] ?? '');
-    $office_hours_line = '';
-
-    foreach ($workplace_lines as $line) :
-        $trimmedLine = trim($line);
-
-        // Detect the "Office Hours" line and store it for parsing
-        if (stripos($trimmedLine, 'Office Hours:') !== false) {
-            $office_hours_line = $trimmedLine;
-            continue; // Skip displaying this line as a regular workplace line
-        }
-
-        // Otherwise, treat as a regular workplace line
-        if ($trimmedLine !== '') {
-            echo '<p>' . esc_html($trimmedLine) . '</p>';
-        }
-    endforeach;
-
-    // Check and display office hours if found
-    if ($office_hours_line) {
-        echo '<strong>' . esc_html__('Office Hours:', 'rrze-faudir') . '</strong><ul>';
-        
-        // Debug: Show extracted office hours line
-        echo '<!-- Debug: Office Hours Line Detected: ' . esc_html($office_hours_line) . ' -->';
-        
-        // Extract individual office hours segments
-        preg_match_all('/Weekday (\d+): (\d{2}:\d{2}) - (\d{2}:\d{2})/', $office_hours_line, $matches, PREG_SET_ORDER);
-
-        // Debug: Show if matches are found
-        if (empty($matches)) {
-            echo '<!-- Debug: No matches found for office hours pattern -->';
-        }
-
-        foreach ($matches as $match) {
-            $weekday = $weekdayMap[$match[1]] ?? 'Unknown';
-            $from = $match[2];
-            $to = $match[3];
-            echo '<li><strong>' . esc_html($weekday) . ':</strong> ' . esc_html($from . ' - ' . $to) . '</li>';
-        }
-        echo '</ul>';
-    } else {
-        echo '<!-- Debug: No office hours line found -->';
-    }
-    ?>
-</div>
+                                        <h5><?php echo esc_html__('Workplace:', 'rrze-faudir'); ?></h5>
+                                        <?php 
+                                        // Define weekday mapping
+                                        $weekdayMap = [
+                                            1 => 'Monday',
+                                            2 => 'Tuesday',
+                                            3 => 'Wednesday',
+                                            4 => 'Thursday',
+                                            5 => 'Friday',
+                                            6 => 'Saturday',
+                                            7 => 'Sunday',
+                                        ];
+                                        
+                                        // Separate workplace lines and office hours
+                                        $workplace_lines = explode("\n", $org['workplace'] ?? '');
+                                        $office_hours_line = '';
+                                    
+                                        foreach ($workplace_lines as $line) :
+                                            $trimmedLine = trim($line);
+                                        
+                                            // Detect the "Office Hours" line and store it for parsing
+                                            if (stripos($trimmedLine, 'Office Hours:') !== false) {
+                                                $office_hours_line = $trimmedLine;
+                                                continue; // Skip displaying this line as a regular workplace line
+                                            }
+                                        
+                                            // Otherwise, treat as a regular workplace line
+                                            if ($trimmedLine !== '') {
+                                                echo '<p>' . esc_html($trimmedLine) . '</p>';
+                                            }
+                                        endforeach;
+                                    
+                                        // Check and display office hours if found
+                                        if ($office_hours_line) {
+                                            echo '<strong>' . esc_html__('Office Hours:', 'rrze-faudir') . '</strong><ul>';
+                                            
+                                            // Debug: Show extracted office hours line
+                                            echo '<!-- Debug: Office Hours Line Detected: ' . esc_html($office_hours_line) . ' -->';
+                                            
+                                            // Extract individual office hours segments
+                                            preg_match_all('/Weekday (\d+): (\d{2}:\d{2}) - (\d{2}:\d{2})/', $office_hours_line, $matches, PREG_SET_ORDER);
+                                        
+                                            // Debug: Show if matches are found
+                                            if (empty($matches)) {
+                                                echo '<!-- Debug: No matches found for office hours pattern -->';
+                                            }
+                                        
+                                            foreach ($matches as $match) {
+                                                $weekday = $weekdayMap[$match[1]] ?? 'Unknown';
+                                                $from = $match[2];
+                                                $to = $match[3];
+                                                echo '<li><strong>' . esc_html($weekday) . ':</strong> ' . esc_html($from . ' - ' . $to) . '</li>';
+                                            }
+                                            echo '</ul>';
+                                        } else {
+                                            echo '<!-- Debug: No office hours line found -->';
+                                        }
+                                        ?>
+                                    </div>
 
 
                                     <?php if (!$show_german) : ?>
