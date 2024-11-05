@@ -236,11 +236,11 @@ function fetch_fau_organization_by_id($organizationId) {
 }
 
 function fetch_and_format_workplaces($contactIdentifier) {
-    error_log('Fetching workplaces for contact identifier: ' . $contactIdentifier);
+    // error_log('Fetching workplaces for contact identifier: ' . $contactIdentifier);
 
     // Fetch contact data
     $contactData = fetch_fau_contacts(1, 0, ['identifier' => $contactIdentifier]);
-    error_log('Contact data response: ' . print_r($contactData, true));
+    // error_log('Contact data response: ' . print_r($contactData, true));
 
     if (empty($contactData['data'])) {
         error_log('No contact data found for identifier: ' . $contactIdentifier);
@@ -314,7 +314,7 @@ function fetch_and_format_address($contactIdentifier) {
 
     // Fetch contact data
     $contactData = fetch_fau_organizations(1, 0, ['identifier' => $contactIdentifier]);
-    error_log('Contact data response: ' . print_r($contactData, true));
+    // error_log('Contact data response: ' . print_r($contactData, true));
 
     if (empty($contactData['data'])) {
         error_log('No contact data found for identifier: ' . $contactIdentifier);
@@ -362,7 +362,7 @@ function fetch_and_format_socials($contactIdentifier) {
 
     // Fetch contact data
     $contactData = fetch_fau_contacts(1, 0, ['identifier' => $contactIdentifier]);
-    error_log('Contact data response: ' . print_r($contactData, true));
+    // error_log('Contact data response: ' . print_r($contactData, true));
 
     if (empty($contactData['data'])) {
         error_log('No contact data found for identifier: ' . $contactIdentifier);
