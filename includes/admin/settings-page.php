@@ -502,7 +502,8 @@ function rrze_faudir_display_all_contacts($page = 1) {
         if (!empty($contacts)) {
             $output = '<div class="contacts-wrapper">';
             foreach ($contacts as $contact) {
-                $name = esc_html($contact['personalTitle'] . ' ' . $contact['givenName'] . ' ' . $contact['familyName']);
+                $personalTitle = isset($contact['personalTitle']) ? $contact['personalTitle'] . ' ' : '';
+                $name = esc_html($personalTitle . $contact['givenName'] . ' ' . $contact['familyName']);
                 $identifier = esc_html($contact['identifier']);
                 $output .= '<div class="contact-card">';
                 $output .= "<h2 class='contact-name'>{$name}</h2>";
