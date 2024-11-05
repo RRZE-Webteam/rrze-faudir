@@ -21,27 +21,25 @@ class FaudirBlock {
             return '<div class="wp-block-rrze-faudir-block">Please select at least one person.</div>';
         }
 
-        $output = '';
-        foreach ($identifiers as $identifier) {
-            // Generate cache key for each person
-            $cache_key = 'faudir_block_' . md5($identifier . serialize($attributes));
-            
-            // Check cache
-            $cached_data = get_transient($cache_key);
-            if ($cached_data !== false) {
-                $output .= $cached_data;
-                continue;
-            }
-
-            // Fetch and render person data
-            $person_data = fetch_fau_data(array_merge($attributes, ['identifier' => $identifier]));
-            if ($person_data) {
-                set_transient($cache_key, $person_data, $cache_timeout);
-                $output .= $person_data;
-            }
+        // Generate cache key for all persons
+        $cache_key = 'faudir_block_' . md5(implode(',', $identifiers) . serialize($attributes));
+        
+        // Check cache for all persons
+        $cached_data = get_transient($cache_key);
+        if ($cached_data !== false) {
+            return $cached_data;
         }
 
-        return $output ?: '<div class="wp-block-rrze-faudir-block">No data found for selected persons.</div>';
+        // Convert identifiers array to comma-separated string before passing to fetch_fau_data
+        $attributes['identifier'] = implode(',', $identifiers);
+        $all_persons_data = fetch_fau_data($attributes);
+        
+        if ($all_persons_data) {
+            set_transient($cache_key, $all_persons_data, $cache_timeout);
+            return $all_persons_data;
+        }
+
+        return '<div class="wp-block-rrze-faudir-block">No data found for selected persons.</div>';
     }
 }
 
