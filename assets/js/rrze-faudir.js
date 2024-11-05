@@ -39,6 +39,120 @@ function fetchCategories() {
     });
 }
 
+// Add this new component near the top of your file, after the imports
+const FormatPreview = ({ format, attributes, persons }) => {
+    const selectedPersons = persons.filter(p => attributes.identifier.includes(p.value));
+    const firstPerson = selectedPersons[0] || { label: 'Example Person' };
+
+    // Common preview styles
+    const previewStyles = {
+        padding: '15px',
+        border: '1px solid #ddd',
+        borderRadius: '4px',
+        backgroundColor: '#f9f9f9'
+    };
+
+    switch (format) {
+        case 'list':
+            return wp.element.createElement(
+                'div',
+                { style: previewStyles },
+                wp.element.createElement('ul', { style: { listStyle: 'none', padding: 0 } },
+                    wp.element.createElement('li', null,
+                        wp.element.createElement('strong', null, firstPerson.label),
+                        wp.element.createElement('br'),
+                        'Email: example@fau.de',
+                        wp.element.createElement('br'),
+                        'Phone: +49 123 456789'
+                    )
+                )
+            );
+
+        case 'card':
+            return wp.element.createElement(
+                'div',
+                { 
+                    style: {
+                        ...previewStyles,
+                        display: 'flex',
+                        gap: '15px'
+                    }
+                },
+                wp.element.createElement('div', { style: { width: '100px', height: '100px', backgroundColor: '#ddd' } }, 'Image'),
+                wp.element.createElement('div', null,
+                    wp.element.createElement('strong', null, firstPerson.label),
+                    wp.element.createElement('br'),
+                    'Email: example@fau.de',
+                    wp.element.createElement('br'),
+                    'Phone: +49 123 456789'
+                )
+            );
+
+        case 'table':
+            return wp.element.createElement(
+                'div',
+                { style: previewStyles },
+                wp.element.createElement('table', { style: { width: '100%' } },
+                    wp.element.createElement('tr', null,
+                        wp.element.createElement('td', null, 'Name:'),
+                        wp.element.createElement('td', null, firstPerson.label)
+                    ),
+                    wp.element.createElement('tr', null,
+                        wp.element.createElement('td', null, 'Email:'),
+                        wp.element.createElement('td', null, 'example@fau.de')
+                    )
+                )
+            );
+
+        case 'kompakt':
+            return wp.element.createElement(
+                'div',
+                { 
+                    style: {
+                        ...previewStyles,
+                        display: 'flex',
+                        gap: '10px',
+                        alignItems: 'center'
+                    }
+                },
+                wp.element.createElement('div', { 
+                    style: { 
+                        width: '50px', 
+                        height: '50px', 
+                        backgroundColor: '#ddd' 
+                    } 
+                }, ''),
+                wp.element.createElement('div', null,
+                    wp.element.createElement('strong', null, firstPerson.label),
+                    wp.element.createElement('br'),
+                    'Email: example@fau.de'
+                )
+            );
+
+        case 'page':
+            return wp.element.createElement(
+                'div',
+                { style: previewStyles },
+                wp.element.createElement('h3', null, firstPerson.label),
+                wp.element.createElement('div', { style: { display: 'flex', gap: '20px' } },
+                    wp.element.createElement('div', { style: { width: '150px', height: '150px', backgroundColor: '#ddd' } }, 'Image'),
+                    wp.element.createElement('div', null,
+                        'Contact Information',
+                        wp.element.createElement('br'),
+                        'Email: example@fau.de',
+                        wp.element.createElement('br'),
+                        'Phone: +49 123 456789',
+                        wp.element.createElement('br'),
+                        'Organization: FAU'
+                    )
+                )
+            );
+
+        default:
+            return wp.element.createElement('div', null, 'Select a format');
+    }
+};
+
 wp.blocks.registerBlockType('rrze/faudir-block', {
     apiVersion: 2,
     title: 'FAUDIR Block',
@@ -71,6 +185,7 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
         const [isLoading, setIsLoading] = wp.element.useState(true);
         const [error, setError] = wp.element.useState(null);
         const [manualIdentifier, setManualIdentifier] = wp.element.useState('');
+        const [isEditMode, setIsEditMode] = wp.element.useState(false);
 
         // Fetch data when component mounts
         wp.element.useEffect(() => {
@@ -219,208 +334,272 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
             );
         }
 
+        // Then update your BlockPreview component to use the FormatPreview
+        const BlockPreview = ({ attributes, onClick, persons }) => {
+            return wp.element.createElement(
+                'div',
+                { 
+                    className: 'faudir-block-preview',
+                    onClick: onClick
+                },
+                wp.element.createElement(
+                    'div',
+                    { className: 'preview-header' },
+                    wp.element.createElement('h3', null, 'FAUDIR Block'),
+                    wp.element.createElement(
+                        'button',
+                        {
+                            className: 'edit-button',
+                            onClick: (e) => {
+                                e.stopPropagation();
+                                onClick();
+                            }
+                        },
+                        'Edit'
+                    )
+                ),
+                wp.element.createElement(FormatPreview, {
+                    format: attributes.format,
+                    attributes: attributes,
+                    persons: persons
+                }),
+                wp.element.createElement(
+                    'div',
+                    { className: 'preview-footer' },
+                    wp.element.createElement('div', null, 
+                        `Selected Persons: ${attributes.identifier.length}`
+                    ),
+                    wp.element.createElement('div', null,
+                        `Showing: ${attributes.show || 'Default fields'}`
+                    )
+                )
+            );
+        };
+
         return wp.element.createElement(
             'div',
             { ...blockProps },
-            // Category dropdown
-            wp.element.createElement(
-                'div',
-                { className: 'block-label' },
-                wp.element.createElement(
-                    wp.components.SelectControl,
-                    {
-                        label: 'Category',
-                        value: props.attributes.category,
-                        options: [
-                            { label: 'Select a category...', value: '' },
-                            ...categories
-                        ],
-                        onChange: handleCategoryChange
-                    }
-                )
-            ),
-            // Person dropdown (showing all persons)
-            wp.element.createElement(
-                'div',
-                { className: 'block-label' },
-                wp.element.createElement(
-                    wp.components.SelectControl,
-                    {
-                        label: 'Add Person',
-                        value: '',
-                        options: [
-                            { label: 'Select a person...', value: '' },
-                            ...persons // Show all persons
-                        ],
-                        onChange: handlePersonSelection
-                    }
-                )
-            ),
-            // Display selected persons with remove option
-            wp.element.createElement(
-                'div',
-                { className: 'selected-persons' },
-                wp.element.createElement('h4', null, 'Selected Persons:'),
-                props.attributes.identifier.length > 0 
-                    ? props.attributes.identifier.map(id => {
-                        const person = persons.find(p => p.value === id);
-                        const isInCategory = person?.categories?.includes(parseInt(props.attributes.category));
-                        return wp.element.createElement(
-                            'div',
-                            { 
-                                key: id,
-                                className: `selected-person${isInCategory ? ' in-category' : ''}`
-                            },
-                            wp.element.createElement('span', null, 
-                                person ? person.label : id
-                            ),
-                            wp.element.createElement(
-                                'button',
-                                {
-                                    onClick: () => {
-                                        const newIdentifiers = props.attributes.identifier
-                                            .filter(identifier => identifier !== id);
-                                        props.setAttributes({ identifier: newIdentifiers });
-                                    },
-                                    className: 'remove-person'
-                                },
-                                '×'
-                            )
-                        );
-                    })
-                    : wp.element.createElement('p', null, 'No persons selected')
-            ),
-            // Format selection dropdown
-            wp.element.createElement(
-                'label',
-                { className: 'block-label' },
-                null,
-                'Format',
-                wp.element.createElement('label', {
-                    className: 'block-label',
-                    type: 'text',
-                    value: 'Format',
-                }),
-                wp.element.createElement('select', {
-                    className: 'block-label',
-                    value: format,
-                    onChange: function(event) {
-                        setAttributes({ format: event.target.value });
-                    }
-                },
-                wp.element.createElement('option', { value: 'list' }, 'List'),
-                wp.element.createElement('option', { value: 'table' }, 'Table'),
-                wp.element.createElement('option', { value: 'card' }, 'Card'),
-                wp.element.createElement('option', { value: 'kompakt' }, 'Kompakt'),
-                wp.element.createElement('option', { value: 'page' }, 'Page')
-                )
-            ),
-             // Url field input
-             wp.element.createElement(
-                'label',
-                { className: 'block-label' },
-                null,
-                'Url',
-                wp.element.createElement('label', {
-                    className: 'block-label',
-                    type: 'text',
-                    value: 'Url',
-                }),
-                wp.element.createElement('input', {
-                    className: 'block-label',
-                    type: 'text',
-                    value: url,
-                    onChange: function(event) {
-                        setAttributes({ url: event.target.value });
-                    }
+            !isEditMode ? (
+                // Preview mode
+                wp.element.createElement(BlockPreview, {
+                    attributes: props.attributes,
+                    onClick: () => setIsEditMode(true),
+                    persons: persons
                 })
-            ),
-            // Show fields input
-            wp.element.createElement(
-                'div',
-                { className: 'block-container' },
-                wp.element.createElement('label', { className: 'block-label' }, 'Show Fields'),
-                options.map((option) =>
+            ) : (
+                // Edit mode
+                wp.element.createElement(
+                    wp.element.Fragment,
+                    null,
                     wp.element.createElement(
                         'div',
-                        { key: option.value, className: 'checkbox-container block-label' },
-                        wp.element.createElement('input', {
-                            type: 'checkbox',
-                            className: 'checkbox-input',
-                            checked: selectedValues.includes(option.value),
-                            onChange: () => handleCheckboxChange(option.value),
+                        { className: 'block-label' },
+                        wp.element.createElement(
+                            wp.components.SelectControl,
+                            {
+                                label: 'Category',
+                                value: props.attributes.category,
+                                options: [
+                                    { label: 'Select a category...', value: '' },
+                                    ...categories
+                                ],
+                                onChange: handleCategoryChange
+                            }
+                        )
+                    ),
+                    // Person dropdown
+                    wp.element.createElement(
+                        'div',
+                        { className: 'block-label' },
+                        wp.element.createElement(
+                            wp.components.SelectControl,
+                            {
+                                label: 'Add Person',
+                                value: '',
+                                options: [
+                                    { label: 'Select a person...', value: '' },
+                                    ...persons
+                                ],
+                                onChange: handlePersonSelection
+                            }
+                        )
+                    ),
+                    // Display selected persons with remove option
+                    wp.element.createElement(
+                        'div',
+                        { className: 'selected-persons' },
+                        wp.element.createElement('h4', null, 'Selected Persons:'),
+                        props.attributes.identifier.length > 0 
+                            ? props.attributes.identifier.map(id => {
+                                const person = persons.find(p => p.value === id);
+                                const isInCategory = person?.categories?.includes(parseInt(props.attributes.category));
+                                return wp.element.createElement(
+                                    'div',
+                                    { 
+                                        key: id,
+                                        className: `selected-person${isInCategory ? ' in-category' : ''}`
+                                    },
+                                    wp.element.createElement('span', null, 
+                                        person ? person.label : id
+                                    ),
+                                    wp.element.createElement(
+                                        'button',
+                                        {
+                                            onClick: () => {
+                                                const newIdentifiers = props.attributes.identifier
+                                                    .filter(identifier => identifier !== id);
+                                                props.setAttributes({ identifier: newIdentifiers });
+                                            },
+                                            className: 'remove-person'
+                                        },
+                                        '×'
+                                    )
+                                );
+                            })
+                            : wp.element.createElement('p', null, 'No persons selected')
+                    ),
+                    // Format selection dropdown
+                    wp.element.createElement(
+                        'label',
+                        { className: 'block-label' },
+                        null,
+                        'Format',
+                        wp.element.createElement('label', {
+                            className: 'block-label',
+                            type: 'text',
+                            value: 'Format',
                         }),
-                        wp.element.createElement('span', null, option.label) // Display the label text
+                        wp.element.createElement('select', {
+                            className: 'block-label',
+                            value: format,
+                            onChange: function(event) {
+                                setAttributes({ format: event.target.value });
+                            }
+                        },
+                        wp.element.createElement('option', { value: 'list' }, 'List'),
+                        wp.element.createElement('option', { value: 'table' }, 'Table'),
+                        wp.element.createElement('option', { value: 'card' }, 'Card'),
+                        wp.element.createElement('option', { value: 'kompakt' }, 'Kompakt'),
+                        wp.element.createElement('option', { value: 'page' }, 'Page')
+                        )
+                    ),
+                     // Url field input
+                     wp.element.createElement(
+                        'label',
+                        { className: 'block-label' },
+                        null,
+                        'Url',
+                        wp.element.createElement('label', {
+                            className: 'block-label',
+                            type: 'text',
+                            value: 'Url',
+                        }),
+                        wp.element.createElement('input', {
+                            className: 'block-label',
+                            type: 'text',
+                            value: url,
+                            onChange: function(event) {
+                                setAttributes({ url: event.target.value });
+                            }
+                        })
+                    ),
+                    // Show fields input
+                    wp.element.createElement(
+                        'div',
+                        { className: 'block-container' },
+                        wp.element.createElement('label', { className: 'block-label' }, 'Show Fields'),
+                        options.map((option) =>
+                            wp.element.createElement(
+                                'div',
+                                { key: option.value, className: 'checkbox-container block-label' },
+                                wp.element.createElement('input', {
+                                    type: 'checkbox',
+                                    className: 'checkbox-input',
+                                    checked: selectedValues.includes(option.value),
+                                    onChange: () => handleCheckboxChange(option.value),
+                                }),
+                                wp.element.createElement('span', null, option.label) // Display the label text
+                            )
+                        )
+                    ),
+                     // GroupId field input
+                     wp.element.createElement(
+                        'label',
+                        { className: 'block-label' },
+                        null,
+                        'Group Id',
+                        wp.element.createElement('label', {
+                            className: 'block-label',
+                            type: 'text',
+                            value: 'Group Id',
+                        }), 
+                        wp.element.createElement('input', {
+                            className: 'block-label',
+                            type: 'text',
+                            value: groupid,
+                            onChange: function(event) {
+                                setAttributes({ groupid: event.target.value });
+                            }
+                        })
+                    ),
+                    // Organization number field input
+                    wp.element.createElement(
+                        'label',
+                        { className: 'block-label' },
+                        null,
+                        'Organization number',
+                        wp.element.createElement('label', {
+                            className: 'block-label',
+                            type: 'text',
+                            value: 'Organization number',
+                        }), 
+                        wp.element.createElement('input', {
+                            className: 'block-label',
+                            type: 'text',
+                            value: orgnr,
+                            onChange: function(event) {
+                                setAttributes({ orgnr: event.target.value });
+                            }
+                        })
+                    ),
+                    // MediaUpload for selecting an image
+                    wp.element.createElement(
+                        wp.blockEditor.MediaUpload,
+                        {
+                            onSelect: onSelectImage,
+                            allowedTypes: ['image'],
+                            value: image,
+                            render: function(obj) {
+                                return wp.element.createElement(
+                                    'div',
+                                    null,
+                                    wp.element.createElement(
+                                        'button',
+                                        {
+                                            onClick: obj.open,
+                                            className: 'button button-secondary block-label',
+                                        },
+                                        image ? 'Change Image' : 'Select Image'
+                                    ),
+                                    image && wp.element.createElement('img', {
+                                        src: wp.media.attachment(image).attributes.url,
+                                        alt: 'Selected Image',
+                                        style: { maxWidth: '100%', height: 'auto' }
+                                    })
+                                );
+                            }
+                        }
+                    ),
+                    // Add a "Done" button at the bottom
+                    wp.element.createElement(
+                        'button',
+                        {
+                            className: 'components-button is-primary',
+                            onClick: () => setIsEditMode(false)
+                        },
+                        'Done'
                     )
                 )
-            ),
-             // GroupId field input
-             wp.element.createElement(
-                'label',
-                { className: 'block-label' },
-                null,
-                'Group Id',
-                wp.element.createElement('label', {
-                    className: 'block-label',
-                    type: 'text',
-                    value: 'Group Id',
-                }), 
-                wp.element.createElement('input', {
-                    className: 'block-label',
-                    type: 'text',
-                    value: groupid,
-                    onChange: function(event) {
-                        setAttributes({ groupid: event.target.value });
-                    }
-                })
-            ),
-            // Organization number field input
-            wp.element.createElement(
-                'label',
-                { className: 'block-label' },
-                null,
-                'Organization number',
-                wp.element.createElement('label', {
-                    className: 'block-label',
-                    type: 'text',
-                    value: 'Organization number',
-                }), 
-                wp.element.createElement('input', {
-                    className: 'block-label',
-                    type: 'text',
-                    value: orgnr,
-                    onChange: function(event) {
-                        setAttributes({ orgnr: event.target.value });
-                    }
-                })
-            ),
-            // MediaUpload for selecting an image
-            wp.element.createElement(
-                wp.blockEditor.MediaUpload,
-                {
-                    onSelect: onSelectImage,
-                    allowedTypes: ['image'],
-                    value: image,
-                    render: function(obj) {
-                        return wp.element.createElement(
-                            'div',
-                            null,
-                            wp.element.createElement(
-                                'button',
-                                {
-                                    onClick: obj.open,
-                                    className: 'button button-secondary block-label',
-                                },
-                                image ? 'Change Image' : 'Select Image'
-                            ),
-                            image && wp.element.createElement('img', {
-                                src: wp.media.attachment(image).attributes.url,
-                                alt: 'Selected Image',
-                                style: { maxWidth: '100%', height: 'auto' }
-                            })
-                        );
-                    }
-                }
             )
         );
     },
