@@ -46,36 +46,33 @@
                     }
                 endforeach;
             }?>
-                <div class="shortcode-contact-kompakt" itemscope itemtype="https://schema.org/Person">
+            <div class="shortcode-contact-kompakt" itemscope itemtype="https://schema.org/Person">
                 <?php  if (count($persons) === 1 && !empty($image_url)) : ?>
-                        <img src="<?php echo esc_url($image_url); ?>" alt="Person Image" itemprop="image" />
-                    <?php else :
-                        if (!empty($featured_image_url)) : ?>
-                            <img src="<?php echo esc_url($featured_image_url); ?>" alt="Person Image" itemprop="image" />
-                        <?php endif;
-                    endif; ?>                     
-                    <div style="flex-grow: 1;">
+                    <img src="<?php echo esc_url($image_url); ?>" alt="Person Image" itemprop="image" />
+                <?php else :
+                    if (!empty($featured_image_url)) : ?>
+                        <img src="<?php echo esc_url($featured_image_url); ?>" alt="Person Image" itemprop="image" />
+                    <?php endif;
+                endif; ?>                     
+                <div style="flex-grow: 1;">
                     <!-- Full name with title -->
                     <?php
-            $options = get_option('rrze_faudir_options');
-            $hard_sanitize = isset($options['hard_sanitize']) && $options['hard_sanitize'];
+                    $options = get_option('rrze_faudir_options');
+                    $hard_sanitize = isset($options['hard_sanitize']) && $options['hard_sanitize'];
                     $longVersion = "";
                     if($hard_sanitize){
                         $prefix = $person['personalTitle'];
                         $prefixes = array(
-                '' => __('Keine Angabe', 'rrze-faudir'),
-                'Dr.' => __('Doktor', 'rrze-faudir'),
-                'Prof.' => __('Professor', 'rrze-faudir'),
-                'Prof. Dr.' => __('Professor Doktor', 'rrze-faudir'),
-                'Prof. em.' => __('Professor (Emeritus)', 'rrze-faudir'),
-                'Prof. Dr. em.' => __('Professor Doktor (Emeritus)', 'rrze-faudir'),
-                'PD' => __('Privatdozent', 'rrze-faudir'),
-                'PD Dr.' => __('Privatdozent Doktor', 'rrze-faudir')
-                        );
-                        
+                        '' => __('Not specified', 'rrze-faudir'),
+                        'Dr.' => __('Doktor', 'rrze-faudir'),
+                        'Prof.' => __('Professor', 'rrze-faudir'),
+                        'Prof. Dr.' => __('Professor Doktor', 'rrze-faudir'),
+                        'Prof. em.' => __('Professor (Emeritus)', 'rrze-faudir'),
+                        'Prof. Dr. em.' => __('Professor Doktor (Emeritus)', 'rrze-faudir'),
+                        'PD' => __('Privatdozent', 'rrze-faudir'),
+                        'PD Dr.' => __('Privatdozent Doktor', 'rrze-faudir'));
                         // Check if the prefix exists in the array and display the long version
                         $longVersion = isset($prefixes[$prefix]) ? $prefixes[$prefix] : __('Unknown', 'rrze-faudir');
-                        
                     }
                     $personal_title = "";
                     $first_name= "";
@@ -104,7 +101,6 @@
                     . ($title_suffix ? $title_suffix : $title_suffix_cpt));
                     ?>
 
-                <div style="flex-grow: 1;">
                     <section class="card-section-title" aria-label="<?php echo esc_html($fullName); ?>">
                         <?php if (!empty($url)) : ?>
                             <a href="<?php echo esc_url($url); ?>" itemprop="url">
@@ -114,19 +110,16 @@
                             <span itemprop="name"><?php echo esc_html($fullName); ?></span>
                         <?php endif; ?>
                     </section>
-
                     <?php
                     // Initialize output strings for email and phone
                     $email_output = '';
                     $phone_output = '';
-
                     // Check if email should be shown and include N/A if it is not available
                     if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) {
                         // Get the email from $person array or fallback to custom post type
                         $email = (isset($person['email']) && !empty($person['email'])) 
                             ? esc_html($person['email']) 
                             : esc_html($email_output_cpt); // Custom post type email
-
                         // Only display the email if it's not empty
                         if (!empty($email)) {
                             echo '<p>' . esc_html__('Email:', 'rrze-faudir') . ' <span itemprop="email">' .esc_html($email) . '</span></p>';
@@ -144,20 +137,10 @@
                         }
                     }
                     ?>
-
-
-                    <?php if (in_array('org', $show_fields) && !in_array('org', $hide_fields)) : ?>
-                        <p itemprop="affiliation"><?php echo (isset($person['org']) && !empty($person['org']) ? esc_html($person['org']) : 'N/A'); ?></p>
-                    <?php endif; ?>
-
-                    <?php if (in_array('job', $show_fields) && !in_array('job', $hide_fields)) : ?>
-                        <p itemprop="jobTitle"><?php echo (isset($person['job']) && !empty($person['job']) ? esc_html($person['job']) : 'N/A'); ?></p>
-                    <?php endif; ?>
-    <?php
+                    <?php
                     $displayedOrganizations = [];
                     $organizationName = ''; // To track displayed organizations
                     ?>
-
                     <?php if (!empty($person['contacts'])) : ?>
                         <?php foreach ($person['contacts'] as $contact) : ?>
                             <?php
@@ -170,12 +153,10 @@
                              } elseif (!empty($function_label_cpt)) {
                                  $functionLabel = $function_label_cpt;
                              }
-                             
                             // Get organization name if allowed by show/hide fields
                             if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) {
                                 $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : $organization_name_cpt;
                             }
-                            
                             // Remove the uniqueness check and always display if there's an organization name
                             if (!empty($organizationName)) :
                             ?>
@@ -189,12 +170,10 @@
                             <?php endif; ?>
                         <?php endforeach; ?>
                     <?php endif; ?>
-
                     <?php
                     $business_card_title = function_exists('rrze_faudir_get_business_card_title') 
                         ? rrze_faudir_get_business_card_title() 
                         : __('Default Business Card Title', 'rrze-faudir');
-
                     if (!empty($url)) {
                         echo '<a href="' . esc_url($url) . '" itemprop="url" class="business-card-link button-link">' . esc_html($business_card_title) . '</a>';
                     }
@@ -203,6 +182,8 @@
             </div>
         <?php endif; ?>
     <?php endforeach; ?>
+
 <?php else : ?>
     <div><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?></div>
 <?php endif; ?>
+

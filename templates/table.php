@@ -72,7 +72,7 @@
                             if($hard_sanitize){
                             $prefix = $person['personalTitle'];
                             $prefixes = array(
-                                '' => __('Keine Angabe', 'rrze-faudir'),
+                                '' => __('Not specified', 'rrze-faudir'),
                                 'Dr.' => __('Doktor', 'rrze-faudir'),
                                 'Prof.' => __('Professor', 'rrze-faudir'),
                                 'Prof. Dr.' => __('Professor Doktor', 'rrze-faudir'),
