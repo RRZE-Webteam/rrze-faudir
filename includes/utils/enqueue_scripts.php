@@ -64,7 +64,15 @@ class EnqueueScripts
         wp_enqueue_script(
             'rrze-faudir-block-js', // Handle for the block JS
             plugin_dir_url(__FILE__) . '../../assets/js/rrze-faudir.js', // Path to the compiled block JS
-            ['wp-blocks', 'wp-element', 'wp-editor', 'wp-components'], // Dependencies for block development
+            [
+                'wp-blocks',
+                'wp-element',
+                'wp-editor', 
+                'wp-components',
+                'wp-block-editor',
+                'wp-i18n',
+                'wp-data'
+            ], // Dependencies for block development
             filemtime(plugin_dir_path(__FILE__) . '../../assets/js/rrze-faudir.js'), // Versioning
             true // Enqueue in the footer
         );

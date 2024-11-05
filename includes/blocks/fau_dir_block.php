@@ -82,6 +82,13 @@ function register_faudir_block_assets() {
         'editor_script' => 'rrze-faudir-block',
         'editor_style' => 'rrze-faudir-block-editor',
         'render_callback' => array('FaudirBlock', 'render'),
+        'supports' => array(
+            'html' => false,
+            'reusable' => true,
+            'multiple' => true,
+            'inserter' => true,
+            'lock' => false,
+        ),
         'attributes' => array(
           
             'identifier' => array('type' => 'array', 'default' => array()),
@@ -127,8 +134,6 @@ function add_person_meta_to_rest($response, $post, $request) {
     return $response;
 }
 add_filter('rest_prepare_custom_person', 'add_person_meta_to_rest', 10, 3);
-
-
 
 
 

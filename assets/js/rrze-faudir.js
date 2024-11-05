@@ -44,6 +44,11 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
     title: 'FAUDIR Block',
     icon: 'admin-users',
     category: 'rrze-blocks',
+    supports: {
+        html: false,
+        reusable: true,
+        lock: false,
+    },
     attributes: {
 
         identifier: { 
@@ -59,6 +64,7 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
         orgnr: { type: 'string', default: '' }
     },
     edit: function (props) {
+        const blockProps = wp.blockEditor.useBlockProps();
         const [persons, setPersons] = wp.element.useState([]);
         const [filteredPersons, setFilteredPersons] = wp.element.useState([]);
         const [categories, setCategories] = wp.element.useState([]);
@@ -215,7 +221,7 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
 
         return wp.element.createElement(
             'div',
-            { className: 'wp-block-rrze-faudir-block' },
+            { ...blockProps },
             // Category dropdown
             wp.element.createElement(
                 'div',
