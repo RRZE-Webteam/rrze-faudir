@@ -206,7 +206,6 @@ add_filter('template_include', 'load_custom_person_template', 99);
 register_activation_hook(__FILE__, 'migrate_person_data_on_activation');
 
 function migrate_person_data_on_activation() {
-    // Fetch all 'person' posts
     $contact_posts = get_posts([
         'post_type' => 'person',
         'posts_per_page' => -1,
@@ -214,133 +213,144 @@ function migrate_person_data_on_activation() {
 
     if (!empty($contact_posts)) {
         foreach ($contact_posts as $post) {
-            // Check if the post has a UnivIS ID, which will be used as the person_id
+
+            // Get Univis ID from old post
             $univisid = get_post_meta($post->ID, 'fau_person_univis_id', true);
 
-            if ($univisid) {
-                // Check if the person already exists in 'custom_person' based on person_id (UnivIS ID)
-                $existing_person = get_posts([
-                    'post_type' => 'custom_person',
-                    'meta_key' => 'person_id',
-                    'meta_value' => $univisid,
-                    'posts_per_page' => 1,
-                ]);
+            // Check if a custom_person with this UnivIS ID and identifier already exists
+            $existing_person = get_posts([
+                'post_type' => 'custom_person',
+                'meta_query' => [
+                    [
+                        'key' => 'fau_person_faudir_synced',
+                        'value' => $univisid,
+                        'compare' => '=',
+                    ],
+                ],
+                'posts_per_page' => 1,
+            ]);
 
-                if (!$existing_person) {
-                    // Make univis api call
-                    $url = 'http://univis.uni-erlangen.de/prg?search=persons&id=' . $univisid . '&show=json';
-                    $response = wp_remote_get($url);
-                    $body = wp_remote_retrieve_body($response);
-                    $data = json_decode($body, true);
+            if ($univisid && !$existing_person) {
 
-                    // Extract person data
-                    $person = $data['Person'][0];
+                // Make Univis api call using Univis ID
+                $url = 'http://univis.uni-erlangen.de/prg?search=persons&id=' . $univisid . '&show=json';
+                $response = wp_remote_get($url);
+                $body = wp_remote_retrieve_body($response);
+                $data = json_decode($body, true);
 
-                    $identifier = $person['idm_id'] ?? null;
-                    $email = $person['location'][0]['email'] ?? null;
-                    $givenName = $person['firstname'] ?? null;
-                    $familyName = $person['lastname'] ?? null;
+                // Extract person data
+                $person = $data['Person'][0];
 
-                    // Determine search parameters
-                    $queryParts = [];
+                // Get identifier
+                $identifier = $person['idm_id'] ?? null;
+                $email = $person['location'][0]['email'] ?? null;
+                $givenName = $person['firstname'] ?? null;
+                $familyName = $person['lastname'] ?? null;
 
-                    if (!empty($identifier)) {
-                        $queryParts[] = 'uid=' . $identifier;
-                    }
-                    if (!empty($givenName)) {
-                        $queryParts[] = 'givenName=' . $givenName;
-                    }
-                    if (!empty($familyName)) {
-                        $queryParts[] = 'familyName=' . $familyName;
-                    }
-                    if (!empty($email)) {
-                        $queryParts[] = 'email=' . urlencode($email);
-                    }
+                // Determine search parameters
+                $queryParts = [];
 
-                    $params = [
-                        'lq' => implode('&', $queryParts)
-                    ];
+                if (!empty($identifier)) {
+                    $queryParts[] = 'uid=' . $identifier;
+                }
+                if (!empty($givenName)) {
+                    $queryParts[] = 'givenName=' . $givenName;
+                }
+                if (!empty($familyName)) {
+                    $queryParts[] = 'familyName=' . $familyName;
+                }
+                if (!empty($email)) {
+                    $queryParts[] = 'email=' . urlencode($email);
+                }
 
-                    // fetch data from api using univis api data
-                    $response = fetch_fau_persons_atributes(60, 0, $params);
+                $params = [
+                    'lq' => implode('&', $queryParts)
+                ];
 
-                    if (is_array($response) && isset($response['data'])) {
-                        $person = $response['data'][0] ?? null; // Assuming first contapersonct is needed
+                // fetch data from api using univis api data
+                $response = fetch_fau_persons_atributes(60, 0, $params);
+
+                if (is_array($response) && isset($response['data'])) {
+                    $person = $response['data'][0] ?? null; // there should only be one match
+
+                    if ($person) {
+
+                        // Get data from old post
+                        $thumbnail_id = get_post_thumbnail_id($post->ID);
+                        $short_description = get_post_meta($post->ID, 'fau_person_description', true);
+                        $description = !empty($short_description) ? $short_description : get_post_meta($post->ID, 'fau_person_small_description', true);
+
+                        // Get all contacts for the person
+                        $contacts = array();
+                        foreach ($person['contacts'] as $contact) {
+                            // Get the identifier
+                            $contactIdentifier = $contact['identifier'];
+                            $organizationIdentifier = $contact['organization']['identifier'];
+                                
+                            $contacts[] = array(
+                                'organization' => sanitize_text_field($contact['organization']['name'] ?? ''),
+                                'socials' => fetch_and_format_socials($contactIdentifier),
+                                'workplace' => fetch_and_format_workplaces($contactIdentifier),
+                                'address' => fetch_and_format_address($organizationIdentifier),
+                                'function_en' => $contact['functionLabel']['en'] ?? '',
+                                'function_de' => $contact['functionLabel']['de'] ?? '',
+                            ); 
+                        }
 
                         // Create a new 'custom_person' post
                         $new_post_id = wp_insert_post([
                             'post_type' => 'custom_person',
-                            'post_title' => $givenName . ' ' . $familyName, // Use the title from the 'person' post
-                            'post_content' => $post->post_content, // Copy the content from the 'person' post
+                            'post_title' => $post->post_name,
+                            'post_content' => $post->post_content,
                             'post_status' => 'publish',
+                            'meta_input' => [
+                                '_thumbnail_id' => $thumbnail_id ?: '',
+                                '_teasertext_en' => sanitize_text_field($description),
+                                'person_id' => sanitize_text_field($person['identifier']),
+                                'person_name' => sanitize_text_field($person['givenName'] . ' ' . $person['familyName']),
+                                'person_email' => sanitize_email($person['email'] ?? ''),
+                                'person_telephone' => sanitize_text_field($person['telephone'] ?? ''),
+                                'person_given_name' => sanitize_text_field($person['givenName'] ?? ''),
+                                'person_family_name' => sanitize_text_field($person['familyName'] ?? ''),
+                                'person_title' => sanitize_text_field($person['personalTitle'] ?? ''),
+                                'person_suffix' => sanitize_text_field($person['personalTitleSuffix'] ?? ''),
+                                'person_nobility_name' => sanitize_text_field($person['titleOfNobility'] ?? ''),
+                                'person_contacts' => $contacts,
+                                'fau_person_faudir_synced' => $univisid
+                            ]
                         ]);
 
-                        if ($new_post_id && $person) {
+                        if ($new_post_id) {
+                            
+                            // Get the categories from the old post
+                            $categories = wp_get_post_terms($post->ID, 'persons_category', array("fields" => "all"));
+                            // Log the category information
+                            error_log('Categories for post ID ' . $post->ID . ': ' . print_r($categories, true));
+                            // Go through categories and create new categories if they don't exist
+                            foreach ($categories as $category) {
 
-                            $short_description = get_post_meta($post->ID, 'fau_person_description', true);
-                            if ($short_description) {
-                                update_post_meta($new_post_id, '_teasertext_en', sanitize_text_field($short_description));
-                            }
-                            // Set the featured image if the original post has one
-                            $thumbnail_id = get_post_thumbnail_id($post->ID);
-                            if ($thumbnail_id) {
-                                set_post_thumbnail($new_post_id, $thumbnail_id);
-                            }
+                                // Log the category information
+                                error_log('Category: ' . $category->name);
 
-                            // Migrate all relevant meta fields from API to the new 'custom_person' post
-                            update_post_meta($new_post_id, 'person_id', $person['identifier']);
-                            update_post_meta($new_post_id, 'person_name', sanitize_text_field($person['givenName'] . ' ' . $person['familyName']));
-                            update_post_meta($new_post_id, 'person_email', sanitize_email($person['email'] ?? ''));
-                            update_post_meta($new_post_id, 'person_telephone', sanitize_text_field($person['telephone'] ?? ''));
-                            update_post_meta($new_post_id, 'person_given_name', sanitize_text_field($person['givenName'] ?? ''));
-                            update_post_meta($new_post_id, 'person_family_name', sanitize_text_field($person['familyName'] ?? ''));
-                            update_post_meta($new_post_id, 'person_title', sanitize_text_field($person['personalTitle'] ?? ''));
-                            update_post_meta($new_post_id, 'person_suffix', sanitize_text_field($person['personalTitleSuffix'] ?? ''));
-                            update_post_meta($new_post_id, 'person_nobility_name', sanitize_text_field($person['titleOfNobility'] ?? ''));
-
-                            // loot through $person['contacts'][0] and store the function in an array
-                            $contacts = array();
-                            foreach ($person['contacts'] as $contact) {
-                                // get the identifier
-                                $contactIdentifier = $contact['identifier'];
-                                $organizationIdentifier = $contact['organization']['identifier'];
+                                if (!term_exists($category->name, 'custom_taxonomy')) {
+                                    // Create new category
+                                    $term = wp_insert_term($category->name, 'custom_taxonomy');
                                     
-                                $contacts[] = array(
-                                    'organization' => sanitize_text_field($contact['organization']['name'] ?? ''),
-                                    'socials' => fetch_and_format_socials($contactIdentifier),
-                                    'workplace' => fetch_and_format_workplaces($contactIdentifier),
-                                    'address' => fetch_and_format_address($organizationIdentifier),
-                                    'function_en' => $contact['functionLabel']['en'] ?? '',
-                                    'function_de' => $contact['functionLabel']['de'] ?? '',
-                                ); 
+                                    // Log the term ID
+                                    error_log('Term ID: ' . $term['term_id']);
+                                    
+                                    // Add the category to the new post
+                                    wp_set_post_terms($new_post_id, $term['term_id'], 'custom_taxonomy', false);
+                                }
                             }
-
-                            update_post_meta($new_post_id, 'person_contacts', $contacts);
-
-                            // Optional: log success for debugging
-                            // error_log("Successfully migrated person with UnivIS ID: $univisid to custom_person.");
-                        } else {
-                            // Optional: log failure for debugging
-                            // error_log("Failed to create custom_person for UnivIS ID: $univisid.");
                         }
-                    } else {
-                        // Log API error if response isn't successful
-                        // error_log("Error fetching person attributes for UnivIS ID: $univisid. Response: " . json_encode($response));
                     }
-                } else {
-                    // Optional: log that the person already exists
-                    // error_log("Person with UnivIS ID: $univisid already exists in custom_person.");
                 }
-            } else {
-                // Optional: log if UnivIS ID is missing
-                // error_log("No UnivIS ID found for post ID: {$post->ID}");
             }
         }
-    } else {
-        // Optional: log if no contact posts were found
-        // error_log('No posts found for post type "person".');
     }
 }
+
 function rrze_faudir_flush_rewrite_on_slug_change($old_value, $value, $option) {
     if ($option === 'rrze_faudir_options' && $old_value['person_slug'] !== $value['person_slug']) {
         flush_rewrite_rules(); // Flush rewrite rules if the slug changes
