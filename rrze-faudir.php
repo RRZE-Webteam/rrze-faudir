@@ -300,7 +300,7 @@ function migrate_person_data_on_activation() {
                         // Create a new 'custom_person' post
                         $new_post_id = wp_insert_post([
                             'post_type' => 'custom_person',
-                            'post_title' => $post->post_name,
+                            'post_title' => $post->post_title,
                             'post_content' => $post->post_content,
                             'post_status' => 'publish',
                             'meta_input' => [
@@ -320,28 +320,44 @@ function migrate_person_data_on_activation() {
                             ]
                         ]);
 
-                        if ($new_post_id) {
-                            
-                            // Get the categories from the old post
-                            $categories = wp_get_post_terms($post->ID, 'persons_category', array("fields" => "all"));
-                            // Log the category information
-                            error_log('Categories for post ID ' . $post->ID . ': ' . print_r($categories, true));
-                            // Go through categories and create new categories if they don't exist
+                        // the old post was of post type 'person' and had categories named 'persons_category'
+                        // the new post is of post type 'custom_person' and has a category named 'custom_taxonomy'
+                        // if the old post had categories, we need to add them to the new post type 'custom_person'
+
+                        // first get the categories from the old post
+                        $categories = wp_get_post_terms($post->ID, 'persons_category', array("fields" => "all"));
+
+                        error_log(sprintf(
+                            '[RRZE-FAUDIR] Migrating categories for post ID %d (%s): %d categories found',
+                            $post->ID,
+                            $post->post_title,
+                            count($categories)
+                        ));
+
+                        error_log(sprintf(
+                            '[RRZE-FAUDIR] Categories for post type person: %s',
+                            implode(', ', get_terms('persons_category', array('fields' => 'names')))
+                        ));
+
+                        // log all categories that are displayed on http://localhost:8000/wp-admin/edit-tags.php?taxonomy=custom_taxonomy&post_type=custom_person
+                        error_log(sprintf(
+                            '[RRZE-FAUDIR] Categories for post type custom_person: %s',
+                            implode(', ', get_terms('custom_taxonomy', array('fields' => 'names')))
+                        ));
+
+                        // if the old post had categories, we need to add them to the new post type 'custom_person'
+                        if (!empty($categories)) {
                             foreach ($categories as $category) {
+                                // log all information about the category
+                                error_log(sprintf(
+                                    '[RRZE-FAUDIR] Migrating category for post ID %d (%s): %s',
+                                    $post->ID,
+                                    $post->post_title,
+                                    $category->name
+                                ));
 
-                                // Log the category information
-                                error_log('Category: ' . $category->name);
-
-                                if (!term_exists($category->name, 'custom_taxonomy')) {
-                                    // Create new category
-                                    $term = wp_insert_term($category->name, 'custom_taxonomy');
-                                    
-                                    // Log the term ID
-                                    error_log('Term ID: ' . $term['term_id']);
-                                    
-                                    // Add the category to the new post
-                                    wp_set_post_terms($new_post_id, $term['term_id'], 'custom_taxonomy', false);
-                                }
+                                // copy the category to the new post type 'custom_person'
+                                wp_set_post_terms($new_post_id, $category->term_id, 'custom_taxonomy', false);
                             }
                         }
                     }
