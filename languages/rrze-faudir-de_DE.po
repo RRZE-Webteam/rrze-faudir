@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rrze-faudir\n"
 "Report-Msgid-Bugs-To: https://your-plugin-url.com/support\n"
-"POT-Creation-Date: 2024-11-05 14:59+0100\n"
-"PO-Revision-Date: 2024-11-05 15:10+0100\n"
+"POT-Creation-Date: 2024-11-05 15:30+0100\n"
+"PO-Revision-Date: 2024-11-05 15:31+0100\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -292,6 +292,15 @@ msgstr ""
 "Einstellungen konnten nicht zurückgesetzt werden. Bitte versuchen Sie es "
 "erneut."
 
+#: includes/admin/settings-page.php:511
+msgid "Contacts:"
+msgstr "Kontakte:"
+
+#: includes/admin/settings-page.php:516 templates/card.php:222
+#: templates/kompakt.php:164 templates/list.php:166 templates/page.php:262
+msgid "Organization:"
+msgstr "Organisation:"
+
 #: includes/admin/settings-page.php:526
 msgid "Previous"
 msgstr "Vorherige"
@@ -309,10 +318,9 @@ msgid "All cache cleared successfully."
 msgstr "Der gesamte Cache wurde erfolgreich gelöscht."
 
 #: includes/admin/settings-page.php:707
-#, fuzzy, php-format
-#| msgid "Error: "
+#, php-format
 msgid "Error: %s"
-msgstr "Fehler: "
+msgstr "Fehler: %s"
 
 #: includes/admin/settings-page.php:733
 msgid "No contacts found. Please verify the IdM-Kennung or names provided."
@@ -469,10 +477,8 @@ msgid "Nobility Name"
 msgstr "Adelsname"
 
 #: includes/custom-post-type/custom-post-type.php:152
-#, fuzzy
-#| msgid "Search Contacts"
 msgid "Contacts"
-msgstr "Kontakte suchen"
+msgstr "Kontakte"
 
 #: includes/custom-post-type/custom-post-type.php:159
 #, fuzzy
@@ -525,9 +531,8 @@ msgstr "Person mit ID %s existiert nicht"
 
 #: includes/utils/api-functions.php:18 includes/utils/api-functions.php:57
 #: includes/utils/api-functions.php:136 includes/utils/api-functions.php:180
-#, fuzzy
 msgid "Error retrieving data: "
-msgstr "Fehler beim Abrufen der Daten:"
+msgstr "Fehler beim Abrufen der Daten: "
 
 #: includes/utils/api-functions.php:25 includes/utils/api-functions.php:64
 #: includes/utils/api-functions.php:141 includes/utils/api-functions.php:192
@@ -546,66 +551,56 @@ msgid "No workplaces available"
 msgstr "Keine Arbeitsplätze verfügbar"
 
 #: includes/utils/api-functions.php:264
-#, fuzzy
 msgid "Room: "
-msgstr "Zimmer:"
+msgstr "Zimmer: "
 
 #: includes/utils/api-functions.php:267
-#, fuzzy
 msgid "Floor: "
-msgstr "Boden:"
+msgstr "Boden: "
 
 #: includes/utils/api-functions.php:270 includes/utils/api-functions.php:345
 msgid "Street: "
-msgstr "Straße:"
+msgstr "Straße: "
 
 #: includes/utils/api-functions.php:273 includes/utils/api-functions.php:348
-#, fuzzy
 msgid "ZIP: "
-msgstr "PLZ:"
+msgstr "PLZ: "
 
 #: includes/utils/api-functions.php:276 includes/utils/api-functions.php:351
 msgid "City: "
-msgstr "Stadt:"
+msgstr "Stadt: "
 
 #: includes/utils/api-functions.php:279 includes/utils/api-functions.php:354
-#, fuzzy
 msgid "FAU Map: "
-msgstr "FAU Karte:"
+msgstr "FAU Karte: "
 
 #: includes/utils/api-functions.php:282
-#, fuzzy
-#| msgid "Phone:"
 msgid "Phones: "
-msgstr "Telefon:"
+msgstr "Telefon: "
 
 #: includes/utils/api-functions.php:285
 msgid "Fax: "
-msgstr "Fax:"
+msgstr "Fax: "
 
 #: includes/utils/api-functions.php:288 includes/utils/api-functions.php:342
 msgid "URL: "
 msgstr "URL: "
 
 #: includes/utils/api-functions.php:291
-#, fuzzy
-#| msgid "Email:"
 msgid "Emails: "
-msgstr "E-Mail:"
+msgstr "E-Mail: "
 
 #: includes/utils/api-functions.php:295 includes/utils/api-functions.php:301
 msgid "Weekday "
-msgstr "Wochentag"
+msgstr "Wochentag "
 
 #: includes/utils/api-functions.php:297
-#, fuzzy
 msgid "Office Hours: "
-msgstr "Sprechzeiten:"
+msgstr "Sprechzeiten: "
 
 #: includes/utils/api-functions.php:303
-#, fuzzy
 msgid "Consultation Hours: "
-msgstr "Sprechstunden:"
+msgstr "Sprechstunden: "
 
 #: includes/utils/api-functions.php:321 includes/utils/api-functions.php:329
 #, fuzzy
@@ -613,16 +608,12 @@ msgid "No address available"
 msgstr "Keine Adresse verfügbar"
 
 #: includes/utils/api-functions.php:336
-#, fuzzy
-#| msgid "Phone:"
 msgid "Phone: "
-msgstr "Telefon:"
+msgstr "Telefon: "
 
 #: includes/utils/api-functions.php:339
-#, fuzzy
-#| msgid "Email:"
 msgid "Email: "
-msgstr "E-Mail:"
+msgstr "E-Mail: "
 
 #: includes/utils/api-functions.php:369 includes/utils/api-functions.php:377
 #, fuzzy
@@ -720,11 +711,6 @@ msgstr "Soziale Profile:"
 msgid "Phone:"
 msgstr "Telefon:"
 
-#: templates/card.php:222 templates/kompakt.php:164 templates/list.php:166
-#: templates/page.php:262
-msgid "Organization:"
-msgstr "Organisation:"
-
 #: templates/card.php:229 templates/card.php:234 templates/kompakt.php:188
 #: templates/list.php:190 templates/list.php:194 templates/page.php:396
 #: templates/page.php:401 templates/table.php:213
@@ -780,7 +766,7 @@ msgstr "Stadt:"
 
 #: templates/page.php:306 templates/page.php:338
 msgid "Map:"
-msgstr "Karte"
+msgstr "Karte:"
 
 #: templates/page.php:308 templates/page.php:340
 #, fuzzy
@@ -820,10 +806,8 @@ msgid "Content"
 msgstr "Biographie"
 
 #: templates/single-custom_person.php:78
-#, fuzzy
-#| msgid "Organization:"
 msgid "Organization: "
-msgstr "Organisation:"
+msgstr "Organisation: "
 
 #: templates/single-custom_person.php:81
 msgid "Social Media:"

@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rrze-faudir\n"
 "Report-Msgid-Bugs-To: https://your-plugin-url.com/support\n"
-"POT-Creation-Date: 2024-11-05 14:59+0100\n"
-"PO-Revision-Date: 2024-11-05 15:15+0100\n"
+"POT-Creation-Date: 2024-11-05 15:25+0100\n"
+"PO-Revision-Date: 2024-11-05 15:27+0100\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -291,6 +291,15 @@ msgid "Failed to reset settings. Please try again."
 msgstr ""
 "Einstellungen konnten nicht zurückgesetzt werden. Bitte versuchen Sie es "
 "erneut."
+
+#: includes/admin/settings-page.php:511
+msgid "Contacts:"
+msgstr "Kontakte:"
+
+#: includes/admin/settings-page.php:516 templates/card.php:222
+#: templates/kompakt.php:164 templates/list.php:166 templates/page.php:262
+msgid "Organization:"
+msgstr "Organisation:"
 
 #: includes/admin/settings-page.php:526
 msgid "Previous"
@@ -704,11 +713,6 @@ msgstr "Soziale Profile:"
 #: templates/single-custom_person.php:55
 msgid "Phone:"
 msgstr "Telefon:"
-
-#: templates/card.php:222 templates/kompakt.php:164 templates/list.php:166
-#: templates/page.php:262
-msgid "Organization:"
-msgstr "Organisation:"
 
 #: templates/card.php:229 templates/card.php:234 templates/kompakt.php:188
 #: templates/list.php:190 templates/list.php:194 templates/page.php:396
