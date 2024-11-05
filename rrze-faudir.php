@@ -334,6 +334,7 @@ function migrate_person_data_on_activation() {
                             foreach ($old_categories as $old_category) {
                                 // Check if a term with the same name exists in the new taxonomy
                                 $existing_term = term_exists($old_category->name, 'custom_taxonomy');
+                                $term = null;
                                 
                                 if (!$existing_term) {
                                     // Create new term in custom_taxonomy
