@@ -133,16 +133,21 @@ get_header();
                                     
                                         foreach ($socials_line as $line) :
                                             if (trim($line) !== '') :
-                                                // Split the line into platform and URL using ':' delimiter
-                                                list($platform, $url) = array_map('trim', explode(':', $line, 2));
-                                                $icon = $social_icons[$platform] ?? ''; // Get the icon if available
-                                                ?>
-                                                <p>
-                                                    <a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener noreferrer">
-                                                        <?php echo $icon . ' ' . esc_html($platform); ?>
-                                                    </a>
-                                                </p>
-                                            <?php endif; 
+                                                // Split the line and make sure we have both platform and URL
+                                                $parts = array_map('trim', explode(':', $line, 2));
+                                                if (count($parts) === 2) {
+                                                    $platform = $parts[0];
+                                                    $url = $parts[1];
+                                                    $icon = $social_icons[$platform] ?? ''; // Get the icon if available
+                                                    ?>
+                                                    <p>
+                                                        <a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener noreferrer">
+                                                            <?php echo $icon . ' ' . esc_html($platform); ?>
+                                                        </a>
+                                                    </p>
+                                                <?php
+                                                }
+                                            endif; 
                                         endforeach; ?>
                                     </div>
 
