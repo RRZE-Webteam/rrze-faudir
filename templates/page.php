@@ -1,6 +1,11 @@
 <?php if (!empty($persons)) : ?>
     <div itemscope itemtype="https://schema.org/ProfilePage">
         <?php foreach ($persons as $person) : ?>
+            <?php if (isset($person['error'])): ?>
+            <div class="faudir-error">
+                <?php echo esc_html($person['message']); ?>
+            </div>
+            <?php else: ?>
             <?php if (!empty($person)) : ?>
             <?php
              $personal_title_cpt = '';
@@ -394,6 +399,7 @@
             </div> <!-- End of shortcode-contact-card -->
             <?php else : ?>
                 <div class="contact-page"><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?> </div>
+            <?php endif; ?>
             <?php endif; ?>
         <?php endforeach; ?>
     </div> <!-- End of shortcode-contacts-wrapper -->

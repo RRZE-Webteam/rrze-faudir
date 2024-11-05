@@ -188,6 +188,7 @@ function fetch_and_render_fau_data($atts) {
  */
 function process_persons_by_identifiers($identifiers) {
     $persons = [];
+    $errors = [];
 
     foreach ($identifiers as $identifier) {
         $identifier = trim($identifier);
@@ -195,10 +196,12 @@ function process_persons_by_identifiers($identifiers) {
             $personData = fetch_fau_persons_atributes(0, 0, ['identifier' => $identifier]);
             if (!empty($personData['data'])) {
                 $persons[] = enrich_person_with_contacts($personData['data'][0]);
-            }
-            else{
-                echo sprintf(__('Person with ID %s does not exist', 'rrze-faudir'), $identifier);
-                echo '<br>';
+            } else {
+                // Create a "person" entry that's actually an error message
+                $persons[] = [
+                    'error' => true,
+                    'message' => sprintf(__('Person with ID %s does not exist', 'rrze-faudir'), $identifier)
+                ];
             }
         }
     }
