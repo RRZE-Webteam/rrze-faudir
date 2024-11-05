@@ -310,7 +310,7 @@ function fetch_and_format_workplaces($contactIdentifier) {
 }
 
 function fetch_and_format_address($contactIdentifier) {
-    error_log('Fetching address for contact identifier: ' . $contactIdentifier);
+    //error_log('Fetching address for contact identifier: ' . $contactIdentifier);
 
     // Fetch contact data
     $contactData = fetch_fau_organizations(1, 0, ['identifier' => $contactIdentifier]);
@@ -358,7 +358,7 @@ function fetch_and_format_address($contactIdentifier) {
 }
 
 function fetch_and_format_socials($contactIdentifier) {
-    error_log('Fetching social media for contact identifier: ' . $contactIdentifier);
+    //error_log('Fetching social media for contact identifier: ' . $contactIdentifier);
 
     // Fetch contact data
     $contactData = fetch_fau_contacts(1, 0, ['identifier' => $contactIdentifier]);
@@ -373,7 +373,7 @@ function fetch_and_format_socials($contactIdentifier) {
     $socials = $detailedContact['socials'] ?? [];
 
     if (empty($socials)) {
-        error_log('No social media found in contact data');
+        //error_log('No social media found in contact data');
         return __('No social media available', 'rrze-faudir');
     }
 
