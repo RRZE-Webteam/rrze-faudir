@@ -196,6 +196,10 @@ function process_persons_by_identifiers($identifiers) {
             if (!empty($personData['data'])) {
                 $persons[] = enrich_person_with_contacts($personData['data'][0]);
             }
+            else{
+                echo sprintf(__('Person with ID %s does not exist', 'rrze-faudir'), $identifier);
+                echo '<br>';
+            }
         }
     }
 
