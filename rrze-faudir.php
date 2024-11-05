@@ -409,6 +409,8 @@ function register_custom_person_taxonomies() {
         'show_admin_column' => true,
         'query_var'        => true,
         'rewrite'          => array('slug' => 'person-category'),
+        'show_in_rest'     => true,
+        'rest_base'        => 'custom_taxonomy',
     ));
 }
 
