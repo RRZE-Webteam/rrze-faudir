@@ -139,10 +139,14 @@ jQuery(document).ready(function($) {
 
     // Handle click on add person button
     $(document).on('click', '.add-person', function() {
-        var personName = $(this).data('name');
-        var personId = $(this).data('id');
-        var organizations = $(this).data('organizations') || [];
-        var functions = $(this).data('functions') || [];
+        var button = $(this); // Store reference to the button
+        var personName = button.data('name');
+        var personId = button.data('id');
+        var organizations = button.data('organizations') || [];
+        var functions = button.data('functions') || [];
+
+        // Disable the button and show loading indicator
+        button.prop('disabled', true).html('<span class="dashicons dashicons-update"></span> Adding...');
 
         $.ajax({
             url: rrzeFaudirAjax.ajax_url,
@@ -158,7 +162,13 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 if (response.success) {
                     alert('Custom person created successfully!');
-                    // Optionally refresh the search results or update the UI
+                    // Replace the Add button with an Edit link
+                    var editLink = $('<a>', {
+                        href: response.data.edit_url,
+                        class: 'edit-person button',
+                        html: '<span class="dashicons dashicons-edit"></span> ' + rrzeFaudirAjax.edit_text
+                    });
+                    button.replaceWith(editLink);
                 } else {
                     alert('Error creating custom person: ' + (response.data || 'Unknown error'));
                 }
@@ -166,6 +176,10 @@ jQuery(document).ready(function($) {
             error: function(jqXHR, textStatus, errorThrown) {
                 console.error('AJAX error:', textStatus, errorThrown);
                 alert('An error occurred while creating the custom person. Please check the console for more details.');
+            },
+            complete: function() {
+                // Enable the button and remove loading indicator
+                button.prop('disabled', false).html('Add');
             }
         });
     });

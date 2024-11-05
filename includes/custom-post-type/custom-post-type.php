@@ -478,10 +478,21 @@ function rrze_faudir_create_custom_person() {
 
             // Save the organizations array as post meta
             update_post_meta($post_id, 'person_contacts', $contacts);
+
+            // Return success with both post ID and edit URL
+            wp_send_json_success(array(
+                'post_id' => $post_id,
+                'edit_url' => get_edit_post_link($post_id, 'url'), // Add the edit URL
+                'message' => __('Custom person created successfully!', 'rrze-faudir')
+            ));
+            return;
         }
     }
 
-    wp_send_json_success(array('post_id' => $post_id));
+    // If we get here, something went wrong with the API response
+    wp_send_json_error(array(
+        'message' => __('Error creating custom person: Failed to fetch person details.', 'rrze-faudir')
+    ));
 }
 add_action('wp_ajax_rrze_faudir_create_custom_person', 'rrze_faudir_create_custom_person');
 

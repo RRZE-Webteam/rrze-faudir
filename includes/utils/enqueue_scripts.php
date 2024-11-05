@@ -53,7 +53,8 @@ class EnqueueScripts
             'ajax_url' => admin_url('admin-ajax.php'),
             'api_nonce' => wp_create_nonce('rrze_faudir_api_nonce'),
             'api_key' => get_option('rrze_faudir_api_key', ''),
-            'confirm_clear_cache' => __('Are you sure you want to clear the cache?', 'rrze-faudir')
+            'confirm_clear_cache' => __('Are you sure you want to clear the cache?', 'rrze-faudir'),
+            'edit_text' => __('Edit', 'rrze-faudir'),
         ));
     }
 

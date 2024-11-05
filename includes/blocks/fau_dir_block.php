@@ -11,6 +11,12 @@ class FaudirBlock {
     }
 
     public static function render($attributes) {
+        error_log('[RRZE-FAUDIR] Rendering block');
+        
+        // Get cache timeout from settings (converting minutes to seconds)
+        $options = get_option('rrze_faudir_options');
+        $cache_timeout = isset($options['cache_timeout']) ? (int)$options['cache_timeout'] * 60 : 900; // Default to 15 minutes if not set
+
         // Ensure identifier is always an array
         $identifiers = isset($attributes['identifier']) 
             ? (array)$attributes['identifier'] 
@@ -43,13 +49,10 @@ class FaudirBlock {
     }
 }
 
-
 // Register the block on init
 add_action('init', function() {
     FaudirBlock::register();
 });
-
-
 
 // Add this function to modify the REST API response
 function add_person_id_to_rest($response, $post, $request) {

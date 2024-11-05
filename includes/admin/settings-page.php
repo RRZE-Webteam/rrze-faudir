@@ -507,6 +507,7 @@ function rrze_faudir_display_all_contacts($page = 1) {
                 $identifier = esc_html($contact['identifier']);
                 $output .= '<div class="contact-card">';
                 $output .= "<h2 class='contact-name'>{$name}</h2>";
+                $output .= "<div class='contact-details'>";
                 $output .= "<p><strong>IdM-Kennung:</strong> {$identifier}</p>";
                 $output .= '<h3>'  . __('Contacts:', 'rrze-faudir'). '</h3>';
                 if (!empty($contact['contacts'])) {
@@ -516,7 +517,24 @@ function rrze_faudir_display_all_contacts($page = 1) {
                         $output .= "<p><strong>". __('Organization:', 'rrze-faudir')."</strong> {$orgName} ({$functionLabel})</p>";
                     }
                 }
-                $output .= "<button class='add-person' data-name='" . esc_attr($name) . "' data-id='" . esc_attr($identifier) . "'><span class='dashicons dashicons-plus'></span></button>";
+                // Check if a post already exists with this identifier
+                $existing_post = get_posts(array(
+                    'post_type' => 'custom_person',
+                    'meta_key' => 'person_id',
+                    'meta_value' => $identifier,
+                    'posts_per_page' => 1
+                ));
+
+                $output .= "</div>";
+
+                if (!empty($existing_post)) {
+                    // Post exists, show edit link
+                    $edit_link = get_edit_post_link($existing_post[0]->ID);
+                    $output .= "<a href='" . esc_url($edit_link) . "' class='edit-person button'><span class='dashicons dashicons-edit'></span> " . esc_html__('Edit', 'rrze-faudir') . "</a>";
+                } else {
+                    // Post doesn't exist, show add button
+                    $output .= "<button class='add-person button' data-name='" . esc_attr($name) . "' data-id='" . esc_attr($identifier) . "'><span class='dashicons dashicons-plus'></span> Add</button>";
+                }
                 $output .= '</div>';
             }
             $output .= '</div>';
@@ -710,12 +728,16 @@ function rrze_faudir_search_person_ajax() {
         if (!empty($contacts)) {
             $output = '<div class="contacts-wrapper">';
             foreach ($contacts as $contact) {
-                $name = esc_html($contact['personalTitle'] . ' ' . $contact['givenName'] . ' ' . $contact['familyName']);
+                $personalTitle = isset($contact['personalTitle']) ? $contact['personalTitle'] . ' ' : '';
+                $name = esc_html($personalTitle . $contact['givenName'] . ' ' . $contact['familyName']);
                 $identifier = esc_html($contact['identifier']);
                 $output .= '<div class="contact-card">';
                 $output .= "<h2 class='contact-name'>{$name}</h2>";
+                $output .= "<div class='contact-details'>";
                 $output .= "<p><strong>IdM-Kennung:</strong> {$identifier}</p>";
-                $output .= "<p><strong>Email:</strong> " . esc_html($contact['email']) . "</p>";
+                if (isset($contact['email']) && !empty($contact['email'])) {
+                    $output .= "<p><strong>Email:</strong> " . esc_html($contact['email']) . "</p>";
+                }
                 if (!empty($contact['contacts'])) {
                     foreach ($contact['contacts'] as $contactDetail) {
                         $orgName = esc_html($contactDetail['organization']['name']);
@@ -723,8 +745,24 @@ function rrze_faudir_search_person_ajax() {
                         $output .= "<p><strong>Organization:</strong> {$orgName} ({$functionLabel})</p>";
                     }
                 }
-                // Add the plus icon
-                $output .= "<button class='add-person' data-name='" . esc_attr($name) . "' data-id='" . esc_attr($identifier) . "'><span class='dashicons dashicons-plus'></span></button>";
+                // Check if a post already exists with this identifier
+                $existing_post = get_posts(array(
+                    'post_type' => 'custom_person',
+                    'meta_key' => 'person_id',
+                    'meta_value' => $identifier,
+                    'posts_per_page' => 1
+                ));
+
+
+                $output .= "</div>";
+                if (!empty($existing_post)) {
+                    // Post exists, show edit link
+                    $edit_link = get_edit_post_link($existing_post[0]->ID);
+                    $output .= "<a href='" . esc_url($edit_link) . "' class='edit-person button'><span class='dashicons dashicons-edit'></span> " . esc_html__('Edit', 'rrze-faudir') . "</a>";
+                } else {
+                    // Post doesn't exist, show add button
+                    $output .= "<button class='add-person button' data-name='" . esc_attr($name) . "' data-id='" . esc_attr($identifier) . "'><span class='dashicons dashicons-plus'></span> Add</button>";
+                }
                 $output .= '</div>';
             }
             $output .= '</div>';

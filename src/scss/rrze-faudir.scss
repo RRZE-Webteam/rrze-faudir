@@ -355,3 +355,21 @@ body {
     border: 1px solid #e2e4e7;
     border-radius: 4px;
 }
+
+.edit-person.button,
+.add-person.button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: fit-content;
+    margin-top: 20px;
+}
+
+.contact-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-details {
+    flex-grow: 1;
+}
