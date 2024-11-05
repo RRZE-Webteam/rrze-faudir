@@ -40,40 +40,42 @@ add_action('init', 'register_custom_person_post_type', 15);
 
 function register_custom_taxonomy() {
     // Register the taxonomy
-    register_taxonomy(
-        'custom_taxonomy', // Taxonomy slug
-        'custom_person', // Custom Post Type to attach the taxonomy
-        array(
-            'labels' => array(
-                'name'              => __( 'Categories', 'text-domain' ),
-                'singular_name'     => __( 'Category', 'text-domain' ),
-                'search_items'      => __( 'Search Categories', 'text-domain' ),
-                'all_items'         => __( 'All Categories', 'text-domain' ),
-                'parent_item'       => __( 'Parent Category', 'text-domain' ),
-                'parent_item_colon' => __( 'Parent Category:', 'text-domain' ),
-                'edit_item'         => __( 'Edit Category', 'text-domain' ),
-                'update_item'       => __( 'Update Category', 'text-domain' ),
-                'add_new_item'      => __( 'Add New Category', 'text-domain' ),
-                'new_item_name'     => __( 'New Category Name', 'text-domain' ),
-                'menu_name'         => __( 'Categories', 'text-domain' ),
-            ),
-            'hierarchical'      => true, // Set true for a category-like taxonomy, false for tags.
-            'public'            => true,
-            'show_ui'           => true,
-            'show_in_menu'      => true,
-            'show_in_nav_menus' => true,
-            'show_tagcloud'     => true,
-            'show_in_quick_edit'=> true,
-            'meta_box_cb'       => null, // Use default meta box
-            'show_admin_column' => true, // Show taxonomy in the admin list table.
-            'query_var'         => true,
-            'rewrite'           => array( 'slug' => 'custom-taxonomy' ),
-            'show_in_rest'      => true,
-            'rest_base'         => 'custom_taxonomy',
-            'rest_controller_class' => 'WP_REST_Terms_Controller',
+    if (!taxonomy_exists('custom_taxonomy')) {
+        register_taxonomy(
+            'custom_taxonomy', // Taxonomy slug
+            'custom_person', // Custom Post Type to attach the taxonomy
+            array(
+                'labels' => array(
+                    'name'              => __( 'Categories', 'text-domain' ),
+                    'singular_name'     => __( 'Category', 'text-domain' ),
+                    'search_items'      => __( 'Search Categories', 'text-domain' ),
+                    'all_items'         => __( 'All Categories', 'text-domain' ),
+                    'parent_item'       => __( 'Parent Category', 'text-domain' ),
+                    'parent_item_colon' => __( 'Parent Category:', 'text-domain' ),
+                    'edit_item'         => __( 'Edit Category', 'text-domain' ),
+                    'update_item'       => __( 'Update Category', 'text-domain' ),
+                    'add_new_item'      => __( 'Add New Category', 'text-domain' ),
+                    'new_item_name'     => __( 'New Category Name', 'text-domain' ),
+                    'menu_name'         => __( 'Categories', 'text-domain' ),
+                ),
+                'hierarchical'      => true, // Set true for a category-like taxonomy, false for tags.
+                'public'            => true,
+                'show_ui'           => true,
+                'show_in_menu'      => true,
+                'show_in_nav_menus' => true,
+                'show_tagcloud'     => true,
+                'show_in_quick_edit'=> true,
+                'meta_box_cb'       => null, // Use default meta box
+                'show_admin_column' => true, // Show taxonomy in the admin list table.
+                'query_var'         => true,
+                'rewrite'           => array( 'slug' => 'custom-taxonomy' ),
+                'show_in_rest'      => true,
+                'rest_base'         => 'custom_taxonomy',
+                'rest_controller_class' => 'WP_REST_Terms_Controller',
 
-        )
-    );
+            )
+        );
+    }
 }
 add_action( 'init', 'register_custom_taxonomy' );
 

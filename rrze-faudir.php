@@ -206,14 +206,9 @@ add_filter('template_include', 'load_custom_person_template', 99);
 register_activation_hook(__FILE__, 'migrate_person_data_on_activation');
 
 function migrate_person_data_on_activation() {
-    // Register taxonomies first
-    register_custom_person_taxonomies();
-    
-    // Debug: Check if taxonomies are registered
-    error_log('[RRZE-FAUDIR] Checking taxonomies:');
-    error_log('[RRZE-FAUDIR] persons_category exists: ' . (taxonomy_exists('persons_category') ? 'yes' : 'no'));
-    error_log('[RRZE-FAUDIR] custom_taxonomy exists: ' . (taxonomy_exists('custom_taxonomy') ? 'yes' : 'no'));
 
+    register_custom_taxonomy();
+    
     $contact_posts = get_posts([
         'post_type' => 'person',
         'posts_per_page' => -1,
@@ -335,13 +330,6 @@ function migrate_person_data_on_activation() {
                         // first get the categories from the old post
                         $old_categories = wp_get_post_terms($post->ID, 'persons_category', array("fields" => "all"));
 
-                        error_log(sprintf(
-                            '[RRZE-FAUDIR] Found %d categories for post ID %d (%s) in persons_category taxonomy',
-                            count($old_categories),
-                            $post->ID,
-                            $post->post_title
-                        ));
-
                         if (!empty($old_categories) && !is_wp_error($old_categories)) {
                             foreach ($old_categories as $old_category) {
                                 // Check if a term with the same name exists in the new taxonomy
@@ -358,12 +346,6 @@ function migrate_person_data_on_activation() {
                                         )
                                     );
 
-                                    error_log(sprintf(
-                                        '[RRZE-FAUDIR] Created new term "%s" in custom_taxonomy. Result: %s',
-                                        $old_category->name,
-                                        is_wp_error($new_term) ? $new_term->get_error_message() : 'Success'
-                                    ));
-
                                     if (!is_wp_error($new_term)) {
                                         $term_id = $new_term['term_id'];
                                     }
@@ -379,15 +361,6 @@ function migrate_person_data_on_activation() {
                                         'custom_taxonomy',      // taxonomy
                                         true                    // append
                                     );
-
-                                    error_log(sprintf(
-                                        '[RRZE-FAUDIR] Setting term ID %d ("%s") for post ID %d (%s). Result: %s',
-                                        $term_id,
-                                        $old_category->name,
-                                        $new_post_id,
-                                        $post->post_title,
-                                        is_wp_error($result) ? $result->get_error_message() : 'Success'
-                                    ));
                                 }
                             }
                         }
@@ -411,19 +384,6 @@ function rrze_faudir_save_permalink_settings() {
     $wp_rewrite->flush_rules();
 }
 add_action('admin_init', 'rrze_faudir_save_permalink_settings');
-
-function rrze_faudir_activate() {
-    // Register post type and taxonomy first
-    register_custom_person_post_type();
-    register_custom_person_taxonomies();
-    
-    // Then run migration
-    migrate_person_data_on_activation();
-    
-    // Finally, flush rewrite rules
-    flush_rewrite_rules();
-}
-register_activation_hook(__FILE__, 'rrze_faudir_activate');
 
 // Register the custom taxonomy before migration
 function register_custom_person_taxonomies() {
