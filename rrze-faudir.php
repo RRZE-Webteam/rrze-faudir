@@ -254,16 +254,14 @@ function migrate_person_data_on_activation() {
                 $queryParts = [];
 
                 if (!empty($identifier)) {
-                    $queryParts[] = 'uid=' . $identifier;
+                    $queryParts[] = 'uid=' . $identifier;  
                 }
-                if (!empty($givenName)) {
+                else if (!empty($email)) {
+                    $queryParts[] = 'email=' . $email;
+                }
+                else if (!empty($givenName) || !empty($familyName)) {
                     $queryParts[] = 'givenName=' . $givenName;
-                }
-                if (!empty($familyName)) {
                     $queryParts[] = 'familyName=' . $familyName;
-                }
-                if (!empty($email)) {
-                    $queryParts[] = 'email=' . urlencode($email);
                 }
 
                 $params = [

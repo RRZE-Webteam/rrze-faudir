@@ -146,7 +146,7 @@ jQuery(document).ready(function($) {
         var functions = button.data('functions') || [];
 
         // Disable the button and show loading indicator
-        button.prop('disabled', true).html('<span class="dashicons dashicons-update"></span> Adding...');
+        button.prop('disabled', true).html('<span class="dashicons dashicons-update"></span> ' + rrzeFaudirAjax.add_text);
 
         $.ajax({
             url: rrzeFaudirAjax.ajax_url,

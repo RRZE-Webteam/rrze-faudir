@@ -55,6 +55,7 @@ class EnqueueScripts
             'api_key' => get_option('rrze_faudir_api_key', ''),
             'confirm_clear_cache' => __('Are you sure you want to clear the cache?', 'rrze-faudir'),
             'edit_text' => __('Edit', 'rrze-faudir'),
+            'add_text' => __('Adding...', 'rrze-faudir'),
         ));
     }
 

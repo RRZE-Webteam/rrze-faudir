@@ -703,16 +703,16 @@ function rrze_faudir_search_person_ajax() {
     $queryParts = [];
     
     if (!empty($personId)) {
-        $queryParts[] = 'identifier=' . urlencode($personId);
+        $queryParts[] = 'identifier=' . $personId;
     }
     if (!empty($givenName)) {
-        $queryParts[] = 'givenName=' . urlencode($givenName);
+        $queryParts[] = 'givenName=' . $givenName;
     }
     if (!empty($familyName)) {
-        $queryParts[] = 'familyName=' . urlencode($familyName);
+        $queryParts[] = 'familyName=' . $familyName;
     }
     if (!empty($email)) {
-        $queryParts[] = 'email=' . urlencode($email);
+        $queryParts[] = 'email=' . $email;
     }
 
     $params = [
