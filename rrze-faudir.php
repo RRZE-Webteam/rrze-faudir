@@ -333,18 +333,7 @@ function migrate_person_data_on_activation() {
                             $post->post_title,
                             count($categories)
                         ));
-
-                        error_log(sprintf(
-                            '[RRZE-FAUDIR] Categories for post type person: %s',
-                            implode(', ', get_terms('persons_category', array('fields' => 'names')))
-                        ));
-
-                        // log all categories that are displayed on http://localhost:8000/wp-admin/edit-tags.php?taxonomy=custom_taxonomy&post_type=custom_person
-                        error_log(sprintf(
-                            '[RRZE-FAUDIR] Categories for post type custom_person: %s',
-                            implode(', ', get_terms('custom_taxonomy', array('fields' => 'names')))
-                        ));
-
+                        
                         // if the old post had categories, we need to add them to the new post type 'custom_person'
                         if (!empty($categories)) {
                             foreach ($categories as $category) {
@@ -355,6 +344,20 @@ function migrate_person_data_on_activation() {
                                     $post->post_title,
                                     $category->name
                                 ));
+
+                                // create the category on the new post type 'custom_person'
+                                $term = term_exists($category->name, 'custom_taxonomy');
+                                if (!$term) {
+                                    $term = wp_insert_term($category->name, 'custom_taxonomy');
+
+                                    // log the result of the wp_insert_term function
+                                    error_log(sprintf(
+                                        '[RRZE-FAUDIR] Result of wp_insert_term for post ID %d (%s): %s',
+                                        $new_post_id,
+                                        $post->post_title,
+                                        $term ? 'success' : 'failed'
+                                    ));
+                                }
 
                                 // copy the category to the new post type 'custom_person'
                                 wp_set_post_terms($new_post_id, $category->term_id, 'custom_taxonomy', false);
