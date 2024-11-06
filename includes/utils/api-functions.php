@@ -109,8 +109,7 @@ function fetch_fau_persons_atributes($limit = 60, $offset = 0, $params = []) {
     // Loop through the parameters and append them to the URL if they exist in $params
     foreach ($query_params as $param) {
         if (!empty($params[$param])) {
-            // $url .= '&' . $param . '=' . urlencode($params[$param]);
-            $url .= '&' . $param . '=' . $params[$param];
+            $url .= '&' . $param . '=' . urlencode($params[$param]);
         }
     }
     // Handle givenName and familyName as special cases to be combined into the 'q' parameter
@@ -126,6 +125,7 @@ function fetch_fau_persons_atributes($limit = 60, $offset = 0, $params = []) {
     if (!empty($params['email'])) {
         $url .= '&q=' . urlencode('^' . $params['email']);
     }
+    error_log('[RRZE-FAUDIR] Fetching persons attributes with URL: ' . $url);
     $response = wp_remote_get($url, array(
         'headers' => array(
             'accept' => 'application/json',
