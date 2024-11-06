@@ -169,7 +169,7 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
             type: 'array',
             default: []
         },
-        format: { type: 'string', default: 'list' },
+        format: { type: 'string', default: 'kompakt' },
         url: { type: 'string', default: '' },
         show: { type: 'string', default: '' },
         hide: { type: 'string', default: '' },

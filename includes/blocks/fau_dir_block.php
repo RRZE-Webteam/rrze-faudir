@@ -95,14 +95,21 @@ function register_faudir_block_assets() {
         'attributes' => array(
           
             'identifier' => array('type' => 'array', 'default' => array()),
-            'format' => array('type' => 'string', 'default' => 'list'),
+            'format' => array('type' => 'string', 'default' => 'kompakt'),
             'url' => array('type' => 'string', 'default' => ''),
             'show' => array('type' => 'string', 'default' => ''),
             'hide' => array('type' => 'string', 'default' => ''),
             'image' => array('type' => 'number', 'default' => 0),
             'groupid' => array('type' => 'string', 'default' => ''),
             'orgnr' => array('type' => 'string', 'default' => '')
-        )
+        ),
+        'example' => [
+            'attributes' => [
+                'format' => 'list',
+                'show' => 'firstName, familyName, email',
+                'identifier' => 'preview'
+            ],
+        ],
     ));
 }
 add_action('init', 'register_faudir_block_assets');
