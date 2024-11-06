@@ -346,36 +346,6 @@
                                 </ul>
                             </div>
                         <?php endif; ?>
-                    <?php if (!empty($person['contacts'])) : ?>
-                        <?php foreach ($person['contacts'] as $contact) : ?>
-                            <?php
-                            $locale = get_locale();
-                            $isGerman = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_DE_formal') !== false;
-                             $functionLabel = '';
-                             if (!empty($contact['functionLabel'])) {
-                                 $functionLabel = $isGerman ? 
-                                     (isset($contact['functionLabel']['de']) ? $contact['functionLabel']['de'] : '') : 
-                                     (isset($contact['functionLabel']['en']) ? $contact['functionLabel']['en'] : '');
-                             } elseif (!empty($function_label_cpt)) {
-                                 $functionLabel = $function_label_cpt;
-                             }
-                            // Get organization name if allowed by show/hide fields
-                            if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) {
-                                $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : $organization_name_cpt;
-                            }
-                            // Remove the uniqueness check and always display if there's an organization name
-                            if (!empty($organizationName)) :
-                            ?>
-                                <p><strong><?php echo esc_html__('Organization:', 'rrze-faudir'); ?></strong> <?php echo esc_html($organizationName); ?></p>
-                                <?php if (!empty($functionLabel)) : ?>
-                                    <?php if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) : ?>
-                                        <!-- Show functions associated with this organization -->
-                                        <p><strong><?php echo esc_html__('Function:', 'rrze-faudir'); ?></strong> <?php echo esc_html($functionLabel); ?></p>
-                                    <?php endif; ?>
-                                <?php endif; ?>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
                     <?php
                     $business_card_title = function_exists('rrze_faudir_get_business_card_title') 
                         ? rrze_faudir_get_business_card_title() 
