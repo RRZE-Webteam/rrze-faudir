@@ -13,36 +13,14 @@ class FaudirShortcode {
 
 include_once plugin_dir_path(__FILE__) . '../utils/Template.php';
 
-// Add this at the beginning of the file, after the initial checks
-if (!function_exists('wp_doing_block_editor')) {
-    function wp_doing_block_editor() {
-        // Check if the current request is for the block editor
-        return (
-            // Gutenberg plugin is active and we're not in the classic editor
-            (
-                defined('REST_REQUEST') && 
-                REST_REQUEST && 
-                isset($_REQUEST['context']) && 
-                'edit' === $_REQUEST['context']
-            ) ||
-            // We're in a block editor page
-            (
-                is_admin() && 
-                isset($_REQUEST['action']) && 
-                'edit' === $_REQUEST['action'] && 
-                !isset($_REQUEST['classic-editor'])
-            )
-        );
-    }
-}
-
 // Shortcode function
 function fetch_fau_data($atts) {
     // Return early only if it's a shortcode call in admin area
-    if (!wp_doing_block_editor() && 
+   /* if (!wp_doing_block_editor() && 
         (is_admin() || (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) || wp_is_json_request())) {
         return '[faudir ...]'; // Return a placeholder for the editor/save operations
     }
+        */
 
     // Get the default output fields using the utility function
     $default_show_fields = FaudirUtils::getDefaultOutputFields();
