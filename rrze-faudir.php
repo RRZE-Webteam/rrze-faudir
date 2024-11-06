@@ -330,10 +330,11 @@ function migrate_person_data_on_activation() {
 
                         if (!empty($old_categories) && !is_wp_error($old_categories)) {
                             foreach ($old_categories as $old_category) {
-                                // Check if a term with the same name exists in the new taxonomy
+                                // Check if a term with the same slug exists in the new taxonomy
                                 $existing_term = term_exists($old_category->name, 'custom_taxonomy');
-                                $term = null;
-                                
+
+                                // log the existing term, which can be null, the term id, an array or 0                                
+                                error_log('[RRZE-FAUDIR] Existing term: ' . print_r($existing_term, true));
                                 if (!$existing_term) {
                                     // Create new term in custom_taxonomy
                                     $new_term = wp_insert_term(
@@ -346,17 +347,18 @@ function migrate_person_data_on_activation() {
                                     );
 
                                     if (!is_wp_error($new_term)) {
-                                        $term_id = $new_term['term_id'];
+                                        $term = get_term($new_term['term_id'], 'custom_taxonomy');
                                     }
                                 } else {
                                     $term_id = is_array($existing_term) ? $existing_term['term_id'] : $existing_term;
+                                    $term = get_term($term_id, 'custom_taxonomy');
                                 }
 
-                                // If we have a valid term ID, set it for the new post
-                                if (isset($term_id)) {
-                                    $result = wp_set_object_terms(
+                                // If we have a valid term, set it for the new post
+                                if ($term && !is_wp_error($term)) {
+                                    wp_set_object_terms(
                                         $new_post_id,           // post ID
-                                        array($term_id),        // terms
+                                        $term->name,            // use the term name instead of ID
                                         'custom_taxonomy',      // taxonomy
                                         true                    // append
                                     );
