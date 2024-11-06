@@ -343,11 +343,11 @@
                                 
                                     foreach ($person['contacts'][0]['socials'] as $social) : 
                                         $platform = strtolower($social['platform']);
-                                        $url = $social['url'];
+                                        $social_url = $social['url'];
                                         $iconClass = isset($iconMap[$platform]) ? $iconMap[$platform] : 'fas fa-link'; // Default to link icon if not found
                                     ?>
                                         <li style="margin-bottom: 8px;">
-                                            <a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                                            <a href="<?php echo esc_url($social_url); ?>" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
                                                 <i class="<?php echo esc_attr($iconClass); ?>" style="margin-right: 8px;"></i>
                                                 <?php echo esc_html(ucfirst($platform)); ?>
                                             </a>
