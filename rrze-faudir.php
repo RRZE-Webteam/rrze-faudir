@@ -206,13 +206,15 @@ add_filter('template_include', 'load_custom_person_template', 99);
 register_activation_hook(__FILE__, 'migrate_person_data_on_activation');
 
 function migrate_person_data_on_activation() {
-
     register_custom_taxonomy();
     
     $contact_posts = get_posts([
         'post_type' => 'person',
         'posts_per_page' => -1,
     ]);
+
+    // Initialize counter
+    $imported_count = 0;
 
     if (!empty($contact_posts)) {
         foreach ($contact_posts as $post) {
@@ -365,12 +367,61 @@ function migrate_person_data_on_activation() {
                                 }
                             }
                         }
+
+                        // Increment counter after successful import
+                        if ($new_post_id && !is_wp_error($new_post_id)) {
+                            $imported_count++;
+                        }
                     }
                 }
             }
         }
     }
+
+    // Store the count in a transient to display it later
+    set_transient('rrze_faudir_imported_count', $imported_count, 60);
+
+    // Add an action to display the notice
+    add_action('admin_notices', 'rrze_faudir_display_import_notice');
 }
+
+// Add this new function to display the notice
+function rrze_faudir_display_import_notice() {
+    // Only show on the plugins page
+    $screen = get_current_screen();
+    if ($screen->id !== 'plugins') {
+        return;
+    }
+
+    $imported_count = get_transient('rrze_faudir_imported_count');
+    if ($imported_count !== false) {
+        // Import success message
+        $import_message = sprintf(
+            /* translators: %d: number of imported persons */
+            _n(
+                '%d person was successfully imported from the old plugin.',
+                '%d persons were successfully imported from the old plugin.',
+                $imported_count,
+                'rrze-faudir'
+            ),
+            $imported_count
+        );
+        
+        // Slug configuration warning
+        $slug_warning = __('You now have the option to set a custom slug for person pages in the settings. If you don\'t set a unique slug, existing person pages from the old plugin may be overridden by the new plugin\'s person pages. To prevent this, please ensure that you configure a custom slug in the settings if you want to keep the old pages intact.', 'rrze-faudir');
+        
+        // Display both messages
+        printf(
+            '<div class="notice notice-success"><p>%s</p></div><div class="notice notice-warning"><p>%s</p></div>', 
+            esc_html($import_message),
+            esc_html($slug_warning)
+        );
+        
+        delete_transient('rrze_faudir_imported_count');
+    }
+}
+// Use a higher priority number (15) to make it appear after the default activation message (priority 10)
+add_action('admin_notices', 'rrze_faudir_display_import_notice', 15);
 
 function rrze_faudir_flush_rewrite_on_slug_change($old_value, $value, $option) {
     if ($option === 'rrze_faudir_options' && $old_value['person_slug'] !== $value['person_slug']) {
