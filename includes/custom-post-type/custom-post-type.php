@@ -116,6 +116,8 @@ function render_person_additional_fields($post) {
         'person_given_name',
         'person_family_name',
         'person_title',
+        'person_suffix',
+        'person_nobility_name',
     ];
 
     $fields = [
