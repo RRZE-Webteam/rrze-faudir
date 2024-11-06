@@ -202,6 +202,10 @@ function fetch_and_render_fau_data($atts) {
     $template_dir = plugin_dir_path(__FILE__) . '../../templates/';
     $template = new Template($template_dir);
 
+    // Fix format assignment when empty
+    if ($atts['format'] === '') {
+        $atts['format'] = 'list';  // Use single = for assignment
+    }
     return $template->render($atts['format'], [
         'show_fields' => $show_fields,
         'hide_fields' => $hide_fields,
