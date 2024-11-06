@@ -350,8 +350,15 @@
                     $business_card_title = function_exists('rrze_faudir_get_business_card_title') 
                         ? rrze_faudir_get_business_card_title() 
                         : __('Default Business Card Title', 'rrze-faudir');
-                    if (!empty($url)) {
-                        echo '<a href="' . esc_url($url) . '" itemprop="url" class="business-card-link button-link">' . esc_html($business_card_title) . '</a>';
+                    
+                    // Get the custom post type URL if available
+                    $cpt_url = !empty($contact_posts) ? get_permalink($contact_posts[0]->ID) : '';
+                    
+                    // Use custom post type URL if multiple persons or no direct URL
+                    $final_url = (count($persons) > 1 || empty($url)) ? $cpt_url : $url;
+                    
+                    if (!empty($final_url)) {
+                        echo '<a href="' . esc_url($final_url) . '" itemprop="url" class="business-card-link button-link">' . esc_html($business_card_title) . '</a>';
                     }
                     ?>
                 </div>
