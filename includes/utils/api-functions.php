@@ -251,7 +251,7 @@ function fetch_and_format_workplaces($contactIdentifier) {
     $workplaces = $detailedContact['workplaces'] ?? [];
 
     if (empty($workplaces)) {
-        error_log('No workplaces found in contact data');
+        //error_log('No workplaces found in contact data');
         return __('No workplaces available', 'rrze-faudir');
     }
 

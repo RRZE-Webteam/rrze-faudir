@@ -70,7 +70,7 @@ get_header();
                                 ));
                             }
                             $locale = get_locale();
-                            $show_german = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_SIE' ) !== false;
+                            $show_german = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_DE_formal' ) !== false;
 
                             // Iterate through organizations and display the data
                             foreach ($contacts as $index => $org) : ?>
@@ -245,7 +245,7 @@ get_header();
                             $content_de = get_the_content();
                             $content_en = isset($content_en) ? $content_en : ''; // Ensure $content_en is set
                                                         
-                            $teaser_text_key = ($locale === 'de_DE' || $locale === 'de_SIE' ) ? '_teasertext_de' : '_teasertext_en';
+                            $teaser_text_key = ($locale === 'de_DE' || $locale === 'de_DE_formal' ) ? '_teasertext_de' : '_teasertext_en';
                             $teaser_lang = get_post_meta(get_the_ID(), $teaser_text_key, true);
                             if (!empty($teaser_lang)) :
                             ?>
@@ -277,7 +277,7 @@ get_header();
                             ],
                         ]
                     );
-                     if ($locale === 'de_DE' || $locale === 'de_SIE' && !empty($content_de)): ?>
+                     if ($locale === 'de_DE' || $locale === 'de_DE_formal' && !empty($content_de)): ?>
                         <section class="card-section-title"><?php esc_html__('Content', 'rrze-faudir'); ?></section>
                         <div class="content-second-language">
                             <?php echo wp_kses(do_shortcode($content_de), $allowed_tags); ?>

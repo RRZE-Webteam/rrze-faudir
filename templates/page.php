@@ -60,7 +60,7 @@
 
                         // Ensure $content_en is set
                         $content_en = isset($content_en) ? $content_en : '';
-                        $teaser_text_key = ($locale === 'de_DE' || $locale === 'de_SIE' ) ? '_teasertext_de' : '_teasertext_en';
+                        $teaser_text_key = ($locale === 'de_DE' || $locale === 'de_DE_formal' ) ? '_teasertext_de' : '_teasertext_en';
                         $teaser_lang = get_post_meta($post->ID, $teaser_text_key, true);    
                     }
                 }
@@ -250,7 +250,7 @@
             foreach ($person['contacts'] as $contact) {
                 $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : $organization_name_cpt;
                 $locale = get_locale();
-                $isGerman = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_SIE') !== false;
+                $isGerman = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_DE_formal') !== false;
                 
                 // Determine function label
                 $functionLabel = '';
@@ -384,12 +384,12 @@
         <?php endif; ?>
 
                       
-                <?php if ($locale === 'de_DE' || $locale === 'de_SIE' && !empty($content_de)): ?>
+                <?php if ($locale === 'de_DE' || $locale === 'de_DE_formal' && !empty($content_de)): ?>
                     <section class="card-section-title"><?php esc_html__('Content', 'rrze-faudir'); ?></section>
                     <div class="content-second-language">
                         <?php echo wp_kses_post($content_de); ?>
                     </div>
-                <?php elseif ($locale !== 'de_DE' || $locale === 'de_SIE' && !empty($content_en)): ?>
+                <?php elseif ($locale !== 'de_DE' || $locale === 'de_DE_formal' && !empty($content_en)): ?>
                     <section class="card-section-title"><?php esc_html__('Content', 'rrze-faudir'); ?></section>
                     <div class="content-second-language">
                         <?php echo wp_kses_post($content_en); ?>

@@ -150,7 +150,7 @@
                         <?php foreach ($person['contacts'] as $contact) : ?>
                             <?php
                             $locale = get_locale();
-                            $isGerman = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_SIE') !== false;
+                            $isGerman = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_DE_formal') !== false;
                              $functionLabel = '';
                              if (!empty($contact['functionLabel'])) {
                                  $functionLabel = $isGerman ? 
