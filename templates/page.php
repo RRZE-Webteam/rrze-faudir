@@ -245,9 +245,7 @@
                 5 => 'Friday',
                 6 => 'Saturday',
                 7 => 'Sunday',
-            ];
-            if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) {
-                foreach ($person['contacts'] as $contact) 
+            ]; 
             foreach ($person['contacts'] as $contact) {
                 $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : $organization_name_cpt;
                 $locale = get_locale();
@@ -265,18 +263,21 @@
                 
                 // Display each organization and associated details
             ?>
+            <?php if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) { ?>
                 <p><strong><?php echo esc_html__('Organization:', 'rrze-faudir'); ?></strong> 
                     <span itemprop="affiliation" itemscope itemtype="https://schema.org/Organization">
                         <span itemprop="name"><?php echo esc_html($organizationName); ?></span>
                     </span>
                 </p>
-                
-                <?php if (!empty($functionLabel)) : ?>
+                <?php } ?>
+                <?php if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) { ?>
+                    <?php if (!empty($functionLabel)) : ?>
                     <strong><?php echo esc_html__('Function:', 'rrze-faudir'); ?></strong>
                     <p itemprop="jobTitle"><?php echo esc_html($functionLabel); ?></p>
                 <?php else : ?>
-                    <p><?php echo esc_html__('No function available.', 'rrze-faudir'); ?></p>
+                    <span><?php echo esc_html__('No function available.', 'rrze-faudir'); ?></span>
                 <?php endif; ?>
+                <?php } ?>
                 
                 <h3><?php echo esc_html__('Organization Address:', 'rrze-faudir'); ?></h3>
                 <div>
@@ -381,7 +382,7 @@
                     <?php endforeach; ?>
                 <?php endif; ?>
                 </div>
-            <?php }} ?>
+            <?php } ?>
         <?php endif; ?>
 
                       
