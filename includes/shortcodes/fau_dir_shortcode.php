@@ -15,6 +15,10 @@ include_once plugin_dir_path(__FILE__) . '../utils/Template.php';
 
 // Shortcode function
 function fetch_fau_data($atts) {
+    // Return early if we're in the admin area
+    if (is_admin()) {
+        return '[faudir ...]'; // Return a placeholder for the editor
+    }
 
     // Get the default output fields using the utility function
     $default_show_fields = FaudirUtils::getDefaultOutputFields();
