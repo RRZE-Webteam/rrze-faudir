@@ -365,9 +365,13 @@
                     
                     // Use custom post type URL if multiple persons or no direct URL
                     $final_url = (count($persons) > 1 || empty($url)) ? $cpt_url : $url;
-                    
+                    $options = get_option('rrze_faudir_options', []);
+                    $button_title = isset($options['business_card_title']) && !empty($options['business_card_title'])
+                        ? $options['business_card_title']
+                        : esc_html__('Call up business card', 'rrze-faudir');
+
                     if (!empty($final_url)) {
-                        echo '<a href="' . esc_url($final_url) . '" itemprop="url" class="business-card-link button-link">' . esc_html($business_card_title) . '</a>';
+                        echo '<a href="' . esc_url($final_url) . '" itemprop="url" class="business-card-link button-link">' . esc_html($button_title) . '</a>';
                     }
                     ?>
                 </div>
