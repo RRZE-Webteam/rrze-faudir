@@ -25,6 +25,15 @@
                 'meta_value' => $person['identifier'],
                 'posts_per_page' => 1, // Only fetch one post matching the person ID
             ]);
+            $business_card_title = function_exists('rrze_faudir_get_business_card_title') 
+                        ? rrze_faudir_get_business_card_title() 
+                        : __('Default Business Card Title', 'rrze-faudir');
+                    
+                    // Get the custom post type URL if available
+                    $cpt_url = !empty($contact_posts) ? get_permalink($contact_posts[0]->ID) : '';
+                    
+                    // Use custom post type URL if multiple persons or no direct URL
+                    $final_url = (count($persons) > 1 || empty($url)) ? $cpt_url : $url;
 
             // If there are contact posts, populate the CPT variables
             if (!empty($contact_posts)) {
@@ -107,8 +116,8 @@
                     ?>
 
                     <section class="card-section-title" aria-label="<?php echo esc_html($fullName); ?>">
-                        <?php if (!empty($url)) : ?>
-                            <a href="<?php echo esc_url($url); ?>" itemprop="url">
+                        <?php if (!empty($final_url)) : ?>
+                            <a href="<?php echo esc_url($final_url); ?>" itemprop="url">
                                 <span itemprop="name"><?php echo esc_html($fullName); ?></span>
                             </a>
                         <?php else : ?>
