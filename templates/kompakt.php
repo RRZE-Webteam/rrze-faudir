@@ -157,7 +157,7 @@
                 6 => 'Saturday',
                 7 => 'Sunday',
             ];
-        
+            if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) {
             foreach ($person['contacts'] as $contact) {
                 $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : $organization_name_cpt;
                 $locale = get_locale();
@@ -291,7 +291,7 @@
                     <?php endforeach; ?>
                 <?php endif; ?>
                 </div>
-            <?php } ?>
+            <?php } }?>
         <?php endif; ?>
                     <?php if (!empty($person['contacts'][0]['socials'])) : ?>
                             <div>

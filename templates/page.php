@@ -138,8 +138,8 @@
                        // Check if email should be shown and output only if an email is available
                         if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) {
                             // Get the email from $person array or fallback to custom post type
-                            $email = (isset($person['workplaces'][0]['mails'][0]) && !empty($person['workplaces'][0]['mails'][0])) 
-                                ? esc_html($person['workplaces'][0]['mails'][0]) 
+                            $email = (isset($person['email']) && !empty($person['email'])) 
+                                ? esc_html($person['email']) 
                                 : esc_html($email_output_cpt); // Custom post type email
 
                             // Only display the email if it's not empty
@@ -150,8 +150,8 @@
                         // Check if phone should be shown and include N/A if not available
                         if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)) {
                             // Get the email from $person array or fallback to custom post type
-                            $phone = (isset($person['workplaces'][0]['phones'][0]) && !empty($person['workplaces'][0]['phones'][0]) 
-                            ? esc_html($person['workplaces'][0]['phones'][0]) 
+                            $phone = (isset($person['telephone']) && !empty($person['telephone']) 
+                            ? esc_html($person['telephone']) 
                             : esc_html($phone_output_cpt));
                             // Only display the email if it's not empty
                             if (!empty($phone)) {
@@ -246,7 +246,8 @@
                 6 => 'Saturday',
                 7 => 'Sunday',
             ];
-        
+            if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) {
+                foreach ($person['contacts'] as $contact) 
             foreach ($person['contacts'] as $contact) {
                 $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : $organization_name_cpt;
                 $locale = get_locale();
@@ -380,7 +381,7 @@
                     <?php endforeach; ?>
                 <?php endif; ?>
                 </div>
-            <?php } ?>
+            <?php }} ?>
         <?php endif; ?>
 
                       
