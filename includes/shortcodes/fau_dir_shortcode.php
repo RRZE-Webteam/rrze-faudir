@@ -30,7 +30,7 @@ function fetch_fau_data($atts) {
         array(
             'category' => '',
             'identifier' => '',
-            'format' => 'list',
+            'format' => 'kompakt',
             'url' => '',
             'show' => '',
             'hide' => '',
@@ -182,7 +182,7 @@ function fetch_and_render_fau_data($atts) {
 
     // Fix format assignment when empty
     if ($atts['format'] === '') {
-        $atts['format'] = 'list';  // Use single = for assignment
+        $atts['format'] = 'kompakt';  // Use single = for assignment
     }
     return $template->render($atts['format'], [
         'show_fields' => $show_fields,
