@@ -533,7 +533,7 @@ function rrze_faudir_display_all_contacts($page = 1) {
                     $output .= "<a href='" . esc_url($edit_link) . "' class='edit-person button'><span class='dashicons dashicons-edit'></span> " . esc_html__('Edit', 'rrze-faudir') . "</a>";
                 } else {
                     // Post doesn't exist, show add button
-                    $output .= "<button class='add-person button' data-name='" . esc_attr($name) . "' data-id='" . esc_attr($identifier) . "'><span class='dashicons dashicons-plus'></span> Add</button>";
+                    $output .= "<button class='add-person button' data-name='" . esc_attr($name) . "' data-id='" . esc_attr($identifier) . "'><span class='dashicons dashicons-plus'></span>" . esc_html__('Add', 'rrze-faudir') ."</button>";
                 }
                 $output .= '</div>';
             }
