@@ -508,12 +508,15 @@ function rrze_faudir_display_all_contacts($page = 1) {
                 $output .= '<div class="contact-card">';
                 $output .= "<h2 class='contact-name'>{$name}</h2>";
                 $output .= "<div class='contact-details'>";
-                $output .= "<p><strong>IdM-Kennung:</strong> {$identifier}</p>";
+                $output .= "<p><strong>". __('Identifier:', 'rrze-faudir').  "{$identifier} </p>";
                 $output .= '<h3>'  . __('Contacts:', 'rrze-faudir'). '</h3>';
                 if (!empty($contact['contacts'])) {
                     foreach ($contact['contacts'] as $contactDetail) {
                         $orgName = esc_html($contactDetail['organization']['name']);
-                        $functionLabel = esc_html($contactDetail['functionLabel']['en']);
+                        $locale = get_locale();
+                        $functionLabel = in_array($locale, ['de_DE', 'de_DE_formal']) 
+                            ? esc_html($contactDetail['functionLabel']['de'])
+                            : esc_html($contactDetail['functionLabel']['en']);
                         $output .= "<p><strong>". __('Organization:', 'rrze-faudir')."</strong> {$orgName} ({$functionLabel})</p>";
                     }
                 }

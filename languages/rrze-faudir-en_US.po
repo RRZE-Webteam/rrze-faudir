@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rrze-faudir\n"
 "Report-Msgid-Bugs-To: https://your-plugin-url.com/support\n"
-"POT-Creation-Date: 2024-11-06 10:52+0100\n"
-"PO-Revision-Date: 2024-11-06 10:53+0100\n"
+"POT-Creation-Date: 2024-11-06 11:27+0100\n"
+"PO-Revision-Date: 2024-11-06 11:27+0100\n"
 "Last-Translator: \n"
 "Language-Team: English (United States)\n"
 "Language: en_US\n"
@@ -287,51 +287,55 @@ msgstr "Settings have been reset to default values."
 msgid "Failed to reset settings. Please try again."
 msgstr "Failed to reset settings. Please try again."
 
+#: includes/admin/settings-page.php:511
+msgid "Identifier:"
+msgstr "Identifier:"
+
 #: includes/admin/settings-page.php:512
 #, fuzzy
 #| msgid "Search Contacts"
 msgid "Contacts:"
 msgstr "Search Contacts"
 
-#: includes/admin/settings-page.php:517 templates/card.php:227
+#: includes/admin/settings-page.php:520 templates/card.php:227
 #: templates/kompakt.php:169 templates/list.php:171 templates/page.php:267
 msgid "Organization:"
 msgstr "Organization:"
 
-#: includes/admin/settings-page.php:533 includes/admin/settings-page.php:761
+#: includes/admin/settings-page.php:536 includes/admin/settings-page.php:764
 #: includes/utils/enqueue_scripts.php:57
 msgid "Edit"
 msgstr "Edit"
 
-#: includes/admin/settings-page.php:536
+#: includes/admin/settings-page.php:539
 msgid "Add"
 msgstr "Add"
 
-#: includes/admin/settings-page.php:544
+#: includes/admin/settings-page.php:547
 msgid "Previous"
 msgstr "Previous"
 
-#: includes/admin/settings-page.php:545
+#: includes/admin/settings-page.php:548
 msgid "Next"
 msgstr "Next"
 
-#: includes/admin/settings-page.php:549
+#: includes/admin/settings-page.php:552
 #, fuzzy
 #| msgid "No contact found."
 msgid "No contacts found."
 msgstr "No contact found."
 
-#: includes/admin/settings-page.php:575
+#: includes/admin/settings-page.php:578
 msgid "All cache cleared successfully."
 msgstr "All cache cleared successfully."
 
-#: includes/admin/settings-page.php:725
+#: includes/admin/settings-page.php:728
 #, fuzzy, php-format
 #| msgid "Error: "
 msgid "Error: %s"
 msgstr "Error: "
 
-#: includes/admin/settings-page.php:771
+#: includes/admin/settings-page.php:774
 msgid "No contacts found. Please verify the IdM-Kennung or names provided."
 msgstr "No contacts found. Please verify the IdM-Kennung or names provided."
 

@@ -143,7 +143,7 @@ jQuery(document).ready(function($) {
         var personName = button.data('name');
         var personId = button.data('id');
         var organizations = button.data('organizations') || [];
-        var functions = button.data('functions') || [];
+        var functions = button.data('functionLabel') || [];
 
         // Disable the button and show loading indicator
         button.prop('disabled', true).html('<span class="dashicons dashicons-update"></span> ' + rrzeFaudirAjax.add_text);

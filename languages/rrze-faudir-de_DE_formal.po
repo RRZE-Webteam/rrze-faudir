@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rrze-faudir\n"
 "Report-Msgid-Bugs-To: https://your-plugin-url.com/support\n"
-"POT-Creation-Date: 2024-11-06 10:43+0100\n"
-"PO-Revision-Date: 2024-11-06 10:48+0100\n"
+"POT-Creation-Date: 2024-11-06 11:28+0100\n"
+"PO-Revision-Date: 2024-11-06 11:28+0100\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -289,46 +289,50 @@ msgstr ""
 "Einstellungen konnten nicht zurückgesetzt werden. Bitte versuchen Sie es "
 "erneut."
 
+#: includes/admin/settings-page.php:511
+msgid "Identifier:"
+msgstr "Kennung:"
+
 #: includes/admin/settings-page.php:512
 msgid "Contacts:"
 msgstr "Kontakte:"
 
-#: includes/admin/settings-page.php:517 templates/card.php:227
+#: includes/admin/settings-page.php:520 templates/card.php:227
 #: templates/kompakt.php:169 templates/list.php:171 templates/page.php:267
 msgid "Organization:"
 msgstr "Organisation:"
 
-#: includes/admin/settings-page.php:533 includes/admin/settings-page.php:761
+#: includes/admin/settings-page.php:536 includes/admin/settings-page.php:764
 #: includes/utils/enqueue_scripts.php:57
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: includes/admin/settings-page.php:536
+#: includes/admin/settings-page.php:539
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: includes/admin/settings-page.php:544
+#: includes/admin/settings-page.php:547
 msgid "Previous"
 msgstr "Vorherige"
 
-#: includes/admin/settings-page.php:545
+#: includes/admin/settings-page.php:548
 msgid "Next"
 msgstr "Nächste"
 
-#: includes/admin/settings-page.php:549
+#: includes/admin/settings-page.php:552
 msgid "No contacts found."
 msgstr "Keine Kontakte gefunden."
 
-#: includes/admin/settings-page.php:575
+#: includes/admin/settings-page.php:578
 msgid "All cache cleared successfully."
 msgstr "Der gesamte Cache wurde erfolgreich gelöscht."
 
-#: includes/admin/settings-page.php:725
+#: includes/admin/settings-page.php:728
 #, php-format
 msgid "Error: %s"
 msgstr "Fehler: %s"
 
-#: includes/admin/settings-page.php:771
+#: includes/admin/settings-page.php:774
 msgid "No contacts found. Please verify the IdM-Kennung or names provided."
 msgstr ""
 "Keine Kontakte gefunden. Bitte überprüfen Sie die IdM-Kennung oder die "
