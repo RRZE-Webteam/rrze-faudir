@@ -59,62 +59,60 @@
                         }
                     }
                 endforeach;
-            }?>
+            }
+            $options = get_option('rrze_faudir_options');
+            $hard_sanitize = isset($options['hard_sanitize']) && $options['hard_sanitize'];
+            $longVersion = "";
+            if($hard_sanitize){
+                $prefix = $person['personalTitle'];
+                $prefixes = array(
+                '' => __('Not specified', 'rrze-faudir'),
+                'Dr.' => __('Doktor', 'rrze-faudir'),
+                'Prof.' => __('Professor', 'rrze-faudir'),
+                'Prof. Dr.' => __('Professor Doktor', 'rrze-faudir'),
+                'Prof. em.' => __('Professor (Emeritus)', 'rrze-faudir'),
+                'Prof. Dr. em.' => __('Professor Doktor (Emeritus)', 'rrze-faudir'),
+                'PD' => __('Privatdozent', 'rrze-faudir'),
+                'PD Dr.' => __('Privatdozent Doktor', 'rrze-faudir'));
+                // Check if the prefix exists in the array and display the long version
+                $longVersion = isset($prefixes[$prefix]) ? $prefixes[$prefix] : __('Unknown', 'rrze-faudir');
+            }
+            $personal_title = "";
+            $first_name= "";
+            $nobility_title= "";
+            $last_name ="";
+            $title_suffix ="";
+            if (in_array('personalTitle', $show_fields) && !in_array('personalTitle', $hide_fields)) {
+                $personal_title = (isset($person['personalTitle']) && !empty($person['personalTitle']) ? esc_html($person['personalTitle']) : '');
+            }
+            if (in_array('firstName', $show_fields) && !in_array('firstName', $hide_fields)) {
+                $first_name = (isset($person['givenName']) && !empty($person['givenName']) ? esc_html($person['givenName']) : '');
+            }
+            if (in_array('titleOfNobility', $show_fields) && !in_array('titleOfNobility', $hide_fields)) {
+                $nobility_title = (isset($person['titleOfNobility']) && !empty($person['titleOfNobility']) ? esc_html($person['titleOfNobility']) : '');
+            }
+            if (in_array('familyName', $show_fields) && !in_array('familyName', $hide_fields)) {
+                $last_name = (isset($person['familyName']) && !empty($person['familyName']) ? esc_html($person['familyName']) : '');
+            }
+            if (in_array('personalTitleSuffix', $show_fields) && !in_array('personalTitleSuffix', $hide_fields)) {
+                $title_suffix = (isset($person['personalTitleSuffix']) && !empty($person['personalTitleSuffix']) ? esc_html($person['personalTitleSuffix']) : '');
+            }
+            $fullName = trim(($longVersion ? $longVersion : ($personal_title ? $personal_title : $personal_title_cpt)) . ' ' 
+            . ($first_name ? $first_name : $first_name_cpt) . ' ' 
+            .($nobility_title ? $nobility_title : $nobility_title_cpt)  . ' ' 
+            . ($last_name ? $last_name : $last_name_cpt) . ' ' 
+            . ($title_suffix ? $title_suffix : $title_suffix_cpt));
+            ?>
+            
             <div class="shortcode-contact-kompakt" itemscope itemtype="https://schema.org/Person">
-                <?php  if (count($persons) === 1 && !empty($image_url)) : ?>
-                    <img src="<?php echo esc_url($image_url); ?>" alt="Person Image" itemprop="image" />
-                <?php else :
-                    if (!empty($featured_image_url)) : ?>
-                        <img src="<?php echo esc_url($featured_image_url); ?>" alt="Person Image" itemprop="image" />
-                    <?php endif;
-                endif; ?>                     
+                  <?php  if (count($persons) === 1 && !empty($image_url)) : ?>
+                    <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
+                <?php elseif (!empty($featured_image_url)) :?>
+                    <img src="<?php echo esc_url($featured_image_url); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
+                    <?php else : ?>
+                        <img src="<?php echo esc_url(plugins_url('rrze-faudir/assets/images/platzhalter-unisex.png', dirname(__FILE__, 2))); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
+                    <?php endif; ?>           
                 <div style="flex-grow: 1;">
-                    <!-- Full name with title -->
-                    <?php
-                    $options = get_option('rrze_faudir_options');
-                    $hard_sanitize = isset($options['hard_sanitize']) && $options['hard_sanitize'];
-                    $longVersion = "";
-                    if($hard_sanitize){
-                        $prefix = $person['personalTitle'];
-                        $prefixes = array(
-                        '' => __('Not specified', 'rrze-faudir'),
-                        'Dr.' => __('Doktor', 'rrze-faudir'),
-                        'Prof.' => __('Professor', 'rrze-faudir'),
-                        'Prof. Dr.' => __('Professor Doktor', 'rrze-faudir'),
-                        'Prof. em.' => __('Professor (Emeritus)', 'rrze-faudir'),
-                        'Prof. Dr. em.' => __('Professor Doktor (Emeritus)', 'rrze-faudir'),
-                        'PD' => __('Privatdozent', 'rrze-faudir'),
-                        'PD Dr.' => __('Privatdozent Doktor', 'rrze-faudir'));
-                        // Check if the prefix exists in the array and display the long version
-                        $longVersion = isset($prefixes[$prefix]) ? $prefixes[$prefix] : __('Unknown', 'rrze-faudir');
-                    }
-                    $personal_title = "";
-                    $first_name= "";
-                    $nobility_title= "";
-                    $last_name ="";
-                    $title_suffix ="";
-                    if (in_array('personalTitle', $show_fields) && !in_array('personalTitle', $hide_fields)) {
-                        $personal_title = (isset($person['personalTitle']) && !empty($person['personalTitle']) ? esc_html($person['personalTitle']) : '');
-                    }
-                    if (in_array('firstName', $show_fields) && !in_array('firstName', $hide_fields)) {
-                        $first_name = (isset($person['givenName']) && !empty($person['givenName']) ? esc_html($person['givenName']) : '');
-                    }
-                    if (in_array('titleOfNobility', $show_fields) && !in_array('titleOfNobility', $hide_fields)) {
-                        $nobility_title = (isset($person['titleOfNobility']) && !empty($person['titleOfNobility']) ? esc_html($person['titleOfNobility']) : '');
-                    }
-                    if (in_array('familyName', $show_fields) && !in_array('familyName', $hide_fields)) {
-                        $last_name = (isset($person['familyName']) && !empty($person['familyName']) ? esc_html($person['familyName']) : '');
-                    }
-                    if (in_array('personalTitleSuffix', $show_fields) && !in_array('personalTitleSuffix', $hide_fields)) {
-                        $title_suffix = (isset($person['personalTitleSuffix']) && !empty($person['personalTitleSuffix']) ? esc_html($person['personalTitleSuffix']) : '');
-                    }
-                    $fullName = trim(($longVersion ? $longVersion : ($personal_title ? $personal_title : $personal_title_cpt)) . ' ' 
-                    . ($first_name ? $first_name : $first_name_cpt) . ' ' 
-                    .($nobility_title ? $nobility_title : $nobility_title_cpt)  . ' ' 
-                    . ($last_name ? $last_name : $last_name_cpt) . ' ' 
-                    . ($title_suffix ? $title_suffix : $title_suffix_cpt));
-                    ?>
-
                     <section class="card-section-title" aria-label="<?php echo esc_html($fullName); ?>">
                         <?php if (!empty($final_url)) : ?>
                             <a href="<?php echo esc_url($final_url); ?>" itemprop="url">

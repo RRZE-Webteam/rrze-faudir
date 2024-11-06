@@ -105,7 +105,7 @@
                 <?php elseif (!empty($featured_image_url)) :?>
                     <img src="<?php echo esc_url($featured_image_url); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
                     <?php else : ?>
-                        <img src="http://localhost/wp-content/uploads/2024/09/image.jpg" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
+                        <img src="<?php echo esc_url(plugins_url('rrze-faudir/assets/images/platzhalter-unisex.png', dirname(__FILE__, 2))); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
                     <?php endif; ?>
                 
                 
