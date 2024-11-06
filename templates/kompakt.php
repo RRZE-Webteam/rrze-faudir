@@ -147,6 +147,206 @@
                     $organizationName = ''; // To track displayed organizations
                     ?>
                     <?php if (!empty($person['contacts'])) : ?>
+            <?php 
+            $weekdayMap = [
+                1 => 'Monday',
+                2 => 'Tuesday',
+                3 => 'Wednesday',
+                4 => 'Thursday',
+                5 => 'Friday',
+                6 => 'Saturday',
+                7 => 'Sunday',
+            ];
+        
+            foreach ($person['contacts'] as $contact) {
+                $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : $organization_name_cpt;
+                $locale = get_locale();
+                $isGerman = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_DE_formal') !== false;
+                
+                // Determine function label
+                $functionLabel = '';
+                if (!empty($contact['functionLabel'])) {
+                    $functionLabel = $isGerman ? 
+                        (isset($contact['functionLabel']['de']) ? $contact['functionLabel']['de'] : '') : 
+                        (isset($contact['functionLabel']['en']) ? $contact['functionLabel']['en'] : '');
+                } elseif (!empty($function_label_cpt)) {
+                    $functionLabel = $function_label_cpt;
+                }
+                
+                // Display each organization and associated details
+            ?>
+                <p><strong><?php echo esc_html__('Organization:', 'rrze-faudir'); ?></strong> 
+                    <span itemprop="affiliation" itemscope itemtype="https://schema.org/Organization">
+                        <span itemprop="name"><?php echo esc_html($organizationName); ?></span>
+                    </span>
+                </p>
+                
+                <?php if (!empty($functionLabel)) : ?>
+                    <strong><?php echo esc_html__('Function:', 'rrze-faudir'); ?></strong>
+                    <p itemprop="jobTitle"><?php echo esc_html($functionLabel); ?></p>
+                <?php else : ?>
+                    <p><?php echo esc_html__('No function available.', 'rrze-faudir'); ?></p>
+                <?php endif; ?>
+                
+                <h3><?php echo esc_html__('Organization Address:', 'rrze-faudir'); ?></h3>
+                <div>
+                    <?php if (!empty($contact['organization_address'])) : ?>
+                        <p>
+                            <?php if (!empty($contact['organization_address']['phone'])) : ?>
+                                <strong><?php echo esc_html__('Phone:', 'rrze-faudir'); ?></strong>
+                                <?php echo esc_html($contact['organization_address']['phone']); ?><br>
+                            <?php endif; ?>
+                            
+                            <?php if (!empty($contact['organization_address']['mail'])) : ?>
+                                <strong><?php echo esc_html__('Mail:', 'rrze-faudir'); ?></strong>
+                                <?php echo esc_html($contact['organization_address']['mail']); ?><br>
+                            <?php endif; ?>
+                            
+                            <?php if (!empty($contact['organization_address']['url'])) : ?>
+                                <strong><?php echo esc_html__('Url:', 'rrze-faudir'); ?></strong>
+                                <?php echo esc_html($contact['organization_address']['url']); ?><br>
+                            <?php endif; ?>
+                            <?php if (!empty($contact['organization_address']['street'])) : ?>
+                                <strong><?php echo esc_html__('Street:', 'rrze-faudir'); ?></strong>
+                                <?php echo esc_html($contact['organization_address']['street']); ?><br>
+                            <?php endif; ?>
+                            <?php if (!empty($contact['organization_address']['zip'])) : ?>
+                                <strong><?php echo esc_html__('ZIP Code:', 'rrze-faudir'); ?></strong>
+                                <?php echo esc_html($contact['organization_address']['zip']); ?><br>
+                            <?php endif; ?>
+                            <?php if (!empty($contact['organization_address']['city'])) : ?>
+                                <strong><?php echo esc_html__('City:', 'rrze-faudir'); ?></strong>
+                                <?php echo esc_html($contact['organization_address']['city']); ?><br>
+                            <?php endif; ?>
+                            <?php if (!empty($contact['organization_address']['faumap'])) : ?>
+                                <strong><?php echo esc_html__('Map:', 'rrze-faudir'); ?></strong>
+                                <a href="<?php echo esc_url($contact['organization_address']['faumap']); ?>" target="_blank">
+                                    <?php echo esc_html__('View on Map', 'rrze-faudir'); ?>
+                                </a><br>
+                            <?php endif; ?>
+                        </p>
+                    <?php endif; ?>
+                </div>
+                            
+                <h3><?php echo esc_html__('Workplaces:', 'rrze-faudir'); ?></h3>
+                <div>
+                <?php if (empty($contact['workplaces'])) : ?>
+                    <p><?php echo esc_html__('No workplaces available.', 'rrze-faudir'); ?></p>
+                <?php else : ?>
+                    <?php foreach ($contact['workplaces'] as $workplace) : ?>
+                        <p>
+                            <?php if (!empty($workplace['street'])) : ?>
+                                <strong><?php echo esc_html__('Street:', 'rrze-faudir'); ?></strong>
+                                <?php echo esc_html($workplace['street']); ?><br>
+                            <?php endif; ?>
+                            
+                            <?php if (!empty($workplace['zip'])) : ?>
+                                <strong><?php echo esc_html__('ZIP Code:', 'rrze-faudir'); ?></strong>
+                                <?php echo esc_html($workplace['zip']); ?><br>
+                            <?php endif; ?>
+                            
+                            <?php if (!empty($workplace['city'])) : ?>
+                                <strong><?php echo esc_html__('City:', 'rrze-faudir'); ?></strong>
+                                <?php echo esc_html($workplace['city']); ?><br>
+                            <?php endif; ?>
+                            
+                            <?php if (!empty($workplace['faumap'])) : ?>
+                                <strong><?php echo esc_html__('Map:', 'rrze-faudir'); ?></strong>
+                                <a href="<?php echo esc_url($workplace['faumap']); ?>" target="_blank">
+                                    <?php echo esc_html__('View on Map', 'rrze-faudir'); ?>
+                                </a><br>
+                            <?php endif; ?>
+                            
+                            <?php if (!empty($workplace['mails'])) : ?>
+                                <strong><?php echo esc_html__('Emails:', 'rrze-faudir'); ?></strong>
+                                <ul>
+                                    <?php foreach ($workplace['mails'] as $email) : ?>
+                                        <li><a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email); ?></a></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php endif; ?>
+                                    
+                            <?php if (!empty($workplace['phones'])) : ?>
+                                <strong><?php echo esc_html__('Phone numbers:', 'rrze-faudir'); ?></strong>
+                                <ul>
+                                    <?php foreach ($workplace['phones'] as $phone) : ?>
+                                        <li><?php echo esc_html($phone); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php endif; ?>
+                                    
+                            <?php if (!empty($workplace['officeHours'])) : ?>
+                                <strong><?php echo esc_html__('Office Hours:', 'rrze-faudir'); ?></strong>
+                                <ul>
+                                    <?php foreach ($workplace['officeHours'] as $officeHour) : ?>
+                                        <li>
+                                            <strong><?php echo esc_html($weekdayMap[$officeHour['weekday']] ?? 'Unknown'); ?>:</strong>
+                                            <?php echo esc_html($officeHour['from'] . ' - ' . $officeHour['to']); ?>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php endif; ?>
+                        </p>
+                        <hr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+                </div>
+            <?php } ?>
+        <?php endif; ?>
+                    <?php if (!empty($person['contacts'][0]['socials'])) : ?>
+                            <div>
+                                <h3><?php echo esc_html__('Social Profiles:', 'rrze-faudir'); ?></h3>
+                                <ul style="list-style: none; padding: 0;">
+                                    <?php 
+                                    // FontAwesome icon mapping for platforms
+                                    $iconMap = [
+                                        'github' => 'fab fa-github',
+                                        'xing' => 'fab fa-xing',
+                                        'bluesky' => 'fas fa-cloud',
+                                        'twitter' => 'fab fa-twitter',
+                                        'facebook' => 'fab fa-facebook',
+                                        'linkedin' => 'fab fa-linkedin',
+                                        'instagram' => 'fab fa-instagram',
+                                        'youtube' => 'fab fa-youtube',
+                                        'tiktok' => 'fab fa-tiktok',
+                                        'whatsapp' => 'fab fa-whatsapp',
+                                        'snapchat' => 'fab fa-snapchat-ghost',
+                                        'reddit' => 'fab fa-reddit',
+                                        'pinterest' => 'fab fa-pinterest',
+                                        'telegram' => 'fab fa-telegram',
+                                        'discord' => 'fab fa-discord',
+                                        'medium' => 'fab fa-medium',
+                                        'vimeo' => 'fab fa-vimeo',
+                                        'twitch' => 'fab fa-twitch',
+                                        'spotify' => 'fab fa-spotify',
+                                        'slack' => 'fab fa-slack',
+                                        'dribbble' => 'fab fa-dribbble',
+                                        'behance' => 'fab fa-behance',
+                                        'flickr' => 'fab fa-flickr',
+                                        'mastodon' => 'fab fa-mastodon',
+                                        'goodreads' => 'fas fa-book',
+                                        'strava' => 'fab fa-strava',
+                                        'rss' => 'fas fa-rss',
+                                        'zoom' => 'fas fa-video',
+                                        'bsky' => 'fas fa-cloud', // Alias for Bluesky
+                                    ];
+                                
+                                    foreach ($person['contacts'][0]['socials'] as $social) : 
+                                        $platform = strtolower($social['platform']);
+                                        $url = $social['url'];
+                                        $iconClass = isset($iconMap[$platform]) ? $iconMap[$platform] : 'fas fa-link'; // Default to link icon if not found
+                                    ?>
+                                        <li style="margin-bottom: 8px;">
+                                            <a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                                                <i class="<?php echo esc_attr($iconClass); ?>" style="margin-right: 8px;"></i>
+                                                <?php echo esc_html(ucfirst($platform)); ?>
+                                            </a>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
+                    <?php if (!empty($person['contacts'])) : ?>
                         <?php foreach ($person['contacts'] as $contact) : ?>
                             <?php
                             $locale = get_locale();

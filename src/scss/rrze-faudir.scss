@@ -102,8 +102,9 @@ body {
     
 }
  .shortcode-contact-kompakt img{
-   width: 20%; 
-   object-fit: cover;
+    width: 20%;
+    object-fit: cover;
+    max-height: 450px;
  }
   .contact-page-img-container img{
     width: 30%;
