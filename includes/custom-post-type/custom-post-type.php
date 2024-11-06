@@ -424,55 +424,20 @@ function rrze_faudir_create_custom_person() {
             // Process organizations and functions
             $contacts = array();
             if (isset($person['contacts']) && is_array($person['contacts'])) {
-                foreach ($person['contacts'] as $contactInfo) {
-                    $org_name = $contactInfo['organization']['name'] ?? '';
-                    $org_identifier = $contactInfo['organization']['identifier'] ?? '';
-                    $function_en = $contactInfo['functionLabel']['en'] ?? '';
-                    $function_de = $contactInfo['functionLabel']['de'] ?? '';
-                    
-                    // Fetch workplace and address for this contact
-                    $workplace = fetch_and_format_workplaces($contactInfo['identifier'] ?? '');
-                    $address = fetch_and_format_address($org_identifier);
-                    $socials = fetch_and_format_socials($contactInfo['identifier'] ?? '');
-                    
-                    // Find if organization already exists in our array
-                    $org_index = -1;
-                    foreach ($contacts as $index => $contact) {
-                        if ($contact['organization'] === $org_name) {
-                            $org_index = $index;
-                            break;
-                        }
-                    }
-                    
-                    if ($org_index >= 0) {
-                        // Add to existing organization
-                        if (!empty($function_en)) {
-                            $contacts[$org_index]['functions_en'][] = $function_en;
-                        }
-                        if (!empty($function_de)) {
-                            $contacts[$org_index]['functions_de'][] = $function_de;
-                        }
-                        // Update workplace and address if not already set
-                        if (empty($contacts[$org_index]['workplace'])) {
-                            $contacts[$org_index]['workplace'] = $workplace;
-                        }
-                        if (empty($contacts[$org_index]['address'])) {
-                            $contacts[$org_index]['address'] = $address;
-                        }
-                        if (empty($contacts[$org_index]['socials'])) {
-                            $contacts[$org_index]['socials'] = $socials;
-                        }
-                    } else {
-                        // Add new organization
-                        $contacts[] = array(
-                            'organization' => $org_name,
-                            'organization_id' => $org_identifier,
-                            'functions_en' => !empty($function_en) ? array($function_en) : array(),
-                            'functions_de' => !empty($function_de) ? array($function_de) : array(),
-                            'workplace' => $workplace,
-                            'address' => $address
-                        );
-                    }
+                foreach ($person['contacts'] as $contact) {
+
+                    // Get the identifier
+                    $contactIdentifier = $contact['identifier'];
+                    $organizationIdentifier = $contact['organization']['identifier'];
+                        
+                    $contacts[] = array(
+                        'organization' => sanitize_text_field($contact['organization']['name'] ?? ''),
+                        'socials' => fetch_and_format_socials($contactIdentifier),
+                        'workplace' => fetch_and_format_workplaces($contactIdentifier),
+                        'address' => fetch_and_format_address($organizationIdentifier),
+                        'function_en' => $contact['functionLabel']['en'] ?? '',
+                        'function_de' => $contact['functionLabel']['de'] ?? '',
+                    );
                 }
             }
 
