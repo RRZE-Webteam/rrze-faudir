@@ -269,7 +269,7 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
         // Array of available options with actual values and display texts
         const options = [
             { value: 'personalTitle', label: 'Personal Title' },
-            { value: 'firstName', label: 'First Name' },
+            { value: 'givenName', label: 'First Name' },
             { value: 'familyName', label: 'Family Name' },
             { value: 'name', label: 'Name' },
             { value: 'email', label: 'Email' },

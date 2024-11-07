@@ -80,7 +80,7 @@
                 if (in_array('personalTitle', $show_fields) && !in_array('personalTitle', $hide_fields)) {
                     $personal_title = (isset($person['personalTitle']) && !empty($person['personalTitle']) ? esc_html($person['personalTitle']) : '');
                 }
-                if (in_array('firstName', $show_fields) && !in_array('firstName', $hide_fields)) {
+                if (in_array('givenName', $show_fields) && !in_array('givenName', $hide_fields)) {
                     $first_name = (isset($person['givenName']) && !empty($person['givenName']) ? esc_html($person['givenName']) : '');
                 }
                 if (in_array('titleOfNobility', $show_fields) && !in_array('titleOfNobility', $hide_fields)) {

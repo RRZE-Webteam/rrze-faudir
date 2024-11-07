@@ -106,7 +106,7 @@ function register_faudir_block_assets() {
         'example' => [
             'attributes' => [
                 'format' => 'list',
-                'show' => 'firstName, familyName, email',
+                'show' => 'givenName, familyName, email',
                 'identifier' => 'preview'
             ],
         ],

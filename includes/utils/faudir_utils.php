@@ -38,7 +38,7 @@ class FaudirUtils
     
         $field_mapping = [
             'academic_title' => 'personalTitle',
-            'first_name' => 'firstName',
+            'first_name' => 'givenName',
             'last_name' => 'familyName',
             'academic_suffix' => 'personalTitleSuffix',
             'organization' => 'organization', // Map organization
