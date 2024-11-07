@@ -12,7 +12,10 @@
             <?php endif; ?>
             <?php if ((in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) || 
                           (in_array('function', $show_fields) && !in_array('function', $hide_fields))) : ?>
-                    <th><?php  echo esc_html__('Organization / Function', 'rrze-faudir') ?></th>
+                    <th><?php echo esc_html__('Organization / Function', 'rrze-faudir') ?></th>
+            <?php endif; ?>
+            <?php if (in_array('url', $show_fields) && !in_array('url', $hide_fields)): ?>
+                    <th><?php  echo esc_html__('Url', 'rrze-faudir') ?></th>
             <?php endif; ?>
         </tr>
     </thead>
@@ -184,7 +187,25 @@
                         ?>
                     </td>
                 <?php endif; ?>
-
+            <?php if (in_array('url', $show_fields) && !in_array('url', $hide_fields)): ?>
+                <td>
+                    
+                <?php  foreach ($person['contacts'] as $contact) {
+                foreach ($contact['workplaces'] as $workplace) : ?>
+                        <p>
+                            <?php if (!empty($workplace['url'])) : ?>
+                                <strong><?php echo esc_html__('Street:', 'rrze-faudir'); ?></strong>
+                                <?php echo esc_html($workplace['url']); ?><br>
+                                <?php else: 
+                                
+                                    echo ' N/A'; ?>
+                                
+                            <?php endif; ?>
+                            
+                        </p>
+                    <?php endforeach;}  ?>
+                </td>
+            <?php endif; ?>
 
                 </tr>
             <?php else : ?>

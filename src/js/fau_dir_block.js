@@ -276,6 +276,7 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
             { value: 'phone', label: 'Phone' },
             { value: 'organization', label: 'Organization' },
             { value: 'function', label: 'Function' },
+            { value: 'url', label: 'URL' },
         ];
 
         // Convert the comma-separated string into an array of selected values

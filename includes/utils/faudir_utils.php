@@ -42,8 +42,9 @@ class FaudirUtils
             'first_name' => 'givenName',
             'last_name' => 'familyName',
             'academic_suffix' => 'personalTitleSuffix',
-            'organization' => 'organization', // Map organization
-            'function' => 'function' // Map function
+            'organization' => 'organization',
+            'function' => 'function',
+            'url' => 'url'
         ];
     
         // Map fields from options to internal field names

@@ -315,6 +315,7 @@ function rrze_faudir_default_output_fields_render() {
         'phone' => __('Phone', 'rrze-faudir'),
         'organization' => __('Organization', 'rrze-faudir'),
         'function' => __('Function', 'rrze-faudir'),
+        'url' => __('Url', 'rrze-faudir'),
     );
 
     echo '<fieldset>';
