@@ -306,6 +306,7 @@ function rrze_faudir_default_output_fields_render() {
     $default_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : array();
     
     $available_fields = array(
+        'display_name' => __('Display Name', 'rrze-faudir'),
         'academic_title' => __('Academic Title', 'rrze-faudir'),
         'first_name' => __('First Name', 'rrze-faudir'),
         'last_name' => __('Last Name', 'rrze-faudir'),

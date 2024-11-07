@@ -7,51 +7,17 @@
             </div>
             <?php else: ?>
             <?php if (!empty($person)) : ?>
-                <?php
-                $personal_title_cpt = '';
-                $first_name_cpt = '';
-                $nobility_title_cpt = '';
-                $last_name_cpt = '';
-                $title_suffix_cpt = '';
-                $email_output_cpt = '';
-                $phone_output_cpt = '';
-                $function_label_cpt = '';
-                $organization_name_cpt = '';
-                
-                // Check if a CPT with the same ID exists
-                $contact_posts = get_posts([
+                <?php 
+                 $contact_posts = get_posts([
                     'post_type' => 'custom_person',
                     'meta_key' => 'person_id',
                     'meta_value' => $person['identifier'],
                     'posts_per_page' => 1, // Only fetch one post matching the person ID
                 ]);
-    
-                // If there are contact posts, process them
-            if (!empty($contact_posts)) {
-                    // Loop through each contact post
-                    foreach ($contact_posts as $post) : {
-                        // Check if the post has a UnivIS ID (person_id)
-                        $identifier = get_post_meta($post->ID, 'person_id', true);
-                        
-                        // Compare the identifier with the current person's identifier
-                        if ($identifier === $person['identifier']) {
-                            // Use $post->ID instead of get_the_ID() to get the correct metadata
-                            $personal_title_cpt = get_post_meta($post->ID, 'person_title', true);
-                            $first_name_cpt = get_post_meta($post->ID, 'person_given_name', true);
-                            $nobility_title_cpt = get_post_meta($post->ID, 'person_nobility_name', true);
-                            $last_name_cpt = get_post_meta($post->ID, 'person_family_name', true);
-                            $title_suffix_cpt = get_post_meta($post->ID, 'person_suffix', true);
-                            $email_output_cpt = get_post_meta($post->ID, 'person_email', true);
-                            $phone_output_cpt = get_post_meta($post->ID, 'person_telephone', true);
-                            $function_label_cpt = get_post_meta($post->ID, 'person_function', true);
-                            $organization_name_cpt = get_post_meta($post->ID, 'person_organization', true);
-                        
-                            
-                            // New Code to Add: Handling multiple languages (de_DE and en)
-                        }
-                    }
-                endforeach;
-            }?>
+                        $cpt_url = !empty($contact_posts) ? get_permalink($contact_posts[0]->ID) : '';
+                    
+                        // Use custom post type URL if multiple persons or no direct URL
+                        $final_url = (count($persons) > 1 || empty($url)) ? $cpt_url : $url;?>
             
                 <li itemscope itemtype="https://schema.org/Person">
                     <!-- Full name with title -->
@@ -93,7 +59,7 @@
                         $last_name = (isset($person['familyName']) && !empty($person['familyName']) ? esc_html($person['familyName']) : '');
                     }
                     if (in_array('personalTitleSuffix', $show_fields) && !in_array('personalTitleSuffix', $hide_fields)) {
-                        $title_suffix = (isset($person['personalTitleSuffix']) && !empty($person['personalTitleSuffix']) ? esc_html($person['personalTitleSuffix']) : '');
+                    $title_suffix = (isset($person['personalTitleSuffix']) && !empty($person['personalTitleSuffix']) ? ' (' . esc_html($person['personalTitleSuffix']) . ')' : '');
                     }
                      // Construct the full name
             $fullName = trim(
@@ -104,18 +70,17 @@
                 ($title_suffix)
             );
                     ?>
-
-                    <!-- We need to add condition for url when we add CPT -->
+                    <?php if (in_array('displayName', $show_fields) && !in_array('displayName', $hide_fields)) : ?>
                     <section class="card-section-title" aria-label="<?php echo esc_html($fullName); ?>">
-                        <?php if (!empty($url)) : ?>
-                            <a href="<?php echo esc_url($url); ?>" itemprop="url">
+                        <?php if (!empty($final_url)) : ?>
+                            <a href="<?php echo esc_url($final_url); ?>" itemprop="url">
                                 <span itemprop="name"><?php echo esc_html($fullName); ?></span>
                             </a>
                         <?php else : ?>
                             <span itemprop="name"><?php echo esc_html($fullName); ?></span>
                         <?php endif; ?>
                     </section>
-
+                    <?php endif; ?>
                     <?php
                     // Initialize output strings for email and phone
                     $email_output = '';
@@ -127,7 +92,7 @@
                             // Get the email from $person array or fallback to custom post type
                             $email = (isset($person['email']) && !empty($person['email'])) 
                                 ? esc_html($person['email']) 
-                                : esc_html($email_output_cpt); // Custom post type email
+                                : ''; // Custom post type email
 
                             // Only display the email if it's not empty
                             if (!empty($email)) {
@@ -139,7 +104,7 @@
                             // Get the email from $person array or fallback to custom post type
                             $phone = (isset($person['telephone']) && !empty($person['telephone']) 
                             ? esc_html($person['telephone']) 
-                            : esc_html($phone_output_cpt));
+                            : '');
                             // Only display the email if it's not empty
                             if (!empty($phone)) {
                                 echo '<p>' . esc_html__('Phone:', 'rrze-faudir') . ' <span itemprop="phone">' . esc_html($phone) . '</span></p>';
@@ -152,46 +117,63 @@
                     $displayedOrganizations = []; // To track displayed organizations
                     ?>
 
-    <?php if (!empty($person['contacts'])) : ?>
-        
-            <?php foreach ($person['contacts'] as $contact) : ?>
-                
-                <?php
-                $organizationName = ''; // Default to an empty string if not found
-                
-                // Check if the organization is allowed to be shown
-                if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) {
-                    $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : $organization_name_cpt;
-                }
+<?php if (!empty($person['contacts'])) : ?>
 
-                // Only display the organization if it is allowed
-                if ($organizationName && !in_array($organizationName, $displayedOrganizations)) :
-                    // Add the organization to the displayed list
-                    $displayedOrganizations[] = $organizationName;
-                ?>
-                <ul>
-                    <li itemprop="affiliation" itemscope itemtype="https://schema.org/Organization">
-                        <strong><?php echo esc_html__('Organization:', 'rrze-faudir'); ?></strong> 
-                        <span itemprop="name"><?php echo esc_html($organizationName); ?></span><br />
-                    </li>
-                    </ul>
-                <?php endif; // End organization check ?>
+<?php
+// Array to track displayed organizations and their associated functions
+$organizationFunctions = [];
 
-                <?php
-                // Check if the function field should be shown, independent of the organization
-                if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) :
-                    $function = isset($contact['functionLabel']['en']) ? $contact['functionLabel']['en'] : $function_label_cpt;
-                ?>
-                <ul>
-                    <li itemprop="jobTitle">
-                        <strong><?php echo esc_html__('Function:', 'rrze-faudir'); ?></strong>
-                        <?php echo esc_html($function); ?>
-                    </li>
-                    </ul>
-                <?php endif; // End function check ?>
-            <?php endforeach; ?>
-        
-    <?php endif; ?>
+foreach ($person['contacts'] as $contact) {
+    $organizationName = '';
+
+    // Check if the organization is allowed to be shown
+        $organizationName = $contact['organization']['name'] ?? '';
+
+    if ($organizationName) {
+        $locale = get_locale();
+        $isGerman = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_DE_formal') !== false;
+
+        // Determine the appropriate function label based on locale
+        $function = '';
+        if (!empty($contact['functionLabel'])) {
+            $function = $isGerman ? 
+                ($contact['functionLabel']['de'] ?? '') : 
+                ($contact['functionLabel']['en'] ?? '');
+        }
+
+        // Group functions by organization
+        if (!empty($function)) {
+            $organizationFunctions[$organizationName][] = $function;
+        }
+    }
+}
+
+// Display each organization and its functions
+foreach ($organizationFunctions as $orgName => $functions) {
+    if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) {
+    ?>
+    <ul>
+        <li itemprop="affiliation" itemscope itemtype="https://schema.org/Organization">
+            <strong><?php echo esc_html__('Organization:', 'rrze-faudir'); ?></strong>
+            <span itemprop="name"><?php echo esc_html($orgName); ?></span><br />
+        </li>
+    </ul>
+        <?php } foreach ($functions as $function) : 
+    if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) {
+        ?>
+            <ul>
+            <li itemprop="jobTitle">
+                <?php echo esc_html($function); ?>
+            </li>
+            </ul>
+        <?php } endforeach; ?>
+    
+    <?php
+}
+?>
+
+<?php endif; ?>
+
 
                 </li>
             <?php else : ?>

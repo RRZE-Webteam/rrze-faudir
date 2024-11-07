@@ -8,15 +8,6 @@
             <?php else: ?>
             <?php if (!empty($person)) : ?>
             <?php
-             $personal_title_cpt = '';
-             $first_name_cpt = '';
-             $nobility_title_cpt = '';
-             $last_name_cpt = '';
-             $title_suffix_cpt = '';
-             $email_output_cpt = '';
-             $phone_output_cpt = '';
-             $function_label_cpt = '';
-             $organization_name_cpt = '';
              $content_en = '';
              $content = '';
              $teaser_lang = '';
@@ -29,7 +20,12 @@
                  'meta_value' => $person['identifier'],
                  'posts_per_page' => 1, // Only fetch one post matching the person ID
              ]);
- 
+              // Get the custom post type URL if available
+              $cpt_url = !empty($contact_posts) ? get_permalink($contact_posts[0]->ID) : '';
+                    
+              // Use custom post type URL if multiple persons or no direct URL
+              $final_url = (count($persons) > 1 || empty($url)) ? $cpt_url : $url;
+
             // If there are contact posts, process them
         if (!empty($contact_posts)) {
                 // Loop through each contact post
@@ -40,15 +36,6 @@
                     // Compare the identifier with the current person's identifier
                     if ($identifier === $person['identifier']) {
                         // Use $post->ID instead of get_the_ID() to get the correct metadata
-                        $personal_title_cpt = get_post_meta($post->ID, 'person_title', true);
-                        $first_name_cpt = get_post_meta($post->ID, 'person_given_name', true);
-                        $nobility_title_cpt = get_post_meta($post->ID, 'person_nobility_name', true);
-                        $last_name_cpt = get_post_meta($post->ID, 'person_family_name', true);
-                        $title_suffix_cpt = get_post_meta($post->ID, 'person_suffix', true);
-                        $email_output_cpt = get_post_meta($post->ID, 'person_email', true);
-                        $phone_output_cpt = get_post_meta($post->ID, 'person_telephone', true);
-                        $function_label_cpt = get_post_meta($post->ID, 'person_function', true);
-                        $organization_name_cpt = get_post_meta($post->ID, 'person_organization', true);
                         $content_en = get_post_meta($post->ID, '_content_en', true);
                         $content = apply_filters('the_content', $post->post_content);
                         $featured_image_url = get_the_post_thumbnail_url($post->ID, 'full');
@@ -111,7 +98,7 @@
                             $last_name = (isset($person['familyName']) && !empty($person['familyName']) ? esc_html($person['familyName']) : '');
                         }
                         if (in_array('personalTitleSuffix', $show_fields) && !in_array('personalTitleSuffix', $hide_fields)) {
-                            $title_suffix = (isset($person['personalTitleSuffix']) && !empty($person['personalTitleSuffix']) ? esc_html($person['personalTitleSuffix']) : '');
+                            $title_suffix = (isset($person['personalTitleSuffix']) && !empty($person['personalTitleSuffix']) ? ' (' . esc_html($person['personalTitleSuffix']) . ')' : '');
                         }
                         
                          // Construct the full name
@@ -123,16 +110,17 @@
                             ($title_suffix)
                         );
                         ?>
-                        
+                         <?php if (in_array('displayName', $show_fields) && !in_array('displayName', $hide_fields)) : ?>
                         <section class="card-section-title" aria-label="<?php echo esc_html($fullName); ?>">
-                        <?php if (!empty($url)) : ?>
-                            <a href="<?php echo esc_url($url); ?>" itemprop="url">
+                        <?php if (!empty($final_url )) : ?>
+                            <a href="<?php echo esc_url($final_url ); ?>" itemprop="url">
                                 <span itemprop="name"><?php echo esc_html($fullName); ?></span>
                             </a>
                         <?php else : ?>
                         <span itemprop="name"><?php echo esc_html($fullName); ?></span>
                         <?php endif; ?>
                         </section>
+                        <?php endif; ?>
                         <?php
                         // Initialize output strings for email and phone
                         $email_output = '';
@@ -141,9 +129,9 @@
                        // Check if email should be shown and output only if an email is available
                         if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) {
                             // Get the email from $person array or fallback to custom post type
-                            $email = (isset($person['email']) && !empty($person['email'])) 
+                            $email = (isset($person['email']) && !empty($person['email']) 
                                 ? esc_html($person['email']) 
-                                : esc_html($email_output_cpt); // Custom post type email
+                                : ''); // Custom post type email
 
                             // Only display the email if it's not empty
                             if (!empty($email)) {
@@ -155,7 +143,7 @@
                             // Get the email from $person array or fallback to custom post type
                             $phone = (isset($person['telephone']) && !empty($person['telephone']) 
                             ? esc_html($person['telephone']) 
-                            : esc_html($phone_output_cpt));
+                            : '');
                             // Only display the email if it's not empty
                             if (!empty($phone)) {
                                 echo '<p>' . esc_html__('Phone:', 'rrze-faudir') . ' <span itemprop="phone">' . esc_html($phone) . '</span></p>';
@@ -240,7 +228,7 @@
                 7 => 'Sunday',
             ]; 
             foreach ($person['contacts'] as $contact) {
-                $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : $organization_name_cpt;
+                $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : '';
                 $locale = get_locale();
                 $isGerman = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_DE_formal') !== false;
                 
@@ -250,8 +238,6 @@
                     $functionLabel = $isGerman ? 
                         (isset($contact['functionLabel']['de']) ? $contact['functionLabel']['de'] : '') : 
                         (isset($contact['functionLabel']['en']) ? $contact['functionLabel']['en'] : '');
-                } elseif (!empty($function_label_cpt)) {
-                    $functionLabel = $function_label_cpt;
                 }
                 
                 // Display each organization and associated details

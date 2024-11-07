@@ -37,6 +37,7 @@ class FaudirUtils
         $default_output_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : [];
     
         $field_mapping = [
+            'display_name' => 'displayName',
             'academic_title' => 'personalTitle',
             'first_name' => 'givenName',
             'last_name' => 'familyName',

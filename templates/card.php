@@ -8,14 +8,6 @@
             <?php else: ?>
             <?php if (!empty($person)) : ?>
             <?php
-             $personal_title_cpt = '';
-             $first_name_cpt = '';
-             $nobility_title_cpt = '';
-             $last_name_cpt = '';
-             $title_suffix_cpt = '';
-             $email_output_cpt = '';
-             $phone_output_cpt = '';
-             $organization_name_cpt = '';
              $featured_image_url = '';
              
              // Check if a CPT with the same ID exists
@@ -25,31 +17,26 @@
                  'meta_value' => $person['identifier'],
                  'posts_per_page' => 1, // Only fetch one post matching the person ID
              ]);
- 
+             $cpt_url = !empty($contact_posts) ? get_permalink($contact_posts[0]->ID) : '';
+                    
+             // Use custom post type URL if multiple persons or no direct URL
+             $final_url = (count($persons) > 1 || empty($url)) ? $cpt_url : $url;
+
             // If there are contact posts, process them
-        if (!empty($contact_posts)) {
-                // Loop through each contact post
+            if (!empty($contact_posts)) {
+                    // Loop through each contact post
                 foreach ($contact_posts as $post) : {
                     // Check if the post has a UnivIS ID (person_id)
                     $identifier = get_post_meta($post->ID, 'person_id', true);
                     
                     // Compare the identifier with the current person's identifier
                     if ($identifier === $person['identifier']) {
-                        // Use $post->ID instead of get_the_ID() to get the correct metadata
-                        $personal_title_cpt = get_post_meta($post->ID, 'person_title', true);
-                        $first_name_cpt = get_post_meta($post->ID, 'person_given_name', true);
-                        $nobility_title_cpt = get_post_meta($post->ID, 'person_nobility_name', true);
-                        $last_name_cpt = get_post_meta($post->ID, 'person_family_name', true);
-                        $title_suffix_cpt = get_post_meta($post->ID, 'person_suffix', true);
-                        $email_output_cpt = get_post_meta($post->ID, 'person_email', true);
-                        $phone_output_cpt = get_post_meta($post->ID, 'person_telephone', true);
-                        $organization_name_cpt = get_post_meta($post->ID, 'person_organization', true);
                         $featured_image_url = get_the_post_thumbnail_url($post->ID, 'full');
-        
+    
                        }
                 }
-            endforeach;
-        }?>
+                endforeach;
+            }?>
             <article class="shortcode-contact-card" itemscope itemtype="https://schema.org/Person" role="listitem">
            <!-- Get Full name with title -->
            <?php
@@ -90,7 +77,7 @@
                     $last_name = (isset($person['familyName']) && !empty($person['familyName']) ? esc_html($person['familyName']) : '');
                 }
                 if (in_array('personalTitleSuffix', $show_fields) && !in_array('personalTitleSuffix', $hide_fields)) {
-                    $title_suffix = (isset($person['personalTitleSuffix']) && !empty($person['personalTitleSuffix']) ? esc_html($person['personalTitleSuffix']) : '');
+                    $title_suffix = (isset($person['personalTitleSuffix']) && !empty($person['personalTitleSuffix']) ? ' (' . esc_html($person['personalTitleSuffix']) . ')' : '');
                 }
                  
                 // Construct the full name
@@ -112,16 +99,17 @@
                     <?php endif; ?>
                 
                 
-                
+                <?php if (in_array('displayName', $show_fields) && !in_array('displayName', $hide_fields)) : ?>
                 <section class="card-section-title" aria-label="<?php echo esc_attr($fullName); ?>">
-                    <?php if (!empty($url)) : ?>
-                        <a href="<?php echo esc_url($url); ?>" itemprop="url" aria-labelledby="name-<?php echo esc_attr($person['identifier']); ?>">
+                    <?php if (!empty($final_url)) : ?>
+                        <a href="<?php echo esc_url($final_url); ?>" itemprop="url" aria-labelledby="name-<?php echo esc_attr($person['identifier']); ?>">
                             <span id="name-<?php echo esc_attr($person['identifier']); ?>" itemprop="name"><?php echo esc_html($fullName); ?></span>
                         </a>
                     <?php else : ?>
                         <span id="name-<?php echo esc_attr($person['identifier']); ?>" itemprop="name"><?php echo esc_html($fullName); ?></span>
                     <?php endif; ?>
                 </section>
+                <?php endif; ?>
                 <?php if (!empty($person['contacts'][0]['socials'])) : ?>
                             <div>
                                 <h3><?php echo esc_html__('Social Profiles:', 'rrze-faudir'); ?></h3>
@@ -187,9 +175,9 @@
                 // Check if email should be shown and output only if an email is available
                 if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) {
                     // Get the email from $person array or fallback to custom post type
-                    $email = (isset($person['email']) && !empty($person['email'])) 
+                    $email = (isset($person['email']) && !empty($person['email'])
                         ? esc_html($person['email']) 
-                        : esc_html($email_output_cpt); // Custom post type email
+                        : ''); // Custom post type email
 
                     // Only display the email if it's not empty
                     if (!empty($email)) {
@@ -203,7 +191,7 @@
                     // Get the phone from $person array or fallback to custom post type
                     $phone = (isset($person['telephone']) && !empty($person['telephone']) 
                     ? esc_html($person['telephone']) 
-                    : esc_html($phone_output_cpt));
+                    : '');
                     // Only display the phone if it's not empty
                     if (!empty($phone)) {
                         echo '<p>' . esc_html__('Phone:', 'rrze-faudir') . ' <a href="tel:' . esc_html($phone) . '" itemprop="telephone">' . esc_html($phone) . '</a></p>';
@@ -211,26 +199,38 @@
                 }
                 ?>
 
-                <!-- Organizations and functions -->
+                <!-- Unique functions -->
                 <?php if (!empty($person['contacts'])) : ?>
                     <?php
-                    $displayedOrganizations = [];
-                    $organizationName = '';
+                    $displayedFunctions = []; // Track displayed functions to avoid duplicates
                     ?>
                     <?php foreach ($person['contacts'] as $contact) : ?>
                         <?php
-                        if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) {
-                            $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : $organization_name_cpt;
+                        if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) {
+                            $locale = get_locale();
+                            $isGerman = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_DE_formal') !== false;
+                        
+                            // Determine the appropriate function label based on locale
+                            $function = '';
+                            if (!empty($contact['functionLabel'])) {
+                                $function = $isGerman ? 
+                                    ($contact['functionLabel']['de'] ?? '') : 
+                                    ($contact['functionLabel']['en'] ?? '');
+                            }
+                        
+                            // Check if the function has already been displayed
+                            if (!empty($function) && !in_array($function, $displayedFunctions)) {
+                                // Add the function to the displayed list to prevent duplicates
+                                $displayedFunctions[] = $function;
+                                ?>
+                                <p><?php echo esc_html($function); ?></p>
+                                <?php
+                            }
                         }
-                        // Check if the organization has already been displayed
-                        if ($organizationName && !in_array($organizationName, $displayedOrganizations)) :
-                            // Add the organization to the displayed list to prevent duplicates
-                            $displayedOrganizations[] = $organizationName;
                         ?>
-                            <p><strong><?php echo esc_html__('Organization:', 'rrze-faudir');?></strong> <?php echo esc_html($organizationName); ?></p>
-                        <?php endif; ?>
                     <?php endforeach; ?>
                 <?php endif; ?>
+
 
             </article> <!-- End of shortcode-contact-card -->
             <?php else : ?>
