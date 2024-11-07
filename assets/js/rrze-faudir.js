@@ -164,7 +164,6 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
         lock: false,
     },
     attributes: {
-
         identifier: { 
             type: 'array',
             default: []
@@ -172,7 +171,6 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
         format: { type: 'string', default: 'kompakt' },
         url: { type: 'string', default: '' },
         show: { type: 'string', default: '' },
-        hide: { type: 'string', default: '' },
         image: { type: 'number', default: 0 },
         groupid: { type: 'string', default: '' },
         orgnr: { type: 'string', default: '' }
@@ -227,22 +225,20 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
 
         // Filter and select persons when category changes
         const handleCategoryChange = (categoryId) => {
-    
-                // If no category selected, clear all selections
-                props.setAttributes({ identifier: [] });
-        
-                // Find all persons in this category and add them to selections
-                const personsInCategory = persons.filter(person => 
-                    person.categories.includes(parseInt(categoryId))
-                );
-                const personIds = personsInCategory.map(person => person.value);
-                
-                // Keep existing selections that aren't in the category
-                const existingSelections = props.attributes.identifier || [];
-                const uniqueSelections = [...new Set([...existingSelections, ...personIds])];
-                
-                props.setAttributes({ identifier: uniqueSelections });
+            // If no category selected, clear all selections
+            props.setAttributes({ identifier: [] });
+
+            // Find all persons in this category and add them to selections
+            const personsInCategory = persons.filter(person => 
+                person.categories.includes(parseInt(categoryId))
+            );
+            const personIds = personsInCategory.map(person => person.value);
             
+            // Keep existing selections that aren't in the category
+            const existingSelections = props.attributes.identifier || [];
+            const uniqueSelections = [...new Set([...existingSelections, ...personIds])];
+            
+            props.setAttributes({ identifier: uniqueSelections });
         };
 
         // Handle individual person selection
@@ -270,6 +266,7 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
         const options = [
             { value: 'personalTitle', label: 'Personal Title' },
             { value: 'givenName', label: 'First Name' },
+            { value: 'displayName', label: 'displayName Name' },
             { value: 'familyName', label: 'Family Name' },
             { value: 'name', label: 'Name' },
             { value: 'email', label: 'Email' },
@@ -280,11 +277,11 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
         ];
 
         // Convert the comma-separated string into an array of selected values
-        const selectedValues = show.split(', ').filter(Boolean);
+        const selectedShowValues = props.attributes.show.split(', ').filter(Boolean);
 
-        // Handle checkbox change
-        const handleCheckboxChange = (optionValue) => {
-            let updatedValues = [...selectedValues];
+        // Handle checkbox change for show fields
+        const handleShowCheckboxChange = (optionValue) => {
+            let updatedValues = [...selectedShowValues];
             if (updatedValues.includes(optionValue)) {
                 // Remove the option if it's already selected
                 updatedValues = updatedValues.filter((item) => item !== optionValue);
@@ -293,7 +290,7 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
                 updatedValues.push(optionValue);
             }
             // Update the show attribute with the new values as a string
-            setAttributes({ show: updatedValues.join(', ') });
+            props.setAttributes({ show: updatedValues.join(', ') });
         };
 
         // Handle manual identifier input
@@ -516,15 +513,15 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
                                 wp.element.createElement('input', {
                                     type: 'checkbox',
                                     className: 'checkbox-input',
-                                    checked: selectedValues.includes(option.value),
-                                    onChange: () => handleCheckboxChange(option.value),
+                                    checked: selectedShowValues.includes(option.value),
+                                    onChange: () => handleShowCheckboxChange(option.value),
                                 }),
                                 wp.element.createElement('span', null, option.label) // Display the label text
                             )
                         )
                     ),
-                     // GroupId field input
-                     wp.element.createElement(
+                    // GroupId field input
+                    wp.element.createElement(
                         'label',
                         { className: 'block-label' },
                         null,

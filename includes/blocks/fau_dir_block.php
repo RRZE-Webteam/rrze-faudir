@@ -27,6 +27,10 @@ class FaudirBlock {
             return '<div class="wp-block-rrze-faudir-block">Please select at least one person.</div>';
         }
 
+        // Use the 'show' and 'hide' attributes directly from the block
+        $show_fields = array_filter(array_map('trim', explode(',', $attributes['show'])));
+        $hide_fields = array_filter(array_map('trim', explode(',', $attributes['hide'])));
+
         // Generate cache key for all persons
         $cache_key = 'faudir_block_' . md5(implode(',', $identifiers) . serialize($attributes));
         
