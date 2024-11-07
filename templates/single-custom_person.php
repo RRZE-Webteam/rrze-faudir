@@ -261,7 +261,9 @@ get_header();
                          ?>
                     <?php if (!empty($image_url)) : ?>
                         <img src="<?php echo esc_url($image_url); ?>" alt="Person Image" />
-                    <?php endif; ?>
+                    <?php else : ?>
+                        <img src="<?php echo esc_url(plugins_url('rrze-faudir/assets/images/platzhalter-unisex.png', dirname(__FILE__, 2))); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
+                    <?php endif; ?>  
                     </div>
                     <?php
                     $allowed_tags = array_merge(
