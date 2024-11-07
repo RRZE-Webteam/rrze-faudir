@@ -204,11 +204,11 @@ function process_persons_by_identifiers($identifiers) {
     foreach ($identifiers as $identifier) {
         $identifier = trim($identifier);
         if (!empty($identifier)) {
-            $personData = fetch_fau_persons_atributes(0, 0, ['identifier' => $identifier]);
-            if (!empty($personData['data'])) {
-                $persons[] = enrich_person_with_contacts($personData['data'][0]);
+            $personData = fetch_fau_person_by_id($identifier);
+            if (!empty($personData)) {
+                $persons[] = enrich_person_with_contacts($personData);
             } else {
-                // Create a "person" entry that's actually an error message
+                // Create a "person" entry that's a ctually an error message
                 $persons[] = [
                     'error' => true,
                     'message' => sprintf(__('Person with ID %s does not exist', 'rrze-faudir'), $identifier)

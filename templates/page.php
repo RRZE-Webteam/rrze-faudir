@@ -203,6 +203,7 @@
                                 </ul>
                             </div>
                         <?php endif; ?>
+                        <?php  if (in_array('teasertext', $show_fields) && !in_array('teasertext', $hide_fields)) { ?> 
                         <?php
                         if (!empty($teaser_lang)) :
                             ?>
@@ -212,6 +213,7 @@
                             <?php
                             endif;
                             ?>
+                            <?php }?>
                              <!-- Array to track displayed organizations -->
                 <?php
                 $displayedOrganizations = []; // To track displayed organizations
@@ -375,7 +377,7 @@
                 </div>
                
 
-                      
+                     <?php  if (in_array('content', $show_fields) && !in_array('content', $hide_fields)) { ?> 
                 <?php if ($locale === 'de_DE' || $locale === 'de_DE_formal' && !empty($content_de)): ?>
                     <section class="card-section-title"><?php esc_html__('Content', 'rrze-faudir'); ?></section>
                     <div class="content-second-language">
@@ -387,6 +389,7 @@
                         <?php echo wp_kses_post($content_en); ?>
                     </div>
                 <?php endif; ?>
+                <?php } ?>
 
             </div> <!-- End of shortcode-contact-card -->
             <?php else : ?>

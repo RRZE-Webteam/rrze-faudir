@@ -316,6 +316,9 @@ function rrze_faudir_default_output_fields_render() {
         'organization' => __('Organization', 'rrze-faudir'),
         'function' => __('Function', 'rrze-faudir'),
         'url' => __('Url', 'rrze-faudir'),
+        'kompaktButton' => __('Kompakt Button', 'rrze-faudir'),
+        'content' => __('Content', 'rrze-faudir'),
+        'teasertext' => __('Teasertext', 'rrze-faudir'),
     );
 
     echo '<fieldset>';
