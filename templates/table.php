@@ -110,11 +110,14 @@
                             if (in_array('personalTitleSuffix', $show_fields) && !in_array('personalTitleSuffix', $hide_fields)) {
                                 $title_suffix = (isset($person['personalTitleSuffix']) && !empty($person['personalTitleSuffix']) ? esc_html($person['personalTitleSuffix']) : '');
                             }
-                            $fullName = trim(($longVersion ? $longVersion : ($personal_title ? $personal_title : $personal_title_cpt)) . ' ' 
-                            . ($first_name ? $first_name : $first_name_cpt) . ' ' 
-                            .($nobility_title ? $nobility_title : $nobility_title_cpt)  . ' ' 
-                            . ($last_name ? $last_name : $last_name_cpt) . ' ' 
-                            . ($title_suffix ? $title_suffix : $title_suffix_cpt));
+                             // Construct the full name
+                            $fullName = trim(
+                                ($longVersion ? $longVersion : $personal_title) . ' ' .
+                                ($first_name) . ' ' .
+                                ($nobility_title) . ' ' .
+                                ($last_name) . ' ' .
+                                ($title_suffix)
+                            );
                             ?>
                             
                         <!-- We need to add condition for url when we add CPT -->
