@@ -34,11 +34,14 @@ function fetch_fau_data_for_block($attributes) {
     $identifiers = empty($attributes['identifier']) ? [] : (is_array($attributes['identifier']) ? $attributes['identifier'] : explode(',', $attributes['identifier']));
     $persons = []; // This will hold the fetched data
 
-    // Fetch persons based on identifiers
-    if (!empty($identifiers)) {
-        $persons = process_persons_by_identifiers($identifiers);
-    } else {
-        $persons = fetch_and_process_persons();
+    // Skip fetching data if it's a REST, AJAX request, or if the block is being edited
+    if (!(defined('REST_REQUEST') && REST_REQUEST) && !wp_doing_ajax() && !is_admin()) {
+        // Fetch persons based on identifiers
+        if (!empty($identifiers)) {
+            $persons = process_persons_by_identifiers($identifiers);
+        } else {
+            $persons = fetch_and_process_persons();
+        }
     }
 
     // Load the template and pass the sorted data
