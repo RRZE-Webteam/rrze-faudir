@@ -1,3 +1,5 @@
+const { __ } = wp.i18n;
+
 function fetchPersons() {
     return wp.apiFetch({
         path: '/wp/v2/custom_person?per_page=100&_fields=id,title,meta.person_id'
@@ -155,7 +157,7 @@ const FormatPreview = ({ format, attributes, persons }) => {
 
 wp.blocks.registerBlockType('rrze/faudir-block', {
     apiVersion: 2,
-    title: 'FAUDIR Block',
+    title: __('FAUDIR Block', 'rrze-faudir'),
     icon: 'admin-users',
     category: 'rrze-blocks',
     supports: {
@@ -399,10 +401,10 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
                         wp.element.createElement(
                             wp.components.SelectControl,
                             {
-                                label: 'Category',
+                                label: __('Category', 'rrze-faudir'),
                                 value: props.attributes.category,
                                 options: [
-                                    { label: 'Select a category...', value: '' },
+                                    { label: __('Select a category...', 'rrze-faudir'), value: '' },
                                     ...categories
                                 ],
                                 onChange: handleCategoryChange
@@ -416,10 +418,10 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
                         wp.element.createElement(
                             wp.components.SelectControl,
                             {
-                                label: 'Add Person',
+                                label: __('Add Person', 'rrze-faudir'),
                                 value: '',
                                 options: [
-                                    { label: 'Select a person...', value: '' },
+                                    { label: __('Select a person...', 'rrze-faudir'), value: '' },
                                     ...persons
                                 ],
                                 onChange: handlePersonSelection
@@ -430,7 +432,7 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
                     wp.element.createElement(
                         'div',
                         { className: 'selected-persons' },
-                        wp.element.createElement('h4', null, 'Selected Persons:'),
+                        wp.element.createElement('h4', null, __('Selected Persons:', 'rrze-faudir')),
                         props.attributes.identifier.length > 0 
                             ? props.attributes.identifier.map(id => {
                                 const person = persons.find(p => p.value === id);
@@ -458,14 +460,14 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
                                     )
                                 );
                             })
-                            : wp.element.createElement('p', null, 'No persons selected')
+                            : wp.element.createElement('p', null, __('No persons selected', 'rrze-faudir'))
                     ),
                     // Format selection dropdown
                     wp.element.createElement(
                         'label',
                         { className: 'block-label' },
                         null,
-                        'Format',
+                        __('Format', 'rrze-faudir'),
                         wp.element.createElement('label', {
                             className: 'block-label',
                             type: 'text',

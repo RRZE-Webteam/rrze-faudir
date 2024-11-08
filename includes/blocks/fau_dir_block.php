@@ -81,8 +81,21 @@ function register_faudir_block_assets() {
     wp_register_script(
         'rrze-faudir-block',
         plugins_url('js/fau_dir_block.js', dirname(__FILE__)),
-        array('wp-blocks', 'wp-element', 'wp-components', 'wp-editor', 'wp-api-fetch') // Added wp-api-fetch
+        array('wp-blocks', 'wp-element', 'wp-components', 'wp-editor', 'wp-api-fetch', 'wp-i18n') // Added wp-i18n
     );
+
+    // Load the translations for JavaScript
+    if (function_exists('wp_set_script_translations')) {
+        wp_set_script_translations(
+            'rrze-faudir-block',
+            'rrze-faudir',
+            plugin_dir_path(dirname(__FILE__)) . 'languages'
+        );
+    } else {
+        // Fallback for older versions of WordPress
+        error_log('[RRZE-FAUDIR] wp_set_script_translations not found, loading textdomain manually');
+        // load_plugin_textdomain('rrze-faudir', false, plugin_dir_path(dirname(__FILE__)) . 'languages');
+    }
 
     // Register block style
     wp_register_style(
