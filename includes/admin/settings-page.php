@@ -319,6 +319,7 @@ function rrze_faudir_default_output_fields_render() {
         'kompaktButton' => __('Kompakt Button', 'rrze-faudir'),
         'content' => __('Content', 'rrze-faudir'),
         'teasertext' => __('Teasertext', 'rrze-faudir'),
+        'socialmedia' => __('Social Media', 'rrze-faudir'),
     );
 
     echo '<fieldset>';

@@ -277,6 +277,7 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
             { value: 'kompaktButton', label: 'Kompakt Button' },
             { value: 'content', label: 'Content' },
             { value: 'teasertext', label: 'Teasertext' },
+            { value: 'socialmedia', label: 'Social Media' },
         ];
 
         // Convert the comma-separated string into an array of selected values
