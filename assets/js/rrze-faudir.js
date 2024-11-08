@@ -268,7 +268,7 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
             { value: 'personalTitle', label: 'Personal Title' },
             { value: 'givenName', label: 'First Name' },
             { value: 'familyName', label: 'Family Name' },
-            { value: 'name', label: 'Name' },
+            { value: 'personalTitleSuffix', label: 'Academic Suffix' },
             { value: 'email', label: 'Email' },
             { value: 'phone', label: 'Phone' },
             { value: 'organization', label: 'Organization' },
