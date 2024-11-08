@@ -39,6 +39,7 @@ function fetch_fau_data($atts) {
             'groupid' => '',
             'orgnr' => '',
             'sort' => 'last_name',
+            'button-text' => '',
         ),
         $atts
     );
@@ -185,12 +186,17 @@ function fetch_and_render_fau_data($atts) {
     if ($atts['format'] === '') {
         $atts['format'] = 'kompakt';  // Use single = for assignment
     }
+
+    // Check if button text is set and not empty before passing it to the template
+    $button_text = isset($atts['button-text']) && $atts['button-text'] !== '' ? $atts['button-text'] : '';
+
     return $template->render($atts['format'], [
         'show_fields' => $show_fields,
         'hide_fields' => $hide_fields,
         'persons' => $persons,
         'image_url' => $image_url,
         'url' => $url,
+        'button_text' => $button_text,
     ]);
 }
 
