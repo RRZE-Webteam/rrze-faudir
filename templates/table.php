@@ -1,24 +1,4 @@
 <table class="fau-contacts-table-custom">
-    <thead>
-        <tr>
-            <?php if (in_array('displayName', $show_fields) && !in_array('displayName', $hide_fields)) : ?>
-                <th><?php  echo esc_html__('Name', 'rrze-faudir') ?></th>
-            <?php endif; ?>
-            <?php if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) : ?>
-                <th><?php  echo esc_html__('Email', 'rrze-faudir') ?></th>
-            <?php endif; ?>
-            <?php if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)) : ?>
-                <th><?php  echo esc_html__('Phone', 'rrze-faudir') ?></th>
-            <?php endif; ?>
-            <?php if ((in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) || 
-                          (in_array('function', $show_fields) && !in_array('function', $hide_fields))) : ?>
-                    <th><?php echo esc_html__('Organization / Function', 'rrze-faudir') ?></th>
-            <?php endif; ?>
-            <?php if (in_array('url', $show_fields) && !in_array('url', $hide_fields)): ?>
-                    <th><?php  echo esc_html__('Url', 'rrze-faudir') ?></th>
-            <?php endif; ?>
-        </tr>
-    </thead>
     <tbody>
     <?php foreach ($persons as $person) : ?>
         <?php if (isset($person['error'])): ?>
@@ -113,10 +93,10 @@
 
                                 // Only display the email if it's not empty
                                 if (!empty($email)) {
-                                    echo '<td> <span itemprop="email">' . esc_html($email) . '</span></td>';
+                                    echo '<td> <span itemprop="email"><i class="fa-regular fa-envelope"></i> ' . esc_html($email) . '</span></td>';
                                 }
                                 else{
-                                    echo '<td> N/A </td>';
+                                    echo '<td> <i class="fa-regular fa-envelope"></i> N/A </td>';
                                 }
                             }
 
@@ -128,65 +108,13 @@
                                 : '');
                                 // Only display the email if it's not empty
                                 if (!empty($phone)) {
-                                    echo '<td><span itemprop="phone">' . esc_html($phone) . '</span></td>';
+                                    echo '<td><span itemprop="phone"><i class="fa-solid fa-phone"></i>' . esc_html($phone) . '</span></td>';
                                 }
                                 else{
-                                    echo '<td> N/A </td>';
+                                    echo '<td><i class="fa-solid fa-phone"></i> N/A </td>';
                                 }
                             }?>
 
-                <!-- Organization / Function (Grouped and Displayed) -->
-                <?php if ((in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) || 
-                        (in_array('function', $show_fields) && !in_array('function', $hide_fields))) : ?>
-                    <td>
-                        <?php
-                        // Group functions by organization
-                        $organizationFunctions = [];
-
-                        // Group functions by organization name
-                        foreach ($person['contacts'] as $contact) {
-                            $organizationName = $contact['organization']['name'] ?? null;
-                            if ($organizationName) {
-                                $locale = get_locale();
-                                $isGerman = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_DE_formal') !== false;
-                            
-                                // Determine function label
-                                $functionLabel = '';
-                                if (!empty($contact['functionLabel'])) {
-                                    $functionLabel = $isGerman ? 
-                                        ($contact['functionLabel']['de'] ?? '') : 
-                                        ($contact['functionLabel']['en'] ?? '');
-                                }
-                            
-                                // Add function label to the organization group
-                                if (!empty($functionLabel)) {
-                                    $organizationFunctions[$organizationName][] = $functionLabel;
-                                }
-                            }
-                        }
-                    
-                        // Display each organization and its functions if found
-                        if (!empty($organizationFunctions)) {
-                            foreach ($organizationFunctions as $orgName => $functions) {
-                            if(in_array('organization', $show_fields) && !in_array('organization', $hide_fields)){?>
-                                <div itemprop="affiliation" itemscope itemtype="https://schema.org/Organization">
-                                    <strong itemprop="name"><?php echo esc_html($orgName); ?></strong>
-                                </div>
-                                <?php } 
-                            if(in_array('function', $show_fields) && !in_array('function', $hide_fields)){ ?>
-                                <ul>
-                                    <?php foreach ($functions as $function) : ?>
-                                        <li itemprop="jobTitle"><?php echo esc_html($function); ?></li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            <?php } ?>
-
-                                <?php
-                            }
-                        }
-                        ?>
-                    </td>
-                <?php endif; ?>
             <?php if (in_array('url', $show_fields) && !in_array('url', $hide_fields)): ?>
                 <td>
                     
@@ -194,11 +122,11 @@
                 foreach ($contact['workplaces'] as $workplace) : ?>
                         <p>
                             <?php if (!empty($workplace['url'])) : ?>
-                                <strong><?php echo esc_html__('Street:', 'rrze-faudir'); ?></strong>
+                                <i class="fa-solid fa-globe"></i>
                                 <?php echo esc_html($workplace['url']); ?><br>
                                 <?php else: 
                                 
-                                    echo ' N/A'; ?>
+                                    echo '<td><i class="fa-solid fa-globe"></i> N/A</td>'; ?>
                                 
                             <?php endif; ?>
                             
