@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rrze-faudir\n"
 "Report-Msgid-Bugs-To: https://your-plugin-url.com/support\n"
-"POT-Creation-Date: 2024-11-06 13:20+0100\n"
-"PO-Revision-Date: 2024-11-06 13:23+0100\n"
+"POT-Creation-Date: 2024-11-08 11:15+0100\n"
+"PO-Revision-Date: 2024-11-08 11:16+0100\n"
 "Last-Translator: \n"
 "Language-Team: English (United States)\n"
 "Language: en_US\n"
@@ -31,7 +31,7 @@ msgstr "RRZE-FAUdir Settings"
 msgid "RRZE-FAUdir"
 msgstr "RRZE-FAUdir"
 
-#: includes/admin/settings-page.php:43 includes/admin/settings-page.php:343
+#: includes/admin/settings-page.php:43 includes/admin/settings-page.php:349
 msgid "API Settings"
 msgstr "API Settings"
 
@@ -39,7 +39,7 @@ msgstr "API Settings"
 msgid "API Key"
 msgstr "API Key"
 
-#: includes/admin/settings-page.php:59 includes/admin/settings-page.php:346
+#: includes/admin/settings-page.php:59 includes/admin/settings-page.php:352
 msgid "Cache Settings"
 msgstr "Cache Settings"
 
@@ -59,7 +59,7 @@ msgstr "Transient Time for Organization ID (in days)"
 msgid "Clear All Cache"
 msgstr "Clear All Cache"
 
-#: includes/admin/settings-page.php:102 includes/admin/settings-page.php:349
+#: includes/admin/settings-page.php:102 includes/admin/settings-page.php:355
 msgid "Error Handling"
 msgstr "Error Handling"
 
@@ -85,11 +85,11 @@ msgstr "Hard Sanitize"
 msgid "Person Slug"
 msgstr "Person"
 
-#: includes/admin/settings-page.php:148 includes/admin/settings-page.php:412
+#: includes/admin/settings-page.php:148 includes/admin/settings-page.php:418
 msgid "Search Contacts by Identifier"
 msgstr "Search Contacts by Identifier"
 
-#: includes/admin/settings-page.php:156 includes/admin/settings-page.php:358
+#: includes/admin/settings-page.php:156 includes/admin/settings-page.php:364
 msgid "Shortcode Settings"
 msgstr "Shortcode Settings"
 
@@ -162,6 +162,7 @@ msgid "Show error messages for incorrect contact entries."
 msgstr "Show error messages for incorrect contact entries."
 
 #: includes/admin/settings-page.php:262 includes/config/config.php:14
+#: templates/kompakt.php:357
 msgid "Call up business card"
 msgstr "Call up business card"
 
@@ -178,169 +179,204 @@ msgid "Enter the slug for the person post type."
 msgstr "Enter the slug for the person post type."
 
 #: includes/admin/settings-page.php:309
+#, fuzzy
+#| msgid "Family Name"
+msgid "Display Name"
+msgstr "Family Name"
+
+#: includes/admin/settings-page.php:310
 msgid "Academic Title"
 msgstr "Academic Title"
 
-#: includes/admin/settings-page.php:310
+#: includes/admin/settings-page.php:311
 msgid "First Name"
 msgstr "First Name"
 
-#: includes/admin/settings-page.php:311
+#: includes/admin/settings-page.php:312
 msgid "Last Name"
 msgstr "Last Name"
 
-#: includes/admin/settings-page.php:312
+#: includes/admin/settings-page.php:313
 msgid "Academic Suffix"
 msgstr "Academic Suffix"
 
-#: includes/admin/settings-page.php:313
-#: includes/custom-post-type/custom-post-type.php:127
-#: templates/single-custom_person.php:24 templates/table.php:8
+#: includes/admin/settings-page.php:314
+#: includes/custom-post-type/custom-post-type.php:129
+#: templates/single-custom_person.php:24
 msgid "Email"
 msgstr "Email"
 
-#: includes/admin/settings-page.php:314 templates/table.php:11
+#: includes/admin/settings-page.php:315
 msgid "Phone"
 msgstr "Phone"
 
-#: includes/admin/settings-page.php:315
-#: includes/custom-post-type/custom-post-type.php:164
+#: includes/admin/settings-page.php:316
+#: includes/custom-post-type/custom-post-type.php:166
 #: templates/single-custom_person.php:31
 msgid "Organization"
 msgstr "Organization"
 
-#: includes/admin/settings-page.php:316 templates/single-custom_person.php:32
+#: includes/admin/settings-page.php:317 templates/single-custom_person.php:32
 #: templates/single-custom_person.php:228
 #: templates/single-custom_person.php:233
 msgid "Function"
 msgstr "Function"
 
-#: includes/admin/settings-page.php:327
+#: includes/admin/settings-page.php:318
+#, fuzzy
+#| msgid "Url:"
+msgid "Url"
+msgstr "Url:"
+
+#: includes/admin/settings-page.php:319
+#, fuzzy
+#| msgid "Kompakt Card Button"
+msgid "Kompakt Button"
+msgstr "Kompakt Card Button"
+
+#: includes/admin/settings-page.php:320 templates/page.php:382
+#: templates/page.php:387 templates/single-custom_person.php:283
+#: templates/single-custom_person.php:288
+msgid "Content"
+msgstr "Biography"
+
+#: includes/admin/settings-page.php:321
+#, fuzzy
+#| msgid "Teaser Text"
+msgid "Teasertext"
+msgstr "Teaser Text"
+
+#: includes/admin/settings-page.php:322
+#, fuzzy
+#| msgid "Social Media:"
+msgid "Social Media"
+msgstr "Social Media:"
+
+#: includes/admin/settings-page.php:333
 msgid "Select the fields to display by default in shortcodes and blocks."
 msgstr "Select the fields to display by default in shortcodes and blocks."
 
-#: includes/admin/settings-page.php:337
+#: includes/admin/settings-page.php:343
 msgid "FAU Directory Settings"
 msgstr "FAU Directory Settings"
 
-#: includes/admin/settings-page.php:352
+#: includes/admin/settings-page.php:358
 msgid "Kompakt Card Button"
 msgstr "Kompakt Card Button"
 
-#: includes/admin/settings-page.php:355
+#: includes/admin/settings-page.php:361
 msgid "Search Contacts"
 msgstr "Search Contacts"
 
-#: includes/admin/settings-page.php:361
+#: includes/admin/settings-page.php:367
 msgid "Reset Settings"
 msgstr "Reset Settings"
 
-#: includes/admin/settings-page.php:401
+#: includes/admin/settings-page.php:407
 msgid "Reset to Default Settings"
 msgstr "Reset to Default Settings"
 
-#: includes/admin/settings-page.php:402
+#: includes/admin/settings-page.php:408
 msgid "Click the button below to reset all settings to their default values."
 msgstr "Click the button below to reset all settings to their default values."
 
-#: includes/admin/settings-page.php:404
+#: includes/admin/settings-page.php:410
 msgid "Reset to Default Values"
 msgstr "Reset to Default Values"
 
-#: includes/admin/settings-page.php:419
+#: includes/admin/settings-page.php:425
 msgid "Search by Name, Surname, Email or ID"
 msgstr "Search by Name, Surname, Email or ID"
 
-#: includes/admin/settings-page.php:422
+#: includes/admin/settings-page.php:428
 #, fuzzy
 #| msgid "Given Name"
 msgid "Given Name:"
 msgstr "Given Name"
 
-#: includes/admin/settings-page.php:425
+#: includes/admin/settings-page.php:431
 #, fuzzy
 #| msgid "Family Name"
 msgid "Family Name:"
 msgstr "Family Name"
 
-#: includes/admin/settings-page.php:428 templates/card.php:193
-#: templates/kompakt.php:130 templates/list.php:131 templates/page.php:147
+#: includes/admin/settings-page.php:434 templates/card.php:129
+#: templates/kompakt.php:124 templates/list.php:99 templates/page.php:138
 #: templates/single-custom_person.php:51
 msgid "Email:"
 msgstr "Email:"
 
-#: includes/admin/settings-page.php:431
+#: includes/admin/settings-page.php:437
 #, fuzzy
 #| msgid "Search Persons"
 msgid "Search"
 msgstr "Search Persons"
 
-#: includes/admin/settings-page.php:457
+#: includes/admin/settings-page.php:463
 msgid "Are you sure you want to reset all settings to their default values?"
 msgstr "Are you sure you want to reset all settings to their default values?"
 
-#: includes/admin/settings-page.php:463 includes/admin/settings-page.php:487
+#: includes/admin/settings-page.php:469 includes/admin/settings-page.php:493
 msgid "Settings have been reset to default values."
 msgstr "Settings have been reset to default values."
 
-#: includes/admin/settings-page.php:466
+#: includes/admin/settings-page.php:472
 msgid "Failed to reset settings. Please try again."
 msgstr "Failed to reset settings. Please try again."
 
-#: includes/admin/settings-page.php:511
+#: includes/admin/settings-page.php:517
 msgid "Identifier:"
 msgstr "Identifier:"
 
-#: includes/admin/settings-page.php:512
+#: includes/admin/settings-page.php:518
 #, fuzzy
 #| msgid "Search Contacts"
 msgid "Contacts:"
 msgstr "Search Contacts"
 
-#: includes/admin/settings-page.php:520 templates/card.php:227
-#: templates/kompakt.php:178 templates/kompakt.php:369 templates/list.php:171
-#: templates/page.php:267
+#: includes/admin/settings-page.php:526 templates/kompakt.php:169
+#: templates/list.php:157 templates/page.php:248
 msgid "Organization:"
 msgstr "Organization:"
 
-#: includes/admin/settings-page.php:536 includes/admin/settings-page.php:764
+#: includes/admin/settings-page.php:542 includes/admin/settings-page.php:770
 #: includes/utils/enqueue_scripts.php:57
 msgid "Edit"
 msgstr "Edit"
 
-#: includes/admin/settings-page.php:539
+#: includes/admin/settings-page.php:545
 msgid "Add"
 msgstr "Add"
 
-#: includes/admin/settings-page.php:547
+#: includes/admin/settings-page.php:553
 msgid "Previous"
 msgstr "Previous"
 
-#: includes/admin/settings-page.php:548
+#: includes/admin/settings-page.php:554
 msgid "Next"
 msgstr "Next"
 
-#: includes/admin/settings-page.php:552
+#: includes/admin/settings-page.php:558
 #, fuzzy
 #| msgid "No contact found."
 msgid "No contacts found."
 msgstr "No contact found."
 
-#: includes/admin/settings-page.php:578
+#: includes/admin/settings-page.php:584
 msgid "All cache cleared successfully."
 msgstr "All cache cleared successfully."
 
-#: includes/admin/settings-page.php:728
+#: includes/admin/settings-page.php:734
 #, fuzzy, php-format
 #| msgid "Error: "
 msgid "Error: %s"
 msgstr "Error: "
 
-#: includes/admin/settings-page.php:774
+#: includes/admin/settings-page.php:780
 msgid "No contacts found. Please verify the IdM-Kennung or names provided."
 msgstr "No contacts found. Please verify the IdM-Kennung or names provided."
 
-#: includes/blocks/fau_dir_block.php:116
+#: includes/blocks/fau_dir_block.php:133
 msgid "RRZE Blocks"
 msgstr "RRZE Blocks"
 
@@ -427,119 +463,119 @@ msgstr "New Category Name"
 msgid "Additional Fields"
 msgstr "Additional Fields"
 
-#: includes/custom-post-type/custom-post-type.php:122
+#: includes/custom-post-type/custom-post-type.php:124
 #, fuzzy
 #| msgid "Teaser Text (English)"
 msgid "Content (English)"
 msgstr "Teaser Text (English)"
 
-#: includes/custom-post-type/custom-post-type.php:123
+#: includes/custom-post-type/custom-post-type.php:125
 msgid "Teaser Text (English)"
 msgstr "Teaser Text (English)"
 
-#: includes/custom-post-type/custom-post-type.php:124
+#: includes/custom-post-type/custom-post-type.php:126
 msgid "Teaser Text (German)"
 msgstr "Teaser Text (German)"
 
-#: includes/custom-post-type/custom-post-type.php:125
+#: includes/custom-post-type/custom-post-type.php:127
 #: templates/single-custom_person.php:22
 msgid "Person ID"
 msgstr "Person ID"
 
-#: includes/custom-post-type/custom-post-type.php:126
-#: templates/single-custom_person.php:23 templates/table.php:5
+#: includes/custom-post-type/custom-post-type.php:128
+#: templates/single-custom_person.php:23
 msgid "Name"
 msgstr "Name"
 
-#: includes/custom-post-type/custom-post-type.php:128
+#: includes/custom-post-type/custom-post-type.php:130
 #: templates/single-custom_person.php:25
 msgid "Telephone"
 msgstr "Telephone"
 
-#: includes/custom-post-type/custom-post-type.php:129
+#: includes/custom-post-type/custom-post-type.php:131
 #: templates/single-custom_person.php:26
 msgid "Given Name"
 msgstr "Given Name"
 
-#: includes/custom-post-type/custom-post-type.php:130
+#: includes/custom-post-type/custom-post-type.php:132
 #: templates/single-custom_person.php:27
 msgid "Family Name"
 msgstr "Family Name"
 
-#: includes/custom-post-type/custom-post-type.php:131
+#: includes/custom-post-type/custom-post-type.php:133
 #: templates/single-custom_person.php:28
 msgid "Title"
 msgstr "Title"
 
-#: includes/custom-post-type/custom-post-type.php:132
+#: includes/custom-post-type/custom-post-type.php:134
 #: templates/single-custom_person.php:29
 msgid "Suffix"
 msgstr "Suffix"
 
-#: includes/custom-post-type/custom-post-type.php:133
+#: includes/custom-post-type/custom-post-type.php:135
 #: templates/single-custom_person.php:30
 msgid "Nobility Name"
 msgstr "Nobility Name"
 
-#: includes/custom-post-type/custom-post-type.php:152
+#: includes/custom-post-type/custom-post-type.php:154
 #, fuzzy
 #| msgid "Search Contacts"
 msgid "Contacts"
 msgstr "Search Contacts"
 
-#: includes/custom-post-type/custom-post-type.php:159
+#: includes/custom-post-type/custom-post-type.php:161
 #, fuzzy
 #| msgid "Content"
 msgid "Contact"
 msgstr "Biography"
 
-#: includes/custom-post-type/custom-post-type.php:170
+#: includes/custom-post-type/custom-post-type.php:172
 msgid "Socials"
 msgstr "Socials"
 
-#: includes/custom-post-type/custom-post-type.php:176
+#: includes/custom-post-type/custom-post-type.php:178
 msgid "Workplace"
 msgstr "Workplace"
 
-#: includes/custom-post-type/custom-post-type.php:181
+#: includes/custom-post-type/custom-post-type.php:183
 msgid "Address"
 msgstr "Address"
 
-#: includes/custom-post-type/custom-post-type.php:187
+#: includes/custom-post-type/custom-post-type.php:189
 #, fuzzy
 #| msgid "Functions:"
 msgid "Function (English)"
 msgstr "Functions:"
 
-#: includes/custom-post-type/custom-post-type.php:193
+#: includes/custom-post-type/custom-post-type.php:195
 #, fuzzy
 #| msgid "Function"
 msgid "Function (German)"
 msgstr "Function"
 
-#: includes/custom-post-type/custom-post-type.php:371
+#: includes/custom-post-type/custom-post-type.php:373
 msgid "No contact found."
 msgstr "No contact found."
 
-#: includes/custom-post-type/custom-post-type.php:374
+#: includes/custom-post-type/custom-post-type.php:376
 msgid "Error fetching person attributes."
 msgstr "Error fetching person attributes."
 
-#: includes/custom-post-type/custom-post-type.php:377
+#: includes/custom-post-type/custom-post-type.php:379
 msgid "Invalid person ID."
 msgstr "Invalid person ID."
 
-#: includes/custom-post-type/custom-post-type.php:451
+#: includes/custom-post-type/custom-post-type.php:453
 #, fuzzy
 #| msgid "All cache cleared successfully."
 msgid "Custom person created successfully!"
 msgstr "All cache cleared successfully."
 
-#: includes/custom-post-type/custom-post-type.php:459
+#: includes/custom-post-type/custom-post-type.php:461
 msgid "Error creating custom person: Failed to fetch person details."
 msgstr "Error creating custom person: Failed to fetch person details."
 
-#: includes/shortcodes/fau_dir_shortcode.php:207
+#: includes/shortcodes/fau_dir_shortcode.php:220
 #, php-format
 msgid "Person with ID %s does not exist"
 msgstr "Person with ID %s does not exist"
@@ -697,160 +733,153 @@ msgctxt "taxonomy singular name"
 msgid "Category"
 msgstr "Category"
 
-#: templates/card.php:62 templates/kompakt.php:71 templates/list.php:66
-#: templates/page.php:81 templates/table.php:80
+#: templates/card.php:49 templates/kompakt.php:51 templates/list.php:32
+#: templates/page.php:68 templates/table.php:31
 msgid "Not specified"
 msgstr "Not specified"
 
-#: templates/card.php:63 templates/kompakt.php:72 templates/list.php:67
-#: templates/page.php:82 templates/table.php:81
+#: templates/card.php:50 templates/kompakt.php:52 templates/list.php:33
+#: templates/page.php:69 templates/table.php:32
 msgid "Doktor"
 msgstr "Doctor"
 
-#: templates/card.php:64 templates/kompakt.php:73 templates/list.php:68
-#: templates/page.php:83 templates/table.php:82
+#: templates/card.php:51 templates/kompakt.php:53 templates/list.php:34
+#: templates/page.php:70 templates/table.php:33
 msgid "Professor"
 msgstr "Professor"
 
-#: templates/card.php:65 templates/kompakt.php:74 templates/list.php:69
-#: templates/page.php:84 templates/table.php:83
+#: templates/card.php:52 templates/kompakt.php:54 templates/list.php:35
+#: templates/page.php:71 templates/table.php:34
 msgid "Professor Doktor"
 msgstr "Professor Doctor"
 
-#: templates/card.php:66 templates/kompakt.php:75 templates/list.php:70
-#: templates/page.php:85 templates/table.php:84
+#: templates/card.php:53 templates/kompakt.php:55 templates/list.php:36
+#: templates/page.php:72 templates/table.php:35
 msgid "Professor (Emeritus)"
 msgstr "Professor (Emeritus)"
 
-#: templates/card.php:67 templates/kompakt.php:76 templates/list.php:71
-#: templates/page.php:86 templates/table.php:85
+#: templates/card.php:54 templates/kompakt.php:56 templates/list.php:37
+#: templates/page.php:73 templates/table.php:36
 msgid "Professor Doktor (Emeritus)"
 msgstr "Professor Doctor (Emeritus)"
 
-#: templates/card.php:68 templates/kompakt.php:77 templates/list.php:72
-#: templates/page.php:87 templates/table.php:86
+#: templates/card.php:55 templates/kompakt.php:57 templates/list.php:38
+#: templates/page.php:74 templates/table.php:37
 msgid "Privatdozent"
 msgstr "Privatdozent"
 
-#: templates/card.php:69 templates/kompakt.php:78 templates/list.php:73
-#: templates/page.php:88 templates/table.php:87
+#: templates/card.php:56 templates/kompakt.php:58 templates/list.php:39
+#: templates/page.php:75 templates/table.php:38
 msgid "Privatdozent Doktor"
 msgstr "Privatdozent Doctor"
 
-#: templates/card.php:72 templates/kompakt.php:80 templates/list.php:76
-#: templates/page.php:91 templates/table.php:90
+#: templates/card.php:59 templates/kompakt.php:60 templates/list.php:42
+#: templates/page.php:78 templates/table.php:41
 msgid "Unknown"
 msgstr "Unknown"
 
-#: templates/card.php:124 templates/kompakt.php:298 templates/page.php:164
-msgid "Social Profiles:"
-msgstr "Social Profiles:"
-
-#: templates/card.php:206 templates/kompakt.php:141 templates/kompakt.php:196
-#: templates/list.php:142 templates/page.php:158 templates/page.php:285
+#: templates/card.php:142 templates/kompakt.php:135 templates/kompakt.php:189
+#: templates/list.php:110 templates/page.php:149 templates/page.php:268
 #: templates/single-custom_person.php:55
 msgid "Phone:"
 msgstr "Phone:"
 
-#: templates/card.php:234 templates/card.php:240 templates/kompakt.php:394
-#: templates/list.php:195 templates/list.php:200 templates/page.php:401
-#: templates/page.php:407 templates/table.php:218
+#: templates/card.php:234 templates/card.php:240 templates/kompakt.php:371
+#: templates/list.php:180 templates/list.php:185 templates/page.php:396
+#: templates/page.php:402 templates/table.php:197
 #, fuzzy
 #| msgid "No contact found."
 msgid "No contact entry could be found."
 msgstr "No contact found."
 
-#: templates/kompakt.php:185 templates/kompakt.php:373 templates/list.php:184
-#: templates/page.php:274
+#: templates/kompakt.php:21 templates/kompakt.php:350
+#, fuzzy
+#| msgid "Business Card Link"
+msgid "Default Business Card Title"
+msgstr "Business Card Link"
+
+#: templates/kompakt.php:177 templates/page.php:256
 #, fuzzy
 #| msgid "Functions:"
 msgid "Function:"
 msgstr "Functions:"
 
-#: templates/kompakt.php:188 templates/page.php:277
+#: templates/kompakt.php:180 templates/page.php:259
 msgid "No function available."
 msgstr "No function available."
 
-#: templates/kompakt.php:191 templates/page.php:280
+#: templates/kompakt.php:184 templates/page.php:263
 #: templates/single-custom_person.php:155
 #, fuzzy
 #| msgid "Organization:"
 msgid "Organization Address:"
 msgstr "Organization:"
 
-#: templates/kompakt.php:201 templates/page.php:290
+#: templates/kompakt.php:194 templates/page.php:273
 #, fuzzy
 #| msgid "Email:"
 msgid "Mail:"
 msgstr "Email:"
 
-#: templates/kompakt.php:206 templates/page.php:295
+#: templates/kompakt.php:199 templates/page.php:278
 msgid "Url:"
 msgstr "Url:"
 
-#: templates/kompakt.php:210 templates/kompakt.php:239 templates/page.php:299
-#: templates/page.php:328
+#: templates/kompakt.php:203 templates/kompakt.php:232 templates/page.php:282
+#: templates/page.php:311
 msgid "Street:"
 msgstr "Street:"
 
-#: templates/kompakt.php:214 templates/kompakt.php:244 templates/page.php:303
-#: templates/page.php:333
+#: templates/kompakt.php:207 templates/kompakt.php:237 templates/page.php:286
+#: templates/page.php:316
 msgid "ZIP Code:"
 msgstr "ZIP Code:"
 
-#: templates/kompakt.php:218 templates/kompakt.php:249 templates/page.php:307
-#: templates/page.php:338
+#: templates/kompakt.php:211 templates/kompakt.php:242 templates/page.php:290
+#: templates/page.php:321
 msgid "City:"
 msgstr "City:"
 
-#: templates/kompakt.php:222 templates/kompakt.php:254 templates/page.php:311
-#: templates/page.php:343
+#: templates/kompakt.php:215 templates/kompakt.php:247 templates/page.php:294
+#: templates/page.php:326
 msgid "Map:"
 msgstr "Map:"
 
-#: templates/kompakt.php:224 templates/kompakt.php:256 templates/page.php:313
-#: templates/page.php:345
+#: templates/kompakt.php:217 templates/kompakt.php:249 templates/page.php:296
+#: templates/page.php:328
 #, fuzzy
 #| msgid "View Person"
 msgid "View on Map"
 msgstr "View Person"
 
-#: templates/kompakt.php:231 templates/page.php:320
+#: templates/kompakt.php:224 templates/page.php:303
 msgid "Workplaces:"
 msgstr "Workplaces:"
 
-#: templates/kompakt.php:234 templates/page.php:323
+#: templates/kompakt.php:227 templates/page.php:306
 msgid "No workplaces available."
 msgstr "No workplaces available."
 
-#: templates/kompakt.php:261 templates/page.php:350
+#: templates/kompakt.php:254 templates/page.php:333
 #, fuzzy
 #| msgid "Email:"
 msgid "Emails:"
 msgstr "Email:"
 
-#: templates/kompakt.php:270 templates/page.php:359
+#: templates/kompakt.php:263 templates/page.php:342
 #, fuzzy
 #| msgid "Phone:"
 msgid "Phone numbers:"
 msgstr "Phone:"
 
-#: templates/kompakt.php:279 templates/page.php:368
+#: templates/kompakt.php:272 templates/page.php:351
 #: templates/single-custom_person.php:199
 msgid "Office Hours:"
 msgstr "Office Hours:"
 
-#: templates/kompakt.php:382
-#, fuzzy
-#| msgid "Business Card Link"
-msgid "Default Business Card Title"
-msgstr "Business Card Link"
-
-#: templates/page.php:388 templates/page.php:393
-#: templates/single-custom_person.php:281
-#: templates/single-custom_person.php:286
-msgid "Content"
-msgstr "Biography"
+#: templates/kompakt.php:292 templates/page.php:155
+msgid "Social Profiles:"
+msgstr "Social Profiles:"
 
 #: templates/single-custom_person.php:78
 #, fuzzy
@@ -866,11 +895,10 @@ msgstr "Social Media:"
 msgid "Workplace:"
 msgstr "Workplace:"
 
-#: templates/table.php:15
 #, fuzzy
-#| msgid "Organization"
-msgid "Organization / Function"
-msgstr "Organization"
+#~| msgid "Organization"
+#~ msgid "Organization / Function"
+#~ msgstr "Organization"
 
 #~ msgid "Content (Second Language)"
 #~ msgstr "Content (Second Language)"
@@ -886,6 +914,3 @@ msgstr "Organization"
 
 #~ msgid "Es konnte kein Kontakteintrag gefunden werden."
 #~ msgstr "No contact entry could be found."
-
-#~ msgid "Teaser Text"
-#~ msgstr "Teaser Text"
