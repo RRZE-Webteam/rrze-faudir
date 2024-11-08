@@ -13,44 +13,50 @@ class FaudirBlock {
     public static function render($attributes) {
         error_log('[RRZE-FAUDIR] Rendering block');
         
-        // Get cache timeout from settings (converting minutes to seconds)
-        $options = get_option('rrze_faudir_options');
-        $cache_timeout = isset($options['cache_timeout']) ? (int)$options['cache_timeout'] * 60 : 900; // Default to 15 minutes if not set
+        // Fetch and render data for the block
+        $output = fetch_fau_data_for_block($attributes);
 
-        // Ensure identifier is always an array
-        $identifiers = isset($attributes['identifier']) 
-            ? (array)$attributes['identifier'] 
-            : [];
-
-        // If no identifiers selected, show message
-        if (empty($identifiers)) {
-            return '<div class="wp-block-rrze-faudir-block">Please select at least one person.</div>';
-        }
-
-        // Use the 'show' and 'hide' attributes directly from the block
-        $show_fields = array_filter(array_map('trim', explode(',', $attributes['show'])));
-        $hide_fields = array_filter(array_map('trim', explode(',', $attributes['hide'])));
-
-        // Generate cache key for all persons
-        $cache_key = 'faudir_block_' . md5(implode(',', $identifiers) . serialize($attributes));
-        
-        // Check cache for all persons
-        $cached_data = get_transient($cache_key);
-        if ($cached_data !== false) {
-            return $cached_data;
-        }
-
-        // Convert identifiers array to comma-separated string before passing to fetch_fau_data
-        $attributes['identifier'] = implode(',', $identifiers);
-        $all_persons_data = fetch_fau_data($attributes);
-        
-        if ($all_persons_data) {
-            set_transient($cache_key, $all_persons_data, $cache_timeout);
-            return $all_persons_data;
-        }
-
-        return '<div class="wp-block-rrze-faudir-block">No data found for selected persons.</div>';
+        return $output;
     }
+}
+
+// New function for fetching FAU data specifically for the block
+function fetch_fau_data_for_block($attributes) {
+    // Ensure 'show' and 'hide' attributes are strings before exploding
+    $show = is_string($attributes['show']) ? $attributes['show'] : '';
+    $hide = is_string($attributes['hide']) ? $attributes['hide'] : '';
+
+    // Convert 'show' and 'hide' attributes into arrays
+    $show_fields = array_map('trim', explode(',', $show));
+    $hide_fields = array_map('trim', explode(',', $hide));
+
+    // Prepare parameters for fetching data
+    $identifiers = empty($attributes['identifier']) ? [] : (is_array($attributes['identifier']) ? $attributes['identifier'] : explode(',', $attributes['identifier']));
+    $persons = []; // This will hold the fetched data
+
+    // Skip fetching data if it's a REST, AJAX request, or if the block is being edited
+    if (!(defined('REST_REQUEST') && REST_REQUEST) && !wp_doing_ajax() && !is_admin()) {
+        // Fetch persons based on identifiers
+        if (!empty($identifiers)) {
+            $persons = process_persons_by_identifiers($identifiers);
+        } else {
+            $persons = fetch_and_process_persons();
+        }
+    }
+
+    // Load the template and pass the sorted data
+    $template_dir = plugin_dir_path(__FILE__) . '../../templates/';
+    $template = new Template($template_dir);
+
+    // Fix format assignment when empty
+    if ($attributes['format'] === '') {
+        $attributes['format'] = 'kompakt';  // Use single = for assignment
+    }
+    return $template->render($attributes['format'], [
+        'show_fields' => $show_fields,
+        'hide_fields' => $hide_fields,
+        'persons' => $persons,
+    ]);
 }
 
 // Register the block on init
