@@ -9,13 +9,7 @@
         <?php if (!empty($person)) : ?>
             <?php
                 // Ensure $attributes is initialized as an array
-                if (!isset($attributes) || !is_array($attributes)) {
-                    $attributes = [];
-                }
-
-                // Safely extract the 'show' attribute
-                $show_fields = isset($attributes['show']) ? array_filter(array_map('trim', explode(',', $attributes['show']))) : [];
-
+         
                 $featured_image_url = '';
 
             // Check if a custom post type (CPT) with the same ID exists
