@@ -29,8 +29,8 @@ function fetch_fau_data_for_block($attributes) {
     // Convert 'show' and 'hide' attributes into arrays
     $show_fields = array_map('trim', explode(',', $show));
     $hide_fields = array_map('trim', explode(',', $hide));
-
-    // Prepare parameters for fetching data
+    $url = $attributes['url'];
+   // Prepare parameters for fetching data
     $identifiers = empty($attributes['identifier']) ? [] : (is_array($attributes['identifier']) ? $attributes['identifier'] : explode(',', $attributes['identifier']));
     $persons = []; // This will hold the fetched data
 
@@ -55,6 +55,7 @@ function fetch_fau_data_for_block($attributes) {
     return $template->render($attributes['format'], [
         'show_fields' => $show_fields,
         'hide_fields' => $hide_fields,
+        'url'=> $url,
         'persons' => $persons,
     ]);
 }
