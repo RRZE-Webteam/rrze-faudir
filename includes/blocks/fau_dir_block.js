@@ -1,47 +1,7 @@
-const { __ } = wp.i18n;
+import { __ } from '@wordpress/i18n';
+import { registerBlockType } from '@wordpress/blocks';
+import { useBlockProps } from '@wordpress/block-editor';
 
-function fetchPersons() {
-    return wp.apiFetch({
-        path: '/wp/v2/custom_person?per_page=100&_fields=id,title,meta.person_id'
-    }).then(persons => {
-        console.log('Raw persons data:', persons);
-        
-        if (!Array.isArray(persons)) {
-            console.error('Expected array of persons, got:', typeof persons);
-            return [];
-        }
-
-        return persons.map(person => {
-            const personName = person.meta?.person_name || 'Unnamed Person';
-            const personId = person.meta?.person_id || '';
-            
-            return {
-                label: personName,
-                value: personId
-            };
-        });
-    }).catch(error => {
-        console.error('Error fetching persons:', error);
-        return [];
-    });
-}
-
-function fetchCategories() {
-    return wp.apiFetch({
-        path: '/wp/v2/custom_taxonomy?per_page=100'
-    }).then(categories => {
-        console.log('Raw categories data:', categories);
-        return categories.map(category => ({
-            label: category.name,
-            value: category.id.toString()
-        }));
-    }).catch(error => {
-        console.error('Error fetching categories:', error);
-        return [];
-    });
-}
-
-// Add this new component near the top of your file, after the imports
 const FormatPreview = ({ format, attributes, persons }) => {
     const selectedPersons = persons.filter(p => attributes.identifier.includes(p.value));
     const firstPerson = selectedPersons[0] || { label: 'Example Person' };
@@ -155,8 +115,8 @@ const FormatPreview = ({ format, attributes, persons }) => {
     }
 };
 
-wp.blocks.registerBlockType('rrze/faudir-block', {
-    apiVersion: 2,
+registerBlockType('rrze/faudir-block', {
+    apiVersion: 3,
     title: __('FAUDIR Block', 'rrze-faudir'),
     icon: 'admin-users',
     category: 'rrze-blocks',
@@ -178,7 +138,7 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
         orgnr: { type: 'string', default: '' }
     },
     edit: function (props) {
-        const blockProps = wp.blockEditor.useBlockProps();
+        const blockProps = useBlockProps();
         const [persons, setPersons] = wp.element.useState([]);
         const [filteredPersons, setFilteredPersons] = wp.element.useState([]);
         const [categories, setCategories] = wp.element.useState([]);
@@ -266,20 +226,20 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
 
         // Array of available options with actual values and display texts
         const options = [
-            { value: 'displayName', label: 'Display Name' },
-            { value: 'personalTitle', label: 'Personal Title' },
-            { value: 'givenName', label: 'First Name' },
-            { value: 'familyName', label: 'Family Name' },
-            { value: 'personalTitleSuffix', label: 'Academic Suffix' },
-            { value: 'email', label: 'Email' },
-            { value: 'phone', label: 'Phone' },
-            { value: 'organization', label: 'Organization' },
-            { value: 'function', label: 'Function' },
-            { value: 'url', label: 'URL' },
-            { value: 'kompaktButton', label: 'Kompakt Button' },
-            { value: 'content', label: 'Content' },
-            { value: 'teasertext', label: 'Teasertext' },
-            { value: 'socialmedia', label: 'Social Media' },
+            { value: 'displayName', label: __('Display Name', 'rrze-faudir') },
+            { value: 'personalTitle', label: __('Personal Title', 'rrze-faudir') },
+            { value: 'givenName', label: __('First Name', 'rrze-faudir') },
+            { value: 'familyName', label: __('Family Name', 'rrze-faudir') },
+            { value: 'personalTitleSuffix', label: __('Academic Suffix', 'rrze-faudir') },
+            { value: 'email', label: __('Email', 'rrze-faudir') },
+            { value: 'phone', label: __('Phone', 'rrze-faudir') },
+            { value: 'organization', label: __('Organization', 'rrze-faudir') },
+            { value: 'function', label: __('Function', 'rrze-faudir') },
+            { value: 'url', label: __('URL', 'rrze-faudir') },
+            { value: 'kompaktButton', label: __('Kompakt Button', 'rrze-faudir') },
+            { value: 'content', label: __('Content', 'rrze-faudir') },
+            { value: 'teasertext', label: __('Teasertext', 'rrze-faudir') },
+            { value: 'socialmedia', label: __('Social Media', 'rrze-faudir') },
         ];
 
         // Convert the comma-separated string into an array of selected values
@@ -359,7 +319,7 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
                                 onClick();
                             }
                         },
-                        'Edit'
+                        __('Edit', 'rrze-faudir')
                     )
                 ),
                 wp.element.createElement(FormatPreview, {
@@ -371,10 +331,10 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
                     'div',
                     { className: 'preview-footer' },
                     wp.element.createElement('div', null, 
-                        `Selected Persons: ${attributes.identifier.length}`
+                        __('Selected Persons:', 'rrze-faudir') + ' ' + attributes.identifier.length
                     ),
                     wp.element.createElement('div', null,
-                        `Showing: ${attributes.show || 'Default fields'}`
+                        __('Showing:', 'rrze-faudir') + ' ' + (attributes.show || __('Default fields', 'rrze-faudir'))
                     )
                 )
             );
@@ -511,7 +471,7 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
                     wp.element.createElement(
                         'div',
                         { className: 'block-container' },
-                        wp.element.createElement('label', { className: 'block-label' }, 'Show Fields'),
+                        wp.element.createElement('label', { className: 'block-label' }, __('Show Fields', 'rrze-faudir')),
                         options.map((option) =>
                             wp.element.createElement(
                                 'div',
@@ -531,7 +491,7 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
                         'label',
                         { className: 'block-label' },
                         null,
-                        'Group Id',
+                        __('Group Id', 'rrze-faudir'),
                         wp.element.createElement('label', {
                             className: 'block-label',
                             type: 'text',
@@ -551,7 +511,7 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
                         'label',
                         { className: 'block-label' },
                         null,
-                        'Organization number',
+                        __('Organization number', 'rrze-faudir'),
                         wp.element.createElement('label', {
                             className: 'block-label',
                             type: 'text',
@@ -583,7 +543,7 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
                                             onClick: obj.open,
                                             className: 'button button-secondary block-label',
                                         },
-                                        image ? 'Change Image' : 'Select Image'
+                                        image ? __('Change Image', 'rrze-faudir') : __('Select Image', 'rrze-faudir')
                                     ),
                                     image && wp.element.createElement('img', {
                                         src: wp.media.attachment(image).attributes.url,
@@ -601,7 +561,7 @@ wp.blocks.registerBlockType('rrze/faudir-block', {
                             className: 'components-button is-primary',
                             onClick: () => setIsEditMode(false)
                         },
-                        'Done'
+                        __('Done', 'rrze-faudir')
                     )
                 )
             )

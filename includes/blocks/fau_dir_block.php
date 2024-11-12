@@ -80,22 +80,9 @@ function register_faudir_block_assets() {
     // Register block script
     wp_register_script(
         'rrze-faudir-block',
-        plugins_url('js/fau_dir_block.js', dirname(__FILE__)),
-        array('wp-blocks', 'wp-element', 'wp-components', 'wp-editor', 'wp-api-fetch', 'wp-i18n') // Added wp-i18n
+        plugins_url('src/js/blocks/fau_dir_block.js', dirname(dirname(__FILE__))),
+        array('wp-blocks', 'wp-element', 'wp-components', 'wp-editor', 'wp-api-fetch', 'wp-i18n', 'react', 'wp-block-editor')
     );
-
-    // Load the translations for JavaScript
-    if (function_exists('wp_set_script_translations')) {
-        wp_set_script_translations(
-            'rrze-faudir-block',
-            'rrze-faudir',
-            plugin_dir_path(dirname(__FILE__)) . 'languages'
-        );
-    } else {
-        // Fallback for older versions of WordPress
-        error_log('[RRZE-FAUDIR] wp_set_script_translations not found, loading textdomain manually');
-        // load_plugin_textdomain('rrze-faudir', false, plugin_dir_path(dirname(__FILE__)) . 'languages');
-    }
 
     // Register block style
     wp_register_style(
@@ -106,6 +93,7 @@ function register_faudir_block_assets() {
 
     // Register the block
     register_block_type('rrze/faudir-block', array(
+        'api_version' => 3,
         'editor_script' => 'rrze-faudir-block',
         'editor_style' => 'rrze-faudir-block-editor',
         'render_callback' => array('FaudirBlock', 'render'),
@@ -117,7 +105,6 @@ function register_faudir_block_assets() {
             'lock' => false,
         ),
         'attributes' => array(
-          
             'identifier' => array('type' => 'array', 'default' => array()),
             'format' => array('type' => 'string', 'default' => 'kompakt'),
             'url' => array('type' => 'string', 'default' => ''),
@@ -137,6 +124,12 @@ function register_faudir_block_assets() {
     ));
 }
 add_action('init', 'register_faudir_block_assets');
+
+// set script translations
+function set_faudir_block_translations() {
+    wp_set_script_translations('rrze-faudir-block', 'rrze-faudir', plugin_dir_path(__FILE__) . '../../languages');
+}
+add_action('init', 'set_faudir_block_translations');
 
 function add_faudir_block_category($categories) {
     return array_merge(
@@ -168,8 +161,5 @@ function add_person_meta_to_rest($response, $post, $request) {
     return $response;
 }
 add_filter('rest_prepare_custom_person', 'add_person_meta_to_rest', 10, 3);
-
-
-
 
 ?>

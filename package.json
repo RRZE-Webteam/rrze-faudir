@@ -4,11 +4,14 @@
     "description": "A WordPress plugin for FAUDIR.",
     "main": "index.js",
     "scripts": {
-        "build": "gulp"
+        "build": "gulp",
+        "build:blocks": "wp-scripts build includes/blocks/fau_dir_block.js --output-path=src/js/blocks",
+        "start:blocks": "wp-scripts start includes/blocks/fau_dir_block.js --output-path=src/js/blocks"
     },
     "author": "FAU",
     "license": "MIT",
     "devDependencies": {
+        "@wordpress/scripts": "^30.4.0",
         "gulp": "^5.0.0",
         "gulp-concat": "^2.6.1",
         "gulp-csso": "^4.0.1",
