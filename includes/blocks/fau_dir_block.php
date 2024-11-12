@@ -81,8 +81,10 @@ function register_faudir_block_assets() {
     wp_register_script(
         'rrze-faudir-block',
         plugins_url('src/js/blocks/fau_dir_block.js', dirname(dirname(__FILE__))),
-        array('wp-blocks', 'wp-element', 'wp-components', 'wp-editor', 'wp-api-fetch', 'wp-i18n', 'react', 'wp-block-editor')
+        array('wp-blocks', 'wp-element', 'wp-components', 'wp-editor', 'wp-api-fetch', 'wp-i18n')
     );
+
+    wp_set_script_translations('rrze-faudir-block', 'rrze-faudir', plugin_dir_path(__FILE__) . '../../languages');
 
     // Register block style
     wp_register_style(
@@ -124,12 +126,6 @@ function register_faudir_block_assets() {
     ));
 }
 add_action('init', 'register_faudir_block_assets');
-
-// set script translations
-function set_faudir_block_translations() {
-    wp_set_script_translations('rrze-faudir-block', 'rrze-faudir', plugin_dir_path(__FILE__) . '../../languages');
-}
-add_action('init', 'set_faudir_block_translations');
 
 function add_faudir_block_category($categories) {
     return array_merge(
