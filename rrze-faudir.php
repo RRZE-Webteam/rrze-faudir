@@ -17,8 +17,8 @@ Requires PHP: 8.2
 defined('ABSPATH') || exit;
 
 // Check if the function exists before using it
-if ( ! function_exists( 'is_plugin_active' ) ) {
-    include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+if (! function_exists('is_plugin_active')) {
+    include_once(ABSPATH . 'wp-admin/includes/plugin.php');
 }
 
 // Constants
@@ -26,7 +26,8 @@ const RRZE_PHP_VERSION = '8.2';
 const RRZE_WP_VERSION = '6.5';
 
 // System requirements check
-function rrze_faudir_system_requirements() {
+function rrze_faudir_system_requirements()
+{
     $error = '';
     if (version_compare(PHP_VERSION, RRZE_PHP_VERSION, '<')) {
         $error = sprintf(
@@ -43,11 +44,11 @@ function rrze_faudir_system_requirements() {
             RRZE_WP_VERSION
         );
     }
-    
+
     if (!empty($error)) {
-        add_action('admin_notices', function() use ($error) {
+        add_action('admin_notices', function () use ($error) {
             printf('<div class="notice notice-error"><p>%s</p></div>', esc_html($error));
-        });        
+        });
         return false;
     }
     return true;
@@ -56,7 +57,8 @@ function rrze_faudir_system_requirements() {
 // Initialize plugin if system requirements are met
 if (rrze_faudir_system_requirements()) {
     // Load plugin textdomain for translations
-    function rrze_faudir_load_textdomain() {
+    function rrze_faudir_load_textdomain()
+    {
         load_plugin_textdomain('rrze-faudir', false, dirname(plugin_basename(__FILE__)) . '/languages');
     }
     add_action('plugins_loaded', 'rrze_faudir_load_textdomain');
@@ -76,7 +78,8 @@ if (rrze_faudir_system_requirements()) {
 
     // Schedule the event on plugin activation
     register_activation_hook(__FILE__, 'schedule_check_person_availability');
-    function schedule_check_person_availability() {
+    function schedule_check_person_availability()
+    {
         if (!wp_next_scheduled('check_person_availability')) {
             wp_schedule_event(time(), 'daily', 'check_person_availability');
         }
@@ -84,7 +87,8 @@ if (rrze_faudir_system_requirements()) {
 
     // Unschedule the event on plugin deactivation
     register_deactivation_hook(__FILE__, 'unschedule_check_person_availability');
-    function unschedule_check_person_availability() {
+    function unschedule_check_person_availability()
+    {
         $timestamp = wp_next_scheduled('check_person_availability');
         if ($timestamp) {
             wp_unschedule_event($timestamp, 'check_person_availability');
@@ -93,7 +97,8 @@ if (rrze_faudir_system_requirements()) {
 
     // Hook the function to check availability
     add_action('check_person_availability', 'check_api_person_availability');
-    function check_api_person_availability() {
+    function check_api_person_availability()
+    {
         $args = array(
             'post_type' => 'custom_person',
             'post_status' => 'any', // Change to 'any' to include drafts and other statuses
@@ -118,8 +123,7 @@ if (rrze_faudir_system_requirements()) {
             $person_data = fetch_fau_person_by_id($person_id);
 
             // If the response indicates an error with status code 404, update the post to draft
-            if (  $person_data === false || empty(  $person_data)) 
-                {
+            if ($person_data === false || empty($person_data)) {
                 wp_update_post(array(
                     'ID' => $post->ID,
                     'post_status' => 'draft',
@@ -131,9 +135,10 @@ if (rrze_faudir_system_requirements()) {
     // AJAX search function
     add_action('wp_ajax_rrze_faudir_search_contacts', 'rrze_faudir_search_contacts');
     add_action('wp_ajax_nopriv_rrze_faudir_search_contacts', 'rrze_faudir_search_contacts');
-    function rrze_faudir_search_contacts() {
+    function rrze_faudir_search_contacts()
+    {
         check_ajax_referer('rrze_faudir_api_nonce', 'security');
-        
+
         if (isset($_POST['identifier'])) {
             $identifier = sanitize_text_field(wp_unslash($_POST['identifier']));
         }
@@ -143,7 +148,7 @@ if (rrze_faudir_system_requirements()) {
             SELECT * FROM {$wpdb->prefix}contacts WHERE identifier LIKE %s", '%' . $wpdb->esc_like($identifier) . '%'));
 
         if (!empty($contacts)) {
-            $formatted_contacts = array_map(function($contact) {
+            $formatted_contacts = array_map(function ($contact) {
                 return [
                     'name' => $contact->name,
                     'identifier' => $contact->identifier,
@@ -160,7 +165,8 @@ if (rrze_faudir_system_requirements()) {
 // Hook into 'init' to check plugin status and register the alias shortcode
 add_action('init', 'register_kontakt_as_faudir_shortcode_alias');
 
-function register_kontakt_as_faudir_shortcode_alias() {
+function register_kontakt_as_faudir_shortcode_alias()
+{
     // Include the plugin.php file to ensure is_plugin_active() is available
     include_once(ABSPATH . 'wp-admin/includes/plugin.php');
 
@@ -173,7 +179,8 @@ function register_kontakt_as_faudir_shortcode_alias() {
 }
 
 // Function to handle the [kontakt] and [kontaktliste] shortcodes and redirect to [faudir]
-function kontakt_to_faudir_shortcode_alias($atts, $content = null) {
+function kontakt_to_faudir_shortcode_alias($atts, $content = null)
+{
     // Pass all attributes and content to the [faudir] shortcode
     $atts_string = '';
     if (!empty($atts)) {
@@ -189,7 +196,8 @@ function kontakt_to_faudir_shortcode_alias($atts, $content = null) {
 add_action('init', 'register_kontakt_as_faudir_shortcode_alias');
 
 // Helper function to convert attributes array to string
-function shortcode_parse_atts_to_string($atts) {
+function shortcode_parse_atts_to_string($atts)
+{
     $output = '';
     foreach ($atts as $key => $value) {
         if (is_numeric($key)) {
@@ -202,7 +210,8 @@ function shortcode_parse_atts_to_string($atts) {
 }
 
 
-function load_custom_person_template($template) {
+function load_custom_person_template($template)
+{
     if (get_query_var('custom_person') || is_singular('custom_person')) {
         $plugin_template = plugin_dir_path(__FILE__) . 'templates/single-custom_person.php';
         if (file_exists($plugin_template)) {
@@ -219,9 +228,10 @@ add_filter('template_include', 'load_custom_person_template', 99);
 // Hook into plugin activation
 register_activation_hook(__FILE__, 'migrate_person_data_on_activation');
 
-function migrate_person_data_on_activation() {
+function migrate_person_data_on_activation()
+{
     register_custom_taxonomy();
-    
+
     $contact_posts = get_posts([
         'post_type' => 'person',
         'posts_per_page' => -1,
@@ -270,12 +280,10 @@ function migrate_person_data_on_activation() {
                 $queryParts = [];
 
                 if (!empty($identifier)) {
-                    $queryParts[] = 'uid=' . $identifier;  
-                }
-                else if (!empty($email)) {
+                    $queryParts[] = 'uid=' . $identifier;
+                } else if (!empty($email)) {
                     $queryParts[] = 'email=' . $email;
-                }
-                else if (!empty($givenName) || !empty($familyName)) {
+                } else if (!empty($givenName) || !empty($familyName)) {
                     $queryParts[] = 'givenName=' . $givenName;
                     $queryParts[] = 'familyName=' . $familyName;
                 }
@@ -303,7 +311,7 @@ function migrate_person_data_on_activation() {
                             // Get the identifier
                             $contactIdentifier = $contact['identifier'];
                             $organizationIdentifier = $contact['organization']['identifier'];
-                                
+
                             $contacts[] = array(
                                 'organization' => sanitize_text_field($contact['organization']['name'] ?? ''),
                                 'socials' => fetch_and_format_socials($contactIdentifier),
@@ -311,7 +319,7 @@ function migrate_person_data_on_activation() {
                                 'address' => fetch_and_format_address($organizationIdentifier),
                                 'function_en' => $contact['functionLabel']['en'] ?? '',
                                 'function_de' => $contact['functionLabel']['de'] ?? '',
-                            ); 
+                            );
                         }
 
                         // Create a new 'custom_person' post
@@ -400,7 +408,8 @@ function migrate_person_data_on_activation() {
 }
 
 // Add this new function to display the notice
-function rrze_faudir_display_import_notice() {
+function rrze_faudir_display_import_notice()
+{
     // Only show on the plugins page
     $screen = get_current_screen();
     if ($screen->id !== 'plugins') {
@@ -420,31 +429,33 @@ function rrze_faudir_display_import_notice() {
             ),
             $imported_count
         );
-        
+
         // Slug configuration warning
         $slug_warning = __('You now have the option to set a custom slug for person pages in the settings. If you don\'t set a unique slug, existing person pages from the old plugin may be overridden by the new plugin\'s person pages. To prevent this, please ensure that you configure a custom slug in the settings if you want to keep the old pages intact.', 'rrze-faudir');
-        
+
         // Display both messages
         printf(
-            '<div class="notice notice-success"><p>%s</p></div><div class="notice notice-warning"><p>%s</p></div>', 
+            '<div class="notice notice-success"><p>%s</p></div><div class="notice notice-warning"><p>%s</p></div>',
             esc_html($import_message),
             esc_html($slug_warning)
         );
-        
+
         delete_transient('rrze_faudir_imported_count');
     }
 }
 // Use a higher priority number (15) to make it appear after the default activation message (priority 10)
 add_action('admin_notices', 'rrze_faudir_display_import_notice', 15);
 
-function rrze_faudir_flush_rewrite_on_slug_change($old_value, $value, $option) {
+function rrze_faudir_flush_rewrite_on_slug_change($old_value, $value, $option)
+{
     if ($option === 'rrze_faudir_options' && $old_value['person_slug'] !== $value['person_slug']) {
         flush_rewrite_rules(); // Flush rewrite rules if the slug changes
     }
 }
 add_action('update_option_rrze_faudir_options', 'rrze_faudir_flush_rewrite_on_slug_change', 10, 3);
 
-function rrze_faudir_save_permalink_settings() {
+function rrze_faudir_save_permalink_settings()
+{
     // Simulate visiting the Permalinks page to refresh rewrite rules
     global $wp_rewrite;
     $wp_rewrite->flush_rules();
@@ -452,7 +463,8 @@ function rrze_faudir_save_permalink_settings() {
 add_action('admin_init', 'rrze_faudir_save_permalink_settings');
 
 // Register the custom taxonomy before migration
-function register_custom_person_taxonomies() {
+function register_custom_person_taxonomies()
+{
     $labels = array(
         'name'              => _x('Categories', 'taxonomy general name', 'rrze-faudir'),
         'singular_name'     => _x('Category', 'taxonomy singular name', 'rrze-faudir'),

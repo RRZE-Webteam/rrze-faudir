@@ -3,7 +3,8 @@
 // require_once plugin_dir_path(__FILE__) . 'api-functions.php';
 // Fetch data from the FAU persons API
 
-function fetch_fau_persons($limit = 60, $offset = 0) {
+function fetch_fau_persons($limit = 60, $offset = 0)
+{
     $api_key = FaudirUtils::getKey();
     $url = FaudirUtils::getApiBaseUrl() . 'persons?limit=' . $limit . '&offset=' . $offset;
 
@@ -29,12 +30,19 @@ function fetch_fau_persons($limit = 60, $offset = 0) {
 }
 
 // Fetch data from the FAU organizations API
-function fetch_fau_organizations($limit = 100, $offset = 1, $params=[]) {
+function fetch_fau_organizations($limit = 100, $offset = 1, $params = [])
+{
     $api_key = FaudirUtils::getKey();
-    $url = FaudirUtils::getApiBaseUrl() .'organizations?limit=' . $limit . '&offset=' . $offset;
+    $url = FaudirUtils::getApiBaseUrl() . 'organizations?limit=' . $limit . '&offset=' . $offset;
 
     $query_params = [
-        'q', 'sort', 'attrs', 'lq', 'rq', 'view', 'lf'
+        'q',
+        'sort',
+        'attrs',
+        'lq',
+        'rq',
+        'view',
+        'lf'
     ];
     // Loop through the parameters and append them to the URL if they exist in $params
     foreach ($query_params as $param) {
@@ -68,7 +76,8 @@ function fetch_fau_organizations($limit = 100, $offset = 1, $params=[]) {
 }
 
 //search person by id
-function fetch_fau_person_by_id($personId) {
+function fetch_fau_person_by_id($personId)
+{
     // Log the function call
     //error_log("fetch_fau_person_by_id called with personId: {$personId}");
 
@@ -99,12 +108,19 @@ function fetch_fau_person_by_id($personId) {
     return $data;
 }
 
-function fetch_fau_persons_atributes($limit = 60, $offset = 0, $params = []) {
+function fetch_fau_persons_atributes($limit = 60, $offset = 0, $params = [])
+{
     $api_key = FaudirUtils::getKey();
     $url = FaudirUtils::getApiBaseUrl() . 'persons?limit=' . $limit . '&offset=' . $offset;
     // Define allowed query parameters and map them to their corresponding keys
     $query_params = [
-        'q', 'sort', 'attrs', 'lq', 'rq', 'view', 'lf'
+        'q',
+        'sort',
+        'attrs',
+        'lq',
+        'rq',
+        'view',
+        'lf'
     ];
     // Loop through the parameters and append them to the URL if they exist in $params
     foreach ($query_params as $param) {
@@ -143,12 +159,19 @@ function fetch_fau_persons_atributes($limit = 60, $offset = 0, $params = []) {
     return $data ?? [];
 }
 // Fetch data from the FAU contacts API
-function fetch_fau_contacts($limit = 20, $offset = 0, $params = []) {
+function fetch_fau_contacts($limit = 20, $offset = 0, $params = [])
+{
     $api_key = FaudirUtils::getKey();
     $url = FaudirUtils::getApiBaseUrl() . 'contacts?limit=' . $limit . '&offset=' . $offset;
     // Define allowed query parameters and map them to their corresponding keys
     $query_params = [
-        'q', 'sort', 'attrs', 'lq', 'rq', 'view', 'lf'
+        'q',
+        'sort',
+        'attrs',
+        'lq',
+        'rq',
+        'view',
+        'lf'
     ];
     // Loop through the parameters and append them to the URL if they exist in $params
     foreach ($query_params as $param) {
@@ -196,7 +219,8 @@ function fetch_fau_contacts($limit = 20, $offset = 0, $params = []) {
 }
 
 // Fetch contact by ID
-function fetch_fau_contact_by_id($contactId) {
+function fetch_fau_contact_by_id($contactId)
+{
     $api_key = FaudirUtils::getKey();
     $url = FaudirUtils::getApiBaseUrl() . "contacts/{$contactId}";
 
@@ -216,7 +240,8 @@ function fetch_fau_contact_by_id($contactId) {
 }
 
 // Fetch organization by ID
-function fetch_fau_organization_by_id($organizationId) {
+function fetch_fau_organization_by_id($organizationId)
+{
     $api_key = FaudirUtils::getKey();
     $url = FaudirUtils::getApiBaseUrl() . "organizations/{$organizationId}";
 
@@ -235,7 +260,8 @@ function fetch_fau_organization_by_id($organizationId) {
     return json_decode($body, true) ?? [];
 }
 
-function fetch_and_format_workplaces($contactIdentifier) {
+function fetch_and_format_workplaces($contactIdentifier)
+{
     // error_log('Fetching workplaces for contact identifier: ' . $contactIdentifier);
 
     // Fetch contact data
@@ -291,14 +317,14 @@ function fetch_and_format_workplaces($contactIdentifier) {
             $workplaceDetails[] = __('Emails: ', 'rrze-faudir') . implode(', ', $workplace['mails']);
         }
         if (!empty($workplace['officeHours'])) {
-            $officeHours = array_map(function($hours) {
+            $officeHours = array_map(function ($hours) {
                 return __('Weekday ', 'rrze-faudir') . $hours['weekday'] . ': ' . $hours['from'] . ' - ' . $hours['to'];
             }, $workplace['officeHours']);
             $workplaceDetails[] = __('Office Hours: ', 'rrze-faudir') . implode('; ', $officeHours);
         }
         if (!empty($workplace['consultationHours'])) {
-            $consultationHours = array_map(function($hours) {
-                return __('Weekday ' , 'rrze-faudir'). $hours['weekday'] . ': ' . $hours['from'] . ' - ' . $hours['to'] . ' (' . $hours['comment'] . ')';
+            $consultationHours = array_map(function ($hours) {
+                return __('Weekday ', 'rrze-faudir') . $hours['weekday'] . ': ' . $hours['from'] . ' - ' . $hours['to'] . ' (' . $hours['comment'] . ')';
             }, $workplace['consultationHours']);
             $workplaceDetails[] = __('Consultation Hours: ', 'rrze-faudir') . implode('; ', $consultationHours);
         }
@@ -309,7 +335,8 @@ function fetch_and_format_workplaces($contactIdentifier) {
     return implode("\n\n", $formattedWorkplaces);
 }
 
-function fetch_and_format_address($contactIdentifier) {
+function fetch_and_format_address($contactIdentifier)
+{
     //error_log('Fetching address for contact identifier: ' . $contactIdentifier);
 
     // Fetch contact data
@@ -357,7 +384,8 @@ function fetch_and_format_address($contactIdentifier) {
     return implode("\n", $addressDetails);
 }
 
-function fetch_and_format_socials($contactIdentifier) {
+function fetch_and_format_socials($contactIdentifier)
+{
     //error_log('Fetching social media for contact identifier: ' . $contactIdentifier);
 
     // Fetch contact data

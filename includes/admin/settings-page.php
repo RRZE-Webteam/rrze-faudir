@@ -17,7 +17,8 @@ function rrze_faudir_add_admin_menu()
 }
 add_action('admin_menu', 'rrze_faudir_add_admin_menu');
 // Load default values from config.php
-function rrze_faudir_get_default_config() {
+function rrze_faudir_get_default_config()
+{
     $config_path = plugin_dir_path(__FILE__) . 'config/config.php';
     if (file_exists($config_path)) {
         return include $config_path;
@@ -94,7 +95,7 @@ function rrze_faudir_settings_init()
         'rrze_faudir_settings_cache',
         'rrze_faudir_cache_section'
     );
-    
+
 
     // Error Handling Section
     add_settings_section(
@@ -167,14 +168,15 @@ function rrze_faudir_settings_init()
 
     // Note: The search form will be handled in the settings page itself, no need for a settings field here.
 
-    
+
 }
 add_action('admin_init', 'rrze_faudir_settings_init');
 
 
 
 // Callback functions
-function rrze_faudir_api_section_callback() {
+function rrze_faudir_api_section_callback()
+{
     echo '<p>' . esc_html__('Configure the API settings for accessing the FAU person and institution directory.', 'rrze-faudir') . '</p>';
 }
 
@@ -220,14 +222,16 @@ function rrze_faudir_no_cache_logged_in_render()
     echo '<p class="description">' . esc_html__('Disable caching for logged-in editors.', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_cache_timeout_render() {
+function rrze_faudir_cache_timeout_render()
+{
     $options = get_option('rrze_faudir_options');
     $value = isset($options['cache_timeout']) ? max(intval($options['cache_timeout']), 15) : 15; // Ensure minimum value is 15
     echo '<input type="number" name="rrze_faudir_options[cache_timeout]" value="' . esc_attr($value) . '" min="15">';
     echo '<p class="description">' . esc_html__('Set the cache timeout in minutes (minimum 15 minutes).', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_transient_time_for_org_id_render() {
+function rrze_faudir_transient_time_for_org_id_render()
+{
     $options = get_option('rrze_faudir_options');
     $value = isset($options['transient_time_for_org_id']) ? max(intval($options['transient_time_for_org_id']), 1) : 1; // Ensure minimum value is 1
     echo '<input type="number" name="rrze_faudir_options[transient_time_for_org_id]" value="' . esc_attr($value) . '" min="1">';
@@ -242,7 +246,8 @@ function rrze_faudir_cache_org_timeout_render()
     echo '<p class="description">' . esc_html__('Set the cache timeout in days for organization identifiers.', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_clear_cache_render() {
+function rrze_faudir_clear_cache_render()
+{
     echo '<button type="button" class="button button-secondary" id="clear-cache-button">' . esc_html__('Clear Cache Now', 'rrze-faudir') . '</button>';
     echo '<p class="description">' . esc_html__('Click the button to clear all cached data.', 'rrze-faudir') . '</p>';
 }
@@ -260,10 +265,10 @@ function rrze_faudir_business_card_title_render()
 {
     $options = get_option('rrze_faudir_options');
     $default_title = esc_html__('Call up business card', 'rrze-faudir');
-    $value = isset($options['business_card_title']) && !empty($options['business_card_title']) 
-        ? sanitize_text_field($options['business_card_title']) 
+    $value = isset($options['business_card_title']) && !empty($options['business_card_title'])
+        ? sanitize_text_field($options['business_card_title'])
         : $default_title;
-    
+
     // Save the default value if it's not set
     if (!isset($options['business_card_title']) || empty($options['business_card_title'])) {
         $options['business_card_title'] = $default_title;
@@ -281,13 +286,14 @@ function rrze_faudir_hard_sanitize_render()
     echo '<input type="checkbox" name="rrze_faudir_options[hard_sanitize]" value="1" ' . esc_attr($checked) . '>';
     echo '<p class="description">' . esc_html__('Hard Sanitize abbreviations.', 'rrze-faudir') . '</p>';
 }
-function rrze_faudir_person_slug_field() {
+function rrze_faudir_person_slug_field()
+{
     $options = get_option('rrze_faudir_options'); // Get all plugin options
     $default_slug = 'person'; // Default slug value
 
     // Retrieve the saved slug or use the default if not set
-    $slug = isset($options['person_slug']) && !empty($options['person_slug']) 
-        ? sanitize_text_field($options['person_slug']) 
+    $slug = isset($options['person_slug']) && !empty($options['person_slug'])
+        ? sanitize_text_field($options['person_slug'])
         : $default_slug;
 
     // Save the default slug if not already set
@@ -301,10 +307,11 @@ function rrze_faudir_person_slug_field() {
 }
 
 
-function rrze_faudir_default_output_fields_render() {
+function rrze_faudir_default_output_fields_render()
+{
     $options = get_option('rrze_faudir_options');
     $default_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : array();
-    
+
     $available_fields = array(
         'display_name' => __('Display Name', 'rrze-faudir'),
         'academic_title' => __('Academic Title', 'rrze-faudir'),
@@ -331,13 +338,12 @@ function rrze_faudir_default_output_fields_render() {
     }
     echo '</fieldset>';
     echo '<p class="description">' . esc_html__('Select the fields to display by default in shortcodes and blocks.', 'rrze-faudir') . '</p>';
-    
 }
 
 // Settings page display
 function rrze_faudir_settings_page()
 {
-    ?>
+?>
     <div class="wrap">
         <h1>
             <?php echo esc_html(__('FAU Directory Settings', 'rrze-faudir')); ?>
@@ -434,7 +440,7 @@ function rrze_faudir_settings_page()
                 <label for="email"><?php echo esc_html__('Email:', 'rrze-faudir'); ?></label>
                 <input type="text" id="email" name="email" />
 
-                <button type="submit" class="button button-primary"><?php echo esc_html__('Search','rrze-faudir')?></button>
+                <button type="submit" class="button button-primary"><?php echo esc_html__('Search', 'rrze-faudir') ?></button>
             </form>
 
             <div id="contacts-list">
@@ -476,12 +482,13 @@ function rrze_faudir_settings_page()
             });
         });
     </script>
-    <?php
+<?php
 }
 
 
 // Function to reset settings to defaults
-function rrze_faudir_reset_defaults() {
+function rrze_faudir_reset_defaults()
+{
     check_ajax_referer('rrze_faudir_reset_defaults_nonce', 'security');
 
     // Load default values from config.php
@@ -494,76 +501,77 @@ function rrze_faudir_reset_defaults() {
 }
 add_action('wp_ajax_rrze_faudir_reset_defaults', 'rrze_faudir_reset_defaults');
 
-function rrze_faudir_display_all_contacts($page = 1) {
-        $limit = 60;
-        $offset = ($page - 1) * $limit;
-        $contacts_data = fetch_fau_persons($limit, $offset);
-    
-        if (is_string($contacts_data)) {
-            return '<p>' . esc_html($contacts_data) . '</p>'; // Handle error message
-        }
-    
-        $contacts = $contacts_data['data'] ?? [];
-    
-        if (!empty($contacts)) {
-            $output = '<div class="contacts-wrapper">';
-            foreach ($contacts as $contact) {
-                $personalTitle = isset($contact['personalTitle']) ? $contact['personalTitle'] . ' ' : '';
-                $name = esc_html($personalTitle . $contact['givenName'] . ' ' . $contact['familyName']);
-                $identifier = esc_html($contact['identifier']);
-                $output .= '<div class="contact-card">';
-                $output .= "<h2 class='contact-name'>{$name}</h2>";
-                $output .= "<div class='contact-details'>";
-                $output .= "<p><strong>". __('Identifier:', 'rrze-faudir').  "{$identifier} </p>";
-                $output .= '<h3>'  . __('Contacts:', 'rrze-faudir'). '</h3>';
-                if (!empty($contact['contacts'])) {
-                    foreach ($contact['contacts'] as $contactDetail) {
-                        $orgName = esc_html($contactDetail['organization']['name']);
-                        $locale = get_locale();
-                        $functionLabel = in_array($locale, ['de_DE', 'de_DE_formal']) 
-                            ? esc_html($contactDetail['functionLabel']['de'])
-                            : esc_html($contactDetail['functionLabel']['en']);
-                        $output .= "<p><strong>". __('Organization:', 'rrze-faudir')."</strong> {$orgName} ({$functionLabel})</p>";
-                    }
-                }
-                // Check if a post already exists with this identifier
-                $existing_post = get_posts(array(
-                    'post_type' => 'custom_person',
-                    'meta_key' => 'person_id',
-                    'meta_value' => $identifier,
-                    'posts_per_page' => 1
-                ));
+function rrze_faudir_display_all_contacts($page = 1)
+{
+    $limit = 60;
+    $offset = ($page - 1) * $limit;
+    $contacts_data = fetch_fau_persons($limit, $offset);
 
-                $output .= "</div>";
+    if (is_string($contacts_data)) {
+        return '<p>' . esc_html($contacts_data) . '</p>'; // Handle error message
+    }
 
-                if (!empty($existing_post)) {
-                    // Post exists, show edit link
-                    $edit_link = get_edit_post_link($existing_post[0]->ID);
-                    $output .= "<a href='" . esc_url($edit_link) . "' class='edit-person button'><span class='dashicons dashicons-edit'></span> " . esc_html__('Edit', 'rrze-faudir') . "</a>";
-                } else {
-                    // Post doesn't exist, show add button
-                    $output .= "<button class='add-person button' data-name='" . esc_attr($name) . "' data-id='" . esc_attr($identifier) . "'><span class='dashicons dashicons-plus'></span>" . esc_html__('Add', 'rrze-faudir') ."</button>";
+    $contacts = $contacts_data['data'] ?? [];
+
+    if (!empty($contacts)) {
+        $output = '<div class="contacts-wrapper">';
+        foreach ($contacts as $contact) {
+            $personalTitle = isset($contact['personalTitle']) ? $contact['personalTitle'] . ' ' : '';
+            $name = esc_html($personalTitle . $contact['givenName'] . ' ' . $contact['familyName']);
+            $identifier = esc_html($contact['identifier']);
+            $output .= '<div class="contact-card">';
+            $output .= "<h2 class='contact-name'>{$name}</h2>";
+            $output .= "<div class='contact-details'>";
+            $output .= "<p><strong>" . __('Identifier:', 'rrze-faudir') .  "{$identifier} </p>";
+            $output .= '<h3>'  . __('Contacts:', 'rrze-faudir') . '</h3>';
+            if (!empty($contact['contacts'])) {
+                foreach ($contact['contacts'] as $contactDetail) {
+                    $orgName = esc_html($contactDetail['organization']['name']);
+                    $locale = get_locale();
+                    $functionLabel = in_array($locale, ['de_DE', 'de_DE_formal'])
+                        ? esc_html($contactDetail['functionLabel']['de'])
+                        : esc_html($contactDetail['functionLabel']['en']);
+                    $output .= "<p><strong>" . __('Organization:', 'rrze-faudir') . "</strong> {$orgName} ({$functionLabel})</p>";
                 }
-                $output .= '</div>';
+            }
+            // Check if a post already exists with this identifier
+            $existing_post = get_posts(array(
+                'post_type' => 'custom_person',
+                'meta_key' => 'person_id',
+                'meta_value' => $identifier,
+                'posts_per_page' => 1
+            ));
+
+            $output .= "</div>";
+
+            if (!empty($existing_post)) {
+                // Post exists, show edit link
+                $edit_link = get_edit_post_link($existing_post[0]->ID);
+                $output .= "<a href='" . esc_url($edit_link) . "' class='edit-person button'><span class='dashicons dashicons-edit'></span> " . esc_html__('Edit', 'rrze-faudir') . "</a>";
+            } else {
+                // Post doesn't exist, show add button
+                $output .= "<button class='add-person button' data-name='" . esc_attr($name) . "' data-id='" . esc_attr($identifier) . "'><span class='dashicons dashicons-plus'></span>" . esc_html__('Add', 'rrze-faudir') . "</button>";
             }
             $output .= '</div>';
-    
-            // Add pagination controls
-            $output .= '<div class="pagination">';
-            $output .= '<button class="prev-page">' . __('Previous', 'rrze-faudir') . '</button>';
-            $output .= '<button class="next-page">' . __('Next', 'rrze-faudir') . '</button>';
-
-            $output .= '</div>';
-        } else {
-            $output = '<p>' . __('No contacts found.', 'rrze-faudir') . '</p>';
         }
-    
-        return $output;
+        $output .= '</div>';
+
+        // Add pagination controls
+        $output .= '<div class="pagination">';
+        $output .= '<button class="prev-page">' . __('Previous', 'rrze-faudir') . '</button>';
+        $output .= '<button class="next-page">' . __('Next', 'rrze-faudir') . '</button>';
+
+        $output .= '</div>';
+    } else {
+        $output = '<p>' . __('No contacts found.', 'rrze-faudir') . '</p>';
     }
+
+    return $output;
+}
 function rrze_faudir_fetch_contacts_handler()
 {
     check_ajax_referer('rrze_faudir_api_nonce', 'security');
-    
+
     $page = isset($_POST['page']) ? intval(wp_unslash($_POST['page'])) : 0;
     $output = rrze_faudir_display_all_contacts($page);
 
@@ -576,7 +584,8 @@ add_action('wp_ajax_rrze_faudir_fetch_contacts', 'rrze_faudir_fetch_contacts_han
 
 
 // Clear Cache Function
-function rrze_faudir_clear_cache() {
+function rrze_faudir_clear_cache()
+{
     global $wpdb;
     // Delete all transients related to the plugin's cache
     $wpdb->query("DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '%_transient_rrze_faudir%'");
@@ -597,7 +606,7 @@ add_action('wp_ajax_rrze_faudir_clear_cache', 'rrze_faudir_clear_cache');
 //     $response = '';
 
 //     // Check if searching by person ID
-    
+
 //    if (!empty($givenName) || !empty($familyName) || !empty($personId)|| !empty($email)) {
 //         // If searching by name, pass the givenName and familyName as parameters
 //         $params = [
@@ -701,7 +710,8 @@ add_action('wp_ajax_rrze_faudir_clear_cache', 'rrze_faudir_clear_cache');
 // add_action('admin_post_rrze_faudir_search_person', 'rrze_faudir_handle_search_person');
 
 // Add this function at the end of the file
-function rrze_faudir_search_person_ajax() {
+function rrze_faudir_search_person_ajax()
+{
     check_ajax_referer('rrze_faudir_api_nonce', 'security');
 
     $personId = isset($_POST['person_id']) ? sanitize_text_field($_POST['person_id']) : '';
@@ -710,7 +720,7 @@ function rrze_faudir_search_person_ajax() {
     $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
 
     $queryParts = [];
-    
+
     if (!empty($personId)) {
         $queryParts[] = 'identifier=' . $personId;
     }
@@ -782,4 +792,3 @@ function rrze_faudir_search_person_ajax() {
     }
 }
 add_action('wp_ajax_rrze_faudir_search_person', 'rrze_faudir_search_person_ajax');
-

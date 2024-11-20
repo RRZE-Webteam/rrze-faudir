@@ -1,8 +1,10 @@
 <?php
 
 // Block handler for RRZE FAUDIR
-class FaudirBlock {
-    public static function register() {
+class FaudirBlock
+{
+    public static function register()
+    {
         // Get the default output fields using the utility function
         $default_show_fields = FaudirUtils::getDefaultOutputFields();
 
@@ -10,9 +12,10 @@ class FaudirBlock {
         $default_show = implode(', ', $default_show_fields);
     }
 
-    public static function render($attributes) {
+    public static function render($attributes)
+    {
         error_log('[RRZE-FAUDIR] Rendering block');
-        
+
         // Fetch and render data for the block
         $output = fetch_fau_data_for_block($attributes);
 
@@ -21,7 +24,8 @@ class FaudirBlock {
 }
 
 // New function for fetching FAU data specifically for the block
-function fetch_fau_data_for_block($attributes) {
+function fetch_fau_data_for_block($attributes)
+{
     // Ensure 'show' and 'hide' attributes are strings before exploding
     $show = is_string($attributes['show']) ? $attributes['show'] : '';
     $hide = is_string($attributes['hide']) ? $attributes['hide'] : '';
@@ -30,7 +34,7 @@ function fetch_fau_data_for_block($attributes) {
     $show_fields = array_map('trim', explode(',', $show));
     $hide_fields = array_map('trim', explode(',', $hide));
     $url = $attributes['url'];
-   // Prepare parameters for fetching data
+    // Prepare parameters for fetching data
     $identifiers = empty($attributes['identifier']) ? [] : (is_array($attributes['identifier']) ? $attributes['identifier'] : explode(',', $attributes['identifier']));
     $persons = []; // This will hold the fetched data
 
@@ -55,18 +59,19 @@ function fetch_fau_data_for_block($attributes) {
     return $template->render($attributes['format'], [
         'show_fields' => $show_fields,
         'hide_fields' => $hide_fields,
-        'url'=> $url,
+        'url' => $url,
         'persons' => $persons,
     ]);
 }
 
 // Register the block on init
-add_action('init', function() {
+add_action('init', function () {
     FaudirBlock::register();
 });
 
 // Add this function to modify the REST API response
-function add_person_id_to_rest($response, $post, $request) {
+function add_person_id_to_rest($response, $post, $request)
+{
     if ($post->post_type === 'custom_person') {
         $person_id = get_post_meta($post->ID, 'person_id', true);
         $response->data['person_id'] = $person_id;
@@ -76,7 +81,8 @@ function add_person_id_to_rest($response, $post, $request) {
 add_filter('rest_prepare_custom_person', 'add_person_id_to_rest', 10, 3);
 
 // Am Anfang der Datei
-function register_faudir_block_assets() {
+function register_faudir_block_assets()
+{
     // Register block script
     wp_register_script(
         'rrze-faudir-block',
@@ -127,7 +133,8 @@ function register_faudir_block_assets() {
 }
 add_action('init', 'register_faudir_block_assets');
 
-function add_faudir_block_category($categories) {
+function add_faudir_block_category($categories)
+{
     return array_merge(
         $categories,
         array(
@@ -141,11 +148,12 @@ function add_faudir_block_category($categories) {
 add_filter('block_categories_all', 'add_faudir_block_category');
 
 // Update the REST API response to include person_name
-function add_person_meta_to_rest($response, $post, $request) {
+function add_person_meta_to_rest($response, $post, $request)
+{
     if ($post->post_type === 'custom_person') {
         $person_id = get_post_meta($post->ID, 'person_id', true);
         $person_name = get_post_meta($post->ID, 'person_name', true);
-        
+
         $response->data['meta'] = array_merge(
             $response->data['meta'] ?? [],
             [
@@ -157,5 +165,3 @@ function add_person_meta_to_rest($response, $post, $request) {
     return $response;
 }
 add_filter('rest_prepare_custom_person', 'add_person_meta_to_rest', 10, 3);
-
-?>
