@@ -55,8 +55,3 @@ class FaudirUtils
         return array_unique($default_show_fields);
     }
 }
-function load_fontawesome()
-{
-    wp_enqueue_style('fontawesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css', [], null);
-}
-add_action('wp_enqueue_scripts', 'load_fontawesome');
