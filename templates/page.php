@@ -154,24 +154,21 @@
                                     <?php if (!empty($person['contacts'][0]['socials'])) : ?>
                                         <div>
                                             <h3><?php echo esc_html__('Social Profiles:', 'rrze-faudir'); ?></h3>
-                                                <?php
-                                                $iconMap = require plugin_dir_path(RRZE_PLUGIN_FILE) . 'includes/config/icons.php';
-
-                                                foreach ($person['contacts'][0]['socials'] as $social) :
-                                                    $platform = strtolower($social['platform']);
-                                                    $url = $social['url'];
-                                                    $icon_name = isset($iconMap[$platform]) ? $iconMap[$platform] : 'link';
-                                                    $svg_content = file_get_contents(plugin_dir_path(RRZE_PLUGIN_FILE) . "assets/fontawesome/svgs/brands/{$icon_name}.svg");
+                                            <ul class="social-media-list">
+                                                <?php foreach ($person['contacts'][0]['socials'] as $social):
+                                                    $icon_data = get_social_icon_data($social['platform']);
                                                 ?>
-                                                        <a href="<?php echo esc_url($url); ?>" 
+                                                    <li>
+                                                        <a href="<?php echo esc_url($social['url']); ?>" 
+                                                           class="<?php echo esc_attr($icon_data['css_class']); ?>"
+                                                           style="background-image: url('<?php echo esc_url($icon_data['icon_url']); ?>');display: inline-block; padding-left: 20px; background-size: contain; background-repeat: no-repeat;"
                                                            target="_blank" 
-                                                           rel="noopener noreferrer"
-                                                           class="social-icon">
-                                                            <span class="icon-svg"><?php echo $svg_content; ?></span>
-                                                            <span class="screen-reader-text"><?php echo esc_html(ucfirst($platform)); ?></span>
-                                                            <?php echo esc_html(ucfirst($platform)); ?>
+                                                           rel="noopener noreferrer">
+                                                            <?php echo esc_html(ucfirst($icon_data['name'])); ?>
                                                         </a>
+                                                    </li>
                                                 <?php endforeach; ?>
+                                            </ul>
                                         </div>
                                     <?php endif; ?>
                                 <?php endif; ?>
