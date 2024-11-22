@@ -1,12 +1,15 @@
 <?php
 // Shortcode handler for RRZE FAUDIR
 
-class FaudirShortcode {
-    public static function register() {
+class FaudirShortcode
+{
+    public static function register()
+    {
         add_shortcode('faudir_shortcode', [self::class, 'render']);
     }
 
-    public static function render($atts, $content = null) {
+    public static function render($atts, $content = null)
+    {
         return '<div class="faudir-shortcode">' . do_shortcode($content) . '</div>';
     }
 }
@@ -14,14 +17,17 @@ class FaudirShortcode {
 include_once plugin_dir_path(__FILE__) . '../utils/Template.php';
 
 // Shortcode function
-function fetch_fau_data($atts) {
+function fetch_fau_data($atts)
+{
     // Return early only if it's a shortcode call in admin area
-    if (is_admin() || 
-        (defined('REST_REQUEST') && REST_REQUEST) || 
-        (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)) {
+    if (
+        is_admin() ||
+        (defined('REST_REQUEST') && REST_REQUEST) ||
+        (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
+    ) {
         return ''; // Return a placeholder for the editor/save operations
     }
-        
+
 
     // Get the default output fields using the utility function
     $default_show_fields = FaudirUtils::getDefaultOutputFields();
@@ -79,7 +85,8 @@ function fetch_fau_data($atts) {
     return $output;
 }
 
-function fetch_and_render_fau_data($atts) {
+function fetch_and_render_fau_data($atts)
+{
     // Convert 'show' and 'hide' attributes into arrays
     $show_fields = array_map('trim', explode(',', $atts['show']));
     $hide_fields = array_map('trim', explode(',', $atts['hide']));
@@ -107,17 +114,17 @@ function fetch_and_render_fau_data($atts) {
             ),
             'posts_per_page' => -1,
         );
-        
+
         $person_posts = get_posts($args);
         $person_identifiers = array();
-        
+
         foreach ($person_posts as $person_post) {
             $person_id = get_post_meta($person_post->ID, 'person_id', true);
             if (!empty($person_id)) {
                 $person_identifiers[] = $person_id;
             }
         }
-        
+
         if (!empty($person_identifiers)) {
             $persons = process_persons_by_identifiers($person_identifiers);
         }
@@ -249,7 +256,8 @@ function fetch_and_render_fau_data($atts) {
 /**
  * Process persons by a list of identifiers.
  */
-function process_persons_by_identifiers($identifiers) {
+function process_persons_by_identifiers($identifiers)
+{
     $persons = [];
     $errors = [];
 
@@ -275,7 +283,8 @@ function process_persons_by_identifiers($identifiers) {
 /**
  * Fetch and process persons based on query parameters.
  */
-function fetch_and_process_persons($lq = null) {
+function fetch_and_process_persons($lq = null)
+{
     $params = $lq ? ['lq' => $lq] : [];
     $data = fetch_fau_persons_atributes(0, 0, $params);
 
@@ -292,7 +301,8 @@ function fetch_and_process_persons($lq = null) {
 /**
  * Enrich a person's data with their contacts and organization details.
  */
-function enrich_person_with_contacts($person) {
+function enrich_person_with_contacts($person)
+{
     $personContacts = [];
 
     if (!empty($person['contacts'])) {
@@ -324,7 +334,3 @@ function enrich_person_with_contacts($person) {
 
 
 add_shortcode('faudir', 'fetch_fau_data');
-
-
-
-?>

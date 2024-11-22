@@ -13,19 +13,19 @@ class EnqueueScripts
     public static function enqueue_frontend()
     {
         wp_enqueue_style('rrze-faudir', plugin_dir_url(__FILE__) . '../../assets/css/rrze-faudir.css');
-    
+
         // Add 'wp-element' or other dependencies if the script uses wp object
         wp_enqueue_script(
-            'rrze-faudir', 
-            plugin_dir_url(__FILE__) . '../../assets/js/rrze-faudir.js', 
+            'rrze-faudir',
+            plugin_dir_url(__FILE__) . '../../assets/js/rrze-faudir.js',
             ['jquery', 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components'], // Add 'wp-element' or other necessary dependencies
-            false, 
+            false,
             true
         );
-    
+
         // Retrieve API key from settings
         $api_key = get_option('rrze_faudir_api_key', '');
-    
+
         // Localize script with API key
         wp_localize_script('rrze-faudir', 'rrze_faudir_ajax', array(
             'ajax_url' => admin_url('admin-ajax.php'),
@@ -33,7 +33,7 @@ class EnqueueScripts
             'api_key' => $api_key // Pass API key to JavaScript
         ));
     }
-    
+
 
     // Enqueue admin scripts and styles for specific admin pages
     public static function enqueue_admin($hook)
@@ -69,7 +69,7 @@ class EnqueueScripts
             [
                 'wp-blocks',
                 'wp-element',
-                'wp-editor', 
+                'wp-editor',
                 'wp-components',
                 'wp-block-editor',
                 'wp-i18n',

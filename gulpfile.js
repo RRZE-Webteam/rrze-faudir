@@ -15,7 +15,7 @@ gulp.task('css', function () {
 
 // Define the JS task for main JavaScript files
 gulp.task('js-main', function () {
-  return gulp.src('src/js/*.js')
+  return gulp.src(['src/js/*.js', '!src/js/fau_dir_block.js'])
     .pipe(concat('rrze-faudir.js'))
     .pipe(gulp.dest('assets/js'));
 });

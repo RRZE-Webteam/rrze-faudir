@@ -1,24 +1,38 @@
-# Copyright (C) 2024 rrze-faudir
-# This file is distributed under the same license as the rrze-faudir package.
-#, fuzzy
+# Copyright (C) 2024 RRZE Webteam
+# This file is distributed under the GNU General Public License v2.
 msgid ""
 msgstr ""
-"Project-Id-Version: rrze-faudir\n"
-"Report-Msgid-Bugs-To: https://your-plugin-url.com/support\n"
-"POT-Creation-Date: 2024-11-08 11:15+0100\n"
-"PO-Revision-Date: \n"
-"Last-Translator: Your Name <your-email@example.com>\n"
-"Language-Team: Your Team <team-email@example.com>\n"
+"Project-Id-Version: RRZE FAU Directory 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-faudir\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Poedit-Basepath: ..\n"
-"X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"X-Generator: Poedit 3.5\n"
-"X-Poedit-SearchPath-0: .\n"
-"X-Poedit-SearchPathExcluded-0: *.js\n"
+"POT-Creation-Date: 2024-11-12T08:50:42+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.11.0\n"
+"X-Domain: rrze-faudir\n"
+
+#. Plugin Name of the plugin
+#: rrze-faudir.php
+msgid "RRZE FAU Directory"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: rrze-faudir.php
+msgid "https://github.com/RRZE-Webteam/rrze-faudir"
+msgstr ""
+
+#. Description of the plugin
+#: rrze-faudir.php
+msgid "Plugin for displaying the FAU person and institution directory on websites."
+msgstr ""
+
+#. Author of the plugin
+#: rrze-faudir.php
+msgid "RRZE Webteam"
+msgstr ""
 
 #: includes/admin/settings-page.php:11
 msgid "RRZE-FAUdir Settings"
@@ -28,7 +42,8 @@ msgstr ""
 msgid "RRZE-FAUdir"
 msgstr ""
 
-#: includes/admin/settings-page.php:43 includes/admin/settings-page.php:349
+#: includes/admin/settings-page.php:43
+#: includes/admin/settings-page.php:349
 msgid "API Settings"
 msgstr ""
 
@@ -36,7 +51,8 @@ msgstr ""
 msgid "API Key"
 msgstr ""
 
-#: includes/admin/settings-page.php:59 includes/admin/settings-page.php:352
+#: includes/admin/settings-page.php:59
+#: includes/admin/settings-page.php:352
 msgid "Cache Settings"
 msgstr ""
 
@@ -56,7 +72,8 @@ msgstr ""
 msgid "Clear All Cache"
 msgstr ""
 
-#: includes/admin/settings-page.php:102 includes/admin/settings-page.php:355
+#: includes/admin/settings-page.php:102
+#: includes/admin/settings-page.php:355
 msgid "Error Handling"
 msgstr ""
 
@@ -80,11 +97,13 @@ msgstr ""
 msgid "Person Slug"
 msgstr ""
 
-#: includes/admin/settings-page.php:148 includes/admin/settings-page.php:418
+#: includes/admin/settings-page.php:148
+#: includes/admin/settings-page.php:418
 msgid "Search Contacts by Identifier"
 msgstr ""
 
-#: includes/admin/settings-page.php:156 includes/admin/settings-page.php:364
+#: includes/admin/settings-page.php:156
+#: includes/admin/settings-page.php:364
 msgid "Shortcode Settings"
 msgstr ""
 
@@ -148,8 +167,9 @@ msgstr ""
 msgid "Show error messages for incorrect contact entries."
 msgstr ""
 
-#: includes/admin/settings-page.php:262 includes/config/config.php:14
-#: templates/kompakt.php:357
+#: includes/admin/settings-page.php:262
+#: includes/config/config.php:14
+#: templates/kompakt.php:362
 msgid "Call up business card"
 msgstr ""
 
@@ -166,6 +186,8 @@ msgid "Enter the slug for the person post type."
 msgstr ""
 
 #: includes/admin/settings-page.php:309
+#: includes/blocks/fau_dir_block.js:229
+#: src/js/blocks/fau_dir_block.js:1
 msgid "Display Name"
 msgstr ""
 
@@ -174,6 +196,8 @@ msgid "Academic Title"
 msgstr ""
 
 #: includes/admin/settings-page.php:311
+#: includes/blocks/fau_dir_block.js:231
+#: src/js/blocks/fau_dir_block.js:1
 msgid "First Name"
 msgstr ""
 
@@ -182,28 +206,39 @@ msgid "Last Name"
 msgstr ""
 
 #: includes/admin/settings-page.php:313
+#: includes/blocks/fau_dir_block.js:233
+#: src/js/blocks/fau_dir_block.js:1
 msgid "Academic Suffix"
 msgstr ""
 
 #: includes/admin/settings-page.php:314
 #: includes/custom-post-type/custom-post-type.php:129
 #: templates/single-custom_person.php:24
+#: includes/blocks/fau_dir_block.js:234
+#: src/js/blocks/fau_dir_block.js:1
 msgid "Email"
 msgstr ""
 
 #: includes/admin/settings-page.php:315
+#: includes/blocks/fau_dir_block.js:235
+#: src/js/blocks/fau_dir_block.js:1
 msgid "Phone"
 msgstr ""
 
 #: includes/admin/settings-page.php:316
 #: includes/custom-post-type/custom-post-type.php:166
 #: templates/single-custom_person.php:31
+#: includes/blocks/fau_dir_block.js:236
+#: src/js/blocks/fau_dir_block.js:1
 msgid "Organization"
 msgstr ""
 
-#: includes/admin/settings-page.php:317 templates/single-custom_person.php:32
+#: includes/admin/settings-page.php:317
+#: templates/single-custom_person.php:32
 #: templates/single-custom_person.php:228
 #: templates/single-custom_person.php:233
+#: includes/blocks/fau_dir_block.js:237
+#: src/js/blocks/fau_dir_block.js:1
 msgid "Function"
 msgstr ""
 
@@ -212,20 +247,30 @@ msgid "Url"
 msgstr ""
 
 #: includes/admin/settings-page.php:319
+#: includes/blocks/fau_dir_block.js:239
+#: src/js/blocks/fau_dir_block.js:1
 msgid "Kompakt Button"
 msgstr ""
 
-#: includes/admin/settings-page.php:320 templates/page.php:382
-#: templates/page.php:387 templates/single-custom_person.php:283
+#: includes/admin/settings-page.php:320
+#: templates/page.php:384
+#: templates/page.php:389
+#: templates/single-custom_person.php:283
 #: templates/single-custom_person.php:288
+#: includes/blocks/fau_dir_block.js:240
+#: src/js/blocks/fau_dir_block.js:1
 msgid "Content"
 msgstr ""
 
 #: includes/admin/settings-page.php:321
+#: includes/blocks/fau_dir_block.js:241
+#: src/js/blocks/fau_dir_block.js:1
 msgid "Teasertext"
 msgstr ""
 
 #: includes/admin/settings-page.php:322
+#: includes/blocks/fau_dir_block.js:242
+#: src/js/blocks/fau_dir_block.js:1
 msgid "Social Media"
 msgstr ""
 
@@ -273,8 +318,11 @@ msgstr ""
 msgid "Family Name:"
 msgstr ""
 
-#: includes/admin/settings-page.php:434 templates/card.php:129
-#: templates/kompakt.php:124 templates/list.php:99 templates/page.php:138
+#: includes/admin/settings-page.php:434
+#: templates/card.php:129
+#: templates/kompakt.php:124
+#: templates/list.php:99
+#: templates/page.php:138
 #: templates/single-custom_person.php:51
 msgid "Email:"
 msgstr ""
@@ -287,7 +335,8 @@ msgstr ""
 msgid "Are you sure you want to reset all settings to their default values?"
 msgstr ""
 
-#: includes/admin/settings-page.php:469 includes/admin/settings-page.php:493
+#: includes/admin/settings-page.php:469
+#: includes/admin/settings-page.php:493
 msgid "Settings have been reset to default values."
 msgstr ""
 
@@ -303,13 +352,18 @@ msgstr ""
 msgid "Contacts:"
 msgstr ""
 
-#: includes/admin/settings-page.php:526 templates/kompakt.php:169
-#: templates/list.php:157 templates/page.php:248
+#: includes/admin/settings-page.php:526
+#: templates/kompakt.php:169
+#: templates/list.php:157
+#: templates/page.php:250
 msgid "Organization:"
 msgstr ""
 
-#: includes/admin/settings-page.php:542 includes/admin/settings-page.php:770
+#: includes/admin/settings-page.php:542
+#: includes/admin/settings-page.php:770
 #: includes/utils/enqueue_scripts.php:57
+#: includes/blocks/fau_dir_block.js:322
+#: src/js/blocks/fau_dir_block.js:1
 msgid "Edit"
 msgstr ""
 
@@ -334,7 +388,6 @@ msgid "All cache cleared successfully."
 msgstr ""
 
 #: includes/admin/settings-page.php:734
-#, php-format
 msgid "Error: %s"
 msgstr ""
 
@@ -342,7 +395,7 @@ msgstr ""
 msgid "No contacts found. Please verify the IdM-Kennung or names provided."
 msgstr ""
 
-#: includes/blocks/fau_dir_block.php:133
+#: includes/blocks/fau_dir_block.php:139
 msgid "RRZE Blocks"
 msgstr ""
 
@@ -377,48 +430,6 @@ msgstr ""
 
 #: includes/custom-post-type/custom-post-type.php:20
 msgid "No persons found."
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:49
-#: includes/custom-post-type/custom-post-type.php:59
-#: includes/custom-post-type/custom-post-type.php:85 rrze-faudir.php:453
-msgid "Categories"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:50
-msgid "Category"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:51 rrze-faudir.php:445
-msgid "Search Categories"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:52 rrze-faudir.php:446
-msgid "All Categories"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:53 rrze-faudir.php:447
-msgid "Parent Category"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:54 rrze-faudir.php:448
-msgid "Parent Category:"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:55 rrze-faudir.php:449
-msgid "Edit Category"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:56 rrze-faudir.php:450
-msgid "Update Category"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:57 rrze-faudir.php:451
-msgid "Add New Category"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:58 rrze-faudir.php:452
-msgid "New Category Name"
 msgstr ""
 
 #: includes/custom-post-type/custom-post-type.php:99
@@ -459,6 +470,8 @@ msgstr ""
 
 #: includes/custom-post-type/custom-post-type.php:132
 #: templates/single-custom_person.php:27
+#: includes/blocks/fau_dir_block.js:232
+#: src/js/blocks/fau_dir_block.js:1
 msgid "Family Name"
 msgstr ""
 
@@ -505,18 +518,6 @@ msgstr ""
 msgid "Function (German)"
 msgstr ""
 
-#: includes/custom-post-type/custom-post-type.php:373
-msgid "No contact found."
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:376
-msgid "Error fetching person attributes."
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:379
-msgid "Invalid person ID."
-msgstr ""
-
 #: includes/custom-post-type/custom-post-type.php:453
 msgid "Custom person created successfully!"
 msgstr ""
@@ -526,17 +527,20 @@ msgid "Error creating custom person: Failed to fetch person details."
 msgstr ""
 
 #: includes/shortcodes/fau_dir_shortcode.php:220
-#, php-format
 msgid "Person with ID %s does not exist"
 msgstr ""
 
-#: includes/utils/api-functions.php:18 includes/utils/api-functions.php:57
-#: includes/utils/api-functions.php:136 includes/utils/api-functions.php:180
+#: includes/utils/api-functions.php:18
+#: includes/utils/api-functions.php:57
+#: includes/utils/api-functions.php:136
+#: includes/utils/api-functions.php:180
 msgid "Error retrieving data: "
 msgstr ""
 
-#: includes/utils/api-functions.php:25 includes/utils/api-functions.php:64
-#: includes/utils/api-functions.php:141 includes/utils/api-functions.php:192
+#: includes/utils/api-functions.php:25
+#: includes/utils/api-functions.php:64
+#: includes/utils/api-functions.php:141
+#: includes/utils/api-functions.php:192
 msgid "Error decoding JSON data."
 msgstr ""
 
@@ -544,7 +548,8 @@ msgstr ""
 msgid "Error retrieving data or contacts not found."
 msgstr ""
 
-#: includes/utils/api-functions.php:247 includes/utils/api-functions.php:255
+#: includes/utils/api-functions.php:247
+#: includes/utils/api-functions.php:255
 msgid "No workplaces available"
 msgstr ""
 
@@ -556,19 +561,23 @@ msgstr ""
 msgid "Floor: "
 msgstr ""
 
-#: includes/utils/api-functions.php:270 includes/utils/api-functions.php:345
+#: includes/utils/api-functions.php:270
+#: includes/utils/api-functions.php:345
 msgid "Street: "
 msgstr ""
 
-#: includes/utils/api-functions.php:273 includes/utils/api-functions.php:348
+#: includes/utils/api-functions.php:273
+#: includes/utils/api-functions.php:348
 msgid "ZIP: "
 msgstr ""
 
-#: includes/utils/api-functions.php:276 includes/utils/api-functions.php:351
+#: includes/utils/api-functions.php:276
+#: includes/utils/api-functions.php:351
 msgid "City: "
 msgstr ""
 
-#: includes/utils/api-functions.php:279 includes/utils/api-functions.php:354
+#: includes/utils/api-functions.php:279
+#: includes/utils/api-functions.php:354
 msgid "FAU Map: "
 msgstr ""
 
@@ -580,7 +589,8 @@ msgstr ""
 msgid "Fax: "
 msgstr ""
 
-#: includes/utils/api-functions.php:288 includes/utils/api-functions.php:342
+#: includes/utils/api-functions.php:288
+#: includes/utils/api-functions.php:342
 msgid "URL: "
 msgstr ""
 
@@ -588,7 +598,8 @@ msgstr ""
 msgid "Emails: "
 msgstr ""
 
-#: includes/utils/api-functions.php:295 includes/utils/api-functions.php:301
+#: includes/utils/api-functions.php:295
+#: includes/utils/api-functions.php:301
 msgid "Weekday "
 msgstr ""
 
@@ -600,7 +611,8 @@ msgstr ""
 msgid "Consultation Hours: "
 msgstr ""
 
-#: includes/utils/api-functions.php:321 includes/utils/api-functions.php:329
+#: includes/utils/api-functions.php:321
+#: includes/utils/api-functions.php:329
 msgid "No address available"
 msgstr ""
 
@@ -612,7 +624,8 @@ msgstr ""
 msgid "Email: "
 msgstr ""
 
-#: includes/utils/api-functions.php:369 includes/utils/api-functions.php:377
+#: includes/utils/api-functions.php:369
+#: includes/utils/api-functions.php:377
 msgid "No social media available"
 msgstr ""
 
@@ -624,13 +637,13 @@ msgstr ""
 msgid "Adding..."
 msgstr ""
 
+#. translators: 1: Current PHP version 2: Required PHP version
 #: rrze-faudir.php:34
-#, php-format
 msgid "Your PHP version (%1$s) is outdated. Please upgrade to PHP %2$s or higher."
 msgstr ""
 
+#. translators: 1: Current WordPress version 2: Required WordPress version
 #: rrze-faudir.php:41
-#, php-format
 msgid "Your WordPress version (%1$s) is outdated. Please upgrade to WordPress %2$s or higher."
 msgstr ""
 
@@ -638,156 +651,250 @@ msgstr ""
 msgid "No contacts found with the provided identifier."
 msgstr ""
 
-#: rrze-faudir.php:402
-#, php-format
+#. translators: %d: number of imported persons
+#: rrze-faudir.php:415
 msgid "%d person was successfully imported from the old plugin."
 msgid_plural "%d persons were successfully imported from the old plugin."
 msgstr[0] ""
 msgstr[1] ""
 
-#: rrze-faudir.php:411
+#: rrze-faudir.php:425
 msgid "You now have the option to set a custom slug for person pages in the settings. If you don't set a unique slug, existing person pages from the old plugin may be overridden by the new plugin's person pages. To prevent this, please ensure that you configure a custom slug in the settings if you want to keep the old pages intact."
 msgstr ""
 
-#: rrze-faudir.php:443
+#: rrze-faudir.php:457
 msgctxt "taxonomy general name"
 msgid "Categories"
 msgstr ""
 
-#: rrze-faudir.php:444
+#: rrze-faudir.php:458
 msgctxt "taxonomy singular name"
 msgid "Category"
 msgstr ""
 
-#: templates/card.php:49 templates/kompakt.php:51 templates/list.php:32
-#: templates/page.php:68 templates/table.php:31
+#: rrze-faudir.php:459
+msgid "Search Categories"
+msgstr ""
+
+#: rrze-faudir.php:460
+msgid "All Categories"
+msgstr ""
+
+#: rrze-faudir.php:461
+msgid "Parent Category"
+msgstr ""
+
+#: rrze-faudir.php:462
+msgid "Parent Category:"
+msgstr ""
+
+#: rrze-faudir.php:463
+msgid "Edit Category"
+msgstr ""
+
+#: rrze-faudir.php:464
+msgid "Update Category"
+msgstr ""
+
+#: rrze-faudir.php:465
+msgid "Add New Category"
+msgstr ""
+
+#: rrze-faudir.php:466
+msgid "New Category Name"
+msgstr ""
+
+#: rrze-faudir.php:467
+msgid "Categories"
+msgstr ""
+
+#: templates/card.php:49
+#: templates/kompakt.php:51
+#: templates/list.php:32
+#: templates/page.php:68
+#: templates/table.php:31
 msgid "Not specified"
 msgstr ""
 
-#: templates/card.php:50 templates/kompakt.php:52 templates/list.php:33
-#: templates/page.php:69 templates/table.php:32
+#: templates/card.php:50
+#: templates/kompakt.php:52
+#: templates/list.php:33
+#: templates/page.php:69
+#: templates/table.php:32
 msgid "Doktor"
 msgstr ""
 
-#: templates/card.php:51 templates/kompakt.php:53 templates/list.php:34
-#: templates/page.php:70 templates/table.php:33
+#: templates/card.php:51
+#: templates/kompakt.php:53
+#: templates/list.php:34
+#: templates/page.php:70
+#: templates/table.php:33
 msgid "Professor"
 msgstr ""
 
-#: templates/card.php:52 templates/kompakt.php:54 templates/list.php:35
-#: templates/page.php:71 templates/table.php:34
+#: templates/card.php:52
+#: templates/kompakt.php:54
+#: templates/list.php:35
+#: templates/page.php:71
+#: templates/table.php:34
 msgid "Professor Doktor"
 msgstr ""
 
-#: templates/card.php:53 templates/kompakt.php:55 templates/list.php:36
-#: templates/page.php:72 templates/table.php:35
+#: templates/card.php:53
+#: templates/kompakt.php:55
+#: templates/list.php:36
+#: templates/page.php:72
+#: templates/table.php:35
 msgid "Professor (Emeritus)"
 msgstr ""
 
-#: templates/card.php:54 templates/kompakt.php:56 templates/list.php:37
-#: templates/page.php:73 templates/table.php:36
+#: templates/card.php:54
+#: templates/kompakt.php:56
+#: templates/list.php:37
+#: templates/page.php:73
+#: templates/table.php:36
 msgid "Professor Doktor (Emeritus)"
 msgstr ""
 
-#: templates/card.php:55 templates/kompakt.php:57 templates/list.php:38
-#: templates/page.php:74 templates/table.php:37
+#: templates/card.php:55
+#: templates/kompakt.php:57
+#: templates/list.php:38
+#: templates/page.php:74
+#: templates/table.php:37
 msgid "Privatdozent"
 msgstr ""
 
-#: templates/card.php:56 templates/kompakt.php:58 templates/list.php:39
-#: templates/page.php:75 templates/table.php:38
+#: templates/card.php:56
+#: templates/kompakt.php:58
+#: templates/list.php:39
+#: templates/page.php:75
+#: templates/table.php:38
 msgid "Privatdozent Doktor"
 msgstr ""
 
-#: templates/card.php:59 templates/kompakt.php:60 templates/list.php:42
-#: templates/page.php:78 templates/table.php:41
+#: templates/card.php:59
+#: templates/kompakt.php:60
+#: templates/list.php:42
+#: templates/page.php:78
+#: templates/table.php:41
 msgid "Unknown"
 msgstr ""
 
-#: templates/card.php:142 templates/kompakt.php:135 templates/kompakt.php:189
-#: templates/list.php:110 templates/page.php:149 templates/page.php:268
+#: templates/card.php:142
+#: templates/kompakt.php:135
+#: templates/kompakt.php:189
+#: templates/list.php:110
+#: templates/page.php:149
+#: templates/page.php:270
 #: templates/single-custom_person.php:55
 msgid "Phone:"
 msgstr ""
 
-#: templates/card.php:234 templates/card.php:240 templates/kompakt.php:371
-#: templates/list.php:180 templates/list.php:185 templates/page.php:396
-#: templates/page.php:402 templates/table.php:197
+#: templates/card.php:236
+#: templates/card.php:242
+#: templates/kompakt.php:374
+#: templates/list.php:180
+#: templates/list.php:185
+#: templates/page.php:398
+#: templates/page.php:404
+#: templates/table.php:197
 msgid "No contact entry could be found."
 msgstr ""
 
-#: templates/kompakt.php:21 templates/kompakt.php:350
+#: templates/kompakt.php:21
+#: templates/kompakt.php:352
 msgid "Default Business Card Title"
 msgstr ""
 
-#: templates/kompakt.php:177 templates/page.php:256
+#: templates/kompakt.php:177
+#: templates/page.php:258
 msgid "Function:"
 msgstr ""
 
-#: templates/kompakt.php:180 templates/page.php:259
+#: templates/kompakt.php:180
+#: templates/page.php:261
 msgid "No function available."
 msgstr ""
 
-#: templates/kompakt.php:184 templates/page.php:263
+#: templates/kompakt.php:184
+#: templates/page.php:265
 #: templates/single-custom_person.php:155
 msgid "Organization Address:"
 msgstr ""
 
-#: templates/kompakt.php:194 templates/page.php:273
+#: templates/kompakt.php:194
+#: templates/page.php:275
 msgid "Mail:"
 msgstr ""
 
-#: templates/kompakt.php:199 templates/page.php:278
+#: templates/kompakt.php:199
+#: templates/page.php:280
 msgid "Url:"
 msgstr ""
 
-#: templates/kompakt.php:203 templates/kompakt.php:232 templates/page.php:282
-#: templates/page.php:311
+#: templates/kompakt.php:203
+#: templates/kompakt.php:232
+#: templates/page.php:284
+#: templates/page.php:313
 msgid "Street:"
 msgstr ""
 
-#: templates/kompakt.php:207 templates/kompakt.php:237 templates/page.php:286
-#: templates/page.php:316
+#: templates/kompakt.php:207
+#: templates/kompakt.php:237
+#: templates/page.php:288
+#: templates/page.php:318
 msgid "ZIP Code:"
 msgstr ""
 
-#: templates/kompakt.php:211 templates/kompakt.php:242 templates/page.php:290
-#: templates/page.php:321
+#: templates/kompakt.php:211
+#: templates/kompakt.php:242
+#: templates/page.php:292
+#: templates/page.php:323
 msgid "City:"
 msgstr ""
 
-#: templates/kompakt.php:215 templates/kompakt.php:247 templates/page.php:294
-#: templates/page.php:326
+#: templates/kompakt.php:215
+#: templates/kompakt.php:247
+#: templates/page.php:296
+#: templates/page.php:328
 msgid "Map:"
 msgstr ""
 
-#: templates/kompakt.php:217 templates/kompakt.php:249 templates/page.php:296
-#: templates/page.php:328
+#: templates/kompakt.php:217
+#: templates/kompakt.php:249
+#: templates/page.php:298
+#: templates/page.php:330
 msgid "View on Map"
 msgstr ""
 
-#: templates/kompakt.php:224 templates/page.php:303
+#: templates/kompakt.php:224
+#: templates/page.php:305
 msgid "Workplaces:"
 msgstr ""
 
-#: templates/kompakt.php:227 templates/page.php:306
+#: templates/kompakt.php:227
+#: templates/page.php:308
 msgid "No workplaces available."
 msgstr ""
 
-#: templates/kompakt.php:254 templates/page.php:333
+#: templates/kompakt.php:254
+#: templates/page.php:335
 msgid "Emails:"
 msgstr ""
 
-#: templates/kompakt.php:263 templates/page.php:342
+#: templates/kompakt.php:263
+#: templates/page.php:344
 msgid "Phone numbers:"
 msgstr ""
 
-#: templates/kompakt.php:272 templates/page.php:351
+#: templates/kompakt.php:272
+#: templates/page.php:353
 #: templates/single-custom_person.php:199
 msgid "Office Hours:"
 msgstr ""
 
-#: templates/kompakt.php:292 templates/page.php:155
+#: templates/kompakt.php:293
+#: templates/page.php:156
 msgid "Social Profiles:"
 msgstr ""
 
@@ -801,4 +908,95 @@ msgstr ""
 
 #: templates/single-custom_person.php:165
 msgid "Workplace:"
+msgstr ""
+
+#: includes/blocks/fau_dir_block.js:120
+#: src/js/blocks/fau_dir_block.js:1
+msgid "FAUDIR Block"
+msgstr ""
+
+#: includes/blocks/fau_dir_block.js:230
+#: src/js/blocks/fau_dir_block.js:1
+msgid "Personal Title"
+msgstr ""
+
+#: includes/blocks/fau_dir_block.js:238
+#: src/js/blocks/fau_dir_block.js:1
+msgid "URL"
+msgstr ""
+
+#: includes/blocks/fau_dir_block.js:334
+#: includes/blocks/fau_dir_block.js:395
+#: src/js/blocks/fau_dir_block.js:1
+msgid "Selected Persons:"
+msgstr ""
+
+#: includes/blocks/fau_dir_block.js:337
+#: src/js/blocks/fau_dir_block.js:1
+msgid "Showing:"
+msgstr ""
+
+#: includes/blocks/fau_dir_block.js:337
+#: src/js/blocks/fau_dir_block.js:1
+msgid "Default fields"
+msgstr ""
+
+#: includes/blocks/fau_dir_block.js:364
+#: src/js/blocks/fau_dir_block.js:1
+msgid "Category"
+msgstr ""
+
+#: includes/blocks/fau_dir_block.js:367
+#: src/js/blocks/fau_dir_block.js:1
+msgid "Select a category..."
+msgstr ""
+
+#: includes/blocks/fau_dir_block.js:381
+#: src/js/blocks/fau_dir_block.js:1
+msgid "Add Person"
+msgstr ""
+
+#: includes/blocks/fau_dir_block.js:384
+#: src/js/blocks/fau_dir_block.js:1
+msgid "Select a person..."
+msgstr ""
+
+#: includes/blocks/fau_dir_block.js:423
+#: src/js/blocks/fau_dir_block.js:1
+msgid "No persons selected"
+msgstr ""
+
+#: includes/blocks/fau_dir_block.js:430
+#: src/js/blocks/fau_dir_block.js:1
+msgid "Format"
+msgstr ""
+
+#: includes/blocks/fau_dir_block.js:474
+#: src/js/blocks/fau_dir_block.js:1
+msgid "Show Fields"
+msgstr ""
+
+#: includes/blocks/fau_dir_block.js:494
+#: src/js/blocks/fau_dir_block.js:1
+msgid "Group Id"
+msgstr ""
+
+#: includes/blocks/fau_dir_block.js:514
+#: src/js/blocks/fau_dir_block.js:1
+msgid "Organization number"
+msgstr ""
+
+#: includes/blocks/fau_dir_block.js:546
+#: src/js/blocks/fau_dir_block.js:1
+msgid "Change Image"
+msgstr ""
+
+#: includes/blocks/fau_dir_block.js:546
+#: src/js/blocks/fau_dir_block.js:1
+msgid "Select Image"
+msgstr ""
+
+#: includes/blocks/fau_dir_block.js:564
+#: src/js/blocks/fau_dir_block.js:1
+msgid "Done"
 msgstr ""
