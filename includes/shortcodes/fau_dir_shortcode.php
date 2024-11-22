@@ -37,6 +37,7 @@ function fetch_fau_data($atts)
         array(
             'category' => '',
             'identifier' => '',
+            'id' => '',
             'format' => 'kompakt',
             'url' => '',
             'show' => '',
@@ -49,6 +50,10 @@ function fetch_fau_data($atts)
         ),
         $atts
     );
+
+    if (empty($atts['identifier']) && !empty($atts['id'])) {
+        $atts['identifier'] = $atts['id'];
+    }
 
     // Convert explicitly set 'show' values to an array and merge with default fields
     $explicit_show_fields = array_filter(array_map('trim', explode(',', $atts['show'])));
