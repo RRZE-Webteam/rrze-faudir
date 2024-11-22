@@ -184,33 +184,33 @@
                             <?php if (!empty($contact['organization_address'])): ?>
                                 <p>
                                     <?php if (!empty($contact['organization_address']['phone'])): ?>
-                                        <strong><?php echo esc_html__('Phone:', 'rrze-faudir'); ?></strong>
+                                        <span class="screen-reader-text"><?php echo esc_html__('Phone:', 'rrze-faudir'); ?></span>
                                         <?php echo esc_html($contact['organization_address']['phone']); ?><br>
                                     <?php endif; ?>
 
                                     <?php if (!empty($contact['organization_address']['mail'])): ?>
-                                        <strong><?php echo esc_html__('Mail:', 'rrze-faudir'); ?></strong>
+                                        <span class="screen-reader-text"><?php echo esc_html__('Mail:', 'rrze-faudir'); ?></span>
                                         <?php echo esc_html($contact['organization_address']['mail']); ?><br>
                                     <?php endif; ?>
 
                                     <?php if (!empty($contact['organization_address']['url'])): ?>
-                                        <strong><?php echo esc_html__('Url:', 'rrze-faudir'); ?></strong>
+                                        <span class="screen-reader-text"><?php echo esc_html__('Url:', 'rrze-faudir'); ?></span>
                                         <?php echo esc_html($contact['organization_address']['url']); ?><br>
                                     <?php endif; ?>
                                     <?php if (!empty($contact['organization_address']['street'])): ?>
-                                        <strong><?php echo esc_html__('Street:', 'rrze-faudir'); ?></strong>
+                                        <span class="screen-reader-text"><?php echo esc_html__('Street:', 'rrze-faudir'); ?></span>
                                         <?php echo esc_html($contact['organization_address']['street']); ?><br>
                                     <?php endif; ?>
                                     <?php if (!empty($contact['organization_address']['zip'])): ?>
-                                        <strong><?php echo esc_html__('ZIP Code:', 'rrze-faudir'); ?></strong>
+                                        <span class="screen-reader-text"><?php echo esc_html__('ZIP Code:', 'rrze-faudir'); ?></span>
                                         <?php echo esc_html($contact['organization_address']['zip']); ?><br>
                                     <?php endif; ?>
                                     <?php if (!empty($contact['organization_address']['city'])): ?>
-                                        <strong><?php echo esc_html__('City:', 'rrze-faudir'); ?></strong>
+                                        <span class="screen-reader-text"><?php echo esc_html__('City:', 'rrze-faudir'); ?></span>
                                         <?php echo esc_html($contact['organization_address']['city']); ?><br>
                                     <?php endif; ?>
                                     <?php if (!empty($contact['organization_address']['faumap'])): ?>
-                                        <strong><?php echo esc_html__('Map:', 'rrze-faudir'); ?></strong>
+                                        <span class="screen-reader-text"><?php echo esc_html__('Map:', 'rrze-faudir'); ?></span>
                                         <a href="<?php echo esc_url($contact['organization_address']['faumap']); ?>" target="_blank">
                                             <?php echo esc_html__('View on Map', 'rrze-faudir'); ?>
                                         </a><br>

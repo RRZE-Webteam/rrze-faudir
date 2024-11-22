@@ -121,11 +121,21 @@ get_header();
                                         // Split the address into lines
                                         $address_lines = explode("\n", $org['address'] ?? '');
 
-                                        foreach ($address_lines as $line) :
-                                            $trimmedLine = trim($line);
-                                            if ($trimmedLine !== '') :
-                                                if (strpos($trimmedLine, ':') !== false) {
-                                                    [$label, $value] = array_map('trim', explode(':', $trimmedLine, 2));
+                                        
+                                    foreach ($address_lines as $line) :
+                                        $trimmedLine = trim($line);
+                                        if ($trimmedLine !== '') :
+                                            if (strpos($trimmedLine, ':') !== false) {
+                                                [$label, $value] = array_map('trim', explode(':', $trimmedLine, 2));
+
+                                                // Define allowed labels for icons
+                                                $allowed_labels = ['phone', 'email', 'url'];
+
+                                                // Define labels to hide with screen-reader-text
+                                                $hidden_labels = ['street', 'zip', 'city', 'fau map'];
+                                            
+                                                // Check if the label is in the allowed list
+                                                if (in_array(strtolower($label), $allowed_labels, true)) {
                                                     // Get icon data for the label
                                                     $icon_data = get_social_icon_data($label); 
                                                     ?>
@@ -139,15 +149,33 @@ get_header();
                                                         </span>
                                                     </p>
                                                     <?php
-                                                } else {
-                                                    // For lines without a colon, render them as plain text
+                                                } elseif (in_array(strtolower($label), $hidden_labels, true)) {
+                                                    // Wrap hidden labels with screen-reader-text
                                                     ?>
-                                                    <p><?php echo esc_html($trimmedLine); ?></p>
+                                                    <p>
+                                                        <span class="screen-reader-text">
+                                                            <?php echo esc_html($label); ?>
+                                                        </span>
+                                                        <?php echo esc_html($value); ?>
+
+                                                    </p>
+                                                    <?php
+                                                } else {
+                                                    // Render as plain text for labels not in the allowed list or hidden list
+                                                    ?>
+                                                    <p><?php echo esc_html($label . ': ' . $value); ?></p>
                                                     <?php
                                                 }
-                                            endif;
-                                        endforeach;
-                                        ?>
+                                            } else {
+                                                // For lines without a colon, render them as plain text
+                                                ?>
+                                                <p><?php echo esc_html($trimmedLine); ?></p>
+                                                <?php
+                                            }
+                                        endif;
+                                    endforeach;
+                                    ?>
+
                                     </div><br>
                                     <?php
                                         /*
