@@ -38,7 +38,7 @@ function fetch_fau_data($atts) {
             'image' => '',
             'groupid' => '',
             'orgnr' => '',
-            'sort' => 'last_name',
+            'sort' => '',
             'button-text' => '',
         ),
         $atts
@@ -154,29 +154,75 @@ function fetch_and_render_fau_data($atts) {
                 $academic_titles = ['Prof. Dr.', 'Dr.', 'Prof.', ''];
                 $a_title = $a['personalTitle'] ?? '';
                 $b_title = $b['personalTitle'] ?? '';
-
                 $a_title_pos = array_search($a_title, $academic_titles) !== false ? array_search($a_title, $academic_titles) : count($academic_titles);
                 $b_title_pos = array_search($b_title, $academic_titles) !== false ? array_search($b_title, $academic_titles) : count($academic_titles);
-
                 if ($a_title_pos !== $b_title_pos) {
                     return $a_title_pos - $b_title_pos;
                 }
                 return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');
-
+    
+                case 'function_head':
+                    // Sort by 'head' in functionLabel
+                    $a_is_head = false;
+                    $b_is_head = false;
+        
+                    foreach ($a['contacts'] as $contact) {
+                        if (isset($contact['function']) && $contact['function'] ==='leader') {
+                            $a_is_professor = true;
+                            break;
+                            }
+                        }
+        
+                    foreach ($b['contacts'] as $contact) {
+                        if (isset($contact['function']) && $contact['function'] ==='professor') {
+                            $b_is_professor = true;
+                            break;
+                        }
+                    }
+        
+                    return $a_is_head === $b_is_head ? collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '') : ($a_is_head ? -1 : 1);
+        
+                case 'function_proffesor':
+                    // Sort by 'professor' in functionLabel
+                    $a_is_professor = false;
+                    $b_is_professor = false;
+        
+                    foreach ($a['contacts'] as $contact) {
+                        if (isset($contact['function']) && $contact['function'] ==='professor') {
+                            $a_is_professor = true;
+                            break;
+                            }
+                        }
+                    
+        
+                    foreach ($b['contacts'] as $contact) {
+                        if (isset($contact['function']) && $contact['function'] ==='professor') {
+                                $b_is_professor = true;
+                                break;
+                            }
+                        }
+        
+                    return $a_is_professor === $b_is_professor ? collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '') : ($a_is_professor ? -1 : 1);
+        
             case 'identifier_order':
                 if (!empty($identifiers)) {
                     $a_index = array_search($a['identifier'] ?? '', $identifiers);
                     $b_index = array_search($b['identifier'] ?? '', $identifiers);
-                    if ($a_index !== false && $b_index !== false) {
-                        return $a_index - $b_index;
+                    if ($a_index === false && $b_index === false) {
+                        return 0; // Both not found, consider equal
+                    } elseif ($a_index === false) {
+                        return 1; // a not found, b comes first
+                    } elseif ($b_index === false) {
+                        return -1; // b not found, a comes first
                     }
+                    return $b_index - $a_index; // Sort based on found indices
                 }
-                return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');
-
+                return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? ''); // Fallback sorting
             default:
                 return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');
         }
     });
+    
 
     // Load the template and pass the sorted data
     $template_dir = plugin_dir_path(__FILE__) . '../../templates/';
