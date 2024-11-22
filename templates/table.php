@@ -135,57 +135,21 @@
                         <?php if (in_array('socialmedia', $show_fields) && !in_array('socialmedia', $hide_fields)): ?>
                             <td>
                                 <?php if (!empty($person['contacts'][0]['socials'])) : ?>
-                                    <div>
-                                        <ul class="social-media-list">
-                                            <?php
-                                            // FontAwesome icon mapping for platforms
-                                            $iconMap = [
-                                                'github' => 'fab fa-github',
-                                                'xing' => 'fab fa-xing',
-                                                'bluesky' => 'fas fa-cloud',
-                                                'twitter' => 'fab fa-twitter',
-                                                'facebook' => 'fab fa-facebook',
-                                                'linkedin' => 'fab fa-linkedin',
-                                                'instagram' => 'fab fa-instagram',
-                                                'youtube' => 'fab fa-youtube',
-                                                'tiktok' => 'fab fa-tiktok',
-                                                'whatsapp' => 'fab fa-whatsapp',
-                                                'snapchat' => 'fab fa-snapchat-ghost',
-                                                'reddit' => 'fab fa-reddit',
-                                                'pinterest' => 'fab fa-pinterest',
-                                                'telegram' => 'fab fa-telegram',
-                                                'discord' => 'fab fa-discord',
-                                                'medium' => 'fab fa-medium',
-                                                'vimeo' => 'fab fa-vimeo',
-                                                'twitch' => 'fab fa-twitch',
-                                                'spotify' => 'fab fa-spotify',
-                                                'slack' => 'fab fa-slack',
-                                                'dribbble' => 'fab fa-dribbble',
-                                                'behance' => 'fab fa-behance',
-                                                'flickr' => 'fab fa-flickr',
-                                                'mastodon' => 'fab fa-mastodon',
-                                                'goodreads' => 'fas fa-book',
-                                                'strava' => 'fab fa-strava',
-                                                'rss' => 'fas fa-rss',
-                                                'zoom' => 'fas fa-video',
-                                                'bsky' => 'fas fa-cloud',
-                                            ];
-
-                                            foreach ($person['contacts'][0]['socials'] as $social) :
-                                                $platform = strtolower($social['platform']);
-                                                $url = $social['url'];
-                                                $iconClass = isset($iconMap[$platform]) ? $iconMap[$platform] : 'fas fa-link'; // Default to link icon if not found
-                                            ?>
-                                                <li style="margin-bottom: 8px;">
-                                                    <a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
-                                                        <i class="<?php echo esc_attr($iconClass); ?>"
-                                                            title="<?php echo esc_attr(ucfirst($platform)); ?>"
-                                                            style="margin-right: 8px;"></i>
-                                                    </a>
-                                                </li>
-                                            <?php endforeach; ?>
-                                        </ul>
-                                    </div>
+                                    <ul class="social-media-list">
+                                        <?php foreach ($person['contacts'][0]['socials'] as $social):
+                                            $icon_data = get_social_icon_data($social['platform']);
+                                        ?>
+                                            <li>
+                                                <a href="<?php echo esc_url($social['url']); ?>" 
+                                                   class="<?php echo esc_attr($icon_data['css_class']); ?> social-icon-compact"
+                                                   style="background-image: url('<?php echo esc_url($icon_data['icon_url']); ?>')"
+                                                   target="_blank" 
+                                                   rel="noopener noreferrer">
+                                                    <span class="screen-reader-text"><?php echo esc_html(ucfirst($icon_data['name'])); ?></span>
+                                                </a>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
                                 <?php endif; ?>
                             </td>
                         <?php endif; ?>

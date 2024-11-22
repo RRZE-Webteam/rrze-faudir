@@ -93,56 +93,22 @@ get_header();
                                                 $socials_line = [];
                                             }
 
-                                            // Define a map of platform names to their icons (you can customize the paths or use Font Awesome classes)
-                                            $social_icons = [
-                                                'Github' => '<i class="fab fa-github"></i>',
-                                                'Xing' => '<i class="fab fa-xing"></i>',
-                                                'Bluesky' => '<i class="fab fa-twitter"></i>', // Adjust icon if needed
-                                            ];
-                                            $social_icons = [
-                                                'Github' => '<i class="fab fa-github"></i>',
-                                                'Xing' => '<i class="fab fa-xing"></i>',
-                                                'Bluesky' => '<i class="fas fa-cloud"></i>',
-                                                'Twitter' => '<i class="fab fa-twitter"></i>',
-                                                'Facebook' => '<i class="fab fa-facebook"></i>',
-                                                'Linkedin' => '<i class="fab fa-linkedin"></i>',
-                                                'Instagram' => '<i class="fab fa-instagram"></i>',
-                                                'Youtube' => '<i class="fab fa-youtube"></i>',
-                                                'Tiktok' => '<i class="fab fa-tiktok"></i>',
-                                                'Whatsapp' => '<i class="fab fa-whatsapp"></i>',
-                                                'Snapchat' => '<i class="fab fa-snapchat-ghost"></i>',
-                                                'Reddit' => '<i class="fab fa-reddit"></i>',
-                                                'Pinterest' => '<i class="fab fa-pinterest"></i>',
-                                                'Telegram' => '<i class="fab fa-telegram"></i>',
-                                                'Discord' => '<i class="fab fa-discord"></i>',
-                                                'Medium' => '<i class="fab fa-medium"></i>',
-                                                'Vimeo' => '<i class="fab fa-vimeo"></i>',
-                                                'Twitch' => '<i class="fab fa-twitch"></i>',
-                                                'Spotify' => '<i class="fab fa-spotify"></i>',
-                                                'Slack' => '<i class="fab fa-slack"></i>',
-                                                'Dribbble' => '<i class="fab fa-dribbble"></i>',
-                                                'Behance' => '<i class="fab fa-behance"></i>',
-                                                'Flickr' => '<i class="fab fa-flickr"></i>',
-                                                'Mastodon' => '<i class="fab fa-mastodon"></i>',
-                                                'Goodreads' => '<i class="fas fa-book"></i>',
-                                                'Strava' => '<i class="fab fa-strava"></i>',
-                                                'Rss' => '<i class="fas fa-rss"></i>',
-                                                'Zoom' => '<i class="fas fa-video"></i>',
-                                                'Bsky' => '<i class="fas fa-cloud"></i>',
-                                            ];
+                                            $iconMap = require plugin_dir_path(RRZE_PLUGIN_FILE) . 'includes/config/icons.php';
 
                                             foreach ($socials_line as $line) :
                                                 if (trim($line) !== '') :
                                                     // Split the line and make sure we have both platform and URL
                                                     $parts = array_map('trim', explode(':', $line, 2));
                                                     if (count($parts) === 2) {
-                                                        $platform = $parts[0];
-                                                        $url = $parts[1];
-                                                        $icon = $social_icons[$platform] ?? ''; // Get the icon if available
+                                                        $icon_data = get_social_icon_data($parts[0]);
                                             ?>
                                                         <p>
-                                                            <a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener noreferrer">
-                                                                <?php echo $icon . ' ' . esc_html($platform); ?>
+                                                            <a href="<?php echo esc_url($parts[1]); ?>" 
+                                                               class="<?php echo esc_attr($icon_data['css_class']); ?>"
+                                                               style="background-image: url('<?php echo esc_url($icon_data['icon_url']); ?>')"
+                                                               target="_blank" 
+                                                               rel="noopener noreferrer">
+                                                                <?php echo esc_html(ucfirst($icon_data['name'])); ?>
                                                             </a>
                                                         </p>
                                             <?php

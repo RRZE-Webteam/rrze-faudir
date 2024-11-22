@@ -3,6 +3,7 @@ const sass = require('gulp-sass')(require('sass'));
 const csso = require('gulp-csso'); // Corrected minifyCSS to csso to match the correct variable name
 const concat = require('gulp-concat');
 const wpPot = require('gulp-wp-pot');
+const svgmin = require('gulp-svgmin');  // Changed from gulp-svgo
 
 // Define the CSS task
 gulp.task('css', function () {
@@ -45,3 +46,10 @@ gulp.task('watch', function() {
 });
 // Define the default task that runs all tasks in series
 gulp.task('default', gulp.series('css', 'js-main', 'js-admin'));
+
+// SVG optimization task
+gulp.task('svg', function() {
+    return gulp.src('src/svg/**/*.svg')
+        .pipe(svgmin())  // Changed from svgo
+        .pipe(gulp.dest('dist/svg'));
+});

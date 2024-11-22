@@ -14,6 +14,11 @@ Requires at least: 6.5
 Requires PHP: 8.2
 */
 
+// Define plugin constants
+define('RRZE_PLUGIN_FILE', __FILE__);
+define('RRZE_PLUGIN_PATH', plugin_dir_path(__FILE__));
+define('RRZE_PLUGIN_URL', plugin_dir_url(__FILE__));
+
 defined('ABSPATH') || exit;
 
 // Check if the function exists before using it
@@ -72,6 +77,7 @@ if (rrze_faudir_system_requirements()) {
     require_once plugin_dir_path(__FILE__) . 'includes/utils/Template.php';
     require_once plugin_dir_path(__FILE__) . 'includes/custom-post-type/custom-post-type.php';
     require_once plugin_dir_path(__FILE__) . 'includes/admin/settings-page.php';
+    require_once plugin_dir_path(__FILE__) . 'includes/config/icons.php';
 
     // Register and enqueue scripts
     EnqueueScripts::register();

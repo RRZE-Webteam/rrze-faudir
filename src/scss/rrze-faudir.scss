@@ -341,3 +341,40 @@ body {
 .edit-person span{
     vertical-align: middle!important;
 }
+
+.screen-reader-text {
+    border: 0;
+    clip: rect(1px, 1px, 1px, 1px);
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    word-wrap: normal !important;
+}
+
+.social-icon {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    
+    &::before {
+        content: '';
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        margin-right: 0.5em;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-image: var(--icon-url);
+    }
+}
+
+.social-icon-item {
+    .social-icon {
+        --icon-url: url("data:image/svg+xml,%3Csvg...%3E");
+    }
+}

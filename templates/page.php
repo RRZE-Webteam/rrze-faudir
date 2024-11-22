@@ -156,47 +156,21 @@
                                             <h3><?php echo esc_html__('Social Profiles:', 'rrze-faudir'); ?></h3>
                                             <ul style="list-style: none; padding: 0;">
                                                 <?php
-                                                // FontAwesome icon mapping for platforms
-                                                $iconMap = [
-                                                    'github' => 'fab fa-github',
-                                                    'xing' => 'fab fa-xing',
-                                                    'bluesky' => 'fas fa-cloud',
-                                                    'twitter' => 'fab fa-twitter',
-                                                    'facebook' => 'fab fa-facebook',
-                                                    'linkedin' => 'fab fa-linkedin',
-                                                    'instagram' => 'fab fa-instagram',
-                                                    'youtube' => 'fab fa-youtube',
-                                                    'tiktok' => 'fab fa-tiktok',
-                                                    'whatsapp' => 'fab fa-whatsapp',
-                                                    'snapchat' => 'fab fa-snapchat-ghost',
-                                                    'reddit' => 'fab fa-reddit',
-                                                    'pinterest' => 'fab fa-pinterest',
-                                                    'telegram' => 'fab fa-telegram',
-                                                    'discord' => 'fab fa-discord',
-                                                    'medium' => 'fab fa-medium',
-                                                    'vimeo' => 'fab fa-vimeo',
-                                                    'twitch' => 'fab fa-twitch',
-                                                    'spotify' => 'fab fa-spotify',
-                                                    'slack' => 'fab fa-slack',
-                                                    'dribbble' => 'fab fa-dribbble',
-                                                    'behance' => 'fab fa-behance',
-                                                    'flickr' => 'fab fa-flickr',
-                                                    'mastodon' => 'fab fa-mastodon',
-                                                    'goodreads' => 'fas fa-book',
-                                                    'strava' => 'fab fa-strava',
-                                                    'rss' => 'fas fa-rss',
-                                                    'zoom' => 'fas fa-video',
-                                                    'bsky' => 'fas fa-cloud', // Alias for Bluesky
-                                                ];
+                                                $iconMap = require plugin_dir_path(RRZE_PLUGIN_FILE) . 'includes/config/icons.php';
 
                                                 foreach ($person['contacts'][0]['socials'] as $social) :
                                                     $platform = strtolower($social['platform']);
                                                     $url = $social['url'];
-                                                    $iconClass = isset($iconMap[$platform]) ? $iconMap[$platform] : 'fas fa-link'; // Default to link icon if not found
+                                                    $icon_name = isset($iconMap[$platform]) ? $iconMap[$platform] : 'link';
+                                                    $svg_content = file_get_contents(plugin_dir_path(RRZE_PLUGIN_FILE) . "assets/fontawesome/svgs/{$icon_name}.svg");
                                                 ?>
-                                                    <li style="margin-bottom: 8px;">
-                                                        <a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
-                                                            <i class="<?php echo esc_attr($iconClass); ?>" style="margin-right: 8px;"></i>
+                                                    <li class="social-icon-item">
+                                                        <a href="<?php echo esc_url($url); ?>" 
+                                                           target="_blank" 
+                                                           rel="noopener noreferrer"
+                                                           class="social-icon">
+                                                            <span class="icon-svg"><?php echo $svg_content; ?></span>
+                                                            <span class="screen-reader-text"><?php echo esc_html(ucfirst($platform)); ?></span>
                                                             <?php echo esc_html(ucfirst($platform)); ?>
                                                         </a>
                                                     </li>
