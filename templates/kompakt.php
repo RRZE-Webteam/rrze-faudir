@@ -184,18 +184,40 @@
                             <?php if (!empty($contact['organization_address'])): ?>
                                 <p>
                                     <?php if (!empty($contact['organization_address']['phone'])): ?>
-                                        <span class="screen-reader-text"><?php echo esc_html__('Phone:', 'rrze-faudir'); ?></span>
-                                        <?php echo esc_html($contact['organization_address']['phone']); ?><br>
+                                        <?php
+                                            // Fetch icon data for "phone"
+                                            $icon_data = get_social_icon_data('phone'); 
+                                        ?>
+                                        <span 
+                                            class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                            style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>'); display: inline-block; padding-left: 20px; background-size: contain; background-repeat: no-repeat;width: 48px;height: 48px;">
+                                            <span class="screen-reader-text"><?php echo esc_html__('Phone:', 'rrze-faudir'); ?></span>
+                                            <?php echo esc_html($contact['organization_address']['phone']); ?>
+                                        </span><br>
                                     <?php endif; ?>
-
                                     <?php if (!empty($contact['organization_address']['mail'])): ?>
-                                        <span class="screen-reader-text"><?php echo esc_html__('Mail:', 'rrze-faudir'); ?></span>
-                                        <?php echo esc_html($contact['organization_address']['mail']); ?><br>
+                                        <?php
+                                            // Fetch icon data for "phone"
+                                            $icon_data = get_social_icon_data('email'); 
+                                        ?>
+                                        <span 
+                                            class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                            style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>'); display: inline-block; padding-left: 20px; background-size: contain; background-repeat: no-repeat;width: 48px;height: 48px;">
+                                            <span class="screen-reader-text"><?php echo esc_html__('Mail:', 'rrze-faudir'); ?></span>
+                                            <?php echo esc_html($contact['organization_address']['mail']); ?>
+                                        </span><br>
                                     <?php endif; ?>
-
                                     <?php if (!empty($contact['organization_address']['url'])): ?>
-                                        <span class="screen-reader-text"><?php echo esc_html__('Url:', 'rrze-faudir'); ?></span>
-                                        <?php echo esc_html($contact['organization_address']['url']); ?><br>
+                                        <?php
+                                            // Fetch icon data for "phone"
+                                            $icon_data = get_social_icon_data('url'); 
+                                        ?>
+                                        <span 
+                                            class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                            style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>'); display: inline-block; padding-left: 20px; background-size: contain; background-repeat: no-repeat;width: 48px;height: 48px;">
+                                            <span class="screen-reader-text"><?php echo esc_html__('Url:', 'rrze-faudir'); ?></span>
+                                            <?php echo esc_html($contact['organization_address']['url']); ?>
+                                        </span><br>
                                     <?php endif; ?>
                                     <?php if (!empty($contact['organization_address']['street'])): ?>
                                         <span class="screen-reader-text"><?php echo esc_html__('Street:', 'rrze-faudir'); ?></span>
