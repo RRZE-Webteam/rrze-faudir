@@ -104,9 +104,10 @@ get_header();
                                             ?>
                                                         <a href="<?php echo esc_url($parts[1]); ?>" 
                                                            class="<?php echo esc_attr($icon_data['css_class']); ?>"
-                                                           style="background-image: url('<?php echo esc_url($icon_data['icon_url']); ?>'); display: inline-block; padding-left: 20px; background-size: contain; background-repeat: no-repeat; margin-right: 10px;"
+                                                           style="background-image: url('<?php echo esc_url($icon_data['icon_url']); ?>'); display: inline-block; padding-left: 20px; background-size: contain; background-repeat: no-repeat; margin-right: 10px;width: 48px;height: 48px;"
                                                            target="_blank" 
                                                            rel="noopener noreferrer">
+                                                           <span class="screen-reader-text"> <?php echo esc_html(ucfirst($icon_data['name'])); ?></span>
                                                         </a>
                                         <?php
                                                 }

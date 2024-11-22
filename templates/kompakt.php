@@ -290,22 +290,18 @@
                 <?php if (in_array('socialmedia', $show_fields) && !in_array('socialmedia', $hide_fields)): ?>
                     <?php if (!empty($person['contacts'][0]['socials'])): ?>
                         <div>
-                            <h3><?php echo esc_html__('Social Profiles:', 'rrze-faudir'); ?></h3>
-                            <ul class="social-media-list">
+                        <span class="screen-reader-text"><?php echo esc_html__('Social Profiles:', 'rrze-faudir'); ?></span>
                                 <?php foreach ($person['contacts'][0]['socials'] as $social):
                                     $icon_data = get_social_icon_data($social['platform']);
                                 ?>
-                                    <li>
                                         <a href="<?php echo esc_url($social['url']); ?>" 
                                            class="<?php echo esc_attr($icon_data['css_class']); ?>"
-                                           style="background-image: url('<?php echo esc_url($icon_data['icon_url']); ?>');display: inline-block; padding-left: 20px; background-size: contain; background-repeat: no-repeat;"
+                                           style="background-image: url('<?php echo esc_url($icon_data['icon_url']); ?>');display: inline-block; padding-left: 20px; background-size: contain; background-repeat: no-repeat;width: 48px;height: 48px;"
                                            target="_blank" 
                                            rel="noopener noreferrer">
-                                            <?php echo esc_html(ucfirst($icon_data['name'])); ?>
+                                        <span class="screen-reader-text"><?php echo esc_html(ucfirst($icon_data['name'])); ?></span>
                                         </a>
-                                    </li>
                                 <?php endforeach; ?>
-                            </ul>
                         </div>
                     <?php endif; ?>
                 <?php endif; ?>
