@@ -75,10 +75,10 @@ get_header();
                                 // Iterate through organizations and display the data
                                 foreach ($contacts as $index => $org) : ?>
                                     <div class="organization-block">
-                                        <h4><?php echo esc_html__('Organization: ', 'rrze-faudir') . ' ' . esc_html($org['organization']); ?></h4>
-
+                                    <span class="screen-reader-text"><?php echo esc_html__('Organization: ', 'rrze-faudir'); ?></span>
+                                    <h4><?php echo esc_html($org['organization']); ?></h4>
                                         <div class="social-wrapper">
-                                            <h5><?php echo esc_html__('Social Media:', 'rrze-faudir'); ?></h5>
+                                            <span class="screen-reader-text"><?php echo esc_html__('Social Media:', 'rrze-faudir'); ?></span>
                                             <?php
                                             // Parse each line to extract platform and URL
                                             if (!empty($org['socials'])) {
@@ -102,33 +102,56 @@ get_header();
                                                     if (count($parts) === 2) {
                                                         $icon_data = get_social_icon_data($parts[0]);
                                             ?>
-                                                        <p>
-                                                            <a href="<?php echo esc_url($parts[1]); ?>" 
-                                                               class="<?php echo esc_attr($icon_data['css_class']); ?>"
-                                                               style="background-image: url('<?php echo esc_url($icon_data['icon_url']); ?>')"
-                                                               target="_blank" 
-                                                               rel="noopener noreferrer">
-                                                                <?php echo esc_html(ucfirst($icon_data['name'])); ?>
-                                                            </a>
-                                                        </p>
-                                            <?php
-                                                    }
+                                                        <a href="<?php echo esc_url($parts[1]); ?>" 
+                                                           class="<?php echo esc_attr($icon_data['css_class']); ?>"
+                                                           style="background-image: url('<?php echo esc_url($icon_data['icon_url']); ?>'); display: inline-block; padding-left: 20px; background-size: contain; background-repeat: no-repeat; margin-right: 10px;"
+                                                           target="_blank" 
+                                                           rel="noopener noreferrer">
+                                                        </a>
+                                        <?php
+                                                }
                                                 endif;
                                             endforeach; ?>
                                         </div>
+                                        <br>
+                                        <div class="organization-address">
+                                        <span class="screen-reader-text"><?php echo esc_html__('Organization Address:', 'rrze-faudir'); ?></span>
+                                        <?php
+                                        // Split the address into lines
+                                        $address_lines = explode("\n", $org['address'] ?? '');
 
-                                        <div class="address-wrapper">
-                                            <h5><?php echo esc_html__('Organization Address:', 'rrze-faudir'); ?></h5>
-                                            <?php
-                                            $address_lines = explode("\n", $org['address'] ?? '');
-                                            foreach ($address_lines as $line) :
-                                                if (trim($line) !== '') : ?>
-                                                    <p><?php echo esc_html($line); ?></p>
-                                            <?php endif;
-                                            endforeach; ?>
-                                        </div>
+                                        foreach ($address_lines as $line) :
+                                            $trimmedLine = trim($line);
+                                            if ($trimmedLine !== '') :
+                                                if (strpos($trimmedLine, ':') !== false) {
+                                                    [$label, $value] = array_map('trim', explode(':', $trimmedLine, 2));
+                                                    // Get icon data for the label
+                                                    $icon_data = get_social_icon_data($label); 
+                                                    ?>
+                                                    <p>
+                                                        <span 
+                                                           class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                                           style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>'); display: inline-block; padding-left: 20px; background-size: contain; background-repeat: no-repeat;" 
+                                                           target="_blank" 
+                                                           rel="noopener noreferrer">
+                                                            <?php echo esc_html($value); ?>
+                                                        </span>
+                                                    </p>
+                                                    <?php
+                                                } else {
+                                                    // For lines without a colon, render them as plain text
+                                                    ?>
+                                                    <p><?php echo esc_html($trimmedLine); ?></p>
+                                                    <?php
+                                                }
+                                            endif;
+                                        endforeach;
+                                        ?>
+                                    </div><br>
+                                    <?php
+                                        /*
                                         <div class="workplace-wrapper">
-                                            <h5><?php echo esc_html__('Workplace:', 'rrze-faudir'); ?></h5>
+                                            <span class="screen-reader-text"><?php echo esc_html__('Workplace:', 'rrze-faudir'); ?></span>
                                             <?php
                                             // Define weekday mapping
                                             $weekdayMap = [
@@ -140,63 +163,87 @@ get_header();
                                                 6 => 'Saturday',
                                                 7 => 'Sunday',
                                             ];
-
-                                            // Separate workplace lines and office hours
+                                                                            
+                                            // Fetch workplace information from the API
                                             $workplace_lines = explode("\n", $org['workplace'] ?? '');
                                             $office_hours_line = '';
-
-                                            foreach ($workplace_lines as $line) :
+                                                                            
+                                            // Start rendering workplace information
+                                            echo '<div class="workplace-info">';
+                                            foreach ($workplace_lines as $line) {
                                                 $trimmedLine = trim($line);
-
-                                                // Detect the "Office Hours" line and store it for parsing
-                                                if (stripos($trimmedLine, 'Office Hours:') !== false) {
-                                                    $office_hours_line = $trimmedLine;
-                                                    continue; // Skip displaying this line as a regular workplace line
-                                                }
-
-                                                // Otherwise, treat as a regular workplace line
+                                                                            
                                                 if ($trimmedLine !== '') {
-                                                    echo '<p>' . esc_html($trimmedLine) . '</p>';
+                                                    // Detect the "Office Hours" line and store it for parsing
+                                                    if (stripos($trimmedLine, 'Office Hours:') !== false) {
+                                                        $office_hours_line = $trimmedLine;
+                                                        continue; // Skip displaying this line as a regular workplace line
+                                                    }
+                                                                            
+                                                    // Split the line into label and value
+                                                    if (strpos($trimmedLine, ':') !== false) {
+                                                        [$label, $value] = array_map('trim', explode(':', $trimmedLine, 2));
+                                                                            
+                                                        // Get icon data for the label
+                                                        $icon_data = get_social_icon_data($label);
+                                                        ?>
+                                                        <p>
+                                                            <span 
+                                                                class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                                                style="background-image: url('<?php echo esc_url($icon_data['icon_url']); ?>'); display: inline-block; padding-left: 20px; background-size: contain; background-repeat: no-repeat;" 
+                                                                target="_blank" 
+                                                                rel="noopener noreferrer">
+                                                                <?php echo esc_html($value); ?>
+                                                            </span>
+                                                        </p>
+                                                        <?php
+                                                    } else {
+                                                        // Render lines without a colon as regular text
+                                                        ?>
+                                                        <p><?php echo esc_html($trimmedLine); ?></p>
+                                                        <?php
+                                                    }
                                                 }
-                                            endforeach;
-
+                                            }
+                                            echo '</div>';
+                                                                            
                                             // Check and display office hours if found
                                             if ($office_hours_line) {
-                                                echo '<strong>' . esc_html__('Office Hours:', 'rrze-faudir') . '</strong><ul>';
-
-                                                // Debug: Show extracted office hours line
-                                                echo '<!-- Debug: Office Hours Line Detected: ' . esc_html($office_hours_line) . ' -->';
-
+                                                echo '<div class="office-hours">';
+                                                echo '<span class="screen-reader-text">' . esc_html__('Office Hours:', 'rrze-faudir') . '</span><ul>';
+                                                                            
                                                 // Extract individual office hours segments
                                                 preg_match_all('/Weekday (\d+): (\d{2}:\d{2}) - (\d{2}:\d{2})/', $office_hours_line, $matches, PREG_SET_ORDER);
-
-                                                // Debug: Show if matches are found
+                                                                            
                                                 if (empty($matches)) {
                                                     echo '<!-- Debug: No matches found for office hours pattern -->';
                                                 }
-
                                                 foreach ($matches as $match) {
                                                     $weekday = $weekdayMap[$match[1]] ?? 'Unknown';
                                                     $from = $match[2];
                                                     $to = $match[3];
                                                     echo '<li><strong>' . esc_html($weekday) . ':</strong> ' . esc_html($from . ' - ' . $to) . '</li>';
                                                 }
-                                                echo '</ul>';
+                                                                            
+                                                echo '</ul></div>';
                                             } else {
                                                 echo '<!-- Debug: No office hours line found -->';
-                                            }
+                                            }                                          
                                             ?>
                                         </div>
+                                        */
+                                        ?>
+                                        
 
 
                                         <?php if (!$show_german) : ?>
                                             <div class="functions-wrapper">
-                                                <h5><?php echo esc_html__('Function', 'rrze-faudir'); ?></h5>
+                                            <span class="screen-reader-text"><?php echo esc_html__('Function', 'rrze-faudir'); ?></span>
                                                 <p><?php echo esc_html($org['function_en']); ?></p>
                                             </div>
                                         <?php elseif ($show_german) : ?>
                                             <div class="functions-wrapper">
-                                                <h5><?php echo esc_html__('Function', 'rrze-faudir'); ?></h5>
+                                            <span class="screen-reader-text"><?php echo esc_html__('Function', 'rrze-faudir'); ?></span>
                                                 <p><?php echo esc_html($org['function_de']); ?></p>
                                             </div>
                                         <?php endif; ?>

@@ -154,7 +154,6 @@
                                     <?php if (!empty($person['contacts'][0]['socials'])) : ?>
                                         <div>
                                             <h3><?php echo esc_html__('Social Profiles:', 'rrze-faudir'); ?></h3>
-                                            <ul style="list-style: none; padding: 0;">
                                                 <?php
                                                 $iconMap = require plugin_dir_path(RRZE_PLUGIN_FILE) . 'includes/config/icons.php';
 
@@ -162,9 +161,8 @@
                                                     $platform = strtolower($social['platform']);
                                                     $url = $social['url'];
                                                     $icon_name = isset($iconMap[$platform]) ? $iconMap[$platform] : 'link';
-                                                    $svg_content = file_get_contents(plugin_dir_path(RRZE_PLUGIN_FILE) . "assets/fontawesome/svgs/{$icon_name}.svg");
+                                                    $svg_content = file_get_contents(plugin_dir_path(RRZE_PLUGIN_FILE) . "assets/fontawesome/svgs/brands/{$icon_name}.svg");
                                                 ?>
-                                                    <li class="social-icon-item">
                                                         <a href="<?php echo esc_url($url); ?>" 
                                                            target="_blank" 
                                                            rel="noopener noreferrer"
@@ -173,9 +171,7 @@
                                                             <span class="screen-reader-text"><?php echo esc_html(ucfirst($platform)); ?></span>
                                                             <?php echo esc_html(ucfirst($platform)); ?>
                                                         </a>
-                                                    </li>
                                                 <?php endforeach; ?>
-                                            </ul>
                                         </div>
                                     <?php endif; ?>
                                 <?php endif; ?>
@@ -220,22 +216,22 @@
                                         // Display each organization and associated details
                                     ?>
                                         <?php if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) { ?>
-                                            <p><strong><?php echo esc_html__('Organization:', 'rrze-faudir'); ?></strong>
+                                            <h4><span class="screen-reader-text"><?php echo esc_html__('Organization:', 'rrze-faudir'); ?></span>
                                                 <span itemprop="affiliation" itemscope itemtype="https://schema.org/Organization">
                                                     <span itemprop="name"><?php echo esc_html($organizationName); ?></span>
                                                 </span>
-                                            </p>
+                                        </h4>
                                         <?php } ?>
                                         <?php if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) { ?>
                                             <?php if (!empty($functionLabel)) : ?>
-                                                <strong><?php echo esc_html__('Function:', 'rrze-faudir'); ?></strong>
+                                                <span class="screen-reader-text"><?php echo esc_html__('Function:', 'rrze-faudir'); ?></span>
                                                 <p itemprop="jobTitle"><?php echo esc_html($functionLabel); ?></p>
                                             <?php else : ?>
                                                 <span><?php echo esc_html__('No function available.', 'rrze-faudir'); ?></span>
                                             <?php endif; ?>
                                         <?php } ?>
 
-                                        <h3><?php echo esc_html__('Organization Address:', 'rrze-faudir'); ?></h3>
+                                        <span class="screen-reader-text"><?php echo esc_html__('Organization Address:', 'rrze-faudir'); ?></span>
                                         <div>
                                             <?php if (!empty($contact['organization_address'])) : ?>
                                                 <p>
@@ -274,8 +270,9 @@
                                                 </p>
                                             <?php endif; ?>
                                         </div>
-
-                                        <h3><?php echo esc_html__('Workplaces:', 'rrze-faudir'); ?></h3>
+                                    <?php 
+                                    /*
+                                        <span class="screen-reader-text"><?php echo esc_html__('Workplaces:', 'rrze-faudir'); ?></span>
                                         <div>
                                             <?php if (empty($contact['workplaces'])) : ?>
                                                 <p><?php echo esc_html__('No workplaces available.', 'rrze-faudir'); ?></p>
@@ -338,6 +335,7 @@
                                             <?php endforeach; ?>
                                         <?php endif; ?>
                                         </div>
+                                        */?>
                                     <?php } ?>
                                 <?php endif; ?>
                             </div>

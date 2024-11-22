@@ -165,11 +165,11 @@
 
                                 // Display each organization and associated details
                             ?><?php if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) { ?>
-                            <p>
+                            <h4>
                                 <span itemprop="affiliation" itemscope itemtype="https://schema.org/Organization">
                                     <span itemprop="name"><?php echo esc_html($organizationName); ?></span>
                                 </span>
-                            </p>
+                            </h4>
                         <?php } ?>
                         <?php if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) { ?>
                             <?php if (!empty($functionLabel)): ?>
@@ -179,7 +179,7 @@
                             <?php endif; ?>
                         <?php } ?>
 
-                        <h3><?php echo esc_html__('Organization Address:', 'rrze-faudir'); ?></h3>
+                        <span class="screen-reader-text"><?php echo esc_html__('Organization Address:', 'rrze-faudir'); ?></span>
                         <div>
                             <?php if (!empty($contact['organization_address'])): ?>
                                 <p>
@@ -218,8 +218,9 @@
                                 </p>
                             <?php endif; ?>
                         </div>
-
-                        <h3><?php echo esc_html__('Workplaces:', 'rrze-faudir'); ?></h3>
+                        <?php
+                        /*
+                        <span class="screen-reader-text"><?php echo esc_html__('Workplaces:', 'rrze-faudir'); ?></span>
                         <div>
                             <?php if (empty($contact['workplaces'])): ?>
                                 <p><?php echo esc_html__('No workplaces available.', 'rrze-faudir'); ?></p>
@@ -282,6 +283,7 @@
                             <?php endforeach; ?>
                         <?php endif; ?>
                         </div>
+                        */?>
                     <?php
                             } ?>
                 <?php endif; ?>
@@ -296,7 +298,7 @@
                                     <li>
                                         <a href="<?php echo esc_url($social['url']); ?>" 
                                            class="<?php echo esc_attr($icon_data['css_class']); ?>"
-                                           style="background-image: url('<?php echo esc_url($icon_data['icon_url']); ?>')"
+                                           style="background-image: url('<?php echo esc_url($icon_data['icon_url']); ?>');display: inline-block; padding-left: 20px; background-size: contain; background-repeat: no-repeat;"
                                            target="_blank" 
                                            rel="noopener noreferrer">
                                             <?php echo esc_html(ucfirst($icon_data['name'])); ?>

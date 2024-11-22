@@ -106,6 +106,7 @@ function get_social_icon_data($platform) {
     return [
         'name' => $platform,
         'css_class' => 'social-icon social-icon-' . $platform,
-        'icon_url' => RRZE_PLUGIN_URL . 'assets/fontawesome/svgs/' . $icon_name . '.svg'
+        'icon_url' => RRZE_PLUGIN_URL . 'assets/fontawesome/svgs/brands/' . $icon_name . '.svg',
+        'icon_address' => RRZE_PLUGIN_URL . 'assets/fontawesome/svgs/solid/' . $icon_name . '.svg'        
     ];
 }
