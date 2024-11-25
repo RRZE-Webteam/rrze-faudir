@@ -216,20 +216,17 @@ function fetch_and_render_fau_data($atts)
         
                     return $a_is_professor === $b_is_professor ? collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '') : ($a_is_professor ? -1 : 1);
         
-            case 'identifier_order':
-                if (!empty($identifiers)) {
-                    $a_index = array_search($a['identifier'] ?? '', $identifiers);
-                    $b_index = array_search($b['identifier'] ?? '', $identifiers);
-                    if ($a_index === false && $b_index === false) {
-                        return 0; // Both not found, consider equal
-                    } elseif ($a_index === false) {
-                        return 1; // a not found, b comes first
-                    } elseif ($b_index === false) {
-                        return -1; // b not found, a comes first
-                    }
-                    return $b_index - $a_index; // Sort based on found indices
-                }
-                return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? ''); // Fallback sorting
+                    case 'identifier_order':
+                        if (!empty($identifiers)) {
+                            $a_index = array_search($a['identifier'] ?? '', $identifiers);
+                            $b_index = array_search($b['identifier'] ?? '', $identifiers);
+                            if ($a_index === false) $a_index = PHP_INT_MAX; 
+                            if ($b_index === false) $b_index = PHP_INT_MAX;
+                    
+                            return $a_index - $b_index; 
+                        }
+                        return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');
+                    
             default:
                 return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');
         }

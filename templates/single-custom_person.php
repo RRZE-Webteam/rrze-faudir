@@ -144,9 +144,8 @@ get_header();
                                                            class="<?php echo esc_attr($icon_data['css_class']); ?>" 
                                                            style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>'); display: inline-block; padding-left: 20px; background-size: contain; background-repeat: no-repeat;" 
                                                            target="_blank" 
-                                                           rel="noopener noreferrer">
+                                                           rel="noopener noreferrer"></span>
                                                             <?php echo esc_html($value); ?>
-                                                        </span>
                                                     </p>
                                                     <?php
                                                 } elseif (in_array(strtolower($label), $hidden_labels, true)) {

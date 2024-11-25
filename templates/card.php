@@ -91,8 +91,13 @@
                         <?php if (count($persons) === 1 && !empty($image_url)) : ?>
                             <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
                         <?php elseif (!empty($featured_image_url)) : ?>
-                            <img src="<?php echo esc_url($featured_image_url); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
-                        <?php else : ?>
+                            <?php if (!empty($final_url)) { ?>
+                                <a href="<?php echo esc_url($final_url); ?>" itemprop="url" aria-labelledby="name-<?php echo esc_attr($person['identifier']); ?>">
+                                    <img src="<?php echo esc_url($featured_image_url); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
+                                </a>
+                                <?php }else {?>
+                                <img src="<?php echo esc_url($featured_image_url); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
+                        <?php } else : ?>
                             <img src="<?php echo esc_url(plugins_url('rrze-faudir/assets/images/platzhalter-unisex.png', dirname(__FILE__, 2))); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
                         <?php endif; ?>
 
