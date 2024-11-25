@@ -359,12 +359,14 @@ body {
     display: inline-flex;
     align-items: center;
     text-decoration: none;
+    background-repeat: no-repeat;
+    background-position: center;
     
     &::before {
         content: '';
         display: inline-block;
-        width: 1em;
-        height: 1em;
+        width: 1.5rem;
+        height: 1.5rem;
         margin-right: 0.5em;
         background-size: contain;
         background-repeat: no-repeat;
@@ -435,8 +437,8 @@ body {
 	border-radius: var(--_icon-border-radius);
 	    
 	&::before {   
-	    width: var(--_icon-size); 
-	    height: var(--_icon-size); 
+	    width: auto; 
+	    height: auto; 
 	    display: inline-block;
 	    content: ' ';
 	    mask-size: var(--_icon-size-mask); 
