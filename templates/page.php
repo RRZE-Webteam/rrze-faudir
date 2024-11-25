@@ -235,7 +235,7 @@
                                                         ?>
                                                         <span 
                                                             class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                                            style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>'); display: inline-block; padding-left: 20px; background-size: contain; background-repeat: no-repeat;width: 48px;height: 48px;">
+                                                            style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')">
                                                             <span class="screen-reader-text"><?php echo esc_html__('Phone:', 'rrze-faudir'); ?></span>
                                                             <?php echo esc_html($contact['organization_address']['phone']); ?>
                                                         </span><br>
@@ -247,7 +247,7 @@
                                                         ?>
                                                         <span 
                                                             class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                                            style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>'); display: inline-block; padding-left: 20px; background-size: contain; background-repeat: no-repeat;width: 48px;height: 48px;">
+                                                            style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')">
                                                             <span class="screen-reader-text"><?php echo esc_html__('Mail:', 'rrze-faudir'); ?></span>
                                                             <?php echo esc_html($contact['organization_address']['mail']); ?>
                                                         </span><br>
@@ -259,7 +259,7 @@
                                                         ?>
                                                         <span 
                                                             class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                                            style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>'); display: inline-block; padding-left: 20px; background-size: contain; background-repeat: no-repeat;width: 48px;height: 48px;">
+                                                            style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')">
                                                             <span class="screen-reader-text"><?php echo esc_html__('Url:', 'rrze-faudir'); ?></span>
                                                             <?php echo esc_html($contact['organization_address']['url']); ?>
                                                         </span><br>

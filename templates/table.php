@@ -85,55 +85,74 @@
 
                         <!-- Email (if available) -->
                         <?php if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) {
+                            $icon_data = get_social_icon_data('email'); 
                             // Get the email from $person array or fallback to custom post type
                             $email = (isset($person['email']) && !empty($person['email']))
                                 ? esc_html($person['email'])
                                 : '';
 
                             // Only display the email if it's not empty
-                            if (!empty($email)) {
-                                echo '<td> <span itemprop="email"><i class="fa-regular fa-envelope"></i> ' . esc_html($email) . '</span></td>';
-                            } else {
-                                echo '<td> <i class="fa-regular fa-envelope"></i> N/A </td>';
+                            if (!empty($email)) {?>
+                                <td> <span 
+                                class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                <?php
+                                echo  esc_html($email) . '</td>';
+                            } else {?>
+                                <td> <span 
+                                     class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                     style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                     <?php
+                                echo ' N/A </td>';
                             }
-                        }
+                        }       
 
                         // Phone (if available)
                         if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)) {
+                            $icon_data = get_social_icon_data('phone'); 
                             // Get the email from $person array or fallback to custom post type
                             $phone = (isset($person['telephone']) && !empty($person['telephone'])
                                 ? esc_html($person['telephone'])
                                 : '');
                             // Only display the email if it's not empty
-                            if (!empty($phone)) {
-                                echo '<td><span itemprop="phone"><i class="fa-solid fa-phone"></i>' . esc_html($phone) . '</span></td>';
-                            } else {
-                                echo '<td><i class="fa-solid fa-phone"></i> N/A </td>';
+                            if (!empty($phone)) {?>
+                           <td> <span 
+                                class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                <?php
+                                echo  esc_html($phone) . '</td>';
+                            } else {?>
+                                <td> <span 
+                                     class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                     style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                     <?php
+                                echo ' N/A </td>';
                             }
                         } ?>
 
                         <?php if (in_array('url', $show_fields) && !in_array('url', $hide_fields)): ?>
                             <td>
                                 <?php 
+                                 $icon_data = get_social_icon_data('url'); 
                                 if (!empty($person['contacts'])) {
                                     foreach ($person['contacts'] as $contact) {
                                         if (isset($contact['workplaces']) && is_array($contact['workplaces'])) {
                                             foreach ($contact['workplaces'] as $workplace) : ?>
-                                                <p>
+                                                <span>
                                                     <?php if (!empty($workplace['url'])) : ?>
-                                                        <i class="fa-solid fa-globe"></i>
+                                                        <span 
+                                                        class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                                        style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
                                                         <?php echo esc_html($workplace['url']); ?><br>
                                                     <?php else: ?>
-                                                        <i class="fa-solid fa-globe"></i> N/A
+                                                        <span 
+                                                        class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                                        style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"> N/A
                                                     <?php endif; ?>
-                                                </p>
+                                                </span>
                                             <?php endforeach;
-                                        } else {
-                                            echo '<p><i class="fa-solid fa-globe"></i> N/A</p>';
-                                        }
+                                        } 
                                     }
-                                } else {
-                                    echo '<p><i class="fa-solid fa-globe"></i> N/A</p>';
                                 }
                                 ?>
                             </td>

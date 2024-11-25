@@ -157,6 +157,9 @@ body {
     .title-suffix{
         white-space: nowrap;
     }
+    td{
+        min-width: 180px;
+    }
 }
 .button-link {
     background-color: var(--color-button-bg);
