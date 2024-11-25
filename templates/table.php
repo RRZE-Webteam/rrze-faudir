@@ -114,22 +114,28 @@
 
                         <?php if (in_array('url', $show_fields) && !in_array('url', $hide_fields)): ?>
                             <td>
-
-                                <?php foreach ($person['contacts'] as $contact) {
-                                    foreach ($contact['workplaces'] as $workplace) : ?>
-                                        <p>
-                                            <?php if (!empty($workplace['url'])) : ?>
-                                                <i class="fa-solid fa-globe"></i>
-                                                <?php echo esc_html($workplace['url']); ?><br>
-                                            <?php else:
-
-                                                echo '<td><i class="fa-solid fa-globe"></i> N/A</td>'; ?>
-
-                                            <?php endif; ?>
-
-                                        </p>
-                                <?php endforeach;
-                                }  ?>
+                                <?php 
+                                if (!empty($person['contacts'])) {
+                                    foreach ($person['contacts'] as $contact) {
+                                        if (isset($contact['workplaces']) && is_array($contact['workplaces'])) {
+                                            foreach ($contact['workplaces'] as $workplace) : ?>
+                                                <p>
+                                                    <?php if (!empty($workplace['url'])) : ?>
+                                                        <i class="fa-solid fa-globe"></i>
+                                                        <?php echo esc_html($workplace['url']); ?><br>
+                                                    <?php else: ?>
+                                                        <i class="fa-solid fa-globe"></i> N/A
+                                                    <?php endif; ?>
+                                                </p>
+                                            <?php endforeach;
+                                        } else {
+                                            echo '<p><i class="fa-solid fa-globe"></i> N/A</p>';
+                                        }
+                                    }
+                                } else {
+                                    echo '<p><i class="fa-solid fa-globe"></i> N/A</p>';
+                                }
+                                ?>
                             </td>
                         <?php endif; ?>
                         <?php if (in_array('socialmedia', $show_fields) && !in_array('socialmedia', $hide_fields)): ?>
