@@ -147,7 +147,7 @@
                                                     <?php else: ?>
                                                         <span 
                                                         class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                                        style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"> N/A
+                                                        style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span> N/A
                                                     <?php endif; ?>
                                                 </span>
                                             <?php endforeach;
