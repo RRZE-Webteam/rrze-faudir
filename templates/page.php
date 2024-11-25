@@ -159,7 +159,7 @@
                                                 ?>
                                                         <a href="<?php echo esc_url($social['url']); ?>" 
                                                            class="<?php echo esc_attr($icon_data['css_class']); ?>"
-                                                           style="background-image: url('<?php echo esc_url($icon_data['icon_url']); ?>');display: inline-block; padding-left: 20px; background-size: contain; background-repeat: no-repeat;width: 48px;height: 48px;"
+                                                           style="background-image: url('<?php echo esc_url($icon_data['icon_url']); ?>');"
                                                            target="_blank" 
                                                            rel="noopener noreferrer">
                                                            <span class="screen-reader-text"> <?php echo esc_html(ucfirst($icon_data['name'])); ?></span>
