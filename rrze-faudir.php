@@ -177,8 +177,7 @@ function register_kontakt_as_faudir_shortcode_alias()
     include_once(ABSPATH . 'wp-admin/includes/plugin.php');
 
     // Check if the FAU-person plugin is not active
-    if (!is_plugin_active('fau-person/fau-person.php')) { // Replace with the correct path to the FAU-person plugin file
-        // Register the [kontakt] and [kontaktliste] shortcodes as aliases for [faudir]
+    if (!is_plugin_active('fau-person-master/fau-person.php')) { 
         add_shortcode('kontakt', 'kontakt_to_faudir_shortcode_alias');
         add_shortcode('kontaktliste', 'kontakt_to_faudir_shortcode_alias');
     }
@@ -197,9 +196,6 @@ function kontakt_to_faudir_shortcode_alias($atts, $content = null)
 
     return do_shortcode(shortcode_unautop('[faudir ' . trim($atts_string) . ']' . $content . '[/faudir]'));
 }
-
-// Hook the function to run when WordPress initializes
-add_action('init', 'register_kontakt_as_faudir_shortcode_alias');
 
 // Helper function to convert attributes array to string
 function shortcode_parse_atts_to_string($atts)
