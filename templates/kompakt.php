@@ -185,8 +185,8 @@
                                 <p>
                                     <?php if (!empty($contact['organization_address']['phone'])): ?>
                                         <?php
-                                            // Fetch icon data for "phone"
-                                            $icon_data = get_social_icon_data('phone'); 
+                                        // Fetch icon data for "phone"
+                                        $icon_data = get_social_icon_data('phone');
                                         ?>
                                         <span 
                                             class="<?php echo esc_attr($icon_data['css_class']); ?>" 
@@ -197,8 +197,8 @@
                                     <?php endif; ?>
                                     <?php if (!empty($contact['organization_address']['mail'])): ?>
                                         <?php
-                                            // Fetch icon data for "phone"
-                                            $icon_data = get_social_icon_data('email'); 
+                                        // Fetch icon data for "phone"
+                                        $icon_data = get_social_icon_data('email');
                                         ?>
                                         <span 
                                             class="<?php echo esc_attr($icon_data['css_class']); ?>" 
@@ -209,8 +209,8 @@
                                     <?php endif; ?>
                                     <?php if (!empty($contact['organization_address']['url'])): ?>
                                         <?php
-                                            // Fetch icon data for "phone"
-                                            $icon_data = get_social_icon_data('url'); 
+                                        // Fetch icon data for "phone"
+                                        $icon_data = get_social_icon_data('url');
                                         ?>
                                         <span 
                                             class="<?php echo esc_attr($icon_data['css_class']); ?>" 
@@ -241,7 +241,7 @@
                             <?php endif; ?>
                         </div>
                         <?php
-                        /*
+                                /*
                         <span class="screen-reader-text"><?php echo esc_html__('Workplaces:', 'rrze-faudir'); ?></span>
                         <div>
                             <?php if (empty($contact['workplaces'])): ?>
@@ -305,7 +305,7 @@
                             <?php endforeach; ?>
                         <?php endif; ?>
                         </div>
-                        */?>
+                        */ ?>
                     <?php
                             } ?>
                 <?php endif; ?>

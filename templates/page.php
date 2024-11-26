@@ -1,5 +1,5 @@
 <?php if (!empty($persons)) : ?>
-    <div itemscope itemtype="https://schema.org/ProfilePage">
+    <div>
         <?php foreach ($persons as $person) : ?>
             <?php if (isset($person['error'])): ?>
                 <div class="faudir-error">
