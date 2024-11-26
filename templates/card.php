@@ -2,7 +2,6 @@
 
 function rrze_faudir_get_person_name_html($person_data)
 {
-    error_log(print_r($person_data, true));
     $title_prefix = $person_data['title_prefix'] ?? '';
     $first_name = $person_data['first_name'] ?? '';
     $nobility_title = $person_data['nobility_title'] ?? '';
