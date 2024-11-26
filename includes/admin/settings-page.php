@@ -307,11 +307,11 @@ function rrze_faudir_person_slug_field()
 }
 
 
-function rrze_faudir_default_output_fields_render()
-{
+function rrze_faudir_default_output_fields_render() {
     $options = get_option('rrze_faudir_options');
     $default_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : array();
 
+    // Available fields to display
     $available_fields = array(
         'display_name' => __('Display Name', 'rrze-faudir'),
         'academic_title' => __('Academic Title', 'rrze-faudir'),
@@ -328,6 +328,11 @@ function rrze_faudir_default_output_fields_render()
         'teasertext' => __('Teasertext', 'rrze-faudir'),
         'socialmedia' => __('Social Media', 'rrze-faudir'),
     );
+
+    // Set default state: all checkboxes checked if no selection exists
+    if (empty($default_fields)) {
+        $default_fields = array_keys($available_fields); // Use all available fields by default
+    }
 
     echo '<fieldset>';
     foreach ($available_fields as $field => $label) {
