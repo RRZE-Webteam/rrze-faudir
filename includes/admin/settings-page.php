@@ -264,7 +264,7 @@ function rrze_faudir_error_message_render()
 function rrze_faudir_business_card_title_render()
 {
     $options = get_option('rrze_faudir_options');
-    $default_title = esc_html__('Call up business card', 'rrze-faudir');
+    $default_title = esc_html__('More', 'rrze-faudir');
     $value = isset($options['business_card_title']) && !empty($options['business_card_title'])
         ? sanitize_text_field($options['business_card_title'])
         : $default_title;
