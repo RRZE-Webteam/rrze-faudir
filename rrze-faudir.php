@@ -495,3 +495,21 @@ function register_custom_person_taxonomies()
 
 // Make sure to register the taxonomy on init as well
 add_action('init', 'register_custom_person_taxonomies');
+
+add_action('template_redirect', 'custom_cpt_404_message');
+function custom_cpt_404_message() {
+    // Check if this is a single post of your custom post type
+    if (is_singular('custom_person')) {
+        global $post;
+
+        // If the post doesn't exist or is not published
+        if (empty($post) || $post->post_status !== 'publish') {
+            // Load a custom 404 template or show a message
+            wp_die(
+                __('No contact entry could be found.', 'rrze-faudir'),
+                __('Page Not Found', 'rrze-faudir'),
+                ['response' => 404]
+            );
+        }
+    }
+}
