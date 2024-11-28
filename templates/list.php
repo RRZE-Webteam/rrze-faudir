@@ -42,29 +42,20 @@
                         $options = get_option('rrze_faudir_options');
                         $hard_sanitize = isset($options['hard_sanitize']) && $options['hard_sanitize'];
 
-                        $longVersion = '';
-                        if ($hard_sanitize) {
-                            $prefix = $person['personalTitle'] ?? '';
-                            $prefixes = array(
-                                '' => __('Not specified', 'rrze-faudir'),
-                                'Dr.' => __('Doktor', 'rrze-faudir'),
-                                'Prof.' => __('Professor', 'rrze-faudir'),
-                                'Prof. Dr.' => __('Professor Doktor', 'rrze-faudir'),
-                                'Prof. em.' => __('Professor (Emeritus)', 'rrze-faudir'),
-                                'Prof. Dr. em.' => __('Professor Doktor (Emeritus)', 'rrze-faudir'),
-                                'PD' => __('Privatdozent', 'rrze-faudir'),
-                                'PD Dr.' => __('Privatdozent Doktor', 'rrze-faudir')
-                            );
-                            // Check if the prefix exists in the array and display the long version
-                            $longVersion = isset($prefixes[$prefix]) ? $prefixes[$prefix] : __('Unknown', 'rrze-faudir');
-                        }
-                        $personal_title = "";
-                        $first_name = "";
-                        $nobility_title = "";
-                        $last_name = "";
-                        $title_suffix = "";
+                        $longVersion = $hard_sanitize ? FaudirUtils::getAcademicTitleLongVersion($person['personalTitle'] ?? '') : '';
+                        $personal_title = '';
+                        $first_name = '';
+                        $nobility_title = '';
+                        $last_name = '';
+                        $title_suffix = '';
                         if (in_array('personalTitle', $show_fields) && !in_array('personalTitle', $hide_fields)) {
-                            $personal_title = (isset($person['personalTitle']) && !empty($person['personalTitle']) ? esc_html($person['personalTitle']) : '');
+                            $personal_title = isset($person['personalTitle']) && !empty($person['personalTitle']) 
+                                ? esc_html($person['personalTitle'])
+                                : '';
+                            
+                            if ($personal_title && $hard_sanitize) {
+                                $personal_title = FaudirUtils::getAcademicTitleLongVersion($personal_title);
+                            }
                         }
                         if (in_array('givenName', $show_fields) && !in_array('givenName', $hide_fields)) {
                             $first_name = (isset($person['givenName']) && !empty($person['givenName']) ? esc_html($person['givenName']) : '');
@@ -80,7 +71,7 @@
                         }
                         // Construct the full name
                         $fullName = trim(
-                            ($longVersion ? $longVersion : $personal_title) . ' ' .
+                            ($personal_title) . ' ' .
                                 ($first_name) . ' ' .
                                 ($nobility_title) . ' ' .
                                 ($last_name) . ' ' .

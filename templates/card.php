@@ -1,35 +1,5 @@
 <?php
 
-function rrze_faudir_get_person_name_html($person_data)
-{
-    $title_prefix = $person_data['title_prefix'] ?? '';
-    $first_name = $person_data['first_name'] ?? '';
-    $nobility_title = $person_data['nobility_title'] ?? '';
-    $last_name = $person_data['last_name'] ?? '';
-    $title_suffix = $person_data['title_suffix'] ?? '';
-    $identifier = $person_data['identifier'] ?? '';
-
-    $nameHtml = '';
-    $nameHtml .= '<span id="name-' . esc_attr($identifier) . '" itemprop="name">';
-    if (!empty($title_prefix)) {
-        $nameHtml .= '<span itemprop="honorificPrefix">' . esc_html($title_prefix) . '</span>';
-    }
-    if (!empty($first_name)) {
-        $nameHtml .= '<span itemprop="givenName">' . esc_html($first_name) . '</span>';
-    }
-    if (!empty($nobility_title)) {
-        $nameHtml .= '<span>' . esc_html($nobility_title) . '</span>';
-    }
-    if (!empty($last_name)) {
-        $nameHtml .= '<span itemprop="familyName">' . esc_html($last_name) . '</span>';
-    }
-    if (!empty($title_suffix)) {
-        $nameHtml .= '<span itemprop="honorificSuffix">' . esc_html($title_suffix) . '</span>';
-    }
-    $nameHtml .= '</span>';
-    return $nameHtml;
-}
-
 if (!empty($persons)) : ?>
     <div class="shortcode-contacts-wrapper" role="list"> <!-- Flex container for the cards -->
         <?php foreach ($persons as $person) : ?>
@@ -72,30 +42,20 @@ if (!empty($persons)) : ?>
                         <!-- Get Full name with title -->
                         <?php
                         $options = get_option('rrze_faudir_options');
-                        $longVersion = "";
                         $hard_sanitize = isset($options['hard_sanitize']) && $options['hard_sanitize'];
-                        if ($hard_sanitize) {
-                            $prefix = $person['personalTitle'];
-                            $prefixes = array(
-                                '' => __('Not specified', 'rrze-faudir'),
-                                'Dr.' => __('Doktor', 'rrze-faudir'),
-                                'Prof.' => __('Professor', 'rrze-faudir'),
-                                'Prof. Dr.' => __('Professor Doktor', 'rrze-faudir'),
-                                'Prof. em.' => __('Professor (Emeritus)', 'rrze-faudir'),
-                                'Prof. Dr. em.' => __('Professor Doktor (Emeritus)', 'rrze-faudir'),
-                                'PD' => __('Privatdozent', 'rrze-faudir'),
-                                'PD Dr.' => __('Privatdozent Doktor', 'rrze-faudir')
-                            );
-                            // Check if the prefix exists in the array and display the long version
-                            $longVersion = isset($prefixes[$prefix]) ? $prefixes[$prefix] : __('Unknown', 'rrze-faudir');
-                        }
-                        $personal_title = "";
-                        $first_name = "";
-                        $nobility_title = "";
-                        $last_name = "";
-                        $title_suffix = "";
+                        $personal_title = '';
+                        $first_name = '';
+                        $nobility_title = '';
+                        $last_name = '';
+                        $title_suffix = '';
                         if (in_array('personalTitle', $show_fields) && !in_array('personalTitle', $hide_fields)) {
-                            $personal_title = (isset($person['personalTitle']) && !empty($person['personalTitle']) ? esc_html($person['personalTitle']) : '');
+                            $personal_title = isset($person['personalTitle']) && !empty($person['personalTitle']) 
+                                ? esc_html($person['personalTitle'])
+                                : '';
+                            
+                            if ($personal_title && $hard_sanitize) {
+                                $personal_title = FaudirUtils::getAcademicTitleLongVersion($personal_title);
+                            }
                         }
                         if (in_array('givenName', $show_fields) && !in_array('givenName', $hide_fields)) {
                             $first_name = (isset($person['givenName']) && !empty($person['givenName']) ? esc_html($person['givenName']) : '');
@@ -110,11 +70,9 @@ if (!empty($persons)) : ?>
                             $title_suffix = (isset($person['personalTitleSuffix']) && !empty($person['personalTitleSuffix']) ? ' (' . esc_html($person['personalTitleSuffix']) . ')' : '');
                         }
 
-                        $title_prefix = $longVersion ? $longVersion : $personal_title;
-
                         // Construct the full name
                         $fullName = trim(
-                            ($title_prefix) . ' ' .
+                            ($personal_title) . ' ' .
                                 ($first_name) . ' ' .
                                 ($nobility_title) . ' ' .
                                 ($last_name) . ' ' .
@@ -141,8 +99,8 @@ if (!empty($persons)) : ?>
                             echo '<section class="card-section-title" aria-label="' . esc_attr($fullName) . '">';
                             if (!empty($final_url)) {
                                 echo '<a href="' . esc_url($final_url) . '" aria-labelledby="name-' . esc_attr($person['identifier']) . '">';
-                                echo rrze_faudir_get_person_name_html([
-                                    'title_prefix' => $title_prefix,
+                                echo FaudirUtils::getPersonNameHtml([
+                                    'personal_title' => $personal_title,
                                     'first_name' => $first_name,
                                     'nobility_title' => $nobility_title,
                                     'last_name' => $last_name,
@@ -151,8 +109,8 @@ if (!empty($persons)) : ?>
                                 ]);
                                 echo '</a>';
                             } else {
-                                echo rrze_faudir_get_person_name_html([
-                                    'title_prefix' => $title_prefix,
+                                echo FaudirUtils::getPersonNameHtml([
+                                    'personal_title' => $personal_title,
                                     'first_name' => $first_name,
                                     'nobility_title' => $nobility_title,
                                     'last_name' => $last_name,
@@ -187,7 +145,7 @@ if (!empty($persons)) : ?>
                                         // Add the function to the displayed list to prevent duplicates
                                         $displayedFunctions[] = $function;
                                 ?>
-                                        <p><?php echo esc_html($function); ?></p>
+                                        <p itemprop="jobTitle"><?php echo esc_html($function); ?></p>
                                 <?php
                                     }
                                 }
