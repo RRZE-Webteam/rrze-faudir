@@ -81,54 +81,71 @@
                                 </section>
                             </td>
                         <?php endif; ?>
+                        <?php
+                        // Initialize arrays for unique emails and phones
+                        $unique_emails = [];
+                        $unique_phones = [];    
 
+                        // Add person's email and phone to the arrays if available
+                        if (!empty($person['email'])) {
+                            $unique_emails[] = $person['email'];
+                        }
+                        if (!empty($person['telephone'])) {
+                            $unique_phones[] = $person['telephone'];
+                        }
 
-                        <!-- Email (if available) -->
-                        <?php if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) {
-                            $icon_data = get_social_icon_data('email'); 
-                            // Get the email from $person array or fallback to custom post type
-                            $email = (isset($person['email']) && !empty($person['email']))
-                                ? esc_html($person['email'])
-                                : '';
-
-                            // Only display the email if it's not empty
-                            if (!empty($email)) {?>
-                                <td> <span 
-                                class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
-                                <?php
-                                echo  esc_html($email) . '</td>';
-                            } else {?>
-                                <td> <span 
-                                     class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                     style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
-                                     <?php
-                                echo ' N/A </td>';
+                        // Collect emails and phones from workplaces
+                        if (!empty($person['contacts'])) {
+                            foreach ($person['contacts'] as $contact) {
+                                if (!empty($contact['workplaces'])) {
+                                    foreach ($contact['workplaces'] as $workplace) {
+                                        // Add unique emails from workplaces
+                                        if (!empty($workplace['mails'])) {
+                                            foreach ($workplace['mails'] as $email) {
+                                                if (!in_array($email, $unique_emails)) {
+                                                    $unique_emails[] = $email;
+                                                }
+                                            }
+                                        }
+                                        // Add unique phones from workplaces
+                                        if (!empty($workplace['phones'])) {
+                                            foreach ($workplace['phones'] as $phone) {
+                                                if (!in_array($phone, $unique_phones)) {
+                                                    $unique_phones[] = $phone;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                        }       
+                        }
+                        ?>
 
-                        // Phone (if available)
-                        if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)) {
-                            $icon_data = get_social_icon_data('phone'); 
-                            // Get the email from $person array or fallback to custom post type
-                            $phone = (isset($person['telephone']) && !empty($person['telephone'])
-                                ? esc_html($person['telephone'])
-                                : '');
-                            // Only display the email if it's not empty
-                            if (!empty($phone)) {?>
-                           <td> <span 
-                                class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
-                                <?php
-                                echo  esc_html($phone) . '</td>';
-                            } else {?>
-                                <td> <span 
-                                     class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                     style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
-                                     <?php
-                                echo ' N/A </td>';
-                            }
-                        } ?>
+                        <!-- Render Email Column -->
+                        <td>
+                            <?php if (!empty($unique_emails)) : ?>
+                                <?php $icon_data = get_social_icon_data('email'); ?>
+                                <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                      style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                <span class="screen-reader-text"><?php echo esc_html__('Emails:', 'rrze-faudir'); ?></span>
+                                <?php echo implode(', ', array_map('esc_html', $unique_emails)); ?>
+                            <?php else : ?>
+                                <span><?php echo esc_html__('N/A', 'rrze-faudir'); ?></span>
+                            <?php endif; ?>
+                    </td    >
+                            
+                        <!-- Render Phone Column -->
+                        <td>
+                            <?php if (!empty($unique_phones)) : ?>
+                                <?php $icon_data = get_social_icon_data('phone'); ?>
+                                <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                      style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                <span class="screen-reader-text"><?php echo esc_html__('Phones:', 'rrze-faudir'); ?></span>
+                                <?php echo implode(', ', array_map('esc_html', $unique_phones)); ?>
+                            <?php else : ?>
+                                <span><?php echo esc_html__('N/A', 'rrze-faudir'); ?></span>
+                            <?php endif; ?>
+                    </td>
 
                         <?php if (in_array('url', $show_fields) && !in_array('url', $hide_fields)): ?>
                             <td>
