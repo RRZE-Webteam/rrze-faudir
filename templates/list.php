@@ -90,97 +90,94 @@
                             </section>
                         <?php endif; ?>
                         <?php if (!empty($person['contacts'])) : ?>
-                            <?php foreach ($person['contacts'] as $contact) : ?>
-                                <div>
-                                    <?php if (!empty($contact['workplaces'])) : ?>
-                                        <?php foreach ($contact['workplaces'] as $workplace) : ?>
-                                            <span>
-                                                <?php if (!empty($workplace['mails'])) : ?>
-                                                    
-                                                        <?php foreach ($workplace['mails'] as $email) : ?>
-                                                            <p>
+                        <?php
+                        // Initialize arrays to keep track of unique emails and phones
+                        $unique_emails = [];
+                        $unique_phones = [];
+
+                        // Include person's email and telephone if available
+                        if (!empty($person['email'])) {
+                            $unique_emails[] = $person['email'];
+                            echo '<span>';
+                            $icon_data = get_social_icon_data('email');
+                            ?>
+                            <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                  style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                            <span class="screen-reader-text"><?php echo esc_html__('Email:', 'rrze-faudir'); ?></span>
+                            <a href="mailto:<?php echo esc_attr($person['email']); ?>"><?php echo esc_html($person['email']); ?></a>
+                            <?php
+                            echo '</span>';
+                        }
+                    
+                        if (!empty($person['telephone'])) {
+                            $unique_phones[] = $person['telephone'];
+                            echo '<span>';
+                            $icon_data = get_social_icon_data('phone');
+                            ?>
+                            <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                  style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                            <span class="screen-reader-text"><?php echo esc_html__('Phone:', 'rrze-faudir'); ?></span>
+                            <?php echo esc_html($person['telephone']); ?>
+                            <?php
+                            echo '</span>';
+                        }
+                        ?>
+<div>
+                        <?php foreach ($person['contacts'] as $contact) : ?>
+                            
+                                <?php if (!empty($contact['workplaces'])) : ?>
+                                    <?php foreach ($contact['workplaces'] as $workplace) : ?>
+                                        <span>
+                                            <?php if (!empty($workplace['mails'])) : ?>
+                                                <?php foreach ($workplace['mails'] as $email) : ?>
+                                                    <?php if (!in_array($email, $unique_emails)) : // Check if email is already added ?>
+                                                        <span>
                                                             <?php $icon_data = get_social_icon_data('email'); ?>
                                                             <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
                                                                   style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
-                                                            <span class="screen-reader-text"><?php echo esc_html__('Emails:', 'rrze-faudir'); ?></span>
+                                                            <span class="screen-reader-text"><?php echo esc_html__('Email:', 'rrze-faudir'); ?></span>
                                                             <a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email); ?></a>
-                                                        </p>
-                                                        <?php endforeach; ?>
+                                                        </span>
+                                                        <?php $unique_emails[] = $email; // Add to the array of unique emails ?>
+                                                    <?php endif; ?>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
                                                     
-                                                <?php endif; ?>
-                                                        
-                                                <?php if (!empty($workplace['phones'])) : ?>
-                                                    
-                                                        <?php foreach ($workplace['phones'] as $phone) : ?>
-                                                            <p>
+                                            <?php if (!empty($workplace['phones'])) : ?>
+                                                <?php foreach ($workplace['phones'] as $phone) : ?>
+                                                    <?php if (!in_array($phone, $unique_phones)) : // Check if phone is already added ?>
+                                                        <span>
                                                             <?php $icon_data = get_social_icon_data('phone'); ?>
                                                             <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
                                                                   style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
                                                             <span class="screen-reader-text"><?php echo esc_html__('Phone:', 'rrze-faudir'); ?></span>
                                                             <?php echo esc_html($phone); ?>
-                                                            </p>
-                                                        <?php endforeach; ?>
-                                                <?php endif; ?>
-                                                        
-                                                <?php if (!empty($workplace['url'])) : ?>
-                                                    <p>
-                                                        <?php $icon_data = get_social_icon_data('url'); ?>
-                                                        <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                                              style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
-                                                        <span class="screen-reader-text"><?php echo esc_html__('Url:', 'rrze-faudir'); ?></span>
-                                                        <?php echo esc_html($workplace['url']); ?>
-                                                    </p>
-                                                <?php endif; ?>
-                                            </span>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+                                                        </span>
+                                                        <?php $unique_phones[] = $phone; // Add to the array of unique phones ?>
+                                                    <?php endif; ?>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
+                                                    
+                                            <?php if (!empty($workplace['url'])) : ?>
+                                                <span>
+                                                    <?php $icon_data = get_social_icon_data('url'); ?>
+                                                    <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                                          style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                                    <span class="screen-reader-text"><?php echo esc_html__('Url:', 'rrze-faudir'); ?></span>
+                                                    <?php echo esc_html($workplace['url']); ?>
+                                                </span>
+                                            <?php endif; ?>
+                                        </span>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            
+                        <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
 
-                        <?php
-                        // Initialize output strings for email and phone
-                        $email_output = '';
-                        $phone_output = '';
-
-
-                        // Check if email should be shown and output only if an email is available
-                        if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) {
-                            // Get the email from $person array or fallback to custom post type
-                            $email = (isset($person['email']) && !empty($person['email']))
-                                ? esc_html($person['email'])
-                                : ''; // Custom post type email
-
-                            // Only display the email if it's not empty
-                            if (!empty($email)) {
-                                $icon_data = get_social_icon_data('email'); 
-                                ?>
-                                    <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                    style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
-                                    <span class="screen-reader-text"><?php echo esc_html__('Email:', 'rrze-faudir'); ?></span>
-                                    <span itemprop="email"><?php echo esc_html($email) ?></span>
-                           <?php }
-                        }
-                        // Check if phone should be shown and include N/A if not available
-                        if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)) {
-                            // Get the email from $person array or fallback to custom post type
-                            $phone = (isset($person['telephone']) && !empty($person['telephone'])
-                                ? esc_html($person['telephone'])
-                                : '');
-                            // Only display the email if it's not empty
-                            if (!empty($phone)) {
-                                $icon_data = get_social_icon_data('phone'); 
-                                ?>
-                                <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
-                                <span class="screen-reader-text"><?php echo esc_html__('Phone:', 'rrze-faudir'); ?></span>
-                                <span itemprop="phone"> <?php echo esc_html($phone) ?></span>;
-                                <?php  }
-                        }
-
-                        ?>
-                        <?php if (in_array('teasertext', $show_fields) && !in_array('teasertext', $hide_fields)) { ?>
-                            <?php
+                                                    
+                            <?php if (in_array('teasertext', $show_fields) && !in_array('teasertext', $hide_fields)) { ?>
+                                <?php
                             if (!empty($teaser_lang)) :
                             ?>
                                 <div class="teaser-second-language">
