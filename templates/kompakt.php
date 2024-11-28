@@ -174,134 +174,97 @@
                                 <p><?php echo esc_html__('No function available.', 'rrze-faudir'); ?></p>
                             <?php endif; ?>
                         <?php } ?>
-
-                        <span class="screen-reader-text"><?php echo esc_html__('Organization Address:', 'rrze-faudir'); ?></span>
+                        <span class="screen-reader-text"><?php echo esc_html__('Workplaces:', 'rrze-faudir'); ?></span>
                         <div>
-                            <?php if (!empty($contact['organization_address'])): ?>
-                                <p>
-                                    <?php if (!empty($contact['organization_address']['phone'])): ?>
-                                        <?php
-                                        // Fetch icon data for "phone"
-                                        $icon_data = get_social_icon_data('phone');
-                                        ?>
-                                        <span 
-                                            class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                            style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>');"></span>
+                            <?php if (empty($contact['workplaces'])) : ?>
+                                <p><?php echo esc_html__('No workplaces available.', 'rrze-faudir'); ?></p>
+                            <?php else : ?>
+                                <?php foreach ($contact['workplaces'] as $workplace) : ?>
+                                    <p> 
+                                    <?php if (!empty($workplace['mails'])) : ?>
+                                        <?php foreach ($workplace['mails'] as $email) : ?>
+                                            <p><?php $icon_data = get_social_icon_data('email'); ?>
+                                            <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                            style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                            <span class="screen-reader-text"><?php echo esc_html__('Emails:', 'rrze-faudir'); ?></span>
+                                            <a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email); ?></a></p>
+                                        <?php endforeach; ?>        
+                                    <?php endif; ?>
+                                    <?php if (!empty($workplace['phones'])) : ?>
+                                        <?php foreach ($workplace['phones'] as $phone) : ?>
+                                            <p><?php $icon_data = get_social_icon_data('phone');?>
+                                            <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                            style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
                                             <span class="screen-reader-text"><?php echo esc_html__('Phone:', 'rrze-faudir'); ?></span>
-                                            <?php echo esc_html($contact['organization_address']['phone']); ?>
-                                        </span><br>
+                                            <?php echo esc_html($phone); ?></p>
+                                        <?php endforeach; ?>
                                     <?php endif; ?>
-                                    <?php if (!empty($contact['organization_address']['mail'])): ?>
-                                        <?php
-                                        // Fetch icon data for "phone"
-                                        $icon_data = get_social_icon_data('email');
-                                        ?>
-                                        <span 
-                                            class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                            style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>'); "></span>
-                                            <span class="screen-reader-text"><?php echo esc_html__('Mail:', 'rrze-faudir'); ?></span>
-                                            <?php echo esc_html($contact['organization_address']['mail']); ?>
-                                        </span><br>
+                                    <?php if (!empty($workplace['url'])) : ?>
+                                        <?php $icon_data = get_social_icon_data('url');?>
+                                        <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                        style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                        <span class="screen-reader-text"><?php echo esc_html__('Url:', 'rrze-faudir'); ?></span>
+                                        <?php echo esc_html($workplace['url']); ?><br>
                                     <?php endif; ?>
-                                    <?php if (!empty($contact['organization_address']['url'])): ?>
-                                        <?php
-                                        // Fetch icon data for "phone"
-                                        $icon_data = get_social_icon_data('url');
-                                        ?>
-                                        <span 
-                                            class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                            style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>'); "></span>
-                                            <span class="screen-reader-text"><?php echo esc_html__('Url:', 'rrze-faudir'); ?></span>
-                                            <?php echo esc_html($contact['organization_address']['url']); ?>
-                                        </span><br>
+                                    <?php if (!empty($workplace['room'])) : ?>
+                                        <span class="screen-reader-text"><?php echo esc_html__('Room:', 'rrze-faudir'); ?></span>
+                                        <?php echo esc_html($workplace['room']); ?><br>
                                     <?php endif; ?>
-                                    <?php if (!empty($contact['organization_address']['street'])): ?>
+                                    <?php if (!empty($workplace['floor'])) : ?>
+                                        <span class="screen-reader-text"><?php echo esc_html__('Floor:', 'rrze-faudir'); ?></span>
+                                        <?php echo esc_html($workplace['floor']); ?><br>
+                                    <?php endif; ?>
+                                    <?php if (!empty($workplace['street'])) : ?>
                                         <span class="screen-reader-text"><?php echo esc_html__('Street:', 'rrze-faudir'); ?></span>
-                                        <?php echo esc_html($contact['organization_address']['street']); ?><br>
+                                        <?php echo esc_html($workplace['street']); ?><br>
                                     <?php endif; ?>
-                                    <?php if (!empty($contact['organization_address']['zip'])): ?>
+                                    <?php if (!empty($workplace['zip'])) : ?>
                                         <span class="screen-reader-text"><?php echo esc_html__('ZIP Code:', 'rrze-faudir'); ?></span>
-                                        <?php echo esc_html($contact['organization_address']['zip']); ?><br>
+                                        <?php echo esc_html($workplace['zip']); ?><br>
                                     <?php endif; ?>
-                                    <?php if (!empty($contact['organization_address']['city'])): ?>
+                                    <?php if (!empty($workplace['city'])) : ?>
                                         <span class="screen-reader-text"><?php echo esc_html__('City:', 'rrze-faudir'); ?></span>
-                                        <?php echo esc_html($contact['organization_address']['city']); ?><br>
+                                        <?php echo esc_html($workplace['city']); ?><br>
                                     <?php endif; ?>
-                                    <?php if (!empty($contact['organization_address']['faumap'])): ?>
+                                    <?php if (!empty($workplace['faumap'])) : ?>
                                         <span class="screen-reader-text"><?php echo esc_html__('Map:', 'rrze-faudir'); ?></span>
-                                        <a href="<?php echo esc_url($contact['organization_address']['faumap']); ?>" target="_blank">
+                                        <a href="<?php echo esc_url($workplace['faumap']); ?>" target="_blank">
                                             <?php echo esc_html__('View on Map', 'rrze-faudir'); ?>
                                         </a><br>
                                     <?php endif; ?>
-                                </p>
-                            <?php endif; ?>
-                        </div>
-                        <?php
-                                /*
-                        <span class="screen-reader-text"><?php echo esc_html__('Workplaces:', 'rrze-faudir'); ?></span>
-                        <div>
-                            <?php if (empty($contact['workplaces'])): ?>
-                                <p><?php echo esc_html__('No workplaces available.', 'rrze-faudir'); ?></p>
-                            <?php else: ?>
-                                <?php foreach ($contact['workplaces'] as $workplace): ?>
-                                    <p>
-                                        <?php if (!empty($workplace['street'])): ?>
-                                            <strong><?php echo esc_html__('Street:', 'rrze-faudir'); ?></strong>
-                                            <?php echo esc_html($workplace['street']); ?><br>
-                                        <?php endif; ?>
-
-                                        <?php if (!empty($workplace['zip'])): ?>
-                                            <strong><?php echo esc_html__('ZIP Code:', 'rrze-faudir'); ?></strong>
-                                            <?php echo esc_html($workplace['zip']); ?><br>
-                                        <?php endif; ?>
-
-                                        <?php if (!empty($workplace['city'])): ?>
-                                            <strong><?php echo esc_html__('City:', 'rrze-faudir'); ?></strong>
-                                            <?php echo esc_html($workplace['city']); ?><br>
-                                        <?php endif; ?>
-
-                                        <?php if (!empty($workplace['faumap'])): ?>
-                                            <strong><?php echo esc_html__('Map:', 'rrze-faudir'); ?></strong>
-                                            <a href="<?php echo esc_url($workplace['faumap']); ?>" target="_blank">
-                                                <?php echo esc_html__('View on Map', 'rrze-faudir'); ?>
-                                            </a><br>
-                                        <?php endif; ?>
-
-                                        <?php if (!empty($workplace['mails'])): ?>
-                                            <strong><?php echo esc_html__('Emails:', 'rrze-faudir'); ?></strong>
-                                    <ul>
-                                        <?php foreach ($workplace['mails'] as $email): ?>
-                                            <li><a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email); ?></a></li>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                <?php endif; ?>
-
-                                <?php if (!empty($workplace['phones'])): ?>
-                                    <strong><?php echo esc_html__('Phone numbers:', 'rrze-faudir'); ?></strong>
-                                    <ul>
-                                        <?php foreach ($workplace['phones'] as $phone): ?>
-                                            <li><?php echo esc_html($phone); ?></li>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                <?php endif; ?>
-
-                                <?php if (!empty($workplace['officeHours'])): ?>
-                                    <strong><?php echo esc_html__('Office Hours:', 'rrze-faudir'); ?></strong>
-                                    <ul>
-                                        <?php foreach ($workplace['officeHours'] as $officeHour): ?>
-                                            <li>
-                                                <strong><?php echo esc_html($weekdayMap[$officeHour['weekday']] ?? 'Unknown'); ?>:</strong>
-                                                <?php echo esc_html($officeHour['from'] . ' - ' . $officeHour['to']); ?>
-                                            </li>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                <?php endif; ?>
-                                </p>
+                                            
+                                    <?php if (!empty($workplace['officeHours'])) : ?>
+                                        <strong><?php echo esc_html__('Office Hours:', 'rrze-faudir'); ?></strong>
+                                        <ul>
+                                            <?php foreach ($workplace['officeHours'] as $officeHour) : ?>
+                                                <li>
+                                                    <strong><?php echo esc_html($weekdayMap[$officeHour['weekday']] ?? 'Unknown'); ?>:</strong>
+                                                    <?php echo esc_html($officeHour['from'] . ' - ' . $officeHour['to']); ?>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    <?php endif; ?>
+                                    <?php if (!empty($workplace['consultationHours'])) : ?>
+                                        <strong><?php echo esc_html__('Consultation Hours:', 'rrze-faudir'); ?></strong>
+                                        <ul>
+                                            <?php foreach ($workplace['consultationHours'] as $consultationHours) : ?>
+                                                <li>
+                                                    <strong><?php echo esc_html($weekdayMap[$consultationHours['weekday']] ?? 'Unknown'); ?>:</strong>
+                                                    <?php echo esc_html($consultationHours['from'] . ' - ' . $consultationHours['to']); ?>
+                                                    <p>
+                                                    <?php echo esc_html($consultationHours['comment']); ?></p>
+                                                    <p><a href="<?php echo esc_url($consultationHours['url']); ?>">
+                                                        <?php echo esc_html($consultationHours['url']); ?>
+                                                    </a><p>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    <?php endif; ?>
+                                    </p>
                                 <hr>
                             <?php endforeach; ?>
                         <?php endif; ?>
                         </div>
-                        */ ?>
                     <?php
                             } ?>
                 <?php endif; ?>

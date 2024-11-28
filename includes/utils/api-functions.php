@@ -324,7 +324,7 @@ function fetch_and_format_workplaces($contactIdentifier)
         }
         if (!empty($workplace['consultationHours'])) {
             $consultationHours = array_map(function ($hours) {
-                return __('Weekday ', 'rrze-faudir') . $hours['weekday'] . ': ' . $hours['from'] . ' - ' . $hours['to'] . ' (' . $hours['comment'] . ')';
+                return __('Weekday ', 'rrze-faudir') . $hours['weekday'] . ': ' . $hours['from'] . ' - ' . $hours['to'] . ' (' . $hours['comment'] . ') ' . $hours['url'];
             }, $workplace['consultationHours']);
             $workplaceDetails[] = __('Consultation Hours: ', 'rrze-faudir') . implode('; ', $consultationHours);
         }

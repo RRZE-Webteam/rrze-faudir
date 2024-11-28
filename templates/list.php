@@ -8,6 +8,8 @@
             <?php else: ?>
                 <?php if (!empty($person)) : ?>
                     <?php
+                    $teaser_lang = '';
+
                     $contact_posts = get_posts([
                         'post_type' => 'custom_person',
                         'meta_key' => 'person_id',
@@ -15,6 +17,21 @@
                         'posts_per_page' => 1, // Only fetch one post matching the person ID
                     ]);
                     $cpt_url = !empty($contact_posts) ? get_permalink($contact_posts[0]->ID) : '';
+                    if (!empty($contact_posts)) {
+                        // Loop through each contact post
+                        foreach ($contact_posts as $post) : {
+                                // Check if the post has a UnivIS ID (person_id)
+                                $identifier = get_post_meta($post->ID, 'person_id', true);
+
+                                // Compare the identifier with the current person's identifier
+                                if ($identifier === $person['identifier']) {
+                                    $locale = get_locale(); 
+                                    $teaser_text_key = ($locale === 'de_DE' || $locale === 'de_DE_formal') ? '_teasertext_de' : '_teasertext_en';
+                                    $teaser_lang = get_post_meta($post->ID, $teaser_text_key, true);
+                                }
+                            }
+                        endforeach;
+                    } 
 
                     // Use custom post type URL if multiple persons or no direct URL
                     $final_url = (count($persons) > 1 || empty($url)) ? $cpt_url : $url; ?>
@@ -81,6 +98,55 @@
                                 <?php endif; ?>
                             </section>
                         <?php endif; ?>
+                        <?php if (!empty($person['contacts'])) : ?>
+                            <?php foreach ($person['contacts'] as $contact) : ?>
+                                <div>
+                                    <?php if (!empty($contact['workplaces'])) : ?>
+                                        <?php foreach ($contact['workplaces'] as $workplace) : ?>
+                                            <span>
+                                                <?php if (!empty($workplace['mails'])) : ?>
+                                                    
+                                                        <?php foreach ($workplace['mails'] as $email) : ?>
+                                                            <p>
+                                                            <?php $icon_data = get_social_icon_data('email'); ?>
+                                                            <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                                                  style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                                            <span class="screen-reader-text"><?php echo esc_html__('Emails:', 'rrze-faudir'); ?></span>
+                                                            <a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email); ?></a>
+                                                        </p>
+                                                        <?php endforeach; ?>
+                                                    
+                                                <?php endif; ?>
+                                                        
+                                                <?php if (!empty($workplace['phones'])) : ?>
+                                                    
+                                                        <?php foreach ($workplace['phones'] as $phone) : ?>
+                                                            <p>
+                                                            <?php $icon_data = get_social_icon_data('phone'); ?>
+                                                            <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                                                  style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                                            <span class="screen-reader-text"><?php echo esc_html__('Phone:', 'rrze-faudir'); ?></span>
+                                                            <?php echo esc_html($phone); ?>
+                                                            </p>
+                                                        <?php endforeach; ?>
+                                                <?php endif; ?>
+                                                        
+                                                <?php if (!empty($workplace['url'])) : ?>
+                                                    <p>
+                                                        <?php $icon_data = get_social_icon_data('url'); ?>
+                                                        <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                                              style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                                        <span class="screen-reader-text"><?php echo esc_html__('Url:', 'rrze-faudir'); ?></span>
+                                                        <?php echo esc_html($workplace['url']); ?>
+                                                    </p>
+                                                <?php endif; ?>
+                                            </span>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+
                         <?php
                         // Initialize output strings for email and phone
                         $email_output = '';
@@ -96,8 +162,13 @@
 
                             // Only display the email if it's not empty
                             if (!empty($email)) {
-                                echo '<p>' . esc_html__('Email:', 'rrze-faudir') . ' <span itemprop="email">' . esc_html($email) . '</span></p>';
-                            }
+                                $icon_data = get_social_icon_data('email'); 
+                                ?>
+                                    <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                    style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                    <span class="screen-reader-text"><?php echo esc_html__('Email:', 'rrze-faudir'); ?></span>
+                                    <span itemprop="email"><?php echo esc_html($email) ?></span>
+                           <?php }
                         }
                         // Check if phone should be shown and include N/A if not available
                         if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)) {
@@ -107,75 +178,27 @@
                                 : '');
                             // Only display the email if it's not empty
                             if (!empty($phone)) {
-                                echo '<p>' . esc_html__('Phone:', 'rrze-faudir') . ' <span itemprop="phone">' . esc_html($phone) . '</span></p>';
-                            }
+                                $icon_data = get_social_icon_data('phone'); 
+                                ?>
+                                <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                <span class="screen-reader-text"><?php echo esc_html__('Phone:', 'rrze-faudir'); ?></span>
+                                <span itemprop="phone"> <?php echo esc_html($phone) ?></span>;
+                                <?php  }
                         }
 
                         ?>
-
-                        <?php
-                        $displayedOrganizations = []; // To track displayed organizations
-                        ?>
-
-                        <?php if (!empty($person['contacts'])) : ?>
-
+                        <?php if (in_array('teasertext', $show_fields) && !in_array('teasertext', $hide_fields)) { ?>
                             <?php
-                            // Array to track displayed organizations and their associated functions
-                            $organizationFunctions = [];
-
-                            foreach ($person['contacts'] as $contact) {
-                                $organizationName = '';
-
-                                // Check if the organization is allowed to be shown
-                                $organizationName = $contact['organization']['name'] ?? '';
-
-                                if ($organizationName) {
-                                    $locale = get_locale();
-                                    $isGerman = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_DE_formal') !== false;
-
-                                    // Determine the appropriate function label based on locale
-                                    $function = '';
-                                    if (!empty($contact['functionLabel'])) {
-                                        $function = $isGerman ?
-                                            ($contact['functionLabel']['de'] ?? '') : ($contact['functionLabel']['en'] ?? '');
-                                    }
-
-                                    // Group functions by organization
-                                    if (!empty($function)) {
-                                        $organizationFunctions[$organizationName][] = $function;
-                                    }
-                                }
-                            }
-
-                            // Display each organization and its functions
-                            foreach ($organizationFunctions as $orgName => $functions) {
-                                if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) {
+                            if (!empty($teaser_lang)) :
                             ?>
-                                    <ul>
-                                        <li itemprop="affiliation" itemscope itemtype="https://schema.org/Organization">
-                                            <strong><?php echo esc_html__('Organization:', 'rrze-faudir'); ?></strong>
-                                            <span itemprop="name"><?php echo esc_html($orgName); ?></span><br />
-                                        </li>
-                                    </ul>
-                                    <?php }
-                                foreach ($functions as $function) :
-                                    if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) {
-                                    ?>
-                                        <ul>
-                                            <li itemprop="jobTitle">
-                                                <?php echo esc_html($function); ?>
-                                            </li>
-                                        </ul>
-                                <?php }
-                                endforeach; ?>
-
+                                <div class="teaser-second-language">
+                                    <?php echo wp_kses_post($teaser_lang); ?>
+                                </div>
                             <?php
-                            }
+                            endif;
                             ?>
-
-                        <?php endif; ?>
-
-
+                        <?php } ?>
                     </li>
                 <?php else : ?>
                     <li itemprop><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?> </li>

@@ -115,69 +115,7 @@ get_header();
                                             endforeach; ?>
                                         </div>
                                         <br>
-                                        <div class="organization-address">
-                                        <span class="screen-reader-text"><?php echo esc_html__('Organization Address:', 'rrze-faudir'); ?></span>
-                                        <?php
-                                        // Split the address into lines
-                                        $address_lines = explode("\n", $org['address'] ?? '');
-
-                                        
-                                    foreach ($address_lines as $line) :
-                                        $trimmedLine = trim($line);
-                                        if ($trimmedLine !== '') :
-                                            if (strpos($trimmedLine, ':') !== false) {
-                                                [$label, $value] = array_map('trim', explode(':', $trimmedLine, 2));
-
-                                                // Define allowed labels for icons
-                                                $allowed_labels = ['phone', 'email', 'url'];
-
-                                                // Define labels to hide with screen-reader-text
-                                                $hidden_labels = ['street', 'zip', 'city', 'fau map'];
-                                            
-                                                // Check if the label is in the allowed list
-                                                if (in_array(strtolower($label), $allowed_labels, true)) {
-                                                    // Get icon data for the label
-                                                    $icon_data = get_social_icon_data($label); 
-                                                    ?>
-                                                    <p>
-                                                        <span 
-                                                           class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                                           style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>'); display: inline-block; padding-left: 20px; background-size: contain; background-repeat: no-repeat;" 
-                                                           target="_blank" 
-                                                           rel="noopener noreferrer"></span>
-                                                            <?php echo esc_html($value); ?>
-                                                    </p>
-                                                    <?php
-                                                } elseif (in_array(strtolower($label), $hidden_labels, true)) {
-                                                    // Wrap hidden labels with screen-reader-text
-                                                    ?>
-                                                    <p>
-                                                        <span class="screen-reader-text">
-                                                            <?php echo esc_html($label); ?>
-                                                        </span>
-                                                        <?php echo esc_html($value); ?>
-
-                                                    </p>
-                                                    <?php
-                                                } else {
-                                                    // Render as plain text for labels not in the allowed list or hidden list
-                                                    ?>
-                                                    <p><?php echo esc_html($label . ': ' . $value); ?></p>
-                                                    <?php
-                                                }
-                                            } else {
-                                                // For lines without a colon, render them as plain text
-                                                ?>
-                                                <p><?php echo esc_html($trimmedLine); ?></p>
-                                                <?php
-                                            }
-                                        endif;
-                                    endforeach;
-                                    ?>
-
-                                    </div><br>
-                                    <?php
-                                        /*
+                                                                            
                                         <div class="workplace-wrapper">
                                             <span class="screen-reader-text"><?php echo esc_html__('Workplace:', 'rrze-faudir'); ?></span>
                                             <?php
@@ -195,50 +133,103 @@ get_header();
                                             // Fetch workplace information from the API
                                             $workplace_lines = explode("\n", $org['workplace'] ?? '');
                                             $office_hours_line = '';
+                                            $consultation_hours_line = '';
                                                                             
                                             // Start rendering workplace information
                                             echo '<div class="workplace-info">';
+                                            // Define priorities for specific labels
+                                            $priority_labels = ['phone', 'email', 'url'];
+                                            
+                                            // Separate lines based on priority
+                                            $priority_lines = [];
+                                            $non_priority_lines = [];
                                             foreach ($workplace_lines as $line) {
                                                 $trimmedLine = trim($line);
-                                                                            
+                                            
+                                                if ($trimmedLine !== '' && strpos($trimmedLine, ':') !== false) {
+                                                    [$label] = array_map('trim', explode(':', $trimmedLine, 2));
+                                                    if (in_array(strtolower($label), $priority_labels, true)) {
+                                                        $priority_lines[] = $line;
+                                                        continue;
+                                                    }
+                                                }
+                                            
+                                                $non_priority_lines[] = $line;
+                                            }
+                                            
+                                            // Merge prioritized lines first, then others
+                                            $sorted_lines = array_merge($priority_lines, $non_priority_lines);
+                                            
+                                            // Process the sorted lines
+                                            foreach ($sorted_lines as $line) {
+                                                $trimmedLine = trim($line);
+                                            
                                                 if ($trimmedLine !== '') {
                                                     // Detect the "Office Hours" line and store it for parsing
                                                     if (stripos($trimmedLine, 'Office Hours:') !== false) {
                                                         $office_hours_line = $trimmedLine;
                                                         continue; // Skip displaying this line as a regular workplace line
                                                     }
-                                                                            
+                                                    if (stripos($trimmedLine, 'Consultation Hours:') !== false) {
+                                                        $consultation_hours_line = $trimmedLine;
+                                                        continue; // Skip displaying this line as a regular workplace line
+                                                    }
                                                     // Split the line into label and value
                                                     if (strpos($trimmedLine, ':') !== false) {
                                                         [$label, $value] = array_map('trim', explode(':', $trimmedLine, 2));
-                                                                            
-                                                        // Get icon data for the label
-                                                        $icon_data = get_social_icon_data($label);
-                                                        ?>
-                                                        <p>
-                                                            <span 
-                                                                class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                                                style="background-image: url('<?php echo esc_url($icon_data['icon_url']); ?>'); display: inline-block; padding-left: 20px; background-size: contain; background-repeat: no-repeat;" 
-                                                                target="_blank" 
-                                                                rel="noopener noreferrer">
+                                                    
+                                                        // Define allowed labels for icons
+                                                        $allowed_labels = ['phone', 'email', 'url'];
+                                                    
+                                                        // Define labels to hide with screen-reader-text
+                                                        $hidden_labels = ['room', 'floor', 'street', 'zip', 'city', 'fau map'];
+                                                    
+                                                        // Check if the label is in the allowed list
+                                                        if (in_array(strtolower($label), $allowed_labels, true)) {
+                                                            // Get icon data for the label
+                                                            $icon_data = get_social_icon_data($label);
+                                                            ?>
+                                                            <p>
+                                                                <span 
+                                                                   class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                                                   style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>'); display: inline-block; padding-left: 20px; background-size: contain; background-repeat: no-repeat;" 
+                                                                   target="_blank" 
+                                                                   rel="noopener noreferrer"></span>
+                                                                    <?php echo esc_html($value); ?>
+                                                            </p>
+                                                            <?php
+                                                        } elseif (in_array(strtolower($label), $hidden_labels, true)) {
+                                                            // Wrap hidden labels with screen-reader-text
+                                                            ?>
+                                                            <p>
+                                                                <span class="screen-reader-text">
+                                                                    <?php echo esc_html($label); ?>
+                                                                </span>
                                                                 <?php echo esc_html($value); ?>
-                                                            </span>
-                                                        </p>
-                                                        <?php
+                                                            </p>
+                                                            <?php
+                                                        } else {
+                                                            // Render as plain text for labels not in the allowed list or hidden list
+                                                            ?>
+                                                            <p><?php echo esc_html($label . ': ' . $value); ?></p>
+                                                            <?php
+                                                        }
                                                     } else {
-                                                        // Render lines without a colon as regular text
+                                                        // For lines without a colon, render them as plain text
                                                         ?>
                                                         <p><?php echo esc_html($trimmedLine); ?></p>
                                                         <?php
                                                     }
                                                 }
                                             }
+                                            
+                                            
                                             echo '</div>';
                                                                             
                                             // Check and display office hours if found
                                             if ($office_hours_line) {
                                                 echo '<div class="office-hours">';
-                                                echo '<span class="screen-reader-text">' . esc_html__('Office Hours:', 'rrze-faudir') . '</span><ul>';
+                                                echo '<span>' . esc_html__('Office Hours:', 'rrze-faudir') . '</span><ul>';
                                                                             
                                                 // Extract individual office hours segments
                                                 preg_match_all('/Weekday (\d+): (\d{2}:\d{2}) - (\d{2}:\d{2})/', $office_hours_line, $matches, PREG_SET_ORDER);
@@ -256,14 +247,44 @@ get_header();
                                                 echo '</ul></div>';
                                             } else {
                                                 echo '<!-- Debug: No office hours line found -->';
-                                            }                                          
+                                            }  
+                                            if ($consultation_hours_line) {
+                                                echo '<div class="consultation-hours">';
+                                                echo '<span>' . esc_html__('Consultation Hours:', 'rrze-faudir') . '</span><ul>';
+                                                
+                                                // Extract individual consultation hours segments with optional comments and URL
+                                                preg_match_all('/Weekday (\d+): (\d{2}:\d{2}) - (\d{2}:\d{2})\s*(\((.*?)\))?\s*(https?:\/\/[^\s]+)/', $consultation_hours_line, $matches, PREG_SET_ORDER);
+                                            
+                                                if (empty($matches)) {
+                                                    echo '<!-- Debug: No matches found for consultation hours pattern -->';
+                                                }
+                                                foreach ($matches as $match) {
+                                                    $weekday = $weekdayMap[$match[1]] ?? 'Unknown';
+                                                    $from = $match[2];
+                                                    $to = $match[3];
+                                                    $comment = isset($match[5]) ? trim($match[5]) : ''; // Capture the optional comment
+                                                    $url = isset($match[6]) ? trim($match[6]) : ''; // Capture the URL
+                                            
+                                                    echo '<li><strong>' . esc_html($weekday) . ':</strong> ' . esc_html($from . ' - ' . $to) ;
+                                                    
+                                                    // Display the comment if available
+                                                    if (!empty($comment)) {
+                                                        echo '<br><em>' . esc_html($comment) . '</em>';
+                                                    }
+                                                    
+                                                    // Display the URL as a clickable link
+                                                    if (!empty($url)) {
+                                                        echo '<br><a href="' . esc_url($url) . '" target="_blank" rel="noopener noreferrer">' . esc_html($url) . '</a>';
+                                                    }
+                                                }
+                                            
+                                                echo '</li></ul></div>';
+                                            } else {
+                                                echo '<!-- Debug: No consultation hours line found -->';
+                                            }
+                                            
                                             ?>
                                         </div>
-                                        */
-                                        ?>
-                                        
-
-
                                         <?php if (!$show_german) : ?>
                                             <div class="functions-wrapper">
                                             <span class="screen-reader-text"><?php echo esc_html__('Function', 'rrze-faudir'); ?></span>

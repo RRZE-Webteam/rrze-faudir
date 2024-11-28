@@ -42,10 +42,12 @@ return [
     'fau karte' => 'map',
     'city' => 'city',            
     'fau card' => 'map',          
-    'e-mail' => 'envelope',  
+    'e-mail' => 'envelope',
+    'emails' => 'envelope',  
     'url' => 'globe',
     'telefon' => 'phone',
     'phone' => 'phone',
+    'phones' => 'phone',
     'email' => 'envelope',
 
 ]; 
