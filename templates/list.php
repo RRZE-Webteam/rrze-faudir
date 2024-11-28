@@ -81,11 +81,24 @@
                         <?php if (in_array('displayName', $show_fields) && !in_array('displayName', $hide_fields)) : ?>
                             <section class="card-section-title" aria-label="<?php echo esc_html($fullName); ?>">
                                 <?php if (!empty($final_url)) : ?>
-                                    <a href="<?php echo esc_url($final_url); ?>" itemprop="url">
-                                        <span itemprop="name"><?php echo esc_html($fullName); ?></span>
+                                    <a href="<?php echo esc_url($final_url); ?>">
+                                        <?php echo FaudirUtils::getPersonNameHtml([
+                                            'personal_title' => $personal_title,
+                                            'first_name' => $first_name,
+                                            'nobility_title' => $nobility_title,
+                                            'last_name' => $last_name,
+                                            'title_suffix' => $title_suffix,
+                                            'identifier' => $person['identifier']
+                                        ]); ?>
                                     </a>
-                                <?php else : ?>
-                                    <span itemprop="name"><?php echo esc_html($fullName); ?></span>
+                                <?php else : echo FaudirUtils::getPersonNameHtml([
+                                    'personal_title' => $personal_title,
+                                    'first_name' => $first_name,
+                                    'nobility_title' => $nobility_title,
+                                    'last_name' => $last_name,
+                                    'title_suffix' => $title_suffix,
+                                    'identifier' => $person['identifier']
+                                ]); ?>
                                 <?php endif; ?>
                             </section>
                         <?php endif; ?>
@@ -189,7 +202,7 @@
                         <?php } ?>
                     </li>
                 <?php else : ?>
-                    <li itemprop><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?> </li>
+                    <li><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?> </li>
                 <?php endif; ?>
             <?php endif; ?>
         <?php endforeach; ?>

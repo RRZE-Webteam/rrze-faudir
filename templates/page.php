@@ -210,7 +210,7 @@
                                     ?>
                                         <?php if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) { ?>
                                             <h4><span class="screen-reader-text"><?php echo esc_html__('Organization:', 'rrze-faudir'); ?></span>
-                                                <span itemprop="affiliation" itemscope itemtype="https://schema.org/Organization">
+                                                <span itemprop="worksFor" itemscope itemtype="https://schema.org/Organization">
                                                     <span itemprop="name"><?php echo esc_html($organizationName); ?></span>
                                                 </span>
                                         </h4>
