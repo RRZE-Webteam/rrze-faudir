@@ -240,6 +240,15 @@ registerBlockType('rrze/faudir-block', {
             { value: 'content', label: __('Content', 'rrze-faudir') },
             { value: 'teasertext', label: __('Teasertext', 'rrze-faudir') },
             { value: 'socialmedia', label: __('Social Media', 'rrze-faudir') },
+            { value: 'workplaces', label: __('Workplaces', 'rrze-faudir') },
+            { value: 'room', label: __('Room', 'rrze-faudir') },
+            { value: 'floor', label: __('Floor', 'rrze-faudir') },
+            { value: 'street', label: __('Street', 'rrze-faudir') },
+            { value: 'zip', label: __('Zip', 'rrze-faudir') },
+            { value: 'city', label: __('City', 'rrze-faudir') },
+            { value: 'faumap', label: __('Fau Map', 'rrze-faudir') },
+            { value: 'officehours', label: __('Office Hours', 'rrze-faudir') },
+            { value: 'consultationhours', label: __('Consultation Hours', 'rrze-faudir') },
         ];
 
         // Convert the comma-separated string into an array of selected values
