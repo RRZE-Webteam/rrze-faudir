@@ -121,35 +121,7 @@
                                         <?php endif; ?>
                                     </section>
                                 <?php endif; ?>
-                                <?php
-                                // Initialize output strings for email and phone
-                                $email_output = '';
-                                $phone_output = '';
-
-                                // Check if email should be shown and output only if an email is available
-                                if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) {
-                                    // Get the email from $person array or fallback to custom post type
-                                    $email = (isset($person['email']) && !empty($person['email'])
-                                        ? esc_html($person['email'])
-                                        : ''); // Custom post type email
-
-                                    // Only display the email if it's not empty
-                                    if (!empty($email)) {
-                                        echo '<p>' . esc_html__('Email:', 'rrze-faudir') . ' <span itemprop="email">' . esc_html($email) . '</span></p>';
-                                    }
-                                }
-                                // Check if phone should be shown and include N/A if not available
-                                if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)) {
-                                    // Get the email from $person array or fallback to custom post type
-                                    $phone = (isset($person['telephone']) && !empty($person['telephone'])
-                                        ? esc_html($person['telephone'])
-                                        : '');
-                                    // Only display the email if it's not empty
-                                    if (!empty($phone)) {
-                                        echo '<p>' . esc_html__('Phone:', 'rrze-faudir') . ' <span itemprop="phone">' . esc_html($phone) . '</span></p>';
-                                    }
-                                }
-                                ?>
+                           
                                 <?php if (in_array('socialmedia', $show_fields) && !in_array('socialmedia', $hide_fields)): ?>
                                     <?php if (!empty($person['contacts'][0]['socials'])) : ?>
                                         <div>
@@ -226,8 +198,43 @@
 
                                         <span class="screen-reader-text"><?php echo esc_html__('Workplaces:', 'rrze-faudir'); ?></span>
                                         <div>
-                                            <?php if (empty($contact['workplaces'])) : ?>
-                                                <p><?php echo esc_html__('No workplaces available.', 'rrze-faudir'); ?></p>
+                                        <?php if (empty($contact['workplaces'])) : ?>
+                                            <?php
+                                            $email_output = '';
+                                            $phone_output = '';
+
+                                            if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) {
+                                                $email = !empty($person['email']) ? esc_html($person['email']) : '';
+                                            
+                                                if (!empty($email)) {
+                                                    $icon_data = get_social_icon_data('email'); ?>
+                                                    <p>
+                                                        <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                                              style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                                        <span class="screen-reader-text"><?php echo esc_html__('Emails:', 'rrze-faudir'); ?></span>
+                                                        <a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email); ?></a>
+                                                    </p>
+                                                <?php }
+                                            }
+                                        
+                                            if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)) {
+                                                $phone = !empty($person['telephone']) ? esc_html($person['telephone']) : '';
+                                            
+                                                if (!empty($phone)) {
+                                                    $icon_data = get_social_icon_data('phone'); ?>
+                                                    <p>
+                                                        <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                                              style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                                        <span class="screen-reader-text"><?php echo esc_html__('Phone:', 'rrze-faudir'); ?></span>
+                                                        <?php echo esc_html($phone); ?>
+                                                    </p>
+                                                <?php }
+                                            }
+                                            ?>
+
+                                            <!-- Fallback message for no workplaces -->
+                                            <p><?php echo esc_html__('No workplaces available.', 'rrze-faudir'); ?></p>
+
                                             <?php else : ?>
                                                 <?php foreach ($contact['workplaces'] as $workplace) : ?>
                                                     <p> 

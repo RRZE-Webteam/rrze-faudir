@@ -84,9 +84,9 @@
                         <?php
                         // Initialize arrays for unique emails and phones
                         $unique_emails = [];
-                        $unique_phones = [];    
+                        $unique_phones = [];
 
-                        // Add person's email and phone to the arrays if available
+                        // Add person's email and phone to the arrays as defaults
                         if (!empty($person['email'])) {
                             $unique_emails[] = $person['email'];
                         }
@@ -99,21 +99,26 @@
                             foreach ($person['contacts'] as $contact) {
                                 if (!empty($contact['workplaces'])) {
                                     foreach ($contact['workplaces'] as $workplace) {
-                                        // Add unique emails from workplaces
+                                        // Add unique emails from workplaces or fallback to person's email
                                         if (!empty($workplace['mails'])) {
                                             foreach ($workplace['mails'] as $email) {
                                                 if (!in_array($email, $unique_emails)) {
                                                     $unique_emails[] = $email;
                                                 }
                                             }
+                                        } elseif (!in_array($person['email'], $unique_emails) && !empty($person['email'])) {
+                                            $unique_emails[] = $person['email'];
                                         }
-                                        // Add unique phones from workplaces
+                                    
+                                        // Add unique phones from workplaces or fallback to person's phone
                                         if (!empty($workplace['phones'])) {
                                             foreach ($workplace['phones'] as $phone) {
                                                 if (!in_array($phone, $unique_phones)) {
                                                     $unique_phones[] = $phone;
                                                 }
                                             }
+                                        } elseif (!in_array($person['telephone'], $unique_phones) && !empty($person['telephone'])) {
+                                            $unique_phones[] = $person['telephone'];
                                         }
                                     }
                                 }
@@ -122,57 +127,63 @@
                         ?>
 
                         <!-- Render Email Column -->
-                        <td>
-                            <?php if (!empty($unique_emails)) : ?>
-                                <?php $icon_data = get_social_icon_data('email'); ?>
-                                <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                      style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
-                                <span class="screen-reader-text"><?php echo esc_html__('Emails:', 'rrze-faudir'); ?></span>
-                                <?php echo implode(', ', array_map('esc_html', $unique_emails)); ?>
-                            <?php else : ?>
-                                <span><?php echo esc_html__('N/A', 'rrze-faudir'); ?></span>
-                            <?php endif; ?>
-                    </td    >
+                        <?php if (in_array('email', $show_fields) && !in_array('email', $hide_fields)): ?>
+                            <td>
+                                    <?php $icon_data = get_social_icon_data('email'); ?>
+                                    <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                          style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                    <span class="screen-reader-text"><?php echo esc_html__('Emails:', 'rrze-faudir'); ?></span>
+                                <?php if (!empty($unique_emails)) : ?>
+                                    <?php echo implode(', ', array_map('esc_html', $unique_emails)); ?>
+                                <?php else : ?>
+                                    <span><?php echo esc_html__('N/A', 'rrze-faudir'); ?></span>
+                                <?php endif; ?>
+                            </td>
+                        <?php endif; ?>
                             
                         <!-- Render Phone Column -->
-                        <td>
-                            <?php if (!empty($unique_phones)) : ?>
-                                <?php $icon_data = get_social_icon_data('phone'); ?>
-                                <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                      style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
-                                <span class="screen-reader-text"><?php echo esc_html__('Phones:', 'rrze-faudir'); ?></span>
-                                <?php echo implode(', ', array_map('esc_html', $unique_phones)); ?>
-                            <?php else : ?>
-                                <span><?php echo esc_html__('N/A', 'rrze-faudir'); ?></span>
-                            <?php endif; ?>
-                    </td>
-
+                        <?php if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)): ?>
+                            <td>
+                                    <?php $icon_data = get_social_icon_data('phone'); ?>
+                                    <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                          style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                    <span class="screen-reader-text"><?php echo esc_html__('Phones:', 'rrze-faudir'); ?></span>
+                                <?php if (!empty($unique_phones)) : ?>
+                                
+                                    <?php echo implode(', ', array_map('esc_html', $unique_phones)); ?>
+                                <?php else : ?>
+                                    <span><?php echo esc_html__('N/A', 'rrze-faudir'); ?></span>
+                                <?php endif; ?>
+                            </td>
+                        <?php endif; ?>
+                        <!-- Render URL Column -->
                         <?php if (in_array('url', $show_fields) && !in_array('url', $hide_fields)): ?>
                             <td>
                                 <?php 
-                                 $icon_data = get_social_icon_data('url'); 
-                                if (!empty($person['contacts'])) {
+                                $icon_data = get_social_icon_data('url'); 
+                                $urls_displayed = false;?>
+                                <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
+                                style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                <?php if (!empty($person['contacts'])) {
                                     foreach ($person['contacts'] as $contact) {
-                                        if (isset($contact['workplaces']) && is_array($contact['workplaces'])) {
-                                            foreach ($contact['workplaces'] as $workplace) : ?>
-                                                <span>
-                                                    <?php if (!empty($workplace['url'])) : ?>
-                                                        <span 
-                                                        class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                                        style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                        if (!empty($contact['workplaces'])) {
+                                            foreach ($contact['workplaces'] as $workplace) {
+                                                if (!empty($workplace['url'])) {
+                                                    $urls_displayed = true; ?>
+                                                    <span>
+                                                       
                                                         <?php echo esc_html($workplace['url']); ?><br>
-                                                    <?php else: ?>
-                                                        <span 
-                                                        class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                                        style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span> N/A
-                                                    <?php endif; ?>
-                                                </span>
-                                            <?php endforeach;
-                                        } 
+                                                    </span>
+                                                <?php }
+                                            }
+                                        }
                                     }
                                 }
-                                ?>
+                                if (!$urls_displayed) { ?>
+                                    <?php echo esc_html__('N/A', 'rrze-faudir'); ?>
+                                <?php } ?>
                             </td>
+                        </td>
                         <?php endif; ?>
                         <?php if (in_array('socialmedia', $show_fields) && !in_array('socialmedia', $hide_fields)): ?>
                             <td>
