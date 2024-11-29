@@ -63,7 +63,7 @@
                     $last_name = (isset($person['familyName']) && !empty($person['familyName']) ? esc_html($person['familyName']) : '');
                 }
                 if (in_array('personalTitleSuffix', $show_fields) && !in_array('personalTitleSuffix', $hide_fields)) {
-                    $title_suffix = (isset($person['personalTitleSuffix']) && !empty($person['personalTitleSuffix']) ? ' (' . esc_html($person['personalTitleSuffix']) . ')' : '');
+                    $title_suffix = (isset($person['personalTitleSuffix']) && !empty($person['personalTitleSuffix']) ? esc_html($person['personalTitleSuffix']) : '');
                 }
                 // Construct the full name
                 $fullName = trim(
@@ -71,7 +71,7 @@
                         ($first_name) . ' ' .
                         ($nobility_title) . ' ' .
                         ($last_name) . ' ' .
-                        ($title_suffix)
+                        '(' . ($title_suffix) . ')'
                 );
                 ?>
 

@@ -25,13 +25,13 @@
 
                                 // Compare the identifier with the current person's identifier
                                 if ($identifier === $person['identifier']) {
-                                    $locale = get_locale(); 
+                                    $locale = get_locale();
                                     $teaser_text_key = ($locale === 'de_DE' || $locale === 'de_DE_formal') ? '_teasertext_de' : '_teasertext_en';
                                     $teaser_lang = get_post_meta($post->ID, $teaser_text_key, true);
                                 }
                             }
                         endforeach;
-                    } 
+                    }
 
                     // Use custom post type URL if multiple persons or no direct URL
                     $final_url = (count($persons) > 1 || empty($url)) ? $cpt_url : $url; ?>
@@ -41,18 +41,16 @@
                         <?php
                         $options = get_option('rrze_faudir_options');
                         $hard_sanitize = isset($options['hard_sanitize']) && $options['hard_sanitize'];
-
-                        $longVersion = $hard_sanitize ? FaudirUtils::getAcademicTitleLongVersion($person['personalTitle'] ?? '') : '';
                         $personal_title = '';
                         $first_name = '';
                         $nobility_title = '';
                         $last_name = '';
                         $title_suffix = '';
                         if (in_array('personalTitle', $show_fields) && !in_array('personalTitle', $hide_fields)) {
-                            $personal_title = isset($person['personalTitle']) && !empty($person['personalTitle']) 
+                            $personal_title = isset($person['personalTitle']) && !empty($person['personalTitle'])
                                 ? esc_html($person['personalTitle'])
                                 : '';
-                            
+
                             if ($personal_title && $hard_sanitize) {
                                 $personal_title = FaudirUtils::getAcademicTitleLongVersion($personal_title);
                             }
@@ -67,7 +65,7 @@
                             $last_name = (isset($person['familyName']) && !empty($person['familyName']) ? esc_html($person['familyName']) : '');
                         }
                         if (in_array('personalTitleSuffix', $show_fields) && !in_array('personalTitleSuffix', $hide_fields)) {
-                            $title_suffix = (isset($person['personalTitleSuffix']) && !empty($person['personalTitleSuffix']) ? ' (' . esc_html($person['personalTitleSuffix']) . ')' : '');
+                            $title_suffix = (isset($person['personalTitleSuffix']) && !empty($person['personalTitleSuffix']) ? esc_html($person['personalTitleSuffix']) : '');
                         }
                         // Construct the full name
                         $fullName = trim(
@@ -75,7 +73,7 @@
                                 ($first_name) . ' ' .
                                 ($nobility_title) . ' ' .
                                 ($last_name) . ' ' .
-                                ($title_suffix)
+                                '(' . ($title_suffix) . ')'
                         );
                         ?>
                         <?php if (in_array('displayName', $show_fields) && !in_array('displayName', $hide_fields)) : ?>
@@ -92,13 +90,13 @@
                                         ]); ?>
                                     </a>
                                 <?php else : echo FaudirUtils::getPersonNameHtml([
-                                    'personal_title' => $personal_title,
-                                    'first_name' => $first_name,
-                                    'nobility_title' => $nobility_title,
-                                    'last_name' => $last_name,
-                                    'title_suffix' => $title_suffix,
-                                    'identifier' => $person['identifier']
-                                ]); ?>
+                                        'personal_title' => $personal_title,
+                                        'first_name' => $first_name,
+                                        'nobility_title' => $nobility_title,
+                                        'last_name' => $last_name,
+                                        'title_suffix' => $title_suffix,
+                                        'identifier' => $person['identifier']
+                                    ]); ?>
                                 <?php endif; ?>
                             </section>
                         <?php endif; ?>
@@ -157,7 +155,7 @@
                                     <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
                                           style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
                                     <span class="screen-reader-text"><?php echo esc_html__('Email:', 'rrze-faudir'); ?></span>
-                                    <a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email); ?></a>
+                                    <a href="mailto:<?php echo esc_attr($email); ?>"><span itemprop="email"><?php echo esc_html($email); ?></span></a>
                                     <?php
                                     echo '</span>';
                                 }
@@ -174,7 +172,7 @@
                                     <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
                                           style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
                                     <span class="screen-reader-text"><?php echo esc_html__('Phone:', 'rrze-faudir'); ?></span>
-                                    <?php echo esc_html($phone); ?>
+                                    <span itemprop="telephone"><?php echo esc_html($phone); ?></span>
                                     <?php
                                     echo '</span>';
                                 }
@@ -194,7 +192,7 @@
                                                 <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
                                                       style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
                                                 <span class="screen-reader-text"><?php echo esc_html__('Url:', 'rrze-faudir'); ?></span>
-                                                <?php echo esc_html($workplace['url']); ?>
+                                                <a href="<?php echo esc_url($workplace['url']); ?>"><span itemprop="url"><?php echo esc_html($workplace['url']); ?></span></a>
                                                 <?php
                                                 echo '</span>';
                                             }

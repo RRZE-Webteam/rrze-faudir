@@ -95,7 +95,7 @@ class FaudirUtils
             $nameHtml .= '<span itemprop="familyName">' . esc_html($last_name) . '</span> ';
         }
         if (!empty($title_suffix)) {
-            $nameHtml .= '<span itemprop="honorificSuffix">' . esc_html($title_suffix) . '</span>';
+            $nameHtml .= '(<span itemprop="honorificSuffix">' . esc_html($title_suffix) . '</span>)';
         }
         $nameHtml .= '</span>';
         return $nameHtml;
