@@ -51,10 +51,6 @@ function fetch_fau_data($atts)
         $atts
     );
 
-    if (empty($atts['identifier']) && !empty($atts['id'])) {
-        $atts['identifier'] = $atts['id'];
-    }
-
     // Convert explicitly set 'show' values to an array and merge with default fields
     $explicit_show_fields = array_filter(array_map('trim', explode(',', $atts['show'])));
     $merged_show_fields = array_unique(array_merge($default_show_fields, $explicit_show_fields));
@@ -103,10 +99,38 @@ function fetch_and_render_fau_data($atts)
     $url = $atts['url'];
     $groupid = $atts['groupid'];
     $orgnr = $atts['orgnr'];
-    $persons = []; // This will hold the fetched data
+    $post_id = $atts['id'];
+    $persons = []; 
 
+    if (!empty($post_id)) {
+        $args = [
+            'post_type'      => 'custom_person',
+            'meta_query'     => [
+                [
+                    'key'     => 'old_person_post_id',
+                    'value'   => intval($post_id),
+                    'compare' => '=',
+                ],
+            ],
+            'posts_per_page' => 1, // Fetch only one post
+        ];
+    
+        $person_posts = get_posts($args);
+        $person_identifiers = array();
+
+        foreach ($person_posts as $person_post) {
+            $person_id = get_post_meta($person_post->ID, 'person_id', true);
+            if (!empty($person_id)) {
+                $person_identifiers[] = $person_id;
+            }
+        }
+
+        if (!empty($person_identifiers)) {
+            $persons = process_persons_by_identifiers($person_identifiers);
+        }
+    }
     // Check for category in CPT first
-    if (!empty($category)) {
+    elseif (!empty($category)) {
         // Get persons from CPT with specified category
         $args = array(
             'post_type' => 'custom_person',
