@@ -327,6 +327,15 @@ function rrze_faudir_default_output_fields_render() {
         'content' => __('Content', 'rrze-faudir'),
         'teasertext' => __('Teasertext', 'rrze-faudir'),
         'socialmedia' => __('Social Media', 'rrze-faudir'),
+        'workplaces' => __('Workplaces', 'rrze-faudir'),
+        'room' => __('Room', 'rrze-faudir'),
+        'floor' => __('Floor', 'rrze-faudir'),
+        'street' => __('Street', 'rrze-faudir'),
+        'zip' => __('Zip', 'rrze-faudir'),
+        'city' => __('City', 'rrze-faudir'),
+        'faumap' => __('Fau Map', 'rrze-faudir'),
+        'officehours' => __('Office Hours', 'rrze-faudir'),
+        'consultationhours' => __('Consultation Hours', 'rrze-faudir'),
     );
 
     // Set default state: all checkboxes checked if no selection exists
