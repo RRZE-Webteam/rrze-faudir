@@ -515,19 +515,45 @@ function register_custom_person_taxonomies()
 add_action('init', 'register_custom_person_taxonomies');
 
 add_action('template_redirect', 'custom_cpt_404_message');
+
 function custom_cpt_404_message() {
-    // Check if this is a single post of your custom post type
     if (is_singular('custom_person')) {
         global $post;
 
-        // If the post doesn't exist or is not published
+        // If the post doesn't exist or is not published, set the 404 status
         if (empty($post) || $post->post_status !== 'publish') {
-            // Load a custom 404 template or show a message
-            wp_die(
-                __('No contact entry could be found.', 'rrze-faudir'),
-                __('Page Not Found', 'rrze-faudir'),
-                ['response' => 404]
-            );
+            // Set 404 status for the query
+            global $wp_query;
+            $wp_query->set_404();
+            status_header(404);
+
+            // Use output buffering to capture and modify the 404 template content
+            ob_start();
+
+            add_action('shutdown', function () {
+                $content = ob_get_clean();
+
+                // Replace the hero-content section with your custom message
+                $new_hero_content = '<div class="hero-container hero-content">'
+                    . '<p class="presentationtitle">' . __('No contact entry could be found.', 'rrze-faudir') . '</p>'
+                    . '</div>';
+
+                // Replace the content of the hero section dynamically
+                $updated_content = preg_replace(
+                    '/<p class="presentationtitle">.*?<\/p>/s',
+                    $new_hero_content,
+                    $content
+                );
+
+                // Output the modified content
+                echo $updated_content;
+            }, 0);
+
+            // Include the 404 template to trigger output buffering
+            include get_404_template();
+            exit;
         }
     }
 }
+
+
