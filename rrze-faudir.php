@@ -179,11 +179,11 @@ function register_kontakt_as_faudir_shortcode_alias()
     // Check if the FAU-person plugin is not active
     if (!is_plugin_active('fau-person-master/fau-person.php')) { 
         add_shortcode('kontakt', 'kontakt_to_faudir_shortcode_alias');
-        add_shortcode('kontaktliste', 'kontakt_to_faudir_shortcode_alias');
+        add_shortcode('kontaktliste', 'kontaktliste_to_faudir_shortcode_alias');
     }
 }
 
-// Function to handle the [kontakt] and [kontaktliste] shortcodes and redirect to [faudir]
+// Function to handle the [kontakt] shortcode and redirect to [faudir]
 function kontakt_to_faudir_shortcode_alias($atts, $content = null)
 {
     // Pass all attributes and content to the [faudir] shortcode
@@ -192,6 +192,23 @@ function kontakt_to_faudir_shortcode_alias($atts, $content = null)
         foreach ($atts as $key => $value) {
             $atts_string .= $key . '="' . esc_attr($value) . '" ';
         }
+    }
+
+    return do_shortcode(shortcode_unautop('[faudir ' . trim($atts_string) . ']' . $content . '[/faudir]'));
+}
+
+// Function to handle the [kontaktliste] shortcode with specific format "list"
+function kontaktliste_to_faudir_shortcode_alias($atts, $content = null)
+{
+    // Ensure the format is set to "list"
+    if (!isset($atts['format'])) {
+        $atts['format'] = 'list';
+    }
+
+    // Convert attributes to string
+    $atts_string = '';
+    foreach ($atts as $key => $value) {
+        $atts_string .= $key . '="' . esc_attr($value) . '" ';
     }
 
     return do_shortcode(shortcode_unautop('[faudir ' . trim($atts_string) . ']' . $content . '[/faudir]'));
