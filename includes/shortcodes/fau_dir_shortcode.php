@@ -170,7 +170,8 @@ function fetch_and_render_fau_data($atts)
             $persons = fetch_and_process_persons($lq);
         }
     } else {
-        $persons = fetch_and_process_persons();
+        error_log('You should set the identifier,group id, organization id or category.');
+        return;
     }
 
     // Fetch the image URL if an image ID is provided
