@@ -73,11 +73,46 @@
 
                 <div class="shortcode-contact-kompakt" itemscope itemtype="https://schema.org/Person">
                     <?php if (count($persons) === 1 && !empty($image_url)): ?>
-                        <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
+                        <div itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
+                            <meta itemprop="identifier" content="<?php echo esc_attr($person['identifier']); ?>_image" />
+                            <?php
+                            $image_id = attachment_url_to_postid($image_url);
+                            $image_meta = wp_get_attachment_metadata($image_id);
+                            $width = isset($image_meta['width']) ? $image_meta['width'] : '';
+                            $height = isset($image_meta['height']) ? $image_meta['height'] : '';
+                            $caption = wp_get_attachment_caption($image_id);
+                            ?>
+                            <img src="<?php echo esc_url($image_url); ?>" 
+                                 alt="<?php echo esc_attr($fullName . ' Image'); ?>" 
+                                 itemprop="contentUrl" />
+                            <?php if ($width): ?><meta itemprop="width" content="<?php echo esc_attr($width); ?>" /><?php endif; ?>
+                            <?php if ($height): ?><meta itemprop="height" content="<?php echo esc_attr($height); ?>" /><?php endif; ?>
+                            <?php if ($caption): ?>
+                                <meta itemprop="caption" content="<?php echo esc_attr($caption); ?>" />
+                            <?php endif; ?>
+                        </div>
                     <?php elseif (!empty($featured_image_url)): ?>
-                        <img src="<?php echo esc_url($featured_image_url); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
+                        <div itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
+                            <meta itemprop="identifier" content="<?php echo esc_attr($person['identifier']); ?>_featured_image" />
+                            <?php
+                            $image_id = attachment_url_to_postid($featured_image_url);
+                            $image_meta = wp_get_attachment_metadata($image_id);
+                            $width = isset($image_meta['width']) ? $image_meta['width'] : '';
+                            $height = isset($image_meta['height']) ? $image_meta['height'] : '';
+                            $caption = wp_get_attachment_caption($image_id);
+                            ?>
+                            <img src="<?php echo esc_url($featured_image_url); ?>" 
+                                 alt="<?php echo esc_attr($fullName . ' Image'); ?>" 
+                                 itemprop="contentUrl" />
+                            <?php if ($width): ?><meta itemprop="width" content="<?php echo esc_attr($width); ?>" /><?php endif; ?>
+                            <?php if ($height): ?><meta itemprop="height" content="<?php echo esc_attr($height); ?>" /><?php endif; ?>
+                            <?php if ($caption): ?>
+                                <meta itemprop="caption" content="<?php echo esc_attr($caption); ?>" />
+                            <?php endif; ?>
+                        </div>
                     <?php else: ?>
-                        <img src="<?php echo esc_url(plugins_url('rrze-faudir/assets/images/platzhalter-unisex.png', dirname(__FILE__, 2))); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" />
+                        <img src="<?php echo esc_url(plugins_url('rrze-faudir/assets/images/platzhalter-unisex.png', dirname(__FILE__, 2))); ?>" 
+                             alt="<?php echo esc_attr($fullName . ' Image'); ?>" />
                     <?php endif; ?>
                     <div style="flex-grow: 1;">
                         <?php if (in_array('displayName', $show_fields) && !in_array('displayName', $hide_fields)): ?>
