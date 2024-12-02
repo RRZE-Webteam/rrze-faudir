@@ -48,10 +48,6 @@
                     $personal_title = isset($person['personalTitle']) && !empty($person['personalTitle'])
                         ? esc_html($person['personalTitle'])
                         : '';
-
-                    if ($personal_title && $hard_sanitize) {
-                        $personal_title = FaudirUtils::getAcademicTitleLongVersion($personal_title);
-                    }
                 }
                 if (in_array('givenName', $show_fields) && !in_array('givenName', $hide_fields)) {
                     $first_name = (isset($person['givenName']) && !empty($person['givenName']) ? esc_html($person['givenName']) : '');
@@ -89,6 +85,7 @@
                                 <?php if (!empty($final_url)): ?>
                                     <a href="<?php echo esc_url($final_url); ?>">
                                         <?php echo FaudirUtils::getPersonNameHtml([
+                                            'hard_sanitize' => $hard_sanitize,
                                             'personal_title' => $personal_title,
                                             'first_name' => $first_name,
                                             'nobility_title' => $nobility_title,
@@ -99,6 +96,7 @@
                                     </a>
                                 <?php else: ?>
                                     <?php echo FaudirUtils::getPersonNameHtml([
+                                        'hard_sanitize' => $hard_sanitize,
                                         'personal_title' => $personal_title,
                                         'first_name' => $first_name,
                                         'nobility_title' => $nobility_title,

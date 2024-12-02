@@ -24,29 +24,15 @@
                             <?php
                             $options = get_option('rrze_faudir_options');
                             $hard_sanitize = isset($options['hard_sanitize']) && $options['hard_sanitize'];
-                            $longVersion = "";
-                            if ($hard_sanitize) {
-                                $prefix = $person['personalTitle'];
-                                $prefixes = array(
-                                    '' => __('Not specified', 'rrze-faudir'),
-                                    'Dr.' => __('Doktor', 'rrze-faudir'),
-                                    'Prof.' => __('Professor', 'rrze-faudir'),
-                                    'Prof. Dr.' => __('Professor Doktor', 'rrze-faudir'),
-                                    'Prof. em.' => __('Professor (Emeritus)', 'rrze-faudir'),
-                                    'Prof. Dr. em.' => __('Professor Doktor (Emeritus)', 'rrze-faudir'),
-                                    'PD' => __('Privatdozent', 'rrze-faudir'),
-                                    'PD Dr.' => __('Privatdozent Doktor', 'rrze-faudir')
-                                );
-                                // Check if the prefix exists in the array and display the long version
-                                $longVersion = isset($prefixes[$prefix]) ? $prefixes[$prefix] : __('Unknown', 'rrze-faudir');
-                            }
-                            $personal_title = "";
-                            $first_name = "";
-                            $nobility_title = "";
-                            $last_name = "";
-                            $title_suffix = "";
+                            $personal_title = '';
+                            $first_name = '';
+                            $nobility_title = '';
+                            $last_name = '';
+                            $title_suffix = '';
                             if (in_array('personalTitle', $show_fields) && !in_array('personalTitle', $hide_fields)) {
-                                $personal_title = (isset($person['personalTitle']) && !empty($person['personalTitle']) ? esc_html($person['personalTitle']) : '');
+                                $personal_title = isset($person['personalTitle']) && !empty($person['personalTitle'])
+                                    ? esc_html($person['personalTitle'])
+                                    : '';
                             }
                             if (in_array('givenName', $show_fields) && !in_array('givenName', $hide_fields)) {
                                 $first_name = (isset($person['givenName']) && !empty($person['givenName']) ? esc_html($person['givenName']) : '');
@@ -62,7 +48,7 @@
                             }
                             // Construct the full name
                             $fullName = trim(
-                                ($longVersion ? $longVersion : $personal_title) . ' ' .
+                                ($personal_title) . ' ' .
                                     ($first_name) . ' ' .
                                     ($nobility_title) . ' ' .
                                     ($last_name) . ' ' .
@@ -73,10 +59,26 @@
                                 <section class="card-section-title" aria-label="<?php echo esc_html($fullName); ?>">
                                     <?php if (!empty($final_url)) : ?>
                                         <a href="<?php echo esc_url($final_url); ?>" itemprop="url">
-                                            <span itemprop="name"><?php echo esc_html($fullName); ?></span>
+                                            <?php echo FaudirUtils::getPersonNameHtml([
+                                                'hard_sanitize' => $hard_sanitize,
+                                                'personal_title' => $personal_title,
+                                                'first_name' => $first_name,
+                                                'nobility_title' => $nobility_title,
+                                                'last_name' => $last_name,
+                                                'title_suffix' => $title_suffix,
+                                                'identifier' => $person['identifier']
+                                            ]); ?>
                                         </a>
                                     <?php else : ?>
-                                        <span itemprop="name"><?php echo esc_html($fullName); ?></span>
+                                        <?php echo FaudirUtils::getPersonNameHtml([
+                                            'hard_sanitize' => $hard_sanitize,
+                                            'personal_title' => $personal_title,
+                                            'first_name' => $first_name,
+                                            'nobility_title' => $nobility_title,
+                                            'last_name' => $last_name,
+                                            'title_suffix' => $title_suffix,
+                                            'identifier' => $person['identifier']
+                                        ]); ?>
                                     <?php endif; ?>
                                 </section>
                             </td>
@@ -106,10 +108,10 @@
                                                     $unique_emails[] = $email;
                                                 }
                                             }
-                                        } elseif (!in_array($person['email'], $unique_emails) && !empty($person['email'])) {
+                                        } elseif (isset($person['email']) && !in_array($person['email'], $unique_emails) && !empty($person['email'])) {
                                             $unique_emails[] = $person['email'];
                                         }
-                                    
+
                                         // Add unique phones from workplaces or fallback to person's phone
                                         if (!empty($workplace['phones'])) {
                                             foreach ($workplace['phones'] as $phone) {
@@ -117,7 +119,7 @@
                                                     $unique_phones[] = $phone;
                                                 }
                                             }
-                                        } elseif (!in_array($person['telephone'], $unique_phones) && !empty($person['telephone'])) {
+                                        } elseif (isset($person['telephone']) && !in_array($person['telephone'], $unique_phones) && !empty($person['telephone'])) {
                                             $unique_phones[] = $person['telephone'];
                                         }
                                     }
@@ -129,10 +131,10 @@
                         <!-- Render Email Column -->
                         <?php if (in_array('email', $show_fields) && !in_array('email', $hide_fields)): ?>
                             <td>
-                                    <?php $icon_data = get_social_icon_data('email'); ?>
-                                    <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                          style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
-                                    <span class="screen-reader-text"><?php echo esc_html__('Emails:', 'rrze-faudir'); ?></span>
+                                <?php $icon_data = get_social_icon_data('email'); ?>
+                                <span class="<?php echo esc_attr($icon_data['css_class']); ?>"
+                                    style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                <span class="screen-reader-text"><?php echo esc_html__('Emails:', 'rrze-faudir'); ?></span>
                                 <?php if (!empty($unique_emails)) : ?>
                                     <?php echo implode(', ', array_map('esc_html', $unique_emails)); ?>
                                 <?php else : ?>
@@ -140,16 +142,16 @@
                                 <?php endif; ?>
                             </td>
                         <?php endif; ?>
-                            
+
                         <!-- Render Phone Column -->
                         <?php if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)): ?>
                             <td>
-                                    <?php $icon_data = get_social_icon_data('phone'); ?>
-                                    <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                          style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
-                                    <span class="screen-reader-text"><?php echo esc_html__('Phones:', 'rrze-faudir'); ?></span>
+                                <?php $icon_data = get_social_icon_data('phone'); ?>
+                                <span class="<?php echo esc_attr($icon_data['css_class']); ?>"
+                                    style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                <span class="screen-reader-text"><?php echo esc_html__('Phones:', 'rrze-faudir'); ?></span>
                                 <?php if (!empty($unique_phones)) : ?>
-                                
+
                                     <?php echo implode(', ', array_map('esc_html', $unique_phones)); ?>
                                 <?php else : ?>
                                     <span><?php echo esc_html__('N/A', 'rrze-faudir'); ?></span>
@@ -159,11 +161,11 @@
                         <!-- Render URL Column -->
                         <?php if (in_array('url', $show_fields) && !in_array('url', $hide_fields)): ?>
                             <td>
-                                <?php 
-                                $icon_data = get_social_icon_data('url'); 
-                                $urls_displayed = false;?>
-                                <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
+                                <?php
+                                $icon_data = get_social_icon_data('url');
+                                $urls_displayed = false; ?>
+                                <span class="<?php echo esc_attr($icon_data['css_class']); ?>"
+                                    style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
                                 <?php if (!empty($person['contacts'])) {
                                     foreach ($person['contacts'] as $contact) {
                                         if (!empty($contact['workplaces'])) {
@@ -171,10 +173,10 @@
                                                 if (!empty($workplace['url'])) {
                                                     $urls_displayed = true; ?>
                                                     <span>
-                                                       
+
                                                         <?php echo esc_html($workplace['url']); ?><br>
                                                     </span>
-                                                <?php }
+                                    <?php }
                                             }
                                         }
                                     }
@@ -183,7 +185,7 @@
                                     <?php echo esc_html__('N/A', 'rrze-faudir'); ?>
                                 <?php } ?>
                             </td>
-                        </td>
+                            </td>
                         <?php endif; ?>
                         <?php if (in_array('socialmedia', $show_fields) && !in_array('socialmedia', $hide_fields)): ?>
                             <td>
@@ -193,11 +195,11 @@
                                             $icon_data = get_social_icon_data($social['platform']);
                                         ?>
                                             <li>
-                                                <a href="<?php echo esc_url($social['url']); ?>" 
-                                                   class="<?php echo esc_attr($icon_data['css_class']); ?> social-icon-compact"
-                                                   style="background-image: url('<?php echo esc_url($icon_data['icon_url']); ?>')"
-                                                   target="_blank" 
-                                                   rel="noopener noreferrer">
+                                                <a href="<?php echo esc_url($social['url']); ?>"
+                                                    class="<?php echo esc_attr($icon_data['css_class']); ?> social-icon-compact"
+                                                    style="background-image: url('<?php echo esc_url($icon_data['icon_url']); ?>')"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer">
                                                     <span class="screen-reader-text"><?php echo esc_html(ucfirst($icon_data['name'])); ?></span>
                                                 </a>
                                             </li>

@@ -55,7 +55,7 @@ class FaudirUtils
         return array_unique($default_show_fields);
     }
 
-    public static function getAcademicTitleLongVersion(string $prefix): string
+    private static function getAcademicTitleLongVersion(string $prefix): string
     {
         $prefixes = array(
             '' => __('Not specified', 'rrze-faudir'),
@@ -68,11 +68,12 @@ class FaudirUtils
             'PD Dr.' => __('Privatdozent Doktor', 'rrze-faudir')
         );
 
-        return isset($prefixes[$prefix]) ? $prefixes[$prefix] : __('Unknown', 'rrze-faudir');
+        return isset($prefixes[$prefix]) ? $prefixes[$prefix] : '';
     }
 
     public static function getPersonNameHtml($person_data)
     {
+        $hard_sanitize = $person_data['hard_sanitize'] ?? false;
         $personal_title = $person_data['personal_title'] ?? '';
         $first_name = $person_data['first_name'] ?? '';
         $nobility_title = $person_data['nobility_title'] ?? '';
@@ -83,7 +84,14 @@ class FaudirUtils
         $nameHtml = '';
         $nameHtml .= '<span id="name-' . esc_attr($identifier) . '" itemprop="name">';
         if (!empty($personal_title)) {
-            $nameHtml .= '<span itemprop="honorificPrefix">' . esc_html($personal_title) . '</span> ';
+            if ($hard_sanitize) {
+                $long_version = self::getAcademicTitleLongVersion($personal_title);
+                if (!empty($long_version)) {
+                    $nameHtml .= '<abbr title="' . esc_attr($long_version) . '" itemprop="honorificPrefix">' . esc_html($personal_title) . '</abbr> ';
+                }
+            } else {
+                $nameHtml .= '<span itemprop="honorificPrefix">' . esc_html($personal_title) . '</span> ';
+            }
         }
         if (!empty($first_name)) {
             $nameHtml .= '<span itemprop="givenName">' . esc_html($first_name) . '</span> ';
