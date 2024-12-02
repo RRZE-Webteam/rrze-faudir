@@ -153,7 +153,7 @@
                                     <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
                                           style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
                                     <span class="screen-reader-text"><?php echo esc_html__('Email:', 'rrze-faudir'); ?></span>
-                                    <a href="mailto:<?php echo esc_attr($email); ?>"><span itemprop="email"><?php echo esc_html($email); ?></span></a>
+                                    <a href="mailto:<?php echo esc_attr($email); ?>" itemprop="email"><?php echo esc_html($email); ?></a>
                                     <?php
                                     echo '</span>';
                                 }
@@ -190,7 +190,7 @@
                                                 <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
                                                       style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
                                                 <span class="screen-reader-text"><?php echo esc_html__('Url:', 'rrze-faudir'); ?></span>
-                                                <a href="<?php echo esc_url($workplace['url']); ?>"><span itemprop="url"><?php echo esc_html($workplace['url']); ?></span></a>
+                                                <a href="<?php echo esc_url($workplace['url']); ?>" itemprop="url"><?php echo esc_html($workplace['url']); ?></a>
                                                 <?php
                                                 echo '</span>';
                                             }

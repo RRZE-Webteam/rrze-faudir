@@ -211,7 +211,7 @@
                                                             <span class="<?php echo esc_attr($icon_data['css_class']); ?>"
                                                                 style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
                                                             <span class="screen-reader-text"><?php echo esc_html__('Emails:', 'rrze-faudir'); ?></span>
-                                                            <a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email); ?></a>
+                                                            <a href="mailto:<?php echo esc_attr($email); ?>" itemprop="email"><?php echo esc_html($email); ?></a>
                                                         </p>
                                                     <?php }
                                                 }
@@ -245,7 +245,7 @@
                                                             <span class="<?php echo esc_attr($icon_data['css_class']); ?>"
                                                                 style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
                                                             <span class="screen-reader-text"><?php echo esc_html__('Emails:', 'rrze-faudir'); ?></span>
-                                                            <a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email); ?></a>
+                                                            <a href="mailto:<?php echo esc_attr($email); ?>" itemprop="email"><?php echo esc_html($email); ?></a>
                                                         </p>
                                                     <?php endforeach; ?>
                                                 <?php endif; ?>
