@@ -52,8 +52,8 @@
                                     ($first_name) . ' ' .
                                     ($nobility_title) . ' ' .
                                     ($last_name) . ' ' .
-                                    ($title_suffix)
-                            );
+                                    '(' . ($title_suffix) . ')'
+                                );
                             ?>
                             <td>
                                 <section class="card-section-title" aria-label="<?php echo esc_html($fullName); ?>">
