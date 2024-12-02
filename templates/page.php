@@ -54,8 +54,8 @@
                         endforeach;
                     } ?>
                     <div class="contact-page">
-                        <div class="contact-page-img-container">
-                            <div style="flex-grow: 1; max-width:70%" itemscope itemtype="https://schema.org/Person">
+                        <div class="contact-page-img-container" itemscope itemtype="https://schema.org/Person">
+                            <div style="flex-grow: 1; max-width:70%">
 
                                 <!-- Full name with title -->
                                 <?php
@@ -225,7 +225,7 @@
                                                             <span class="<?php echo esc_attr($icon_data['css_class']); ?>"
                                                                 style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
                                                             <span class="screen-reader-text"><?php echo esc_html__('Phone:', 'rrze-faudir'); ?></span>
-                                                            <?php echo esc_html($phone); ?>
+                                                            <span itemprop="telephone"><?php echo esc_html($phone); ?></span>
                                                         </p>
                                                 <?php }
                                                 }
@@ -258,7 +258,7 @@
                                                             <span class="<?php echo esc_attr($icon_data['css_class']); ?>"
                                                                 style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
                                                             <span class="screen-reader-text"><?php echo esc_html__('Phone:', 'rrze-faudir'); ?></span>
-                                                            <?php echo esc_html($phone); ?>
+                                                            <span itemprop="telephone"><?php echo esc_html($phone); ?></span>
                                                         </p>
                                                     <?php endforeach; ?>
                                                 <?php endif; ?>
@@ -270,7 +270,7 @@
                                                     <span class="<?php echo esc_attr($icon_data['css_class']); ?>"
                                                         style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
                                                     <span class="screen-reader-text"><?php echo esc_html__('Url:', 'rrze-faudir'); ?></span>
-                                                    <?php echo esc_html($workplace['url']); ?><br>
+                                                    <a href="<?php echo esc_url($workplace['url']); ?>" itemprop="url"><?php echo esc_html($workplace['url']); ?></a><br>
                                                 <?php endif; ?>
                                             <?php endif; ?>
 
@@ -293,19 +293,19 @@
                                                     <?php if (in_array('street', $show_fields) && !in_array('street', $hide_fields)) : ?>
                                                         <?php if (!empty($workplace['street'])) : ?>
                                                             <span class="screen-reader-text"><?php echo esc_html__('Street:', 'rrze-faudir'); ?></span>
-                                                            <?php echo esc_html($workplace['street']); ?><br>
+                                                            <span itemprop="streetAddress"><?php echo esc_html($workplace['street']); ?></span><br>
                                                         <?php endif; ?>
                                                     <?php endif; ?>
                                                     <?php if (in_array('zip', $show_fields) && !in_array('zip', $hide_fields)) : ?>
                                                         <?php if (!empty($workplace['zip'])) : ?>
                                                             <span class="screen-reader-text"><?php echo esc_html__('ZIP Code:', 'rrze-faudir'); ?></span>
-                                                            <?php echo esc_html($workplace['zip']); ?><br>
+                                                            <span itemprop="postalCode"><?php echo esc_html($workplace['zip']); ?></span><br>
                                                         <?php endif; ?>
                                                     <?php endif; ?>
                                                     <?php if (in_array('city', $show_fields) && !in_array('city', $hide_fields)) : ?>
                                                         <?php if (!empty($workplace['city'])) : ?>
                                                             <span class="screen-reader-text"><?php echo esc_html__('City:', 'rrze-faudir'); ?></span>
-                                                            <?php echo esc_html($workplace['city']); ?><br>
+                                                            <span itemprop="addressLocality"><?php echo esc_html($workplace['city']); ?></span><br>
                                                         <?php endif; ?>
                                                     <?php endif; ?>
                                                 </span>
@@ -386,11 +386,52 @@
                             </div>
 
                             <?php if (count($persons) === 1 && !empty($image_url)) : ?>
-                                <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
+                                <div itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
+                                    <meta itemprop="identifier" content="<?php echo esc_attr($person['identifier']); ?>_image" />
+                                    <?php
+                                    $image_id = attachment_url_to_postid($image_url);
+                                    $image_meta = wp_get_attachment_metadata($image_id);
+                                    $width = isset($image_meta['width']) ? $image_meta['width'] : '';
+                                    $height = isset($image_meta['height']) ? $image_meta['height'] : '';
+                                    $caption = wp_get_attachment_caption($image_id);
+                                    ?>
+                                    <img src="<?php echo esc_url($image_url); ?>"
+                                        alt="<?php echo esc_attr($fullName . ' Image'); ?>"
+                                        itemprop="contentUrl" />
+                                    <?php if ($width) : ?>
+                                        <meta itemprop="width" content="<?php echo esc_attr($width); ?>" /><?php endif; ?>
+                                    <?php if ($height) : ?>
+                                        <meta itemprop="height" content="<?php echo esc_attr($height); ?>" /><?php endif; ?>
+                                    <?php if ($caption) : ?>
+                                        <meta itemprop="caption" content="<?php echo esc_attr($caption); ?>" />
+                                        <figcaption><?php echo esc_html($caption); ?></figcaption>
+                                    <?php endif; ?>
+                                </div>
                             <?php elseif (!empty($featured_image_url)) : ?>
-                                <img src="<?php echo esc_url($featured_image_url); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
+                                <div itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
+                                    <meta itemprop="identifier" content="<?php echo esc_attr($person['identifier']); ?>_featured_image" />
+                                    <?php
+                                    $image_id = attachment_url_to_postid($featured_image_url);
+                                    $image_meta = wp_get_attachment_metadata($image_id);
+                                    $width = isset($image_meta['width']) ? $image_meta['width'] : '';
+                                    $height = isset($image_meta['height']) ? $image_meta['height'] : '';
+                                    $caption = wp_get_attachment_caption($image_id);
+                                    ?>
+                                    <img src="<?php echo esc_url($featured_image_url); ?>"
+                                        alt="<?php echo esc_attr($fullName . ' Image'); ?>"
+                                        itemprop="contentUrl" />
+                                    <?php if ($width) : ?>
+                                        <meta itemprop="width" content="<?php echo esc_attr($width); ?>" /><?php endif; ?>
+                                    <?php if ($height) : ?>
+                                        <meta itemprop="height" content="<?php echo esc_attr($height); ?>" /><?php endif; ?>
+                                    <?php if ($caption) : ?>
+                                        <meta itemprop="caption" content="<?php echo esc_attr($caption); ?>" />
+                                        <figcaption><?php echo esc_html($caption); ?></figcaption>
+                                    <?php endif; ?>
+                                </div>
                             <?php else : ?>
-                                <img src="<?php echo esc_url(plugins_url('rrze-faudir/assets/images/platzhalter-unisex.png', dirname(__FILE__, 2))); ?>" alt="<?php echo esc_attr($fullName . ' Image'); ?>" itemprop="image" />
+                                <img src="<?php echo esc_url(plugins_url('rrze-faudir/assets/images/platzhalter-unisex.png', dirname(__FILE__, 2))); ?>"
+                                    alt="<?php echo esc_attr($fullName . ' Image'); ?>" />
                             <?php endif; ?>
                         </div>
 
@@ -398,12 +439,12 @@
                         <?php if (in_array('content', $show_fields) && !in_array('content', $hide_fields)) { ?>
                             <?php if (($locale === 'de_DE' || $locale === 'de_DE_formal') && !empty($content_de)): ?>
                                 <section class="card-section-title"><?php esc_html__('Content', 'rrze-faudir'); ?></section>
-                                <div class="content-second-language" itemprop="description">
+                                <div class="content-second-language">
                                     <?php echo wp_kses_post($content_de); ?>
                                 </div>
                             <?php elseif (($locale !== 'de_DE' || $locale === 'de_DE_formal') && !empty($content_en)): ?>
                                 <section class="card-section-title"><?php esc_html__('Content', 'rrze-faudir'); ?></section>
-                                <div class="content-second-language" itemprop="description">
+                                <div class="content-second-language">
                                     <?php echo wp_kses_post($content_en); ?>
                                 </div>
                             <?php endif; ?>
