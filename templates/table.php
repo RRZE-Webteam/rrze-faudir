@@ -136,7 +136,9 @@
                                     style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
                                 <span class="screen-reader-text"><?php echo esc_html__('Emails:', 'rrze-faudir'); ?></span>
                                 <?php if (!empty($unique_emails)) : ?>
-                                    <?php echo implode(', ', array_map('esc_html', $unique_emails)); ?>
+                                    <?php echo implode(', ', array_map(function ($email) {
+                                        return '<span itemprop="email">' . esc_html($email) . '</span>';
+                                    }, $unique_emails)); ?>
                                 <?php else : ?>
                                     <span><?php echo esc_html__('N/A', 'rrze-faudir'); ?></span>
                                 <?php endif; ?>
@@ -151,8 +153,9 @@
                                     style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
                                 <span class="screen-reader-text"><?php echo esc_html__('Phones:', 'rrze-faudir'); ?></span>
                                 <?php if (!empty($unique_phones)) : ?>
-
-                                    <?php echo implode(', ', array_map('esc_html', $unique_phones)); ?>
+                                    <?php echo implode(', ', array_map(function ($phone) {
+                                        return '<span itemprop="telephone">' . esc_html($phone) . '</span>';
+                                    }, $unique_phones)); ?>
                                 <?php else : ?>
                                     <span><?php echo esc_html__('N/A', 'rrze-faudir'); ?></span>
                                 <?php endif; ?>
@@ -173,8 +176,11 @@
                                                 if (!empty($workplace['url'])) {
                                                     $urls_displayed = true; ?>
                                                     <span>
-
-                                                        <?php echo esc_html($workplace['url']); ?><br>
+                                                        <a href="<?php echo esc_url($workplace['url']); ?>"
+                                                            rel="noopener noreferrer"
+                                                            itemprop="url">
+                                                            <?php echo esc_html($workplace['url']); ?>
+                                                        </a>
                                                     </span>
                                     <?php }
                                             }
@@ -199,7 +205,8 @@
                                                     class="<?php echo esc_attr($icon_data['css_class']); ?> social-icon-compact"
                                                     style="background-image: url('<?php echo esc_url($icon_data['icon_url']); ?>')"
                                                     target="_blank"
-                                                    rel="noopener noreferrer">
+                                                    rel="noopener noreferrer"
+                                                    itemprop="sameAs">
                                                     <span class="screen-reader-text"><?php echo esc_html(ucfirst($icon_data['name'])); ?></span>
                                                 </a>
                                             </li>
