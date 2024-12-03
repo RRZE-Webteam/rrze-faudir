@@ -521,10 +521,7 @@ function custom_cpt_404_message() {
 
     // Check query vars for custom_person post type
     if (isset($wp_query->query_vars['post_type']) && $wp_query->query_vars['post_type'] === 'custom_person') {
-        error_log('Detected custom_person post type.');
         if (empty($wp_query->post)) {
-            error_log('No post found for custom_person.');
-
             $wp_query->set_404();
             status_header(404);
 
@@ -556,8 +553,6 @@ function custom_cpt_404_message() {
         // Check the request URI for /person/ slug
         $request_uri = $_SERVER['REQUEST_URI'];
         if (strpos($request_uri, '/person/') !== false) {
-            error_log('Detected /person/ in the URL, but no post found.');
-
             $wp_query->set_404();
             status_header(404);
 
