@@ -514,20 +514,20 @@ function register_custom_person_taxonomies()
 // Make sure to register the taxonomy on init as well
 add_action('init', 'register_custom_person_taxonomies');
 
-add_action('template_redirect', 'custom_cpt_404_message');
-
 function custom_cpt_404_message() {
-    if (is_singular('custom_person')) {
-        global $post;
+    error_log('1 logged out');
 
-        // If the post doesn't exist or is not published, set the 404 status
-        if (empty($post) || $post->post_status !== 'publish') {
-            // Set 404 status for the query
-            global $wp_query;
+    global $wp_query;
+
+    // Check query vars for custom_person post type
+    if (isset($wp_query->query_vars['post_type']) && $wp_query->query_vars['post_type'] === 'custom_person') {
+        error_log('Detected custom_person post type.');
+        if (empty($wp_query->post)) {
+            error_log('No post found for custom_person.');
+
             $wp_query->set_404();
             status_header(404);
 
-            // Use output buffering to capture and modify the 404 template content
             ob_start();
 
             add_action('shutdown', function () {
@@ -549,11 +549,34 @@ function custom_cpt_404_message() {
                 echo $updated_content;
             }, 0);
 
-            // Include the 404 template to trigger output buffering
+            include get_404_template();
+            exit;
+        }
+    } else {
+        // Check the request URI for /person/ slug
+        $request_uri = $_SERVER['REQUEST_URI'];
+        if (strpos($request_uri, '/person/') !== false) {
+            error_log('Detected /person/ in the URL, but no post found.');
+
+            $wp_query->set_404();
+            status_header(404);
+
+            ob_start();
+
+            add_action('shutdown', function () {
+                $content = ob_get_clean();
+
+                $new_hero_content = '<div class="hero-container hero-content">'
+                    . '<p class="presentationtitle">' . __('No contact entry could be found.', 'rrze-faudir') . '</p>'
+                    . '</div>';
+
+                echo $new_hero_content;
+            }, 0);
+
             include get_404_template();
             exit;
         }
     }
 }
-
+add_action('template_redirect', 'custom_cpt_404_message');
 
