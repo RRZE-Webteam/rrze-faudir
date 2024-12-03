@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rrze-faudir\n"
 "Report-Msgid-Bugs-To: https://your-plugin-url.com/support\n"
-"POT-Creation-Date: 2024-12-03 15:35+0100\n"
-"PO-Revision-Date: 2024-12-03 15:38+0100\n"
+"POT-Creation-Date: 2024-12-03 16:29+0100\n"
+"PO-Revision-Date: 2024-12-03 16:32+0100\n"
 "Last-Translator: \n"
 "Language-Team: English (United States)\n"
 "Language: en_US\n"
@@ -205,7 +205,7 @@ msgid "Phone"
 msgstr "Phone"
 
 #: includes/admin/settings-page.php:323
-#: includes/custom-post-type/custom-post-type.php:171
+#: includes/custom-post-type/custom-post-type.php:181
 msgid "Organization"
 msgstr "Organization"
 
@@ -262,11 +262,13 @@ msgstr "City"
 msgid "Fau Map"
 msgstr "FAU Map"
 
-#: includes/admin/settings-page.php:337
+#: includes/admin/settings-page.php:337 includes/utils/api-functions.php:323
+#: templates/kompakt.php:316 templates/page.php:329
 msgid "Office Hours"
 msgstr "Office Hours"
 
-#: includes/admin/settings-page.php:338
+#: includes/admin/settings-page.php:338 includes/utils/api-functions.php:329
+#: templates/kompakt.php:341 templates/page.php:354
 msgid "Consultation Hours"
 msgstr "Consultation Hours"
 
@@ -481,8 +483,10 @@ msgid "Teaser Text (German)"
 msgstr "Teaser Text (German)"
 
 #: includes/custom-post-type/custom-post-type.php:132
-msgid "Person ID"
-msgstr "Person ID"
+#, fuzzy
+#| msgid "Identifier:"
+msgid "API Person Identifier"
+msgstr "Identifier:"
 
 #: includes/custom-post-type/custom-post-type.php:133
 msgid "Name"
@@ -512,53 +516,73 @@ msgstr "Suffix"
 msgid "Nobility Name"
 msgstr "Nobility Name"
 
-#: includes/custom-post-type/custom-post-type.php:159
+#: includes/custom-post-type/custom-post-type.php:151
+msgid ""
+"Enter the internal \"API Person Identification\" of the person who can "
+"retrieve the data via FAU IdM here. The API person identifiers can view the "
+"persons themselves in the IdM portal in the view of the Personal Data. "
+"Contact persons and facility lines can access this value for other pesons in "
+"their organization through the management of FAUdir. Alternatively, use the "
+"search for the settings under settings -> RRZE FAUdir -> API"
+msgstr ""
+"Enter the internal \"API Person Identification\" of the person who can "
+"retrieve the data via FAU IdM here. The API person identifiers can view the "
+"persons themselves in the IdM portal in the view of the Personal Data. "
+"Contact persons and facility lines can access this value for other pesons in "
+"their organization through the management of FAUdir. Alternatively, use the "
+"search for the settings under settings -> RRZE FAUdir -> API"
+
+#: includes/custom-post-type/custom-post-type.php:153
+msgid ""
+"The following data comes from the FAU IdM portal. A change of data is only "
+"possible by the persons or the appointed contact persons in the IdM portal."
+msgstr ""
+"The following data comes from the FAU IdM portal. A change of data is only "
+"possible by the persons or the appointed contact persons in the IdM portal."
+
+#: includes/custom-post-type/custom-post-type.php:169
 #, fuzzy
 #| msgid "Search Contacts"
 msgid "Contacts"
 msgstr "Search Contacts"
 
-#: includes/custom-post-type/custom-post-type.php:166
+#: includes/custom-post-type/custom-post-type.php:176
 msgid "Contact"
 msgstr "Biography"
 
-#: includes/custom-post-type/custom-post-type.php:177
-msgid "Socials"
-msgstr "Socials"
-
-#: includes/custom-post-type/custom-post-type.php:183
-msgid "Workplace"
-msgstr "Workplace"
-
-#: includes/custom-post-type/custom-post-type.php:188
-msgid "Address"
-msgstr "Address"
-
-#: includes/custom-post-type/custom-post-type.php:194
+#: includes/custom-post-type/custom-post-type.php:187
 msgid "Function (English)"
 msgstr "Function (English)"
 
-#: includes/custom-post-type/custom-post-type.php:200
+#: includes/custom-post-type/custom-post-type.php:193
 msgid "Function (German)"
 msgstr "Function (German)"
 
-#: includes/custom-post-type/custom-post-type.php:381
+#: includes/custom-post-type/custom-post-type.php:200
+msgid "Socials"
+msgstr "Socials"
+
+#: includes/custom-post-type/custom-post-type.php:206
+msgid "Workplace"
+msgstr "Workplace"
+
+#: includes/custom-post-type/custom-post-type.php:387
 msgid "No contact found."
 msgstr "No contact found."
 
-#: includes/custom-post-type/custom-post-type.php:384
+#: includes/custom-post-type/custom-post-type.php:390
 msgid "Error fetching person attributes."
 msgstr "Error fetching person attributes."
 
-#: includes/custom-post-type/custom-post-type.php:387
+#: includes/custom-post-type/custom-post-type.php:393
 msgid "Invalid person ID."
 msgstr "Invalid person ID."
 
-#: includes/custom-post-type/custom-post-type.php:462
+#: includes/custom-post-type/custom-post-type.php:468
 msgid "Custom person created successfully!"
 msgstr "Custom person created successfully!"
 
-#: includes/custom-post-type/custom-post-type.php:470
+#: includes/custom-post-type/custom-post-type.php:476
 msgid "Error creating custom person: Failed to fetch person details."
 msgstr "Error creating custom person: Failed to fetch person details."
 
@@ -628,14 +652,6 @@ msgstr "Email: "
 #: includes/utils/api-functions.php:321 includes/utils/api-functions.php:327
 msgid "Weekday "
 msgstr "Weekday "
-
-#: includes/utils/api-functions.php:323
-msgid "Office Hours: "
-msgstr "Office Hours: "
-
-#: includes/utils/api-functions.php:329
-msgid "Consultation Hours: "
-msgstr "Consultation Hours: "
 
 #: includes/utils/api-functions.php:348 includes/utils/api-functions.php:356
 msgid "No address available"
@@ -812,14 +828,6 @@ msgstr "Map:"
 #: templates/kompakt.php:306 templates/page.php:319
 msgid "View on Map"
 msgstr "View Person"
-
-#: templates/kompakt.php:316 templates/page.php:329
-msgid "Office Hours:"
-msgstr "Office Hours:"
-
-#: templates/kompakt.php:341 templates/page.php:354
-msgid "Consultation Hours:"
-msgstr "Consultation Hours:"
 
 #: templates/kompakt.php:377 templates/page.php:127
 msgid "Social Profiles:"
