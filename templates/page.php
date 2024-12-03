@@ -132,7 +132,8 @@
                                                     class="<?php echo esc_attr($icon_data['css_class']); ?>"
                                                     style="background-image: url('<?php echo esc_url($icon_data['icon_url']); ?>');"
                                                     target="_blank"
-                                                    rel="noopener noreferrer">
+                                                    rel="noopener noreferrer"
+                                                    itemprop="sameAs">
                                                     <span class="screen-reader-text"> <?php echo esc_html(ucfirst($icon_data['name'])); ?></span>
                                                 </a>
                                             <?php endforeach; ?>
