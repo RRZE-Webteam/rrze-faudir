@@ -360,7 +360,7 @@ function rrze_faudir_settings_page()
 ?>
     <div class="wrap">
         <h1>
-            <?php echo esc_html(__('FAU Directory Settings', 'rrze-faudir')); ?>
+            <?php echo esc_html(__('FAUdir Settings', 'rrze-faudir')); ?>
         </h1>
 
         <!-- Tabs Navigation -->

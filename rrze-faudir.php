@@ -1,7 +1,7 @@
 <?php
 
 /*
-Plugin Name: RRZE FAU Directory
+Plugin Name: RRZE FAUdir
 Plugin URI: https://github.com/RRZE-Webteam/rrze-faudir
 Description: Plugin for displaying the FAU person and institution directory on websites.
 Version: 1.0.0
