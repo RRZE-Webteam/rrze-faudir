@@ -313,7 +313,7 @@
                                                             <?php if (!empty($workplace['officeHours'])) : ?>
                                                                 <div itemprop="contactPoint" itemscope itemtype="https://schema.org/ContactPoint">
                                                                     <meta itemprop="contactType" content="office hours" />
-                                                                    <strong><?php echo esc_html__('Office Hours:', 'rrze-faudir'); ?></strong>
+                                                                    <strong><?php echo esc_html__('Office Hours', 'rrze-faudir'); ?></strong>
                                                                     <ul>
                                                                         <?php foreach ($workplace['officeHours'] as $officeHours) : ?>
                                                                             <li itemscope itemtype="https://schema.org/OpeningHoursSpecification" itemprop="hoursAvailable">
@@ -338,7 +338,7 @@
                                                             <?php if (!empty($workplace['consultationHours'])) : ?>
                                                                 <div itemprop="contactPoint" itemscope itemtype="https://schema.org/ContactPoint">
                                                                     <meta itemprop="contactType" content="consultation hours" />
-                                                                    <strong><?php echo esc_html__('Consultation Hours:', 'rrze-faudir'); ?></strong>
+                                                                    <strong><?php echo esc_html__('Consultation Hours', 'rrze-faudir'); ?></strong>
                                                                     <ul>
                                                                         <?php foreach ($workplace['consultationHours'] as $consultationHours) : ?>
                                                                             <li itemscope itemtype="https://schema.org/OpeningHoursSpecification" itemprop="hoursAvailable">

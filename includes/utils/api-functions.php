@@ -320,13 +320,13 @@ function fetch_and_format_workplaces($contactIdentifier)
             $officeHours = array_map(function ($hours) {
                 return __('Weekday ', 'rrze-faudir') . $hours['weekday'] . ': ' . $hours['from'] . ' - ' . $hours['to'];
             }, $workplace['officeHours']);
-            $workplaceDetails[] = __('Office Hours: ', 'rrze-faudir') . implode('; ', $officeHours);
+            $workplaceDetails[] = __('Office Hours', 'rrze-faudir') . implode('; ', $officeHours);
         }
         if (!empty($workplace['consultationHours'])) {
             $consultationHours = array_map(function ($hours) {
                 return __('Weekday ', 'rrze-faudir') . $hours['weekday'] . ': ' . $hours['from'] . ' - ' . $hours['to'] . ' (' . $hours['comment'] . ') ' . $hours['url'];
             }, $workplace['consultationHours']);
-            $workplaceDetails[] = __('Consultation Hours: ', 'rrze-faudir') . implode('; ', $consultationHours);
+            $workplaceDetails[] = __('Consultation Hours', 'rrze-faudir') . implode('; ', $consultationHours);
         }
 
         $formattedWorkplaces[] = implode("\n", $workplaceDetails);
