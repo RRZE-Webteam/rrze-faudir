@@ -87,8 +87,19 @@ if (rrze_faudir_system_requirements()) {
     function schedule_check_person_availability()
     {
         if (!wp_next_scheduled('check_person_availability')) {
-            wp_schedule_event(time(), 'daily', 'check_person_availability');
+            wp_schedule_event(time(), 'every_hour', 'check_person_availability');
         }
+    }
+
+    // Add custom cron schedule for every minute
+    add_filter('cron_schedules', 'add_every_hour_cron_schedule');
+    function add_every_hour_cron_schedule($schedules)
+    {
+        $schedules['every_hour'] = array(
+            'interval' => 3600,
+            'display'  => __('Every Hour'),
+        );
+        return $schedules;
     }
 
     // Unschedule the event on plugin deactivation
@@ -107,7 +118,7 @@ if (rrze_faudir_system_requirements()) {
     {
         $args = array(
             'post_type' => 'custom_person',
-            'post_status' => 'any', // Change to 'any' to include drafts and other statuses
+            'post_status' => 'any', // Include drafts and other statuses
             'posts_per_page' => -1,
         );
         $posts = get_posts($args);
@@ -115,8 +126,7 @@ if (rrze_faudir_system_requirements()) {
         foreach ($posts as $post) {
             $person_id = get_post_meta($post->ID, 'person_id', true);
 
-
-            // Check if person_id is empty
+            // If person_id is missing, set the post to draft
             if (empty($person_id)) {
                 wp_update_post(array(
                     'ID' => $post->ID,
@@ -125,10 +135,10 @@ if (rrze_faudir_system_requirements()) {
                 continue; // Skip to the next post
             }
 
-            // Make API request to check if person is accessible
+            // Fetch person data from API
             $person_data = fetch_fau_person_by_id($person_id);
 
-            // If the response indicates an error with status code 404, update the post to draft
+            // If API returns an error or empty data, set the post to draft
             if ($person_data === false || empty($person_data)) {
                 wp_update_post(array(
                     'ID' => $post->ID,
@@ -515,8 +525,6 @@ function register_custom_person_taxonomies()
 add_action('init', 'register_custom_person_taxonomies');
 
 function custom_cpt_404_message() {
-    error_log('1 logged out');
-
     global $wp_query;
 
     // Check query vars for custom_person post type
@@ -562,12 +570,19 @@ function custom_cpt_404_message() {
                 $content = ob_get_clean();
 
                 $new_hero_content = '<div class="hero-container hero-content">'
-                    . '<p class="presentationtitle">' . __('No contact entry could be found.', 'rrze-faudir') . '</p>'
-                    . '</div>';
+                . '<p class="presentationtitle">' . __('No contact entry could be found.', 'rrze-faudir') . '</p>'
+                . '</div>';
 
-                echo $new_hero_content;
+                // Replace the content of the hero section dynamically
+                $updated_content = preg_replace(
+                    '/<p class="presentationtitle">.*?<\/p>/s',
+                    $new_hero_content,
+                    $content
+                );
+
+                // Output the modified content
+                echo $updated_content;
             }, 0);
-
             include get_404_template();
             exit;
         }
