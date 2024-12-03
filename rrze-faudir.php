@@ -187,7 +187,7 @@ function register_kontakt_as_faudir_shortcode_alias()
     include_once(ABSPATH . 'wp-admin/includes/plugin.php');
 
     // Check if the FAU-person plugin is not active
-    if (!is_plugin_active('fau-person-master/fau-person.php')) { 
+    if (!is_plugin_active('fau-person/fau-person.php')) { 
         add_shortcode('kontakt', 'kontakt_to_faudir_shortcode_alias');
         add_shortcode('kontaktliste', 'kontaktliste_to_faudir_shortcode_alias');
     }
