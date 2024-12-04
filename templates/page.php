@@ -162,16 +162,10 @@
                                         }
                                     
                                         $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : '';
-                                        $locale = get_locale();
-                                        $isGerman = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_DE_formal') !== false;
-                                    
-                                        // Determine function label
-                                        $functionLabel = '';
-                                        if (!empty($contact['functionLabel'])) {
-                                            $functionLabel = $isGerman
-                                                ? (isset($contact['functionLabel']['de']) ? $contact['functionLabel']['de'] : '')
-                                                : (isset($contact['functionLabel']['en']) ? $contact['functionLabel']['en'] : '');
-                                        }
+                                        $locale = explode('_', get_locale())[0];
+                                        $functionLabel = $contact['functionLabel'][$locale] ?? '';
+
+                                        // Display each organization and associated details
                                     ?>
                                     
                                         <?php if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) { ?>
@@ -322,20 +316,20 @@
                                                         <meta itemprop="contactType" content="office hours" />
                                                         <strong><?php echo esc_html__('Office Hours', 'rrze-faudir'); ?>:</strong>
                                                         <ul>
-                                                        <?php foreach ($workplace['officeHours'] as $officeHours) : ?>
-                                                            <li itemscope itemtype="https://schema.org/OpeningHoursSpecification" itemprop="hoursAvailable">
-                                                                <div itemprop="dayOfWeek" content="https://schema.org/<?php echo esc_attr(FaudirUtils::getWeekday($officeHours['weekday'])); ?>">
-                                                                    <strong><?php echo esc_html(FaudirUtils::getWeekday($officeHours['weekday'])); ?>:</strong>
-                                                                </div>
-                                                                <span itemprop="opens"><?php echo esc_html($officeHours['from']); ?></span> -
-                                                                <span itemprop="closes"><?php echo esc_html($officeHours['to']); ?></span>
-                                                                <?php if (!empty($officeHours['comment'])) : ?>
-                                                                    <p itemprop="description">
-                                                                        <?php echo esc_html($officeHours['comment']); ?>
-                                                                    </p>
-                                                                <?php endif; ?>
-                                                            </li>
-                                                        <?php endforeach; ?>                                                            
+                                                            <?php foreach ($workplace['officeHours'] as $officeHours) : ?>
+                                                                <li itemscope itemtype="https://schema.org/OpeningHoursSpecification" itemprop="hoursAvailable">
+                                                                    <div itemprop="dayOfWeek" content="https://schema.org/<?php echo esc_attr(FaudirUtils::getWeekday($officeHours['weekday'])); ?>">
+                                                                        <strong><?php echo esc_html(FaudirUtils::getWeekday($officeHours['weekday'])); ?>:</strong>
+                                                                    </div>
+                                                                    <span itemprop="opens"><?php echo esc_html($officeHours['from']); ?></span> -
+                                                                    <span itemprop="closes"><?php echo esc_html($officeHours['to']); ?></span>
+                                                                    <?php if (!empty($officeHours['comment'])) : ?>
+                                                                        <p itemprop="description">
+                                                                            <?php echo esc_html($officeHours['comment']); ?>
+                                                                        </p>
+                                                                    <?php endif; ?>
+                                                                </li>
+                                                            <?php endforeach; ?>
                                                         </ul>
                                                     </div>
                                                 <?php endif; ?>
@@ -381,14 +375,12 @@
                             </div>
 
                             <?php if (count($persons) === 1 && !empty($image_url)) : ?>
-                                <div itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
+                                <div itemporop="image" itemscope itemtype="https://schema.org/ImageObject">
                                     <meta itemprop="identifier" content="<?php echo esc_attr($person['identifier']); ?>_image" />
                                     <?php
-                                    $image_id = attachment_url_to_postid($image_url);
-                                    $image_meta = wp_get_attachment_metadata($image_id);
+                                    $image_meta = wp_get_attachment_metadata(attachment_url_to_postid($image_url));
                                     $width = isset($image_meta['width']) ? $image_meta['width'] : '';
                                     $height = isset($image_meta['height']) ? $image_meta['height'] : '';
-                                    $caption = wp_get_attachment_caption($image_id);
                                     ?>
                                     <img src="<?php echo esc_url($image_url); ?>"
                                         alt="<?php echo esc_attr($fullName . ' Image'); ?>"
@@ -397,20 +389,15 @@
                                         <meta itemprop="width" content="<?php echo esc_attr($width); ?>" /><?php endif; ?>
                                     <?php if ($height) : ?>
                                         <meta itemprop="height" content="<?php echo esc_attr($height); ?>" /><?php endif; ?>
-                                    <?php if ($caption) : ?>
-                                        <meta itemprop="caption" content="<?php echo esc_attr($caption); ?>" />
-                                        <figcaption><?php echo esc_html($caption); ?></figcaption>
-                                    <?php endif; ?>
+                                    <meta itemprop="caption" content="<?php echo esc_attr($fullName); ?>" />
                                 </div>
                             <?php elseif (!empty($featured_image_url)) : ?>
                                 <div itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
                                     <meta itemprop="identifier" content="<?php echo esc_attr($person['identifier']); ?>_featured_image" />
                                     <?php
-                                    $image_id = attachment_url_to_postid($featured_image_url);
-                                    $image_meta = wp_get_attachment_metadata($image_id);
+                                    $image_meta = wp_get_attachment_metadata(attachment_url_to_postid($featured_image_url));
                                     $width = isset($image_meta['width']) ? $image_meta['width'] : '';
                                     $height = isset($image_meta['height']) ? $image_meta['height'] : '';
-                                    $caption = wp_get_attachment_caption($image_id);
                                     ?>
                                     <img src="<?php echo esc_url($featured_image_url); ?>"
                                         alt="<?php echo esc_attr($fullName . ' Image'); ?>"
@@ -419,30 +406,25 @@
                                         <meta itemprop="width" content="<?php echo esc_attr($width); ?>" /><?php endif; ?>
                                     <?php if ($height) : ?>
                                         <meta itemprop="height" content="<?php echo esc_attr($height); ?>" /><?php endif; ?>
-                                    <?php if ($caption) : ?>
-                                        <meta itemprop="caption" content="<?php echo esc_attr($caption); ?>" />
-                                        <figcaption><?php echo esc_html($caption); ?></figcaption>
-                                    <?php endif; ?>
+                                    <meta itemprop="caption" content="<?php echo esc_attr($fullName); ?>" />
                                 </div>
                             <?php else : ?>
-                                <img src="<?php echo esc_url(plugins_url('rrze-faudir/assets/images/platzhalter-unisex.png', dirname(__FILE__, 2))); ?>"
-                                    alt="<?php echo esc_attr($fullName . ' Image'); ?>" />
+                                <div itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
+                                    <meta itemprop="identifier" content="<?php echo esc_attr($person['identifier']); ?>_placeholder" />
+                                    <img src="<?php echo esc_url(plugins_url('rrze-faudir/assets/images/platzhalter-unisex.png', dirname(__FILE__, 2))); ?>"
+                                        alt="<?php echo esc_attr($fullName . ' Image'); ?>"
+                                        itemprop="contentUrl" />
+                                    <meta itemprop="caption" content="<?php echo esc_attr__('Placeholder image for', 'rrze-faudir') . ' ' . esc_attr($fullName); ?>" />
+                                </div>
                             <?php endif; ?>
                         </div>
 
 
                         <?php if (in_array('content', $show_fields) && !in_array('content', $hide_fields)) { ?>
-                            <?php if (($locale === 'de_DE' || $locale === 'de_DE_formal') && !empty($content_de)): ?>
-                                <section class="card-section-title"><?php esc_html__('Content', 'rrze-faudir'); ?></section>
-                                <div class="content-second-language">
-                                    <?php echo wp_kses_post($content_de); ?>
-                                </div>
-                            <?php elseif (($locale !== 'de_DE' || $locale === 'de_DE_formal') && !empty($content_en)): ?>
-                                <section class="card-section-title"><?php esc_html__('Content', 'rrze-faudir'); ?></section>
-                                <div class="content-second-language">
-                                    <?php echo wp_kses_post($content_en); ?>
-                                </div>
-                            <?php endif; ?>
+                            <section>
+                                <span class="card-section-title"><?php echo esc_html__('Content', 'rrze-faudir'); ?></span>
+                                <?php echo wp_kses_post($locale === 'de' && !empty($content_de) ? $content_de : (!empty($content_en) ? $content_en : '')); ?>
+                            </section>
                         <?php } ?>
 
                     </div> <!-- End of shortcode-contact-card -->
