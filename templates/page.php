@@ -157,15 +157,6 @@
                                 ?>
                                 <?php if (!empty($person['contacts'])) : ?>
                                     <?php
-                                    $weekdayMap = [
-                                        1 => 'Monday',
-                                        2 => 'Tuesday',
-                                        3 => 'Wednesday',
-                                        4 => 'Thursday',
-                                        5 => 'Friday',
-                                        6 => 'Saturday',
-                                        7 => 'Sunday',
-                                    ];
                                     foreach ($person['contacts'] as $contact) {
                                         $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : '';
                                         $locale = get_locale();
@@ -326,22 +317,22 @@
                                                 <?php if (!empty($workplace['officeHours'])) : ?>
                                                     <div itemprop="contactPoint" itemscope itemtype="https://schema.org/ContactPoint">
                                                         <meta itemprop="contactType" content="office hours" />
-                                                        <strong><?php echo esc_html__('Office Hours', 'rrze-faudir'); ?></strong>
+                                                        <strong><?php echo esc_html__('Office Hours', 'rrze-faudir'); ?>:</strong>
                                                         <ul>
-                                                            <?php foreach ($workplace['officeHours'] as $officeHours) : ?>
-                                                                <li itemscope itemtype="https://schema.org/OpeningHoursSpecification" itemprop="hoursAvailable">
-                                                                    <div itemprop="dayOfWeek" content="https://schema.org/<?php echo esc_attr($weekdayMap[$officeHours['weekday']] ?? 'Unknown'); ?>">
-                                                                        <strong><?php echo esc_html($weekdayMap[$officeHours['weekday']] ?? 'Unknown'); ?>:</strong>
-                                                                    </div>
-                                                                    <span itemprop="opens"><?php echo esc_html($officeHours['from']); ?></span> -
-                                                                    <span itemprop="closes"><?php echo esc_html($officeHours['to']); ?></span>
-                                                                    <?php if (!empty($officeHours['comment'])) : ?>
-                                                                        <p itemprop="description">
-                                                                            <?php echo esc_html($officeHours['comment']); ?>
-                                                                        </p>
-                                                                    <?php endif; ?>
-                                                                </li>
-                                                            <?php endforeach; ?>
+                                                        <?php foreach ($workplace['officeHours'] as $officeHours) : ?>
+                                                            <li itemscope itemtype="https://schema.org/OpeningHoursSpecification" itemprop="hoursAvailable">
+                                                                <div itemprop="dayOfWeek" content="https://schema.org/<?php echo esc_attr(FaudirUtils::getWeekday($officeHours['weekday'])); ?>">
+                                                                    <strong><?php echo esc_html(FaudirUtils::getWeekday($officeHours['weekday'])); ?>:</strong>
+                                                                </div>
+                                                                <span itemprop="opens"><?php echo esc_html($officeHours['from']); ?></span> -
+                                                                <span itemprop="closes"><?php echo esc_html($officeHours['to']); ?></span>
+                                                                <?php if (!empty($officeHours['comment'])) : ?>
+                                                                    <p itemprop="description">
+                                                                        <?php echo esc_html($officeHours['comment']); ?>
+                                                                    </p>
+                                                                <?php endif; ?>
+                                                            </li>
+                                                        <?php endforeach; ?>                                                            
                                                         </ul>
                                                     </div>
                                                 <?php endif; ?>
@@ -351,12 +342,12 @@
                                                 <?php if (!empty($workplace['consultationHours'])) : ?>
                                                     <div itemprop="contactPoint" itemscope itemtype="https://schema.org/ContactPoint">
                                                         <meta itemprop="contactType" content="consultation hours" />
-                                                        <strong><?php echo esc_html__('Consultation Hours', 'rrze-faudir'); ?></strong>
+                                                        <strong><?php echo esc_html__('Consultation Hours', 'rrze-faudir'); ?>:</strong>
                                                         <ul>
                                                             <?php foreach ($workplace['consultationHours'] as $consultationHours) : ?>
                                                                 <li itemscope itemtype="https://schema.org/OpeningHoursSpecification" itemprop="hoursAvailable">
-                                                                    <div itemprop="dayOfWeek" content="https://schema.org/<?php echo esc_attr($weekdayMap[$consultationHours['weekday']] ?? 'Unknown'); ?>">
-                                                                        <strong><?php echo esc_html($weekdayMap[$consultationHours['weekday']] ?? 'Unknown'); ?>:</strong>
+                                                                    <div itemprop="dayOfWeek" content="https://schema.org/<?php echo esc_attr(FaudirUtils::getWeekday($consultationHours['weekday'])); ?>">
+                                                                        <strong><?php echo esc_html(FaudirUtils::getWeekday($consultationHours['weekday'])); ?>:</strong>
                                                                     </div>
                                                                     <span itemprop="opens"><?php echo esc_html($consultationHours['from']); ?></span> -
                                                                     <span itemprop="closes"><?php echo esc_html($consultationHours['to']); ?></span>

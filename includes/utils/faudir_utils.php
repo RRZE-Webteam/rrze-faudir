@@ -108,6 +108,19 @@ class FaudirUtils
         $nameHtml .= '</span>';
         return $nameHtml;
     }
+    public static function getWeekday($weekday)
+    {
+        $weekdayMap = [
+            0 => __('Sunday','rrze-faudir'),
+            1 => __('Monday','rrze-faudir'),
+            2 => __('Tuesday','rrze-faudir'),
+            3 => __('Wednesday','rrze-faudir'),
+            4 => __('Thursday','rrze-faudir'),
+            5 => __('Friday','rrze-faudir'),
+            6 => __('Saturday','rrze-faudir'),
+        ];
+        return $weekdayMap[$weekday] ?? __('Unknown','rrze-faudir');
+    }
 }
 
 // Neue lokale Version:
