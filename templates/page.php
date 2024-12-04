@@ -312,20 +312,20 @@
                                                         <meta itemprop="contactType" content="office hours" />
                                                         <strong><?php echo esc_html__('Office Hours', 'rrze-faudir'); ?>:</strong>
                                                         <ul>
-                                                        <?php foreach ($workplace['officeHours'] as $officeHours) : ?>
-                                                            <li itemscope itemtype="https://schema.org/OpeningHoursSpecification" itemprop="hoursAvailable">
-                                                                <div itemprop="dayOfWeek" content="https://schema.org/<?php echo esc_attr(FaudirUtils::getWeekday($officeHours['weekday'])); ?>">
-                                                                    <strong><?php echo esc_html(FaudirUtils::getWeekday($officeHours['weekday'])); ?>:</strong>
-                                                                </div>
-                                                                <span itemprop="opens"><?php echo esc_html($officeHours['from']); ?></span> -
-                                                                <span itemprop="closes"><?php echo esc_html($officeHours['to']); ?></span>
-                                                                <?php if (!empty($officeHours['comment'])) : ?>
-                                                                    <p itemprop="description">
-                                                                        <?php echo esc_html($officeHours['comment']); ?>
-                                                                    </p>
-                                                                <?php endif; ?>
-                                                            </li>
-                                                        <?php endforeach; ?>                                                            
+                                                            <?php foreach ($workplace['officeHours'] as $officeHours) : ?>
+                                                                <li itemscope itemtype="https://schema.org/OpeningHoursSpecification" itemprop="hoursAvailable">
+                                                                    <div itemprop="dayOfWeek" content="https://schema.org/<?php echo esc_attr(FaudirUtils::getWeekday($officeHours['weekday'])); ?>">
+                                                                        <strong><?php echo esc_html(FaudirUtils::getWeekday($officeHours['weekday'])); ?>:</strong>
+                                                                    </div>
+                                                                    <span itemprop="opens"><?php echo esc_html($officeHours['from']); ?></span> -
+                                                                    <span itemprop="closes"><?php echo esc_html($officeHours['to']); ?></span>
+                                                                    <?php if (!empty($officeHours['comment'])) : ?>
+                                                                        <p itemprop="description">
+                                                                            <?php echo esc_html($officeHours['comment']); ?>
+                                                                        </p>
+                                                                    <?php endif; ?>
+                                                                </li>
+                                                            <?php endforeach; ?>
                                                         </ul>
                                                     </div>
                                                 <?php endif; ?>
@@ -417,17 +417,10 @@
 
 
                         <?php if (in_array('content', $show_fields) && !in_array('content', $hide_fields)) { ?>
-                            <?php if ($locale === 'de' && !empty($content_de)): ?>
-                                <section class="card-section-title"><?php echo esc_html__('Content', 'rrze-faudir'); ?></section>
-                                <div class="content-second-language" >
-                                    <?php echo wp_kses_post($content_de); ?>
-                                </div>
-                            <?php elseif (!empty($content_en)): ?>
-                                <section class="card-section-title"><?php echo esc_html__('Content', 'rrze-faudir'); ?></section>
-                                <div class="content-second-language" >
-                                    <?php echo wp_kses_post($content_en); ?>
-                                </div>
-                            <?php endif; ?>
+                            <section>
+                                <span class="card-section-title"><?php echo esc_html__('Content', 'rrze-faudir'); ?></span>
+                                <?php echo wp_kses_post($locale === 'de' && !empty($content_de) ? $content_de : (!empty($content_en) ? $content_en : '')); ?>
+                            </section>
                         <?php } ?>
 
                     </div> <!-- End of shortcode-contact-card -->
