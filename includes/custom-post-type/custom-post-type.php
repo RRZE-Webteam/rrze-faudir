@@ -129,7 +129,7 @@ function render_person_additional_fields($post)
         '_content_en' => __('Content (English)', 'rrze-faudir'),
         '_teasertext_en' => __('Teaser Text (English)', 'rrze-faudir'),
         '_teasertext_de' => __('Teaser Text (German)', 'rrze-faudir'),
-        'person_id' => __('Person ID', 'rrze-faudir'),
+        'person_id' => __('API Person Identifier', 'rrze-faudir'),
         'person_name' => __('Name', 'rrze-faudir'),
         'person_email' => __('Email', 'rrze-faudir'),
         'person_telephone' => __('Telephone', 'rrze-faudir'),
@@ -145,14 +145,24 @@ function render_person_additional_fields($post)
         $value = get_post_meta($post->ID, $meta_key, true);
         $readonly = in_array($meta_key, $api_fields) ? 'readonly' : '';
 
-        if (in_array($meta_key, ['_content_en', '_teasertext_en', '_teasertext_de'])) {
+        // Check for 'person_id' to add descriptions
+        if ($meta_key === 'person_id') {
+            echo "<label for='" . esc_attr($meta_key) . "'>" . esc_html($label) . "</label>";
+            echo "<p class='description'>" . __('Enter the internal "API Person Identification" of the person who can retrieve the data via FAU IdM here. The API person identifiers can view the persons themselves in the IdM portal in the view of the Personal Data. Contact persons and facility lines can access this value for other pesons in their organization through the management of FAUdir. Alternatively, use the search for the settings under settings -> RRZE FAUdir -> API', 'rrze-faudir') . "</p>";
+            echo "<input type='text' name='" . esc_attr($meta_key) . "' id='" . esc_attr($meta_key) . "' value='" . esc_attr($value) . "' style='width: 100%;' $readonly /><br><br>";
+            echo '<p><strong>' . __('The following data comes from the FAU IdM portal. A change of data is only possible by the persons or the appointed contact persons in the IdM portal.', 'rrze-faudir') . '</strong></p>';
+            echo '<hr>';
+        } elseif (in_array($meta_key, ['_content_en', '_teasertext_en', '_teasertext_de'])) {
+            // Handle textarea fields
             echo "<label for='" . esc_attr($meta_key) . "'>" . esc_html($label) . "</label>";
             echo "<textarea name='" . esc_attr($meta_key) . "' id='" . esc_attr($meta_key) . "' style='width: 100%; height: 100px;' $readonly>" . esc_textarea($value) . "</textarea><br><br>";
         } else {
+            // Handle other input fields
             echo "<label for='" . esc_attr($meta_key) . "'>" . esc_html($label) . "</label>";
             echo "<input type='text' name='" . esc_attr($meta_key) . "' id='" . esc_attr($meta_key) . "' value='" . esc_attr($value) . "' style='width: 100%;' $readonly /><br><br>";
         }
     }
+
 
     // Render contacts section
     echo '<div class="contacts-wrapper">';
@@ -172,33 +182,29 @@ function render_person_additional_fields($post)
         echo '<input type="text" name="person_contacts[' . $index . '][organization]" value="' . esc_attr($contact['organization']) . '" class="widefat" readonly />';
         echo '</div>';
 
+         // English Function
+         echo '<div class="function-wrapper">';
+         echo '<h5>' . __('Function (English)', 'rrze-faudir') . '</h5>';
+         echo '<input type="text" name="person_contacts[' . $index . '][function_en]" value="' . esc_attr($contact['function_en'] ?? '') . '" class="widefat" readonly />';
+         echo '</div>';
+ 
+         // German Function
+         echo '<div class="function-wrapper">';
+         echo '<h5>' . __('Function (German)', 'rrze-faudir') . '</h5>';
+         echo '<input type="text" name="person_contacts[' . $index . '][function_de]" value="' . esc_attr($contact['function_de'] ?? '') . '" class="widefat" readonly />';
+         echo '</div>';
+ 
+
         // Add socials field
         echo '<div class="socials-wrapper">';
         echo '<h5>' . __('Socials', 'rrze-faudir') . '</h5>';
-        echo '<textarea name="person_contacts[' . $index . '][socials]" class="widefat" readonly rows="5">' . esc_textarea($contact['socials'] ?? '') . '</textarea>';
+        echo '<textarea name="person_contacts[' . $index . '][socials]" class="widefat" readonly rows="10">' . esc_textarea($contact['socials'] ?? '') . '</textarea>';
         echo '</div>';
 
         // Add workplace and address fields
         echo '<div class="workplace-wrapper">';
         echo '<h5>' . __('Workplace', 'rrze-faudir') . '</h5>';
-        echo '<textarea name="person_contacts[' . $index . '][workplace]" class="widefat" readonly rows="5">' . esc_textarea($contact['workplace'] ?? '') . '</textarea>';
-        echo '</div>';
-
-        echo '<div class="address-wrapper">';
-        echo '<h5>' . __('Address', 'rrze-faudir') . '</h5>';
-        echo '<textarea name="person_contacts[' . $index . '][address]" class="widefat" readonly rows="5">' . esc_textarea($contact['address'] ?? '') . '</textarea>';
-        echo '</div>';
-
-        // English Function
-        echo '<div class="function-wrapper">';
-        echo '<h5>' . __('Function (English)', 'rrze-faudir') . '</h5>';
-        echo '<input type="text" name="person_contacts[' . $index . '][function_en]" value="' . esc_attr($contact['function_en'] ?? '') . '" class="widefat" readonly />';
-        echo '</div>';
-
-        // German Function
-        echo '<div class="function-wrapper">';
-        echo '<h5>' . __('Function (German)', 'rrze-faudir') . '</h5>';
-        echo '<input type="text" name="person_contacts[' . $index . '][function_de]" value="' . esc_attr($contact['function_de'] ?? '') . '" class="widefat" readonly />';
+        echo '<textarea name="person_contacts[' . $index . '][workplace]" class="widefat" readonly rows="10">' . esc_textarea($contact['workplace'] ?? '') . '</textarea>';
         echo '</div>';
 
         echo '</div>'; // .organization-block
