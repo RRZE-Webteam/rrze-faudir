@@ -2,6 +2,7 @@ jQuery(document).ready(function($) {
     let currentPage = 1;
 
     function loadContacts(page) {
+        console.log('Loading contacts for page:', page);
         $.ajax({
             url: rrzeFaudirAjax.ajax_url,
             method: 'POST',
@@ -46,9 +47,6 @@ jQuery(document).ready(function($) {
         localStorage.setItem('activeTab', $(this).attr('href'));
     });
 
-    // Initial load
-    loadContacts(currentPage);
-
     // Event listeners for pagination buttons
     $(document).on('click', '.prev-page', function(e) {
         e.preventDefault(); // Prevent the default link behavior
@@ -63,11 +61,6 @@ jQuery(document).ready(function($) {
         currentPage++;
         loadContacts(currentPage);
     });
-
-    // Initial load for contacts when on the right tab
-    if (activeTab === '#tab-5') {
-        loadContacts(currentPage);
-    }
 
     // Clear cache button handler
     $('#clear-cache-button').on('click', function() {

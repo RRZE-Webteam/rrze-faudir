@@ -313,7 +313,7 @@ function process_persons_by_identifiers($identifiers)
 function fetch_and_process_persons($lq = null)
 {
     $params = $lq ? ['lq' => $lq] : [];
-    $data = fetch_fau_persons_atributes(0, 0, $params);
+    $data = fetch_fau_persons(0, 0, $params);
 
     $persons = [];
     if (!empty($data['data'])) {

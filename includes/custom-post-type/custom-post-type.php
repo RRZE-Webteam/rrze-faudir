@@ -250,7 +250,7 @@ function save_person_additional_fields($post_id)
         $params = ['identifier' => $person_id];
 
         // Fetch person attributes using the custom function
-        $response = fetch_fau_persons_atributes(60, 0, $params);
+        $response = fetch_fau_persons(60, 0, $params);
 
         // Check if the response is a valid array
         if (is_array($response) && isset($response['data'])) {
@@ -369,7 +369,7 @@ function fetch_person_attributes()
 
     if (!empty($person_id)) {
         $params = ['identifier' => $person_id];
-        $response = fetch_fau_persons_atributes(60, 0, $params);
+        $response = fetch_fau_persons(60, 0, $params);
 
         if (is_array($response) && isset($response['data'])) {
             $person = $response['data'][0] ?? null;
@@ -444,7 +444,7 @@ function rrze_faudir_create_custom_person()
 
     // Fetch additional person attributes
     $params = ['identifier' => $person_id];
-    $response = fetch_fau_persons_atributes(60, 0, $params);
+    $response = fetch_fau_persons(60, 0, $params);
 
     if (is_array($response) && isset($response['data'])) {
         $person = $response['data'][0] ?? null;
