@@ -159,15 +159,8 @@
                                     <?php
                                     foreach ($person['contacts'] as $contact) {
                                         $organizationName = isset($contact['organization']['name']) ? $contact['organization']['name'] : '';
-                                        $locale = get_locale();
-                                        $isGerman = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_DE_formal') !== false;
-
-                                        // Determine function label
-                                        $functionLabel = '';
-                                        if (!empty($contact['functionLabel'])) {
-                                            $functionLabel = $isGerman ?
-                                                (isset($contact['functionLabel']['de']) ? $contact['functionLabel']['de'] : '') : (isset($contact['functionLabel']['en']) ? $contact['functionLabel']['en'] : '');
-                                        }
+                                        $locale = explode('_', get_locale())[0];
+                                        $functionLabel = $contact['functionLabel'][$locale] ?? '';
 
                                         // Display each organization and associated details
                                     ?>
@@ -285,19 +278,19 @@
                                                     <?php if (in_array('street', $show_fields) && !in_array('street', $hide_fields)) : ?>
                                                         <?php if (!empty($workplace['street'])) : ?>
                                                             <span class="screen-reader-text"><?php echo esc_html__('Street:', 'rrze-faudir'); ?></span>
-                                                            <?php echo esc_html($workplace['street']); ?><br>
+                                                            <span itemprop="streetAddress"><?php echo esc_html($workplace['street']); ?></span><br>
                                                         <?php endif; ?>
                                                     <?php endif; ?>
                                                     <?php if (in_array('zip', $show_fields) && !in_array('zip', $hide_fields)) : ?>
                                                         <?php if (!empty($workplace['zip'])) : ?>
                                                             <span class="screen-reader-text"><?php echo esc_html__('ZIP Code:', 'rrze-faudir'); ?></span>
-                                                            <?php echo esc_html($workplace['zip']); ?><br>
+                                                            <span itemprop="postalCode"><?php echo esc_html($workplace['zip']); ?></span><br>
                                                         <?php endif; ?>
                                                     <?php endif; ?>
                                                     <?php if (in_array('city', $show_fields) && !in_array('city', $hide_fields)) : ?>
                                                         <?php if (!empty($workplace['city'])) : ?>
                                                             <span class="screen-reader-text"><?php echo esc_html__('City:', 'rrze-faudir'); ?></span>
-                                                            <?php echo esc_html($workplace['city']); ?><br>
+                                                            <span itemprop="addressLocality"><?php echo esc_html($workplace['city']); ?></span><br>
                                                         <?php endif; ?>
                                                     <?php endif; ?>
                                                 </span>
@@ -424,14 +417,14 @@
 
 
                         <?php if (in_array('content', $show_fields) && !in_array('content', $hide_fields)) { ?>
-                            <?php if (($locale === 'de_DE' || $locale === 'de_DE_formal') && !empty($content_de)): ?>
-                                <section class="card-section-title"><?php esc_html__('Content', 'rrze-faudir'); ?></section>
-                                <div class="content-second-language" itemprop="description">
+                            <?php if ($locale === 'de' && !empty($content_de)): ?>
+                                <section class="card-section-title"><?php echo esc_html__('Content', 'rrze-faudir'); ?></section>
+                                <div class="content-second-language" >
                                     <?php echo wp_kses_post($content_de); ?>
                                 </div>
-                            <?php elseif (($locale !== 'de_DE' || $locale === 'de_DE_formal') && !empty($content_en)): ?>
-                                <section class="card-section-title"><?php esc_html__('Content', 'rrze-faudir'); ?></section>
-                                <div class="content-second-language" itemprop="description">
+                            <?php elseif (!empty($content_en)): ?>
+                                <section class="card-section-title"><?php echo esc_html__('Content', 'rrze-faudir'); ?></section>
+                                <div class="content-second-language" >
                                     <?php echo wp_kses_post($content_en); ?>
                                 </div>
                             <?php endif; ?>
