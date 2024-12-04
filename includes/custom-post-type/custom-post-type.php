@@ -169,11 +169,22 @@ function render_person_additional_fields($post)
     echo '<h3>' . __('Contacts', 'rrze-faudir') . '</h3>';
 
     $contacts = get_post_meta($post->ID, 'person_contacts', true) ?: array();
+    $displayed_contacts = get_post_meta($post->ID, 'displayed_contacts', true) ?: array();
+     // If displayed_contacts is not set, default to selecting the first contact
+     if (empty($displayed_contacts) && !empty($contacts)) {
+        $displayed_contacts = [0]; // Default to first contact
+    }
 
     foreach ($contacts as $index => $contact) {
+        $checked = in_array($index, $displayed_contacts) ? 'checked' : '';
+
         echo '<div class="organization-block">';
         echo '<div class="organization-header">';
         echo '<h4>' . __('Contact', 'rrze-faudir') . ' ' . ($index + 1) . '</h4>';
+        echo '<label>';
+        echo "<input type='checkbox' name='displayed_contacts[]' value='" . esc_attr($index) . "' $checked>";
+        echo __('Display this contact', 'rrze-faudir');
+        echo '</label>';
         echo '</div>';
 
         // Add organization field
@@ -182,18 +193,17 @@ function render_person_additional_fields($post)
         echo '<input type="text" name="person_contacts[' . $index . '][organization]" value="' . esc_attr($contact['organization']) . '" class="widefat" readonly />';
         echo '</div>';
 
-         // English Function
-         echo '<div class="function-wrapper">';
-         echo '<h5>' . __('Function (English)', 'rrze-faudir') . '</h5>';
-         echo '<input type="text" name="person_contacts[' . $index . '][function_en]" value="' . esc_attr($contact['function_en'] ?? '') . '" class="widefat" readonly />';
-         echo '</div>';
- 
-         // German Function
-         echo '<div class="function-wrapper">';
-         echo '<h5>' . __('Function (German)', 'rrze-faudir') . '</h5>';
-         echo '<input type="text" name="person_contacts[' . $index . '][function_de]" value="' . esc_attr($contact['function_de'] ?? '') . '" class="widefat" readonly />';
-         echo '</div>';
- 
+        // English Function
+        echo '<div class="function-wrapper">';
+        echo '<h5>' . __('Function (English)', 'rrze-faudir') . '</h5>';
+        echo '<input type="text" name="person_contacts[' . $index . '][function_en]" value="' . esc_attr($contact['function_en'] ?? '') . '" class="widefat" readonly />';
+        echo '</div>';
+
+        // German Function
+        echo '<div class="function-wrapper">';
+        echo '<h5>' . __('Function (German)', 'rrze-faudir') . '</h5>';
+        echo '<input type="text" name="person_contacts[' . $index . '][function_de]" value="' . esc_attr($contact['function_de'] ?? '') . '" class="widefat" readonly />';
+        echo '</div>';
 
         // Add socials field
         echo '<div class="socials-wrapper">';
@@ -313,6 +323,16 @@ function save_person_additional_fields($post_id)
         if (isset($_POST[$field])) {
             update_post_meta($post_id, $field, sanitize_text_field(wp_unslash($_POST[$field])));
         }
+    }
+
+    // Save displayed_contacts
+    if (isset($_POST['displayed_contacts']) && is_array($_POST['displayed_contacts'])) {
+        // Sanitize and save the displayed contacts
+        $displayed_contacts = array_map('intval', $_POST['displayed_contacts']);
+        update_post_meta($post_id, 'displayed_contacts', $displayed_contacts);
+    } else {
+        // If no contacts are selected, save an empty array
+        update_post_meta($post_id, 'displayed_contacts', []);
     }
 }
 
@@ -460,6 +480,16 @@ function rrze_faudir_create_custom_person()
 
             // Save the organizations array as post meta
             update_post_meta($post_id, 'person_contacts', $contacts);
+           // Handle displayed_contacts
+           if (isset($_POST['displayed_contacts']) && is_array($_POST['displayed_contacts'])) {
+            // Sanitize and save the displayed contacts
+            $displayed_contacts = array_map('intval', $_POST['displayed_contacts']);
+            } else {
+                // Default to the first contact if not provided
+                $displayed_contacts = !empty($contacts) ? [0] : [];
+            }
+        
+            update_post_meta($post_id, 'displayed_contacts', $displayed_contacts);
 
             // Return success with both post ID and edit URL
             wp_send_json_success(array(

@@ -106,7 +106,12 @@
 
                         // Collect emails and phones from workplaces, falling back to person email/phone if necessary
                         if (!empty($person['contacts'])) {
-                            foreach ($person['contacts'] as $contact) {
+                            $displayed_contacts = get_post_meta($post->ID, 'displayed_contacts', true) ?: []; // Retrieve displayed contact indexes
+                            foreach ($person['contacts'] as $index => $contact) { // Use index to match against $displayed_contacts
+                                // Check if the current contact index is in $displayed_contacts
+                                if (!in_array($index, $displayed_contacts) && !empty($displayed_contacts)) {
+                                    continue; // Skip this contact if it's not selected to be displayed
+                                }
                                 if (!empty($contact['workplaces'])) {
                                     foreach ($contact['workplaces'] as $workplace) {
                                         // Handle emails

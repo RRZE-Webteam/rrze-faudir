@@ -155,9 +155,16 @@ if (!empty($persons)) : ?>
                         <?php if (!empty($person['contacts'])) : ?>
                             <?php
                             $displayedFunctions = []; // Track displayed functions to avoid duplicates
+                            
+                            $displayed_contacts = get_post_meta($post->ID, 'displayed_contacts', true) ?: []; // Retrieve displayed contact indexes
                             ?>
-                            <?php foreach ($person['contacts'] as $contact) : ?>
+
+                            <?php foreach ($person['contacts'] as $index => $contact)  : ?>
                                 <?php
+                                // Check if the current contact index is in $displayed_contacts
+                                if (!in_array($index, $displayed_contacts) && !empty($displayed_contacts)) {
+                                    continue; // Skip this contact if it's not selected to be displayed
+                                }
                                 if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) {
                                     $locale = get_locale();
                                     $isGerman = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_DE_formal') !== false;
