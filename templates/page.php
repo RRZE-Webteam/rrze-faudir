@@ -285,19 +285,19 @@
                                                     <?php if (in_array('street', $show_fields) && !in_array('street', $hide_fields)) : ?>
                                                         <?php if (!empty($workplace['street'])) : ?>
                                                             <span class="screen-reader-text"><?php echo esc_html__('Street:', 'rrze-faudir'); ?></span>
-                                                            <span itemprop="streetAddress"><?php echo esc_html($workplace['street']); ?></span><br>
+                                                            <?php echo esc_html($workplace['street']); ?><br>
                                                         <?php endif; ?>
                                                     <?php endif; ?>
                                                     <?php if (in_array('zip', $show_fields) && !in_array('zip', $hide_fields)) : ?>
                                                         <?php if (!empty($workplace['zip'])) : ?>
                                                             <span class="screen-reader-text"><?php echo esc_html__('ZIP Code:', 'rrze-faudir'); ?></span>
-                                                            <span itemprop="postalCode"><?php echo esc_html($workplace['zip']); ?></span><br>
+                                                            <?php echo esc_html($workplace['zip']); ?><br>
                                                         <?php endif; ?>
                                                     <?php endif; ?>
                                                     <?php if (in_array('city', $show_fields) && !in_array('city', $hide_fields)) : ?>
                                                         <?php if (!empty($workplace['city'])) : ?>
                                                             <span class="screen-reader-text"><?php echo esc_html__('City:', 'rrze-faudir'); ?></span>
-                                                            <span itemprop="addressLocality"><?php echo esc_html($workplace['city']); ?></span><br>
+                                                            <?php echo esc_html($workplace['city']); ?><br>
                                                         <?php endif; ?>
                                                     <?php endif; ?>
                                                 </span>
@@ -378,14 +378,12 @@
                             </div>
 
                             <?php if (count($persons) === 1 && !empty($image_url)) : ?>
-                                <div itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
+                                <div itemporop="image" itemscope itemtype="https://schema.org/ImageObject">
                                     <meta itemprop="identifier" content="<?php echo esc_attr($person['identifier']); ?>_image" />
                                     <?php
-                                    $image_id = attachment_url_to_postid($image_url);
-                                    $image_meta = wp_get_attachment_metadata($image_id);
+                                    $image_meta = wp_get_attachment_metadata(attachment_url_to_postid($image_url));
                                     $width = isset($image_meta['width']) ? $image_meta['width'] : '';
                                     $height = isset($image_meta['height']) ? $image_meta['height'] : '';
-                                    $caption = wp_get_attachment_caption($image_id);
                                     ?>
                                     <img src="<?php echo esc_url($image_url); ?>"
                                         alt="<?php echo esc_attr($fullName . ' Image'); ?>"
@@ -394,20 +392,15 @@
                                         <meta itemprop="width" content="<?php echo esc_attr($width); ?>" /><?php endif; ?>
                                     <?php if ($height) : ?>
                                         <meta itemprop="height" content="<?php echo esc_attr($height); ?>" /><?php endif; ?>
-                                    <?php if ($caption) : ?>
-                                        <meta itemprop="caption" content="<?php echo esc_attr($caption); ?>" />
-                                        <figcaption><?php echo esc_html($caption); ?></figcaption>
-                                    <?php endif; ?>
+                                    <meta itemprop="caption" content="<?php echo esc_attr($fullName); ?>" />
                                 </div>
                             <?php elseif (!empty($featured_image_url)) : ?>
                                 <div itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
                                     <meta itemprop="identifier" content="<?php echo esc_attr($person['identifier']); ?>_featured_image" />
                                     <?php
-                                    $image_id = attachment_url_to_postid($featured_image_url);
-                                    $image_meta = wp_get_attachment_metadata($image_id);
+                                    $image_meta = wp_get_attachment_metadata(attachment_url_to_postid($featured_image_url));
                                     $width = isset($image_meta['width']) ? $image_meta['width'] : '';
                                     $height = isset($image_meta['height']) ? $image_meta['height'] : '';
-                                    $caption = wp_get_attachment_caption($image_id);
                                     ?>
                                     <img src="<?php echo esc_url($featured_image_url); ?>"
                                         alt="<?php echo esc_attr($fullName . ' Image'); ?>"
@@ -416,14 +409,16 @@
                                         <meta itemprop="width" content="<?php echo esc_attr($width); ?>" /><?php endif; ?>
                                     <?php if ($height) : ?>
                                         <meta itemprop="height" content="<?php echo esc_attr($height); ?>" /><?php endif; ?>
-                                    <?php if ($caption) : ?>
-                                        <meta itemprop="caption" content="<?php echo esc_attr($caption); ?>" />
-                                        <figcaption><?php echo esc_html($caption); ?></figcaption>
-                                    <?php endif; ?>
+                                    <meta itemprop="caption" content="<?php echo esc_attr($fullName); ?>" />
                                 </div>
                             <?php else : ?>
-                                <img src="<?php echo esc_url(plugins_url('rrze-faudir/assets/images/platzhalter-unisex.png', dirname(__FILE__, 2))); ?>"
-                                    alt="<?php echo esc_attr($fullName . ' Image'); ?>" />
+                                <div itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
+                                    <meta itemprop="identifier" content="<?php echo esc_attr($person['identifier']); ?>_placeholder" />
+                                    <img src="<?php echo esc_url(plugins_url('rrze-faudir/assets/images/platzhalter-unisex.png', dirname(__FILE__, 2))); ?>"
+                                        alt="<?php echo esc_attr($fullName . ' Image'); ?>"
+                                        itemprop="contentUrl" />
+                                    <meta itemprop="caption" content="<?php echo esc_attr__('Placeholder image for', 'rrze-faudir') . ' ' . esc_attr($fullName); ?>" />
+                                </div>
                             <?php endif; ?>
                         </div>
 
@@ -431,12 +426,12 @@
                         <?php if (in_array('content', $show_fields) && !in_array('content', $hide_fields)) { ?>
                             <?php if (($locale === 'de_DE' || $locale === 'de_DE_formal') && !empty($content_de)): ?>
                                 <section class="card-section-title"><?php esc_html__('Content', 'rrze-faudir'); ?></section>
-                                <div class="content-second-language">
+                                <div class="content-second-language" itemprop="description">
                                     <?php echo wp_kses_post($content_de); ?>
                                 </div>
                             <?php elseif (($locale !== 'de_DE' || $locale === 'de_DE_formal') && !empty($content_en)): ?>
                                 <section class="card-section-title"><?php esc_html__('Content', 'rrze-faudir'); ?></section>
-                                <div class="content-second-language">
+                                <div class="content-second-language" itemprop="description">
                                     <?php echo wp_kses_post($content_en); ?>
                                 </div>
                             <?php endif; ?>
