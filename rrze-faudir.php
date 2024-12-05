@@ -187,7 +187,7 @@ function register_kontakt_as_faudir_shortcode_alias()
     include_once(ABSPATH . 'wp-admin/includes/plugin.php');
 
     // Check if the FAU-person plugin is not active
-    if (!is_plugin_active('fau-person/fau-person.php')) { 
+    if (!is_plugin_active('fau-person/fau-person.php')) {
         add_shortcode('kontakt', 'kontakt_to_faudir_shortcode_alias');
         add_shortcode('kontaktliste', 'kontaktliste_to_faudir_shortcode_alias');
     }
@@ -307,11 +307,22 @@ function migrate_person_data_on_activation()
 
                 // Determine search parameters
                 $queryParts = [];
+                $personId = null;
 
                 if (!empty($identifier)) {
                     $queryParts[] = 'uid=' . $identifier;
                 } else if (!empty($email)) {
-                    $queryParts[] = 'email=' . $email;
+                    // search for contacts with the email
+                    $response = fetch_fau_contacts(1, 0, ['lq' => 'workplaces.mails=' . $email]);
+                    error_log('Response: ' . print_r($response, true));
+                    // if no contact is found, search the persons
+                    if (empty($response['data'])) {
+                        $queryParts[] = 'email=' . $email;
+                    } else {
+                        // get the person id from the contact's person object
+                        $personId = $response['data'][0]['person']['identifier'];
+                        $queryParts[] = 'identifier=' . $personId;
+                    }
                 } else if (!empty($givenName) || !empty($familyName)) {
                     $queryParts[] = 'givenName=' . $givenName;
                     $queryParts[] = 'familyName=' . $familyName;
@@ -320,9 +331,9 @@ function migrate_person_data_on_activation()
                 $params = [
                     'lq' => implode('&', $queryParts)
                 ];
+                $response = fetch_fau_persons(1, 0, $params);
 
-                // fetch data from api using univis api data
-                $response = fetch_fau_persons(60, 0, $params);
+                error_log('Response: ' . print_r($response, true));
 
                 if (is_array($response) && isset($response['data'])) {
                     $person = $response['data'][0] ?? null; // there should only be one match
@@ -524,7 +535,8 @@ function register_custom_person_taxonomies()
 // Make sure to register the taxonomy on init as well
 add_action('init', 'register_custom_person_taxonomies');
 
-function custom_cpt_404_message() {
+function custom_cpt_404_message()
+{
     global $wp_query;
 
     // Check query vars for custom_person post type
@@ -570,8 +582,8 @@ function custom_cpt_404_message() {
                 $content = ob_get_clean();
 
                 $new_hero_content = '<div class="hero-container hero-content">'
-                . '<p class="presentationtitle">' . __('No contact entry could be found.', 'rrze-faudir') . '</p>'
-                . '</div>';
+                    . '<p class="presentationtitle">' . __('No contact entry could be found.', 'rrze-faudir') . '</p>'
+                    . '</div>';
 
                 // Replace the content of the hero section dynamically
                 $updated_content = preg_replace(
@@ -589,4 +601,3 @@ function custom_cpt_404_message() {
     }
 }
 add_action('template_redirect', 'custom_cpt_404_message');
-
