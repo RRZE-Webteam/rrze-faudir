@@ -322,7 +322,7 @@ function migrate_person_data_on_activation()
                 ];
 
                 // fetch data from api using univis api data
-                $response = fetch_fau_persons_atributes(60, 0, $params);
+                $response = fetch_fau_persons(60, 0, $params);
 
                 if (is_array($response) && isset($response['data'])) {
                     $person = $response['data'][0] ?? null; // there should only be one match

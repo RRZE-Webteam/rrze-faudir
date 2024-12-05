@@ -515,87 +515,6 @@ function rrze_faudir_reset_defaults()
 }
 add_action('wp_ajax_rrze_faudir_reset_defaults', 'rrze_faudir_reset_defaults');
 
-function rrze_faudir_display_all_contacts($page = 1)
-{
-    $limit = 60;
-    $offset = ($page - 1) * $limit;
-    $contacts_data = fetch_fau_persons($limit, $offset);
-
-    if (is_string($contacts_data)) {
-        return '<p>' . esc_html($contacts_data) . '</p>'; // Handle error message
-    }
-
-    $contacts = $contacts_data['data'] ?? [];
-
-    if (!empty($contacts)) {
-        $output = '<div class="contacts-wrapper">';
-        foreach ($contacts as $contact) {
-            $personalTitle = isset($contact['personalTitle']) ? $contact['personalTitle'] . ' ' : '';
-            $name = esc_html($personalTitle . $contact['givenName'] . ' ' . $contact['familyName']);
-            $identifier = esc_html($contact['identifier']);
-            $output .= '<div class="contact-card">';
-            $output .= "<h2 class='contact-name'>{$name}</h2>";
-            $output .= "<div class='contact-details'>";
-            $output .= "<p><strong>" . __('Identifier:', 'rrze-faudir') .  "{$identifier} </p>";
-            $output .= '<h3>'  . __('Contacts:', 'rrze-faudir') . '</h3>';
-            if (!empty($contact['contacts'])) {
-                foreach ($contact['contacts'] as $contactDetail) {
-                    $orgName = esc_html($contactDetail['organization']['name']);
-                    $locale = get_locale();
-                    $functionLabel = in_array($locale, ['de_DE', 'de_DE_formal'])
-                        ? esc_html($contactDetail['functionLabel']['de'])
-                        : esc_html($contactDetail['functionLabel']['en']);
-                    $output .= "<p><strong>" . __('Organization:', 'rrze-faudir') . "</strong> {$orgName} ({$functionLabel})</p>";
-                }
-            }
-            // Check if a post already exists with this identifier
-            $existing_post = get_posts(array(
-                'post_type' => 'custom_person',
-                'meta_key' => 'person_id',
-                'meta_value' => $identifier,
-                'posts_per_page' => 1
-            ));
-
-            $output .= "</div>";
-
-            if (!empty($existing_post)) {
-                // Post exists, show edit link
-                $edit_link = get_edit_post_link($existing_post[0]->ID);
-                $output .= "<a href='" . esc_url($edit_link) . "' class='edit-person button'><span class='dashicons dashicons-edit'></span> " . esc_html__('Edit', 'rrze-faudir') . "</a>";
-            } else {
-                // Post doesn't exist, show add button
-                $output .= "<button class='add-person button' data-name='" . esc_attr($name) . "' data-id='" . esc_attr($identifier) . "'><span class='dashicons dashicons-plus'></span>" . esc_html__('Add', 'rrze-faudir') . "</button>";
-            }
-            $output .= '</div>';
-        }
-        $output .= '</div>';
-
-        // Add pagination controls
-        $output .= '<div class="pagination">';
-        $output .= '<button class="prev-page">' . __('Previous', 'rrze-faudir') . '</button>';
-        $output .= '<button class="next-page">' . __('Next', 'rrze-faudir') . '</button>';
-
-        $output .= '</div>';
-    } else {
-        $output = '<p>' . __('No contacts found.', 'rrze-faudir') . '</p>';
-    }
-
-    return $output;
-}
-function rrze_faudir_fetch_contacts_handler()
-{
-    check_ajax_referer('rrze_faudir_api_nonce', 'security');
-
-    $page = isset($_POST['page']) ? intval(wp_unslash($_POST['page'])) : 0;
-    $output = rrze_faudir_display_all_contacts($page);
-
-    wp_send_json_success($output);
-}
-add_action('wp_ajax_rrze_faudir_fetch_contacts', 'rrze_faudir_fetch_contacts_handler');
-
-// AJAX handler for filtering contacts
-
-
 
 // Clear Cache Function
 function rrze_faudir_clear_cache()
@@ -629,7 +548,7 @@ add_action('wp_ajax_rrze_faudir_clear_cache', 'rrze_faudir_clear_cache');
 //             'identifier'=> $personId,
 //             'email'=> $email,
 //         ];
-//         $response = fetch_fau_persons_atributes(60, 0, $params);
+//         $response = fetch_fau_persons(60, 0, $params);
 //     }
 
 //     // Check if the response is a valid array (success), otherwise return an error
@@ -686,7 +605,7 @@ add_action('wp_ajax_rrze_faudir_clear_cache', 'rrze_faudir_clear_cache');
 //         'email' => $email,
 //     ];
 
-//     $response = fetch_fau_persons_atributes(60, 0, $params);
+//     $response = fetch_fau_persons(60, 0, $params);
 
 //     if (is_string($response)) {
 //         $output = sprintf(__('Error: %s', 'rrze-faudir'), $response);
@@ -752,7 +671,7 @@ function rrze_faudir_search_person_ajax()
         'lq' => implode('&', $queryParts)
     ];
 
-    $response = fetch_fau_persons_atributes(60, 0, $params);
+    $response = fetch_fau_persons(60, 0, $params);
 
     if (is_string($response)) {
         wp_send_json_error(sprintf(__('Error: %s', 'rrze-faudir'), $response));
