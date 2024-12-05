@@ -125,18 +125,16 @@
                                     <?php if (!empty($person['contacts'][0]['socials'])) : ?>
                                         <div>
                                             <span class="screen-reader-text"><?php echo esc_html__('Social Profiles:', 'rrze-faudir'); ?></span>
-                                            <?php foreach ($person['contacts'][0]['socials'] as $social):
-                                                $icon_data = get_social_icon_data($social['platform']);
-                                            ?>
-                                                <a href="<?php echo esc_url($social['url']); ?>"
-                                                    class="<?php echo esc_attr($icon_data['css_class']); ?>"
-                                                    style="background-image: url('<?php echo esc_url($icon_data['icon_url']); ?>');"
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    itemprop="sameAs">
-                                                    <span class="screen-reader-text"> <?php echo esc_html(ucfirst($icon_data['name'])); ?></span>
-                                                </a>
-                                            <?php endforeach; ?>
+                                            <ul class="socialmedia">
+                                                <?php foreach ($person['contacts'][0]['socials'] as $social):
+                                                    $icon_data = get_social_icon_data($social['platform']);
+                                                ?>
+                                                    <li>
+                                                        <span class="screen-reader-text"><?php echo esc_html(ucfirst($icon_data['name'])); ?>: </span>
+                                                        <a href="<?php echo esc_url($social['url']); ?>" itemprop="sameAs" ><?php echo esc_url($social['url']); ?></a>
+                                                    </li>
+                                                <?php endforeach; ?>
+                                            </ul>
                                         </div>
                                     <?php endif; ?>
                                 <?php endif; ?>

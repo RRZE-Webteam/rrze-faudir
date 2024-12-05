@@ -192,19 +192,13 @@ if (!empty($persons)) : ?>
                         <!-- Social Media -->
                         <?php if (in_array('socialmedia', $show_fields) && !in_array('socialmedia', $hide_fields)): ?>
                             <?php if (!empty($person['contacts'][0]['socials'])) : ?>
-                                <ul class="social-media-list">
+                                <ul class="socialmedia">
                                     <?php foreach ($person['contacts'][0]['socials'] as $social) :
                                         $icon_data = get_social_icon_data($social['platform']);
                                     ?>
                                         <li>
-                                            <a href="<?php echo esc_url($social['url']); ?>"
-                                                class="<?php echo esc_attr($icon_data['css_class']); ?> social-icon-compact"
-                                                style="background-image: url('<?php echo esc_url($icon_data['icon_url']); ?>');"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                itemprop="sameAs">
-                                                <span class="screen-reader-text"><?php echo esc_html(ucfirst($icon_data['name'])); ?></span>
-                                            </a>
+                                            <span class="screen-reader-text"> <?php echo esc_html(ucfirst($icon_data['name'])); ?>: </span>
+                                            <a href="<?php echo esc_url($social['url']); ?>"><?php echo esc_url($social['url']); ?></a>
                                         </li>
                                     <?php endforeach; ?>
                                 </ul>
