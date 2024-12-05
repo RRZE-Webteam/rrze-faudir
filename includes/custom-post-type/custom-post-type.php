@@ -108,7 +108,34 @@ function add_custom_person_meta_boxes()
     );
 }
 add_action('add_meta_boxes', 'add_custom_person_meta_boxes');
+function check_classic_editor_and_add_shortcode_button() {
+    global $post;
 
+    // Ensure we are in the admin area and on a post edit screen
+    if (!is_admin() || !isset($post)) {
+        return;
+    }
+
+    // Check if Classic Editor plugin is active
+    include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+    $is_classic_editor_active = is_plugin_active('classic-editor/classic-editor.php');
+
+    // Target a specific custom post type
+    if ($is_classic_editor_active && $post->post_type === 'custom_person') {
+
+        // Add the button between the title and content editor
+        add_action('edit_form_after_title', function() use ($post) {
+            
+            echo '<div class="generate-shortcode">
+                    <input type="text" id="generated-shortcode" readonly value="[faudir identifier=\"person_id\"]">
+                    <button type="button" id="copy-shortcode" class="button button-primary" >' . __('Copy shortcode to Clipboard', 'rrze-faudir') . '</button>
+                  </div>';
+                   // Enqueue the script for shortcode functionality
+         wp_enqueue_script('custom-shortcode-script', plugins_url('./custom-shortcode.js', __FILE__), array('jquery'), null, true);
+        });
+    }
+}
+add_action('admin_head', 'check_classic_editor_and_add_shortcode_button');
 // Render Meta Box Fields
 function render_person_additional_fields($post)
 {
@@ -139,7 +166,6 @@ function render_person_additional_fields($post)
         'person_suffix' => __('Suffix', 'rrze-faudir'),
         'person_nobility_name' => __('Nobility Name', 'rrze-faudir'),
     ];
-
     // Render regular fields
     foreach ($fields as $meta_key => $label) {
         $value = get_post_meta($post->ID, $meta_key, true);
@@ -148,10 +174,13 @@ function render_person_additional_fields($post)
         // Check for 'person_id' to add descriptions
         if ($meta_key === 'person_id') {
             echo "<label for='" . esc_attr($meta_key) . "'>" . esc_html($label) . "</label>";
-            echo "<p class='description'>" . __('Enter the internal "API Person Identification" of the person who can retrieve the data via FAU IdM here. The API person identifiers can view the persons themselves in the IdM portal in the view of the Personal Data. Contact persons and facility lines can access this value for other pesons in their organization through the management of FAUdir. Alternatively, use the search for the settings under settings -> RRZE FAUdir -> API', 'rrze-faudir') . "</p>";
+            echo "<p class='description'>" . __('Enter the internal "API Person Identification" of the person who can retrieve the data via FAU IdM here. The API person identifiers can view the persons themselves in the IdM portal in the view of the Personal Data. Contact persons and facility lines can access this value for other persons in their organization through the management of FAUdir. Alternatively, use the search for the settings under settings -> RRZE FAUdir -> API', 'rrze-faudir') . "</p>";
             echo "<input type='text' name='" . esc_attr($meta_key) . "' id='" . esc_attr($meta_key) . "' value='" . esc_attr($value) . "' style='width: 100%;' $readonly /><br><br>";
             echo '<p><strong>' . __('The following data comes from the FAU IdM portal. A change of data is only possible by the persons or the appointed contact persons in the IdM portal.', 'rrze-faudir') . '</strong></p>';
             echo '<hr>';
+            
+            // Add a hidden input for person_id
+            echo "<input type='hidden' id='hidden-person-id' value='" . esc_attr($value) . "' />";
         } elseif (in_array($meta_key, ['_content_en', '_teasertext_en', '_teasertext_de'])) {
             // Handle textarea fields
             echo "<label for='" . esc_attr($meta_key) . "'>" . esc_html($label) . "</label>";
@@ -162,7 +191,7 @@ function render_person_additional_fields($post)
             echo "<input type='text' name='" . esc_attr($meta_key) . "' id='" . esc_attr($meta_key) . "' value='" . esc_attr($value) . "' style='width: 100%;' $readonly /><br><br>";
         }
     }
-
+    
 
     // Render contacts section
     echo '<div class="contacts-wrapper">';

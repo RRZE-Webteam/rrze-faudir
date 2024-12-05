@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rrze-faudir\n"
 "Report-Msgid-Bugs-To: https://your-plugin-url.com/support\n"
-"POT-Creation-Date: 2024-12-04 09:51+0100\n"
-"PO-Revision-Date: 2024-12-04 09:59+0100\n"
+"POT-Creation-Date: 2024-12-05 09:54+0000\n"
+"PO-Revision-Date: 2024-12-05 10:57+0100\n"
 "Last-Translator: \n"
 "Language-Team: Deutsch (Sie)\n"
 "Language: de\n"
@@ -208,7 +208,7 @@ msgid "Phone"
 msgstr "Telefon"
 
 #: includes/admin/settings-page.php:323,
-#: includes/custom-post-type/custom-post-type.php:181
+#: includes/custom-post-type/custom-post-type.php:203
 msgid "Organization"
 msgstr "Organisation"
 
@@ -225,8 +225,7 @@ msgstr "Url"
 msgid "Kompakt Button"
 msgstr "Kompaktkarten-Schaltfläche"
 
-#: includes/admin/settings-page.php:327, templates/page.php:438,
-#: templates/page.php:433
+#: includes/admin/settings-page.php:327, templates/page.php:425
 msgid "Content"
 msgstr "Biographie"
 
@@ -268,12 +267,12 @@ msgid "Fau Map"
 msgstr "FAU Karte"
 
 #: includes/admin/settings-page.php:337, includes/utils/api-functions.php:323,
-#: templates/kompakt.php:307, templates/page.php:320
+#: templates/kompakt.php:313, templates/page.php:317
 msgid "Office Hours"
 msgstr "Sprechzeiten"
 
 #: includes/admin/settings-page.php:338, includes/utils/api-functions.php:329,
-#: templates/kompakt.php:332, templates/page.php:345
+#: templates/kompakt.php:338, templates/page.php:342
 msgid "Consultation Hours"
 msgstr "Sprechstunden"
 
@@ -327,7 +326,7 @@ msgstr "Vorname:"
 msgid "Family Name:"
 msgstr "Nachname:"
 
-#: includes/admin/settings-page.php:454, templates/list.php:155
+#: includes/admin/settings-page.php:454, templates/list.php:160
 msgid "Email:"
 msgstr "E-Mail:"
 
@@ -363,8 +362,8 @@ msgstr "Kennung:"
 msgid "Contacts:"
 msgstr "Kontakte:"
 
-#: includes/admin/settings-page.php:548, templates/kompakt.php:166,
-#: templates/page.php:175
+#: includes/admin/settings-page.php:548, templates/kompakt.php:172,
+#: templates/page.php:172
 msgid "Organization:"
 msgstr "Organisation:"
 
@@ -403,7 +402,7 @@ msgstr "Fehler: %s"
 msgid "RRZE Blocks"
 msgstr "RRZE Blöcke"
 
-#: includes/config/config.php:14, templates/kompakt.php:396
+#: includes/config/config.php:14, templates/kompakt.php:402
 msgid "Call up business card"
 msgstr "Visitenkarte aufrufen"
 
@@ -457,10 +456,8 @@ msgid "Teaser Text (German)"
 msgstr "Teaser-Text (Deutsch)"
 
 #: includes/custom-post-type/custom-post-type.php:132
-#, fuzzy
-#| msgid "Identifier:"
 msgid "API Person Identifier"
-msgstr "Kennung:"
+msgstr "API-Personenkennung"
 
 #: includes/custom-post-type/custom-post-type.php:133
 msgid "Name"
@@ -490,14 +487,27 @@ msgstr "Suffix"
 msgid "Nobility Name"
 msgstr "Adelsname"
 
-#: includes/custom-post-type/custom-post-type.php:151
+#: includes/custom-post-type/custom-post-type.php:145
+msgid "Copy shortcode to Clipboard"
+msgstr "Shortcode in die Zwischenablage kopieren"
+
+#: includes/custom-post-type/custom-post-type.php:159
+#, fuzzy
+#| msgid ""
+#| "Enter the internal \"API Person Identification\" of the person who can "
+#| "retrieve the data via FAU IdM here. The API person identifiers can view "
+#| "the persons themselves in the IdM portal in the view of the Personal "
+#| "Data. Contact persons and facility lines can access this value for other "
+#| "pesons in their organization through the management of FAUdir. "
+#| "Alternatively, use the search for the settings under settings -> RRZE "
+#| "FAUdir -> API"
 msgid ""
 "Enter the internal \"API Person Identification\" of the person who can "
 "retrieve the data via FAU IdM here. The API person identifiers can view the "
 "persons themselves in the IdM portal in the view of the Personal Data. "
-"Contact persons and facility lines can access this value for other pesons in "
-"their organization through the management of FAUdir. Alternatively, use the "
-"search for the settings under settings -> RRZE FAUdir -> API"
+"Contact persons and facility lines can access this value for other persons "
+"in their organization through the management of FAUdir. Alternatively, use "
+"the search for the settings under settings -> RRZE FAUdir -> API"
 msgstr ""
 "Geben Sie hier die interne \"API-Person-Identifier\" der Person ein, über "
 "der die Daten über FAU IdM abgerufen werden können. Die API-Person-"
@@ -507,7 +517,7 @@ msgstr ""
 "Organisation abrufen. Alternativ nutzen Sie die Suche in den Einstellungen "
 "unter Einstellungen -> RRZE FAUdir -> API EInstellungen"
 
-#: includes/custom-post-type/custom-post-type.php:153
+#: includes/custom-post-type/custom-post-type.php:161
 msgid ""
 "The following data comes from the FAU IdM portal. A change of data is only "
 "possible by the persons or the appointed contact persons in the IdM portal."
@@ -516,35 +526,39 @@ msgstr ""
 "ist nur von den Personen oder den beauftragten Kontaktpersonen im IdM Portal "
 "möglich."
 
-#: includes/custom-post-type/custom-post-type.php:169
+#: includes/custom-post-type/custom-post-type.php:180
 msgid "Contacts"
 msgstr "Kontakte"
 
-#: includes/custom-post-type/custom-post-type.php:176
+#: includes/custom-post-type/custom-post-type.php:194
 msgid "Contact"
 msgstr "Kontakt"
 
-#: includes/custom-post-type/custom-post-type.php:187
+#: includes/custom-post-type/custom-post-type.php:197
+msgid "Display this contact"
+msgstr "Diesen Kontakt anzeigen"
+
+#: includes/custom-post-type/custom-post-type.php:209
 msgid "Function (English)"
 msgstr "Funktion (Englisch)"
 
-#: includes/custom-post-type/custom-post-type.php:193
+#: includes/custom-post-type/custom-post-type.php:215
 msgid "Function (German)"
 msgstr "Funktion (Deutsch)"
 
-#: includes/custom-post-type/custom-post-type.php:200
+#: includes/custom-post-type/custom-post-type.php:221
 msgid "Socials"
 msgstr "Socials"
 
-#: includes/custom-post-type/custom-post-type.php:206
+#: includes/custom-post-type/custom-post-type.php:227
 msgid "Workplace"
 msgstr "Arbeitsplatz"
 
-#: includes/custom-post-type/custom-post-type.php:468
+#: includes/custom-post-type/custom-post-type.php:509
 msgid "Custom person created successfully!"
 msgstr "Der gesamte Cache wurde erfolgreich gelöscht!"
 
-#: includes/custom-post-type/custom-post-type.php:476
+#: includes/custom-post-type/custom-post-type.php:517
 msgid "Error creating custom person: Failed to fetch person details."
 msgstr ""
 "Fehler beim Erstellen der benutzerdefinierten Person: Personendetails "
@@ -794,81 +808,85 @@ msgstr "Neuer Kategoriename"
 msgid "Categories"
 msgstr "Kategorien"
 
-#: rrze-faudir.php:573, rrze-faudir.php:543, templates/card.php:215,
-#: templates/card.php:209, templates/kompakt.php:410, templates/list.php:221,
-#: templates/list.php:216, templates/page.php:453, templates/page.php:447,
-#: templates/table.php:221
+#: rrze-faudir.php:573, rrze-faudir.php:543, templates/card.php:222,
+#: templates/card.php:216, templates/kompakt.php:416, templates/list.php:226,
+#: templates/list.php:221, templates/page.php:438, templates/page.php:432,
+#: templates/table.php:227
 msgid "No contact entry could be found."
 msgstr "Es konnte kein Kontakteintrag gefunden werden."
 
-#: templates/kompakt.php:177, templates/page.php:186
+#: templates/kompakt.php:183, templates/page.php:183
 msgid "No function available."
 msgstr "Keine Funktion verfügbar."
 
-#: templates/kompakt.php:174, templates/page.php:183
+#: templates/kompakt.php:180, templates/page.php:180
 msgid "Function:"
 msgstr "Funktion:"
 
-#: templates/kompakt.php:180, templates/page.php:190
+#: templates/kompakt.php:186, templates/page.php:187
 msgid "Workplaces:"
 msgstr "Arbeitsplätze:"
 
-#: templates/kompakt.php:229, templates/kompakt.php:195,
-#: templates/page.php:239, templates/page.php:205, templates/table.php:137
+#: templates/kompakt.php:235, templates/kompakt.php:201,
+#: templates/page.php:236, templates/page.php:202, templates/table.php:143
 msgid "Emails:"
 msgstr "E-Mails:"
 
-#: templates/kompakt.php:241, templates/kompakt.php:209,
-#: templates/list.php:172, templates/page.php:252, templates/page.php:219
+#: templates/kompakt.php:247, templates/kompakt.php:215,
+#: templates/list.php:177, templates/page.php:249, templates/page.php:216
 msgid "Phone:"
 msgstr "Telefon:"
 
-#: templates/kompakt.php:252, templates/list.php:192, templates/page.php:264
+#: templates/kompakt.php:258, templates/list.php:197, templates/page.php:261
 msgid "Url:"
 msgstr "Url:"
 
-#: templates/kompakt.php:259, templates/page.php:271
+#: templates/kompakt.php:265, templates/page.php:268
 msgid "Room:"
 msgstr "Zimmer:"
 
-#: templates/kompakt.php:266, templates/page.php:278
+#: templates/kompakt.php:272, templates/page.php:275
 msgid "Floor:"
 msgstr "Boden:"
 
-#: templates/kompakt.php:274, templates/page.php:287
+#: templates/kompakt.php:280, templates/page.php:284
 msgid "Street:"
 msgstr "Straße:"
 
-#: templates/kompakt.php:280, templates/page.php:293
+#: templates/kompakt.php:286, templates/page.php:290
 msgid "ZIP Code:"
 msgstr "PLZ:"
 
-#: templates/kompakt.php:286, templates/page.php:299
+#: templates/kompakt.php:292, templates/page.php:296
 msgid "City:"
 msgstr "Stadt:"
 
-#: templates/kompakt.php:295, templates/page.php:308
+#: templates/kompakt.php:301, templates/page.php:305
 msgid "Map:"
 msgstr "Karte:"
 
-#: templates/kompakt.php:297, templates/page.php:310
+#: templates/kompakt.php:303, templates/page.php:307
 msgid "View on Map"
 msgstr "Auf Karte anzeigen"
 
-#: templates/kompakt.php:217, templates/page.php:227
+#: templates/kompakt.php:223, templates/page.php:224
 msgid "No workplaces available."
 msgstr "Keine Arbeitsplätze verfügbar."
 
-#: templates/kompakt.php:368, templates/page.php:127
+#: templates/kompakt.php:374, templates/page.php:127
 msgid "Social Profiles:"
 msgstr "Soziale Profile:"
 
-#: templates/table.php:143, templates/table.php:160, templates/table.php:191
+#: templates/page.php:417
+msgid "Placeholder image for"
+msgstr "Platzhalterbild für"
+
+#: templates/table.php:149, templates/table.php:166, templates/table.php:197
 #, fuzzy
 msgid "N/A"
 msgstr "N/A"
 
-#: templates/table.php:154
+#: templates/table.php:160
 msgid "Phones:"
 msgstr "Telefon:"
 
