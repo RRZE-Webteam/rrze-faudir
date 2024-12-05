@@ -38,16 +38,18 @@ class EnqueueScripts
     // Enqueue admin scripts and styles for specific admin pages
     public static function enqueue_admin($hook)
     {
-        if ($hook !== 'settings_page_rrze-faudir') {
+        // Check for both settings page and post edit screen
+        global $post;
+        if ($hook !== 'settings_page_rrze-faudir'
+            && ($hook !== 'post.php' && $hook !== 'post-new.php'
+                || !isset($post)
+                || $post->post_type !== 'custom_person')) {
             return;
         }
-
         // Enqueue CSS for the admin page
         wp_enqueue_style('rrze-faudir', plugin_dir_url(__FILE__) . '../../assets/css/rrze-faudir.css');
-
         // Enqueue the admin.js script
         wp_enqueue_script('rrze-faudir-admin-js', plugin_dir_url(__FILE__) . '../../assets/js/admin.js', ['jquery'], null, true);
-
         // Localize the script with relevant data
         wp_localize_script('rrze-faudir-admin-js', 'rrzeFaudirAjax', array(
             'ajax_url' => admin_url('admin-ajax.php'),
