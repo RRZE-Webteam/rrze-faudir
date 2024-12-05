@@ -82,24 +82,14 @@ if (rrze_faudir_system_requirements()) {
     // Register and enqueue scripts
     EnqueueScripts::register();
 
+
     // Schedule the event on plugin activation
     register_activation_hook(__FILE__, 'schedule_check_person_availability');
     function schedule_check_person_availability()
     {
         if (!wp_next_scheduled('check_person_availability')) {
-            wp_schedule_event(time(), 'every_hour', 'check_person_availability');
+            wp_schedule_event(time(), 'hourly', 'check_person_availability');
         }
-    }
-
-    // Add custom cron schedule for every minute
-    add_filter('cron_schedules', 'add_every_hour_cron_schedule');
-    function add_every_hour_cron_schedule($schedules)
-    {
-        $schedules['every_hour'] = array(
-            'interval' => 3600,
-            'display'  => __('Every Hour'),
-        );
-        return $schedules;
     }
 
     // Unschedule the event on plugin deactivation
@@ -116,17 +106,30 @@ if (rrze_faudir_system_requirements()) {
     add_action('check_person_availability', 'check_api_person_availability');
     function check_api_person_availability()
     {
+        // Check if the job is already running
+        if (get_transient('check_person_availability_running')) {
+            error_log('Cron job is already running.');
+            return;
+        }
+
+        // Set a transient to indicate the job is running
+        set_transient('check_person_availability_running', true, 60); // 60 seconds
+
+        // Log the start of the cron job
+        error_log('Cron job check_person_availability started.');
+
+        // Your existing code to check person availability
         $args = array(
             'post_type' => 'custom_person',
-            'post_status' => 'any', // Include drafts and other statuses
-            'posts_per_page' => -1,
+            'post_status' => 'any', // Change to 'any' to include drafts and other statuses
+            'posts_per_page' => 1000,
         );
         $posts = get_posts($args);
 
         foreach ($posts as $post) {
             $person_id = get_post_meta($post->ID, 'person_id', true);
 
-            // If person_id is missing, set the post to draft
+            // Check if person_id is empty
             if (empty($person_id)) {
                 wp_update_post(array(
                     'ID' => $post->ID,
@@ -135,10 +138,10 @@ if (rrze_faudir_system_requirements()) {
                 continue; // Skip to the next post
             }
 
-            // Fetch person data from API
+            // Make API request to check if person is accessible
             $person_data = fetch_fau_person_by_id($person_id);
 
-            // If API returns an error or empty data, set the post to draft
+            // If the response indicates an error with status code 404, update the post to draft
             if ($person_data === false || empty($person_data)) {
                 wp_update_post(array(
                     'ID' => $post->ID,
@@ -146,6 +149,12 @@ if (rrze_faudir_system_requirements()) {
                 ));
             }
         }
+
+        // Delete the transient to indicate the job is finished
+        delete_transient('check_person_availability_running');
+
+        // Log the completion of the cron job
+        error_log('Cron job check_person_availability completed.');
     }
 
     // AJAX search function
