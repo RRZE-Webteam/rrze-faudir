@@ -266,8 +266,10 @@ function migrate_person_data_on_activation()
         'posts_per_page' => -1,
     ]);
 
-    // Initialize counter
+    // Initialize counters and reasons array
     $imported_count = 0;
+    $not_imported_count = 0;
+    $not_imported_reasons = [];
 
     if (!empty($contact_posts)) {
         foreach ($contact_posts as $post) {
@@ -435,14 +437,43 @@ function migrate_person_data_on_activation()
                         if ($new_post_id && !is_wp_error($new_post_id)) {
                             $imported_count++;
                         }
+                    } else {
+                        // Separate messages for each case
+                        if (empty($univisid)) {
+                            $not_imported_count++;
+                            $not_imported_reasons[] = __('Missing Univis ID for person: ', 'rrze-faudir') . $post->post_title;
+                        } else {
+                            $not_imported_count++;
+                            $not_imported_reasons[] = __('Person with Univis ID ', 'rrze-faudir') . $univisid . __(' already exists.', 'rrze-faudir');
+                        }
                     }
+                } else {
+                    // Separate messages for each case
+                    if (empty($univisid)) {
+                        $not_imported_count++;
+                        $not_imported_reasons[] = __('Missing Univis ID for person: ', 'rrze-faudir') . $post->post_title;
+                    } else {
+                        $not_imported_count++;
+                        $not_imported_reasons[] = __('Person with Univis ID ', 'rrze-faudir') . $univisid . __(' already exists.', 'rrze-faudir');
+                    }
+                }
+            } else {
+                // Separate messages for each case
+                if (empty($univisid)) {
+                    $not_imported_count++;
+                    $not_imported_reasons[] = __('Missing Univis ID for person: ', 'rrze-faudir') . $post->post_title;
+                } else {
+                    $not_imported_count++;
+                    $not_imported_reasons[] = __('Person with Univis ID ', 'rrze-faudir') . $univisid . __(' already exists.', 'rrze-faudir');
                 }
             }
         }
     }
 
-    // Store the count in a transient to display it later
+    // Store the counts and reasons in transients to display them later
     set_transient('rrze_faudir_imported_count', $imported_count, 60);
+    set_transient('rrze_faudir_not_imported_count', $not_imported_count, 60);
+    set_transient('rrze_faudir_not_imported_reasons', $not_imported_reasons, 60);
 
     // Add an action to display the notice
     add_action('admin_notices', 'rrze_faudir_display_import_notice');
@@ -458,7 +489,9 @@ function rrze_faudir_display_import_notice()
     }
 
     $imported_count = get_transient('rrze_faudir_imported_count');
-    if ($imported_count !== false) {
+    $not_imported_count = get_transient('rrze_faudir_not_imported_count');
+    $not_imported_reasons = get_transient('rrze_faudir_not_imported_reasons');
+    if ($imported_count !== false || $not_imported_count !== false) {
         // Import success message
         $import_message = sprintf(
             /* translators: %d: number of imported persons */
@@ -471,17 +504,52 @@ function rrze_faudir_display_import_notice()
             $imported_count
         );
 
+        // Not imported message
+        $not_imported_message = sprintf(
+            /* translators: %d: number of not imported persons */
+            _n(
+                '%d person was not able to be imported from the old plugin.',
+                '%d persons were not able to be imported from the old plugin.',
+                $not_imported_count,
+                'rrze-faudir'
+            ),
+            $not_imported_count
+        );
+
         // Slug configuration warning
         $slug_warning = __('You now have the option to set a custom slug for person pages in the settings. If you don\'t set a unique slug, existing person pages from the old plugin may be overridden by the new plugin\'s person pages. To prevent this, please ensure that you configure a custom slug in the settings if you want to keep the old pages intact.', 'rrze-faudir');
 
-        // Display both messages
+        // Display all messages
+        if ($imported_count > 0) {
+            printf(
+                '<div class="notice notice-success is-dismissible"><p>%s</p></div>',
+                esc_html($import_message)
+            );
+        }
         printf(
-            '<div class="notice notice-success"><p>%s</p></div><div class="notice notice-warning"><p>%s</p></div>',
-            esc_html($import_message),
+            '<div class="notice notice-warning is-dismissible"><p>%s</p></div>',
             esc_html($slug_warning)
         );
+        if ($not_imported_count > 0) {
+            printf(
+                '<div class="notice notice-error is-dismissible"><p>%s</p></div>',
+                esc_html($not_imported_message)
+            );
+        }
+
+        // Display not imported reasons
+        if (!empty($not_imported_reasons)) {
+            foreach ($not_imported_reasons as $reason) {
+                printf(
+                    '<div class="notice notice-error is-dismissible"><p>%s</p></div>',
+                    esc_html($reason)
+                );
+            }
+        }
 
         delete_transient('rrze_faudir_imported_count');
+        delete_transient('rrze_faudir_not_imported_count');
+        delete_transient('rrze_faudir_not_imported_reasons');
     }
 }
 // Use a higher priority number (15) to make it appear after the default activation message (priority 10)
