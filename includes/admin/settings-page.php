@@ -142,13 +142,6 @@ function rrze_faudir_settings_init()
         'rrze_faudir_settings_business_card',
         'rrze_faudir_business_card_section'
     );
-    add_settings_field(
-        'rrze_faudir_person_slug',
-        __('Person Slug', 'rrze-faudir'),
-        'rrze_faudir_person_slug_field',
-        'rrze_faudir_settings_business_card',
-        'rrze_faudir_business_card_section'
-    );
 
     // Contacts Search Section
     add_settings_section(
