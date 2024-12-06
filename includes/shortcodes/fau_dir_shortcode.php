@@ -44,6 +44,7 @@ function fetch_fau_data($atts)
             'hide' => '',
             'image' => '',
             'groupid' => '',
+            'function' => '',
             'orgnr' => '',
             'sort' => '',
             'button-text' => '',
@@ -98,6 +99,7 @@ function fetch_and_render_fau_data($atts)
     $image_id = $atts['image'];
     $url = $atts['url'];
     $groupid = $atts['groupid'];
+    $function = $atts['function'];
     $orgnr = $atts['orgnr'];
     $post_id = $atts['id'];
     $persons = []; 
@@ -162,6 +164,16 @@ function fetch_and_render_fau_data($atts)
     } elseif (!empty($groupid)) {
         $lq = 'contacts.organization.identifier[eq]=' . urlencode($groupid);
         $persons = fetch_and_process_persons($lq);
+    } elseif (!empty($function)) {
+        // Check English first
+        $lq_en = 'contacts.functionLabel.en[eq]=' . urlencode($function);
+        $persons = fetch_and_process_persons($lq_en);
+    
+        // If no persons found, fallback to German
+        if (empty($persons)) {
+            $lq_de = 'contacts.functionLabel.de[eq]=' . urlencode($function);
+            $persons = fetch_and_process_persons($lq_de);
+        }
     } elseif (!empty($orgnr)) {
         $orgData = fetch_fau_organizations(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
         if (!empty($orgData['data'])) {
