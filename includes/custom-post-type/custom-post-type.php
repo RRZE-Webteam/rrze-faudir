@@ -108,7 +108,8 @@ function add_custom_person_meta_boxes()
     );
 }
 add_action('add_meta_boxes', 'add_custom_person_meta_boxes');
-function check_classic_editor_and_add_shortcode_button() {
+function check_classic_editor_and_add_shortcode_button()
+{
     global $post;
 
     // Ensure we are in the admin area and on a post edit screen
@@ -124,14 +125,14 @@ function check_classic_editor_and_add_shortcode_button() {
     if ($is_classic_editor_active && $post->post_type === 'custom_person') {
 
         // Add the button between the title and content editor
-        add_action('edit_form_after_title', function() use ($post) {
-            
+        add_action('edit_form_after_title', function () use ($post) {
+
             echo '<div class="generate-shortcode">
                     <input type="text" id="generated-shortcode" readonly value="[faudir identifier=\"person_id\"]">
                     <button type="button" id="copy-shortcode" class="button button-primary" >' . __('Copy shortcode to Clipboard', 'rrze-faudir') . '</button>
                   </div>';
-                   // Enqueue the script for shortcode functionality
-         wp_enqueue_script('custom-shortcode-script', plugins_url('./custom-shortcode.js', __FILE__), array('jquery'), null, true);
+            // Enqueue the script for shortcode functionality
+            wp_enqueue_script('custom-shortcode-script', plugins_url('./custom-shortcode.js', __FILE__), array('jquery'), null, true);
         });
     }
 }
@@ -178,7 +179,7 @@ function render_person_additional_fields($post)
             echo "<input type='text' name='" . esc_attr($meta_key) . "' id='" . esc_attr($meta_key) . "' value='" . esc_attr($value) . "' style='width: 100%;' $readonly /><br><br>";
             echo '<p><strong>' . __('The following data comes from the FAU IdM portal. A change of data is only possible by the persons or the appointed contact persons in the IdM portal.', 'rrze-faudir') . '</strong></p>';
             echo '<hr>';
-            
+
             // Add a hidden input for person_id
             echo "<input type='hidden' id='hidden-person-id' value='" . esc_attr($value) . "' />";
         } elseif (in_array($meta_key, ['_content_en', '_teasertext_en', '_teasertext_de'])) {
@@ -191,7 +192,7 @@ function render_person_additional_fields($post)
             echo "<input type='text' name='" . esc_attr($meta_key) . "' id='" . esc_attr($meta_key) . "' value='" . esc_attr($value) . "' style='width: 100%;' $readonly /><br><br>";
         }
     }
-    
+
 
     // Render contacts section
     echo '<div class="contacts-wrapper">';
@@ -199,8 +200,8 @@ function render_person_additional_fields($post)
 
     $contacts = get_post_meta($post->ID, 'person_contacts', true) ?: array();
     $displayed_contacts = get_post_meta($post->ID, 'displayed_contacts', true) ?: array();
-     // If displayed_contacts is not set, default to selecting the first contact
-     if (empty($displayed_contacts) && !empty($contacts)) {
+    // If displayed_contacts is not set, default to selecting the first contact
+    if (empty($displayed_contacts) && !empty($contacts)) {
         $displayed_contacts = [0]; // Default to first contact
     }
 
@@ -495,7 +496,7 @@ function rrze_faudir_create_custom_person()
                 $options = get_option('rrze_faudir_options', array());
                 $defaultOrg = $options['default_organization'] ?? null;
                 $defaultOrgIdentifier = $defaultOrg ? $defaultOrg['id'] : '';
-                
+
                 // Filter contacts based on default organization
                 $filteredContacts = FaudirUtils::filterContactsByCriteria(
                     $person['contacts'],
@@ -522,15 +523,15 @@ function rrze_faudir_create_custom_person()
 
             // Save the organizations array as post meta
             update_post_meta($post_id, 'person_contacts', $contacts);
-           // Handle displayed_contacts
-           if (isset($_POST['displayed_contacts']) && is_array($_POST['displayed_contacts'])) {
-            // Sanitize and save the displayed contacts
-            $displayed_contacts = array_map('intval', $_POST['displayed_contacts']);
+            // Handle displayed_contacts
+            if (isset($_POST['displayed_contacts']) && is_array($_POST['displayed_contacts'])) {
+                // Sanitize and save the displayed contacts
+                $displayed_contacts = array_map('intval', $_POST['displayed_contacts']);
             } else {
                 // Default to the first contact if not provided
                 $displayed_contacts = !empty($contacts) ? [0] : [];
             }
-        
+
             update_post_meta($post_id, 'displayed_contacts', $displayed_contacts);
 
             // Return success with both post ID and edit URL

@@ -146,7 +146,7 @@ function rrze_faudir_settings_init()
     // Contacts Search Section
     add_settings_section(
         'rrze_faudir_contacts_search_section',
-        __('Search Contacts by Identifier', 'rrze-faudir'),
+        __('Search Contacts', 'rrze-faudir'),
         'rrze_faudir_contacts_search_section_callback',
         'rrze_faudir_settings_contacts_search'
     );
@@ -453,29 +453,56 @@ function rrze_faudir_settings_page()
         <!-- Contacts Search Tab -->
         <div id="tab-5" class="tab-content" style="display:none;">
             <h2>
-                <?php echo esc_html__('Search Contacts by Identifier', 'rrze-faudir'); ?>
+                <?php echo esc_html__('Search Contacts', 'rrze-faudir'); ?>
             </h2>
 
             <form id="search-person-form" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
                 <input type="hidden" name="action" value="rrze_faudir_search_person">
                 <?php wp_nonce_field('rrze_faudir_search_person', 'rrze_faudir_search_nonce'); ?>
 
-                <label for="person-id"><?php echo esc_html__('Search by Name, Surname, Email or ID', 'rrze-faudir'); ?></label>
-                <input type="text" id="person-id" name="person-id" />
+                <table class="form-table">
+                    <tbody>
+                        <tr>
+                            <th scope="row">
+                                <label for="person-id"><?php echo esc_html__('Search Terms', 'rrze-faudir'); ?></label>
+                            </th>
+                            <td>
+                                <fieldset>
+                                    <p>
+                                        <label for="person-id"><?php echo esc_html__('Person ID:', 'rrze-faudir'); ?></label><br>
+                                        <input type="text" id="person-id" name="person-id" class="regular-text" />
+                                    </p>
+                                    <p>
+                                        <label for="given-name"><?php echo esc_html__('Given Name:', 'rrze-faudir'); ?></label><br>
+                                        <input type="text" id="given-name" name="given-name" class="regular-text" />
+                                    </p>
 
-                <label for="given-name"><?php echo esc_html__('Given Name:', 'rrze-faudir'); ?></label>
-                <input type="text" id="given-name" name="given-name" />
+                                    <p>
+                                        <label for="family-name"><?php echo esc_html__('Family Name:', 'rrze-faudir'); ?></label><br>
+                                        <input type="text" id="family-name" name="family-name" class="regular-text" />
+                                    </p>
 
-                <label for="family-name"><?php echo esc_html__('Family Name:', 'rrze-faudir'); ?></label>
-                <input type="text" id="family-name" name="family-name" />
+                                    <p>
+                                        <label for="email"><?php echo esc_html__('Email:', 'rrze-faudir'); ?></label><br>
+                                        <input type="text" id="email" name="email" class="regular-text" />
+                                    </p>
+                                </fieldset>
+                            </td>
+                        </tr>
 
-                <label for="email"><?php echo esc_html__('Email:', 'rrze-faudir'); ?></label>
-                <input type="text" id="email" name="email" />
-
-                <label for="include-default-org">
-                    <input type="checkbox" id="include-default-org" name="include-default-org" value="1" checked>
-                    <?php echo esc_html__('Include Default Organization in Search', 'rrze-faudir'); ?>
-                </label>
+                        <tr>
+                            <th scope="row"><?php echo esc_html__('Search Options', 'rrze-faudir'); ?></th>
+                            <td>
+                                <fieldset>
+                                    <label for="include-default-org">
+                                        <input type="checkbox" id="include-default-org" name="include-default-org" value="1" checked>
+                                        <span><?php echo esc_html__('Filter by default organization', 'rrze-faudir'); ?></span>
+                                    </label>
+                                </fieldset>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
 
                 <button type="submit" class="button button-primary" disabled><?php echo esc_html__('Search', 'rrze-faudir') ?></button>
             </form>

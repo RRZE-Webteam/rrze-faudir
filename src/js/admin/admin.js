@@ -96,7 +96,7 @@ jQuery(document).ready(function ($) {
         if ($('#given-name').val().length == 1 || $('#family-name').val().length == 1) {
             disabled = true;
         }
-        $('#search-person-form > button').prop('disabled', disabled);
+        $('#search-person-form button').prop('disabled', disabled);
     });
 
     // Handle form submission
