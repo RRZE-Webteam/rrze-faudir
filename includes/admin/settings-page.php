@@ -454,7 +454,7 @@ function rrze_faudir_settings_page()
                 <label for="email"><?php echo esc_html__('Email:', 'rrze-faudir'); ?></label>
                 <input type="text" id="email" name="email" />
 
-                <button type="submit" class="button button-primary"><?php echo esc_html__('Search', 'rrze-faudir') ?></button>
+                <button type="submit" class="button button-primary" disabled><?php echo esc_html__('Search', 'rrze-faudir') ?></button>
             </form>
 
             <div id="contacts-list">
@@ -543,18 +543,18 @@ function rrze_faudir_search_person_ajax()
         $queryParts[] = 'identifier=' . $personId;
     }
     if (!empty($givenName)) {
-        $queryParts[] = 'givenName=' . $givenName;
+        $queryParts[] = 'givenName[ireg]=' . $givenName;
     }
     if (!empty($familyName)) {
-        $queryParts[] = 'familyName=' . $familyName;
+        $queryParts[] = 'familyName[ireg]=' . $familyName;
     }
     if (!empty($email)) {
         // search for contacts with the email
-        $response = fetch_fau_contacts(1, 0, ['lq' => 'workplaces.mails=' . $email]);
+        $response = fetch_fau_contacts(1, 0, ['lq' => 'workplaces.mails[ireg]=' . $email]);
         error_log('Response: ' . print_r($response, true));
         // if no contact is found, search the persons
         if (empty($response['data'])) {
-            $queryParts[] = 'email=' . $email;
+            $queryParts[] = 'email[ireg]=' . $email;
         } else {
             // get the person id from the contact's person object
             $personId = $response['data'][0]['person']['identifier'];

@@ -85,6 +85,18 @@ jQuery(document).ready(function($) {
             $('#search-person-form').submit();
         }
     });
+    $('#search-person-form input').on('input', function () {
+        var disabled = true;
+        $('#search-person-form input[type="text"], #search-person-form input[type="email"]').each(function () {
+            if ($(this).val() !== '') {
+                disabled = false;
+            }
+        });
+        if ($('#given-name').val().length == 1 || $('#family-name').val().length == 1) {
+            disabled = true;
+        }
+        $('#search-person-form > button').prop('disabled', disabled);
+    });
 
     // Handle form submission
     $('#search-person-form').on('submit', function(e) {
