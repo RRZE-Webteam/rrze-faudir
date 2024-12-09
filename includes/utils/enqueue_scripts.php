@@ -58,6 +58,11 @@ class EnqueueScripts
             'confirm_clear_cache' => __('Are you sure you want to clear the cache?', 'rrze-faudir'),
             'edit_text' => __('Edit', 'rrze-faudir'),
             'add_text' => __('Adding...', 'rrze-faudir'),
+            'saving_text' => __('Saving...', 'rrze-faudir'),
+            'saved_text' => __('Saved', 'rrze-faudir'),
+            'save_text' => __('Save as Default Organization', 'rrze-faudir'),
+            'org_saved_text' => __('Organization has been saved as default.', 'rrze-faudir'),
+            'error_saving_text' => __('Error saving organization.', 'rrze-faudir')
         ));
     }
 

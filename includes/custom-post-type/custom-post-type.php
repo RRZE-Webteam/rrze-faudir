@@ -447,6 +447,7 @@ add_action('wp_ajax_fetch_person_attributes', 'fetch_person_attributes');
 // Add this function at the end of the file
 function rrze_faudir_create_custom_person()
 {
+    error_log('rrze_faudir_create_custom_person called');
     check_ajax_referer('rrze_faudir_api_nonce', 'security');
 
     $person_name = isset($_POST['person_name']) ? sanitize_text_field($_POST['person_name']) : '';
@@ -490,8 +491,20 @@ function rrze_faudir_create_custom_person()
             // Process organizations and functions
             $contacts = array();
             if (isset($person['contacts']) && is_array($person['contacts'])) {
-                foreach ($person['contacts'] as $contact) {
+                // Get default organization settings
+                $options = get_option('rrze_faudir_options', array());
+                $defaultOrg = $options['default_organization'] ?? null;
+                $defaultOrgIdentifier = $defaultOrg ? $defaultOrg['id'] : '';
+                
+                // Filter contacts based on default organization
+                $filteredContacts = FaudirUtils::filterContactsByCriteria(
+                    $person['contacts'],
+                    true, // includeDefaultOrg
+                    $defaultOrgIdentifier,
+                    '' // email (empty since we're not filtering by email here)
+                );
 
+                foreach ($filteredContacts as $contact) {
                     // Get the identifier
                     $contactIdentifier = $contact['identifier'];
                     $organizationIdentifier = $contact['organization']['identifier'];

@@ -121,6 +121,32 @@ class FaudirUtils
         ];
         return $weekdayMap[$weekday] ?? __('Unknown','rrze-faudir');
     }
+
+    public static function filterContactsByCriteria($contacts, $includeDefaultOrg, $defaultOrgIdentifier, $email)
+    {
+        foreach ($contacts as $contactKey => $contact) {
+            $shouldRemove = false;
+
+            // Check organization if includeDefaultOrg is true
+            if ($includeDefaultOrg && $contact['organization']['identifier'] !== $defaultOrgIdentifier) {
+                $shouldRemove = true;
+            }
+
+            // Check email only if an email search parameter was provided
+            if (!empty($email)) {
+                $contactEmails = $contact['mails'] ?? [];
+                if (empty($contactEmails) || !in_array($email, $contactEmails)) {
+                    $shouldRemove = true;
+                }
+            }
+
+            if ($shouldRemove) {
+                unset($contacts[$contactKey]);
+            }
+        }
+
+        return $contacts;
+    }
 }
 
 // Neue lokale Version:

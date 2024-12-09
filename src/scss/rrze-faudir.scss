@@ -16,7 +16,15 @@ body {
     padding: 20px;
 }
 
-#wpbody-content .wrap .contact-card {
+.organizations-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding-top: 20px;
+}
+
+#wpbody-content .wrap .contact-card,
+.organizations-wrapper .organization-card {
     background-color: var(--color-white);
     border-radius: 10px;
     box-shadow: 0px 4px 6px var(--color-ContentBorders);
@@ -57,114 +65,143 @@ body {
     gap: 20px;
     padding: 20px;
 }
+
 .shortcode-contact-card {
-    background-color: var(--color-white); 
-    padding: 20px; 
-    width: calc(33.333% - 40px); 
-    box-sizing: border-box; 
-    transition: transform 0.2s ease-in-out; 
+    background-color: var(--color-white);
+    padding: 20px;
+    width: calc(33.333% - 40px);
+    box-sizing: border-box;
+    transition: transform 0.2s ease-in-out;
     text-align: center;
 }
-.shortcode-contact-card img{
+
+.shortcode-contact-card img {
     border-radius: 50%;
     width: 50%;
     height: auto;
     aspect-ratio: 1;
     object-fit: cover;
 }
-.shortcode-contact-card h2{
-    display: block; 
-    font-size: 18px; 
+
+.shortcode-contact-card h2 {
+    display: block;
+    font-size: 18px;
     margin-bottom: 10px;
 }
-.shortcode-contact-card h3{
+
+.shortcode-contact-card h3 {
     display: block;
-    font-size: 16px; 
+    font-size: 16px;
     color: var(--color-MetaTextDefault);
- }
- .contact-page{
-    align-items: center; 
-    gap: 20px; padding: 20px; 
-    background-color: var(--color-white); 
-    box-shadow: 0 4px 8px var(--color-ContentBorders); 
-    margin-bottom: 20px; border-radius: 8px;
-    margin:10px;
 }
-.contact-page-img-container{
-    display: flex; 
-}
- .shortcode-contact-kompakt {
-    display: flex; 
-    gap: 20px; padding: 20px; 
+
+.contact-page {
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
     background-color: var(--color-white);
     box-shadow: 0 4px 8px var(--color-ContentBorders);
-    margin-bottom: 20px; border-radius: 8px;
-    
+    margin-bottom: 20px;
+    border-radius: 8px;
+    margin: 10px;
 }
- .shortcode-contact-kompakt img{
+
+.contact-page-img-container {
+    display: flex;
+}
+
+.shortcode-contact-kompakt {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    background-color: var(--color-white);
+    box-shadow: 0 4px 8px var(--color-ContentBorders);
+    margin-bottom: 20px;
+    border-radius: 8px;
+
+}
+
+.shortcode-contact-kompakt img {
     width: 20%;
     object-fit: cover;
     max-height: 450px;
- }
-  .contact-page-img-container img{
+}
+
+.contact-page-img-container img {
     width: 30%;
     object-fit: cover;
     max-height: 450px;
- }
- .page-section-title,
- .card-section-title,
- .kompakt-section-title{
+}
+
+.page-section-title,
+.card-section-title,
+.kompakt-section-title {
     font-size:#{$font-size-h2}px;
     font-weight: 600;
     color: var(--color-black);
 
-    & a, a:hover, a:active, a:focus{
-    text-decoration: none;
+    & a,
+    a:hover,
+    a:active,
+    a:focus {
+        text-decoration: none;
     }
 
 }
-.list-section-title, 
+
+.list-section-title,
 .table-section-title {
     font-size:#{$font-size-h5}px;
     font-weight: 600;
     color: var(--color-black);
 
-    & a, a:hover, a:active, a:focus{
-    text-decoration: none;
+    & a,
+    a:hover,
+    a:active,
+    a:focus {
+        text-decoration: none;
     }
 
 }
-.block-label{
-    font-family:$fontStack;
-    border-radius: 3px!important;
-    width: clamp(10rem,25rem,100%)!important;
-    padding:5px;
+
+.block-label {
+    font-family: $fontStack;
+    border-radius: 3px !important;
+    width: clamp(10rem, 25rem, 100%) !important;
+    padding: 5px;
 }
+
 // Responsive styles
 @media (max-width: 768px) {
-    #wpbody-content .wrap .contact-card {
+
+    #wpbody-content .wrap .contact-card,
+    .organizations-wrapper .organization-card {
         width: calc(50% - 20px);
     }
 }
 
 @media (max-width: 480px) {
-    #wpbody-content .wrap .contact-card {
+
+    #wpbody-content .wrap .contact-card,
+    .organizations-wrapper .organization-card {
         width: 100%;
     }
 }
 
-.fau-contacts-table-custom{
-    .title-suffix{
+.fau-contacts-table-custom {
+    .title-suffix {
         white-space: nowrap;
     }
-    td{
+
+    td {
         min-width: 10rem;
     }
 }
+
 .button-link {
     background-color: var(--color-button-bg);
     border: none;
-    border-radius: var(--border-radius-buttons,3px);
+    border-radius: var(--border-radius-buttons, 3px);
     color: var(--color-button-text);
     display: inline-block;
     font-size: .938rem;
@@ -176,23 +213,26 @@ body {
     text-align: center;
     text-decoration: none;
 }
+
 .button-link:hover {
     background-color: var(--color-button-hover-bg);
     color: var(--color-button-hover-text);
     text-decoration: none;
 }
-.social-media-list{
-    list-style: none; 
-    padding: 0; 
-    margin: 0; 
-    display: flex; 
-    flex-wrap: wrap; 
+
+.social-media-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
     gap: 10px;
-    justify-content: center; 
+    justify-content: center;
     align-items: center;
 }
-.social-media-list li{
-    list-style: none; 
+
+.social-media-list li {
+    list-style: none;
 }
 
 .manual-identifier {
@@ -286,7 +326,8 @@ body {
 }
 
 .selected-person.in-category {
-    background: #e0f0e0; /* Slightly different background for category members */
+    background: #e0f0e0;
+    /* Slightly different background for category members */
 }
 
 .remove-person {
@@ -300,6 +341,7 @@ body {
 .remove-person:hover {
     color: #ff0000;
 }
+
 .faudir-block-preview {
     border: 1px solid #ddd;
     padding: 20px;
@@ -338,11 +380,13 @@ body {
 .edit-button:hover {
     background: #006ba1;
 }
-.add-person span{
-    vertical-align: middle!important;
+
+.add-person span {
+    vertical-align: middle !important;
 }
-.edit-person span{
-    vertical-align: middle!important;
+
+.edit-person span {
+    vertical-align: middle !important;
 }
 
 .screen-reader-text {
@@ -364,7 +408,7 @@ body {
     text-decoration: none;
     background-repeat: no-repeat;
     background-position: center;
-    
+
     &::before {
         content: '';
         display: inline-block;
@@ -391,13 +435,13 @@ body {
 .socialmedia,
 .svg-socialmedia {
     margin: 0;
-    
+
     --_icon-size: var(--icon-size, 1.8rem);
     --_icon-color: var(--icon-color, var(--color-Text));
     --_icon-color-hover: var(--icon-color-hover, var(--color-MainBackground));
     --_icon-background-color-hover: var(--icon-background-color-hover, var(--color-Text));
     --_icon_background-color: var(--icon_background-color, var(--color-MainBackground));
-    
+
     --_icon-border-radius: var(--icon-border-radius, 50%);
     --_icon-border-width: var(--icon-border-width, 1px);
     --_icon-border-color: var(--icon-border-color, var(--color-Text));
@@ -412,208 +456,213 @@ body {
         overflow: hidden;
         margin: 0.25rem;
         padding: 0px;
-        width: var(--_icon-size); 
-        height: var(--_icon-size); 
+        width: var(--_icon-size);
+        height: var(--_icon-size);
 
         &::before {
             content: inherit;
             display: none;
         }
     }
- 
-   
+
+
 
     span {
-	a::before {
-	     margin-top: 0.3rem;
-	}
+        a::before {
+            margin-top: 0.3rem;
+        }
     }
-    
-    
+
+
     a {
-	width: var(--_icon-size); 
-	height: var(--_icon-size); 
-	overflow: hidden;
-	display: inline-block;
-	background-color: var(--_icon_background-color);
-	border: var(--_icon-border-width) solid var(--_icon-border-color);
-	border-radius: var(--_icon-border-radius);
-	    
-	&::before {   
-	    width: auto; 
-	    height: auto; 
-	    display: inline-block;
-	    content: ' ';
-	    mask-size: var(--_icon-size-mask); 
-	    mask-repeat: no-repeat;
-	    mask-position: var(--_icon-size-maskposition); 
-	    background-color: var(--_icon-color);
-	    mask-image: svg-bookmark();
-	    
-	}
-	&:focus,
-	&:hover {
-	    background-color: var(--_icon-background-color-hover);
-	    border-color: var(--_icon-border-color-hover);
-	}
-	&:focus::before,
-	&:hover::before {
-	     background-color: var(--_icon-color-hover);
-	}
+        width: var(--_icon-size);
+        height: var(--_icon-size);
+        overflow: hidden;
+        display: inline-block;
+        background-color: var(--_icon_background-color);
+        border: var(--_icon-border-width) solid var(--_icon-border-color);
+        border-radius: var(--_icon-border-radius);
 
-		
+        &::before {
+            width: auto;
+            height: auto;
+            display: inline-block;
+            content: ' ';
+            mask-size: var(--_icon-size-mask);
+            mask-repeat: no-repeat;
+            mask-position: var(--_icon-size-maskposition);
+            background-color: var(--_icon-color);
+            mask-image: svg-bookmark();
 
-	&[href*="twitter.com"]:before {
-	    mask-image: svg-twitter();
-	}
-	
-	&[href*="facebook.com"]:before {
-	   mask-image: svg-facebook();
-	}
-	
+        }
 
-	&[href*="github.com"]:before {
-	    mask-image: svg-github();
-	}
-	
+        &:focus,
+        &:hover {
+            background-color: var(--_icon-background-color-hover);
+            border-color: var(--_icon-border-color-hover);
+        }
 
-	&[href*="instagram.com"]:before {
-	    mask-image: svg-instagram();
-	}
-	
+        &:focus::before,
+        &:hover::before {
+            background-color: var(--_icon-color-hover);
+        }
 
-	&[href*="publons.com"]:before {
-	    mask-image: svg-publons();
-	}
-	
 
-	&[href*="linkedin.com"]:before {
-	    mask-image: svg-linkedin();
-	}
-	
 
-	&[href*="xing.com"]:before {
-	    mask-image: svg-xing();
-	}
-	
+        &[href*="twitter.com"]:before {
+            mask-image: svg-twitter();
+        }
 
-	&[href*="tiktok.com"]:before {
-	    mask-image: svg-tiktok();
-	}
-	
-	&[href*="youtube.com"]:before {
-	    mask-image: svg-youtube();
-	}
-	
+        &[href*="facebook.com"]:before {
+            mask-image: svg-facebook();
+        }
 
-	&[href*="scopus.com"]:before {
-	    mask-image: svg-scopus();
-	}
-	
 
-	&[href*="scholar.google.de"]:before {
-	    mask-image: svg-googlescholar();
-	}
-	
-	&[href*="orcid.org"]:before {
-	    mask-image: svg-orcid();
-	}
-	
+        &[href*="github.com"]:before {
+            mask-image: svg-github();
+        }
 
-	&[href*="researchgate.net"]:before {
-	    mask-image: svg-researchgate();
-	}
-	
-	&[href*="pinterest."]:before {
-	    mask-image: svg-pinterest();
-	}
-	
-	
-	&[href*="mastodon.social"]:before {
-	    mask-image: svg-mastodon();
-	}
-	
-	
-	// Reddit
-	&[href*="reddit.com"]:before {
-	    mask-image: svg-reddit();
-	}
-	
-	// Discord
-	&[href*="discord.com"]:before {
-	    mask-image: svg-discord();
-	}
-	
-	// Indeed
-	&[href*="indeed.com"]:before {
-	    mask-image: svg-indeed();
-	}
-	
-	
-	// whatsapp
-	&[href*="whatsapp.com"]:before {
-	    mask-image: svg-whatsapp();
-	}
-	
-	// Bluesky
-	&[href*="bsky.app"]:before {
-	    mask-image: svg-bluesky();
-	}
-	
-	// Twitch
-	&[href*="twitch.tv"]:before {
-	    mask-image: svg-twitch();
-	}
-	
-	// arxiv
-	&[href*="arxiv.org"]:before {
-	    mask-image: svg-arxiv();
-	}
-	
-	// clarivate / webofscience
-	&[href*="webofscience.com"]:before {
-	    mask-image: svg-clarivate();
-	}
-	
-	// clarivate / webofscience
-	&[href*="academia.edu"]:before {
-	    mask-image: svg-academia();
-	}
-	
-	
 
-	// community.fau.de
-	// group of people
-	// https://github.com/RRZE-Webteam/FAU-Einrichtungen/issues/1271
-	&[href*="community.fau.de"]:before {
-	    mask-image: svg-group();
-	}
-	
-	&[href*="mailto:"]:before {
-	    mask-image: svg-icon-mail();
-	}
-	
-	
-	&[href*="rss"]:before,
-	&[href*="feed"]:before {
-	    mask-image: svg-icon-rss();
-	}
-	
-	
-	&[href*=".ics"]:before,
-	&[href*="ical"]:before {
-	    mask-image: svg-icon-calendar();
-	}
+        &[href*="instagram.com"]:before {
+            mask-image: svg-instagram();
+        }
+
+
+        &[href*="publons.com"]:before {
+            mask-image: svg-publons();
+        }
+
+
+        &[href*="linkedin.com"]:before {
+            mask-image: svg-linkedin();
+        }
+
+
+        &[href*="xing.com"]:before {
+            mask-image: svg-xing();
+        }
+
+
+        &[href*="tiktok.com"]:before {
+            mask-image: svg-tiktok();
+        }
+
+        &[href*="youtube.com"]:before {
+            mask-image: svg-youtube();
+        }
+
+
+        &[href*="scopus.com"]:before {
+            mask-image: svg-scopus();
+        }
+
+
+        &[href*="scholar.google.de"]:before {
+            mask-image: svg-googlescholar();
+        }
+
+        &[href*="orcid.org"]:before {
+            mask-image: svg-orcid();
+        }
+
+
+        &[href*="researchgate.net"]:before {
+            mask-image: svg-researchgate();
+        }
+
+        &[href*="pinterest."]:before {
+            mask-image: svg-pinterest();
+        }
+
+
+        &[href*="mastodon.social"]:before {
+            mask-image: svg-mastodon();
+        }
+
+
+        // Reddit
+        &[href*="reddit.com"]:before {
+            mask-image: svg-reddit();
+        }
+
+        // Discord
+        &[href*="discord.com"]:before {
+            mask-image: svg-discord();
+        }
+
+        // Indeed
+        &[href*="indeed.com"]:before {
+            mask-image: svg-indeed();
+        }
+
+
+        // whatsapp
+        &[href*="whatsapp.com"]:before {
+            mask-image: svg-whatsapp();
+        }
+
+        // Bluesky
+        &[href*="bsky.app"]:before {
+            mask-image: svg-bluesky();
+        }
+
+        // Twitch
+        &[href*="twitch.tv"]:before {
+            mask-image: svg-twitch();
+        }
+
+        // arxiv
+        &[href*="arxiv.org"]:before {
+            mask-image: svg-arxiv();
+        }
+
+        // clarivate / webofscience
+        &[href*="webofscience.com"]:before {
+            mask-image: svg-clarivate();
+        }
+
+        // clarivate / webofscience
+        &[href*="academia.edu"]:before {
+            mask-image: svg-academia();
+        }
+
+
+
+        // community.fau.de
+        // group of people
+        // https://github.com/RRZE-Webteam/FAU-Einrichtungen/issues/1271
+        &[href*="community.fau.de"]:before {
+            mask-image: svg-group();
+        }
+
+        &[href*="mailto:"]:before {
+            mask-image: svg-icon-mail();
+        }
+
+
+        &[href*="rss"]:before,
+        &[href*="feed"]:before {
+            mask-image: svg-icon-rss();
+        }
+
+
+        &[href*=".ics"]:before,
+        &[href*="ical"]:before {
+            mask-image: svg-icon-calendar();
+        }
     }
+
     // ... rest of the social media styles ...
 }
-.generate-shortcode{
-    margin: 10px 0; 
-    padding: 10px; 
-    background: #f1f1f1; 
-    border: 1px solid #ccc; 
+
+.generate-shortcode {
+    margin: 10px 0;
+    padding: 10px;
+    background: #f1f1f1;
+    border: 1px solid #ccc;
     border-radius: 4px;
 }
-.generate-shortcode input{
+
+.generate-shortcode input {
     width: 70%;
 }

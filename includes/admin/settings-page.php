@@ -166,6 +166,14 @@ function rrze_faudir_settings_init()
         'rrze_faudir_shortcode_section'
     );
 
+    // Add Organization Search Section
+    add_settings_section(
+        'rrze_faudir_org_search_section',
+        __('Search Organizations', 'rrze-faudir'),
+        'rrze_faudir_org_search_section_callback',
+        'rrze_faudir_settings_org_search'
+    );
+
     // Note: The search form will be handled in the settings page itself, no need for a settings field here.
 
 
@@ -307,7 +315,8 @@ function rrze_faudir_person_slug_field()
 }
 
 
-function rrze_faudir_default_output_fields_render() {
+function rrze_faudir_default_output_fields_render()
+{
     $options = get_option('rrze_faudir_options');
     $default_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : array();
 
@@ -354,6 +363,12 @@ function rrze_faudir_default_output_fields_render() {
     echo '<p class="description">' . esc_html__('Select the fields to display by default in shortcodes and blocks.', 'rrze-faudir') . '</p>';
 }
 
+// Add the callback function
+function rrze_faudir_org_search_section_callback()
+{
+    echo '<p>' . esc_html__('Search for FAU organizations by name or identifier.', 'rrze-faudir') . '</p>';
+}
+
 // Settings page display
 function rrze_faudir_settings_page()
 {
@@ -379,6 +394,9 @@ function rrze_faudir_settings_page()
             </a>
             <a href="#tab-5" class="nav-tab">
                 <?php echo esc_html__('Search Contacts', 'rrze-faudir'); ?>
+            </a>
+            <a href="#tab-8" class="nav-tab">
+                <?php echo esc_html__('Search Organizations', 'rrze-faudir'); ?>
             </a>
             <a href="#tab-6" class="nav-tab">
                 <?php echo esc_html__('Shortcode Settings', 'rrze-faudir'); ?>
@@ -454,6 +472,11 @@ function rrze_faudir_settings_page()
                 <label for="email"><?php echo esc_html__('Email:', 'rrze-faudir'); ?></label>
                 <input type="text" id="email" name="email" />
 
+                <label for="include-default-org">
+                    <input type="checkbox" id="include-default-org" name="include-default-org" value="1" checked>
+                    <?php echo esc_html__('Include Default Organization in Search', 'rrze-faudir'); ?>
+                </label>
+
                 <button type="submit" class="button button-primary" disabled><?php echo esc_html__('Search', 'rrze-faudir') ?></button>
             </form>
 
@@ -461,6 +484,59 @@ function rrze_faudir_settings_page()
                 <?php
                 if (isset($_GET['search_results'])) {
                     echo wp_kses_post(urldecode($_GET['search_results']));
+                }
+                ?>
+            </div>
+        </div>
+
+        <!-- Organizations Search Tab -->
+        <div id="tab-8" class="tab-content" style="display:none;">
+            <!-- Default Organization -->
+            <?php
+            $default_org = get_option('rrze_faudir_options', array())['default_organization'] ?? null;
+            if ($default_org) {
+            ?>
+                <div id="default-organization">
+                    <h2><?php echo esc_html__('Current Default Organization', 'rrze-faudir'); ?></h2>
+                    <p><?php echo esc_html__('This is the organization that will be used by default in shortcodes and blocks.', 'rrze-faudir'); ?></p>
+                    <p><strong><?php echo esc_html(__('Name:', 'rrze-faudir')); ?></strong> <?php echo esc_html($default_org['name']); ?></p>
+                    <p><strong><?php echo esc_html(__('Organization-Nr.:', 'rrze-faudir')); ?></strong> <?php echo esc_html($default_org['orgnr']); ?></p>
+                    <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" style="display: inline;">
+                        <?php wp_nonce_field('delete_default_organization'); ?>
+                        <input type="hidden" name="action" value="delete_default_organization">
+                        <button type="submit" class="button button-secondary" onclick="return confirm('<?php echo esc_js(__('Are you sure you want to delete the default organization?', 'rrze-faudir')); ?>');">
+                            <?php echo esc_html__('Delete Default Organization', 'rrze-faudir'); ?>
+                        </button>
+                    </form>
+                </div>
+            <?php
+            }
+            ?>
+            <h2><?php echo esc_html__('Search Organizations', 'rrze-faudir'); ?></h2>
+
+            <form id="search-org-form" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+                <input type="hidden" name="action" value="rrze_faudir_search_org">
+                <?php wp_nonce_field('rrze_faudir_search_org', 'rrze_faudir_search_org_nonce'); ?>
+
+                <table class="form-table">
+                    <tr>
+                        <th scope="row">
+                            <label for="org-search"><?php echo esc_html__('Search Term', 'rrze-faudir'); ?></label>
+                        </th>
+                        <td>
+                            <input type="text" id="org-search" name="org-search" class="regular-text" />
+                            <p class="description"><?php echo esc_html__('Enter organization name or identifier', 'rrze-faudir'); ?></p>
+                        </td>
+                    </tr>
+                </table>
+
+                <button type="submit" class="button button-primary"><?php echo esc_html__('Search', 'rrze-faudir') ?></button>
+            </form>
+
+            <div id="organizations-list">
+                <?php
+                if (isset($_GET['org_search_results'])) {
+                    echo wp_kses_post(urldecode($_GET['org_search_results']));
                 }
                 ?>
             </div>
@@ -499,6 +575,34 @@ function rrze_faudir_settings_page()
 <?php
 }
 
+function rrze_faudir_delete_default_organization()
+{
+    if (!current_user_can('manage_options')) {
+        wp_die(__('You do not have sufficient permissions to access this page.', 'rrze-faudir'));
+    }
+
+    check_admin_referer('delete_default_organization');
+
+    $options = get_option('rrze_faudir_options', array());
+    if (isset($options['default_organization'])) {
+        unset($options['default_organization']);
+        update_option('rrze_faudir_options', $options);
+        add_settings_error(
+            'rrze_faudir_messages',
+            'default_org_deleted',
+            __('Default organization has been deleted.', 'rrze-faudir'),
+            'updated'
+        );
+    }
+
+    // Redirect back to the settings page
+    wp_redirect(add_query_arg(
+        array('page' => 'rrze-faudir', 'settings-updated' => 'true'),
+        admin_url('options-general.php')
+    ));
+    exit;
+}
+add_action('admin_post_delete_default_organization', 'rrze_faudir_delete_default_organization');
 
 // Function to reset settings to defaults
 function rrze_faudir_reset_defaults()
@@ -536,6 +640,13 @@ function rrze_faudir_search_person_ajax()
     $givenName = isset($_POST['given_name']) ? sanitize_text_field($_POST['given_name']) : '';
     $familyName = isset($_POST['family_name']) ? sanitize_text_field($_POST['family_name']) : '';
     $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
+    $includeDefaultOrg = isset($_POST['include_default_org']) && $_POST['include_default_org'] === '1';
+    error_log('$includeDefaultOrg: ' . $includeDefaultOrg);
+
+    // get default organization
+    $defaultOrg = get_option('rrze_faudir_options', array())['default_organization'] ?? null;
+    // get identifier of default organization
+    $defaultOrgIdentifier = $defaultOrg ? $defaultOrg['id'] : '';
 
     $queryParts = [];
 
@@ -561,6 +672,9 @@ function rrze_faudir_search_person_ajax()
             $queryParts[] = 'identifier=' . $personId;
         }
     }
+    if ($includeDefaultOrg && !empty($defaultOrgIdentifier)) {
+        $queryParts[] = 'contacts.organization.identifier=' . $defaultOrgIdentifier;
+    }
 
     $params = [
         'lq' => implode('&', $queryParts)
@@ -568,7 +682,14 @@ function rrze_faudir_search_person_ajax()
 
     $response = fetch_fau_persons(60, 0, $params);
 
-    error_log('Response: ' . print_r($response, true));
+    foreach ($response['data'] as $key => $person) {
+        $response['data'][$key]['contacts'] = FaudirUtils::filterContactsByCriteria(
+            $person['contacts'],
+            $includeDefaultOrg,
+            $defaultOrgIdentifier,
+            $email
+        );
+    }
 
     if (is_string($response)) {
         wp_send_json_error(sprintf(__('Error: %s', 'rrze-faudir'), $response));

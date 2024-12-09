@@ -1,4 +1,4 @@
-jQuery(document).ready(function($) {
+jQuery(document).ready(function ($) {
     let currentPage = 1;
 
     function loadContacts(page) {
@@ -11,7 +11,7 @@ jQuery(document).ready(function($) {
                 security: rrzeFaudirAjax.api_nonce,
                 page: page
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.success) {
                     $('#contacts-list').html(response.data);
                     // Keep the tab active on pagination
@@ -20,7 +20,7 @@ jQuery(document).ready(function($) {
                     $('#contacts-list').html('<p>An error occurred while loading contacts.</p>');
                 }
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 console.error('AJAX request failed:', status, error);
                 $('#contacts-list').html('<p>An error occurred during the request.</p>');
             }
@@ -35,7 +35,7 @@ jQuery(document).ready(function($) {
     $(activeTab).show();
 
     // Tab switching logic
-    $('.nav-tab').click(function(e) {
+    $('.nav-tab').click(function (e) {
         e.preventDefault();
         $('.nav-tab').removeClass('nav-tab-active');
         $(this).addClass('nav-tab-active');
@@ -48,7 +48,7 @@ jQuery(document).ready(function($) {
     });
 
     // Event listeners for pagination buttons
-    $(document).on('click', '.prev-page', function(e) {
+    $(document).on('click', '.prev-page', function (e) {
         e.preventDefault(); // Prevent the default link behavior
         if (currentPage > 1) {
             currentPage--;
@@ -56,19 +56,19 @@ jQuery(document).ready(function($) {
         }
     });
 
-    $(document).on('click', '.next-page', function(e) {
+    $(document).on('click', '.next-page', function (e) {
         e.preventDefault(); // Prevent the default link behavior
         currentPage++;
         loadContacts(currentPage);
     });
 
     // Clear cache button handler
-    $('#clear-cache-button').on('click', function() {
+    $('#clear-cache-button').on('click', function () {
         if (confirm(rrzeFaudirAjax.confirm_clear_cache)) {
             $.post(rrzeFaudirAjax.ajax_url, {
                 action: 'rrze_faudir_clear_cache',
                 security: rrzeFaudirAjax.api_nonce
-            }, function(response) {
+            }, function (response) {
                 if (response.success) {
                     alert(response.data);
                 } else {
@@ -79,15 +79,16 @@ jQuery(document).ready(function($) {
     });
 
     // Prevent form submission on Enter key
-    $('#search-person-form input').on('keypress', function(e) {
+    $('#search-person-form input').on('keypress', function (e) {
         if (e.which === 13) { // Enter key
             e.preventDefault();
             $('#search-person-form').submit();
         }
     });
-    $('#search-person-form input').on('input', function() {
+
+    $('#search-person-form input').on('input', function () {
         var disabled = true;
-        $('#search-person-form input[type="text"], #search-person-form input[type="email"]').each(function() {
+        $('#search-person-form input[type="text"], #search-person-form input[type="email"]').each(function () {
             if ($(this).val() !== '') {
                 disabled = false;
             }
@@ -99,19 +100,20 @@ jQuery(document).ready(function($) {
     });
 
     // Handle form submission
-    $('#search-person-form').on('submit', function(e) {
+    $('#search-person-form').on('submit', function (e) {
         e.preventDefault(); // Prevent form submission
 
         var personId = $('#person-id').val().trim();
         var givenName = $('#given-name').val().trim();
         var familyName = $('#family-name').val().trim();
         var email = $('#email').val().trim();
+        var includeDefaultOrg = $('#include-default-org').is(':checked') ? '1' : '0';
 
         console.log('Person ID:', personId);
         console.log('Given Name:', givenName);
         console.log('Family Name:', familyName);
         console.log('Email:', email);
-
+        console.log('Include Default Organization:', includeDefaultOrg);
         if (personId.length > 0 || givenName.length > 0 || familyName.length > 0 || email.length > 0) {
             $.ajax({
                 url: rrzeFaudirAjax.ajax_url,
@@ -122,9 +124,10 @@ jQuery(document).ready(function($) {
                     person_id: personId,
                     given_name: givenName,
                     family_name: familyName,
-                    email: email
+                    email: email,
+                    include_default_org: includeDefaultOrg
                 },
-                success: function(response) {
+                success: function (response) {
                     console.log('Response:', response);
                     if (response.success) {
                         $('#contacts-list').html(response.data);
@@ -132,7 +135,7 @@ jQuery(document).ready(function($) {
                         $('#contacts-list').html('<p>' + response.data + '</p>');
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error('AJAX request failed:', status, error);
                     $('#contacts-list').html('<p>An error occurred during the request.</p>');
                 }
@@ -143,7 +146,7 @@ jQuery(document).ready(function($) {
     });
 
     // Handle click on add person button
-    $(document).on('click', '.add-person', function() {
+    $(document).on('click', '.add-person', function () {
         var button = $(this); // Store reference to the button
         var personName = button.data('name');
         var personId = button.data('id');
@@ -164,9 +167,8 @@ jQuery(document).ready(function($) {
                 organizations: organizations,
                 functions: functions
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.success) {
-                    alert('Custom person created successfully!');
                     // Replace the Add button with an Edit link
                     var editLink = $('<a>', {
                         href: response.data.edit_url,
@@ -178,11 +180,11 @@ jQuery(document).ready(function($) {
                     alert('Error creating custom person: ' + (response.data || 'Unknown error'));
                 }
             },
-            error: function(jqXHR, textStatus, errorThrown) {
+            error: function (jqXHR, textStatus, errorThrown) {
                 console.error('AJAX error:', textStatus, errorThrown);
                 alert('An error occurred while creating the custom person. Please check the console for more details.');
             },
-            complete: function() {
+            complete: function () {
                 // Enable the button and remove loading indicator
                 button.prop('disabled', false).html('Add');
             }
@@ -190,12 +192,12 @@ jQuery(document).ready(function($) {
     });
 
     // Handle person ID input changes
-    $('#person_id').on('change', function() {
+    $('#person_id').on('change', function () {
         var personId = $(this).val();
         if (!personId) return;
 
         // Show loading indicator if needed
-        
+
         $.ajax({
             url: customPerson.ajax_url,
             type: 'POST',
@@ -204,21 +206,21 @@ jQuery(document).ready(function($) {
                 nonce: customPerson.nonce,
                 person_id: personId
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.success) {
                     const data = response.data;
-                    
+
                     // Update regular fields
                     $('#person_name').val(data.person_name);
                     $('#person_email').val(data.person_email);
                     $('#person_given_name').val(data.person_given_name);
                     $('#person_family_name').val(data.person_family_name);
                     $('#person_title').val(data.person_title);
-                    
+
                     // Update organizations and functions
                     const organizationsWrapper = $('.contacts-wrapper');
                     organizationsWrapper.empty();
-                    
+
                     data.organizations.forEach((org, index) => {
                         const orgBlock = `
                             <div class="organization-block">
@@ -242,10 +244,51 @@ jQuery(document).ready(function($) {
                     alert('Error fetching person data: ' + (response.data || 'Unknown error'));
                 }
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 console.error('AJAX error:', status, error);
                 alert('Error fetching person data. Please check the console for details.');
             }
         });
+    });
+
+    // Handle organization search form submission
+    $('#search-org-form').on('submit', function (e) {
+        e.preventDefault();
+
+        var searchTerm = $('#org-search').val().trim();
+
+        if (searchTerm.length > 0) {
+            $.ajax({
+                url: rrzeFaudirAjax.ajax_url,
+                method: 'POST',
+                data: {
+                    action: 'rrze_faudir_search_org',
+                    security: rrzeFaudirAjax.api_nonce,
+                    search_term: searchTerm
+                },
+                success: function (response) {
+                    console.log('Organization search response:', response);
+                    if (response.success) {
+                        $('#organizations-list').html(response.data);
+                    } else {
+                        $('#organizations-list').html('<p>' + response.data + '</p>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX request failed:', status, error);
+                    $('#organizations-list').html('<p>An error occurred during the request.</p>');
+                }
+            });
+        } else {
+            $('#organizations-list').html('<p>Please enter a search term.</p>');
+        }
+    });
+
+    // Prevent form submission on Enter key for organization search
+    $('#search-org-form input').on('keypress', function (e) {
+        if (e.which === 13) { // Enter key
+            e.preventDefault();
+            $('#search-org-form').submit();
+        }
     });
 });
