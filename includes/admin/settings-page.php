@@ -463,33 +463,12 @@ function rrze_faudir_settings_page()
                 <table class="form-table">
                     <tbody>
                         <tr>
-                            <th scope="row">
-                                <label for="person-id"><?php echo esc_html__('Search Terms', 'rrze-faudir'); ?></label>
-                            </th>
-                            <td>
-                                <fieldset>
-                                    <p>
-                                        <label for="person-id"><?php echo esc_html__('Person ID:', 'rrze-faudir'); ?></label><br>
-                                        <input type="text" id="person-id" name="person-id" class="regular-text" />
-                                    </p>
-                                    <p>
-                                        <label for="given-name"><?php echo esc_html__('Given Name:', 'rrze-faudir'); ?></label><br>
-                                        <input type="text" id="given-name" name="given-name" class="regular-text" />
-                                    </p>
-
-                                    <p>
-                                        <label for="family-name"><?php echo esc_html__('Family Name:', 'rrze-faudir'); ?></label><br>
-                                        <input type="text" id="family-name" name="family-name" class="regular-text" />
-                                    </p>
-
-                                    <p>
-                                        <label for="email"><?php echo esc_html__('Email:', 'rrze-faudir'); ?></label><br>
-                                        <input type="text" id="email" name="email" class="regular-text" />
-                                    </p>
-                                </fieldset>
+                            <td colspan="2">
+                                <p class="description">
+                                    <?php echo esc_html__('Please enter at least one search term. If more than one parameter is entered, the search results must contain all values (AND search).', 'rrze-faudir'); ?>
+                                </p>
                             </td>
                         </tr>
-
                         <tr>
                             <th scope="row"><?php echo esc_html__('Search Options', 'rrze-faudir'); ?></th>
                             <td>
@@ -498,6 +477,34 @@ function rrze_faudir_settings_page()
                                         <input type="checkbox" id="include-default-org" name="include-default-org" value="1" checked>
                                         <span><?php echo esc_html__('Filter by default organization', 'rrze-faudir'); ?></span>
                                     </label>
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">
+                                <label for="person-id"><?php echo esc_html__('Search Terms', 'rrze-faudir'); ?></label>
+                            </th>
+                            <td>
+                                <fieldset>
+                                    <p>
+                                        <label for="person-id"><?php echo esc_html__('API-Person-Identifier:', 'rrze-faudir'); ?></label><br>
+                                        <input type="text" id="person-id" name="person-id" class="regular-text" />
+                                    </p>
+                                    <br>
+                                    <p>
+                                        <label for="given-name"><?php echo esc_html__('Given Name:', 'rrze-faudir'); ?></label><br>
+                                        <input type="text" id="given-name" name="given-name" class="regular-text" />
+                                    </p>
+                                    <br>
+                                    <p>
+                                        <label for="family-name"><?php echo esc_html__('Family Name:', 'rrze-faudir'); ?></label><br>
+                                        <input type="text" id="family-name" name="family-name" class="regular-text" />
+                                    </p>
+                                    <br>
+                                    <p>
+                                        <label for="email"><?php echo esc_html__('Email:', 'rrze-faudir'); ?></label><br>
+                                        <input type="text" id="email" name="email" class="regular-text" />
+                                    </p>
                                 </fieldset>
                             </td>
                         </tr>
@@ -731,7 +738,7 @@ function rrze_faudir_search_person_ajax()
                 $output .= '<div class="contact-card">';
                 $output .= "<h2 class='contact-name'>{$name}</h2>";
                 $output .= "<div class='contact-details'>";
-                $output .= "<p><strong>IdM-Kennung:</strong> {$identifier}</p>";
+                $output .= "<p><strong>API-Person-Identifier:</strong> {$identifier}</p>";
                 if (isset($contact['email']) && !empty($contact['email'])) {
                     $output .= "<p><strong>Email:</strong> " . esc_html($contact['email']) . "</p>";
                 }

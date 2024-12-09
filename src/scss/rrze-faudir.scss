@@ -59,8 +59,8 @@ body {
     }
 }
 
-#search-person-form fieldset > p {
-    margin-bottom: 20px;
+#search-person-form > table > tbody > tr:nth-child(1) > td {
+    padding: 10px 0px;
 }
 
 .shortcode-contacts-wrapper {

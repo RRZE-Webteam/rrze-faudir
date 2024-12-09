@@ -167,6 +167,7 @@ function render_person_additional_fields($post)
         'person_suffix' => __('Suffix', 'rrze-faudir'),
         'person_nobility_name' => __('Nobility Name', 'rrze-faudir'),
     ];
+
     // Render regular fields
     foreach ($fields as $meta_key => $label) {
         $value = get_post_meta($post->ID, $meta_key, true);
@@ -179,7 +180,7 @@ function render_person_additional_fields($post)
             echo "<input type='text' name='" . esc_attr($meta_key) . "' id='" . esc_attr($meta_key) . "' value='" . esc_attr($value) . "' style='width: 100%;' $readonly /><br><br>";
             echo '<p><strong>' . __('The following data comes from the FAU IdM portal. A change of data is only possible by the persons or the appointed contact persons in the IdM portal.', 'rrze-faudir') . '</strong></p>';
             echo '<hr>';
-
+            echo '<h3>' . __('Person', 'rrze-faudir') . '</h3>';
             // Add a hidden input for person_id
             echo "<input type='hidden' id='hidden-person-id' value='" . esc_attr($value) . "' />";
         } elseif (in_array($meta_key, ['_content_en', '_teasertext_en', '_teasertext_de'])) {
@@ -210,6 +211,7 @@ function render_person_additional_fields($post)
 
         echo '<div class="organization-block">';
         echo '<div class="organization-header">';
+        echo '<hr>';
         echo '<h4>' . __('Contact', 'rrze-faudir') . ' ' . ($index + 1) . '</h4>';
         echo '<label>';
         echo "<input type='checkbox' name='displayed_contacts[]' value='" . esc_attr($index) . "' $checked>";
