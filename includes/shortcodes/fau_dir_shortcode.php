@@ -93,7 +93,7 @@ function fetch_and_render_fau_data($atts)
     $show_fields = array_map('trim', explode(',', $atts['show']));
     $hide_fields = array_map('trim', explode(',', $atts['hide']));
 
-    // Prepare parameters for fetching data
+    // Extract the attributes from the shortcode
     $identifiers = empty($atts['identifier']) ? [] : explode(',', $atts['identifier']);
     $category = $atts['category'];
     $image_id = $atts['image'];
@@ -102,9 +102,10 @@ function fetch_and_render_fau_data($atts)
     $function = $atts['function'];
     $orgnr = $atts['orgnr'];
     $post_id = $atts['id'];
-    $persons = []; 
+    $persons = [];
 
-    if (!empty($post_id)) {
+    // Closure to fetch persons by post ID
+    $fetch_persons_by_post_id = function($post_id) {
         $args = [
             'post_type'      => 'custom_person',
             'meta_query'     => [
@@ -114,9 +115,9 @@ function fetch_and_render_fau_data($atts)
                     'compare' => '=',
                 ],
             ],
-            'posts_per_page' => 1, // Fetch only one post
+            'posts_per_page' => 1,
         ];
-    
+        
         $person_posts = get_posts($args);
         $person_identifiers = array();
 
@@ -127,62 +128,115 @@ function fetch_and_render_fau_data($atts)
             }
         }
 
-        if (!empty($person_identifiers)) {
-            $persons = process_persons_by_identifiers($person_identifiers);
+        return process_persons_by_identifiers($person_identifiers);
+    };
+
+    // Closure to fetch persons by function and default organization
+    $fetch_persons_by_function = function($function) {
+        $options = get_option('rrze_faudir_options', []);
+        $default_org = $options['default_organization'] ?? null;
+        $defaultOrgIdentifier = $default_org ? $default_org['id'] : '';
+
+        if (!empty($defaultOrgIdentifier)) {
+            $lq_en = 'contacts.functionLabel.en[eq]=' . urlencode($function) . 
+                    '&contacts.organization.identifier[eq]=' . urlencode($defaultOrgIdentifier);
+            $response = fetch_fau_persons(0, 0, ['lq' => $lq_en]);
+
+            if (empty($response['data'])) {
+                $lq_de = 'contacts.functionLabel.de[eq]=' . urlencode($function) . 
+                        '&contacts.organization.identifier[eq]=' . urlencode($defaultOrgIdentifier);
+                $response = fetch_fau_persons(0, 0, ['lq' => $lq_de]);
+            }
+
+            if (!empty($response['data'])) {
+                $person_identifiers = array_map(function($person) {
+                    return $person['identifier'];
+                }, $response['data']);
+                return process_persons_by_identifiers($person_identifiers);
+            }
         }
-    }
-    // Check for category in CPT first
-    elseif (!empty($category)) {
-        // Get persons from CPT with specified category
-        $args = array(
+        return [];
+    };
+
+    // Closure to filter persons by organization and group ID
+    $filter_persons = function($persons, $orgnr, $groupid) {
+        if (!empty($orgnr)) {
+            $orgData = fetch_fau_organizations(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
+            if (!empty($orgData['data'])) {
+                $orgIdentifier = $orgData['data'][0]['identifier'];
+                $persons = array_filter($persons, function($person) use ($orgIdentifier) {
+                    foreach ($person['contacts'] as $contact) {
+                        if ($contact['organization']['identifier'] === $orgIdentifier) {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+            }
+        }
+
+        if (!empty($groupid)) {
+            $persons = array_filter($persons, function($person) use ($groupid) {
+                foreach ($person['contacts'] as $contact) {
+                    if ($contact['organization']['identifier'] === $groupid) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+        }
+
+        return $persons;
+    };
+
+    // Closure to filter persons by category
+    $filter_persons_by_category = function($persons, $category) {
+        if (empty($category)) {
+            return $persons;
+        }
+
+        $args = [
             'post_type' => 'custom_person',
-            'tax_query' => array(
-                array(
+            'tax_query' => [
+                [
                     'taxonomy' => 'custom_taxonomy',
                     'field'    => 'slug',
                     'terms'    => $category,
-                ),
-            ),
+                ],
+            ],
             'posts_per_page' => -1,
-        );
-
+        ];
+        
         $person_posts = get_posts($args);
-        $person_identifiers = array();
+        $category_person_ids = array();
 
         foreach ($person_posts as $person_post) {
             $person_id = get_post_meta($person_post->ID, 'person_id', true);
             if (!empty($person_id)) {
-                $person_identifiers[] = $person_id;
+                $category_person_ids[] = $person_id;
             }
         }
 
-        if (!empty($person_identifiers)) {
-            $persons = process_persons_by_identifiers($person_identifiers);
-        }
+        return array_filter($persons, function($person) use ($category_person_ids) {
+            return in_array($person['identifier'], $category_person_ids);
+        });
+    };
+
+    // Determine which logic to apply based on provided attributes
+    if (!empty($post_id) && empty($identifiers) && empty($category) && empty($groupid) && empty($function) && empty($orgnr)) {
+        $persons = $fetch_persons_by_post_id($post_id);
+    } elseif (!empty($function) && empty($identifiers) && empty($category) && empty($groupid) && empty($post_id) && empty($orgnr)) {
+        $persons = $fetch_persons_by_function($function);
     } elseif (!empty($identifiers)) {
         $persons = process_persons_by_identifiers($identifiers);
-    } elseif (!empty($groupid)) {
-        $lq = 'contacts.organization.identifier[eq]=' . urlencode($groupid);
-        $persons = fetch_and_process_persons($lq);
-    } elseif (!empty($function)) {
-        // Check English first
-        $lq_en = 'contacts.functionLabel.en[eq]=' . urlencode($function);
-        $persons = fetch_and_process_persons($lq_en);
-    
-        // If no persons found, fallback to German
-        if (empty($persons)) {
-            $lq_de = 'contacts.functionLabel.de[eq]=' . urlencode($function);
-            $persons = fetch_and_process_persons($lq_de);
+        // Apply category filter if category is set
+        if (!empty($category)) {
+            $persons = $filter_persons_by_category($persons, $category);
         }
-    } elseif (!empty($orgnr)) {
-        $orgData = fetch_fau_organizations(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
-        if (!empty($orgData['data'])) {
-            $orgname = $orgData['data'][0]['name'];
-            $lq = 'contacts.organization.name[eq]=' . urlencode($orgname);
-            $persons = fetch_and_process_persons($lq);
-        }
+        // Apply organization and group filters if set
+        $persons = $filter_persons($persons, $orgnr, $groupid);
     } else {
-        error_log('You should set the identifier,group id, organization id or category.');
+        error_log('Invalid combination of attributes.');
         return;
     }
 
@@ -209,66 +263,64 @@ function fetch_and_render_fau_data($atts)
                     return $a_title_pos - $b_title_pos;
                 }
                 return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');
-    
-                case 'function_head':
-                    // Sort by 'head' in functionLabel
-                    $a_is_head = false;
-                    $b_is_head = false;
-        
-                    foreach ($a['contacts'] as $contact) {
-                        if (isset($contact['function']) && $contact['function'] ==='leader') {
-                            $a_is_professor = true;
-                            break;
-                            }
-                        }
-        
-                    foreach ($b['contacts'] as $contact) {
-                        if (isset($contact['function']) && $contact['function'] ==='professor') {
-                            $b_is_professor = true;
-                            break;
-                        }
+
+            case 'function_head':
+                // Sort by 'head' in functionLabel
+                $a_is_head = false;
+                $b_is_head = false;
+
+                foreach ($a['contacts'] as $contact) {
+                    if (isset($contact['function']) && $contact['function'] === 'leader') {
+                        $a_is_professor = true;
+                        break;
                     }
-        
-                    return $a_is_head === $b_is_head ? collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '') : ($a_is_head ? -1 : 1);
-        
-                case 'function_proffesor':
-                    // Sort by 'professor' in functionLabel
-                    $a_is_professor = false;
-                    $b_is_professor = false;
-        
-                    foreach ($a['contacts'] as $contact) {
-                        if (isset($contact['function']) && $contact['function'] ==='professor') {
-                            $a_is_professor = true;
-                            break;
-                            }
-                        }
-                    
-        
-                    foreach ($b['contacts'] as $contact) {
-                        if (isset($contact['function']) && $contact['function'] ==='professor') {
-                                $b_is_professor = true;
-                                break;
-                            }
-                        }
-        
-                    return $a_is_professor === $b_is_professor ? collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '') : ($a_is_professor ? -1 : 1);
-        
-                    case 'identifier_order':
-                        if (!empty($identifiers)) {
-                            $a_index = array_search($a['identifier'] ?? '', $identifiers);
-                            $b_index = array_search($b['identifier'] ?? '', $identifiers);
-                            if ($a_index === false) $a_index = PHP_INT_MAX; 
-                            if ($b_index === false) $b_index = PHP_INT_MAX;
-                    
-                            return $a_index - $b_index; 
-                        }
-                        return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');
-                    
+                }
+
+                foreach ($b['contacts'] as $contact) {
+                    if (isset($contact['function']) && $contact['function'] === 'professor') {
+                        $b_is_professor = true;
+                        break;
+                    }
+                }
+
+                return $a_is_head === $b_is_head ? collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '') : ($a_is_head ? -1 : 1);
+
+            case 'function_proffesor':
+                // Sort by 'professor' in functionLabel
+                $a_is_professor = false;
+                $b_is_professor = false;
+
+                foreach ($a['contacts'] as $contact) {
+                    if (isset($contact['function']) && $contact['function'] === 'professor') {
+                        $a_is_professor = true;
+                        break;
+                    }
+                }
+
+                foreach ($b['contacts'] as $contact) {
+                    if (isset($contact['function']) && $contact['function'] === 'professor') {
+                        $b_is_professor = true;
+                        break;
+                    }
+                }
+
+                return $a_is_professor === $b_is_professor ? collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '') : ($a_is_professor ? -1 : 1);
+
+            case 'identifier_order':
+                if (!empty($identifiers)) {
+                    $a_index = array_search($a['identifier'] ?? '', $identifiers);
+                    $b_index = array_search($b['identifier'] ?? '', $identifiers);
+                    if ($a_index === false) $a_index = PHP_INT_MAX;
+                    if ($b_index === false) $b_index = PHP_INT_MAX;
+
+                    return $a_index - $b_index;
+                }
+                return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');
+
             default:
                 return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');
         }
     });
-    
 
     // Load the template and pass the sorted data
     $template_dir = plugin_dir_path(__FILE__) . '../../templates/';
@@ -369,7 +421,6 @@ function enrich_person_with_contacts($person)
     $person['contacts'] = $personContacts;
     return $person;
 }
-
 
 
 add_shortcode('faudir', 'fetch_fau_data');
