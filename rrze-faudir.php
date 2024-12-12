@@ -30,6 +30,14 @@ if (! function_exists('is_plugin_active')) {
 const RRZE_PHP_VERSION = '8.2';
 const RRZE_WP_VERSION = '6.5';
 
+// Register FAUdir Block
+function register_faudir_block() {
+    register_block_type(
+        plugin_dir_path(__FILE__) . 'faudir-block/build'
+    );
+}
+add_action('init', 'register_faudir_block');
+
 // System requirements check
 function rrze_faudir_system_requirements()
 {

@@ -1,0 +1,81 @@
+{
+	"apiVersion": 2,
+	"name": "rrze-faudir/faudir-block",
+	"title": "FAU Directory Block",
+	"category": "widgets",
+	"icon": "businessperson",
+	"description": "Display FAU directory information",
+	"attributes": {
+		"selectedCategory": {
+            "type": "string",
+            "default": ""
+        },
+		"selectedPosts": {
+			"type": "array",
+			"default": []
+		  },
+		  "selectedFields": {
+			"type": "array",
+			"default": []
+		  },
+	  "category": {
+		"type": "string",
+		"default": ""
+	  },
+	  "identifier": {
+		"type": "string",
+		"default": ""
+	  },
+	  "id": {
+		"type": "string",
+		"default": ""
+	  },
+	  "format": {
+		"type": "string",
+		"default": "kompakt"
+	  },
+	  "url": {
+		"type": "string",
+		"default": ""
+	  },
+	  "show": {
+		"type": "string",
+		"default": ""
+	  },
+	  "hide": {
+		"type": "string",
+		"default": ""
+	  },
+	  "imageUrl": {
+		"type": "string",
+		"default": ""
+	  },
+	  "groupid": {
+		"type": "string",
+		"default": ""
+	  },
+	  "function": {
+		"type": "string",
+		"default": ""
+	  },
+	  "orgnr": {
+		"type": "string",
+		"default": ""
+	  },
+	  "sort": {
+		"type": "string",
+		"default": "last_name"
+	  },
+	  "buttonText": {
+		"type": "string",
+		"default": ""
+	  }
+	},
+	"supports": {
+	  "html": false
+	},
+	"textdomain": "faudir-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css"
+  }
