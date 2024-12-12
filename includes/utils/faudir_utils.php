@@ -122,13 +122,13 @@ class FaudirUtils
         return $weekdayMap[$weekday] ?? __('Unknown','rrze-faudir');
     }
 
-    public static function filterContactsByCriteria($contacts, $includeDefaultOrg, $defaultOrgIdentifier, $email)
+    public static function filterContactsByCriteria($contacts, $includeDefaultOrg, $defaultOrgIds, $email)
     {
         foreach ($contacts as $contactKey => $contact) {
             $shouldRemove = false;
 
             // Check organization if includeDefaultOrg is true
-            if ($includeDefaultOrg && $contact['organization']['identifier'] !== $defaultOrgIdentifier) {
+            if ($includeDefaultOrg && !in_array($contact['organization']['identifier'], $defaultOrgIds)) {
                 $shouldRemove = true;
             }
 
