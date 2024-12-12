@@ -454,6 +454,15 @@ function rrze_faudir_search_org_callback()
                 $identifier = esc_html($org['identifier']);
                 $disambiguatingDescription = esc_html($org['disambiguatingDescription']);
 
+                $subOrganizations = $org['subOrganization'] ?? [];
+                // extract the identifier from the subOrganizations
+                $identifiers = array_map(function ($subOrg) {
+                    return $subOrg['identifier'];
+                }, $subOrganizations);
+
+                // add the identifier of the parent organization to the subOrganizationIdentifiers
+                $identifiers[] = $org['identifier'];
+
                 $output .= '<div class="organization-card">';
                 $output .= "<h2 class='organization-name'>{$name}</h2>";
                 $output .= "<div class='organization-details'>";
@@ -499,11 +508,11 @@ function rrze_faudir_search_org_callback()
                 $output .= '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" style="display: inline;">';
                 $output .= wp_nonce_field('save_default_organization', '_wpnonce', true, false);
                 $output .= '<input type="hidden" name="action" value="save_default_organization">';
-                $output .= '<input type="hidden" name="org_id" value="' . esc_attr($identifier) . '">';
+                $output .= '<input type="hidden" name="org_ids" value="' . esc_attr(json_encode($identifiers)) . '">';
                 $output .= '<input type="hidden" name="org_name" value="' . esc_attr($name) . '">';
                 $output .= '<input type="hidden" name="org_nr" value="' . esc_attr($disambiguatingDescription) . '">';
-                $output .= '<button type="submit" class="button button-primary">' . 
-                    esc_html__('Save as Default Organization', 'rrze-faudir') . 
+                $output .= '<button type="submit" class="button button-primary">' .
+                    esc_html__('Save as Default Organization', 'rrze-faudir') .
                     '</button>';
                 $output .= '</form>';
                 $output .= '</div>'; // Close organization-card
@@ -520,32 +529,52 @@ add_action('wp_ajax_rrze_faudir_search_org', 'rrze_faudir_search_org_callback');
 /**
  * Handle saving the default organization
  */
-function rrze_faudir_save_default_organization() {
+function rrze_faudir_save_default_organization()
+{
     if (!current_user_can('manage_options')) {
         wp_die(__('You do not have sufficient permissions to access this page.', 'rrze-faudir'));
     }
 
     check_admin_referer('save_default_organization');
 
-    $org_id = isset($_POST['org_id']) ? sanitize_text_field($_POST['org_id']) : '';
+    // Debug the raw POST data
+    error_log('Raw POST org_ids: ' . print_r($_POST['org_ids'], true));
+
+    $org_ids = [];
+    if (isset($_POST['org_ids'])) {
+        $decoded = json_decode(stripslashes($_POST['org_ids']), true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            $org_ids = $decoded;
+        } else {
+            error_log('JSON decode error: ' . json_last_error_msg());
+        }
+    }
+
     $org_name = isset($_POST['org_name']) ? sanitize_text_field($_POST['org_name']) : '';
     $org_nr = isset($_POST['org_nr']) ? sanitize_text_field($_POST['org_nr']) : '';
 
-    if (!empty($org_id) && !empty($org_name)) {
+    error_log('Processed Org IDs: ' . print_r($org_ids, true));
+    error_log('Org Name: ' . $org_name);
+    error_log('Org NR: ' . $org_nr);
+
+    if (!empty($org_ids) && !empty($org_name)) {
         $options = get_option('rrze_faudir_options', array());
         $options['default_organization'] = array(
-            'id' => $org_id,
+            'ids' => $org_ids,
             'name' => $org_name,
             'orgnr' => $org_nr
         );
+        error_log('Saving Default Organization: ' . print_r($options['default_organization'], true));
         update_option('rrze_faudir_options', $options);
-        
+
         add_settings_error(
             'rrze_faudir_messages',
             'default_org_saved',
             __('Default organization has been saved.', 'rrze-faudir'),
             'updated'
         );
+    } else {
+        error_log('Missing required data - org_ids or org_name is empty');
     }
 
     // Redirect back to the settings page

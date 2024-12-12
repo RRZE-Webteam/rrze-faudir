@@ -680,7 +680,7 @@ function rrze_faudir_search_person_ajax()
     // get default organization
     $defaultOrg = get_option('rrze_faudir_options', array())['default_organization'] ?? null;
     // get identifier of default organization
-    $defaultOrgIdentifier = $defaultOrg ? $defaultOrg['id'] : '';
+    $defaultOrgIds = $defaultOrg ? $defaultOrg['ids'] : [];
 
     $queryParts = [];
 
@@ -706,8 +706,8 @@ function rrze_faudir_search_person_ajax()
             $queryParts[] = 'identifier=' . $personId;
         }
     }
-    if ($includeDefaultOrg && !empty($defaultOrgIdentifier)) {
-        $queryParts[] = 'contacts.organization.identifier=' . $defaultOrgIdentifier;
+    if ($includeDefaultOrg && !empty($defaultOrgIds)) {
+        $queryParts[] = 'contacts.organization.identifier[reg]=^(' . implode('|', $defaultOrgIds) . ')$';
     }
 
     $params = [
@@ -720,7 +720,7 @@ function rrze_faudir_search_person_ajax()
         $response['data'][$key]['contacts'] = FaudirUtils::filterContactsByCriteria(
             $person['contacts'],
             $includeDefaultOrg,
-            $defaultOrgIdentifier,
+            $defaultOrgIds,
             $email
         );
     }
