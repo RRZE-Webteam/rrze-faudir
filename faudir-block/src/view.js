@@ -21,5 +21,5 @@
  */
 
 /* eslint-disable no-console */
-console.log( 'Hello World! (from create-block-faudir-block block)' );
+console.log( 'Hello World! (from create-block-block-faudir block)' );
 /* eslint-enable no-console */

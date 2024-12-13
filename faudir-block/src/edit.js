@@ -2,6 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { PanelBody, CheckboxControl, ToggleControl, SelectControl, TextControl } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
+import ServerSideRender from '@wordpress/server-side-render';
 import apiFetch from '@wordpress/api-fetch';
 import './editor.scss';
 
@@ -13,16 +14,16 @@ export default function Edit({ attributes, setAttributes }) {
     const [buttonText, setButtonText] = useState(''); // Add state for button text
 
     const {
-        selectedCategory,
-        selectedPosts,
-        showCategory,
-        showPosts,
-        selectedFormat,
+        selectedCategory='',
+        selectedPosts= [],
+        showCategory='',
+        showPosts='',
+        selectedFormat='',
         selectedFields = [], // Default to an empty array
-        groupId, // New attribute
-        functionField, // New attribute for function
-        organizationNr, 
-        url,// New attribute for the image URL
+        groupId='', // New attribute
+        functionField='', // New attribute for function
+        organizationNr='', 
+        url='',// New attribute for the image URL
     } = attributes;
 
     const availableFields = {
@@ -49,8 +50,6 @@ export default function Edit({ attributes, setAttributes }) {
         faumap: __('Fau Map', 'rrze-faudir'),
         officehours: __('Office Hours', 'rrze-faudir'),
         consultationhours: __('Consultation Hours', 'rrze-faudir'),
-        group_id: __('Group Id', 'rrze-faudir'), // New field
-        organization_nr: __('Organization Nr', 'rrze-faudir'), // New field
     };
 
     const formatFields = {
@@ -64,8 +63,6 @@ export default function Edit({ attributes, setAttributes }) {
             'phone',
             'function',
             'socialmedia',
-            'group_id', // New field
-            'organization_nr', // New field
         ],
         table: [
             'display_name',
@@ -77,8 +74,6 @@ export default function Edit({ attributes, setAttributes }) {
             'phone',
             'url',
             'socialmedia',
-            'group_id', // New field
-            'organization_nr', // New field
         ],
         list: [
             'display_name',
@@ -90,8 +85,6 @@ export default function Edit({ attributes, setAttributes }) {
             'phone',
             'url',
             'teasertext',
-            'group_id', // New field
-            'organization_nr', // New field
         ],
         kompakt: Object.keys(availableFields),
         page: Object.keys(availableFields),
@@ -322,6 +315,10 @@ export default function Edit({ attributes, setAttributes }) {
                         <strong>{__('Organization Nr:', 'faudir-block')}</strong> {organizationNr}
                     </p>
                 )}
+                <ServerSideRender
+                    block="rrze-faudir/faudir-block"
+                    attributes={attributes}
+                />
             </div>
         </>
     );
