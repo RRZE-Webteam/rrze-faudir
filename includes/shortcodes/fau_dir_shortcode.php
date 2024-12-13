@@ -235,7 +235,14 @@ function fetch_and_render_fau_data($atts)
         }
         // Apply organization and group filters if set
         $persons = $filter_persons($persons, $orgnr, $groupid);
-    } else {
+    } elseif (!empty($orgnr) && empty($post_id) && empty($identifiers) && empty($category) && empty($groupid) && empty($function)) {
+        $orgData = fetch_fau_organizations(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
+        if (!empty($orgData['data'])) {
+            $orgname = $orgData['data'][0]['name'];
+            $lq = 'contacts.organization.name[eq]=' . urlencode($orgname);
+            $persons = fetch_and_process_persons($lq);
+        }
+    }else {
         error_log('Invalid combination of attributes.');
         return;
     }
