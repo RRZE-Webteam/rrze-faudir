@@ -686,3 +686,4 @@ function custom_cpt_404_message()
     }
 }
 add_action('template_redirect', 'custom_cpt_404_message');
+

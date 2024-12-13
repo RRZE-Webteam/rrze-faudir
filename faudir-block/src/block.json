@@ -15,55 +15,35 @@
 			"type": "array",
 			"default": []
 		  },
+		  "selectedPersonIds": {
+			"type": "array",
+			"default": []
+		  },
 		  "selectedFields": {
 			"type": "array",
 			"default": []
 		  },
 		  "selectedFormat": {
-			"type": "array",
-			"default": []
+			"type": "string",
+			"default": ""
 		  },
-	  "category": {
-		"type": "string",
-		"default": ""
-	  },
-	  "identifier": {
-		"type": "string",
-		"default": ""
-	  },
 	  "id": {
 		"type": "string",
 		"default": ""
-	  },
-	  "format": {
-		"type": "string",
-		"default": "kompakt"
 	  },
 	  "url": {
 		"type": "string",
 		"default": ""
 	  },
-	  "show": {
+	  "groupId": {
 		"type": "string",
 		"default": ""
 	  },
-	  "hide": {
+	  "functionField": {
 		"type": "string",
 		"default": ""
 	  },
-	  "imageUrl": {
-		"type": "string",
-		"default": ""
-	  },
-	  "groupid": {
-		"type": "string",
-		"default": ""
-	  },
-	  "function": {
-		"type": "string",
-		"default": ""
-	  },
-	  "orgnr": {
+	  "organizationNr": {
 		"type": "string",
 		"default": ""
 	  },
@@ -79,7 +59,11 @@
 	"supports": {
 	  "html": false
 	},
-	"example": {},
+	"example": {
+		"attributes": {
+            "message": "This is a notice!"
+        }
+	},
 	"textdomain": "block-faudir",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",

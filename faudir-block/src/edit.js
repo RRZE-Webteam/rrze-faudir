@@ -18,7 +18,8 @@ export default function Edit({ attributes, setAttributes }) {
         selectedPosts= [],
         showCategory='',
         showPosts='',
-        selectedFormat='',
+        selectedPersonIds='',
+        selectedFormat='kompakt',
         selectedFields = [], // Default to an empty array
         groupId='', // New attribute
         functionField='', // New attribute for function
@@ -126,21 +127,22 @@ export default function Edit({ attributes, setAttributes }) {
             });
     }, []);
 
-    // Update the togglePostSelection function
     const togglePostSelection = (postId, personId) => {
         const updatedSelectedPosts = selectedPosts.includes(postId)
             ? selectedPosts.filter((id) => id !== postId) // Deselect post
             : [...selectedPosts, postId]; // Select post
-
-        // Store both post ID and person ID
-        setAttributes({ 
-            selectedPosts: updatedSelectedPosts,
-            selectedPersonIds: updatedSelectedPosts.map(id => {
+            const updatedPersonIds = updatedSelectedPosts.map(id => {
                 const post = posts.find(p => p.id === id);
-                return post?.meta?.person_id || null;
-            }).filter(Boolean)
+                // Ensure the person_id is extracted and filtered properly
+                return post?.meta?.person_id || null;}).filter(Boolean)
+    
+        // Store both post ID and person ID
+        setAttributes({
+            selectedPosts: updatedSelectedPosts,
+            selectedPersonIds: updatedPersonIds,// Remove any null values from the person IDs array
         });
     };
+    
 
     const toggleFieldSelection = (field) => {
         const updatedSelectedFields = selectedFields.includes(field)
@@ -169,8 +171,8 @@ export default function Edit({ attributes, setAttributes }) {
                                 <CheckboxControl
                                     key={category.id}
                                     label={category.name}
-                                    checked={selectedCategory === category.id}
-                                    onChange={() => setAttributes({ selectedCategory: category.id })}
+                                    checked={selectedCategory === category.name}
+                                    onChange={() => setAttributes({ selectedCategory: category.name })}
                                 />
                             ))}
                         </>
@@ -178,7 +180,7 @@ export default function Edit({ attributes, setAttributes }) {
 
                     {/* Toggle for Posts */}
                     <ToggleControl
-                        label={__('Show Posts', 'faudir-block')}
+                        label={__('Show Persons', 'faudir-block')}
                         checked={showPosts}
                         onChange={() => setAttributes({ showPosts: !showPosts })}
                     />
@@ -186,7 +188,7 @@ export default function Edit({ attributes, setAttributes }) {
                     {/* Posts Selection */}
                     {showPosts && (
                         <>
-                            <h4>{__('Select Posts', 'faudir-block')}</h4>
+                            <h4>{__('Select Persons', 'faudir-block')}</h4>
                             {isLoadingPosts ? (
                                 <p>{__('Loading posts...', 'faudir-block')}</p>
                             ) : posts.length > 0 ? (
@@ -207,7 +209,7 @@ export default function Edit({ attributes, setAttributes }) {
                     {/* Format Selection */}
                     <SelectControl
                         label={__('Select Format', 'faudir-block')}
-                        value={selectedFormat}
+                        value={selectedFormat || 'list'}
                         options={[
                             { value: 'list', label: __('List', 'faudir-block') },
                             { value: 'table', label: __('Table', 'faudir-block') },
@@ -215,7 +217,12 @@ export default function Edit({ attributes, setAttributes }) {
                             { value: 'kompakt', label: __('Kompakt', 'faudir-block') },
                             { value: 'page', label: __('Page', 'faudir-block') },
                         ]}
-                        onChange={(value) => setAttributes({ selectedFormat: value })}
+                        onChange={(value) => {
+                            setAttributes({ selectedFormat: value });
+                            setAttributes({ 
+                                selectedFields: formatFields[value] || []
+                            });
+                        }}
                     />
 
                     {/* Fields Selection */}
@@ -287,6 +294,7 @@ export default function Edit({ attributes, setAttributes }) {
                     <div className="faudir-block-preview">
                         <h4>{__('Selected Posts:', 'faudir-block')}</h4>
                         <ul>
+                            {selectedPersonIds}
                             {posts
                                 .filter((post) => selectedPosts.includes(post.id))
                                 .map((post) => (
