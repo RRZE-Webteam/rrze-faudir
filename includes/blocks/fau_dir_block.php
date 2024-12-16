@@ -14,7 +14,7 @@ class FaudirBlock
 
     public static function render($attributes)
     {
-        error_log('[RRZE-FAUDIR] Rendering block');
+        // error_log('[RRZE-FAUDIR] Rendering block');
 
         // Fetch and render data for the block
         $output = fetch_fau_data_for_block($attributes);

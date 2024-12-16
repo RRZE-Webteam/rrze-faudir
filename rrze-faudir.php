@@ -116,7 +116,7 @@ if (rrze_faudir_system_requirements()) {
     {
         // Check if the job is already running
         if (get_transient('check_person_availability_running')) {
-            error_log('Cron job is already running.');
+            // error_log('Cron job is already running.');
             return;
         }
 
@@ -124,7 +124,7 @@ if (rrze_faudir_system_requirements()) {
         set_transient('check_person_availability_running', true, 60); // 60 seconds
 
         // Log the start of the cron job
-        error_log('Cron job check_person_availability started.');
+        // error_log('Cron job check_person_availability started.');
 
         // Your existing code to check person availability
         $args = array(
@@ -162,7 +162,7 @@ if (rrze_faudir_system_requirements()) {
         delete_transient('check_person_availability_running');
 
         // Log the completion of the cron job
-        error_log('Cron job check_person_availability completed.');
+        // error_log('Cron job check_person_availability completed.');
     }
 
     // AJAX search function
@@ -261,10 +261,10 @@ function load_custom_person_template($template)
     if (get_query_var('custom_person') || is_singular('custom_person')) {
         $plugin_template = plugin_dir_path(__FILE__) . 'templates/single-custom_person.php';
         if (file_exists($plugin_template)) {
-            //error_log('Loading custom person template: ' . $plugin_template);
+            // error_log('Loading custom person template: ' . $plugin_template);
             return $plugin_template;
         } else {
-            //error_log('Custom person template not found at: ' . $plugin_template);
+            // error_log('Custom person template not found at: ' . $plugin_template);
         }
     }
     return $template;
@@ -333,7 +333,7 @@ function migrate_person_data_on_activation()
                 } else if (!empty($email)) {
                     // search for contacts with the email
                     $response = fetch_fau_contacts(1, 0, ['lq' => 'workplaces.mails=' . $email]);
-                    error_log('Response: ' . print_r($response, true));
+                    // error_log('Response: ' . print_r($response, true));
                     // if no contact is found, search the persons
                     if (empty($response['data'])) {
                         $queryParts[] = 'email=' . $email;
@@ -352,7 +352,7 @@ function migrate_person_data_on_activation()
                 ];
                 $response = fetch_fau_persons(1, 0, $params);
 
-                error_log('Response: ' . print_r($response, true));
+                // error_log('Response: ' . print_r($response, true));
 
                 if (is_array($response) && isset($response['data'])) {
                     $person = $response['data'][0] ?? null; // there should only be one match
@@ -418,7 +418,7 @@ function migrate_person_data_on_activation()
                                 $existing_term = term_exists($old_category->name, 'custom_taxonomy');
 
                                 // log the existing term, which can be null, the term id, an array or 0                                
-                                error_log('[RRZE-FAUDIR] Existing term: ' . print_r($existing_term, true));
+                                // error_log('[RRZE-FAUDIR] Existing term: ' . print_r($existing_term, true));
                                 if (!$existing_term) {
                                     // Create new term in custom_taxonomy
                                     $new_term = wp_insert_term(

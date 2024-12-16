@@ -450,7 +450,7 @@ add_action('wp_ajax_fetch_person_attributes', 'fetch_person_attributes');
 // Add this function at the end of the file
 function rrze_faudir_create_custom_person()
 {
-    error_log('rrze_faudir_create_custom_person called');
+    // error_log('rrze_faudir_create_custom_person called');
     check_ajax_referer('rrze_faudir_api_nonce', 'security');
 
     $person_name = isset($_POST['person_name']) ? sanitize_text_field($_POST['person_name']) : '';

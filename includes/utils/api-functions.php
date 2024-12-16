@@ -44,7 +44,7 @@ function fetch_fau_persons($limit = 60, $offset = 0, $params = [])
         $url .= '&q=' . urlencode('^' . $params['email']);
     }
 
-    error_log('Fetching persons with URL: ' . $url);
+    // error_log('Fetching persons with URL: ' . $url);
     $response = wp_remote_get($url, array(
         'headers' => array(
             'accept' => 'application/json',
@@ -140,7 +140,7 @@ function fetch_fau_contacts($limit = 20, $offset = 0, $params = [])
         $url .= '&q=' . urlencode('^' . $params['email']);
     }
 
-    error_log('Fetching contacts with URL: ' . $url);
+    // error_log('Fetching contacts with URL: ' . $url);
     $response = wp_remote_get($url, array(
         'headers' => array(
             'accept' => 'application/json',
@@ -270,7 +270,7 @@ function fetch_and_format_workplaces($contactIdentifier)
     // error_log('Contact data response: ' . print_r($contactData, true));
 
     if (empty($contactData['data'])) {
-        error_log('No contact data found for identifier: ' . $contactIdentifier);
+        // error_log('No contact data found for identifier: ' . $contactIdentifier);
         return __('No workplaces available', 'rrze-faudir');
     }
 
@@ -278,7 +278,7 @@ function fetch_and_format_workplaces($contactIdentifier)
     $workplaces = $detailedContact['workplaces'] ?? [];
 
     if (empty($workplaces)) {
-        //error_log('No workplaces found in contact data');
+        // error_log('No workplaces found in contact data');
         return __('No workplaces available', 'rrze-faudir');
     }
 
@@ -338,14 +338,14 @@ function fetch_and_format_workplaces($contactIdentifier)
 
 function fetch_and_format_address($contactIdentifier)
 {
-    //error_log('Fetching address for contact identifier: ' . $contactIdentifier);
+    // error_log('Fetching address for contact identifier: ' . $contactIdentifier);
 
     // Fetch contact data
     $contactData = fetch_fau_organizations(1, 0, ['identifier' => $contactIdentifier]);
     // error_log('Contact data response: ' . print_r($contactData, true));
 
     if (empty($contactData['data'])) {
-        error_log('No contact data found for identifier: ' . $contactIdentifier);
+        // error_log('No contact data found for identifier: ' . $contactIdentifier);
         return __('No address available', 'rrze-faudir');
     }
 
@@ -353,7 +353,7 @@ function fetch_and_format_address($contactIdentifier)
     $address = $detailedContact['address'] ?? [];
 
     if (empty($address)) {
-        error_log('No address found in contact data');
+        // error_log('No address found in contact data');
         return __('No address available', 'rrze-faudir');
     }
 
@@ -394,7 +394,7 @@ function fetch_and_format_socials($contactIdentifier)
     // error_log('Contact data response: ' . print_r($contactData, true));
 
     if (empty($contactData['data'])) {
-        error_log('No contact data found for identifier: ' . $contactIdentifier);
+        // error_log('No contact data found for identifier: ' . $contactIdentifier);
         return __('No social media available', 'rrze-faudir');
     }
 
@@ -538,7 +538,7 @@ function rrze_faudir_save_default_organization()
     check_admin_referer('save_default_organization');
 
     // Debug the raw POST data
-    error_log('Raw POST org_ids: ' . print_r($_POST['org_ids'], true));
+    // error_log('Raw POST org_ids: ' . print_r($_POST['org_ids'], true));
 
     $org_ids = [];
     if (isset($_POST['org_ids'])) {
@@ -546,16 +546,16 @@ function rrze_faudir_save_default_organization()
         if (json_last_error() === JSON_ERROR_NONE) {
             $org_ids = $decoded;
         } else {
-            error_log('JSON decode error: ' . json_last_error_msg());
+            // error_log('JSON decode error: ' . json_last_error_msg());
         }
     }
 
     $org_name = isset($_POST['org_name']) ? sanitize_text_field($_POST['org_name']) : '';
     $org_nr = isset($_POST['org_nr']) ? sanitize_text_field($_POST['org_nr']) : '';
 
-    error_log('Processed Org IDs: ' . print_r($org_ids, true));
-    error_log('Org Name: ' . $org_name);
-    error_log('Org NR: ' . $org_nr);
+    // error_log('Processed Org IDs: ' . print_r($org_ids, true));
+    // error_log('Org Name: ' . $org_name);
+    // error_log('Org NR: ' . $org_nr);
 
     if (!empty($org_ids) && !empty($org_name)) {
         $options = get_option('rrze_faudir_options', array());
@@ -564,7 +564,7 @@ function rrze_faudir_save_default_organization()
             'name' => $org_name,
             'orgnr' => $org_nr
         );
-        error_log('Saving Default Organization: ' . print_r($options['default_organization'], true));
+        // error_log('Saving Default Organization: ' . print_r($options['default_organization'], true));
         update_option('rrze_faudir_options', $options);
 
         add_settings_error(
@@ -574,7 +574,7 @@ function rrze_faudir_save_default_organization()
             'updated'
         );
     } else {
-        error_log('Missing required data - org_ids or org_name is empty');
+        // error_log('Missing required data - org_ids or org_name is empty');
     }
 
     // Redirect back to the settings page

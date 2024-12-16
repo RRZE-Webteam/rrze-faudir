@@ -676,7 +676,7 @@ function rrze_faudir_search_person_ajax()
     $familyName = isset($_POST['family_name']) ? sanitize_text_field($_POST['family_name']) : '';
     $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
     $includeDefaultOrg = isset($_POST['include_default_org']) && $_POST['include_default_org'] === '1';
-    error_log('$includeDefaultOrg: ' . $includeDefaultOrg);
+    // error_log('$includeDefaultOrg: ' . $includeDefaultOrg);
 
     // get default organization
     $defaultOrg = get_option('rrze_faudir_options', array())['default_organization'] ?? null;
@@ -697,7 +697,7 @@ function rrze_faudir_search_person_ajax()
     if (!empty($email)) {
         // search for contacts with the email
         $response = fetch_fau_contacts(1, 0, ['lq' => 'workplaces.mails[ireg]=' . $email]);
-        error_log('Response: ' . print_r($response, true));
+        // error_log('Response: ' . print_r($response, true));
         // if no contact is found, search the persons
         if (empty($response['data'])) {
             $queryParts[] = 'email[ireg]=' . $email;
