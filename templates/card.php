@@ -156,7 +156,9 @@ if (!empty($persons)) : ?>
                             <?php
                             $displayedFunctions = []; // Track displayed functions to avoid duplicates
                             
-                            $displayed_contacts = get_post_meta($post->ID, 'displayed_contacts', true) ?: []; // Retrieve displayed contact indexes
+                            // Get the post ID from the earlier contact posts query
+                            $post_id = !empty($contact_posts) ? $contact_posts[0]->ID : 0;
+                            $displayed_contacts = get_post_meta($post_id, 'displayed_contacts', true) ?: [];
                             ?>
 
                             <?php foreach ($person['contacts'] as $index => $contact)  : ?>
