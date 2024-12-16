@@ -150,7 +150,7 @@ function render_person_additional_fields($post)
         'person_family_name',
         'person_title',
         'person_suffix',
-        'person_nobility_name',
+        'person_nobility_title',
     ];
 
     $fields = [
@@ -165,7 +165,7 @@ function render_person_additional_fields($post)
         'person_family_name' => __('Family Name', 'rrze-faudir'),
         'person_title' => __('Title', 'rrze-faudir'),
         'person_suffix' => __('Suffix', 'rrze-faudir'),
-        'person_nobility_name' => __('Nobility Name', 'rrze-faudir'),
+        'person_nobility_title' => __('Nobility Title', 'rrze-faudir'),
     ];
 
     // Render regular fields
@@ -347,7 +347,7 @@ function save_person_additional_fields($post_id)
         'person_family_name',
         'person_title',
         'person_suffix',
-        'person_nobility_name',
+        'person_nobility_title',
     ];
 
     // Save each field
@@ -491,6 +491,8 @@ function rrze_faudir_create_custom_person()
             update_post_meta($post_id, 'person_given_name', sanitize_text_field($person['givenName'] ?? ''));
             update_post_meta($post_id, 'person_family_name', sanitize_text_field($person['familyName'] ?? ''));
             update_post_meta($post_id, 'person_title', sanitize_text_field($person['personalTitle'] ?? ''));
+            update_post_meta($post_id, 'person_suffix', sanitize_text_field($person['personalTitleSuffix'] ?? ''));
+            update_post_meta($post_id, 'person_nobility_title', sanitize_text_field($person['titleOfNobility'] ?? ''));
 
             // Process organizations and functions
             $contacts = array();

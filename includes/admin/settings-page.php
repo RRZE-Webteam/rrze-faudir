@@ -325,6 +325,7 @@ function rrze_faudir_default_output_fields_render()
         'display_name' => __('Display Name', 'rrze-faudir'),
         'academic_title' => __('Academic Title', 'rrze-faudir'),
         'first_name' => __('First Name', 'rrze-faudir'),
+        'nobility_title' => __('Nobility Title', 'rrze-faudir'),
         'last_name' => __('Last Name', 'rrze-faudir'),
         'academic_suffix' => __('Academic Suffix', 'rrze-faudir'),
         'email' => __('Email', 'rrze-faudir'),

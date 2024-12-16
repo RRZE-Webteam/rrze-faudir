@@ -398,7 +398,7 @@ function migrate_person_data_on_activation()
                                 'person_family_name' => sanitize_text_field($person['familyName'] ?? ''),
                                 'person_title' => sanitize_text_field($person['personalTitle'] ?? ''),
                                 'person_suffix' => sanitize_text_field($person['personalTitleSuffix'] ?? ''),
-                                'person_nobility_name' => sanitize_text_field($person['titleOfNobility'] ?? ''),
+                                'person_nobility_title' => sanitize_text_field($person['titleOfNobility'] ?? ''),
                                 'person_contacts' => $contacts,
                                 'fau_person_faudir_synced' => $univisid,
                                 'old_person_post_id' => $post->ID

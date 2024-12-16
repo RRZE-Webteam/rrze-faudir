@@ -40,6 +40,7 @@ class FaudirUtils
             'display_name' => 'displayName',
             'academic_title' => 'personalTitle',
             'first_name' => 'givenName',
+            'nobility_title' => 'titleOfNobility',
             'last_name' => 'familyName',
             'academic_suffix' => 'personalTitleSuffix',
             'organization' => 'organization',
