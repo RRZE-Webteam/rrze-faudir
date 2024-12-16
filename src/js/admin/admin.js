@@ -150,7 +150,7 @@ jQuery(document).ready(function ($) {
         var button = $(this); // Store reference to the button
         var personName = button.data('name');
         var personId = button.data('id');
-        var organizations = button.data('organizations') || [];
+        var includeDefaultOrg = button.data('include-default-org');
         var functions = button.data('functionLabel') || [];
 
         // Disable the button and show loading indicator
@@ -164,7 +164,7 @@ jQuery(document).ready(function ($) {
                 security: rrzeFaudirAjax.api_nonce,
                 person_name: personName,
                 person_id: personId,
-                organizations: organizations,
+                include_default_org: includeDefaultOrg,
                 functions: functions
             },
             success: function (response) {

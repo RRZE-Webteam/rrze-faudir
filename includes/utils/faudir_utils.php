@@ -108,6 +108,7 @@ class FaudirUtils
         $nameHtml .= '</span>';
         return $nameHtml;
     }
+
     public static function getWeekday($weekday)
     {
         $weekdayMap = [

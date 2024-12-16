@@ -294,6 +294,7 @@ function rrze_faudir_hard_sanitize_render()
     echo '<input type="checkbox" name="rrze_faudir_options[hard_sanitize]" value="1" ' . esc_attr($checked) . '>';
     echo '<p class="description">' . esc_html__('Hard Sanitize abbreviations.', 'rrze-faudir') . '</p>';
 }
+
 function rrze_faudir_person_slug_field()
 {
     $options = get_option('rrze_faudir_options'); // Get all plugin options
@@ -313,7 +314,6 @@ function rrze_faudir_person_slug_field()
     echo '<input type="text" id="rrze_faudir_person_slug" name="rrze_faudir_options[person_slug]" value="' . esc_attr($slug) . '" size="50">';
     echo '<p class="description">' . esc_html__('Enter the slug for the person post type.', 'rrze-faudir') . '</p>';
 }
-
 
 function rrze_faudir_default_output_fields_render()
 {
@@ -765,7 +765,7 @@ function rrze_faudir_search_person_ajax()
                     $output .= "<a href='" . esc_url($edit_link) . "' class='edit-person button'><span class='dashicons dashicons-edit'></span> " . esc_html__('Edit', 'rrze-faudir') . "</a>";
                 } else {
                     // Post doesn't exist, show add button
-                    $output .= "<button class='add-person button' data-name='" . esc_attr($name) . "' data-id='" . esc_attr($identifier) . "'><span class='dashicons dashicons-plus'></span> Add</button>";
+                    $output .= "<button class='add-person button' data-name='" . esc_attr($name) . "' data-id='" . esc_attr($identifier) . "' data-include-default-org='" . $includeDefaultOrg . "'><span class='dashicons dashicons-plus'></span> Add</button>";
                 }
                 $output .= '</div>';
             }

@@ -455,6 +455,7 @@ function rrze_faudir_create_custom_person()
 
     $person_name = isset($_POST['person_name']) ? sanitize_text_field($_POST['person_name']) : '';
     $person_id = isset($_POST['person_id']) ? sanitize_text_field($_POST['person_id']) : '';
+    $includeDefaultOrg = isset($_POST['include_default_org']) && $_POST['include_default_org'] === '1';
 
     if (empty($person_name) || empty($person_id)) {
         wp_send_json_error('Invalid person data');
@@ -497,13 +498,13 @@ function rrze_faudir_create_custom_person()
                 // Get default organization settings
                 $options = get_option('rrze_faudir_options', array());
                 $defaultOrg = $options['default_organization'] ?? null;
-                $defaultOrgIdentifier = $defaultOrg ? $defaultOrg['id'] : '';
+                $defaultOrgIds = $defaultOrg ? $defaultOrg['ids'] : [];
 
                 // Filter contacts based on default organization
                 $filteredContacts = FaudirUtils::filterContactsByCriteria(
                     $person['contacts'],
-                    true, // includeDefaultOrg
-                    $defaultOrgIdentifier,
+                    $includeDefaultOrg,
+                    $defaultOrgIds,
                     '' // email (empty since we're not filtering by email here)
                 );
 
