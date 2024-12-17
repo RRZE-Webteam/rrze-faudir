@@ -1,95 +1,46 @@
 <?php
 /**
- * @see https://github.com/WordPress/gutenberg/blob/trunk/docs/reference-guides/block-api/block-metadata.md#render
+ * Block Render File
+ *
+ * Renders the shortcode output and ensures it works in both the block editor and front end.
  */
-if(!empty($attributes['selectedCategory'])){
-    $category = $attributes['selectedCategory'];
-}
-if(!empty($attributes['selectedPosts'])){
-    $postid = $attributes['selectedPosts'];
-}
-if(!empty($attributes['selectedPersonIds'])){
-    $identifier = $attributes['selectedPersonIds'];
-}
-if(!empty($attributes['selectedFields'])){
-    $showFields = $attributes['selectedFields'];
-}
-if(!empty($attributes['selectedFormat'])){
-    $format = $attributes['selectedFormat'];
-}
-if(!empty($attributes['groupId'])){
-    $groupid = $attributes['groupId'];
-}
-if(!empty($attributes['functionField'])){
-    $function = $attributes['functionField'];
-}
-if(!empty($attributes['organizationNr'])){
-    $orgnr = $attributes['organizationNr'];
-}
-if(!empty($attributes['url'])){
-    $url = $attributes['url'];
-}
 
-// Build shortcode parameters
+// Initialize shortcode parameters array
 $shortcode_params = array();
 
-if (!empty($category)) {
-    $shortcode_params[] = 'category=' . esc_attr($category);
-}
+// Map attributes to parameters
+$attributes_map = [
+    'selectedCategory'  => 'category',
+    'selectedPersonIds' => 'identifier',
+    'selectedFields'    => 'show',
+    'selectedFormat'    => 'format',
+    'groupId'           => 'groupid',
+    'functionField'     => 'function',
+    'organizationNr'    => 'orgnr',
+    'url'               => 'url',
+];
 
-if (!empty($identifier)) {
-    if (is_array($identifier)) {
-        $identifier = implode(',', $identifier);
+// Process and sanitize attributes
+foreach ($attributes_map as $attr_key => $param_name) {
+    if (!empty($attributes[$attr_key])) {
+        $value = $attributes[$attr_key];
+        if (is_array($value)) {
+            $value = implode(',', $value);
+        }
+        $shortcode_params[] = $param_name . '=' . esc_attr($value);
     }
-    $shortcode_params[] = 'identifier=' . esc_attr($identifier);
 }
+// Build the shortcode string
+$shortcode = '[faudir ' . implode(' ', $shortcode_params) . ']';
 
-if (!empty($showFields)) {
-    if (is_array($showFields)) {
-        $showFields = implode(',', $showFields);
-    }
-    $shortcode_params[] = 'show=' . esc_attr($showFields);
-}
-if (!empty($format)) {
-    if (is_array($format)) {
-        $format = implode(',', $format);
-    }
-    $shortcode_params[] = 'format=' . esc_attr($format);
-}
-if (!empty($groupid)) {
-    if (is_array($groupid)) {
-        $groupid = implode(',', $groupid);
-    }
-    $shortcode_params[] = 'groupid=' . esc_attr($groupid);
-}
-if (!empty($function)) {
-    if (is_array($function)) {
-        $function = implode(',', $function);
-    }
-    $shortcode_params[] = 'function=' . esc_attr($function);
-}
-if (!empty($orgnr)) {
-    if (is_array($orgnr)) {
-        $orgnr = implode(',', $orgnr);
-    }
-    $shortcode_params[] = 'orgnr=' . esc_attr($orgnr);
-}
-if (!empty($url)) {
-    if (is_array($url)) {
-        $url = implode(',', $url);
-    }
-    $shortcode_params[] = 'url=' . esc_attr($url);
-}
+// Get the output of the shortcode
+$shortcode_output = do_shortcode($shortcode);
 
-// Construct the shortcode
-$shortcode = '[faudir';
-if (!empty($shortcode_params)) {
-    $shortcode .= ' ' . implode(' ', $shortcode_params);
-}
-$shortcode .= ']';
+// Render block content for both editor and front end
 ?>
-
 <p <?php echo get_block_wrapper_attributes(); ?>>
-<?php echo implode('<br> ', $shortcode_params);?>
-<?php echo do_shortcode($shortcode); ?>
+    <?php 
+    // Display the shortcode output for both editor and front end
+    echo wp_kses_post($shortcode_output);
+    ?>
 </p>

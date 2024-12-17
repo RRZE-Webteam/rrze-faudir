@@ -190,7 +190,7 @@ export default function Edit({ attributes, setAttributes }) {
                         <>
                             <h4>{__('Select Persons', 'faudir-block')}</h4>
                             {isLoadingPosts ? (
-                                <p>{__('Loading posts...', 'faudir-block')}</p>
+                                <p>{__('Loading persons...', 'faudir-block')}</p>
                             ) : posts.length > 0 ? (
                                 posts.map((post) => (
                                     <CheckboxControl
@@ -279,20 +279,19 @@ export default function Edit({ attributes, setAttributes }) {
                 </PanelBody>
             </InspectorControls>
             <div {...useBlockProps()}>
-                <p>{__('Faudir Block – hello from the editor!', 'faudir-block')}</p>
-
                 {/* Display Selected Category */}
-                {showCategory && selectedCategory && (
+                <div className="faudir-block-preview">
+                {selectedCategory && (
                     <p>
                         <strong>{__('Selected Category:', 'faudir-block')}</strong>{' '}
-                        {categories.find((cat) => cat.id === selectedCategory)?.name || ''}
+                        {selectedCategory}
                     </p>
                 )}
 
                 {/* Display Selected Posts */}
-                {showPosts && selectedPosts.length > 0 && (
-                    <div className="faudir-block-preview">
-                        <h4>{__('Selected Posts:', 'faudir-block')}</h4>
+                {selectedPosts.length > 0 && (
+                    <div>
+                        <h4>{__('Selected Persons:', 'faudir-block')}</h4>
                         <ul>
                             {selectedPersonIds}
                             {posts
@@ -323,10 +322,13 @@ export default function Edit({ attributes, setAttributes }) {
                         <strong>{__('Organization Nr:', 'faudir-block')}</strong> {organizationNr}
                     </p>
                 )}
+                    </div>
+
                 <ServerSideRender
                     block="rrze-faudir/faudir-block"
                     attributes={attributes}
                 />
+
             </div>
         </>
     );

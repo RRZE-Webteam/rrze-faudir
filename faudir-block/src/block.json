@@ -1,73 +1,107 @@
 {
-	"$schema": "https://schemas.wp.org/trunk/block.json",
-	"apiVersion": 3,
-	"name": "rrze-faudir/faudir-block",
-	"title": "Faudir Block",
-	"category": "widgets",
-	"icon": "businessperson",
-	"description": "Display Faudir information",
-	"attributes": {
-		"selectedCategory": {
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "rrze-faudir/faudir-block",
+    "title": "Faudir Block",
+    "category": "widgets",
+    "icon": "businessperson",
+    "description": "Display Faudir information",
+    "attributes": {
+        "selectedCategory": {
             "type": "string",
             "default": ""
         },
-		"selectedPosts": {
-			"type": "array",
-			"default": []
-		  },
-		  "selectedPersonIds": {
-			"type": "array",
-			"default": []
-		  },
-		  "selectedFields": {
-			"type": "array",
-			"default": []
-		  },
-		  "selectedFormat": {
-			"type": "string",
-			"default": ""
-		  },
-	  "id": {
-		"type": "string",
-		"default": ""
-	  },
-	  "url": {
-		"type": "string",
-		"default": ""
-	  },
-	  "groupId": {
-		"type": "string",
-		"default": ""
-	  },
-	  "functionField": {
-		"type": "string",
-		"default": ""
-	  },
-	  "organizationNr": {
-		"type": "string",
-		"default": ""
-	  },
-	  "sort": {
-		"type": "string",
-		"default": "last_name"
-	  },
-	  "buttonText": {
-		"type": "string",
-		"default": ""
-	  }
-	},
-	"supports": {
-	  "html": false
-	},
-	"example": {
-		"attributes": {
-            "message": "This is a notice!"
+        "selectedPosts": {
+            "type": "array",
+            "default": []
+        },
+        "selectedPersonIds": {
+            "type": "array",
+            "default": []
+        },
+        "selectedFields": {
+            "type": "array",
+            "default": []
+        },
+        "selectedFormat": {
+            "type": "string",
+            "default": ""
+        },
+        "id": {
+            "type": "string",
+            "default": ""
+        },
+        "url": {
+            "type": "string",
+            "default": ""
+        },
+        "groupId": {
+            "type": "string",
+            "default": ""
+        },
+        "functionField": {
+            "type": "string",
+            "default": ""
+        },
+        "organizationNr": {
+            "type": "string",
+            "default": ""
+        },
+        "sort": {
+            "type": "string",
+            "default": "last_name"
+        },
+        "buttonText": {
+            "type": "string",
+            "default": ""
         }
-	},
-	"textdomain": "block-faudir",
-	"editorScript": "file:./index.js",
-	"editorStyle": "file:./index.css",
-	"style": "file:./style-index.css",
-	"render": "file:./render.php",
-	"viewScript": "file:./view.js"
+    },
+    "supports": {
+        "html": false
+    },
+    "example": {
+        "attributes": {
+            "selectedCategory": "test",
+            "selectedPersonIds": "14216341f6",
+            "selectedFormat": "kompakt"
+        }
+    },
+    "variations": [
+        {
+            "name": "kompakt",
+            "title": "Kompakt format",
+            "description": "Kompakt format",
+            "attributes": { "selectedFormat": "kompakt" }
+        },
+		{
+            "name": "card",
+            "title": "Card format",
+            "description": "Card format",
+            "attributes": { "selectedFormat": "card" }
+        },
+		{
+            "name": "page",
+            "title": "Page format",
+            "description": "Page format",
+            "attributes": { "selectedFormat": "page" }
+        },
+		{
+            "name": "list",
+            "title": "List format",
+            "description": "List format",
+            "attributes": { "selectedFormat": "list" }
+        },
+		{
+            "name": "table",
+            "title": "Table format",
+            "description": "Table format",
+            "attributes": { "selectedFormat": "table" }
+        }
+    ],
+    "textdomain": "block-faudir",
+    "editorScript": "file:./index.js",
+    "editorStyle": "file:./index.css",
+    "style": "file:./style-index.css",
+    "render": "file:./render.php",
+    "viewScript": "file:./view.js"
 }

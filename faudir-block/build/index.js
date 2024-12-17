@@ -179,7 +179,7 @@ function Edit({
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("h4", {
             children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Select Persons', 'faudir-block')
           }), isLoadingPosts ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("p", {
-            children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Loading posts...', 'faudir-block')
+            children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Loading persons...', 'faudir-block')
           }) : posts.length > 0 ? posts.map(post => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.CheckboxControl, {
             label: post.title.rendered,
             checked: selectedPosts.includes(post.id),
@@ -259,37 +259,37 @@ function Edit({
       })
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
       ...(0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)(),
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("p", {
-        children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Faudir Block – hello from the editor!', 'faudir-block')
-      }), showCategory && selectedCategory && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("p", {
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("strong", {
-          children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Selected Category:', 'faudir-block')
-        }), ' ', categories.find(cat => cat.id === selectedCategory)?.name || '']
-      }), showPosts && selectedPosts.length > 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
         className: "faudir-block-preview",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("h4", {
-          children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Selected Posts:', 'faudir-block')
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("ul", {
-          children: [selectedPersonIds, posts.filter(post => selectedPosts.includes(post.id)).map(post => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("li", {
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("strong", {
-              children: post.title.rendered
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("span", {
-              children: post.meta?.person_id
-            })]
-          }, post.id))]
+        children: [selectedCategory && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("p", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("strong", {
+            children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Selected Category:', 'faudir-block')
+          }), ' ', selectedCategory]
+        }), selectedPosts.length > 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("h4", {
+            children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Selected Persons:', 'faudir-block')
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("ul", {
+            children: [selectedPersonIds, posts.filter(post => selectedPosts.includes(post.id)).map(post => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("li", {
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("strong", {
+                children: post.title.rendered
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("span", {
+                children: post.meta?.person_id
+              })]
+            }, post.id))]
+          })]
+        }), groupId && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("p", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("strong", {
+            children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Group Id:', 'faudir-block')
+          }), " ", groupId]
+        }), functionField && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("p", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("strong", {
+            children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Function:', 'faudir-block')
+          }), " ", functionField]
+        }), organizationNr && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("p", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("strong", {
+            children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Organization Nr:', 'faudir-block')
+          }), " ", organizationNr]
         })]
-      }), groupId && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("p", {
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("strong", {
-          children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Group Id:', 'faudir-block')
-        }), " ", groupId]
-      }), functionField && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("p", {
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("strong", {
-          children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Function:', 'faudir-block')
-        }), " ", functionField]
-      }), organizationNr && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("p", {
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("strong", {
-          children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Organization Nr:', 'faudir-block')
-        }), " ", organizationNr]
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)((_wordpress_server_side_render__WEBPACK_IMPORTED_MODULE_4___default()), {
         block: "rrze-faudir/faudir-block",
         attributes: attributes
@@ -459,7 +459,7 @@ module.exports = window["wp"]["serverSideRender"];
   \************************/
 /***/ ((module) => {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"rrze-faudir/faudir-block","title":"Faudir Block","category":"widgets","icon":"businessperson","description":"Display Faudir information","attributes":{"selectedCategory":{"type":"string","default":""},"selectedPosts":{"type":"array","default":[]},"selectedPersonIds":{"type":"array","default":[]},"selectedFields":{"type":"array","default":[]},"selectedFormat":{"type":"string","default":""},"id":{"type":"string","default":""},"url":{"type":"string","default":""},"groupId":{"type":"string","default":""},"functionField":{"type":"string","default":""},"organizationNr":{"type":"string","default":""},"sort":{"type":"string","default":"last_name"},"buttonText":{"type":"string","default":""}},"supports":{"html":false},"example":{"attributes":{"message":"This is a notice!"}},"textdomain":"block-faudir","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","render":"file:./render.php","viewScript":"file:./view.js"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"rrze-faudir/faudir-block","title":"Faudir Block","category":"widgets","icon":"businessperson","description":"Display Faudir information","attributes":{"selectedCategory":{"type":"string","default":""},"selectedPosts":{"type":"array","default":[]},"selectedPersonIds":{"type":"array","default":[]},"selectedFields":{"type":"array","default":[]},"selectedFormat":{"type":"string","default":""},"id":{"type":"string","default":""},"url":{"type":"string","default":""},"groupId":{"type":"string","default":""},"functionField":{"type":"string","default":""},"organizationNr":{"type":"string","default":""},"sort":{"type":"string","default":"last_name"},"buttonText":{"type":"string","default":""}},"supports":{"html":false},"example":{"attributes":{"selectedCategory":"test","selectedPersonIds":"14216341f6","selectedFormat":"kompakt"}},"variations":[{"name":"kompakt","title":"Kompakt format","description":"Kompakt format","attributes":{"selectedFormat":"kompakt"}},{"name":"card","title":"Card format","description":"Card format","attributes":{"selectedFormat":"card"}},{"name":"page","title":"Page format","description":"Page format","attributes":{"selectedFormat":"page"}},{"name":"list","title":"List format","description":"List format","attributes":{"selectedFormat":"list"}},{"name":"table","title":"Table format","description":"Table format","attributes":{"selectedFormat":"table"}}],"textdomain":"block-faudir","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","render":"file:./render.php","viewScript":"file:./view.js"}');
 
 /***/ })
 

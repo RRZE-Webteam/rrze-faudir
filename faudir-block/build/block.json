@@ -61,9 +61,53 @@
   },
   "example": {
     "attributes": {
-      "message": "This is a notice!"
+      "selectedCategory": "test",
+      "selectedPersonIds": "14216341f6",
+      "selectedFormat": "kompakt"
     }
   },
+  "variations": [
+    {
+      "name": "kompakt",
+      "title": "Kompakt format",
+      "description": "Kompakt format",
+      "attributes": {
+        "selectedFormat": "kompakt"
+      }
+    },
+    {
+      "name": "card",
+      "title": "Card format",
+      "description": "Card format",
+      "attributes": {
+        "selectedFormat": "card"
+      }
+    },
+    {
+      "name": "page",
+      "title": "Page format",
+      "description": "Page format",
+      "attributes": {
+        "selectedFormat": "page"
+      }
+    },
+    {
+      "name": "list",
+      "title": "List format",
+      "description": "List format",
+      "attributes": {
+        "selectedFormat": "list"
+      }
+    },
+    {
+      "name": "table",
+      "title": "Table format",
+      "description": "Table format",
+      "attributes": {
+        "selectedFormat": "table"
+      }
+    }
+  ],
   "textdomain": "block-faudir",
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
