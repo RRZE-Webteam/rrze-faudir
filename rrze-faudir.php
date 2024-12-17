@@ -688,13 +688,9 @@ function register_faudir_block() {
             try {
                 error_log('FAUDIR Block render started with attributes: ' . print_r($attributes, true));
 
-                // Check if shortcode exists and get handler
-                global $shortcode_tags;
+                // Check if shortcode exists
                 if (!shortcode_exists('faudir')) {
-                    error_log('FAUDIR shortcode is not registered!');
                     throw new Exception('FAUDIR shortcode is not registered');
-                } else {
-                    error_log('FAUDIR shortcode is registered. Handler: ' . print_r($shortcode_tags['faudir'], true));
                 }
 
                 // Get identifier from attributes
@@ -705,37 +701,81 @@ function register_faudir_block() {
                     throw new Exception('No person IDs provided');
                 }
 
-                // Convert selected fields to proper format
-                $show_fields = isset($attributes['selectedFields']) ? implode(',', array_map(function($field) {
-                    $field_map = [
-                        'display_name' => 'name',
-                        'academic_title' => 'title',
-                        'first_name' => 'firstname',
-                        'last_name' => 'lastname',
-                        'academic_suffix' => 'suffix',
-                        'email' => 'email',
-                        'phone' => 'phone',
-                        'url' => 'url',
-                        'socialmedia' => 'social',
-                        'room' => 'room',
-                        'building' => 'building',
-                        'floor' => 'floor',
-                        'street' => 'street',
-                        'zip' => 'zip',
-                        'city' => 'city',
-                        'faumap' => 'faumap',
-                        'officehours' => 'officehours',
-                        'consultationhours' => 'consultationhours'
-                    ];
-                    return isset($field_map[$field]) ? $field_map[$field] : $field;
-                }, $attributes['selectedFields'])) : '';
+                // Get all available fields based on the selected format
+                $format = $attributes['selectedFormat'] ?? 'kompakt';
+                $all_format_fields = [
+                    'card' => [
+                        'display_name', 'academic_title', 'first_name', 'last_name', 
+                        'academic_suffix', 'email', 'phone', 'function', 'socialmedia'
+                    ],
+                    'table' => [
+                        'display_name', 'academic_title', 'first_name', 'last_name', 
+                        'academic_suffix', 'email', 'phone', 'url', 'socialmedia'
+                    ],
+                    'list' => [
+                        'display_name', 'academic_title', 'first_name', 'last_name', 
+                        'academic_suffix', 'email', 'phone', 'url', 'teasertext'
+                    ],
+                    'kompakt' => [
+                        'display_name', 'academic_title', 'first_name', 'last_name', 
+                        'academic_suffix', 'email', 'phone', 'organization', 'function', 
+                        'url', 'kompaktButton', 'content', 'teasertext', 'socialmedia', 
+                        'workplaces', 'room', 'floor', 'street', 'zip', 'city', 
+                        'faumap', 'officehours', 'consultationhours'
+                    ],
+                    'page' => [
+                        'display_name', 'academic_title', 'first_name', 'last_name', 
+                        'academic_suffix', 'email', 'phone', 'organization', 'function', 
+                        'url', 'kompaktButton', 'content', 'teasertext', 'socialmedia', 
+                        'workplaces', 'room', 'floor', 'street', 'zip', 'city', 
+                        'faumap', 'officehours', 'consultationhours'
+                    ]
+                ];
+
+                // Get all available fields for the selected format
+                $available_fields = $all_format_fields[$format] ?? $all_format_fields['kompakt'];
+
+                // Get selected fields
+                $selected_fields = $attributes['selectedFields'] ?? [];
+
+                // Calculate fields to hide (available fields that aren't selected)
+                $hide_fields = array_values(array_diff($available_fields, $selected_fields));
 
                 // Build shortcode attributes
                 $shortcode_atts = [
                     'identifier' => $identifier,
-                    'format' => $attributes['selectedFormat'] ?? 'kompakt',
-                    'show' => $show_fields
+                    'format' => $format
                 ];
+
+                // Add show fields if any are selected
+                if (!empty($selected_fields)) {
+                    $shortcode_atts['show'] = implode(',', $selected_fields);
+                }
+
+                // Add hide fields if any are unselected
+                if (!empty($hide_fields)) {
+                    $shortcode_atts['hide'] = implode(',', $hide_fields);
+                }
+
+                // Add optional attributes
+                if (!empty($attributes['buttonText'])) {
+                    $shortcode_atts['button-text'] = $attributes['buttonText'];
+                }
+                if (!empty($attributes['selectedCategory'])) {
+                    $shortcode_atts['category'] = $attributes['selectedCategory'];
+                }
+                if (!empty($attributes['groupId'])) {
+                    $shortcode_atts['groupid'] = $attributes['groupId'];
+                }
+                if (!empty($attributes['functionField'])) {
+                    $shortcode_atts['function'] = $attributes['functionField'];
+                }
+                if (!empty($attributes['organizationNr'])) {
+                    $shortcode_atts['orgnr'] = $attributes['organizationNr'];
+                }
+                if (!empty($attributes['url'])) {
+                    $shortcode_atts['url'] = $attributes['url'];
+                }
 
                 // Build shortcode string
                 $shortcode = '[faudir';
@@ -746,28 +786,13 @@ function register_faudir_block() {
                 }
                 $shortcode .= ']';
 
-                error_log('About to execute shortcode: ' . $shortcode);
-
-                // Try direct handler call first
-                if (isset($shortcode_tags['faudir'])) {
-                    $handler = $shortcode_tags['faudir'];
-                    error_log('Calling shortcode handler directly with attributes: ' . print_r($shortcode_atts, true));
-                    $direct_output = call_user_func($handler, $shortcode_atts, '', 'faudir');
-                    error_log('Direct handler output: ' . print_r($direct_output, true));
-                }
+                error_log('Generated shortcode: ' . $shortcode);
 
                 // Execute shortcode
                 $output = do_shortcode($shortcode);
-                error_log('Shortcode execution complete. Output length: ' . strlen($output));
-                error_log('Raw output: ' . print_r($output, true));
 
                 if (empty(trim($output))) {
-                    error_log('Empty output detected. Checking if shortcode handler exists and is callable...');
-                    if (isset($shortcode_tags['faudir'])) {
-                        $handler = $shortcode_tags['faudir'];
-                        error_log('Handler exists and is ' . (is_callable($handler) ? 'callable' : 'not callable'));
-                    }
-                    throw new Exception('Shortcode returned empty content. Check error log for details.');
+                    throw new Exception('Shortcode returned empty content');
                 }
 
                 return sprintf('<div class="wp-block-rrze-faudir-block">%s</div>', $output);
@@ -795,18 +820,22 @@ add_action('init', 'register_faudir_block');
 
 // Add this to your existing plugin file where other REST routes are registered
 add_action('rest_api_init', function () {
-    register_rest_route('wp/v2/settings', 'rrze_faudir_options', array(
-        'methods' => 'GET',
-        'callback' => function () {
-            $options = get_option('rrze_faudir_options', []);
-            return [
-                'default_output_fields' => isset($options['default_output_fields']) ? 
-                    $options['default_output_fields'] : 
-                    []
-            ];
-        },
-        'permission_callback' => function () {
-            return current_user_can('edit_posts');
-        }
-    ));
+// Update the REST API endpoint to include button text
+register_rest_route('wp/v2/settings', 'rrze_faudir_options', array(
+    'methods' => 'GET',
+    'callback' => function () {
+        $options = get_option('rrze_faudir_options', []);
+        return [
+            'default_output_fields' => isset($options['default_output_fields']) ? 
+                $options['default_output_fields'] : 
+                [],
+            'business_card_title' => isset($options['business_card_title']) ? 
+                $options['business_card_title'] : 
+                __('More Information', 'rrze-faudir')
+        ];
+    },
+    'permission_callback' => function () {
+        return current_user_can('edit_posts');
+    }
+));
 });

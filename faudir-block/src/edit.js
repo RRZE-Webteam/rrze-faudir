@@ -11,28 +11,31 @@ export default function Edit({ attributes, setAttributes }) {
     const [posts, setPosts] = useState([]);
     const [isLoadingCategories, setIsLoadingCategories] = useState(true);
     const [isLoadingPosts, setIsLoadingPosts] = useState(false);
-    const [buttonText, setButtonText] = useState(''); // Add state for button text
+    const [defaultButtonText, setDefaultButtonText] = useState('');
 
     const {
         selectedCategory='',
-        selectedPosts= [],
+        selectedPosts=[],
         showCategory='',
         showPosts='',
         selectedPersonIds='',
         selectedFormat='kompakt',
-        selectedFields = [], // Default to an empty array
-        groupId='', // New attribute
-        functionField='', // New attribute for function
-        organizationNr='', 
-        url='',// New attribute for the image URL
+        selectedFields=[],
+        groupId='',
+        functionField='',
+        organizationNr='',
+        url='',
+        buttonText='',
+        hideFields=[],
     } = attributes;
 
     const availableFields = {
-        display_name: __('Display Name', 'rrze-faudir'),
-        academic_title: __('Academic Title', 'rrze-faudir'),
-        first_name: __('First Name', 'rrze-faudir'),
-        last_name: __('Last Name', 'rrze-faudir'),
-        academic_suffix: __('Academic Suffix', 'rrze-faudir'),
+        displayName: __('Display Name', 'rrze-faudir'),
+        personalTitle: __('Academic Title', 'rrze-faudir'),
+        givenName: __('First Name', 'rrze-faudir'),
+        familyName: __('Last Name', 'rrze-faudir'),
+        personalTitleSuffix: __('Academic Suffix', 'rrze-faudir'),
+        titleOfNobility: __('Title of Nobility', 'rrze-faudir'),
         email: __('Email', 'rrze-faudir'),
         phone: __('Phone', 'rrze-faudir'),
         organization: __('Organization', 'rrze-faudir'),
@@ -55,50 +58,60 @@ export default function Edit({ attributes, setAttributes }) {
 
     const formatFields = {
         card: [
-            'display_name',
-            'academic_title',
-            'first_name',
-            'last_name',
-            'academic_suffix',
+            'displayName',
+            'personalTitle',
+            'givenName',
+            'familyName',
+            'personalTitleSuffix',
             'email',
             'phone',
             'function',
             'socialmedia',
+            'titleOfNobility',
         ],
         table: [
-            'display_name',
+            'displayName',
             'academic_title',
-            'first_name',
-            'last_name',
-            'academic_suffix',
+            'givenName',
+            'familyName',
+            'personalTitleSuffix',
             'email',
             'phone',
             'url',
             'socialmedia',
+            'titleOfNobility',
         ],
         list: [
-            'display_name',
-            'academic_title',
-            'first_name',
-            'last_name',
-            'academic_suffix',
+            'displayName',
+            'personalTitle',
+            'givenName',
+            'familyName',
+            'personalTitleSuffix',
             'email',
             'phone',
             'url',
             'teasertext',
+            'titleOfNobility',
         ],
         kompakt: Object.keys(availableFields),
         page: Object.keys(availableFields),
     };
 
+    // Define required fields for each format
+    const requiredFields = {
+        card: ['display_name', 'academic_title', 'first_name', 'last_name'],
+        table: ['display_name', 'academic_title', 'first_name', 'last_name'],
+        list: ['display_name', 'academic_title', 'first_name', 'last_name'],
+        kompakt: ['display_name', 'academic_title', 'first_name', 'last_name'],
+        page: ['display_name', 'academic_title', 'first_name', 'last_name']
+    };
+
     useEffect(() => {
-        // Initialize selectedFields to include all fields if not already set
-        if (!selectedFields.length) {
-            // Fetch default fields from WordPress settings
+        // Only fetch and set default fields if this is a new block (no selectedFields set)
+        if (!attributes.selectedFields || attributes.selectedFields.length === 0) {
             apiFetch({ 
                 path: '/wp/v2/settings/rrze_faudir_options'
             }).then((settings) => {
-                // Only set default fields if none are currently selected
                 if (settings?.default_output_fields) {
                     setAttributes({
                         selectedFields: settings.default_output_fields
@@ -108,7 +121,7 @@ export default function Edit({ attributes, setAttributes }) {
                 console.error('Error fetching default fields:', error);
             });
         }
-    }, []);
+    }, []); // Empty dependency array means this only runs once when component mounts
 
     useEffect(() => {
         // Fetch categories from the REST API
@@ -137,6 +150,21 @@ export default function Edit({ attributes, setAttributes }) {
             });
     }, []);
 
+    useEffect(() => {
+        if (!buttonText) {
+            apiFetch({ 
+                path: '/wp/v2/settings/rrze_faudir_options'
+            }).then((settings) => {
+                if (settings?.business_card_title) {
+                    setDefaultButtonText(settings.business_card_title);
+                    setAttributes({ buttonText: settings.business_card_title });
+                }
+            }).catch((error) => {
+                console.error('Error fetching button text:', error);
+            });
+        }
+    }, []); // Empty dependency array means this runs once on mount
+
     const togglePostSelection = (postId, personId) => {
         const updatedSelectedPosts = selectedPosts.includes(postId)
             ? selectedPosts.filter((id) => id !== postId) // Deselect post
@@ -155,11 +183,56 @@ export default function Edit({ attributes, setAttributes }) {
     
 
     const toggleFieldSelection = (field) => {
-        const updatedSelectedFields = selectedFields.includes(field)
-            ? selectedFields.filter((f) => f !== field) // Deselect field
-            : [...selectedFields, field]; // Select field
+        console.log('Toggling field:', field); // Debug log
+        console.log('Current selectedFields:', selectedFields); // Debug log
+        console.log('Current hideFields:', attributes.hideFields); // Debug log
 
-        setAttributes({ selectedFields: updatedSelectedFields });
+        const isFieldSelected = selectedFields.includes(field);
+        let updatedSelectedFields;
+        let updatedHideFields = attributes.hideFields || [];
+
+        if (isFieldSelected) {
+            // Remove from selected fields and add to hide fields
+            updatedSelectedFields = selectedFields.filter((f) => f !== field);
+            updatedHideFields = [...updatedHideFields, field];
+        } else {
+            // Add to selected fields and remove from hide fields
+            updatedSelectedFields = [...selectedFields, field];
+            updatedHideFields = updatedHideFields.filter((f) => f !== field);
+        }
+
+        console.log('Updated selectedFields:', updatedSelectedFields); // Debug log
+        console.log('Updated hideFields:', updatedHideFields); // Debug log
+
+        setAttributes({ 
+            selectedFields: updatedSelectedFields,
+            hideFields: updatedHideFields
+        });
+    };
+
+    // Modify the format change handler
+    const handleFormatChange = (value) => {
+        setAttributes({ selectedFormat: value });
+        
+        // Only reset fields if explicitly changing format and no fields are selected
+        if (!attributes.selectedFields || attributes.selectedFields.length === 0) {
+            apiFetch({ 
+                path: '/wp/v2/settings/rrze_faudir_options'
+            }).then((settings) => {
+                if (settings?.default_output_fields) {
+                    // Filter default fields based on the selected format
+                    const formatSpecificFields = formatFields[value] || [];
+                    const filteredDefaultFields = settings.default_output_fields.filter(
+                        field => formatSpecificFields.includes(field)
+                    );
+                    setAttributes({ 
+                        selectedFields: filteredDefaultFields
+                    });
+                }
+            }).catch((error) => {
+                console.error('Error fetching default fields:', error);
+            });
+        }
     };
 
     // Add debug logging
@@ -179,6 +252,7 @@ export default function Edit({ attributes, setAttributes }) {
 
     console.log('Block attributes:', blockAttributes);
 
+    // Add debug output to the rendered component
     return (
         <>
             <InspectorControls>
@@ -244,39 +318,10 @@ export default function Edit({ attributes, setAttributes }) {
                             { value: 'kompakt', label: __('Kompakt', 'faudir-block') },
                             { value: 'page', label: __('Page', 'faudir-block') },
                         ]}
-                        onChange={(value) => {
-                            setAttributes({ selectedFormat: value });
-                            
-                            // When changing format, fetch default fields if no fields are selected
-                            if (!selectedFields.length) {
-                                apiFetch({ 
-                                    path: '/wp/v2/settings/rrze_faudir_options'
-                                }).then((settings) => {
-                                    if (settings?.default_output_fields) {
-                                        // Filter default fields based on the selected format
-                                        const formatSpecificFields = formatFields[value] || [];
-                                        const filteredDefaultFields = settings.default_output_fields.filter(
-                                            field => formatSpecificFields.includes(field)
-                                        );
-                                        setAttributes({ 
-                                            selectedFields: filteredDefaultFields.length ? filteredDefaultFields : formatSpecificFields
-                                        });
-                                    } else {
-                                        // If no default fields are set, use format-specific fields
-                                        setAttributes({ 
-                                            selectedFields: formatFields[value] || []
-                                        });
-                                    }
-                                }).catch((error) => {
-                                    console.error('Error fetching default fields:', error);
-                                    // Fallback to format-specific fields on error
-                                    setAttributes({ 
-                                        selectedFields: formatFields[value] || []
-                                    });
-                                });
-                            }
-                        }}
+                        onChange={handleFormatChange}
                     />
+
+
 
                     {/* Fields Selection */}
                     {Object.keys(formatFields).map((format) => {
@@ -285,12 +330,24 @@ export default function Edit({ attributes, setAttributes }) {
                                 <div key={format}>
                                     <h4>{__('Select Fields', 'faudir-block')}</h4>
                                     {formatFields[format].map((field) => (
-                                        <CheckboxControl
-                                            key={field}
-                                            label={availableFields[field]}
-                                            checked={selectedFields.includes(field)}
-                                            onChange={() => toggleFieldSelection(field)}
-                                        />
+                                        <div key={field} style={{ marginBottom: '8px' }}>
+                                            <CheckboxControl
+                                                label={
+                                                    <>
+                                                        {availableFields[field]}
+                                                        <span style={{ 
+                                                            marginLeft: '8px',
+                                                            color: selectedFields.includes(field) ? '#4CAF50' : '#f44336',
+                                                            fontSize: '12px'
+                                                        }}>
+                                                            ({selectedFields.includes(field) ? 'show' : 'hide'})
+                                                        </span>
+                                                    </>
+                                                }
+                                                checked={selectedFields.includes(field)}
+                                                onChange={() => toggleFieldSelection(field)}
+                                            />
+                                        </div>
                                     ))}
                                 </div>
                             );
@@ -325,13 +382,17 @@ export default function Edit({ attributes, setAttributes }) {
                     {selectedFormat === 'kompakt' && (
                         <TextControl
                             label={__('Button Text', 'rrze-faudir')}
+                            help={__('Default: ', 'rrze-faudir') + defaultButtonText}
                             value={buttonText}
-                            onChange={(value) => setButtonText(value)}
+                            onChange={(value) => setAttributes({ buttonText: value })}
+                            placeholder={defaultButtonText}
                         />
                     )}
                 </PanelBody>
             </InspectorControls>
             <div {...useBlockProps()}>
+                {/* Add debug info to the block preview */}
+     
                 {attributes.selectedPersonIds && attributes.selectedPersonIds.length > 0 ? (
                     <>
                         <div style={{ marginBottom: '10px', padding: '10px', backgroundColor: '#f8f9fa' }}>

@@ -36,26 +36,80 @@ function rrze_faudir_block_init() {
 					throw new Exception('No person IDs provided');
 				}
 
+				// Get all available fields based on the selected format
+				$format = $attributes['selectedFormat'] ?? 'kompakt';
+				$all_format_fields = [
+					'card' => [
+						'display_name', 'academic_title', 'first_name', 'last_name', 
+						'academic_suffix', 'email', 'phone', 'function', 'socialmedia'
+					],
+					'table' => [
+						'display_name', 'academic_title', 'first_name', 'last_name', 
+						'academic_suffix', 'email', 'phone', 'url', 'socialmedia'
+					],
+					'list' => [
+						'display_name', 'academic_title', 'first_name', 'last_name', 
+						'academic_suffix', 'email', 'phone', 'url', 'teasertext'
+					],
+					'kompakt' => [
+						'display_name', 'academic_title', 'first_name', 'last_name', 
+						'academic_suffix', 'email', 'phone', 'organization', 'function', 
+						'url', 'kompaktButton', 'content', 'teasertext', 'socialmedia', 
+						'workplaces', 'room', 'floor', 'street', 'zip', 'city', 
+						'faumap', 'officehours', 'consultationhours'
+					],
+					'page' => [
+						'display_name', 'academic_title', 'first_name', 'last_name', 
+						'academic_suffix', 'email', 'phone', 'organization', 'function', 
+						'url', 'kompaktButton', 'content', 'teasertext', 'socialmedia', 
+						'workplaces', 'room', 'floor', 'street', 'zip', 'city', 
+						'faumap', 'officehours', 'consultationhours'
+					]
+				];
+
+				// Get all available fields for the selected format
+				$available_fields = $all_format_fields[$format] ?? $all_format_fields['kompakt'];
+
+				// Get selected fields
+				$selected_fields = $attributes['selectedFields'] ?? [];
+
+				// Calculate fields to hide (available fields that aren't selected)
+				$hide_fields = array_values(array_diff($available_fields, $selected_fields));
+
 				// Build shortcode attributes
 				$shortcode_atts = [
 					'identifier' => $identifier,
-					'format' => $attributes['selectedFormat'] ?? 'kompakt',
-					'show' => isset($attributes['selectedFields']) ? implode(',', $attributes['selectedFields']) : '',
+					'format' => $format
 				];
+
+				// Add show fields if any are selected
+				if (!empty($selected_fields)) {
+					$shortcode_atts['show'] = implode(',', $selected_fields);
+				}
+
+				// Add hide fields if any are unselected
+				if (!empty($hide_fields)) {
+					$shortcode_atts['hide'] = implode(',', $hide_fields);
+				}
 
 				// Add optional attributes
-				$optional_pairs = [
-					'category' => 'selectedCategory',
-					'groupid' => 'groupId',
-					'function' => 'functionField',
-					'orgnr' => 'organizationNr',
-					'url' => 'url'
-				];
-
-				foreach ($optional_pairs as $shortcode_key => $attr_key) {
-					if (!empty($attributes[$attr_key])) {
-						$shortcode_atts[$shortcode_key] = $attributes[$attr_key];
-					}
+				if (!empty($attributes['buttonText'])) {
+					$shortcode_atts['button-text'] = $attributes['buttonText'];
+				}
+				if (!empty($attributes['selectedCategory'])) {
+					$shortcode_atts['category'] = $attributes['selectedCategory'];
+				}
+				if (!empty($attributes['groupId'])) {
+					$shortcode_atts['groupid'] = $attributes['groupId'];
+				}
+				if (!empty($attributes['functionField'])) {
+					$shortcode_atts['function'] = $attributes['functionField'];
+				}
+				if (!empty($attributes['organizationNr'])) {
+					$shortcode_atts['orgnr'] = $attributes['organizationNr'];
+				}
+				if (!empty($attributes['url'])) {
+					$shortcode_atts['url'] = $attributes['url'];
 				}
 
 				// Build shortcode string
@@ -85,10 +139,12 @@ function rrze_faudir_block_init() {
 						<p><strong>Error:</strong> %s</p>
 						<details>
 							<summary>Debug Information</summary>
-							<pre>%s</pre>
+							<pre>Shortcode: %s</pre>
+							<pre>Attributes: %s</pre>
 						</details>
 					</div>',
 					esc_html($e->getMessage()),
+					esc_html($shortcode ?? 'Not generated'),
 					esc_html(print_r($attributes, true))
 				);
 			}

@@ -1,8 +1,8 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 3,
+  "apiVersion": 2,
   "name": "rrze-faudir/block",
-  "title": "Faudir Block",
+  "title": "FAUDIR Block",
   "category": "widgets",
   "icon": "businessperson",
   "description": "Display Faudir information",
@@ -40,6 +40,10 @@
       "default": ""
     },
     "url": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonText": {
       "type": "string",
       "default": ""
     }
