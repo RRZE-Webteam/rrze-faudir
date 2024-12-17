@@ -235,6 +235,32 @@ function fetch_and_render_fau_data($atts)
         }
         // Apply organization and group filters if set
         $persons = $filter_persons($persons, $orgnr, $groupid);
+    } elseif (!empty($category)) {
+            // Fetch by category
+            $args = [
+                'post_type' => 'custom_person',
+                'tax_query' => [
+                    [
+                        'taxonomy' => 'custom_taxonomy',
+                        'field'    => 'slug',
+                        'terms'    => $category,
+                    ],
+                ],
+                'posts_per_page' => -1,
+            ];
+            $person_posts = get_posts($args);
+            $person_identifiers = array();
+    
+            foreach ($person_posts as $person_post) {
+                $person_id = get_post_meta($person_post->ID, 'person_id', true);
+                if (!empty($person_id)) {
+                    $person_identifiers[] = $person_id;
+                }
+            }
+    
+            if (!empty($person_identifiers)) {
+                $persons = process_persons_by_identifiers($person_identifiers);
+            }
     } elseif (!empty($orgnr) && empty($post_id) && empty($identifiers) && empty($category) && empty($groupid) && empty($function)) {
         $orgData = fetch_fau_organizations(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
         if (!empty($orgData['data'])) {
