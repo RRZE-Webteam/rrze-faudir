@@ -227,8 +227,13 @@ function fetch_and_render_fau_data($atts)
         $persons = $fetch_persons_by_post_id($post_id);
     } elseif (!empty($function) && empty($identifiers) && empty($category) && empty($groupid) && empty($post_id) && empty($orgnr)) {
         $persons = $fetch_persons_by_function($function);
-    } elseif (!empty($identifiers)) {
+    } elseif (!empty($identifiers) || !empty($post_id)) {
+        if(!empty($identifiers)){
         $persons = process_persons_by_identifiers($identifiers);
+        } 
+        elseif (!empty($post_id)){
+            $persons = $fetch_persons_by_post_id($post_id);
+        }
         // Apply category filter if category is set
         if (!empty($category)) {
             $persons = $filter_persons_by_category($persons, $category);
