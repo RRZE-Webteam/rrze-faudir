@@ -30,13 +30,7 @@ if (! function_exists('is_plugin_active')) {
 const RRZE_PHP_VERSION = '8.2';
 const RRZE_WP_VERSION = '6.5';
 
-// Register FAUdir Block
-function register_faudir_block() {
-    register_block_type(
-        plugin_dir_path(__FILE__) . 'faudir-block/build'
-    );
-}
-add_action('init', 'register_faudir_block');
+
 
 // System requirements check
 function rrze_faudir_system_requirements()
@@ -78,7 +72,7 @@ if (rrze_faudir_system_requirements()) {
 
     // Include necessary files
     require_once plugin_dir_path(__FILE__) . 'includes/shortcodes/fau_dir_shortcode.php';
-    require_once plugin_dir_path(__FILE__) . 'includes/blocks/fau_dir_block.php';
+
     require_once plugin_dir_path(__FILE__) . 'includes/utils/enqueue_scripts.php';
     require_once plugin_dir_path(__FILE__) . 'includes/utils/faudir_utils.php';
     require_once plugin_dir_path(__FILE__) . 'includes/utils/api-functions.php';
@@ -687,3 +681,114 @@ function custom_cpt_404_message()
 }
 add_action('template_redirect', 'custom_cpt_404_message');
 
+// Register FAUdir Block
+function register_faudir_block() {
+    register_block_type(plugin_dir_path(__FILE__) . '/faudir-block/build', [
+        'render_callback' => function($attributes) {
+            try {
+                error_log('FAUDIR Block render started with attributes: ' . print_r($attributes, true));
+
+                // Check if shortcode exists and get handler
+                global $shortcode_tags;
+                if (!shortcode_exists('faudir')) {
+                    error_log('FAUDIR shortcode is not registered!');
+                    throw new Exception('FAUDIR shortcode is not registered');
+                } else {
+                    error_log('FAUDIR shortcode is registered. Handler: ' . print_r($shortcode_tags['faudir'], true));
+                }
+
+                // Get identifier from attributes
+                $identifier = isset($attributes['selectedPersonIds']) ? 
+                    (is_array($attributes['selectedPersonIds']) ? implode(',', $attributes['selectedPersonIds']) : $attributes['selectedPersonIds']) : '';
+
+                if (empty($identifier)) {
+                    throw new Exception('No person IDs provided');
+                }
+
+                // Convert selected fields to proper format
+                $show_fields = isset($attributes['selectedFields']) ? implode(',', array_map(function($field) {
+                    $field_map = [
+                        'display_name' => 'name',
+                        'academic_title' => 'title',
+                        'first_name' => 'firstname',
+                        'last_name' => 'lastname',
+                        'academic_suffix' => 'suffix',
+                        'email' => 'email',
+                        'phone' => 'phone',
+                        'url' => 'url',
+                        'socialmedia' => 'social',
+                        'room' => 'room',
+                        'building' => 'building',
+                        'floor' => 'floor',
+                        'street' => 'street',
+                        'zip' => 'zip',
+                        'city' => 'city',
+                        'faumap' => 'faumap',
+                        'officehours' => 'officehours',
+                        'consultationhours' => 'consultationhours'
+                    ];
+                    return isset($field_map[$field]) ? $field_map[$field] : $field;
+                }, $attributes['selectedFields'])) : '';
+
+                // Build shortcode attributes
+                $shortcode_atts = [
+                    'identifier' => $identifier,
+                    'format' => $attributes['selectedFormat'] ?? 'kompakt',
+                    'show' => $show_fields
+                ];
+
+                // Build shortcode string
+                $shortcode = '[faudir';
+                foreach ($shortcode_atts as $key => $value) {
+                    if (!empty($value)) {
+                        $shortcode .= sprintf(' %s="%s"', esc_attr($key), esc_attr($value));
+                    }
+                }
+                $shortcode .= ']';
+
+                error_log('About to execute shortcode: ' . $shortcode);
+
+                // Try direct handler call first
+                if (isset($shortcode_tags['faudir'])) {
+                    $handler = $shortcode_tags['faudir'];
+                    error_log('Calling shortcode handler directly with attributes: ' . print_r($shortcode_atts, true));
+                    $direct_output = call_user_func($handler, $shortcode_atts, '', 'faudir');
+                    error_log('Direct handler output: ' . print_r($direct_output, true));
+                }
+
+                // Execute shortcode
+                $output = do_shortcode($shortcode);
+                error_log('Shortcode execution complete. Output length: ' . strlen($output));
+                error_log('Raw output: ' . print_r($output, true));
+
+                if (empty(trim($output))) {
+                    error_log('Empty output detected. Checking if shortcode handler exists and is callable...');
+                    if (isset($shortcode_tags['faudir'])) {
+                        $handler = $shortcode_tags['faudir'];
+                        error_log('Handler exists and is ' . (is_callable($handler) ? 'callable' : 'not callable'));
+                    }
+                    throw new Exception('Shortcode returned empty content. Check error log for details.');
+                }
+
+                return sprintf('<div class="wp-block-rrze-faudir-block">%s</div>', $output);
+
+            } catch (Exception $e) {
+                error_log('FAUDIR Block Error: ' . $e->getMessage());
+                return sprintf(
+                    '<div class="faudir-error" style="padding: 20px; border: 1px solid #dc3545; background-color: #f8d7da; color: #721c24;">
+                        <p><strong>Error:</strong> %s</p>
+                        <details>
+                            <summary>Debug Information</summary>
+                            <pre>Shortcode: %s</pre>
+                            <pre>Attributes: %s</pre>
+                        </details>
+                    </div>',
+                    esc_html($e->getMessage()),
+                    esc_html($shortcode ?? 'Not generated'),
+                    esc_html(print_r($attributes, true))
+                );
+            }
+        }
+    ]);
+}
+add_action('init', 'register_faudir_block');

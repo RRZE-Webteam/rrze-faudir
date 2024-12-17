@@ -152,6 +152,23 @@ export default function Edit({ attributes, setAttributes }) {
         setAttributes({ selectedFields: updatedSelectedFields });
     };
 
+    // Add debug logging
+    console.log('Edit component rendering with attributes:', attributes);
+
+    // Transform attributes to match the shortcode format
+    const blockAttributes = {
+        selectedPersonIds: attributes.selectedPersonIds,
+        selectedFields: attributes.selectedFields,
+        selectedFormat: attributes.selectedFormat,
+        selectedCategory: attributes.selectedCategory,
+        groupId: attributes.groupId,
+        functionField: attributes.functionField,
+        organizationNr: attributes.organizationNr,
+        url: attributes.url
+    };
+
+    console.log('Block attributes:', blockAttributes);
+
     return (
         <>
             <InspectorControls>
@@ -279,56 +296,42 @@ export default function Edit({ attributes, setAttributes }) {
                 </PanelBody>
             </InspectorControls>
             <div {...useBlockProps()}>
-                {/* Display Selected Category */}
-                <div className="faudir-block-preview">
-                {selectedCategory && (
-                    <p>
-                        <strong>{__('Selected Category:', 'faudir-block')}</strong>{' '}
-                        {selectedCategory}
-                    </p>
-                )}
-
-                {/* Display Selected Posts */}
-                {selectedPosts.length > 0 && (
-                    <div>
-                        <h4>{__('Selected Persons:', 'faudir-block')}</h4>
-                        <ul>
-                            {selectedPersonIds}
-                            {posts
-                                .filter((post) => selectedPosts.includes(post.id))
-                                .map((post) => (
-                                    <li key={post.id}>
-                                        <strong>{post.title.rendered}</strong>
-                                        <span>{post.meta?.person_id}</span>
-                                    </li>
-                                ))}
-                        </ul>
+                {attributes.selectedPersonIds && attributes.selectedPersonIds.length > 0 ? (
+                    <>
+                        <div style={{ marginBottom: '10px', padding: '10px', backgroundColor: '#f8f9fa' }}>
+                            <strong>Selected Person IDs:</strong> {attributes.selectedPersonIds.join(', ')}
+                        </div>
+                        <ServerSideRender
+                            block="rrze-faudir/block"
+                            attributes={attributes}
+                            EmptyResponsePlaceholder={() => (
+                                <div style={{ padding: '20px', backgroundColor: '#fff3cd', color: '#856404' }}>
+                                    <p>No content returned from server.</p>
+                                    <details>
+                                        <summary>Debug Information</summary>
+                                        <pre>{JSON.stringify(attributes, null, 2)}</pre>
+                                    </details>
+                                </div>
+                            )}
+                            ErrorResponsePlaceholder={({ response }) => (
+                                <div style={{ padding: '20px', backgroundColor: '#f8d7da', color: '#721c24' }}>
+                                    <p><strong>Error loading content:</strong></p>
+                                    <p>{response?.errorMsg || 'Unknown error occurred'}</p>
+                                    <details>
+                                        <summary>Debug Information</summary>
+                                        <pre>Block: rrze-faudir/block</pre>
+                                        <pre>Response: {JSON.stringify(response, null, 2)}</pre>
+                                        <pre>Attributes: {JSON.stringify(attributes, null, 2)}</pre>
+                                    </details>
+                                </div>
+                            )}
+                        />
+                    </>
+                ) : (
+                    <div style={{ padding: '20px', backgroundColor: '#f8f9fa', textAlign: 'center' }}>
+                        <p>Please select persons to display using the sidebar controls.</p>
                     </div>
                 )}
-
-                {/* Display Input Values */}
-                {groupId && (
-                    <p>
-                        <strong>{__('Group Id:', 'faudir-block')}</strong> {groupId}
-                    </p>
-                )}
-                {functionField && (
-                    <p>
-                        <strong>{__('Function:', 'faudir-block')}</strong> {functionField}
-                    </p>
-                )}
-                {organizationNr && (
-                    <p>
-                        <strong>{__('Organization Nr:', 'faudir-block')}</strong> {organizationNr}
-                    </p>
-                )}
-                    </div>
-
-                <ServerSideRender
-                    block="rrze-faudir/faudir-block"
-                    attributes={attributes}
-                />
-
             </div>
         </>
     );

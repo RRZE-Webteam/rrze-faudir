@@ -1,20 +1,16 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "rrze-faudir/faudir-block",
+  "name": "rrze-faudir/block",
   "title": "Faudir Block",
   "category": "widgets",
   "icon": "businessperson",
   "description": "Display Faudir information",
+  "supports": {
+    "html": false,
+    "anchor": true
+  },
   "attributes": {
-    "selectedCategory": {
-      "type": "string",
-      "default": ""
-    },
-    "selectedPosts": {
-      "type": "array",
-      "default": []
-    },
     "selectedPersonIds": {
       "type": "array",
       "default": []
@@ -25,13 +21,9 @@
     },
     "selectedFormat": {
       "type": "string",
-      "default": ""
+      "default": "kompakt"
     },
-    "id": {
-      "type": "string",
-      "default": ""
-    },
-    "url": {
+    "selectedCategory": {
       "type": "string",
       "default": ""
     },
@@ -47,71 +39,13 @@
       "type": "string",
       "default": ""
     },
-    "sort": {
-      "type": "string",
-      "default": "last_name"
-    },
-    "buttonText": {
+    "url": {
       "type": "string",
       "default": ""
     }
   },
-  "supports": {
-    "html": false
-  },
-  "example": {
-    "attributes": {
-      "selectedCategory": "test",
-      "selectedPersonIds": "14216341f6",
-      "selectedFormat": "kompakt"
-    }
-  },
-  "variations": [
-    {
-      "name": "kompakt",
-      "title": "Kompakt format",
-      "description": "Kompakt format",
-      "attributes": {
-        "selectedFormat": "kompakt"
-      }
-    },
-    {
-      "name": "card",
-      "title": "Card format",
-      "description": "Card format",
-      "attributes": {
-        "selectedFormat": "card"
-      }
-    },
-    {
-      "name": "page",
-      "title": "Page format",
-      "description": "Page format",
-      "attributes": {
-        "selectedFormat": "page"
-      }
-    },
-    {
-      "name": "list",
-      "title": "List format",
-      "description": "List format",
-      "attributes": {
-        "selectedFormat": "list"
-      }
-    },
-    {
-      "name": "table",
-      "title": "Table format",
-      "description": "Table format",
-      "attributes": {
-        "selectedFormat": "table"
-      }
-    }
-  ],
   "textdomain": "block-faudir",
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
-  "style": "file:./style-index.css",
-  "render": "file:./render.php",
-  "viewScript": "file:./view.js"
+  "style": "file:./style-index.css"
 }

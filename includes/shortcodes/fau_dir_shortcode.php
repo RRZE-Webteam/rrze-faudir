@@ -19,15 +19,15 @@ include_once plugin_dir_path(__FILE__) . '../utils/Template.php';
 // Shortcode function
 function fetch_fau_data($atts)
 {
-    // Return early only if it's a shortcode call in admin area
+    // Only return early if it's a pure admin page, not the block editor
     if (
-        is_admin() ||
-        (defined('REST_REQUEST') && REST_REQUEST) ||
-        (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
+        is_admin() && 
+        !(defined('REST_REQUEST') && REST_REQUEST) && // Allow REST requests (block editor)
+        !(defined('DOING_AJAX') && DOING_AJAX) && // Allow AJAX calls
+        !(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) // Allow autosave
     ) {
-        return ''; // Return a placeholder for the editor/save operations
+        return ''; 
     }
-
 
     // Get the default output fields using the utility function
     $default_show_fields = FaudirUtils::getDefaultOutputFields();

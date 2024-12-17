@@ -30,13 +30,22 @@ foreach ($attributes_map as $attr_key => $param_name) {
         $shortcode_params[] = $param_name . '=' . esc_attr($value);
     }
 }
+
 // Build the shortcode string
 $shortcode = '[faudir ' . implode(' ', $shortcode_params) . ']';
 
-// Get the output of the shortcode
+// Render block content for both editor and front end
 $shortcode_output = do_shortcode($shortcode);
 
-// Render block content for both editor and front end
+// Check if we are in the block editor using a more compatible method
+$is_block_editor = defined('REST_REQUEST') && REST_REQUEST && isset($_GET['context']) && $_GET['context'] === 'edit';
+
+if ($is_block_editor) {
+    // In the block editor, we'll still show the actual shortcode output
+    // instead of just a loading message, for better preview
+    $shortcode_output = do_shortcode($shortcode);
+}
+
 ?>
 <p <?php echo get_block_wrapper_attributes(); ?>>
     <?php 
