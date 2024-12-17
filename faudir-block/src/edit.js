@@ -71,7 +71,7 @@ export default function Edit({ attributes, setAttributes }) {
         ],
         table: [
             'displayName',
-            'academic_title',
+            'personalTitle',
             'givenName',
             'familyName',
             'personalTitleSuffix',
@@ -256,10 +256,10 @@ export default function Edit({ attributes, setAttributes }) {
     return (
         <>
             <InspectorControls>
-                <PanelBody title={__('Settings', 'faudir-block')}>
+                <PanelBody title={__('Settings', 'rrze-faudir')}>
                     {/* Toggle for Category */}
                     <ToggleControl
-                        label={__('Show Category', 'faudir-block')}
+                        label={__('Show Category', 'rrze-faudir')}
                         checked={showCategory}
                         onChange={() => setAttributes({ showCategory: !showCategory })}
                     />
@@ -267,7 +267,7 @@ export default function Edit({ attributes, setAttributes }) {
                     {/* Category Selection */}
                     {showCategory && (
                         <>
-                            <h4>{__('Select Category', 'faudir-block')}</h4>
+                            <h4>{__('Select Category', 'rrze-faudir')}</h4>
                             {categories.map((category) => (
                                 <CheckboxControl
                                     key={category.id}
@@ -281,7 +281,7 @@ export default function Edit({ attributes, setAttributes }) {
 
                     {/* Toggle for Posts */}
                     <ToggleControl
-                        label={__('Show Persons', 'faudir-block')}
+                        label={__('Show Persons', 'rrze-faudir')}
                         checked={showPosts}
                         onChange={() => setAttributes({ showPosts: !showPosts })}
                     />
@@ -289,9 +289,9 @@ export default function Edit({ attributes, setAttributes }) {
                     {/* Posts Selection */}
                     {showPosts && (
                         <>
-                            <h4>{__('Select Persons', 'faudir-block')}</h4>
+                            <h4>{__('Select Persons', 'rrze-faudir')}</h4>
                             {isLoadingPosts ? (
-                                <p>{__('Loading persons...', 'faudir-block')}</p>
+                                <p>{__('Loading persons...', 'rrze-faudir')}</p>
                             ) : posts.length > 0 ? (
                                 posts.map((post) => (
                                     <CheckboxControl
@@ -302,21 +302,21 @@ export default function Edit({ attributes, setAttributes }) {
                                     />
                                 ))
                             ) : (
-                                <p>{__('No posts available.', 'faudir-block')}</p>
+                                <p>{__('No posts available.', 'rrze-faudir')}</p>
                             )}
                         </>
                     )}
 
                     {/* Format Selection */}
                     <SelectControl
-                        label={__('Select Format', 'faudir-block')}
+                        label={__('Select Format', 'rrze-faudir')}
                         value={selectedFormat || 'list'}
                         options={[
-                            { value: 'list', label: __('List', 'faudir-block') },
-                            { value: 'table', label: __('Table', 'faudir-block') },
-                            { value: 'card', label: __('Card', 'faudir-block') },
-                            { value: 'kompakt', label: __('Kompakt', 'faudir-block') },
-                            { value: 'page', label: __('Page', 'faudir-block') },
+                            { value: 'list', label: __('List', 'rrze-faudir') },
+                            { value: 'table', label: __('Table', 'rrze-faudir') },
+                            { value: 'card', label: __('Card', 'rrze-faudir') },
+                            { value: 'kompakt', label: __('Kompakt', 'rrze-faudir') },
+                            { value: 'page', label: __('Page', 'rrze-faudir') },
                         ]}
                         onChange={handleFormatChange}
                     />
@@ -328,7 +328,7 @@ export default function Edit({ attributes, setAttributes }) {
                         if (selectedFormat === format) {
                             return (
                                 <div key={format}>
-                                    <h4>{__('Select Fields', 'faudir-block')}</h4>
+                                    <h4>{__('Select Fields', 'rrze-faudir')}</h4>
                                     {formatFields[format].map((field) => (
                                         <div key={field} style={{ marginBottom: '8px' }}>
                                             <CheckboxControl
@@ -395,9 +395,6 @@ export default function Edit({ attributes, setAttributes }) {
      
                 {attributes.selectedPersonIds && attributes.selectedPersonIds.length > 0 ? (
                     <>
-                        <div style={{ marginBottom: '10px', padding: '10px', backgroundColor: '#f8f9fa' }}>
-                            <strong>Selected Person IDs:</strong> {attributes.selectedPersonIds.join(', ')}
-                        </div>
                         <ServerSideRender
                             block="rrze-faudir/block"
                             attributes={attributes}
@@ -426,7 +423,7 @@ export default function Edit({ attributes, setAttributes }) {
                     </>
                 ) : (
                     <div style={{ padding: '20px', backgroundColor: '#f8f9fa', textAlign: 'center' }}>
-                        <p>Please select persons to display using the sidebar controls.</p>
+                        <p>__('Please select persons to display using the sidebar controls.', 'rrze-faudir')</p>
                     </div>
                 )}
             </div>
