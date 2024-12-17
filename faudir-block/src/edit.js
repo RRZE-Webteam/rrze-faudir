@@ -246,9 +246,35 @@ export default function Edit({ attributes, setAttributes }) {
                         ]}
                         onChange={(value) => {
                             setAttributes({ selectedFormat: value });
-                            setAttributes({ 
-                                selectedFields: formatFields[value] || []
-                            });
+                            
+                            // When changing format, fetch default fields if no fields are selected
+                            if (!selectedFields.length) {
+                                apiFetch({ 
+                                    path: '/wp/v2/settings/rrze_faudir_options'
+                                }).then((settings) => {
+                                    if (settings?.default_output_fields) {
+                                        // Filter default fields based on the selected format
+                                        const formatSpecificFields = formatFields[value] || [];
+                                        const filteredDefaultFields = settings.default_output_fields.filter(
+                                            field => formatSpecificFields.includes(field)
+                                        );
+                                        setAttributes({ 
+                                            selectedFields: filteredDefaultFields.length ? filteredDefaultFields : formatSpecificFields
+                                        });
+                                    } else {
+                                        // If no default fields are set, use format-specific fields
+                                        setAttributes({ 
+                                            selectedFields: formatFields[value] || []
+                                        });
+                                    }
+                                }).catch((error) => {
+                                    console.error('Error fetching default fields:', error);
+                                    // Fallback to format-specific fields on error
+                                    setAttributes({ 
+                                        selectedFields: formatFields[value] || []
+                                    });
+                                });
+                            }
                         }}
                     />
 
