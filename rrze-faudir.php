@@ -792,3 +792,21 @@ function register_faudir_block() {
     ]);
 }
 add_action('init', 'register_faudir_block');
+
+// Add this to your existing plugin file where other REST routes are registered
+add_action('rest_api_init', function () {
+    register_rest_route('wp/v2/settings', 'rrze_faudir_options', array(
+        'methods' => 'GET',
+        'callback' => function () {
+            $options = get_option('rrze_faudir_options', []);
+            return [
+                'default_output_fields' => isset($options['default_output_fields']) ? 
+                    $options['default_output_fields'] : 
+                    []
+            ];
+        },
+        'permission_callback' => function () {
+            return current_user_can('edit_posts');
+        }
+    ));
+});

@@ -94,8 +94,18 @@ export default function Edit({ attributes, setAttributes }) {
     useEffect(() => {
         // Initialize selectedFields to include all fields if not already set
         if (!selectedFields.length) {
-            setAttributes({
-                selectedFields: Object.keys(availableFields),
+            // Fetch default fields from WordPress settings
+            apiFetch({ 
+                path: '/wp/v2/settings/rrze_faudir_options'
+            }).then((settings) => {
+                // Only set default fields if none are currently selected
+                if (settings?.default_output_fields) {
+                    setAttributes({
+                        selectedFields: settings.default_output_fields
+                    });
+                }
+            }).catch((error) => {
+                console.error('Error fetching default fields:', error);
             });
         }
     }, []);
