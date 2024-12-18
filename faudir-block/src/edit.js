@@ -12,21 +12,23 @@ export default function Edit({ attributes, setAttributes }) {
     const [isLoadingCategories, setIsLoadingCategories] = useState(true);
     const [isLoadingPosts, setIsLoadingPosts] = useState(false);
     const [defaultButtonText, setDefaultButtonText] = useState('');
+    const [defaultOrgNr, setDefaultOrgNr] = useState(null);
 
+    const blockProps = useBlockProps();
     const {
-        selectedCategory='',
-        selectedPosts=[],
-        showCategory='',
-        showPosts='',
-        selectedPersonIds='',
-        selectedFormat='kompakt',
-        selectedFields=[],
-        groupId='',
-        functionField='',
-        organizationNr='',
-        url='',
-        buttonText='',
-        hideFields=[],
+        selectedCategory = '',
+        selectedPosts = [],
+        showCategory = '',
+        showPosts = '',
+        selectedPersonIds = '',
+        selectedFormat = 'kompakt',
+        selectedFields = [],
+        groupId = '',
+        function: functionValue = '',
+        orgnr = '',
+        url = '',
+        buttonText = '',
+        hideFields = [],
     } = attributes;
 
     const availableFields = {
@@ -137,38 +139,72 @@ export default function Edit({ attributes, setAttributes }) {
     }, []);
 
     useEffect(() => {
+        // Fetch default organization number on component mount
+        apiFetch({ 
+            path: '/wp/v2/settings/rrze_faudir_options'
+        }).then((settings) => {
+            if (settings?.default_organization?.orgnr) {
+                setDefaultOrgNr(settings.default_organization.orgnr);
+                // If we have a functionField but no organizationNr, set the default
+                if (functionValue && !orgnr) {
+                    setAttributes({ orgnr: settings.default_organization.orgnr });
+                }
+            }
+        }).catch((error) => {
+            console.error('Error fetching default organization number:', error);
+        });
+    }, []); // Empty dependency array means this runs once on mount
+
+    useEffect(() => {
         // Fetch all posts from the custom post type with minimal fields
         setIsLoadingPosts(true);
+        const params = {
+            per_page: 100,
+            _fields: 'id,title,meta',
+            orderby: 'title',
+            order: 'asc'
+        };
+
+        // Add category filter if category is selected
+        if (selectedCategory) {
+            params.custom_taxonomy = selectedCategory;
+        }
+
+        // Modified logic for function and organization number
+        if (functionValue) {
+            params.function = functionValue;
+            // Use organizationNr if set, otherwise fall back to defaultOrgNr
+            const orgNr = orgnr || defaultOrgNr;
+            if (orgNr) {
+                params.organization_nr = orgNr;
+            }
+        }
+
         apiFetch({ 
             path: '/wp/v2/custom_person',
-            params: {
-                per_page: 100,
-                _fields: 'id,title,meta', // Minimize fields being fetched
-                orderby: 'title',
-                order: 'asc'
-            }
+            params: params
         })
-            .then((data) => {
-                setPosts(data);
-                if (selectedPersonIds && (!selectedPosts || selectedPosts.length === 0)) {
-                    const matchingPosts = data
-                        .filter(post => post.meta?.person_id && 
-                            selectedPersonIds.includes(post.meta.person_id))
-                        .map(post => post.id);
-                    
-                    if (matchingPosts.length > 0) {
-                        setAttributes({
-                            selectedPosts: matchingPosts
-                        });
-                    }
-                }
-                setIsLoadingPosts(false);
-            })
-            .catch((error) => {
-                console.error('Error fetching posts:', error);
-                setIsLoadingPosts(false);
-            });
-    }, []);  // Remove selectedPersonIds dependency to prevent unnecessary reloads
+        .then((data) => {
+            setPosts(data);
+            // Only auto-select posts for category selection, not for function
+            if (selectedCategory && (!selectedPosts || selectedPosts.length === 0)) {
+                const categoryPosts = data.map(post => post.id);
+                const categoryPersonIds = data
+                    .map(post => post.meta?.person_id)
+                    .filter(Boolean);
+                
+                setAttributes({
+                    selectedPosts: categoryPosts,
+                    selectedPersonIds: categoryPersonIds
+                });
+            }
+            setIsLoadingPosts(false);
+        })
+        .catch((error) => {
+            console.error('Error fetching posts:', error);
+            setIsLoadingPosts(false);
+        });
+    }, [selectedCategory, functionValue, orgnr, defaultOrgNr]);
 
     useEffect(() => {
         if (!buttonText) {
@@ -265,8 +301,8 @@ export default function Edit({ attributes, setAttributes }) {
         selectedFormat: attributes.selectedFormat,
         selectedCategory: attributes.selectedCategory,
         groupId: attributes.groupId,
-        functionField: attributes.functionField,
-        organizationNr: attributes.organizationNr,
+        function: attributes.function,
+        orgnr: attributes.orgnr,
         url: attributes.url
     };
 
@@ -387,14 +423,17 @@ export default function Edit({ attributes, setAttributes }) {
 
                     <TextControl
                         label={__('Function', 'rrze-faudir')}
-                        value={functionField}
-                        onChange={(value) => setAttributes({ functionField: value })}
+                        value={attributes.function || ''}
+                        onChange={(value) => setAttributes({ function: value })}
                     />
 
                     <TextControl
                         label={__('Organization Nr', 'rrze-faudir')}
-                        value={organizationNr}
-                        onChange={(value) => setAttributes({ organizationNr: value })}
+                        value={orgnr}
+                        onChange={(value) => {
+                            console.log('Setting orgnr:', value); // Debug log
+                            setAttributes({ orgnr: value });
+                        }}
                     />
                      <TextControl
                         label={__('Custom url', 'rrze-faudir')}
@@ -413,42 +452,49 @@ export default function Edit({ attributes, setAttributes }) {
                     )}
                 </PanelBody>
             </InspectorControls>
-            <div {...useBlockProps()}>
-                {/* Add debug info to the block preview */}
-     
-                {attributes.selectedPersonIds && attributes.selectedPersonIds.length > 0 ? (
-                    <>
-                        <ServerSideRender
-                            key={key} // Add key to control re-rendering
-                            block="rrze-faudir/block"
-                            attributes={attributes}
-                            skipBlockSupportAttributes={true} // Skip unnecessary attributes
-                            EmptyResponsePlaceholder={() => (
-                                <div style={{ padding: '20px', backgroundColor: '#fff3cd', color: '#856404' }}>
-                                    <p>No content returned from server.</p>
-                                    <details>
-                                        <summary>Debug Information</summary>
-                                        <pre>{JSON.stringify(attributes, null, 2)}</pre>
-                                    </details>
-                                </div>
-                            )}
-                            ErrorResponsePlaceholder={({ response }) => (
-                                <div style={{ padding: '20px', backgroundColor: '#f8d7da', color: '#721c24' }}>
-                                    <p><strong>Error loading content:</strong></p>
-                                    <p>{response?.errorMsg || 'Unknown error occurred'}</p>
-                                    <details>
-                                        <summary>Debug Information</summary>
-                                        <pre>Block: rrze-faudir/block</pre>
-                                        <pre>Response: {JSON.stringify(response, null, 2)}</pre>
-                                        <pre>Attributes: {JSON.stringify(attributes, null, 2)}</pre>
-                                    </details>
-                                </div>
-                            )}
-                        />
-                    </>
+            <div {...blockProps}>
+                {(attributes.selectedPersonIds?.length > 0) || 
+                 (attributes.selectedCategory) || 
+                 (attributes.function && attributes.orgnr) ? (
+                    <ServerSideRender
+                        block="rrze-faudir/block"
+                        attributes={{
+                            // Case 1: function + orgnr
+                            ...(attributes.function && attributes.orgnr ? {
+                                function: attributes.function,
+                                orgnr: attributes.orgnr,
+                                selectedFormat: attributes.selectedFormat,
+                                selectedFields: attributes.selectedFields,
+                                buttonText: attributes.buttonText,
+                                url: attributes.url
+                            } : 
+                            // Case 2: category
+                            attributes.selectedCategory ? {
+                                selectedCategory: attributes.selectedCategory,
+                                selectedFormat: attributes.selectedFormat,
+                                selectedFields: attributes.selectedFields,
+                                buttonText: attributes.buttonText,
+                                url: attributes.url,
+                                groupId: attributes.groupId
+                            } :
+                            // Case 3: selectedPersonIds
+                            {
+                                selectedPersonIds: attributes.selectedPersonIds,
+                                selectedFields: attributes.selectedFields,
+                                selectedFormat: attributes.selectedFormat,
+                                buttonText: attributes.buttonText,
+                                url: attributes.url,
+                                groupId: attributes.groupId
+                            })
+                        }}
+                    />
                 ) : (
                     <div style={{ padding: '20px', backgroundColor: '#f8f9fa', textAlign: 'center' }}>
-                        <p>__('Please select persons to display using the sidebar controls.', 'rrze-faudir')</p>
+                        <p>
+                            {attributes.function 
+                                ? __('Please add an organization ID to display results.', 'rrze-faudir')
+                                : __('Please select persons or a category to display using the sidebar controls.', 'rrze-faudir')}
+                        </p>
                     </div>
                 )}
             </div>

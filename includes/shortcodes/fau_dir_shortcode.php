@@ -138,10 +138,12 @@ function fetch_and_render_fau_data($atts)
         $defaultOrgIdentifier = $default_org ? $default_org['id'] : '';
 
         if (!empty($defaultOrgIdentifier)) {
+            // Try English function label first
             $lq_en = 'contacts.functionLabel.en[eq]=' . urlencode($function) . 
                     '&contacts.organization.identifier[eq]=' . urlencode($defaultOrgIdentifier);
             $response = fetch_fau_persons(0, 0, ['lq' => $lq_en]);
 
+            // If no results, try German function label
             if (empty($response['data'])) {
                 $lq_de = 'contacts.functionLabel.de[eq]=' . urlencode($function) . 
                         '&contacts.organization.identifier[eq]=' . urlencode($defaultOrgIdentifier);
@@ -223,10 +225,119 @@ function fetch_and_render_fau_data($atts)
     };
 
     // Determine which logic to apply based on provided attributes
-    if (!empty($post_id) && empty($identifiers) && empty($category) && empty($groupid) && empty($function) && empty($orgnr)) {
+    if (!empty($function)) {
+        // Function must be accompanied by identifier, id, or orgnr
+        if (empty($identifiers) && empty($post_id) && empty($orgnr) && empty($category)) {
+            // Get default organization from settings
+            $options = get_option('rrze_faudir_options', []);
+            $default_org = $options['default_organization'] ?? null;
+            
+            if (empty($default_org)) {
+                return __('Error: When using function parameter, you must also specify either identifier, id, orgnr, category, or set a default organization in settings.', 'rrze-faudir');
+            }
+            
+            // Extract the orgnr from the default organization array
+            $orgnr = '';
+            if (is_array($default_org)) {
+                $orgnr = $default_org['orgnr'] ?? '';  // Changed from 'id' to 'orgnr'
+                if (empty($orgnr) && !empty($default_org['ids'])) {
+                    $orgnr = reset($default_org['ids']); // Use first ID if orgnr not set
+                }
+            } else {
+                $orgnr = $default_org;
+            }
+            
+            if (empty($orgnr)) {
+                return __('Error: Invalid default organization configuration.', 'rrze-faudir');
+            }
+        }
+        
+        // Fetch persons based on function and available parameters
+        if (!empty($identifiers)) {
+            $persons = process_persons_by_identifiers($identifiers);
+            // Apply category filter if category is set
+            if (!empty($category)) {
+                $persons = $filter_persons_by_category($persons, $category);
+            }
+        } elseif (!empty($post_id)) {
+            $persons = $fetch_persons_by_post_id($post_id);
+            // Apply category filter if category is set
+            if (!empty($category)) {
+                $persons = $filter_persons_by_category($persons, $category);
+            }
+        } elseif (!empty($category)) {
+            // Fetch all persons from category first
+            $args = [
+                'post_type' => 'custom_person',
+                'tax_query' => [
+                    [
+                        'taxonomy' => 'custom_taxonomy',
+                        'field'    => 'slug',
+                        'terms'    => $category,
+                    ],
+                ],
+                'posts_per_page' => -1,
+            ];
+            
+            $person_posts = get_posts($args);
+            $person_identifiers = array();
+    
+            foreach ($person_posts as $person_post) {
+                $person_id = get_post_meta($person_post->ID, 'person_id', true);
+                if (!empty($person_id)) {
+                    $person_identifiers[] = $person_id;
+                }
+            }
+    
+            if (!empty($person_identifiers)) {
+                $persons = process_persons_by_identifiers($person_identifiers);
+                // Then filter by function
+                $persons = array_filter($persons, function($person) use ($function) {
+                    foreach ($person['contacts'] as $contact) {
+                        if (isset($contact['functionLabel']['en']) && $contact['functionLabel']['en'] === $function) {
+                            return true;
+                        }
+                        if (isset($contact['functionLabel']['de']) && $contact['functionLabel']['de'] === $function) {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+            }
+        } elseif (!empty($orgnr)) {
+            $orgData = fetch_fau_organizations(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
+            if (!empty($orgData['data'])) {
+                $orgIdentifier = $orgData['data'][0]['identifier'];
+                
+                // Try English function label first
+                $lq_en = 'contacts.organization.identifier[eq]=' . urlencode($orgIdentifier) . 
+                        '&contacts.functionLabel.en[eq]=' . urlencode($function);
+                $persons = fetch_and_process_persons($lq_en);
+                
+                // If no results, try German function label
+                if (empty($persons)) {
+                    $lq_de = 'contacts.organization.identifier[eq]=' . urlencode($orgIdentifier) . 
+                            '&contacts.functionLabel.de[eq]=' . urlencode($function);
+                    $persons = fetch_and_process_persons($lq_de);
+                }
+
+                // Additional filter to ensure function matches for the specific organization
+                $persons = array_filter($persons, function($person) use ($function, $orgIdentifier) {
+                    foreach ($person['contacts'] as $contact) {
+                        if ($contact['organization']['identifier'] === $orgIdentifier &&
+                            ((isset($contact['functionLabel']['en']) && 
+                              $contact['functionLabel']['en'] === $function) ||
+                             (isset($contact['functionLabel']['de']) && 
+                              $contact['functionLabel']['de'] === $function))) {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+            }
+        }
+    } elseif (!empty($post_id) && empty($identifiers) && empty($category) && empty($groupid) && empty($orgnr)) {
         $persons = $fetch_persons_by_post_id($post_id);
-    } elseif (!empty($function) && empty($identifiers) && empty($category) && empty($groupid) && empty($post_id) && empty($orgnr)) {
-        $persons = $fetch_persons_by_function($function);
     } elseif (!empty($identifiers) || !empty($post_id)) {
         if(!empty($identifiers)){
         $persons = process_persons_by_identifiers($identifiers);

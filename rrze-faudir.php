@@ -688,91 +688,61 @@ function register_faudir_block() {
             try {
                 error_log('FAUDIR Block render started with attributes: ' . print_r($attributes, true));
 
-                // Check if shortcode exists
                 if (!shortcode_exists('faudir')) {
                     throw new Exception('FAUDIR shortcode is not registered');
                 }
 
-                // Get identifier from attributes
-                $identifier = isset($attributes['selectedPersonIds']) ? 
-                    (is_array($attributes['selectedPersonIds']) ? implode(',', $attributes['selectedPersonIds']) : $attributes['selectedPersonIds']) : '';
-
-                if (empty($identifier)) {
-                    throw new Exception('No person IDs provided');
+                // First check if we have function and orgnr
+                if (!empty($attributes['function']) && !empty($attributes['orgnr'])) {
+                    $shortcode_atts = [
+                        'format' => $attributes['selectedFormat'] ?? 'kompakt',
+                        'function' => $attributes['function'],
+                        'orgnr' => $attributes['orgnr']
+                    ];
+                } 
+                // Then check for selectedPersonIds
+                else if (!empty($attributes['selectedPersonIds'])) {
+                    $identifier = is_array($attributes['selectedPersonIds']) ? 
+                        implode(',', $attributes['selectedPersonIds']) : 
+                        $attributes['selectedPersonIds'];
+                    
+                    if (empty($identifier)) {
+                        throw new Exception('No person IDs provided');
+                    }
+                    
+                    $shortcode_atts = [
+                        'format' => $attributes['selectedFormat'] ?? 'kompakt',
+                        'identifier' => $identifier
+                    ];
                 }
-
-                // Get all available fields based on the selected format
-                $format = $attributes['selectedFormat'] ?? 'kompakt';
-                $all_format_fields = [
-                    'card' => [
-                        'display_name', 'academic_title', 'first_name', 'last_name', 
-                        'academic_suffix', 'email', 'phone', 'function', 'socialmedia'
-                    ],
-                    'table' => [
-                        'display_name', 'academic_title', 'first_name', 'last_name', 
-                        'academic_suffix', 'email', 'phone', 'url', 'socialmedia'
-                    ],
-                    'list' => [
-                        'display_name', 'academic_title', 'first_name', 'last_name', 
-                        'academic_suffix', 'email', 'phone', 'url', 'teasertext'
-                    ],
-                    'kompakt' => [
-                        'display_name', 'academic_title', 'first_name', 'last_name', 
-                        'academic_suffix', 'email', 'phone', 'organization', 'function', 
-                        'url', 'kompaktButton', 'content', 'teasertext', 'socialmedia', 
-                        'workplaces', 'room', 'floor', 'street', 'zip', 'city', 
-                        'faumap', 'officehours', 'consultationhours'
-                    ],
-                    'page' => [
-                        'display_name', 'academic_title', 'first_name', 'last_name', 
-                        'academic_suffix', 'email', 'phone', 'organization', 'function', 
-                        'url', 'kompaktButton', 'content', 'teasertext', 'socialmedia', 
-                        'workplaces', 'room', 'floor', 'street', 'zip', 'city', 
-                        'faumap', 'officehours', 'consultationhours'
-                    ]
-                ];
-
-                // Get all available fields for the selected format
-                $available_fields = $all_format_fields[$format] ?? $all_format_fields['kompakt'];
-
-                // Get selected fields
-                $selected_fields = $attributes['selectedFields'] ?? [];
-
-                // Calculate fields to hide (available fields that aren't selected)
-                $hide_fields = array_values(array_diff($available_fields, $selected_fields));
-
-                // Build shortcode attributes
-                $shortcode_atts = [
-                    'identifier' => $identifier,
-                    'format' => $format
-                ];
-
-                // Add show fields if any are selected
-                if (!empty($selected_fields)) {
-                    $shortcode_atts['show'] = implode(',', $selected_fields);
+                // Finally check for category
+                else if (!empty($attributes['selectedCategory'])) {
+                    $shortcode_atts = [
+                        'format' => $attributes['selectedFormat'] ?? 'kompakt',
+                        'category' => $attributes['selectedCategory']
+                    ];
                 }
-
-                // Add hide fields if any are unselected
-                if (!empty($hide_fields)) {
-                    $shortcode_atts['hide'] = implode(',', $hide_fields);
+                else {
+                    throw new Exception('Neither person IDs, function+orgnr, nor category were provided');
                 }
 
                 // Add optional attributes
+                if (!empty($attributes['selectedFields'])) {
+                    $shortcode_atts['show'] = implode(',', $attributes['selectedFields']);
+                }
+                
+                if (!empty($attributes['hideFields'])) {
+                    $shortcode_atts['hide'] = implode(',', $attributes['hideFields']);
+                }
+
                 if (!empty($attributes['buttonText'])) {
                     $shortcode_atts['button-text'] = $attributes['buttonText'];
                 }
-                if (!empty($attributes['selectedCategory'])) {
-                    $shortcode_atts['category'] = $attributes['selectedCategory'];
-                }
+
                 if (!empty($attributes['groupId'])) {
                     $shortcode_atts['groupid'] = $attributes['groupId'];
                 }
-                if (!empty($attributes['functionField'])) {
-                    $shortcode_atts['function'] = $attributes['functionField'];
-                }
-                if (!empty($attributes['organizationNr'])) {
-                    $shortcode_atts['orgnr'] = $attributes['organizationNr'];
-                }
+
                 if (!empty($attributes['url'])) {
                     $shortcode_atts['url'] = $attributes['url'];
                 }
@@ -795,19 +765,14 @@ function register_faudir_block() {
                     throw new Exception('Shortcode returned empty content');
                 }
 
-                // Return the output directly without wrapping div
                 return $output;
 
             } catch (Exception $e) {
                 error_log('FAUDIR Block Error: ' . $e->getMessage());
                 return sprintf(
                     '<div class="faudir-error" style="padding: 20px; border: 1px solid #dc3545; background-color: #f8d7da; color: #721c24;">
-                        <p><strong>Error:</strong> %s</p>
-                        <details>
-                            <summary>Debug Information</summary>
-                            <pre>Shortcode: %s</pre>
-                            <pre>Attributes: %s</pre>
-                        </details>
+                        <p><strong>Error</strong> %s</p>
+                  
                     </div>',
                     esc_html($e->getMessage()),
                     esc_html($shortcode ?? 'Not generated'),

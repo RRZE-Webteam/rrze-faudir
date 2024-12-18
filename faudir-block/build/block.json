@@ -11,11 +11,15 @@
     "anchor": true
   },
   "attributes": {
-    "selectedPersonIds": {
+    "selectedCategory": {
+      "type": "string",
+      "default": ""
+    },
+    "selectedPosts": {
       "type": "array",
       "default": []
     },
-    "selectedFields": {
+    "selectedPersonIds": {
       "type": "array",
       "default": []
     },
@@ -23,19 +27,19 @@
       "type": "string",
       "default": "kompakt"
     },
-    "selectedCategory": {
-      "type": "string",
-      "default": ""
+    "selectedFields": {
+      "type": "array",
+      "default": []
     },
     "groupId": {
       "type": "string",
       "default": ""
     },
-    "functionField": {
+    "function": {
       "type": "string",
       "default": ""
     },
-    "organizationNr": {
+    "orgnr": {
       "type": "string",
       "default": ""
     },
@@ -46,6 +50,18 @@
     "buttonText": {
       "type": "string",
       "default": ""
+    },
+    "hideFields": {
+      "type": "array",
+      "default": []
+    },
+    "showCategory": {
+      "type": "boolean",
+      "default": false
+    },
+    "showPosts": {
+      "type": "boolean",
+      "default": false
     }
   },
   "textdomain": "block-faudir",
