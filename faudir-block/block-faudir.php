@@ -130,7 +130,7 @@ function rrze_faudir_block_init() {
 					throw new Exception('Shortcode returned empty content');
 				}
 
-				return sprintf('<div class="wp-block-rrze-faudir-block">%s</div>', $output);
+				return sprintf(' ', $output);
 
 			} catch (Exception $e) {
 				error_log('FAUDIR Block Error: ' . $e->getMessage());

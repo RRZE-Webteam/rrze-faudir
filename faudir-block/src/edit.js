@@ -137,18 +137,38 @@ export default function Edit({ attributes, setAttributes }) {
     }, []);
 
     useEffect(() => {
-        // Fetch all posts from the custom post type
+        // Fetch all posts from the custom post type with minimal fields
         setIsLoadingPosts(true);
-        apiFetch({ path: '/wp/v2/custom_person?per_page=100&_fields=id,title,meta' })
+        apiFetch({ 
+            path: '/wp/v2/custom_person',
+            params: {
+                per_page: 100,
+                _fields: 'id,title,meta', // Minimize fields being fetched
+                orderby: 'title',
+                order: 'asc'
+            }
+        })
             .then((data) => {
                 setPosts(data);
+                if (selectedPersonIds && (!selectedPosts || selectedPosts.length === 0)) {
+                    const matchingPosts = data
+                        .filter(post => post.meta?.person_id && 
+                            selectedPersonIds.includes(post.meta.person_id))
+                        .map(post => post.id);
+                    
+                    if (matchingPosts.length > 0) {
+                        setAttributes({
+                            selectedPosts: matchingPosts
+                        });
+                    }
+                }
                 setIsLoadingPosts(false);
             })
             .catch((error) => {
                 console.error('Error fetching posts:', error);
                 setIsLoadingPosts(false);
             });
-    }, []);
+    }, []);  // Remove selectedPersonIds dependency to prevent unnecessary reloads
 
     useEffect(() => {
         if (!buttonText) {
@@ -252,6 +272,15 @@ export default function Edit({ attributes, setAttributes }) {
 
     console.log('Block attributes:', blockAttributes);
 
+    // Add ServerSideRender with debounce
+    const [key, setKey] = useState(0);
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setKey(prev => prev + 1);
+        }, 300); // 300ms debounce
+        return () => clearTimeout(timer);
+    }, [attributes]);
+
     // Add debug output to the rendered component
     return (
         <>
@@ -297,7 +326,7 @@ export default function Edit({ attributes, setAttributes }) {
                                     <CheckboxControl
                                         key={post.id}
                                         label={post.title.rendered}
-                                        checked={selectedPosts.includes(post.id)}
+                                        checked={Array.isArray(selectedPosts) && selectedPosts.includes(post.id)}
                                         onChange={() => togglePostSelection(post.id, post.meta?.person_id)}
                                     />
                                 ))
@@ -335,13 +364,7 @@ export default function Edit({ attributes, setAttributes }) {
                                                 label={
                                                     <>
                                                         {availableFields[field]}
-                                                        <span style={{ 
-                                                            marginLeft: '8px',
-                                                            color: selectedFields.includes(field) ? '#4CAF50' : '#f44336',
-                                                            fontSize: '12px'
-                                                        }}>
-                                                            ({selectedFields.includes(field) ? 'show' : 'hide'})
-                                                        </span>
+                                                    
                                                     </>
                                                 }
                                                 checked={selectedFields.includes(field)}
@@ -396,8 +419,10 @@ export default function Edit({ attributes, setAttributes }) {
                 {attributes.selectedPersonIds && attributes.selectedPersonIds.length > 0 ? (
                     <>
                         <ServerSideRender
+                            key={key} // Add key to control re-rendering
                             block="rrze-faudir/block"
                             attributes={attributes}
+                            skipBlockSupportAttributes={true} // Skip unnecessary attributes
                             EmptyResponsePlaceholder={() => (
                                 <div style={{ padding: '20px', backgroundColor: '#fff3cd', color: '#856404' }}>
                                     <p>No content returned from server.</p>

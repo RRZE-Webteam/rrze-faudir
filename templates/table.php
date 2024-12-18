@@ -98,7 +98,8 @@
 
                         // Collect emails and phones from workplaces
                         if (!empty($person['contacts'])) {
-                            $displayed_contacts = get_post_meta($post->ID, 'displayed_contacts', true) ?: []; // Retrieve displayed contact indexes
+                            $displayed_contacts = isset($post) ? get_post_meta($post->ID, 'displayed_contacts', true) : [];
+                            $displayed_contacts = !empty($displayed_contacts) ? $displayed_contacts : [];
 
                             foreach ($person['contacts'] as $index => $contact) { // Use index to match against $displayed_contacts
                                 // Check if the current contact index is in $displayed_contacts

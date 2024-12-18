@@ -795,7 +795,8 @@ function register_faudir_block() {
                     throw new Exception('Shortcode returned empty content');
                 }
 
-                return sprintf('<div class="wp-block-rrze-faudir-block">%s</div>', $output);
+                // Return the output directly without wrapping div
+                return $output;
 
             } catch (Exception $e) {
                 error_log('FAUDIR Block Error: ' . $e->getMessage());
@@ -813,7 +814,8 @@ function register_faudir_block() {
                     esc_html(print_r($attributes, true))
                 );
             }
-        }
+        },
+        'skip_inner_blocks' => true
     ]);
 }
 add_action('init', 'register_faudir_block');
