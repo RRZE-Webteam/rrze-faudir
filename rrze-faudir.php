@@ -68,7 +68,28 @@ if (rrze_faudir_system_requirements()) {
     {
         load_plugin_textdomain('rrze-faudir', false, dirname(plugin_basename(__FILE__)) . '/languages');
     }
+
     add_action('plugins_loaded', 'rrze_faudir_load_textdomain');
+    function rrze_faudir_enqueue_scripts()
+{
+    // Register your script with the dependencies
+    wp_enqueue_script(
+        'rrze-faudir-script',
+        plugin_dir_url(__FILE__) . 'assets/js/script.js',
+        ['wp-i18n', 'wp-element'], // Include wp-i18n for translations
+        '1.0.0',
+        true
+    );
+
+    // Load translations for your script
+    wp_set_script_translations(
+        'rrze-faudir-script', // Script handle
+        'rrze-faudir',        // Text domain
+        plugin_dir_path(__FILE__) . 'languages' // Path to your .json files
+    );
+}
+add_action('wp_enqueue_scripts', 'rrze_faudir_enqueue_scripts');
+
 
     // Include necessary files
     require_once plugin_dir_path(__FILE__) . 'includes/shortcodes/fau_dir_shortcode.php';
@@ -782,6 +803,8 @@ function register_faudir_block() {
         },
         'skip_inner_blocks' => true
     ]);
+	wp_set_script_translations( 'rrze-faudir-block-script', 'rrze-faudir', plugin_dir_path( __FILE__ ) . 'languages' );
+
 }
 add_action('init', 'register_faudir_block');
 

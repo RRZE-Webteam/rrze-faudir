@@ -64,7 +64,7 @@
       "default": false
     }
   },
-  "textdomain": "block-faudir",
+  "textdomain": "rrze-faudir",
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css"
 }

@@ -4,9 +4,7 @@
     "description": "A WordPress plugin for FAUDIR.",
     "main": "index.js",
     "scripts": {
-        "build": "gulp",
-        "build:blocks": "wp-scripts build includes/blocks/fau_dir_block.js --output-path=src/js/blocks",
-        "start:blocks": "wp-scripts start includes/blocks/fau_dir_block.js --output-path=src/js/blocks"
+        "build": "gulp"
     },
     "author": "FAU",
     "license": "MIT",
