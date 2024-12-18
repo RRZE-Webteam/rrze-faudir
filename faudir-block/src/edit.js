@@ -209,24 +209,20 @@ export default function Edit({ attributes, setAttributes }) {
     }, []); // Empty dependency array means this runs once on mount
 
     useEffect(() => {
-        // Fetch all posts from the custom post type with minimal fields
         setIsLoadingPosts(true);
         const params = {
-            per_page: 100,
+            per_page: -1,
             _fields: 'id,title,meta',
             orderby: 'title',
             order: 'asc'
         };
 
-        // Add category filter if category is selected
         if (selectedCategory) {
             params.custom_taxonomy = selectedCategory;
         }
 
-        // Modified logic for function and organization number
         if (functionValue) {
             params.function = functionValue;
-            // Use organizationNr if set, otherwise fall back to defaultOrgNr
             const orgNr = orgnr || defaultOrgNr;
             if (orgNr) {
                 params.organization_nr = orgNr;
@@ -239,8 +235,9 @@ export default function Edit({ attributes, setAttributes }) {
         })
         .then((data) => {
             setPosts(data);
-            // Only auto-select posts for category selection, not for function
-            if (selectedCategory && (!selectedPosts || selectedPosts.length === 0)) {
+            setDisplayedPosts(data.slice(0, 20));
+            
+            if (selectedCategory) {
                 const categoryPosts = data.map(post => post.id);
                 const categoryPersonIds = data
                     .map(post => post.meta?.person_id)
@@ -414,17 +411,24 @@ export default function Edit({ attributes, setAttributes }) {
                     {showPosts && (
                         <>
                             <h4>{__('Select Persons', 'rrze-faudir')}</h4>
+                            {console.log('Total posts available:', posts.length)}
                             {isLoadingPosts ? (
                                 <p>{__('Loading persons...', 'rrze-faudir')}</p>
                             ) : posts.length > 0 ? (
-                                posts.map((post) => (
-                                    <CheckboxControl
-                                        key={post.id}
-                                        label={post.title.rendered}
-                                        checked={Array.isArray(selectedPosts) && selectedPosts.includes(post.id)}
-                                        onChange={() => togglePostSelection(post.id, post.meta?.person_id)}
-                                    />
-                                ))
+                                <>
+                                    <p>{__('Showing', 'rrze-faudir')} {posts.length} {__('persons', 'rrze-faudir')}</p>
+                                    {posts.map((post) => {
+                                        console.log('Rendering post:', post.title.rendered, post.id);
+                                        return (
+                                            <CheckboxControl
+                                                key={post.id}
+                                                label={post.title.rendered}
+                                                checked={Array.isArray(selectedPosts) && selectedPosts.includes(post.id)}
+                                                onChange={() => togglePostSelection(post.id, post.meta?.person_id)}
+                                            />
+                                        );
+                                    })}
+                                </>
                             ) : (
                                 <p>{__('No posts available.', 'rrze-faudir')}</p>
                             )}
@@ -527,42 +531,59 @@ export default function Edit({ attributes, setAttributes }) {
                 {(attributes.selectedPersonIds?.length > 0) || 
                  (attributes.selectedCategory) || 
                  (attributes.function && attributes.orgnr) ? (
-                    <ServerSideRender
-                        key={renderKey}
-                        block="rrze-faudir/block"
-                        attributes={{
-                            // Case 1: function + orgnr
-                            ...(attributes.function && attributes.orgnr ? {
-                                function: attributes.function,
-                                orgnr: attributes.orgnr,
-                                selectedFormat: attributes.selectedFormat,
-                                selectedFields: attributes.selectedFields,
-                                buttonText: attributes.buttonText,
-                                url: attributes.url,
-                                sort: attributes.sort
-                            } : 
-                            // Case 2: category
-                            attributes.selectedCategory ? {
-                                selectedCategory: attributes.selectedCategory,
-                                selectedFormat: attributes.selectedFormat,
-                                selectedFields: attributes.selectedFields,
-                                buttonText: attributes.buttonText,
-                                url: attributes.url,
-                                groupId: attributes.groupId,
-                                sort: attributes.sort
-                            } :
-                            // Case 3: selectedPersonIds
-                            {
-                                selectedPersonIds: attributes.selectedPersonIds,
-                                selectedFields: attributes.selectedFields,
-                                selectedFormat: attributes.selectedFormat,
-                                buttonText: attributes.buttonText,
-                                url: attributes.url,
-                                groupId: attributes.groupId,
-                                sort: attributes.sort
-                            })
-                        }}
-                    />
+                    <>
+                        {/* Format console log as WordPress shortcode */}
+                        {console.log('Shortcode:', `[faudir ${
+                            attributes.function && attributes.orgnr 
+                                ? `function="${attributes.function}" orgnr="${attributes.orgnr}"`
+                                : `${attributes.selectedCategory ? `category="${attributes.selectedCategory}"` : ''
+                                }${attributes.selectedPersonIds?.length ? ` identifiers="${attributes.selectedPersonIds}"` : ''}`
+                        }${attributes.selectedFormat ? ` format="${attributes.selectedFormat}"` : ''}${
+                            attributes.selectedFields?.length ? ` fields="${attributes.selectedFields.join(',')}"` : ''
+                        }${attributes.sort ? ` sort="${attributes.sort}"` : ''}${
+                            attributes.buttonText ? ` button_text="${attributes.buttonText}"` : ''
+                        }${attributes.url ? ` url="${attributes.url}"` : ''}${
+                            attributes.groupId ? ` group_id="${attributes.groupId}"` : ''
+                        }]`)}
+                        <ServerSideRender
+                            key={renderKey}
+                            block="rrze-faudir/block"
+                            attributes={{
+                                // Case 1: function + orgnr
+                                ...(attributes.function && attributes.orgnr ? {
+                                    function: attributes.function,
+                                    orgnr: attributes.orgnr,
+                                    selectedFormat: attributes.selectedFormat,
+                                    selectedFields: attributes.selectedFields,
+                                    buttonText: attributes.buttonText,
+                                    url: attributes.url,
+                                    sort: attributes.sort
+                                } : 
+                                // Case 2: category
+                                attributes.selectedCategory ? {
+                                    selectedCategory: attributes.selectedCategory,
+                                    selectedPersonIds: attributes.selectedPersonIds,
+                                    selectedFormat: attributes.selectedFormat,
+                                    selectedFields: attributes.selectedFields,
+                                    buttonText: attributes.buttonText,
+                                    url: attributes.url,
+                                    groupId: attributes.groupId,
+                                    sort: attributes.sort,
+                                    hideFields: attributes.hideFields
+                                } :
+                                // Case 3: selectedPersonIds
+                                {
+                                    selectedPersonIds: attributes.selectedPersonIds,
+                                    selectedFields: attributes.selectedFields,
+                                    selectedFormat: attributes.selectedFormat,
+                                    buttonText: attributes.buttonText,
+                                    url: attributes.url,
+                                    groupId: attributes.groupId,
+                                    sort: attributes.sort
+                                })
+                            }}
+                        />
+                    </>
                 ) : (
                     <div style={{ padding: '20px', backgroundColor: '#f8f9fa', textAlign: 'center' }}>
                         <p>

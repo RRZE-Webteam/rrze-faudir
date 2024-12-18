@@ -705,113 +705,107 @@ add_action('template_redirect', 'custom_cpt_404_message');
 // Register FAUdir Block
 function register_faudir_block() {
     register_block_type(plugin_dir_path(__FILE__) . '/faudir-block/build', [
-        'render_callback' => function($attributes) {
-            try {
-                error_log('FAUDIR Block render started with attributes: ' . print_r($attributes, true));
-
-                if (!shortcode_exists('faudir')) {
-                    throw new Exception('FAUDIR shortcode is not registered');
-                }
-
-                // First check if we have function and orgnr
-                if (!empty($attributes['function']) && !empty($attributes['orgnr'])) {
-                    $shortcode_atts = [
-                        'format' => $attributes['selectedFormat'] ?? 'kompakt',
-                        'function' => $attributes['function'],
-                        'orgnr' => $attributes['orgnr']
-                    ];
-                } 
-                // Then check for selectedPersonIds
-                else if (!empty($attributes['selectedPersonIds'])) {
-                    $identifier = is_array($attributes['selectedPersonIds']) ? 
-                        implode(',', $attributes['selectedPersonIds']) : 
-                        $attributes['selectedPersonIds'];
-                    
-                    if (empty($identifier)) {
-                        throw new Exception('No person IDs provided');
-                    }
-                    
-                    $shortcode_atts = [
-                        'format' => $attributes['selectedFormat'] ?? 'kompakt',
-                        'identifier' => $identifier
-                    ];
-                }
-                // Finally check for category
-                else if (!empty($attributes['selectedCategory'])) {
-                    $shortcode_atts = [
-                        'format' => $attributes['selectedFormat'] ?? 'kompakt',
-                        'category' => $attributes['selectedCategory']
-                    ];
-                }
-                else {
-                    throw new Exception('Neither person IDs, function+orgnr, nor category were provided');
-                }
-
-                // Add optional attributes
-                if (!empty($attributes['selectedFields'])) {
-                    $shortcode_atts['show'] = implode(',', $attributes['selectedFields']);
-                }
-                
-                if (!empty($attributes['hideFields'])) {
-                    $shortcode_atts['hide'] = implode(',', $attributes['hideFields']);
-                }
-
-                if (!empty($attributes['buttonText'])) {
-                    $shortcode_atts['button-text'] = $attributes['buttonText'];
-                }
-
-                if (!empty($attributes['groupId'])) {
-                    $shortcode_atts['groupid'] = $attributes['groupId'];
-                }
-
-                if (!empty($attributes['url'])) {
-                    $shortcode_atts['url'] = $attributes['url'];
-                }
-
-                // Add sort parameter to shortcode attributes
-                if (!empty($attributes['sort'])) {
-                    $shortcode_atts['sort'] = $attributes['sort'];
-                }
-
-                // Build shortcode string
-                $shortcode = '[faudir';
-                foreach ($shortcode_atts as $key => $value) {
-                    if (!empty($value)) {
-                        $shortcode .= sprintf(' %s="%s"', esc_attr($key), esc_attr($value));
-                    }
-                }
-                $shortcode .= ']';
-
-                error_log('Generated shortcode: ' . $shortcode);
-
-                // Execute shortcode
-                $output = do_shortcode($shortcode);
-
-                if (empty(trim($output))) {
-                    throw new Exception('Shortcode returned empty content');
-                }
-
-                return $output;
-
-            } catch (Exception $e) {
-                error_log('FAUDIR Block Error: ' . $e->getMessage());
-                return sprintf(
-                    '<div class="faudir-error" style="padding: 20px; border: 1px solid #dc3545; background-color: #f8d7da; color: #721c24;">
-                        <p><strong>Error</strong> %s</p>
-                  
-                    </div>',
-                    esc_html($e->getMessage()),
-                    esc_html($shortcode ?? 'Not generated'),
-                    esc_html(print_r($attributes, true))
-                );
-            }
-        },
+        'render_callback' => 'render_faudir_block',
         'skip_inner_blocks' => true
     ]);
-    wp_set_script_translations('rrze-faudir-editor-script', 'rrze-faudir', plugin_dir_path(__FILE__) . 'languages');
-
 }
 add_action('init', 'register_faudir_block');
+
+// Render callback function for FAUdir block
+function render_faudir_block($attributes) {
+    try {
+        error_log('FAUDIR Block render started with attributes: ' . print_r($attributes, true));
+
+        if (!shortcode_exists('faudir')) {
+            throw new Exception('FAUDIR shortcode is not registered');
+        }
+
+        // First check if we have function and orgnr
+        if (!empty($attributes['function']) && !empty($attributes['orgnr'])) {
+            $shortcode_atts = [
+                'format' => $attributes['selectedFormat'] ?? 'kompakt',
+                'function' => $attributes['function'],
+                'orgnr' => $attributes['orgnr']
+            ];
+        } 
+        // Then check for category
+        else if (!empty($attributes['selectedCategory'])) {
+            $shortcode_atts = [
+                'format' => $attributes['selectedFormat'] ?? 'kompakt',
+                'category' => $attributes['selectedCategory']
+            ];
+            
+            // Only add identifiers if they're specifically selected for this category
+            if (!empty($attributes['selectedPersonIds'])) {
+                $shortcode_atts['identifier'] = implode(',', $attributes['selectedPersonIds']);
+            }
+        }
+        // Finally check for selectedPersonIds without category
+        else if (!empty($attributes['selectedPersonIds'])) {
+            $shortcode_atts = [
+                'format' => $attributes['selectedFormat'] ?? 'kompakt',
+                'identifier' => is_array($attributes['selectedPersonIds']) ? 
+                    implode(',', $attributes['selectedPersonIds']) : 
+                    $attributes['selectedPersonIds']
+            ];
+        }
+        else {
+            throw new Exception('Neither person IDs, function+orgnr, nor category were provided');
+        }
+
+        // Add optional attributes
+        if (!empty($attributes['selectedFields'])) {
+            $shortcode_atts['show'] = implode(',', $attributes['selectedFields']);
+        }
+        
+        if (!empty($attributes['hideFields'])) {
+            $shortcode_atts['hide'] = implode(',', $attributes['hideFields']);
+        }
+
+        if (!empty($attributes['buttonText'])) {
+            $shortcode_atts['button-text'] = $attributes['buttonText'];
+        }
+
+        if (!empty($attributes['groupId'])) {
+            $shortcode_atts['groupid'] = $attributes['groupId'];
+        }
+
+        if (!empty($attributes['url'])) {
+            $shortcode_atts['url'] = $attributes['url'];
+        }
+
+        if (!empty($attributes['sort'])) {
+            $shortcode_atts['sort'] = $attributes['sort'];
+        }
+
+        // Build shortcode string
+        $shortcode = '[faudir';
+        foreach ($shortcode_atts as $key => $value) {
+            if (!empty($value)) {
+                $shortcode .= sprintf(' %s="%s"', esc_attr($key), esc_attr($value));
+            }
+        }
+        $shortcode .= ']';
+
+        error_log('Generated shortcode: ' . $shortcode);
+
+        // Execute shortcode
+        $output = do_shortcode($shortcode);
+
+        if (empty(trim($output))) {
+            throw new Exception('Shortcode returned empty content');
+        }
+
+        return $output;
+
+    } catch (Exception $e) {
+        error_log('FAUDIR Block Error: ' . $e->getMessage());
+        return sprintf(
+            '<div class="faudir-error">%s</div>',
+            esc_html($e->getMessage())
+        );
+    }
+}
 
 // Add editor assets
 add_action('enqueue_block_editor_assets', function() {
