@@ -128,21 +128,55 @@ export default function Edit({ attributes, setAttributes }) {
     };
 
     useEffect(() => {
-        // Only fetch and set default fields if this is a new block (no selectedFields set)
+        // Check if this is a new block (no fields selected yet)
         if (!attributes.selectedFields || attributes.selectedFields.length === 0) {
             apiFetch({ 
                 path: '/wp/v2/settings/rrze_faudir_options'
             }).then((settings) => {
+                // Update the fields if defaults exist
                 if (settings?.default_output_fields) {
+                    // Map PHP field names to JavaScript field names
+                    const fieldMapping = {
+                        'display_name': 'displayName',
+                        'academic_title': 'personalTitle',
+                        'first_name': 'givenName',
+                        'last_name': 'familyName',
+                        'academic_suffix': 'personalTitleSuffix',
+                        'nobility_title': 'titleOfNobility',
+                        'email': 'email',
+                        'phone': 'phone',
+                        'organization': 'organization',
+                        'function': 'function',
+                        'url': 'url',
+                        'kompaktButton': 'kompaktButton',
+                        'content': 'content',
+                        'teasertext': 'teasertext',
+                        'socialmedia': 'socialmedia',
+                        'workplaces': 'workplaces',
+                        'room': 'room',
+                        'floor': 'floor',
+                        'street': 'street',
+                        'zip': 'zip',
+                        'city': 'city',
+                        'faumap': 'faumap',
+                        'officehours': 'officehours',
+                        'consultationhours': 'consultationhours'
+                    };
+
+                    // Convert PHP field names to JavaScript field names
+                    const mappedFields = settings.default_output_fields
+                        .map(field => fieldMapping[field])
+                        .filter(field => field !== undefined); // Remove any unmapped fields
+
                     setAttributes({
-                        selectedFields: settings.default_output_fields
+                        selectedFields: mappedFields
                     });
                 }
             }).catch((error) => {
                 console.error('Error fetching default fields:', error);
             });
         }
-    }, []); // Empty dependency array means this only runs once when component mounts
+    }, []); // Empty dependency array means this runs once when the block is created
 
     useEffect(() => {
         // Fetch categories from the REST API
