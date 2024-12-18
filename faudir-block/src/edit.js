@@ -211,7 +211,7 @@ export default function Edit({ attributes, setAttributes }) {
     useEffect(() => {
         setIsLoadingPosts(true);
         const params = {
-            per_page: -1,
+            per_page: 100,
             _fields: 'id,title,meta',
             orderby: 'title',
             order: 'asc'
@@ -230,12 +230,12 @@ export default function Edit({ attributes, setAttributes }) {
         }
 
         apiFetch({ 
-            path: '/wp/v2/custom_person',
+            path: '/wp/v2/custom_person?per_page=100',
             params: params
         })
         .then((data) => {
             setPosts(data);
-            setDisplayedPosts(data.slice(0, 20));
+            setDisplayedPosts(data.slice(0, 100));
             
             if (selectedCategory) {
                 const categoryPosts = data.map(post => post.id);
@@ -416,7 +416,7 @@ export default function Edit({ attributes, setAttributes }) {
                                 <p>{__('Loading persons...', 'rrze-faudir')}</p>
                             ) : posts.length > 0 ? (
                                 <>
-                                    <p>{__('Showing', 'rrze-faudir')} {posts.length} {__('persons', 'rrze-faudir')}</p>
+                                   
                                     {posts.map((post) => {
                                         console.log('Rendering post:', post.title.rendered, post.id);
                                         return (
