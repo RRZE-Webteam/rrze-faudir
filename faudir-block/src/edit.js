@@ -13,6 +13,7 @@ export default function Edit({ attributes, setAttributes }) {
     const [isLoadingPosts, setIsLoadingPosts] = useState(false);
     const [defaultButtonText, setDefaultButtonText] = useState('');
     const [defaultOrgNr, setDefaultOrgNr] = useState(null);
+    const [renderKey, setRenderKey] = useState(0);
 
     const blockProps = useBlockProps();
     const {
@@ -223,18 +224,18 @@ export default function Edit({ attributes, setAttributes }) {
 
     const togglePostSelection = (postId, personId) => {
         const updatedSelectedPosts = selectedPosts.includes(postId)
-            ? selectedPosts.filter((id) => id !== postId) // Deselect post
-            : [...selectedPosts, postId]; // Select post
-            const updatedPersonIds = updatedSelectedPosts.map(id => {
-                const post = posts.find(p => p.id === id);
-                // Ensure the person_id is extracted and filtered properly
-                return post?.meta?.person_id || null;}).filter(Boolean)
-    
-        // Store both post ID and person ID
+            ? selectedPosts.filter((id) => id !== postId)
+            : [...selectedPosts, postId];
+        const updatedPersonIds = updatedSelectedPosts.map(id => {
+            const post = posts.find(p => p.id === id);
+            return post?.meta?.person_id || null;
+        }).filter(Boolean);
+
         setAttributes({
             selectedPosts: updatedSelectedPosts,
-            selectedPersonIds: updatedPersonIds,// Remove any null values from the person IDs array
+            selectedPersonIds: updatedPersonIds,
         });
+        setRenderKey(prev => prev + 1);
     };
     
 
@@ -269,6 +270,9 @@ export default function Edit({ attributes, setAttributes }) {
     // Modify the format change handler
     const handleFormatChange = (value) => {
         setAttributes({ selectedFormat: value });
+        
+        // Force re-render
+        setRenderKey(prev => prev + 1);
         
         // Only reset fields if explicitly changing format and no fields are selected
         if (!attributes.selectedFields || attributes.selectedFields.length === 0) {
@@ -457,6 +461,7 @@ export default function Edit({ attributes, setAttributes }) {
                  (attributes.selectedCategory) || 
                  (attributes.function && attributes.orgnr) ? (
                     <ServerSideRender
+                        key={renderKey}
                         block="rrze-faudir/block"
                         attributes={{
                             // Case 1: function + orgnr
