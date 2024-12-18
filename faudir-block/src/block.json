@@ -3,9 +3,9 @@
     "apiVersion": 2,
     "name": "rrze-faudir/block",
     "title": "FAUdir",
-    "category": "fau",
+    "category": "custom-fau-category",
     "icon": "businessperson",
-    "description": "Display Faudir information",
+    "description": "Display FAUdir information",
     "supports": {
         "html": false,
         "anchor": true

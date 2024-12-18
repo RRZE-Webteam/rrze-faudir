@@ -864,3 +864,13 @@ register_rest_route('wp/v2/settings', 'rrze_faudir_options', array(
     }
 ));
 });
+add_filter( 'block_categories_all' , function( $categories ) {
+
+    // Adding a new category.
+	$categories[] = array(
+		'slug'  => 'custom-fau-category',
+		'title' => 'Fau'
+	);
+
+	return $categories;
+} );
