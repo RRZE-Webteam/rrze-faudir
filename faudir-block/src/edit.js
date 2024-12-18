@@ -342,7 +342,16 @@ export default function Edit({ attributes, setAttributes }) {
                                     key={category.id}
                                     label={category.name}
                                     checked={selectedCategory === category.name}
-                                    onChange={() => setAttributes({ selectedCategory: category.name })}
+                                    onChange={() => {
+                                        // If the category is already selected, unselect it by setting to empty string
+                                        const newCategory = selectedCategory === category.name ? '' : category.name;
+                                        setAttributes({ 
+                                            selectedCategory: newCategory,
+                                            // Clear selected posts when unchecking category
+                                            selectedPosts: newCategory === '' ? [] : selectedPosts,
+                                            selectedPersonIds: newCategory === '' ? [] : selectedPersonIds
+                                        });
+                                    }}
                                 />
                             ))}
                         </>
