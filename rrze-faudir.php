@@ -808,10 +808,40 @@ function register_faudir_block() {
         },
         'skip_inner_blocks' => true
     ]);
-	wp_set_script_translations( 'rrze-faudir-block-script', 'rrze-faudir', plugin_dir_path( __FILE__ ) . 'languages' );
+    wp_set_script_translations('rrze-faudir-editor-script', 'rrze-faudir', plugin_dir_path(__FILE__) . 'languages');
 
 }
 add_action('init', 'register_faudir_block');
+
+// Add editor assets
+add_action('enqueue_block_editor_assets', function() {
+    // Get the file paths
+    $js_path = plugin_dir_path(__FILE__) . 'faudir-block/build/index.js';
+    $css_path = plugin_dir_path(__FILE__) . 'faudir-block/build/style.css';
+
+    // Only register and enqueue if files exist
+    wp_register_script(
+        'rrze-faudir-block-script',
+        plugins_url('faudir-block/build/index.js', __FILE__),
+        ['wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor'],
+        file_exists($js_path) ? filemtime($js_path) : '1.0.0',
+        true
+    );
+
+    // Check if style file exists before registering
+    if (file_exists($css_path)) {
+        wp_register_style(
+            'rrze-faudir-block-style',
+            plugins_url('faudir-block/build/style.css', __FILE__),
+            [],
+            filemtime($css_path)
+        );
+        wp_enqueue_style('rrze-faudir-block-style');
+    }
+    
+    wp_set_script_translations('rrze-faudir-block-script', 'rrze-faudir', plugin_dir_path(__FILE__) . 'languages');
+    wp_enqueue_script('rrze-faudir-block-script');
+});
 
 // Add this to your existing plugin file where other REST routes are registered
 add_action('rest_api_init', function () {

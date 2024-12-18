@@ -7,6 +7,23 @@ import apiFetch from '@wordpress/api-fetch';
 import './editor.scss';
 
 export default function Edit({ attributes, setAttributes }) {
+    // Enhanced translation test
+    console.log('Translation system test:', {
+        displayName: {
+            translated: __('Display Name', 'rrze-faudir'),
+            expected: 'Anzeigename'
+        },
+        email: {
+            translated: __('Email', 'rrze-faudir'),
+            expected: 'E-Mail'
+        },
+        phone: {
+            translated: __('Phone', 'rrze-faudir'),
+            expected: 'Telefon'
+        },
+        textDomain: 'rrze-faudir'
+    });
+
     const [categories, setCategories] = useState([]);
     const [posts, setPosts] = useState([]);
     const [isLoadingCategories, setIsLoadingCategories] = useState(true);
@@ -241,32 +258,26 @@ export default function Edit({ attributes, setAttributes }) {
     
 
     const toggleFieldSelection = (field) => {
-        console.log('Toggling field:', field); // Debug log
-        console.log('Current selectedFields:', selectedFields); // Debug log
-        console.log('Current hideFields:', attributes.hideFields); // Debug log
-
         const isFieldSelected = selectedFields.includes(field);
         let updatedSelectedFields;
         let updatedHideFields = attributes.hideFields || [];
 
         if (isFieldSelected) {
-            // Remove from selected fields and add to hide fields
             updatedSelectedFields = selectedFields.filter((f) => f !== field);
             updatedHideFields = [...updatedHideFields, field];
         } else {
-            // Add to selected fields and remove from hide fields
             updatedSelectedFields = [...selectedFields, field];
             updatedHideFields = updatedHideFields.filter((f) => f !== field);
         }
-
-        console.log('Updated selectedFields:', updatedSelectedFields); // Debug log
-        console.log('Updated hideFields:', updatedHideFields); // Debug log
 
         setAttributes({ 
             selectedFields: updatedSelectedFields,
             hideFields: updatedHideFields
         });
     };
+
+    // Add translation test log
+    console.log('Translation test:', __('Display Name', 'rrze-faudir'));
 
     // Modify the format change handler
     const handleFormatChange = (value) => {
@@ -281,7 +292,6 @@ export default function Edit({ attributes, setAttributes }) {
                 path: '/wp/v2/settings/rrze_faudir_options'
             }).then((settings) => {
                 if (settings?.default_output_fields) {
-                    // Filter default fields based on the selected format
                     const formatSpecificFields = formatFields[value] || [];
                     const filteredDefaultFields = settings.default_output_fields.filter(
                         field => formatSpecificFields.includes(field)
@@ -296,9 +306,6 @@ export default function Edit({ attributes, setAttributes }) {
         }
     };
 
-    // Add debug logging
-    console.log('Edit component rendering with attributes:', attributes);
-
     // Transform attributes to match the shortcode format
     const blockAttributes = {
         selectedPersonIds: attributes.selectedPersonIds,
@@ -310,8 +317,6 @@ export default function Edit({ attributes, setAttributes }) {
         orgnr: attributes.orgnr,
         url: attributes.url
     };
-
-    console.log('Block attributes:', blockAttributes);
 
     // Add ServerSideRender with debounce
     const [key, setKey] = useState(0);
@@ -451,7 +456,7 @@ export default function Edit({ attributes, setAttributes }) {
                         label={__('Organization Nr', 'rrze-faudir')}
                         value={orgnr}
                         onChange={(value) => {
-                            console.log('Setting orgnr:', value); // Debug log
+                            console.log('Setting orgnr:', value);
                             setAttributes({ orgnr: value });
                         }}
                     />
