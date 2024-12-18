@@ -308,32 +308,41 @@ function fetch_and_render_fau_data($atts)
             $orgData = fetch_fau_organizations(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
             if (!empty($orgData['data'])) {
                 $orgIdentifier = $orgData['data'][0]['identifier'];
+                error_log("Found organization: " . $orgIdentifier);
                 
-                // Try English function label first
-                $lq_en = 'contacts.organization.identifier[eq]=' . urlencode($orgIdentifier) . 
-                        '&contacts.functionLabel.en[eq]=' . urlencode($function);
-                $persons = fetch_and_process_persons($lq_en);
+                // Fetch all persons for this organization first
+                $lq = 'contacts.organization.identifier[eq]=' . urlencode($orgIdentifier);
+                $persons = fetch_and_process_persons($lq);
                 
-                // If no results, try German function label
-                if (empty($persons)) {
-                    $lq_de = 'contacts.organization.identifier[eq]=' . urlencode($orgIdentifier) . 
-                            '&contacts.functionLabel.de[eq]=' . urlencode($function);
-                    $persons = fetch_and_process_persons($lq_de);
-                }
-
-                // Additional filter to ensure function matches for the specific organization
+                error_log("Total persons found for org: " . count($persons));
+                
+                // Filter by function with more flexible matching
                 $persons = array_filter($persons, function($person) use ($function, $orgIdentifier) {
                     foreach ($person['contacts'] as $contact) {
-                        if ($contact['organization']['identifier'] === $orgIdentifier &&
-                            ((isset($contact['functionLabel']['en']) && 
-                              $contact['functionLabel']['en'] === $function) ||
-                             (isset($contact['functionLabel']['de']) && 
-                              $contact['functionLabel']['de'] === $function))) {
-                            return true;
+                        if ($contact['organization']['identifier'] === $orgIdentifier) {
+                            // Log the function labels we're comparing
+                            error_log("Comparing - Required: " . $function);
+                            error_log("Found EN: " . ($contact['functionLabel']['en'] ?? 'none'));
+                            error_log("Found DE: " . ($contact['functionLabel']['de'] ?? 'none'));
+                            
+                            // More flexible matching including partial matches
+                            $en_label = strtolower($contact['functionLabel']['en'] ?? '');
+                            $de_label = strtolower($contact['functionLabel']['de'] ?? '');
+                            $search_function = strtolower($function);
+                            
+                            // Check for exact or partial matches
+                            if (strpos($en_label, $search_function) !== false ||
+                                strpos($de_label, $search_function) !== false ||
+                                strpos($search_function, $en_label) !== false ||
+                                strpos($search_function, $de_label) !== false) {
+                                return true;
+                            }
                         }
                     }
                     return false;
                 });
+                
+                error_log("Filtered persons count: " . count($persons));
             }
         }
     } elseif (!empty($post_id) && empty($identifiers) && empty($category) && empty($groupid) && empty($orgnr)) {

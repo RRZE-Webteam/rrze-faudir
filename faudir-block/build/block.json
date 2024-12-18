@@ -62,6 +62,10 @@
     "showPosts": {
       "type": "boolean",
       "default": false
+    },
+    "sort": {
+      "type": "string",
+      "default": "last_name"
     }
   },
   "textdomain": "rrze-faudir",

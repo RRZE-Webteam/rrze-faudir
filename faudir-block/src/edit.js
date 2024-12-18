@@ -30,6 +30,7 @@ export default function Edit({ attributes, setAttributes }) {
         url = '',
         buttonText = '',
         hideFields = [],
+        sort = 'last_name',
     } = attributes;
 
     const availableFields = {
@@ -319,7 +320,13 @@ export default function Edit({ attributes, setAttributes }) {
             setKey(prev => prev + 1);
         }, 300); // 300ms debounce
         return () => clearTimeout(timer);
-    }, [attributes]);
+    }, [...Object.values(attributes), sort]); // Add sort to the dependency array
+
+    // Also update the renderKey when sort changes
+    const handleSortChange = (value) => {
+        setAttributes({ sort: value });
+        setRenderKey(prev => prev + 1); // Force re-render
+    };
 
     // Add debug output to the rendered component
     return (
@@ -463,6 +470,18 @@ export default function Edit({ attributes, setAttributes }) {
                             placeholder={defaultButtonText}
                         />
                     )}
+                    <SelectControl
+                        label={__('Sort by', 'rrze-faudir')}
+                        value={sort}
+                        options={[
+                            { value: 'last_name', label: __('Last Name', 'rrze-faudir') },
+                            { value: 'title_last_name', label: __('Title and Last Name', 'rrze-faudir') },
+                            { value: 'function_head', label: __('Head of Department First', 'rrze-faudir') },
+                            { value: 'function_proffesor', label: __('Professors First', 'rrze-faudir') },
+                            { value: 'identifier_order', label: __('Identifier Order', 'rrze-faudir') },
+                        ]}
+                        onChange={handleSortChange} // Use the new handler instead of direct setAttributes
+                    />
                 </PanelBody>
             </InspectorControls>
             <div {...blockProps}>
@@ -480,7 +499,8 @@ export default function Edit({ attributes, setAttributes }) {
                                 selectedFormat: attributes.selectedFormat,
                                 selectedFields: attributes.selectedFields,
                                 buttonText: attributes.buttonText,
-                                url: attributes.url
+                                url: attributes.url,
+                                sort: attributes.sort
                             } : 
                             // Case 2: category
                             attributes.selectedCategory ? {
@@ -489,7 +509,8 @@ export default function Edit({ attributes, setAttributes }) {
                                 selectedFields: attributes.selectedFields,
                                 buttonText: attributes.buttonText,
                                 url: attributes.url,
-                                groupId: attributes.groupId
+                                groupId: attributes.groupId,
+                                sort: attributes.sort
                             } :
                             // Case 3: selectedPersonIds
                             {
@@ -498,7 +519,8 @@ export default function Edit({ attributes, setAttributes }) {
                                 selectedFormat: attributes.selectedFormat,
                                 buttonText: attributes.buttonText,
                                 url: attributes.url,
-                                groupId: attributes.groupId
+                                groupId: attributes.groupId,
+                                sort: attributes.sort
                             })
                         }}
                     />
