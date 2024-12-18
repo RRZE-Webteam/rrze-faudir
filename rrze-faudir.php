@@ -747,6 +747,11 @@ function register_faudir_block() {
                     $shortcode_atts['url'] = $attributes['url'];
                 }
 
+                // Add sort parameter to shortcode attributes
+                if (!empty($attributes['sort'])) {
+                    $shortcode_atts['sort'] = $attributes['sort'];
+                }
+
                 // Build shortcode string
                 $shortcode = '[faudir';
                 foreach ($shortcode_atts as $key => $value) {
