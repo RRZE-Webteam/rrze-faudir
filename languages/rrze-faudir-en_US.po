@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rrze-faudir\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-faudir\n"
-"POT-Creation-Date: 2024-12-18T11:07:32+00:00\n"
-"PO-Revision-Date: 2024-12-18 14:48+0100\n"
+"POT-Creation-Date: 2024-12-19T08:35:54+00:00\n"
+"PO-Revision-Date: 2024-12-19 09:43+0100\n"
 "Last-Translator: \n"
 "Language-Team: English (United States)\n"
 "Language: en_US\n"
@@ -204,17 +204,18 @@ msgid "Enter the slug for the person post type."
 msgstr "Enter the slug for the person post type."
 
 #: includes/admin/settings-page.php:325 faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:36 src/js/blocks/index.js:1
+#: faudir-block/src/edit.js:13 faudir-block/src/edit.js:54
+#: faudir-block/src/edit.js:311
 msgid "Display Name"
 msgstr "Display Name"
 
 #: includes/admin/settings-page.php:326 faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:37 src/js/blocks/index.js:1
+#: faudir-block/src/edit.js:55
 msgid "Academic Title"
 msgstr "Academic Title"
 
 #: includes/admin/settings-page.php:327 faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:38 src/js/blocks/index.js:1
+#: faudir-block/src/edit.js:56
 msgid "First Name"
 msgstr "First Name"
 
@@ -224,112 +225,107 @@ msgid "Nobility Title"
 msgstr "Nobility Title"
 
 #: includes/admin/settings-page.php:329 faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:39 src/js/blocks/index.js:1
+#: faudir-block/src/edit.js:57 faudir-block/src/edit.js:520
 msgid "Last Name"
 msgstr "Last Name"
 
 #: includes/admin/settings-page.php:330 faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:40 src/js/blocks/index.js:1
+#: faudir-block/src/edit.js:58
 msgid "Academic Suffix"
 msgstr "Academic Suffix"
 
 #: includes/admin/settings-page.php:331
 #: includes/custom-post-type/custom-post-type.php:162
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:42
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:17
+#: faudir-block/src/edit.js:60
 msgid "Email"
 msgstr "Email"
 
 #: includes/admin/settings-page.php:332 faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:43 src/js/blocks/index.js:1
+#: faudir-block/src/edit.js:21 faudir-block/src/edit.js:61
 msgid "Phone"
 msgstr "Phone"
 
 #: includes/admin/settings-page.php:333
 #: includes/custom-post-type/custom-post-type.php:224
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:44
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:62
 msgid "Organization"
 msgstr "Organization"
 
 #: includes/admin/settings-page.php:334 faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:45 faudir-block/src/edit.js:438
-#: src/js/blocks/index.js:1
+#: faudir-block/src/edit.js:63 faudir-block/src/edit.js:488
 msgid "Function"
 msgstr "Function"
 
 #: includes/admin/settings-page.php:335 faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:46 src/js/blocks/index.js:1
+#: faudir-block/src/edit.js:64
 msgid "Url"
 msgstr "Url"
 
 #: includes/admin/settings-page.php:336 faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:47 src/js/blocks/index.js:1
+#: faudir-block/src/edit.js:65
 msgid "Kompakt Button"
 msgstr "Kompakt Card Button"
 
 #: includes/admin/settings-page.php:337 templates/page.php:423
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:48
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:66
 msgid "Content"
 msgstr "Biography"
 
 #: includes/admin/settings-page.php:338 faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:49 src/js/blocks/index.js:1
+#: faudir-block/src/edit.js:67
 msgid "Teasertext"
 msgstr "Teaser Text"
 
 #: includes/admin/settings-page.php:339 faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:50 src/js/blocks/index.js:1
+#: faudir-block/src/edit.js:68
 msgid "Social Media"
 msgstr "Social Media"
 
 #: includes/admin/settings-page.php:340 faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:51 src/js/blocks/index.js:1
+#: faudir-block/src/edit.js:69
 msgid "Workplaces"
 msgstr "Workplaces"
 
 #: includes/admin/settings-page.php:341 faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:52 src/js/blocks/index.js:1
+#: faudir-block/src/edit.js:70
 msgid "Room"
 msgstr "Room"
 
 #: includes/admin/settings-page.php:342 faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:53 src/js/blocks/index.js:1
+#: faudir-block/src/edit.js:71
 msgid "Floor"
 msgstr "Floor"
 
 #: includes/admin/settings-page.php:343 faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:54 src/js/blocks/index.js:1
+#: faudir-block/src/edit.js:72
 msgid "Street"
 msgstr "Street"
 
 #: includes/admin/settings-page.php:344 faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:55 src/js/blocks/index.js:1
+#: faudir-block/src/edit.js:73
 msgid "Zip"
 msgstr "Zip"
 
 #: includes/admin/settings-page.php:345 faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:56 src/js/blocks/index.js:1
+#: faudir-block/src/edit.js:74
 msgid "City"
 msgstr "City"
 
 #: includes/admin/settings-page.php:346 faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:57 src/js/blocks/index.js:1
+#: faudir-block/src/edit.js:75
 msgid "Fau Map"
 msgstr "FAU Map"
 
 #: includes/admin/settings-page.php:347 includes/utils/api-functions.php:324
 #: templates/kompakt.php:319 templates/page.php:315
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:58
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:76
 msgid "Office Hours"
 msgstr "Office Hours"
 
 #: includes/admin/settings-page.php:348 includes/utils/api-functions.php:330
 #: templates/kompakt.php:344 templates/page.php:340
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:59
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:77
 msgid "Consultation Hours"
 msgstr "Consultation Hours"
 
@@ -626,17 +622,7 @@ msgstr "Custom person created successfully!"
 msgid "Error creating custom person: Failed to fetch person details."
 msgstr "Error creating custom person: Failed to fetch person details."
 
-#: includes/shortcodes/fau_dir_shortcode.php:236
-msgid ""
-"Error: When using function parameter, you must also specify either "
-"identifier, id, orgnr, category, or set a default organization in settings."
-msgstr ""
-
-#: includes/shortcodes/fau_dir_shortcode.php:251
-msgid "Error: Invalid default organization configuration."
-msgstr ""
-
-#: includes/shortcodes/fau_dir_shortcode.php:514
+#: includes/shortcodes/fau_dir_shortcode.php:448
 msgid "Person with ID %s does not exist"
 msgstr "Person with ID %s does not exist"
 
@@ -868,37 +854,37 @@ msgstr ""
 "Your WordPress version (%1$s) is outdated. Please upgrade to WordPress %2$s "
 "or higher."
 
-#: rrze-faudir.php:187
+#: rrze-faudir.php:208
 msgid "No contacts found with the provided identifier."
 msgstr "No contacts found with the provided identifier."
 
-#: rrze-faudir.php:455 rrze-faudir.php:465 rrze-faudir.php:475
+#: rrze-faudir.php:476 rrze-faudir.php:486 rrze-faudir.php:496
 msgid "Missing Univis ID for person: "
 msgstr "Missing Univis ID for person: "
 
-#: rrze-faudir.php:458 rrze-faudir.php:468 rrze-faudir.php:478
+#: rrze-faudir.php:479 rrze-faudir.php:489 rrze-faudir.php:499
 msgid "Person with Univis ID "
 msgstr "Person with Univis ID "
 
-#: rrze-faudir.php:458 rrze-faudir.php:468 rrze-faudir.php:478
+#: rrze-faudir.php:479 rrze-faudir.php:489 rrze-faudir.php:499
 msgid " already exists."
 msgstr " already exists."
 
 #. translators: %d: number of imported persons
-#: rrze-faudir.php:509
+#: rrze-faudir.php:530
 msgid "%d person was successfully imported from the old plugin."
 msgid_plural "%d persons were successfully imported from the old plugin."
 msgstr[0] "%d person was successfully imported from the old plugin."
 msgstr[1] "%d persons were successfully imported from the old plugin."
 
 #. translators: %d: number of not imported persons
-#: rrze-faudir.php:521
+#: rrze-faudir.php:542
 msgid "%d person was not able to be imported from the old plugin."
 msgid_plural "%d persons were not able to be imported from the old plugin."
 msgstr[0] "%d person was not able to be imported from the old plugin."
 msgstr[1] "%d persons were not able to be imported from the old plugin."
 
-#: rrze-faudir.php:531
+#: rrze-faudir.php:552
 msgid ""
 "You now have the option to set a custom slug for person pages in the "
 "settings. If you don't set a unique slug, existing person pages from the old "
@@ -912,60 +898,64 @@ msgstr ""
 "please ensure that you configure a custom slug in the settings if you want "
 "to keep the old pages intact."
 
-#: rrze-faudir.php:589
+#: rrze-faudir.php:610
 msgctxt "taxonomy general name"
 msgid "Categories"
 msgstr "Categories"
 
-#: rrze-faudir.php:590
+#: rrze-faudir.php:611
 msgctxt "taxonomy singular name"
 msgid "Category"
 msgstr "Category"
 
-#: rrze-faudir.php:591
+#: rrze-faudir.php:612
 msgid "Search Categories"
 msgstr "Search Categories"
 
-#: rrze-faudir.php:592
+#: rrze-faudir.php:613
 msgid "All Categories"
 msgstr "All Categories"
 
-#: rrze-faudir.php:593
+#: rrze-faudir.php:614
 msgid "Parent Category"
 msgstr "Parent Category"
 
-#: rrze-faudir.php:594
+#: rrze-faudir.php:615
 msgid "Parent Category:"
 msgstr "Parent Category:"
 
-#: rrze-faudir.php:595
+#: rrze-faudir.php:616
 msgid "Edit Category"
 msgstr "Edit Category"
 
-#: rrze-faudir.php:596
+#: rrze-faudir.php:617
 msgid "Update Category"
 msgstr "Update Category"
 
-#: rrze-faudir.php:597
+#: rrze-faudir.php:618
 msgid "Add New Category"
 msgstr "Add New Category"
 
-#: rrze-faudir.php:598
+#: rrze-faudir.php:619
 msgid "New Category Name"
 msgstr "New Category Name"
 
-#: rrze-faudir.php:599
+#: rrze-faudir.php:620
 msgid "Categories"
 msgstr "Categories"
 
-#: rrze-faudir.php:634 rrze-faudir.php:664 templates/card.php:212
+#: rrze-faudir.php:655 rrze-faudir.php:685 templates/card.php:212
 #: templates/card.php:218 templates/kompakt.php:420 templates/list.php:221
 #: templates/list.php:226 templates/page.php:430 templates/page.php:436
 #: templates/table.php:222
 msgid "No contact entry could be found."
 msgstr "No contact entry could be found."
 
-#: rrze-faudir.php:801
+#: rrze-faudir.php:753
+msgid "Neither person IDs, function+orgnr, nor category were provided"
+msgstr "Neither person IDs, function+orgnr, nor category were provided"
+
+#: rrze-faudir.php:853
 msgid "More Information"
 msgstr "More Information"
 
@@ -1042,119 +1032,118 @@ msgstr "N/A"
 msgid "Phones:"
 msgstr "Phone:"
 
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:41
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:59
 msgid "Title of Nobility"
 msgstr "Title of Nobility"
 
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:328
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:371
 msgid "Settings"
 msgstr "Settings"
 
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:331
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:374
 msgid "Show Category"
 msgstr "Show Category"
 
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:339
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:382
 msgid "Select Category"
 msgstr "Select Category"
 
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:362
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:405
 msgid "Show Persons"
 msgstr "Show Persons"
 
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:370
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:413
 msgid "Select Persons"
 msgstr "Select Persons"
 
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:372
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:416
 msgid "Loading persons..."
 msgstr "Loading persons…"
 
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:383
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:433
 msgid "No posts available."
 msgstr "No posts available."
 
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:390
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:440
 msgid "Select Format"
 msgstr "Select Format"
 
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:393
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:443
 msgid "List"
 msgstr "List"
 
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:394
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:444
 msgid "Table"
 msgstr "Table"
 
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:395
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:445
 msgid "Card"
 msgstr "Card"
 
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:396
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:446
 msgid "Kompakt"
 msgstr "Kompakt"
 
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:397
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:447
 msgid "Page"
 msgstr "Page"
 
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:409
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:459
 msgid "Select Fields"
 msgstr "Select Fields"
 
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:432
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:482
 msgid "Group Id"
 msgstr "Group Id"
 
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:444
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:494
 msgid "Organization Nr"
 msgstr "Organization Nr"
 
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:452
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:502
 msgid "Custom url"
 msgstr "Custom url"
 
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:459
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:509
 msgid "Button Text"
 msgstr "Button Text"
 
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:460
-#: src/js/blocks/index.js:1
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:510
 msgid "Default: "
 msgstr "Default: "
 
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:509
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:517
+msgid "Sort by"
+msgstr "Sort by"
+
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:521
+msgid "Title and Last Name"
+msgstr "Title and Last Name"
+
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:522
+msgid "Head of Department First"
+msgstr "Head of Department First"
+
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:523
+msgid "Professors First"
+msgstr "Professors First"
+
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:524
+msgid "Identifier Order"
+msgstr "Identifier Order"
+
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:591
 msgid "Please add an organization ID to display results."
 msgstr "Please add an organization ID to display results."
 
-#: faudir-block/build/index.js:1 faudir-block/src/edit.js:510
+#: faudir-block/build/index.js:1 faudir-block/src/edit.js:592
 msgid ""
 "Please select persons or a category to display using the sidebar controls."
 msgstr ""
 "Please select persons or a category to display using the sidebar controls."
 
-#: src/js/blocks/index.js:1
-msgid "Please select persons to display using the sidebar controls."
-msgstr "Please select persons to display using the sidebar controls."
+#~ msgid "Please select persons to display using the sidebar controls."
+#~ msgstr "Please select persons to display using the sidebar controls."
 
 #~ msgid "Category"
 #~ msgstr "Category"

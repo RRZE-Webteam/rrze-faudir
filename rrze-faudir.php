@@ -750,7 +750,7 @@ function render_faudir_block($attributes) {
             ];
         }
         else {
-            throw new Exception('Neither person IDs, function+orgnr, nor category were provided');
+            throw new Exception(__('Neither person IDs, function+orgnr, nor category were provided', 'rrze-faudir'));
         }
 
         // Add optional attributes
