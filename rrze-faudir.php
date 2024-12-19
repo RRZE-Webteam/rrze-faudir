@@ -720,10 +720,12 @@ function render_faudir_block($attributes) {
             throw new Exception('FAUDIR shortcode is not registered');
         }
 
-        // Get default organization from options
+        // Get default organization from options with proper checks
         $options = get_option('rrze_faudir_options', []);
-        $default_org = $options['default_organization'] ?? null;
-        $defaultOrgIdentifier = $default_org ? $default_org['id'] : '';
+        $default_org = isset($options['default_organization']) && is_array($options['default_organization']) 
+            ? $options['default_organization'] 
+            : [];
+        $defaultOrgIdentifier = isset($default_org['id']) ? $default_org['id'] : '';
 
         // First check if we have function and orgnr
         if (!empty($attributes['function'])) {
@@ -732,7 +734,7 @@ function render_faudir_block($attributes) {
                 'function' => $attributes['function'],
                 'orgnr' => !empty($attributes['orgnr']) ? $attributes['orgnr'] : $defaultOrgIdentifier
             ];
-        }
+        } 
         // Then check for category
         else if (!empty($attributes['selectedCategory'])) {
             $shortcode_atts = [
@@ -744,11 +746,6 @@ function render_faudir_block($attributes) {
             if (!empty($attributes['selectedPersonIds'])) {
                 $shortcode_atts['identifier'] = implode(',', $attributes['selectedPersonIds']);
             }
-
-            // Add default orgnr if none specified
-            if (empty($attributes['orgnr']) && !empty($defaultOrgIdentifier)) {
-                $shortcode_atts['orgnr'] = $defaultOrgIdentifier;
-            }
         }
         // Finally check for selectedPersonIds without category
         else if (!empty($attributes['selectedPersonIds'])) {
@@ -758,11 +755,6 @@ function render_faudir_block($attributes) {
                     implode(',', $attributes['selectedPersonIds']) : 
                     $attributes['selectedPersonIds']
             ];
-
-            // Add default orgnr if none specified
-            if (empty($attributes['orgnr']) && !empty($defaultOrgIdentifier)) {
-                $shortcode_atts['orgnr'] = $defaultOrgIdentifier;
-            }
         }
         else {
             throw new Exception(__('Neither person IDs, function+orgnr, nor category were provided', 'rrze-faudir'));
