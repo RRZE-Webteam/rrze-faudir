@@ -197,11 +197,8 @@ export default function Edit({ attributes, setAttributes }) {
             path: '/wp/v2/settings/rrze_faudir_options'
         }).then((settings) => {
             if (settings?.default_organization?.orgnr) {
-                setDefaultOrgNr(settings.default_organization.orgnr);
-                // If we have a functionField but no organizationNr, set the default
-                if (functionValue && !orgnr) {
-                    setAttributes({ orgnr: settings.default_organization.orgnr });
-                }
+                setDefaultOrgNr(settings.default_organization);
+                console.log('Default org loaded:', settings.default_organization);
             }
         }).catch((error) => {
             console.error('Error fetching default organization number:', error);
@@ -221,13 +218,7 @@ export default function Edit({ attributes, setAttributes }) {
             params.custom_taxonomy = selectedCategory;
         }
 
-        if (functionValue) {
-            params.function = functionValue;
-            const orgNr = orgnr || defaultOrgNr;
-            if (orgNr) {
-                params.organization_nr = orgNr;
-            }
-        }
+    
 
         apiFetch({ 
             path: '/wp/v2/custom_person?per_page=100',
@@ -254,7 +245,7 @@ export default function Edit({ attributes, setAttributes }) {
             console.error('Error fetching posts:', error);
             setIsLoadingPosts(false);
         });
-    }, [selectedCategory, functionValue, orgnr, defaultOrgNr]);
+    }, [selectedCategory, functionValue, orgnr]);
 
     useEffect(() => {
         if (!buttonText) {
@@ -345,7 +336,7 @@ export default function Edit({ attributes, setAttributes }) {
         selectedCategory: attributes.selectedCategory,
         groupId: attributes.groupId,
         function: attributes.function,
-        orgnr: attributes.orgnr,
+        ...(attributes.orgnr && { orgnr: attributes.orgnr }), // Only include orgnr if it's not empty
         url: attributes.url
     };
 
@@ -356,7 +347,7 @@ export default function Edit({ attributes, setAttributes }) {
             setKey(prev => prev + 1);
         }, 300); // 300ms debounce
         return () => clearTimeout(timer);
-    }, [...Object.values(attributes), sort]); // Add sort to the dependency array
+    }, [...Object.values(blockAttributes), sort]); // Use blockAttributes instead of attributes
 
     // Also update the renderKey when sort changes
     const handleSortChange = (value) => {
@@ -498,6 +489,18 @@ export default function Edit({ attributes, setAttributes }) {
                             setAttributes({ orgnr: value });
                         }}
                     />
+                    {defaultOrgNr && !orgnr && (
+                        <div style={{ 
+                            padding: '8px', 
+                            backgroundColor: '#f0f0f0', 
+                            borderLeft: '4px solid #007cba',
+                            marginTop: '5px',
+                            marginBottom: '15px'
+                        }}>
+                            <span className="dashicons dashicons-info" style={{ marginRight: '5px' }}></span>
+                            {__('Default organization will be used if empty.', 'rrze-faudir')}
+                        </div>
+                    )}
                      <TextControl
                         label={__('Custom url', 'rrze-faudir')}
                         value={url}
@@ -530,12 +533,12 @@ export default function Edit({ attributes, setAttributes }) {
             <div {...blockProps}>
                 {(attributes.selectedPersonIds?.length > 0) || 
                  (attributes.selectedCategory) || 
-                 (attributes.function && attributes.orgnr) ? (
+                 (attributes.function && (attributes.orgnr || defaultOrgNr)) ? (
                     <>
                         {/* Format console log as WordPress shortcode */}
                         {console.log('Shortcode:', `[faudir ${
-                            attributes.function && attributes.orgnr 
-                                ? `function="${attributes.function}" orgnr="${attributes.orgnr}"`
+                            attributes.function ? 
+                                `function="${attributes.function}"${attributes.orgnr ? ` orgnr="${attributes.orgnr}"` : ''}`
                                 : `${attributes.selectedCategory ? `category="${attributes.selectedCategory}"` : ''
                                 }${attributes.selectedPersonIds?.length ? ` identifiers="${attributes.selectedPersonIds}"` : ''}`
                         }${attributes.selectedFormat ? ` format="${attributes.selectedFormat}"` : ''}${
@@ -550,9 +553,9 @@ export default function Edit({ attributes, setAttributes }) {
                             block="rrze-faudir/block"
                             attributes={{
                                 // Case 1: function + orgnr
-                                ...(attributes.function && attributes.orgnr ? {
+                                ...(attributes.function ? {
                                     function: attributes.function,
-                                    orgnr: attributes.orgnr,
+                                    ...(attributes.orgnr && { orgnr: attributes.orgnr }),
                                     selectedFormat: attributes.selectedFormat,
                                     selectedFields: attributes.selectedFields,
                                     buttonText: attributes.buttonText,
@@ -588,7 +591,9 @@ export default function Edit({ attributes, setAttributes }) {
                     <div style={{ padding: '20px', backgroundColor: '#f8f9fa', textAlign: 'center' }}>
                         <p>
                             {attributes.function 
-                                ? __('Please add an organization ID to display results.', 'rrze-faudir')
+                                ? (defaultOrgNr 
+                                    ? __('Using default organization.', 'rrze-faudir')
+                                    : __('Please configure a default organization in the plugin settings or add an organization ID to display results.', 'rrze-faudir'))
                                 : __('Please select persons or a category to display using the sidebar controls.', 'rrze-faudir')}
                         </p>
                     </div>
