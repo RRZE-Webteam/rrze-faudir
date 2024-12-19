@@ -21,12 +21,12 @@ function fetch_fau_data($atts)
 {
     // Only return early if it's a pure admin page, not the block editor
     if (
-        is_admin() && 
+        is_admin() &&
         !(defined('REST_REQUEST') && REST_REQUEST) && // Allow REST requests (block editor)
         !(defined('DOING_AJAX') && DOING_AJAX) && // Allow AJAX calls
         !(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) // Allow autosave
     ) {
-        return ''; 
+        return '';
     }
 
     // Get the default output fields using the utility function
@@ -105,7 +105,7 @@ function fetch_and_render_fau_data($atts)
     $persons = [];
 
     // Closure to fetch persons by post ID
-    $fetch_persons_by_post_id = function($post_id) {
+    $fetch_persons_by_post_id = function ($post_id) {
         $args = [
             'post_type'      => 'custom_person',
             'meta_query'     => [
@@ -117,7 +117,7 @@ function fetch_and_render_fau_data($atts)
             ],
             'posts_per_page' => 1,
         ];
-        
+
         $person_posts = get_posts($args);
         $person_identifiers = array();
 
@@ -132,26 +132,26 @@ function fetch_and_render_fau_data($atts)
     };
 
     // Closure to fetch persons by function and default organization
-    $fetch_persons_by_function = function($function) {
+    $fetch_persons_by_function = function ($function) {
         $options = get_option('rrze_faudir_options', []);
         $default_org = $options['default_organization'] ?? null;
         $defaultOrgIdentifier = $default_org ? $default_org['id'] : '';
 
         if (!empty($defaultOrgIdentifier)) {
             // Try English function label first
-            $lq_en = 'contacts.functionLabel.en[eq]=' . urlencode($function) . 
-                    '&contacts.organization.identifier[eq]=' . urlencode($defaultOrgIdentifier);
+            $lq_en = 'contacts.functionLabel.en[eq]=' . urlencode($function) .
+                '&contacts.organization.identifier[eq]=' . urlencode($defaultOrgIdentifier);
             $response = fetch_fau_persons(0, 0, ['lq' => $lq_en]);
 
             // If no results, try German function label
             if (empty($response['data'])) {
-                $lq_de = 'contacts.functionLabel.de[eq]=' . urlencode($function) . 
-                        '&contacts.organization.identifier[eq]=' . urlencode($defaultOrgIdentifier);
+                $lq_de = 'contacts.functionLabel.de[eq]=' . urlencode($function) .
+                    '&contacts.organization.identifier[eq]=' . urlencode($defaultOrgIdentifier);
                 $response = fetch_fau_persons(0, 0, ['lq' => $lq_de]);
             }
 
             if (!empty($response['data'])) {
-                $person_identifiers = array_map(function($person) {
+                $person_identifiers = array_map(function ($person) {
                     return $person['identifier'];
                 }, $response['data']);
                 return process_persons_by_identifiers($person_identifiers);
@@ -161,12 +161,12 @@ function fetch_and_render_fau_data($atts)
     };
 
     // Closure to filter persons by organization and group ID
-    $filter_persons = function($persons, $orgnr, $groupid) {
+    $filter_persons = function ($persons, $orgnr, $groupid) {
         if (!empty($orgnr)) {
             $orgData = fetch_fau_organizations(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
             if (!empty($orgData['data'])) {
                 $orgIdentifier = $orgData['data'][0]['identifier'];
-                $persons = array_filter($persons, function($person) use ($orgIdentifier) {
+                $persons = array_filter($persons, function ($person) use ($orgIdentifier) {
                     foreach ($person['contacts'] as $contact) {
                         if ($contact['organization']['identifier'] === $orgIdentifier) {
                             return true;
@@ -178,7 +178,7 @@ function fetch_and_render_fau_data($atts)
         }
 
         if (!empty($groupid)) {
-            $persons = array_filter($persons, function($person) use ($groupid) {
+            $persons = array_filter($persons, function ($person) use ($groupid) {
                 foreach ($person['contacts'] as $contact) {
                     if ($contact['organization']['identifier'] === $groupid) {
                         return true;
@@ -192,7 +192,7 @@ function fetch_and_render_fau_data($atts)
     };
 
     // Closure to filter persons by category
-    $filter_persons_by_category = function($persons, $category) {
+    $filter_persons_by_category = function ($persons, $category) {
         if (empty($category)) {
             return $persons;
         }
@@ -208,7 +208,7 @@ function fetch_and_render_fau_data($atts)
             ],
             'posts_per_page' => -1,
         ];
-        
+
         $person_posts = get_posts($args);
         $category_person_ids = array();
 
@@ -219,7 +219,7 @@ function fetch_and_render_fau_data($atts)
             }
         }
 
-        return array_filter($persons, function($person) use ($category_person_ids) {
+        return array_filter($persons, function ($person) use ($category_person_ids) {
             return in_array($person['identifier'], $category_person_ids);
         });
     };
@@ -227,21 +227,41 @@ function fetch_and_render_fau_data($atts)
     // Determine which logic to apply based on provided attributes
     if (!empty($function)) {
         $persons = [];
-        
+
         if (!empty($orgnr)) {
             // Case 1: Explicit orgnr is provided in shortcode - exact match for both org and function
             $orgData = fetch_fau_organizations(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
             if (!empty($orgData['data'])) {
-                $orgIdentifier = $orgData['data'][0]['identifier'];
-                error_log("Found organization: " . $orgIdentifier);
-                
+                $org = $orgData['data'][0];
+                $identifier = $org['identifier'];
+
                 // Format query using the exact format from the API example
-                $query = 'contacts.function=eq:' . urlencode($function) . 
-                         '&contacts.organization.identifier=eq:' . urlencode($orgIdentifier);
-                
-                error_log("Exact match query: $query");
-                 $result = fetch_fau_persons(0, 100, ['attrs' => 'lq=' . urlencode($query)]);
-                
+                $queryParts = [];
+                // $queryParts[] = 'contacts.functionLabel.de[eq]=' . $function;
+                $queryParts[] = 'contacts.organization.identifier[eq]=' . $identifier;
+
+                $params = [
+                    'lq' => implode('&', $queryParts)
+                ];
+
+                $result = fetch_fau_persons(60, 0, $params);
+
+                // go through through every person in the result
+                foreach ($result['data'] as $key => &$person) {
+                    // go through the contacts of the person
+                    foreach ($person['contacts'] as $contactKey => $contact) {
+                        // remove the contact the the functionLabel.de or functionLabel.en is not the function
+                        if ($contact['functionLabel']['de'] !== $function && $contact['functionLabel']['en'] !== $function || $contact['organization']['identifier'] !== $identifier) {
+                            unset($result['data'][$key]['contacts'][$contactKey]);
+                        }
+                    }
+
+                    // if the person has no contacts left, remove the person
+                    if (count($person['contacts']) === 0) {
+                        unset($result['data'][$key]);
+                    }
+                }
+
                 if (!empty($result['data'])) {
                     $persons = $result['data'];
                 }
@@ -251,19 +271,37 @@ function fetch_and_render_fau_data($atts)
             if (empty($identifiers) && empty($post_id) && empty($orgnr) && empty($category)) {
                 $options = get_option('rrze_faudir_options', []);
                 $default_org = $options['default_organization'] ?? null;
-                
+
                 if (!empty($default_org['orgnr'])) {
-                    $orgnr = $default_org['orgnr'];
+                    $ids = $default_org['ids'];
                     // Extract first 6 digits for prefix matching
-                    $org_prefix = substr(preg_replace('/[^0-9]/', '', $orgnr), 0, 6);
-                    
+
+                    $queryParts[] = 'contacts.organization.identifier[reg]=^(' . implode('|', $ids) . ')$';
+
                     // Format the query according to the specified pattern
-                    $query = 'contacts.function=eq:' . $function . 
-                             '&contacts.organization.identifier=reg:^' . $org_prefix;
-                    
-                    error_log("Prefix match query: $query");
-                    $result = fetch_fau_persons(0, 100, ['attrs' => 'lq=' . urlencode($query)]);
-                    
+                    $params = [
+                        'lq' => implode('&', $queryParts)
+                    ];
+
+                    $result = fetch_fau_persons(60, 0, $params);
+
+                    // go through through every person in the result
+                    foreach ($result['data'] as $key => &$person) {
+                        // go through the contacts of the person
+                        foreach ($person['contacts'] as $contactKey => $contact) {
+
+                            // remove the contact the the functionLabel.de or functionLabel.en is not the function
+                            if ($contact['functionLabel']['de'] !== $function && $contact['functionLabel']['en'] !== $function || !in_array($contact['organization']['identifier'], $ids)) {
+                                unset($result['data'][$key]['contacts'][$contactKey]);
+                            }
+                        }
+
+                        // if the person has no contacts left, remove the person
+                        if (count($person['contacts']) === 0) {
+                            unset($result['data'][$key]);
+                        }
+                    }
+
                     if (!empty($result['data'])) {
                         $persons = $result['data'];
                     }
@@ -273,10 +311,9 @@ function fetch_and_render_fau_data($atts)
     } elseif (!empty($post_id) && empty($identifiers) && empty($category) && empty($groupid) && empty($orgnr)) {
         $persons = $fetch_persons_by_post_id($post_id);
     } elseif (!empty($identifiers) || !empty($post_id)) {
-        if(!empty($identifiers)){
-        $persons = process_persons_by_identifiers($identifiers);
-        } 
-        elseif (!empty($post_id)){
+        if (!empty($identifiers)) {
+            $persons = process_persons_by_identifiers($identifiers);
+        } elseif (!empty($post_id)) {
             $persons = $fetch_persons_by_post_id($post_id);
         }
         // Apply category filter if category is set
@@ -286,31 +323,31 @@ function fetch_and_render_fau_data($atts)
         // Apply organization and group filters if set
         $persons = $filter_persons($persons, $orgnr, $groupid);
     } elseif (!empty($category)) {
-            // Fetch by category
-            $args = [
-                'post_type' => 'custom_person',
-                'tax_query' => [
-                    [
-                        'taxonomy' => 'custom_taxonomy',
-                        'field'    => 'slug',
-                        'terms'    => $category,
-                    ],
+        // Fetch by category
+        $args = [
+            'post_type' => 'custom_person',
+            'tax_query' => [
+                [
+                    'taxonomy' => 'custom_taxonomy',
+                    'field'    => 'slug',
+                    'terms'    => $category,
                 ],
-                'posts_per_page' => -1,
-            ];
-            $person_posts = get_posts($args);
-            $person_identifiers = array();
-    
-            foreach ($person_posts as $person_post) {
-                $person_id = get_post_meta($person_post->ID, 'person_id', true);
-                if (!empty($person_id)) {
-                    $person_identifiers[] = $person_id;
-                }
+            ],
+            'posts_per_page' => -1,
+        ];
+        $person_posts = get_posts($args);
+        $person_identifiers = array();
+
+        foreach ($person_posts as $person_post) {
+            $person_id = get_post_meta($person_post->ID, 'person_id', true);
+            if (!empty($person_id)) {
+                $person_identifiers[] = $person_id;
             }
-    
-            if (!empty($person_identifiers)) {
-                $persons = process_persons_by_identifiers($person_identifiers);
-            }
+        }
+
+        if (!empty($person_identifiers)) {
+            $persons = process_persons_by_identifiers($person_identifiers);
+        }
     } elseif (!empty($orgnr) && empty($post_id) && empty($identifiers) && empty($category) && empty($groupid) && empty($function)) {
         $orgData = fetch_fau_organizations(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
         if (!empty($orgData['data'])) {

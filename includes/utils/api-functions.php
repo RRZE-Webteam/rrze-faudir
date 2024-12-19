@@ -23,12 +23,17 @@ function fetch_fau_persons($limit = 60, $offset = 0, $params = [])
         'lf'
     ];
 
+    $logUrl = '';
+
     // Loop through the parameters and append them to the URL if they exist in $params
     foreach ($query_params as $param) {
         if (!empty($params[$param])) {
+            $logUrl .= '&' . $param . '=' . $params[$param];
             $url .= '&' . $param . '=' . urlencode($params[$param]);
         }
     }
+
+    error_log('$logUrl: ' . $logUrl);
 
     // Handle givenName and familyName as special cases to be combined into the 'q' parameter
     if (!empty($params['givenName'])) {
