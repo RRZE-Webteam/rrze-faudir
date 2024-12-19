@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-12-19T08:35:54+00:00\n"
+"POT-Creation-Date: 2024-12-19T14:40:58+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: rrze-faudir\n"
@@ -194,7 +194,7 @@ msgstr ""
 #: faudir-block/build/index.js:1
 #: faudir-block/src/edit.js:13
 #: faudir-block/src/edit.js:54
-#: faudir-block/src/edit.js:311
+#: faudir-block/src/edit.js:302
 msgid "Display Name"
 msgstr ""
 
@@ -218,7 +218,7 @@ msgstr ""
 #: includes/admin/settings-page.php:329
 #: faudir-block/build/index.js:1
 #: faudir-block/src/edit.js:57
-#: faudir-block/src/edit.js:520
+#: faudir-block/src/edit.js:523
 msgid "Last Name"
 msgstr ""
 
@@ -253,7 +253,7 @@ msgstr ""
 #: includes/admin/settings-page.php:334
 #: faudir-block/build/index.js:1
 #: faudir-block/src/edit.js:63
-#: faudir-block/src/edit.js:488
+#: faudir-block/src/edit.js:479
 msgid "Function"
 msgstr ""
 
@@ -331,7 +331,7 @@ msgid "Fau Map"
 msgstr ""
 
 #: includes/admin/settings-page.php:347
-#: includes/utils/api-functions.php:324
+#: includes/utils/api-functions.php:329
 #: templates/kompakt.php:319
 #: templates/page.php:315
 #: faudir-block/build/index.js:1
@@ -340,7 +340,7 @@ msgid "Office Hours"
 msgstr ""
 
 #: includes/admin/settings-page.php:348
-#: includes/utils/api-functions.php:330
+#: includes/utils/api-functions.php:335
 #: templates/kompakt.php:344
 #: templates/page.php:340
 #: faudir-block/build/index.js:1
@@ -409,7 +409,7 @@ msgid "Family Name:"
 msgstr ""
 
 #: includes/admin/settings-page.php:506
-#: includes/utils/api-functions.php:499
+#: includes/utils/api-functions.php:504
 #: templates/list.php:160
 msgid "Email:"
 msgstr ""
@@ -465,7 +465,7 @@ msgid "Failed to reset settings. Please try again."
 msgstr ""
 
 #: includes/admin/settings-page.php:616
-#: includes/utils/api-functions.php:535
+#: includes/utils/api-functions.php:540
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
@@ -478,7 +478,7 @@ msgid "All cache cleared successfully."
 msgstr ""
 
 #: includes/admin/settings-page.php:730
-#: includes/utils/api-functions.php:447
+#: includes/utils/api-functions.php:452
 msgid "Error: %s"
 msgstr ""
 
@@ -622,124 +622,124 @@ msgstr ""
 msgid "Error creating custom person: Failed to fetch person details."
 msgstr ""
 
-#: includes/shortcodes/fau_dir_shortcode.php:448
+#: includes/shortcodes/fau_dir_shortcode.php:485
 msgid "Person with ID %s does not exist"
 msgstr ""
 
-#: includes/utils/api-functions.php:56
-#: includes/utils/api-functions.php:152
-#: includes/utils/api-functions.php:230
+#: includes/utils/api-functions.php:61
+#: includes/utils/api-functions.php:157
+#: includes/utils/api-functions.php:235
 msgid "Error retrieving data: "
 msgstr ""
 
-#: includes/utils/api-functions.php:61
-#: includes/utils/api-functions.php:164
-#: includes/utils/api-functions.php:237
+#: includes/utils/api-functions.php:66
+#: includes/utils/api-functions.php:169
+#: includes/utils/api-functions.php:242
 msgid "Error decoding JSON data."
 msgstr ""
 
-#: includes/utils/api-functions.php:157
+#: includes/utils/api-functions.php:162
 msgid "Error retrieving data or contacts not found."
 msgstr ""
 
-#: includes/utils/api-functions.php:274
-#: includes/utils/api-functions.php:282
+#: includes/utils/api-functions.php:279
+#: includes/utils/api-functions.php:287
 msgid "No workplaces available"
 msgstr ""
 
-#: includes/utils/api-functions.php:291
+#: includes/utils/api-functions.php:296
 msgid "Room: "
 msgstr ""
 
-#: includes/utils/api-functions.php:294
+#: includes/utils/api-functions.php:299
 msgid "Floor: "
 msgstr ""
 
-#: includes/utils/api-functions.php:297
-#: includes/utils/api-functions.php:373
+#: includes/utils/api-functions.php:302
+#: includes/utils/api-functions.php:378
 msgid "Street: "
 msgstr ""
 
-#: includes/utils/api-functions.php:300
-#: includes/utils/api-functions.php:376
+#: includes/utils/api-functions.php:305
+#: includes/utils/api-functions.php:381
 msgid "ZIP: "
 msgstr ""
 
-#: includes/utils/api-functions.php:303
-#: includes/utils/api-functions.php:379
+#: includes/utils/api-functions.php:308
+#: includes/utils/api-functions.php:384
 msgid "City: "
 msgstr ""
 
-#: includes/utils/api-functions.php:306
-#: includes/utils/api-functions.php:382
+#: includes/utils/api-functions.php:311
+#: includes/utils/api-functions.php:387
 msgid "FAU Map: "
 msgstr ""
 
-#: includes/utils/api-functions.php:309
+#: includes/utils/api-functions.php:314
 msgid "Phones: "
 msgstr ""
 
-#: includes/utils/api-functions.php:312
+#: includes/utils/api-functions.php:317
 msgid "Fax: "
 msgstr ""
 
-#: includes/utils/api-functions.php:315
-#: includes/utils/api-functions.php:370
+#: includes/utils/api-functions.php:320
+#: includes/utils/api-functions.php:375
 msgid "URL: "
 msgstr ""
 
-#: includes/utils/api-functions.php:318
+#: includes/utils/api-functions.php:323
 msgid "Emails: "
 msgstr ""
 
-#: includes/utils/api-functions.php:322
-#: includes/utils/api-functions.php:328
+#: includes/utils/api-functions.php:327
+#: includes/utils/api-functions.php:333
 msgid "Weekday "
 msgstr ""
 
-#: includes/utils/api-functions.php:349
-#: includes/utils/api-functions.php:357
+#: includes/utils/api-functions.php:354
+#: includes/utils/api-functions.php:362
 msgid "No address available"
 msgstr ""
 
-#: includes/utils/api-functions.php:364
+#: includes/utils/api-functions.php:369
 msgid "Phone: "
 msgstr ""
 
-#: includes/utils/api-functions.php:367
+#: includes/utils/api-functions.php:372
 msgid "Email: "
 msgstr ""
 
-#: includes/utils/api-functions.php:398
-#: includes/utils/api-functions.php:406
+#: includes/utils/api-functions.php:403
+#: includes/utils/api-functions.php:411
 msgid "No social media available"
 msgstr ""
 
-#: includes/utils/api-functions.php:430
+#: includes/utils/api-functions.php:435
 msgid "Please enter a search term"
 msgstr ""
 
-#: includes/utils/api-functions.php:469
+#: includes/utils/api-functions.php:474
 msgid "Organization ID:"
 msgstr ""
 
-#: includes/utils/api-functions.php:470
+#: includes/utils/api-functions.php:475
 msgid "Organizations-Nr.:"
 msgstr ""
 
-#: includes/utils/api-functions.php:475
+#: includes/utils/api-functions.php:480
 msgid "Parent Organization:"
 msgstr ""
 
-#: includes/utils/api-functions.php:481
+#: includes/utils/api-functions.php:486
 msgid "Type:"
 msgstr ""
 
-#: includes/utils/api-functions.php:487
+#: includes/utils/api-functions.php:492
 msgid "Address"
 msgstr ""
 
-#: includes/utils/api-functions.php:496
+#: includes/utils/api-functions.php:501
 #: templates/kompakt.php:221
 #: templates/kompakt.php:253
 #: templates/list.php:177
@@ -748,20 +748,20 @@ msgstr ""
 msgid "Phone:"
 msgstr ""
 
-#: includes/utils/api-functions.php:502
+#: includes/utils/api-functions.php:507
 msgid "Website:"
 msgstr ""
 
-#: includes/utils/api-functions.php:515
+#: includes/utils/api-functions.php:520
 #: includes/utils/enqueue_scripts.php:63
 msgid "Save as Default Organization"
 msgstr ""
 
-#: includes/utils/api-functions.php:523
+#: includes/utils/api-functions.php:528
 msgid "No organizations found. Please try a different search term."
 msgstr ""
 
-#: includes/utils/api-functions.php:573
+#: includes/utils/api-functions.php:578
 msgid "Default organization has been saved."
 msgstr ""
 
@@ -962,11 +962,11 @@ msgstr ""
 msgid "No contact entry could be found."
 msgstr ""
 
-#: rrze-faudir.php:753
+#: rrze-faudir.php:760
 msgid "Neither person IDs, function+orgnr, nor category were provided"
 msgstr ""
 
-#: rrze-faudir.php:853
+#: rrze-faudir.php:859
 msgid "More Information"
 msgstr ""
 
@@ -1069,131 +1069,141 @@ msgid "Title of Nobility"
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:371
+#: faudir-block/src/edit.js:362
 msgid "Settings"
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:374
+#: faudir-block/src/edit.js:365
 msgid "Show Category"
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:382
+#: faudir-block/src/edit.js:373
 msgid "Select Category"
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:405
+#: faudir-block/src/edit.js:396
 msgid "Show Persons"
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:413
+#: faudir-block/src/edit.js:404
 msgid "Select Persons"
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:416
+#: faudir-block/src/edit.js:407
 msgid "Loading persons..."
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:433
+#: faudir-block/src/edit.js:424
 msgid "No posts available."
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:440
+#: faudir-block/src/edit.js:431
 msgid "Select Format"
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:443
+#: faudir-block/src/edit.js:434
 msgid "List"
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:444
+#: faudir-block/src/edit.js:435
 msgid "Table"
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:445
+#: faudir-block/src/edit.js:436
 msgid "Card"
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:446
+#: faudir-block/src/edit.js:437
 msgid "Kompakt"
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:447
+#: faudir-block/src/edit.js:438
 msgid "Page"
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:459
+#: faudir-block/src/edit.js:450
 msgid "Select Fields"
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:482
+#: faudir-block/src/edit.js:473
 msgid "Group Id"
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:494
+#: faudir-block/src/edit.js:485
 msgid "Organization Nr"
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:502
+#: faudir-block/src/edit.js:501
+msgid "Default organization will be used if empty."
+msgstr ""
+
+#: faudir-block/build/index.js:1
+#: faudir-block/src/edit.js:505
 msgid "Custom url"
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:509
+#: faudir-block/src/edit.js:512
 msgid "Button Text"
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:510
+#: faudir-block/src/edit.js:513
 msgid "Default: "
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:517
+#: faudir-block/src/edit.js:520
 msgid "Sort by"
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:521
+#: faudir-block/src/edit.js:524
 msgid "Title and Last Name"
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:522
+#: faudir-block/src/edit.js:525
 msgid "Head of Department First"
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:523
+#: faudir-block/src/edit.js:526
 msgid "Professors First"
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:524
+#: faudir-block/src/edit.js:527
 msgid "Identifier Order"
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:591
-msgid "Please add an organization ID to display results."
+#: faudir-block/src/edit.js:595
+msgid "Using default organization."
 msgstr ""
 
 #: faudir-block/build/index.js:1
-#: faudir-block/src/edit.js:592
+#: faudir-block/src/edit.js:596
+msgid "Please configure a default organization in the plugin settings or add an organization ID to display results."
+msgstr ""
+
+#: faudir-block/build/index.js:1
+#: faudir-block/src/edit.js:597
 msgid "Please select persons or a category to display using the sidebar controls."
 msgstr ""
