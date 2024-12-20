@@ -93,6 +93,25 @@ function fetch_and_render_fau_data($atts)
     $show_fields = array_map('trim', explode(',', $atts['show']));
     $hide_fields = array_map('trim', explode(',', $atts['hide']));
 
+    // Handle name-related fields logic
+    $name_fields = ['personalTitle', 'givenName', 'familyName', 'personalTitleSuffix', 'titleOfNobility'];
+    
+    // If displayName is in show_fields, add all name-related fields
+    if (in_array('displayName', $show_fields)) {
+        $show_fields = array_merge($show_fields, $name_fields);
+    } else {
+        // Only keep explicitly selected name fields
+        foreach ($name_fields as $field) {
+            if (!in_array($field, $show_fields)) {
+                $hide_fields[] = $field;
+            }
+        }
+    }
+
+    // Remove duplicates and ensure arrays are unique
+    $show_fields = array_unique($show_fields);
+    $hide_fields = array_unique($hide_fields);
+
     // Extract the attributes from the shortcode
     $identifiers = empty($atts['identifier']) ? [] : explode(',', $atts['identifier']);
     $category = $atts['category'];

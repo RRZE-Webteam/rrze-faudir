@@ -270,16 +270,42 @@ export default function Edit({ attributes, setAttributes }) {
         let updatedSelectedFields;
         let updatedHideFields = attributes.hideFields || [];
 
-        if (isFieldSelected) {
-            updatedSelectedFields = selectedFields.filter((f) => f !== field);
-            updatedHideFields = [...updatedHideFields, field];
-        } else {
-            updatedSelectedFields = [...selectedFields, field];
-            // If selecting firstName or lastName, also select displayName if not already selected
-            if ((field === 'givenName' || field === 'familyName') && !selectedFields.includes('displayName')) {
-                updatedSelectedFields.push('displayName');
+        // Define name-related fields
+        const nameFields = ['personalTitle', 'givenName', 'familyName', 'personalTitleSuffix', 'titleOfNobility'];
+
+        if (field === 'displayName') {
+            if (isFieldSelected) {
+                // If unchecking displayName, remove it and all name-related fields
+                updatedSelectedFields = selectedFields.filter(f => !nameFields.includes(f) && f !== 'displayName');
+                updatedHideFields = [...updatedHideFields, 'displayName', ...nameFields];
+            } else {
+                // If checking displayName, add it and all name-related fields
+                updatedSelectedFields = [
+                    ...selectedFields.filter(f => !nameFields.includes(f)),
+                    'displayName',
+                    ...nameFields
+                ];
+                updatedHideFields = updatedHideFields.filter(f => !nameFields.includes(f) && f !== 'displayName');
             }
-            updatedHideFields = updatedHideFields.filter((f) => f !== field);
+        } else if (nameFields.includes(field)) {
+            if (isFieldSelected) {
+                // If unchecking a name field, remove it and displayName
+                updatedSelectedFields = selectedFields.filter(f => f !== field && f !== 'displayName');
+                updatedHideFields = [...updatedHideFields, field];
+            } else {
+                // If checking a name field, add just that field
+                updatedSelectedFields = [...selectedFields.filter(f => f !== 'displayName'), field];
+                updatedHideFields = updatedHideFields.filter(f => f !== field);
+            }
+        } else {
+            // Handle non-name fields as before
+            if (isFieldSelected) {
+                updatedSelectedFields = selectedFields.filter(f => f !== field);
+                updatedHideFields = [...updatedHideFields, field];
+            } else {
+                updatedSelectedFields = [...selectedFields, field];
+                updatedHideFields = updatedHideFields.filter(f => f !== field);
+            }
         }
 
         setAttributes({ 
