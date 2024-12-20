@@ -235,9 +235,7 @@ function fetch_and_render_fau_data($atts)
                 $org = $orgData['data'][0];
                 $identifier = $org['identifier'];
 
-                // Format query using the exact format from the API example
                 $queryParts = [];
-                // $queryParts[] = 'contacts.functionLabel.de[eq]=' . $function;
                 $queryParts[] = 'contacts.organization.identifier[eq]=' . $identifier;
 
                 $params = [
@@ -246,24 +244,26 @@ function fetch_and_render_fau_data($atts)
 
                 $result = fetch_fau_persons(60, 0, $params);
 
-                // go through through every person in the result
+                // Process each person and filter contacts
                 foreach ($result['data'] as $key => &$person) {
-                    // go through the contacts of the person
+                    // Enrich person data with full contact information
+                    $person = enrich_person_with_contacts($person);
+                    
+                    // Filter contacts based on function
                     foreach ($person['contacts'] as $contactKey => $contact) {
-                        // remove the contact the the functionLabel.de or functionLabel.en is not the function
                         if ($contact['functionLabel']['de'] !== $function && $contact['functionLabel']['en'] !== $function || $contact['organization']['identifier'] !== $identifier) {
-                            unset($result['data'][$key]['contacts'][$contactKey]);
+                            unset($person['contacts'][$contactKey]);
                         }
                     }
 
-                    // if the person has no contacts left, remove the person
+                    // Remove person if no matching contacts remain
                     if (count($person['contacts']) === 0) {
                         unset($result['data'][$key]);
                     }
                 }
 
                 if (!empty($result['data'])) {
-                    $persons = $result['data'];
+                    $persons = array_values($result['data']);
                 }
             }
         } else {
@@ -285,25 +285,24 @@ function fetch_and_render_fau_data($atts)
 
                     $result = fetch_fau_persons(60, 0, $params);
 
-                    // go through through every person in the result
+                    // Process each person and filter contacts
                     foreach ($result['data'] as $key => &$person) {
-                        // go through the contacts of the person
+                        // Enrich person data with full contact information
+                        $person = enrich_person_with_contacts($person);
+                        
                         foreach ($person['contacts'] as $contactKey => $contact) {
-
-                            // remove the contact the the functionLabel.de or functionLabel.en is not the function
                             if ($contact['functionLabel']['de'] !== $function && $contact['functionLabel']['en'] !== $function || !in_array($contact['organization']['identifier'], $ids)) {
-                                unset($result['data'][$key]['contacts'][$contactKey]);
+                                unset($person['contacts'][$contactKey]);
                             }
                         }
 
-                        // if the person has no contacts left, remove the person
                         if (count($person['contacts']) === 0) {
                             unset($result['data'][$key]);
                         }
                     }
 
                     if (!empty($result['data'])) {
-                        $persons = $result['data'];
+                        $persons = array_values($result['data']);
                     }
                 }
             }

@@ -289,6 +289,10 @@ export default function Edit({ attributes, setAttributes }) {
             updatedHideFields = [...updatedHideFields, field];
         } else {
             updatedSelectedFields = [...selectedFields, field];
+            // If selecting firstName or lastName, also select displayName if not already selected
+            if ((field === 'givenName' || field === 'familyName') && !selectedFields.includes('displayName')) {
+                updatedSelectedFields.push('displayName');
+            }
             updatedHideFields = updatedHideFields.filter((f) => f !== field);
         }
 
@@ -296,6 +300,9 @@ export default function Edit({ attributes, setAttributes }) {
             selectedFields: updatedSelectedFields,
             hideFields: updatedHideFields
         });
+        
+        // Force re-render when fields are changed
+        setRenderKey(prev => prev + 1);
     };
 
     // Add translation test log
@@ -557,7 +564,8 @@ export default function Edit({ attributes, setAttributes }) {
                                     function: attributes.function,
                                     ...(attributes.orgnr && { orgnr: attributes.orgnr }),
                                     selectedFormat: attributes.selectedFormat,
-                                    selectedFields: attributes.selectedFields,
+                                    selectedFields: attributes.selectedFields.length > 0 ? attributes.selectedFields : null, // Only pass if fields are selected
+                                    hideFields: attributes.hideFields,  // Add hideFields
                                     buttonText: attributes.buttonText,
                                     url: attributes.url,
                                     sort: attributes.sort
@@ -567,17 +575,18 @@ export default function Edit({ attributes, setAttributes }) {
                                     selectedCategory: attributes.selectedCategory,
                                     selectedPersonIds: attributes.selectedPersonIds,
                                     selectedFormat: attributes.selectedFormat,
-                                    selectedFields: attributes.selectedFields,
+                                    selectedFields: attributes.selectedFields.length > 0 ? attributes.selectedFields : null, // Only pass if fields are selected
+                                    hideFields: attributes.hideFields,  // Add hideFields
                                     buttonText: attributes.buttonText,
                                     url: attributes.url,
                                     groupId: attributes.groupId,
-                                    sort: attributes.sort,
-                                    hideFields: attributes.hideFields
+                                    sort: attributes.sort
                                 } :
                                 // Case 3: selectedPersonIds
                                 {
                                     selectedPersonIds: attributes.selectedPersonIds,
-                                    selectedFields: attributes.selectedFields,
+                                    selectedFields: attributes.selectedFields.length > 0 ? attributes.selectedFields : null, // Only pass if fields are selected
+                                    hideFields: attributes.hideFields,  // Add hideFields
                                     selectedFormat: attributes.selectedFormat,
                                     buttonText: attributes.buttonText,
                                     url: attributes.url,
