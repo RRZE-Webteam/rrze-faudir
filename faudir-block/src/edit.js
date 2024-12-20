@@ -1,28 +1,14 @@
 import { __ } from '@wordpress/i18n';
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { PanelBody, CheckboxControl, ToggleControl, SelectControl, TextControl } from '@wordpress/components';
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, useMemo } from '@wordpress/element';
 import ServerSideRender from '@wordpress/server-side-render';
 import apiFetch from '@wordpress/api-fetch';
 import './editor.scss';
 
 export default function Edit({ attributes, setAttributes }) {
     // Enhanced translation test
-    console.log('Translation system test:', {
-        displayName: {
-            translated: __('Display Name', 'rrze-faudir'),
-            expected: 'Anzeigename'
-        },
-        email: {
-            translated: __('Email', 'rrze-faudir'),
-            expected: 'E-Mail'
-        },
-        phone: {
-            translated: __('Phone', 'rrze-faudir'),
-            expected: 'Telefon'
-        },
-        textDomain: 'rrze-faudir'
-    });
+  
 
     const [categories, setCategories] = useState([]);
     const [posts, setPosts] = useState([]);
@@ -198,7 +184,7 @@ export default function Edit({ attributes, setAttributes }) {
         }).then((settings) => {
             if (settings?.default_organization?.orgnr) {
                 setDefaultOrgNr(settings.default_organization);
-                console.log('Default org loaded:', settings.default_organization);
+               
             }
         }).catch((error) => {
             console.error('Error fetching default organization number:', error);
@@ -305,9 +291,6 @@ export default function Edit({ attributes, setAttributes }) {
         setRenderKey(prev => prev + 1);
     };
 
-    // Add translation test log
-    console.log('Translation test:', __('Display Name', 'rrze-faudir'));
-
     // Modify the format change handler
     const handleFormatChange = (value) => {
         setAttributes({ selectedFormat: value });
@@ -362,6 +345,33 @@ export default function Edit({ attributes, setAttributes }) {
         setRenderKey(prev => prev + 1); // Force re-render
     };
 
+    // 1. Add memoization for expensive computations
+    const memoizedPosts = useMemo(() => posts.map((post) => ({
+        id: post.id,
+        title: post.title.rendered,
+        personId: post.meta?.person_id
+    })), [posts]);
+
+    // 2. Implement debouncing for the ServerSideRender
+    const debouncedRenderKey = useDebounce(renderKey, 500);
+
+    // Add this custom hook at the top of your file
+    function useDebounce(value, delay) {
+        const [debouncedValue, setDebouncedValue] = useState(value);
+
+        useEffect(() => {
+            const handler = setTimeout(() => {
+                setDebouncedValue(value);
+            }, delay);
+
+            return () => {
+                clearTimeout(handler);
+            };
+        }, [value, delay]);
+
+        return debouncedValue;
+    }
+
     // Add debug output to the rendered component
     return (
         <>
@@ -409,14 +419,13 @@ export default function Edit({ attributes, setAttributes }) {
                     {showPosts && (
                         <>
                             <h4>{__('Select Persons', 'rrze-faudir')}</h4>
-                            {console.log('Total posts available:', posts.length)}
+            
                             {isLoadingPosts ? (
                                 <p>{__('Loading persons...', 'rrze-faudir')}</p>
                             ) : posts.length > 0 ? (
                                 <>
                                    
                                     {posts.map((post) => {
-                                        console.log('Rendering post:', post.title.rendered, post.id);
                                         return (
                                             <CheckboxControl
                                                 key={post.id}
@@ -492,7 +501,7 @@ export default function Edit({ attributes, setAttributes }) {
                         label={__('Organization Nr', 'rrze-faudir')}
                         value={orgnr}
                         onChange={(value) => {
-                            console.log('Setting orgnr:', value);
+                   
                             setAttributes({ orgnr: value });
                         }}
                     />
@@ -543,20 +552,9 @@ export default function Edit({ attributes, setAttributes }) {
                  (attributes.function && (attributes.orgnr || defaultOrgNr)) ? (
                     <>
                         {/* Format console log as WordPress shortcode */}
-                        {console.log('Shortcode:', `[faudir ${
-                            attributes.function ? 
-                                `function="${attributes.function}"${attributes.orgnr ? ` orgnr="${attributes.orgnr}"` : ''}`
-                                : `${attributes.selectedCategory ? `category="${attributes.selectedCategory}"` : ''
-                                }${attributes.selectedPersonIds?.length ? ` identifiers="${attributes.selectedPersonIds}"` : ''}`
-                        }${attributes.selectedFormat ? ` format="${attributes.selectedFormat}"` : ''}${
-                            attributes.selectedFields?.length ? ` fields="${attributes.selectedFields.join(',')}"` : ''
-                        }${attributes.sort ? ` sort="${attributes.sort}"` : ''}${
-                            attributes.buttonText ? ` button_text="${attributes.buttonText}"` : ''
-                        }${attributes.url ? ` url="${attributes.url}"` : ''}${
-                            attributes.groupId ? ` group_id="${attributes.groupId}"` : ''
-                        }]`)}
+                        
                         <ServerSideRender
-                            key={renderKey}
+                            key={debouncedRenderKey}
                             block="rrze-faudir/block"
                             attributes={{
                                 // Case 1: function + orgnr
