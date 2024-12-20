@@ -36,7 +36,13 @@ function rrze_faudir_settings_init()
     $settings = wp_parse_args($options, $default_settings);
     update_option('rrze_faudir_options', $settings);
 
-    register_setting('rrze_faudir_settings', 'rrze_faudir_options');
+    register_setting(
+        'rrze_faudir_settings', 
+        'rrze_faudir_options',
+        array(
+            'sanitize_callback' => 'rrze_faudir_sanitize_options'
+        )
+    );
 
     // API Settings Section
     add_settings_section(
@@ -621,6 +627,8 @@ function rrze_faudir_delete_default_organization()
     $options = get_option('rrze_faudir_options', array());
     if (isset($options['default_organization'])) {
         unset($options['default_organization']);
+        // Explicitly set default_organization to null to signal intentional removal
+        $options['default_organization'] = null;
         update_option('rrze_faudir_options', $options);
         add_settings_error(
             'rrze_faudir_messages',
@@ -630,7 +638,6 @@ function rrze_faudir_delete_default_organization()
         );
     }
 
-    // Redirect back to the settings page
     wp_redirect(add_query_arg(
         array('page' => 'rrze-faudir', 'settings-updated' => 'true'),
         admin_url('options-general.php')
@@ -778,3 +785,17 @@ function rrze_faudir_search_person_ajax()
     }
 }
 add_action('wp_ajax_rrze_faudir_search_person', 'rrze_faudir_search_person_ajax');
+
+// Add this new function
+function rrze_faudir_sanitize_options($new_options) {
+    // Get existing options
+    $existing_options = get_option('rrze_faudir_options', array());
+    
+    // Only preserve default_organization if it exists in current options
+    // AND if it's not being intentionally removed (check if it exists in new_options)
+    if (isset($existing_options['default_organization']) && !array_key_exists('default_organization', $new_options)) {
+        $new_options['default_organization'] = $existing_options['default_organization'];
+    }
+    
+    return $new_options;
+}
