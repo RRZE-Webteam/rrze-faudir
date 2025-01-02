@@ -20,65 +20,59 @@
                     $final_url = (count($persons) > 1 || empty($url)) ? $cpt_url : $url; ?>
                     <tr itemscope itemtype="https://schema.org/Person">
                         <!-- Full Name -->
-                        <?php if (in_array('displayName', $show_fields) && !in_array('displayName', $hide_fields)) : ?>
-                            <?php
-                            $options = get_option('rrze_faudir_options');
-                            $hard_sanitize = isset($options['hard_sanitize']) && $options['hard_sanitize'];
-                            $personal_title = '';
-                            $first_name = '';
-                            $nobility_title = '';
-                            $last_name = '';
-                            $title_suffix = '';
-                            if (in_array('personalTitle', $show_fields) && !in_array('personalTitle', $hide_fields)) {
-                                $personal_title = isset($person['personalTitle']) && !empty($person['personalTitle'])
-                                    ? esc_html($person['personalTitle'])
-                                    : '';
-                            }
-                            if (in_array('givenName', $show_fields) && !in_array('givenName', $hide_fields)) {
-                                $first_name = (isset($person['givenName']) && !empty($person['givenName']) ? esc_html($person['givenName']) : '');
-                            }
-                            if (in_array('titleOfNobility', $show_fields) && !in_array('titleOfNobility', $hide_fields)) {
-                                $nobility_title = (isset($person['titleOfNobility']) && !empty($person['titleOfNobility']) ? esc_html($person['titleOfNobility']) : '');
-                            }
-                            if (in_array('familyName', $show_fields) && !in_array('familyName', $hide_fields)) {
-                                $last_name = (isset($person['familyName']) && !empty($person['familyName']) ? esc_html($person['familyName']) : '');
-                            }
-                            if (in_array('personalTitleSuffix', $show_fields) && !in_array('personalTitleSuffix', $hide_fields)) {
-                                $title_suffix = (isset($person['personalTitleSuffix']) && !empty($person['personalTitleSuffix']) ? esc_html($person['personalTitleSuffix']) : '');
-                            }
-                            // Construct the full name
-                            $fullName = trim(
-                                ($personal_title) . ' ' .
-                                    ($first_name) . ' ' .
-                                    ($nobility_title) . ' ' .
-                                    ($last_name) . ' ' .
-                                    '(' . ($title_suffix) . ')'
-                                );
-                            ?>
+                        <?php
+                        $options = get_option('rrze_faudir_options');
+                        $hard_sanitize = isset($options['hard_sanitize']) && $options['hard_sanitize'];
+                        $personal_title = '';
+                        $first_name = '';
+                        $nobility_title = '';
+                        $last_name = '';
+                        $title_suffix = '';
+                        if (in_array('personalTitle', $show_fields) && !in_array('personalTitle', $hide_fields)) {
+                            $personal_title = isset($person['personalTitle']) && !empty($person['personalTitle'])
+                                ? esc_html($person['personalTitle'])
+                                : '';
+                        }
+                        if (in_array('givenName', $show_fields) && !in_array('givenName', $hide_fields)) {
+                            $first_name = (isset($person['givenName']) && !empty($person['givenName']) ? esc_html($person['givenName']) : '');
+                        }
+                        if (in_array('titleOfNobility', $show_fields) && !in_array('titleOfNobility', $hide_fields)) {
+                            $nobility_title = (isset($person['titleOfNobility']) && !empty($person['titleOfNobility']) ? esc_html($person['titleOfNobility']) : '');
+                        }
+                        if (in_array('familyName', $show_fields) && !in_array('familyName', $hide_fields)) {
+                            $last_name = (isset($person['familyName']) && !empty($person['familyName']) ? esc_html($person['familyName']) : '');
+                        }
+                        if (in_array('personalTitleSuffix', $show_fields) && !in_array('personalTitleSuffix', $hide_fields)) {
+                            $title_suffix = (isset($person['personalTitleSuffix']) && !empty($person['personalTitleSuffix']) ? esc_html($person['personalTitleSuffix']) : '');
+                        }
+                        // Construct the full name
+                        $fullName = trim(
+                            ($personal_title) . ' ' .
+                                ($first_name) . ' ' .
+                                ($nobility_title) . ' ' .
+                                ($last_name) . ' ' .
+                                '(' . ($title_suffix) . ')'
+                        );
+
+                        $person_name_html = FaudirUtils::getPersonNameHtml([
+                            'hard_sanitize' => $hard_sanitize,
+                            'personal_title' => $personal_title,
+                            'first_name' => $first_name,
+                            'nobility_title' => $nobility_title,
+                            'last_name' => $last_name,
+                            'title_suffix' => $title_suffix,
+                            'identifier' => $person['identifier']
+                        ]);
+                        ?>
+                        <?php if (!empty($person_name_html)): ?>
                             <td>
                                 <section class="card-section-title" aria-label="<?php echo esc_html($fullName); ?>">
                                     <?php if (!empty($final_url)) : ?>
                                         <a href="<?php echo esc_url($final_url); ?>" itemprop="url">
-                                            <?php echo FaudirUtils::getPersonNameHtml([
-                                                'hard_sanitize' => $hard_sanitize,
-                                                'personal_title' => $personal_title,
-                                                'first_name' => $first_name,
-                                                'nobility_title' => $nobility_title,
-                                                'last_name' => $last_name,
-                                                'title_suffix' => $title_suffix,
-                                                'identifier' => $person['identifier']
-                                            ]); ?>
+                                            <?php echo $person_name_html; ?>
                                         </a>
                                     <?php else : ?>
-                                        <?php echo FaudirUtils::getPersonNameHtml([
-                                            'hard_sanitize' => $hard_sanitize,
-                                            'personal_title' => $personal_title,
-                                            'first_name' => $first_name,
-                                            'nobility_title' => $nobility_title,
-                                            'last_name' => $last_name,
-                                            'title_suffix' => $title_suffix,
-                                            'identifier' => $person['identifier']
-                                        ]); ?>
+                                        <?php echo $person_name_html; ?>
                                     <?php endif; ?>
                                 </section>
                             </td>
@@ -209,7 +203,7 @@
                                         ?>
                                             <li>
                                                 <span class="screen-reader-text"><?php echo esc_html(ucfirst($icon_data['name'])); ?>: </span>
-                                                <a href="<?php echo esc_url($social['url']); ?>" itemprop="sameAs" ><?php echo esc_url($social['url']); ?></a>
+                                                <a href="<?php echo esc_url($social['url']); ?>" itemprop="sameAs"><?php echo esc_url($social['url']); ?></a>
                                             </li>
                                         <?php endforeach; ?>
                                     </ul>

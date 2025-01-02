@@ -74,6 +74,16 @@ if (!empty($persons)) : ?>
                                 '(' . ($title_suffix) . ')'
                         );
 
+                        $person_name_html = FaudirUtils::getPersonNameHtml([
+                            'hard_sanitize' => $hard_sanitize,
+                            'personal_title' => $personal_title,
+                            'first_name' => $first_name,
+                            'nobility_title' => $nobility_title,
+                            'last_name' => $last_name,
+                            'title_suffix' => $title_suffix,
+                            'identifier' => $person['identifier']
+                        ]);
+
                         // Image
                         if (count($persons) === 1 && !empty($image_url)) {
                             ?>
@@ -122,30 +132,14 @@ if (!empty($persons)) : ?>
                         }
 
                         // Name
-                        if (in_array('displayName', $show_fields) && !in_array('displayName', $hide_fields)) {
+                        if (!empty($person_name_html)) {
                             echo '<section class="card-section-title" aria-label="' . esc_attr($fullName) . '">';
                             if (!empty($final_url)) {
                                 echo '<a href="' . esc_url($final_url) . '" aria-labelledby="name-' . esc_attr($person['identifier']) . '">';
-                                echo FaudirUtils::getPersonNameHtml([
-                                    'hard_sanitize' => $hard_sanitize,
-                                    'personal_title' => $personal_title,
-                                    'first_name' => $first_name,
-                                    'nobility_title' => $nobility_title,
-                                    'last_name' => $last_name,
-                                    'title_suffix' => $title_suffix,
-                                    'identifier' => $person['identifier']
-                                ]);
+                                echo $person_name_html;
                                 echo '</a>';
                             } else {
-                                echo FaudirUtils::getPersonNameHtml([
-                                    'hard_sanitize' => $hard_sanitize,
-                                    'personal_title' => $personal_title,
-                                    'first_name' => $first_name,
-                                    'nobility_title' => $nobility_title,
-                                    'last_name' => $last_name,
-                                    'title_suffix' => $title_suffix,
-                                    'identifier' => $person['identifier']
-                                ]);
+                                echo $person_name_html;
                             }
                             echo '</section>';
                         }

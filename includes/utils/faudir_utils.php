@@ -82,6 +82,11 @@ class FaudirUtils
         $title_suffix = $person_data['title_suffix'] ?? '';
         $identifier = $person_data['identifier'] ?? '';
 
+        // if all name parts are empty, return an empty string
+        if (empty($personal_title) && empty($first_name) && empty($nobility_title) && empty($last_name) && empty($title_suffix)) {
+            return '';
+        }
+
         $nameHtml = '';
         $nameHtml .= '<span id="name-' . esc_attr($identifier) . '" itemprop="name">';
         if (!empty($personal_title)) {

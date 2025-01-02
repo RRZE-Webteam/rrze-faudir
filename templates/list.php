@@ -71,31 +71,27 @@
                                 ($last_name) . ' ' .
                                 '(' . ($title_suffix) . ')'
                         );
+
+                        $person_name_html = FaudirUtils::getPersonNameHtml([
+                            'hard_sanitize' => $hard_sanitize,
+                            'personal_title' => $personal_title,
+                            'first_name' => $first_name,
+                            'nobility_title' => $nobility_title,
+                            'last_name' => $last_name,
+                            'title_suffix' => $title_suffix,
+                            'identifier' => $person['identifier']
+                        ]);
+
                         ?>
-                        <?php if (in_array('displayName', $show_fields) && !in_array('displayName', $hide_fields)) : ?>
+                        <?php if (!empty($person_name_html)) : ?>
                             <section class="card-section-title" aria-label="<?php echo esc_html($fullName); ?>">
                                 <?php if (!empty($final_url)) : ?>
                                     <a href="<?php echo esc_url($final_url); ?>">
-                                        <?php echo FaudirUtils::getPersonNameHtml([
-                                            'hard_sanitize' => $hard_sanitize,
-                                            'personal_title' => $personal_title,
-                                            'first_name' => $first_name,
-                                            'nobility_title' => $nobility_title,
-                                            'last_name' => $last_name,
-                                            'title_suffix' => $title_suffix,
-                                            'identifier' => $person['identifier']
-                                        ]); ?>
+                                        <?php echo $person_name_html; ?>
                                     </a>
-                                <?php else : echo FaudirUtils::getPersonNameHtml([
-                                            'hard_sanitize' => $hard_sanitize,
-                                            'personal_title' => $personal_title,
-                                            'first_name' => $first_name,
-                                            'nobility_title' => $nobility_title,
-                                            'last_name' => $last_name,
-                                            'title_suffix' => $title_suffix,
-                                            'identifier' => $person['identifier']
-                                    ]); ?>
-                                <?php endif; ?>
+                                <?php else : 
+                                    echo $person_name_html;
+                                endif; ?>
                             </section>
                         <?php endif; ?>
                         <?php
