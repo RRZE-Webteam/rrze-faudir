@@ -1,13 +1,45 @@
 {
     "name": "rrze-faudir",
     "version": "1.0.0",
-    "description": "A WordPress plugin for FAUDIR.",
-    "main": "index.js",
+    "description": "Plugin for displaying the FAUdir and institution directory on websites.",
+    "main": "rrze-faudir.php",
+    "textdomain": "rrze-faudir",
     "scripts": {
         "build": "gulp"
     },
-    "author": "FAU",
-    "license": "MIT",
+    "keywords": [
+        "WordPress",
+        "Theme",
+        "FAU",
+        "RRZE"
+    ],
+    "compatibility": {
+        "wprequires": "6.4",
+        "wptestedup": "6.7",
+        "phprequires": "8.2"
+    },
+    "author": {
+        "name": "RRZE-Webteam <webmaster@fau.de> (https://www.rrze.fau.de)",
+        "url": "https://www.wordpress.rrze.fau.de"
+    },
+    "license": "GNU General Public License v3 or later",
+    "licenseurl": "http://www.gnu.org/licenses/gpl-3.0.html",
+    "tags": "Plugin, WordPress, FAUdir, FAU, RRZE",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/RRZE-Webteam/rrze-faudir",
+        "issues": "https://github.com/RRZE-Webteam/rrze-faudir/issues",
+        "clone": "git+https://github.com/RRZE-Webteam/rrze-faudir.git"
+    },
+    "type": "module",
+    "source": {
+        "js": "./src/js/",
+        "sass": "./src/scss/"
+    },
+    "target": {
+        "js": "./assets/js/",
+        "css": "./assets/css/"
+    },
     "devDependencies": {
         "@wordpress/scripts": "^30.4.0",
         "gulp": "^5.0.0",
@@ -17,5 +49,10 @@
         "gulp-svgmin": "^4.1.0",
         "gulp-wp-pot": "^2.5.0",
         "sass": "^1.77.8"
+    },
+    "dependencies": {
+        "gulp-header": "^2.0.9",
+        "gulp-sourcemaps": "^3.0.0",
+        "gulp-touch-cmd": "^0.0.1"
     }
 }
