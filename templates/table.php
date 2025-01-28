@@ -1,3 +1,12 @@
+<?php
+// Template file for RRZE FAUDIR
+
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly
+}
+?>
+<div class="faudir">
+
 <table class="fau-contacts-table-custom">
     <tbody>
         <?php foreach ($persons as $person) : ?>
@@ -219,3 +228,4 @@
         <?php endforeach; ?>
     </tbody>
 </table>
+</div>

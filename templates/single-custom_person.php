@@ -1,8 +1,15 @@
 <?php
+// Template file for RRZE FAUDIR
+
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly
+}
+?>
+<?php
 get_header();
 ?>
 
-<main id="main" class="site-main">
+<main id="main" class="site-main faudir">
     <?php
     while (have_posts()) :
         the_post();

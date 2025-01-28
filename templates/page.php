@@ -1,3 +1,11 @@
+<?php
+// Template file for RRZE FAUDIR
+
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly
+}
+?>
+<div class="faudir">
 <?php if (!empty($persons)) : ?>
     <div>
         <?php foreach ($persons as $person) : ?>
@@ -429,3 +437,4 @@
 <?php else : ?>
     <div><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?> </div>
 <?php endif; ?>
+</div>

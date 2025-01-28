@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 class FaudirUtils
 {
     const API_BASE_URL = 'https://api.fau.de/pub/v1/opendir/';

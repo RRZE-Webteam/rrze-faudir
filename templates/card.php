@@ -1,6 +1,14 @@
 <?php
+// Template file for RRZE FAUDIR
 
-if (!empty($persons)) : ?>
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly
+}
+?>
+
+<div class="faudir">
+<?php
+    if (!empty($persons)) : ?>
     <div class="shortcode-contacts-wrapper" role="list"> <!-- Flex container for the cards -->
         <?php foreach ($persons as $person) : ?>
             <?php if (isset($person['error'])): ?>
@@ -211,3 +219,4 @@ if (!empty($persons)) : ?>
 <?php else : ?>
     <div><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir') ?> </div>
 <?php endif; ?>
+</div>

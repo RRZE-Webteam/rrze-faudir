@@ -1,4 +1,7 @@
 <?php
+
+defined('ABSPATH') || exit;
+
 class Template
 {
     protected $template_dir;

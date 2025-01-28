@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Fetch persons from the FAU persons API
  * @param int $limit - Limit the number of persons to fetch

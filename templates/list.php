@@ -1,4 +1,12 @@
-<ul class="fau-contacts-list-custom">
+<?php
+// Template file for RRZE FAUDIR
+
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly
+}
+?>
+<div class="faudir">
+    <ul class="fau-contacts-list-custom">
     <?php if (!empty($persons)) : ?>
         <?php foreach ($persons as $person) : ?>
             <?php if (isset($person['error'])): ?>
@@ -221,4 +229,5 @@
     <?php else : ?>
         <div><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir') ?> </div>
     <?php endif; ?>
-</ul>
+    </ul>
+</div>
