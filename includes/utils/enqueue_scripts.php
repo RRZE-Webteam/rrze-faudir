@@ -49,7 +49,7 @@ class EnqueueScripts
         // Enqueue CSS for the admin page
         wp_enqueue_style('rrze-faudir', plugin_dir_url(__FILE__) . '../../assets/css/rrze-faudir.css');
         // Enqueue the admin.js script
-        wp_enqueue_script('rrze-faudir-admin-js', plugin_dir_url(__FILE__) . '../../assets/js/admin.js', ['jquery'], null, true);
+        wp_enqueue_script('rrze-faudir-admin-js', plugin_dir_url(__FILE__) . '../../assets/js/rrze-faudir-admin.js', ['jquery'], null, true);
         // Localize the script with relevant data
         wp_localize_script('rrze-faudir-admin-js', 'rrzeFaudirAjax', array(
             'ajax_url' => admin_url('admin-ajax.php'),

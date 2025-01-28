@@ -1,6 +1,5 @@
 
 jQuery(document).ready(function ($) {
-    console.log('RRZE FAUDIR JS from src directory');
     $('#person_id').on('change', function() {
         var personId = $(this).val();
 
