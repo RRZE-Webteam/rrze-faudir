@@ -106,23 +106,23 @@ let readmebanner = [
 ].join("\n");
 
 /*
- * SASS and Autoprefix CSS Files, without clean
+ * Erstelle CSS für Dev-Versionen: Ohne Minify mit Sourcemap
  */
 export function devcss() {
-    return src([info.source.sass + "rrze-faudir.scss"])
-      
-      .pipe(sass(sassDevOptions).on("error", sass.logError))
-      .pipe(header(banner, { info: info }))
-      .pipe(dest(info.target.css))
-      .pipe(touch());
+    return src([info.source.sass + "rrze-faudir.scss"])      
+      	.pipe(sourcemaps.init())
+	.pipe(sass(sassDevOptions).on("error", sass.logError))
+	.pipe(sourcemaps.write())
+	.pipe(header(banner, { info: info }))
+	.pipe(dest(info.target.css))
+	.pipe(touch());
 }
 
 /*
- * Compile all styles with SASS and clean them up
+ * Compile all styles with SASS and clean them up, with Minify 
  */
 export function css() {
-    return src([info.source.sass + "rrze-faudir.scss"])
-	
+    return src([info.source.sass + "rrze-faudir.scss"])	
 	.pipe(sass(sassProdOptions).on("error", sass.logError))
 	.pipe(header(banner, { info: info }))
 	.pipe(dest(info.target.css))
@@ -130,11 +130,19 @@ export function css() {
 }
 
 
-// JavaScript-Task für die Hauptdateien
+// JavaScript-Task für die Hauptdateien: Prod mit Minifizierung
 export function jsMain() {
   return src([info.source.js + '*.js', '!src/js/fau_dir_block.js'])
     .pipe(concat(info.target.mainjs))
     .pipe(uglify())
+    .pipe(header(jsbanner, { info: info }))
+    .pipe(dest(info.target.js))
+    .pipe(touch());
+}
+// JavaScript-Task für die Hauptdateien: Dev ohne Minifizierung
+export function devjsMain() {
+  return src([info.source.js + '*.js', '!src/js/fau_dir_block.js'])
+    .pipe(concat(info.target.mainjs))
     .pipe(header(jsbanner, { info: info }))
     .pipe(dest(info.target.js))
     .pipe(touch());
@@ -173,9 +181,11 @@ export function svg() {
 }
 
 // Watch-Task zur Überwachung von Änderungen
+// Der Watch-Task wird zur Entwicklung verwendet, daher hier nur 
+// Dev-Versionen erstellen
 export function watchTask() {
-  watch('src/scss/*.scss', css); // Überwachung von SCSS-Dateien
-  watch('src/js/*.js', jsMain); // Überwachung von JS-Dateien
+  watch('src/scss/*.scss', devcss); // Überwachung von SCSS-Dateien
+  watch('src/js/*.js', devjsMain); // Überwachung von JS-Dateien
 }
 
 
@@ -246,6 +256,6 @@ export default series(upversionpatch, css, jsMain, jsAdmin);
 export const build = series(upversionpatch, css, jsMain, jsAdmin, createReadme);
 
 // Dev Version
-export const dev = series(devversion, devcss, jsMain, jsAdmin);
+export const dev = series(devversion, devcss, devjsMain, jsAdmin);
 
 
