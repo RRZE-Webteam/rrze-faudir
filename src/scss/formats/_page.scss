@@ -1,0 +1,29 @@
+/*----------------------------------------------------------------------------*/
+/* _page 
+/* Created on : 30.01.2025, 10:57:51
+/*----------------------------------------------------------------------------*/
+
+.faudir {
+    
+    .format-page {
+	align-items: center;
+	gap: 20px;
+	padding: 20px;
+	background-color: var(--color-white);
+	box-shadow: 0 4px 8px var(--color-ContentBorders);
+	margin-bottom: 20px;
+	border-radius: 8px;
+	margin: 10px;
+    }
+
+    .format-page-img-container {
+	display: flex;
+
+	img {
+		width: 30%;
+		object-fit: cover;
+		max-height: 450px;
+	}
+    }
+
+}

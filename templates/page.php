@@ -7,7 +7,6 @@ if (!defined('ABSPATH')) {
 ?>
 <div class="faudir">
 <?php if (!empty($persons)) : ?>
-    <div>
         <?php foreach ($persons as $person) : ?>
             <?php if (isset($person['error'])): ?>
                 <div class="faudir-error">
@@ -61,9 +60,9 @@ if (!defined('ABSPATH')) {
                             }
                         endforeach;
                     } ?>
-                    <div class="contact-page">
-                        <div class="contact-page-img-container" itemscope itemtype="https://schema.org/Person">
-                            <div style="flex-grow: 1; max-width:70%">
+                    <div class="format-page">
+                        <div class="format-page-img-container" itemscope itemtype="https://schema.org/Person">
+                            <div>
 
                                 <!-- Full name with title -->
                                 <?php
@@ -427,14 +426,15 @@ if (!defined('ABSPATH')) {
                             </section>
                         <?php } ?>
 
-                    </div> <!-- End of shortcode-contact-card -->
+                    </div> <!-- End of .format-page -->
                 <?php else : ?>
                     <div class="contact-page"><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?> </div>
                 <?php endif; ?>
             <?php endif; ?>
         <?php endforeach; ?>
-    </div> <!-- End of shortcode-contacts-wrapper -->
 <?php else : ?>
-    <div><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?> </div>
+    <div class="faudir-error">
+    <?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?>
+    </div>
 <?php endif; ?>
 </div>

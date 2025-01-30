@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
 <div class="faudir">
 <?php
     if (!empty($persons)) : ?>
-    <div class="shortcode-contacts-wrapper" role="list"> <!-- Flex container for the cards -->
+    <div class="format-card-wrapper" role="list"> <!-- Flex container for the cards -->
         <?php foreach ($persons as $person) : ?>
             <?php if (isset($person['error'])): ?>
                 <div class="faudir-error">
@@ -46,7 +46,7 @@ if (!defined('ABSPATH')) {
                             }
                         endforeach;
                     } ?>
-                    <article class="shortcode-contact-card" itemscope itemtype="https://schema.org/Person" role="listitem">
+                    <article class="format-card" itemscope itemtype="https://schema.org/Person" role="listitem">
                         <!-- Get Full name with title -->
                         <?php
                         $options = get_option('rrze_faudir_options');
@@ -209,14 +209,14 @@ if (!defined('ABSPATH')) {
                             <?php endif; ?>
                         <?php endif; ?>
 
-                    </article> <!-- End of shortcode-contact-card -->
+                    </article> <!-- End of .card -->
                 <?php else : ?>
-                    <article itemscope><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?></article>
+                    <article><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?></article>
                 <?php endif; ?>
             <?php endif; ?>
         <?php endforeach; ?>
-    </div> <!-- End of shortcode-contacts-wrapper -->
+    </div> <!-- End of .cards -->
 <?php else : ?>
-    <div><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir') ?> </div>
+    <div class="faudir-error"><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir') ?> </div>
 <?php endif; ?>
 </div>

@@ -1,0 +1,43 @@
+/*----------------------------------------------------------------------------*/
+/* card 
+/* Settings for Format Card
+/* Created on : 30.01.2025, 09:54:26
+/*----------------------------------------------------------------------------*/
+
+.faudir {   
+    .format-card-wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	padding: 20px;
+    }
+
+
+    .format-card {
+	background-color: var(--color-white);
+	padding: 20px;
+	width: calc(33.333% - 40px);
+	box-sizing: border-box;
+	transition: transform 0.2s ease-in-out;
+	text-align: center;
+
+	 img {
+	    border-radius: 50%;
+	    width: 50%;
+	    height: auto;
+	    aspect-ratio: 1;
+	    object-fit: cover;
+	}
+	h2 {
+	    display: block;
+	    font-size: 18px;
+	    margin-bottom: 10px;
+	}
+	 h3 {
+	    display: block;
+	    font-size: 16px;
+	    color: var(--color-MetaTextDefault);
+	}
+    }
+
+}

@@ -96,8 +96,7 @@ function add_taxonomy_meta_box()
 add_action('add_meta_boxes', 'add_taxonomy_meta_box');
 
 // Add Meta Boxes
-function add_custom_person_meta_boxes()
-{
+function add_custom_person_meta_boxes() {
     add_meta_box(
         'person_additional_fields',
         __('Additional Fields', 'rrze-faudir'),
@@ -108,8 +107,7 @@ function add_custom_person_meta_boxes()
     );
 }
 add_action('add_meta_boxes', 'add_custom_person_meta_boxes');
-function check_classic_editor_and_add_shortcode_button()
-{
+function check_classic_editor_and_add_shortcode_button() {
     global $post;
 
     // Ensure we are in the admin area and on a post edit screen
@@ -131,8 +129,6 @@ function check_classic_editor_and_add_shortcode_button()
                     <input type="text" id="generated-shortcode" readonly value="[faudir identifier=\"person_id\"]">
                     <button type="button" id="copy-shortcode" class="button button-primary" >' . __('Copy shortcode to Clipboard', 'rrze-faudir') . '</button>
                   </div>';
-            // Enqueue the script for shortcode functionality
-            wp_enqueue_script('custom-shortcode-script', plugins_url('./custom-shortcode.js', __FILE__), array('jquery'), null, true);
         });
     }
 }

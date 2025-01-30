@@ -8,10 +8,10 @@ class FaudirShortcode
         add_shortcode('faudir_shortcode', [self::class, 'render']);
     }
 
-    // obsolet - WW, 28-01
- //   public static function render($atts, $content = null)  {
- //       return '<div class="faudir faudir-shortcode">' . do_shortcode($content) . '</div>';
- //   }
+    // obsolet - WW, 28-01?
+   public static function render($atts, $content = null)  {
+       return '<div class="faudir faudir-shortcode">' . do_shortcode($content) . '</div>';
+   }
 }
 
 include_once plugin_dir_path(__FILE__) . '../utils/Template.php';

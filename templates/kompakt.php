@@ -7,6 +7,7 @@ if (!defined('ABSPATH')) {
 ?>
 <div class="faudir">
 <?php if (!empty($persons)): ?>
+    <div class="format-compact-wrapper">
     <?php foreach ($persons as $person): ?>
         <?php if (isset($person['error'])): ?>
             <div class="faudir-error">
@@ -89,7 +90,7 @@ if (!defined('ABSPATH')) {
                 ]);
                 ?>
 
-                <div class="shortcode-contact-kompakt" itemscope itemtype="https://schema.org/Person">
+                <div class="format-compact" itemscope itemtype="https://schema.org/Person">
                     <?php if (count($persons) === 1 && !empty($image_url)): ?>
                         <div itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
                             <meta itemprop="identifier" content="<?php echo esc_attr($person['identifier']); ?>_image" />
@@ -417,9 +418,9 @@ if (!defined('ABSPATH')) {
             <?php endif; ?>
         <?php endif; ?>
     <?php endforeach; ?>
-
+    </div>
 <?php else: ?>
-    <div><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?></div>
+    <div class="faudir-error"><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?></div>
 <?php endif; ?>
 
 </div>

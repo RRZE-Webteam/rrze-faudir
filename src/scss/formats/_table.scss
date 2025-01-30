@@ -1,10 +1,15 @@
 /*----------------------------------------------------------------------------*/
-/* _settings 
-/* Created on : 28.01.2025, 16:27:58
+/* _table 
+/* Created on : 30.01.2025, 11:34:05
 /*----------------------------------------------------------------------------*/
-
-// Add global styles here
 .faudir {
-    --border-color: var(--color-branding-primary, var(--faudir-color-border));
-}
+    .format-table {
+	.title-suffix {
+	    white-space: nowrap;
+	}
 
+	td {
+	    min-width: 10rem;
+	}
+    }
+}

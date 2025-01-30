@@ -1,0 +1,184 @@
+/*----------------------------------------------------------------------------*/
+/* _unknown-use 
+/* CSS Definition, which use are unknown (yet). Maybe obsolet
+/* Created on : 30.01.2025, 08:38:43
+/*----------------------------------------------------------------------------*/
+.manual-identifier {
+    margin: 15px 0;
+}
+
+.manual-identifier-input {
+    display: flex;
+    gap: 10px;
+}
+
+.manual-identifier-input input {
+    flex: 1;
+}
+
+.manual-identifier-input {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.selected-identifier {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    margin: 5px 0;
+    background: white;
+    border-radius: 3px;
+}
+
+.selected-identifiers {
+    margin: 15px 0;
+    padding: 10px;
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+.remove-identifier {
+    background: none;
+    border: none;
+    color: #cc0000;
+    cursor: pointer;
+    padding: 0 5px;
+    font-size: 18px;
+}
+
+.remove-identifier:hover {
+    color: #990000;
+}
+
+.selected-identifiers {
+    margin: 15px 0;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+.selected-identifier {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    margin: 5px 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.remove-identifier {
+    border: none;
+    background: none;
+    color: #cc0000;
+    cursor: pointer;
+    padding: 0 8px;
+}
+
+
+.remove-person {
+    background: none;
+    border: none;
+    color: #cc0000;
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+.remove-person:hover {
+    color: #ff0000;
+}
+
+.selected-person {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    margin: 3px 0;
+    background: #f0f0f0;
+    border-radius: 3px;
+}
+
+.selected-person.in-category {
+    background: #e0f0e0;
+    /* Slightly different background for category members */
+}
+
+.block-label {
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.block-label {
+    font-family: var(--font-family-default, 'Roboto, sans-serif');
+    border-radius: 3px;
+    width: clamp(10rem, 25rem, 100%);
+    padding: 5px;
+}
+
+
+.faudir-block-preview {
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.faudir-block-preview:hover {
+    border-color: #007cba;
+}
+
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.preview-footer {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #ddd;
+    font-size: 0.9em;
+    color: #666;
+}
+
+
+
+/*
+Murks code wegen falscher Semabtik. Räume ich eh auf
+
+.page-section-title,
+.card-section-title{
+    font-size: var(--font-size-h2, 1.5rem);
+    font-weight: 600;
+    color: var(--color-black);
+
+    & a,
+    a:hover,
+    a:active,
+    a:focus {
+        text-decoration: none;
+    }
+
+}
+
+.list-section-title,
+.table-section-title {
+    font-size: var(--font-size-h5, 1.125rem);
+    font-weight: 600;
+    color: var(--color-black);
+
+    & a,
+    a:hover,
+    a:active,
+    a:focus {
+        text-decoration: none;
+    }
+
+}
+
+
+*/ 
+

@@ -5,11 +5,10 @@ if (!defined('ABSPATH')) {
 }
 
 // Add admin menu
-function rrze_faudir_add_admin_menu()
-{
+function rrze_faudir_add_admin_menu() {
     add_options_page(
-        __('RRZE-FAUdir Settings', 'rrze-faudir'),
-        __('RRZE-FAUdir', 'rrze-faudir'),
+        __('FAUdir Settings', 'rrze-faudir'),
+        __('FAUdir', 'rrze-faudir'),
         'manage_options',
         'rrze-faudir',
         'rrze_faudir_settings_page'
@@ -17,8 +16,7 @@ function rrze_faudir_add_admin_menu()
 }
 add_action('admin_menu', 'rrze_faudir_add_admin_menu');
 // Load default values from config.php
-function rrze_faudir_get_default_config()
-{
+function rrze_faudir_get_default_config() {
     $config_path = plugin_dir_path(__FILE__) . 'config/config.php';
     if (file_exists($config_path)) {
         return include $config_path;
@@ -26,8 +24,7 @@ function rrze_faudir_get_default_config()
     return [];
 }
 
-function rrze_faudir_settings_init()
-{
+function rrze_faudir_settings_init() {
     // Load the default settings
     $default_settings = rrze_faudir_get_default_config();
     $options = get_option('rrze_faudir_options', []);
@@ -338,7 +335,7 @@ function rrze_faudir_default_output_fields_render()
         'phone' => __('Phone', 'rrze-faudir'),
         'organization' => __('Organization', 'rrze-faudir'),
         'function' => __('Function', 'rrze-faudir'),
-        'url' => __('Url', 'rrze-faudir'),
+        'url' => __('URL', 'rrze-faudir'),
         'kompaktButton' => __('Kompakt Button', 'rrze-faudir'),
         'content' => __('Content', 'rrze-faudir'),
         'teasertext' => __('Teasertext', 'rrze-faudir'),
@@ -377,10 +374,9 @@ function rrze_faudir_org_search_section_callback()
 }
 
 // Settings page display
-function rrze_faudir_settings_page()
-{
+function rrze_faudir_settings_page() {
 ?>
-    <div class="wrap">
+    <div class="wrap faudir-settings">
         <h1>
             <?php echo esc_html(__('FAUdir Settings', 'rrze-faudir')); ?>
         </h1>

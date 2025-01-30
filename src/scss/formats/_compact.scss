@@ -1,0 +1,30 @@
+/*----------------------------------------------------------------------------*/
+/* _compact 
+/* Created on : 30.01.2025, 10:53:27
+/*----------------------------------------------------------------------------*/
+
+
+.faudir {
+    .format-compact-wrapper {
+	
+    }
+    .format-compact {
+	display: flex;
+	gap: 20px;
+	padding: 20px;
+	background-color: var(--color-white);
+	box-shadow: 0 4px 8px var(--color-ContentBorders);
+	margin-bottom: 20px;
+	border-radius: 8px;
+
+	img {
+	    width: 20%;
+	    object-fit: cover;
+	    max-height: 450px;
+	}
+
+	
+    }
+
+
+} 

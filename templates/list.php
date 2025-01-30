@@ -6,13 +6,11 @@ if (!defined('ABSPATH')) {
 }
 ?>
 <div class="faudir">
-    <ul class="fau-contacts-list-custom">
     <?php if (!empty($persons)) : ?>
+         <ul class="format-list">
         <?php foreach ($persons as $person) : ?>
             <?php if (isset($person['error'])): ?>
-                <div class="faudir-error">
-                    <?php echo esc_html($person['message']); ?>
-                </div>
+                <li class="faudir-error"><?php echo esc_html($person['message']); ?> </li>             
             <?php else: ?>
                 <?php if (!empty($person)) : ?>
                     <?php
@@ -222,12 +220,13 @@ if (!defined('ABSPATH')) {
                         <?php } ?>
                     </li>
                 <?php else : ?>
-                    <li><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?> </li>
+                    <li class="faudir-error"><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?> </li>
                 <?php endif; ?>
             <?php endif; ?>
         <?php endforeach; ?>
+        </ul>
     <?php else : ?>
-        <div><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir') ?> </div>
+        <div class="faudir-error"><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir') ?> </div>
     <?php endif; ?>
-    </ul>
+
 </div>

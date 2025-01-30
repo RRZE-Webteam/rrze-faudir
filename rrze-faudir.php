@@ -4,7 +4,7 @@
 Plugin Name: RRZE FAUdir
 Plugin URI: https://github.com/RRZE-Webteam/rrze-faudir
 Description: Plugin for displaying the FAU person and institution directory on websites.
-Version: 1.0.6-3
+Version: 2.1.1-0
 Author: RRZE Webteam
 License: GNU General Public License v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -64,32 +64,34 @@ function rrze_faudir_system_requirements()
 // Initialize plugin if system requirements are met
 if (rrze_faudir_system_requirements()) {
     // Load plugin textdomain for translations
-    function rrze_faudir_load_textdomain()
-    {
+    function rrze_faudir_load_textdomain()  {
         load_plugin_textdomain('rrze-faudir', false, dirname(plugin_basename(__FILE__)) . '/languages');
     }
 
     add_action('plugins_loaded', 'rrze_faudir_load_textdomain');
-    function rrze_faudir_enqueue_scripts()
-{
-    // Register your script with the dependencies
-    wp_enqueue_script(
-        'rrze-faudir-script',
-        plugin_dir_url(__FILE__) . 'assets/js/script.js',
-        ['wp-i18n', 'wp-element'], // Include wp-i18n for translations
-        '1.0.0',
-        true
-    );
 
-    // Load translations for your script
-    wp_set_script_translations(
-        'rrze-faudir-script', // Script handle
-        'rrze-faudir',        // Text domain
-        plugin_dir_path(__FILE__) . 'languages' // Path to your .json files
-    );
-}
-add_action('wp_enqueue_scripts', 'rrze_faudir_enqueue_scripts');
+/*
+ * 
+ *  js file existiert nicht. Wozu braucht man das??
+    function rrze_faudir_enqueue_scripts() {
+        // Register your script with the dependencies
+        wp_enqueue_script(
+            'rrze-faudir-script',
+            plugin_dir_url(__FILE__) . 'assets/js/script.js',
+            ['wp-i18n', 'wp-element'], // Include wp-i18n for translations
+            '1.0.0',
+            true
+        );
 
+        // Load translations for your script
+        wp_set_script_translations(
+            'rrze-faudir-script', // Script handle
+            'rrze-faudir',        // Text domain
+            plugin_dir_path(__FILE__) . 'languages' // Path to your .json files
+        );
+    }
+     add_action('wp_enqueue_scripts', 'rrze_faudir_enqueue_scripts');
+    */
 
     // Include necessary files
     require_once plugin_dir_path(__FILE__) . 'includes/shortcodes/fau_dir_shortcode.php';
@@ -108,8 +110,7 @@ add_action('wp_enqueue_scripts', 'rrze_faudir_enqueue_scripts');
 
     // Schedule the event on plugin activation
     register_activation_hook(__FILE__, 'schedule_check_person_availability');
-    function schedule_check_person_availability()
-    {
+    function schedule_check_person_availability() {
         if (!wp_next_scheduled('check_person_availability')) {
             wp_schedule_event(time(), 'hourly', 'check_person_availability');
         }
@@ -183,8 +184,7 @@ add_action('wp_enqueue_scripts', 'rrze_faudir_enqueue_scripts');
     // AJAX search function
     add_action('wp_ajax_rrze_faudir_search_contacts', 'rrze_faudir_search_contacts');
     add_action('wp_ajax_nopriv_rrze_faudir_search_contacts', 'rrze_faudir_search_contacts');
-    function rrze_faudir_search_contacts()
-    {
+    function rrze_faudir_search_contacts()   {
         check_ajax_referer('rrze_faudir_api_nonce', 'security');
 
         if (isset($_POST['identifier'])) {
@@ -213,8 +213,7 @@ add_action('wp_enqueue_scripts', 'rrze_faudir_enqueue_scripts');
 // Hook into 'init' to check plugin status and register the alias shortcode
 add_action('init', 'register_kontakt_as_faudir_shortcode_alias');
 
-function register_kontakt_as_faudir_shortcode_alias()
-{
+function register_kontakt_as_faudir_shortcode_alias() {
     // Include the plugin.php file to ensure is_plugin_active() is available
     include_once(ABSPATH . 'wp-admin/includes/plugin.php');
 
@@ -226,8 +225,7 @@ function register_kontakt_as_faudir_shortcode_alias()
 }
 
 // Function to handle the [kontakt] shortcode and redirect to [faudir]
-function kontakt_to_faudir_shortcode_alias($atts, $content = null)
-{
+function kontakt_to_faudir_shortcode_alias($atts, $content = null) {
     // Pass all attributes and content to the [faudir] shortcode
     $atts_string = '';
     if (!empty($atts)) {
