@@ -69,14 +69,6 @@ if (!defined('ABSPATH')) {
                         if (in_array('personalTitleSuffix', $show_fields) && !in_array('personalTitleSuffix', $hide_fields)) {
                             $title_suffix = (isset($person['personalTitleSuffix']) && !empty($person['personalTitleSuffix']) ? esc_html($person['personalTitleSuffix']) : '');
                         }
-                        // Construct the full name
-                        $fullName = trim(
-                            ($personal_title) . ' ' .
-                                ($first_name) . ' ' .
-                                ($nobility_title) . ' ' .
-                                ($last_name) . ' ' .
-                                '(' . ($title_suffix) . ')'
-                        );
 
                         $person_name_html = FaudirUtils::getPersonNameHtml([
                             'hard_sanitize' => $hard_sanitize,
@@ -88,24 +80,21 @@ if (!defined('ABSPATH')) {
                             'identifier' => $person['identifier']
                         ]);
 
-                        ?>
-                        <?php if (!empty($person_name_html)) : ?>
-                            <section class="card-section-title" aria-label="<?php echo esc_html($fullName); ?>">
-                                <?php if (!empty($final_url)) : ?>
-                                    <a href="<?php echo esc_url($final_url); ?>">
-                                        <?php echo $person_name_html; ?>
-                                    </a>
-                                <?php else : 
+                        if (!empty($person_name_html)) { ?>
+                            <span class="displayname"><?php if (!empty($final_url)) { ?>
+                                    <a href="<?php echo esc_url($final_url); ?>"><?php echo $person_name_html; ?></a>
+                                <?php } else { 
                                     echo $person_name_html;
-                                endif; ?>
-                            </section>
-                        <?php endif; ?>
-                        <?php
+                                } ?>
+                            </span>
+                        <?php } 
                         // Initialize arrays for unique emails, phones, and a flag for URLs
                         $unique_emails = [];
                         $unique_phones = [];
                         $url_displayed = false;
 
+                        $output = '';
+                        
                         // Collect emails and phones from workplaces, falling back to person email/phone if necessary
                         if (!empty($person['contacts'])) {
                             $displayed_contacts = get_post_meta($post->ID, 'displayed_contacts', true) ?: []; // Retrieve displayed contact indexes
@@ -153,71 +142,75 @@ if (!defined('ABSPATH')) {
                         // Output emails
                         if (in_array('email', $show_fields) && !in_array('email', $hide_fields)){
                             if (!empty($unique_emails)) {
-                                foreach ($unique_emails as $email) {
-                                    echo '<span>';
-                                    $icon_data = get_social_icon_data('email');
-                                    ?>
-                                    <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                          style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
-                                    <span class="screen-reader-text"><?php echo esc_html__('Email:', 'rrze-faudir'); ?></span>
-                                    <a href="mailto:<?php echo esc_attr($email); ?>" itemprop="email"><?php echo esc_html($email); ?></a>
-                                    <?php
-                                    echo '</span>';
+                                $output .= '<span class="email">';           
+                                $output .= '<span class="screen-reader-text">'.esc_html__('Email:', 'rrze-faudir').' </span>';
+                           
+                                foreach ($unique_emails as $email) {                                  
+                                    $output .= '<a href="mailto:'.esc_attr($email).'" itemprop="email">'.esc_html($email).'</a>';     
+                                    if ($email !== end($unique_emails)) {
+                                        $output .= ' / ';
+                                    }
                                 }
-                            }
+                                $output .= '</span>';
+                            }                            
                         }
 
                         // Output phones
                         if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)){
                             if (!empty($unique_phones)) {
-                                foreach ($unique_phones as $phone) {
-                                    echo '<span>';
-                                    $icon_data = get_social_icon_data('phone');
-                                    ?>
-                                    <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                          style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
-                                    <span class="screen-reader-text"><?php echo esc_html__('Phone:', 'rrze-faudir'); ?></span>
-                                    <span itemprop="telephone"><?php echo esc_html($phone); ?></span>
-                                    <?php
-                                    echo '</span>';
+                                if (!empty($output)) {
+                                    $output .= ', ';
                                 }
+                                $output .= '<span class="phone">';           
+                                $output .= '<span class="screen-reader-text">'.esc_html__('Phone:', 'rrze-faudir').' </span>';
+                                foreach ($unique_phones as $phone) {                                    
+                                    $output .= '<a href="tel:'.esc_attr($phone).'" itemprop="telephone">'.esc_html($phone).'</a>';     
+                                    if ($phone !== end($unique_phones)) {
+                                        $output .= ' / ';
+                                    }
+                                }
+                                $output .= '</span>';
                             }
                         }
 
                         // Output URL or N/A
-                        if (in_array('url', $show_fields) && !in_array('url', $hide_fields)){
+                        if (in_array('url', $show_fields) && !in_array('url', $hide_fields)) {
                             if ($url_displayed) {
+                                if (!empty($output)) {
+                                    $output .= ', ';
+                                }
                                 foreach ($person['contacts'] as $contact) {
                                     if (!empty($contact['workplaces'])) {
+                                        $output .= '<span class="url">';           
+                                        $output .= '<span class="screen-reader-text">'.esc_html__('URL:', 'rrze-faudir').' </span>';
                                         foreach ($contact['workplaces'] as $workplace) {
                                             if (!empty($workplace['url'])) {
-                                                echo '<span>';
-                                                $icon_data = get_social_icon_data('url');
-                                                ?>
-                                                <span class="<?php echo esc_attr($icon_data['css_class']); ?>" 
-                                                      style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
-                                                <span class="screen-reader-text"><?php echo esc_html__('Url:', 'rrze-faudir'); ?></span>
-                                                <a href="<?php echo esc_url($workplace['url']); ?>" itemprop="url"><?php echo esc_html($workplace['url']); ?></a>
-                                                <?php
-                                                echo '</span>';
+                                              
+                                                $output .= '<a href="'.esc_url($workplace['url']).'" itemprop="url">'.esc_html($workplace['url']).'</a>';     
+                                                if ($phone !== end($unique_phones)) {
+                                                    $output .= ' / ';
+                                                }
                                             }
                                         }
+                                        $output .= '</span>';
                                     }
                                 }
                             }
                         }
-                        ?>                      
-                            <?php if (in_array('teasertext', $show_fields) && !in_array('teasertext', $hide_fields)) { ?>
-                                <?php
-                            if (!empty($teaser_lang)) :
-                            ?>
-                                <div class="teaser-second-language">
-                                    <?php echo wp_kses_post($teaser_lang); ?>
-                                </div>
-                            <?php
-                            endif;
-                            ?>
-                        <?php } ?>
+                        
+                        if (!empty($output)) {
+                           $output = '('.$output.')';
+                        }
+                        
+                        // Output optional teasertext
+                        if (in_array('teasertext', $show_fields) && !in_array('teasertext', $hide_fields)) {
+                            if (!empty($teaser_lang)) {  
+                               $output .= ' <span class="teasertext">'.wp_kses_post($teaser_lang).'</span>';
+                            }
+                        } 
+                        echo $output;
+                        ?>
+                        
                     </li>
                 <?php else : ?>
                     <li class="faudir-error"><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?> </li>

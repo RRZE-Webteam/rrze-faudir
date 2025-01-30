@@ -1,8 +1,7 @@
 <?php
 // Shortcode handler for RRZE FAUDIR
 
-class FaudirShortcode
-{
+class FaudirShortcode {
     public static function register()
     {
         add_shortcode('faudir_shortcode', [self::class, 'render']);
@@ -17,8 +16,7 @@ class FaudirShortcode
 include_once plugin_dir_path(__FILE__) . '../utils/Template.php';
 
 // Shortcode function
-function fetch_fau_data($atts)
-{
+function fetch_fau_data($atts) {
     // Only return early if it's a pure admin page, not the block editor
     if (
         is_admin() &&
@@ -87,8 +85,7 @@ function fetch_fau_data($atts)
     return $output;
 }
 
-function fetch_and_render_fau_data($atts)
-{
+function fetch_and_render_fau_data($atts) {
     // Convert 'show' and 'hide' attributes into arrays
     $show_fields = array_map('trim', explode(',', $atts['show']));
     $hide_fields = array_map('trim', explode(',', $atts['hide']));
@@ -467,6 +464,9 @@ function fetch_and_render_fau_data($atts)
     // Fix format assignment when empty
     if ($atts['format'] === '') {
         $atts['format'] = 'kompakt';  // Use single = for assignment
+    }
+    if ($atts['format'] === 'liste') {
+         $atts['format'] = 'list';
     }
 
     // Check if button text is set and not empty before passing it to the template
