@@ -6,5 +6,7 @@
 // Add global styles here
 .faudir {
     --border-color: var(--color-branding-primary, var(--faudir-color-border));
+    
+    --faudir-color-list-displayname: var(--color-content-links, #222);
 }
 
