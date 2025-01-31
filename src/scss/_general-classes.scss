@@ -16,4 +16,56 @@
 	width: 1px;
 	word-wrap: normal !important;
     }
+     
+     .contactlist {
+	 ul {
+	    margin: 0;
+	    display: inline;
+	    
+	    li {
+		display: inline;
+	    }
+	    li::after {
+		content: ", ";
+	    }
+	    li:last-child::after {
+		content: "";
+	    }
+	    .website.title {
+		@extend .screen-reader-text;
+	    }
+	}
+	    	
+    }
+    .portallist {
+	 ul {
+	    margin: 0;
+	    display: inline;
+	    
+	    li {
+		display: inline;
+	    }
+	    .website.title {
+		@extend .screen-reader-text;
+	    }
+	}
+	    	
+    }
+
+	ul.maillist {
+	    margin: 0;
+	    display: inline;
+	    
+	    li {
+		display: inline;
+	    }
+	    li::after {
+		content: " / ";
+	    }
+	    li:last-child::after {
+		content: "";
+	    }
+	}
+	    	
+    
 }

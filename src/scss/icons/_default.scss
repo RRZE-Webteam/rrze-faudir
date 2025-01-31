@@ -1,0 +1,137 @@
+/*-----------------------------------------------------------------------------------*/
+/* Default SVG Icons
+/*-----------------------------------------------------------------------------------*/
+
+
+// Default Settings for Mask-Icons
+/* 
+   Since Version 2.4 we are using SVG Icons with mask: url(); instead of
+   background-image: url() due to the better methods to change the colors
+   of the icon.
+   See also: https://codepen.io/noahblon/post/coloring-svgs-in-css-background-images
+   Chapter CSS masks.
+*/
+
+
+
+
+@mixin unset-svg-background-image($important: '', $font-size: 1rem) {
+    @if ($important != '') {
+	background-image: none !important;
+	background-size: inherit !important;
+	background-position: inherit !important;
+
+    } @else {
+	background-image: none;
+	background-size: inherit;
+	background-position: inherit;
+
+    }
+    	line-height: var(--base-line-height, 1.5);
+	font-size: $font-size;
+}
+
+@mixin mask-icon($iconurl: '',$color: #000, $iconsize: 1.2rem) {
+    @include unset-svg-background-image();
+    mask-size: var(--icon-size-mask, 70%); 
+    mask-repeat: no-repeat;
+    mask-position: center; 
+    
+    @if ($iconurl != '') {
+	mask-image: $iconurl;
+	background-color: var(--icon-color, $color);
+	width: var(--icon-size, $iconsize);
+	height: var(--icon-size, $iconsize);
+    }
+    
+}
+
+
+// Default background-svg-icon width for use in :before
+.svg-placeholder {
+    width: 1rem;
+    height: 1rem;
+    line-height: 1rem;
+    font-size: 0.6rem;
+
+    background-image: svg-bookmark();
+    background-repeat: no-repeat;
+    display: inline-block;
+    content: ' ';
+    background-size: 100%;
+    background-position: center center;
+    
+    margin-right: 0.5rem;
+}
+.svg-icon {
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    content: ' ';
+    @include svg-icon-sizes($svg-icon-size);
+    background-image: inherit;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-position: center center;
+}
+
+.fau-svg-definitions {
+    display: none;
+}
+
+.fau-icon {
+    --_icon-size: var(--fau-icon-size, 1rem);
+    --_icon-color: var(--fau-icon-color, var(--color-Text));
+    --_icon-color-hover: var(--fau-icon-color-hover, var(--color-MainBackground));
+    --_icon-size-mask: var(--fau-icon-size-mask, var(--fau-icon-size, 1.6rem));
+    --_icon-margin-right: var(--fau-icon-margin-right, 0);
+    --_icon-margin-left: var(--fau-icon-margin-left, 0);
+    
+
+    width: var(--_icon-size); 
+    height: var(--_icon-size); 
+    display: inline-block;
+    content: ' ';
+    mask-size: var(--_icon-size-mask); 
+    mask-repeat: no-repeat;
+    mask-position: center;
+    background-color: var(--_icon-color);
+    margin-right: var(--_icon-margin-right);
+    margin-left: var(--_icon-margin-left);
+
+    &:focus,
+    &:hover {
+	background-color: var(--_icon-color-hover);
+    }
+
+}
+
+.fau-icon-bars {
+    @extend .fau-icon;
+    mask-image: svg-icon-bars();
+    transition: transform .2s linear;
+}
+.fau-icon-close {
+    @extend .fau-icon;
+    mask-image: svg-icon-close();
+}
+
+.fau-icon-play {
+    @extend .fau-icon;
+    mask-image: svg-icon-play();
+}
+.fau-icon-pause {
+    @extend .fau-icon;
+    mask-image: svg-icon-pause();
+}
+
+.fau-icon-calendar {
+    @extend .fau-icon;
+    mask-image: svg-icon-calendar();
+}
+
+
+.fau-icon-building {
+    @extend .fau-icon;
+    mask-image: svg-icon-building();
+}

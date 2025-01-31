@@ -7,14 +7,18 @@
 @use 'blocks/blocks';
 // General classes
 @use 'general-classes';
+
 // Icons for Links and Social Media
-@use 'icons/icons';
+// @use 'icons/icons';
 
 // Buttons
 @use 'buttons';
 
 // Settings-Page in Backend
 @use 'backend';
+
+// Symbols
+@use 'symbols/symbols';
 
 // Formats
 @use 'formats/formats';

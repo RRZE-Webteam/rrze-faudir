@@ -4,7 +4,7 @@
 Plugin Name: RRZE FAUdir
 Plugin URI: https://github.com/RRZE-Webteam/rrze-faudir
 Description: Plugin for displaying the FAU person and institution directory on websites.
-Version: 2.1.1-3
+Version: 2.1.1-10
 Author: RRZE Webteam
 License: GNU General Public License v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -104,6 +104,9 @@ if (rrze_faudir_system_requirements()) {
     require_once plugin_dir_path(__FILE__) . 'includes/admin/settings-page.php';
     require_once plugin_dir_path(__FILE__) . 'includes/config/icons.php';
 
+    require_once plugin_dir_path(__FILE__) . 'includes/Debug.php';
+    
+    
     // Register and enqueue scripts
     EnqueueScripts::register();
 

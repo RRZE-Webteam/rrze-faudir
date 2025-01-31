@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
                 <?php if (!empty($person)) : ?>
                     <?php
                     $teaser_lang = '';
-
+                    $locale = get_locale();
                     $contact_posts = get_posts([
                         'post_type' => 'custom_person',
                         'meta_key' => 'person_id',
@@ -30,8 +30,7 @@ if (!defined('ABSPATH')) {
                                 $identifier = get_post_meta($post->ID, 'person_id', true);
 
                                 // Compare the identifier with the current person's identifier
-                                if ($identifier === $person['identifier']) {
-                                    $locale = get_locale();
+                                if ($identifier === $person['identifier']) {                                    
                                     $teaser_text_key = ($locale === 'de_DE' || $locale === 'de_DE_formal') ? '_teasertext_de' : '_teasertext_en';
                                     $teaser_lang = get_post_meta($post->ID, $teaser_text_key, true);
                                 }
@@ -94,7 +93,13 @@ if (!defined('ABSPATH')) {
                         $url_displayed = false;
 
                         $output = '';
-                        
+                        $workplaces = [];
+                        $socials = [];
+                        $org = '';
+                        $function = '';
+                       
+                                    
+                                    
                         // Collect emails and phones from workplaces, falling back to person email/phone if necessary
                         if (!empty($person['contacts'])) {
                             $displayed_contacts = get_post_meta($post->ID, 'displayed_contacts', true) ?: []; // Retrieve displayed contact indexes
@@ -103,6 +108,41 @@ if (!defined('ABSPATH')) {
                                 if (!in_array($index, $displayed_contacts) && !empty($displayed_contacts)) {
                                     continue; // Skip this contact if it's not selected to be displayed
                                 }
+                                $workplaces = $contact['workplaces'];
+                                $socials = $contact['socials'];
+                                
+                                if (!empty($contact['socials'])) {
+                                    $socials = [];
+
+                                    foreach ($contact['socials'] as $item) {
+                                        if (isset($item['platform']) && isset($item['url'])) {
+                                            $socials[$item['platform']] = $item['url'];
+                                        }
+                                    }
+                                }
+                           /*
+                            * TODO, Problem Funktionslabel wie "Professorinnen und Professoren" bei Orgname "Professur für Höchstleistungsrechnen"
+                                 
+                                $org = $contact['organization'];
+                                $orgname = '';
+                                    $isGerman = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_DE_formal') !== false;
+
+                                    // Determine the appropriate function label based on locale
+                                    if (!empty($contact['functionLabel'])) {
+                                        $function = $isGerman ?
+                                            ($contact['functionLabel']['de'] ?? '') : ($contact['functionLabel']['en'] ?? '');
+                                        
+                                        $orgname = $isGerman ?
+                                            ($org['longDescription']['de'] ?? '') : ($org['longDescription']['en'] ?? '');
+                                    }
+                                    if (!empty($function)) {
+                                        $function .= ' '.$orgname;
+                                    }
+
+                                    */
+
+
+                                
                                 if (!empty($contact['workplaces'])) {
                                     foreach ($contact['workplaces'] as $workplace) {
                                         // Handle emails
@@ -131,73 +171,31 @@ if (!defined('ABSPATH')) {
                                 }
                             }
                             if (empty($unique_emails) && !empty($person['email'])) {
-                                $unique_emails[] = $person['email'];
+                                $workplaces['mails'][] = $person['email'];
                             }
                         
                             if (empty($unique_phones) && !empty($person['telephone'])) {
-                                $unique_phones[] = $person['telephone'];
+                                $workplaces['phones'][] = $person['telephone'];
                             }
                         }
-
-                        // Output emails
-                        if (in_array('email', $show_fields) && !in_array('email', $hide_fields)){
-                            if (!empty($unique_emails)) {
-                                $output .= '<span class="email">';           
-                                $output .= '<span class="screen-reader-text">'.esc_html__('Email:', 'rrze-faudir').' </span>';
-                           
-                                foreach ($unique_emails as $email) {                                  
-                                    $output .= '<a href="mailto:'.esc_attr($email).'" itemprop="email">'.esc_html($email).'</a>';     
-                                    if ($email !== end($unique_emails)) {
-                                        $output .= ' / ';
-                                    }
-                                }
-                                $output .= '</span>';
-                            }                            
+                        if (!empty($function)) {
+                            $workplaces['function'] = $function;
                         }
+             //         $output .= Debug::get_html_var_dump($workplaces);
+             //           $output .= Debug::get_html_var_dump($show_fields);
+             //           $output .= Debug::get_html_var_dump($hide_fields);
 
-                        // Output phones
-                        if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)){
-                            if (!empty($unique_phones)) {
-                                if (!empty($output)) {
-                                    $output .= ', ';
-                                }
-                                $output .= '<span class="phone">';           
-                                $output .= '<span class="screen-reader-text">'.esc_html__('Phone:', 'rrze-faudir').' </span>';
-                                foreach ($unique_phones as $phone) {                                    
-                                    $output .= '<a href="tel:'.esc_attr($phone).'" itemprop="telephone">'.esc_html($phone).'</a>';     
-                                    if ($phone !== end($unique_phones)) {
-                                        $output .= ' / ';
-                                    }
-                                }
-                                $output .= '</span>';
+                         $reihenfolge = ['function', 'url', 'mails', 'phones', 'street', 'zip', 'city', 'roompos', 'room', 'floor', 'address','faumap'];
+                        // Output Workplace Data
+                        $output .= FaudirUtils::getListOutput($workplaces,'span',__('Contactpoints', 'rrze-faudir'),'contactlist',$show_fields,$hide_fields,$reihenfolge);
+
+
+                        if (in_array('socialmedia', $show_fields) && !in_array('socialmedia', $hide_fields)) {                            
+                            if (!empty($socials)) {        
+                                $output .= FaudirUtils::getListOutput($socials,'span',__('Portale', 'rrze-faudir'),'portallist');
                             }
-                        }
 
-                        // Output URL or N/A
-                        if (in_array('url', $show_fields) && !in_array('url', $hide_fields)) {
-                            if ($url_displayed) {
-                                if (!empty($output)) {
-                                    $output .= ', ';
-                                }
-                                foreach ($person['contacts'] as $contact) {
-                                    if (!empty($contact['workplaces'])) {
-                                        $output .= '<span class="url">';           
-                                        $output .= '<span class="screen-reader-text">'.esc_html__('URL:', 'rrze-faudir').' </span>';
-                                        foreach ($contact['workplaces'] as $workplace) {
-                                            if (!empty($workplace['url'])) {
-                                              
-                                                $output .= '<a href="'.esc_url($workplace['url']).'" itemprop="url">'.esc_html($workplace['url']).'</a>';     
-                                                if ($phone !== end($unique_phones)) {
-                                                    $output .= ' / ';
-                                                }
-                                            }
-                                        }
-                                        $output .= '</span>';
-                                    }
-                                }
-                            }
                         }
-                        
                         if (!empty($output)) {
                            $output = '('.$output.')';
                         }
