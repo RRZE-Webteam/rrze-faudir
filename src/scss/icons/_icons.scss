@@ -1,10 +1,74 @@
-/*-----------------------------------------------------------------------------------*/
-/* Icons
-/*-----------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
+/* _symbols 
+/* Created on : 31.01.2025, 17:28:46
+/*----------------------------------------------------------------------------*/
 
-@import "functions";
-@import "lib/lib";
-@import "default";
-@import "social-media";
-@import "arrows";
+@use "cp-defaults";
+@use "cp-websites";
+@use "cp-fau";
 
+.faudir {
+   .icon {
+       
+       span.texticon,
+       a {
+	   text-decoration: none;
+	   display: inline-flex;
+	   align-items: center;
+	   gap: 0.1rem;
+	   
+       }
+       a:hover, a:focus {
+	   text-decoration: underline;
+	   text-decoration-thickness: inherit;
+       }
+       
+       
+	span.texticon::before,
+	a::before {
+	   background: currentColor;
+	   mask-size: var(--_icon-mask-size, var(--faudir-icon-mask-size, 100%));
+	   mask-repeat: no-repeat;
+	   mask-position: center center;
+	   
+	   display: inline-block;
+	   width: var(--_icon-size, var(--faudir-icon-size));
+	   height: var(--_icon-size, var(--faudir-icon-size));
+	   content: "";
+	   font-size: var(--_icon-size, var(--faudir-icon-size));
+	   flex-shrink: 0;
+	   margin-right: var(--_icon-margin-right, var(--faudir-icon-margin-right)); 
+	}
+	span.texticon::before {
+	     mask-image: var(--_icon, var(--faudir-icon-default));
+	}
+	a::before {
+	   mask-image: var(--_icon, var(--faudir-icon-url));
+
+	}
+	
+	&.icon-list {
+	    li {
+		a {
+		   width: var(--_icon-size, var(--faudir-icon-size));
+		   height: var(--_icon-size, var(--faudir-icon-size));
+		   overflow: hidden;
+		   gap: 0.3rem;
+		}
+		a:hover, a:focus {
+	
+		  color: var(--_icon-color-hover, var(--faudir-icon-color-hover));
+
+		}
+	    }
+	}
+	
+     }
+     
+  
+
+
+
+
+    
+}

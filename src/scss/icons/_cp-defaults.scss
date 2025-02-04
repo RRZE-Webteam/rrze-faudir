@@ -68,7 +68,7 @@
     }
     
     a[href*=".ics"]:before,
-    a[href*="ical"]:before {
+    a[href*=".ical"]:before {
 	--_icon: var(--faudir-icon-calendar);
     }
     
