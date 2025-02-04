@@ -187,12 +187,12 @@ if (!defined('ABSPATH')) {
 
                          $reihenfolge = ['function', 'url', 'mails', 'phones', 'street', 'zip', 'city', 'roompos', 'room', 'floor', 'address','faumap'];
                         // Output Workplace Data
-                        $output .= FaudirUtils::getListOutput($workplaces,'span',__('Contactpoints', 'rrze-faudir'),'contactlist',$show_fields,$hide_fields,$reihenfolge);
+                        $output .= FaudirUtils::getListOutput($workplaces,'span',__('Contactpoints', 'rrze-faudir'),'text-list icon',$show_fields,$hide_fields,$reihenfolge);
 
 
                         if (in_array('socialmedia', $show_fields) && !in_array('socialmedia', $hide_fields)) {                            
                             if (!empty($socials)) {        
-                                $output .= FaudirUtils::getListOutput($socials,'span',__('Portale', 'rrze-faudir'),'portallist');
+                                $output .= FaudirUtils::getListOutput($socials,'span',__('Portale', 'rrze-faudir'),'icon-list icon');
                             }
 
                         }

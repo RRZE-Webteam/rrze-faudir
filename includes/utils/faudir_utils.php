@@ -190,7 +190,7 @@ class FaudirUtils {
                 $address .= isset($data['zip']) ?  '<span itemprop="postalCode">'.esc_html($data['zip']).'</span> ' : '';
                 $address .= isset($data['city']) ? '<span itemprop="addressLocality">'.esc_html($data['city']).'</span>' : '';
                 if (!empty($address)) {
-                    $address = '<span itemprop="address" itemscope="" itemtype="https://schmea.org/PostalAddress">'.$address.'</span>';                  
+                    $address = '<span class="texticon address" itemprop="address" itemscope="" itemtype="https://schmea.org/PostalAddress">'.$address.'</span>';                  
                     $address = '<li><span class="screen-reader-text">'.__('Address', 'rrze-faudir').': </span>' . $address . '</li>';
                 }
 
@@ -216,7 +216,7 @@ class FaudirUtils {
                     $roompos .= isset($data['room']) ?  __('Room','rrze-faudir').' '.esc_html($data['room']) : '';
                 }
                 if (!empty($roompos)) {
-                    $roompos = '<li>' . $roompos . '</li>';
+                    $roompos = '<li><span class="screen-reader-text">'.__('Bureau', 'rrze-faudir').': </span><span class="texticon room">' . $roompos . '</span></li>';
                 }
 
                 // Zip, City und Street aus der normalen Verarbeitung entfernen
@@ -320,12 +320,22 @@ class FaudirUtils {
                 continue;
             }
             
+            
+            // Falls $value eine FAUMap-Adresse ist
+            if (preg_match('/^https?:\/\/karte\.fau\.de/i', $value)) {
+                $displayValue = __('Map','rrze-faudir');
+                $formattedValue = '<a href="' . esc_url($value) . '" itemprop="url">' . esc_html($displayValue) . '</a>';
+                
+                $output .= '<li><span class="website title">'.ucfirst(esc_html($name)).': </span>'.$formattedValue.'</li>';
+                continue;
+            }
+            
             // Falls $value eine URL ist (http oder https)
-            if (preg_match('/^https?:\/\//i', $value)) {
+            elseif (preg_match('/^https?:\/\//i', $value)) {
                 $displayValue = preg_replace('/^https?:\/\//i', '', $value);
                 $formattedValue = '<a href="' . esc_url($value) . '" itemprop="url">' . esc_html($displayValue) . '</a>';
                 
-                $output .= '<li class="link"><span class="website title">'.ucfirst(esc_html($name)).': </span>'.$formattedValue.'</li>';
+                $output .= '<li><span class="website title">'.ucfirst(esc_html($name)).': </span>'.$formattedValue.'</li>';
                 continue;
             }
             // Falls $value eine E-Mail-Adresse ist
@@ -339,8 +349,11 @@ class FaudirUtils {
                 $formattedPhone = self::format_phone_number($value); // Formatierte Nummer
                 $telLink = preg_replace('/\s+/', '', $formattedPhone); // Entferne Leerzeichen für den `tel:`-Link
                 $formattedValue = '<a itemprop="telephone" href="tel:' . esc_attr($telLink) . '">' . esc_html($formattedPhone) . '</a>';
-                $output .= '<li class="link"><span class="title">'.ucfirst(esc_html($name)).': </span>'.$formattedValue.'</li>';
+                $output .= '<li><span class="title">'.ucfirst(esc_html($name)).': </span>'.$formattedValue.'</li>';
                 continue;
+                        
+            
+                
             } else {
                 $formattedValue = '<span class="value">'. esc_html($value). '</span>';
             }
