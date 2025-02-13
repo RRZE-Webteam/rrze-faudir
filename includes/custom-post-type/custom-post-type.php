@@ -81,8 +81,8 @@ function register_custom_taxonomy()
 }
 add_action('init', 'register_custom_taxonomy');
 
-function add_taxonomy_meta_box()
-{
+// Bug #119
+/* function add_taxonomy_meta_box() {
     add_meta_box(
         'custom_taxonomydiv',
         __('Categories', 'text-domain'),
@@ -93,7 +93,9 @@ function add_taxonomy_meta_box()
         array('taxonomy' => 'custom_taxonomy')
     );
 }
-add_action('add_meta_boxes', 'add_taxonomy_meta_box');
+ * 
+ */
+// add_action('add_meta_boxes', 'add_taxonomy_meta_box');
 
 // Add Meta Boxes
 function add_custom_person_meta_boxes() {
@@ -367,8 +369,10 @@ function save_person_additional_fields($post_id)
 
 add_action('save_post', 'save_person_additional_fields');
 
-function enqueue_custom_person_scripts($hook)
-{
+// TODO:
+// Take a look if this is not handled in admin.js - file js/custom-person.js isnt found anyway
+
+function enqueue_custom_person_scripts($hook) {
     // Only load on post edit screens for our custom post type
     if ($hook == 'post-new.php' || $hook == 'post.php') {
         global $post;
@@ -387,7 +391,7 @@ function enqueue_custom_person_scripts($hook)
         }
     }
 }
-add_action('admin_enqueue_scripts', 'enqueue_custom_person_scripts');
+// add_action('admin_enqueue_scripts', 'enqueue_custom_person_scripts');
 
 function fetch_person_attributes()
 {
