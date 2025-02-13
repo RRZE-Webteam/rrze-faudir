@@ -19,7 +19,7 @@
 	   
 	   background-color: var(--_icon_background-color, inherit);
 	   border-width: var(--_icon-border-width, 0);
-	   border-style: solid;
+	   border-style: var(--_icon-border-style, solid);
 	   border-color: var(--_icon-border-color, none);
 	   border-radius: var(--_icon-border-radius, var(--border-radius, 50%));
 	   
@@ -62,6 +62,10 @@
 	    --_icon-mask-size: 1rem;
 	    --_outer_icon-size: 1.8rem;
 	    --_icon-size:  clamp(var(--faudir-min-iconwidth, 24px), var(--_outer_icon-size, var(--faudir-icon-size, 1.5rem)), 42px);
+	    --_icon-border-color-hover: var(--_icon_background-color);
+	    --_icon-color-hover: var(--_icon_background-color);		
+	    --_icon-background-color-hover: var(--color-Text, currentColor);
+	    
 	     ul {
 		margin: 0;
 		display: inline;
@@ -81,9 +85,9 @@
 		    }
 		    a:hover, 
 		    a:focus {
-			--_icon-border-color: var(--_icon_background-color);	
-		      color: var(--_icon_background-color);			 
-		      background: var(--color-Text, currentColor);
+			--_icon-border-color: var(--_icon-border-color-hover);	
+		      color: var(--_icon-color-hover);			 
+		      background: var(--_icon-background-color-hover);
 		      	
 		    }
 		}
@@ -94,5 +98,19 @@
      
   
 
-    
+     .fau-elemental & .icon-list  {
+	  --_icon-border-color: none;
+	  --_icon-border-style: none;
+	  --_icon-border-width: 0;
+	  --_icon-border-color-hover: inherit;
+	  --_icon-color-hover: var(--color-Text, currentColor);
+	  --_icon-background-color-hover: inherit;
+	  --_icon-border-width: 2px;
+	  --_icon-border-radius: 0;
+
+	  a:hover, a:focus {
+	    --_icon-border-style: none none solid none;
+	    --_icon-border-color: var(--color-Text, currentColor);
+	  }
+     }
 }
