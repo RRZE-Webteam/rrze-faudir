@@ -171,10 +171,10 @@ class FaudirUtils {
         }
         $output .= '>';
         $output .= '<ul>';
+        
         // Prüfen, ob Zip, City und Street im $data enthalten sind
         $address = '';
-        $roompos = '';
-       
+        $roompos = '';     
         if (isset($data['zip']) || isset($data['city']) || isset($data['street'])) {
             if (!empty($hide) && (in_array('zip', $hide, true) || in_array('city', $hide, true) || in_array('street', $hide, true))) {
                 // Wenn eines der Felder in $hide ist, Adresse nicht anzeigen
@@ -416,43 +416,7 @@ class FaudirUtils {
 }
 
 
-
-
-
-
-// Old Icon Load, mostly obsolet since of 2.2
-function load_fontawesome_svg() {
-    function get_fa_icon($icon_name)  {
-        $icon_path = plugin_dir_path(RRZE_PLUGIN_FILE) . 'assets/fontawesome/svgs/';
-        $icon_file = '';
-
-        // Check in different FA directories
-        $directories = ['solid', 'regular', 'brands'];
-        foreach ($directories as $dir) {
-            if (file_exists($icon_path . $dir . '/' . $icon_name . '.svg')) {
-                $icon_file = file_get_contents($icon_path . $dir . '/' . $icon_name . '.svg');
-                break;
-            }
-        }
-
-        return $icon_file ?: '<i class="fas fa-' . esc_attr($icon_name) . '"></i>';
-    }
-
-    function get_fa_icon_url($icon_name)   {
-        $icon_path = plugin_dir_path(RRZE_PLUGIN_FILE) . 'assets/fontawesome/svgs/';
-        $icon_url = plugin_dir_url(RRZE_PLUGIN_FILE) . 'assets/fontawesome/svgs/';
-
-        // Check in different FA directories
-        $directories = ['solid', 'regular', 'brands'];
-        foreach ($directories as $dir) {
-            if (file_exists($icon_path . $dir . '/' . $icon_name . '.svg')) {
-                return $icon_url . $dir . '/' . $icon_name . '.svg';
-            }
-        }
-        return '';
-    }
-}
-// add_action('init', 'load_fontawesome_svg');
+// Obsolet in 2.2, but still needs to update the calling functions
 
 function get_social_icon_data($platform) {
     if (!defined('RRZE_PLUGIN_FILE')) {
