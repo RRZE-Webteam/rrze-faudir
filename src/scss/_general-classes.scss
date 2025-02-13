@@ -35,28 +35,16 @@
 	    li:last-child::after {
 		content: "";
 	    }
-	    .website.title {
-		@extend .screen-reader-text;
-	    }
 	}
 	
     }
+    .text-list,
     .icon-list {
-	 ul {
-	    margin: 0;
-	    display: inline;
-	    
-	    li {
-		display: inline;
-		padding: 0 0.4rem;
-		--_icon-size: 1.2rem;
-	    }
-	    .website.title {
-		@extend .screen-reader-text;
-	    }
-	}
-	    	
+	.website.title {
+		    @extend .screen-reader-text;
+	}  
     }
+    
     
 	ul.maillist {
 	    margin: 0;

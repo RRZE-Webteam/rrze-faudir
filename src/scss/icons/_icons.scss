@@ -9,13 +9,19 @@
 
 .faudir {
    .icon {
-       
+
        span.texticon,
        a {
 	   text-decoration: none;
 	   display: inline-flex;
 	   align-items: center;
-	   gap: 0.1rem;
+	   gap: 0 0.1rem;
+	   
+	   background-color: var(--_icon_background-color, inherit);
+	   border-width: var(--_icon-border-width, 0);
+	   border-style: solid;
+	   border-color: var(--_icon-border-color, none);
+	   border-radius: var(--_icon-border-radius, var(--border-radius, 50%));
 	   
        }
        a:hover, a:focus {
@@ -47,28 +53,46 @@
 
 	}
 	
-	&.icon-list {
-	    li {
-		a {
-		   width: var(--_icon-size, var(--faudir-icon-size));
-		   height: var(--_icon-size, var(--faudir-icon-size));
-		   overflow: hidden;
-		   gap: 0.3rem;
-		}
-		a:hover, a:focus {
-	
-		  color: var(--_icon-color-hover, var(--faudir-icon-color-hover));
 
+	&.icon-list {
+	    --_icon-border-color: var(--color-Text, currentColor);
+	    --_icon-border-width: 1px;
+	    --_icon-border-radius: 50%;
+	    --_icon_background-color: white;
+	    --_icon-mask-size: 1rem;
+	    --_outer_icon-size: 1.8rem;
+	    --_icon-size:  clamp(var(--faudir-min-iconwidth, 24px), var(--_outer_icon-size, var(--faudir-icon-size, 1.5rem)), 42px);
+	     ul {
+		margin: 0;
+		display: inline;
+		
+		
+		li {
+		    display: inline;
+		    padding: 0;
+
+		    a {
+			vertical-align: bottom;
+		       width: var(--_icon-size);
+		       height: var(--_icon-size);
+		       overflow: hidden;
+		       margin-right: var(--faudir-icon-margin-right, 5px);
+		       margin-left: var(--faudir-icon-margin-right, 5px);
+		    }
+		    a:hover, 
+		    a:focus {
+			--_icon-border-color: var(--_icon_background-color);	
+		      color: var(--_icon_background-color);			 
+		      background: var(--color-Text, currentColor);
+		      	
+		    }
 		}
-	    }
+	     }
 	}
 	
      }
      
   
-
-
-
 
     
 }
