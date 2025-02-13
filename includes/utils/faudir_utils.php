@@ -384,7 +384,6 @@ class FaudirUtils {
     public static function format_phone_number(string $phone): string {
         // Entferne alle Zeichen außer Zahlen, "+", "(", ")", "-" und Leerzeichen
         $phone = preg_replace('/[^\d\+\-\(\) ]/', '', $phone);
-
         $phone = preg_replace('/\s+/', ' ', trim($phone));
 
         // Falls die Nummer mit "+49(0)" beginnt → zu "+49" umwandeln
