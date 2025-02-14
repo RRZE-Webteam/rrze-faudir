@@ -1,6 +1,9 @@
 <?php
 // Template file for RRZE FAUDIR
 
+use RRZE\FAUdir\Debug;
+use RRZE\FAUdir\FAUdirUtils;
+
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
@@ -16,6 +19,9 @@ if (!defined('ABSPATH')) {
                 <?php else: ?>
                     <?php if (!empty($person)) : ?>
                         <?php
+                        
+                        
+                        
                         $contact_posts = get_posts([
                             'post_type' => 'custom_person',
                             'meta_key' => 'person_id',
@@ -25,7 +31,13 @@ if (!defined('ABSPATH')) {
                         $cpt_url = !empty($contact_posts) ? get_permalink($contact_posts[0]->ID) : '';
 
                         // Use custom post type URL if multiple persons or no direct URL
-                        $final_url = (count($persons) > 1 || empty($url)) ? $cpt_url : $url; ?>
+                        $final_url = (count($persons) > 1 || empty($url)) ? $cpt_url : $url; 
+                        
+                        
+                        
+                   echo Debug::get_html_var_dump($person);
+                        
+                        ?>
                         <tr itemscope itemtype="https://schema.org/Person">
                             <!-- Full Name -->
                             <?php
@@ -140,7 +152,7 @@ if (!defined('ABSPATH')) {
                             <!-- Render Email Column -->
                             <?php if (in_array('email', $show_fields) && !in_array('email', $hide_fields)): ?>
                                 <td>
-                                    <?php $icon_data = get_social_icon_data('email'); ?>
+                                    <?php $icon_data = []; ?>
                                     <span class="<?php echo esc_attr($icon_data['css_class']); ?>"
                                         style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
                                     <span class="screen-reader-text"><?php echo esc_html__('Emails:', 'rrze-faudir'); ?></span>
@@ -157,7 +169,7 @@ if (!defined('ABSPATH')) {
                             <!-- Render Phone Column -->
                             <?php if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)): ?>
                                 <td>
-                                    <?php $icon_data = get_social_icon_data('phone'); ?>
+                                    <?php $icon_data = [] ?>
                                     <span class="<?php echo esc_attr($icon_data['css_class']); ?>"
                                         style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
                                     <span class="screen-reader-text"><?php echo esc_html__('Phones:', 'rrze-faudir'); ?></span>
@@ -174,7 +186,7 @@ if (!defined('ABSPATH')) {
                             <?php if (in_array('url', $show_fields) && !in_array('url', $hide_fields)): ?>
                                 <td>
                                     <?php
-                                    $icon_data = get_social_icon_data('url');
+                                    $icon_data = [];
                                     $urls_displayed = false; ?>
                                     <span class="<?php echo esc_attr($icon_data['css_class']); ?>"
                                         style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
@@ -207,7 +219,7 @@ if (!defined('ABSPATH')) {
                                     <?php if (!empty($person['contacts'][0]['socials'])) : ?>
                                         <ul class="socialmedia">
                                             <?php foreach ($person['contacts'][0]['socials'] as $social):
-                                                $icon_data = get_social_icon_data($social['platform']);
+                                                $icon_data = []
                                             ?>
                                                 <li>
                                                     <span class="screen-reader-text"><?php echo esc_html(ucfirst($icon_data['name'])); ?>: </span>

@@ -6,7 +6,7 @@
  * Created on : 24.07.2023, 17:06:22
  */
 
-
+namespace RRZE\FAUdir;
 
 defined('ABSPATH') || exit;
 

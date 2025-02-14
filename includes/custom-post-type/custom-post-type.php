@@ -1,7 +1,6 @@
 <?php
 // Register the Custom Post Type
-function register_custom_person_post_type()
-{
+function register_custom_person_post_type() {
     // Get the slug from the options; fallback to 'person' if not set.
     $options = get_option('rrze_faudir_options');
     $slug = isset($options['person_slug']) && !empty($options['person_slug'])
@@ -39,8 +38,7 @@ function register_custom_person_post_type()
 add_action('init', 'register_custom_person_post_type', 15);
 
 
-function register_custom_taxonomy()
-{
+function register_custom_taxonomy() {
     // Register the taxonomy
     if (!taxonomy_exists('custom_taxonomy')) {
         register_taxonomy(
@@ -136,8 +134,7 @@ function check_classic_editor_and_add_shortcode_button() {
 }
 add_action('admin_head', 'check_classic_editor_and_add_shortcode_button');
 // Render Meta Box Fields
-function render_person_additional_fields($post)
-{
+function render_person_additional_fields($post) {
     wp_nonce_field('save_person_additional_fields', 'person_additional_fields_nonce');
 
     $api_fields = [
@@ -254,8 +251,7 @@ function render_person_additional_fields($post)
 }
 
 
-function save_person_additional_fields($post_id)
-{
+function save_person_additional_fields($post_id) {
     // Verify nonce
     if (!isset($_POST['person_additional_fields_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['person_additional_fields_nonce'])), 'save_person_additional_fields')) {
         return;
@@ -393,8 +389,7 @@ function enqueue_custom_person_scripts($hook) {
 }
 // add_action('admin_enqueue_scripts', 'enqueue_custom_person_scripts');
 
-function fetch_person_attributes()
-{
+function fetch_person_attributes() {
     check_ajax_referer('custom_person_nonce', 'nonce');
 
     $person_id = sanitize_text_field($_POST['person_id']);

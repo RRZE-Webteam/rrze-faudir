@@ -8,8 +8,16 @@
  * @param array $params - Additional query parameters
  * @return array - Array of persons
  */
-function fetch_fau_persons($limit = 60, $offset = 0, $params = [])
-{
+namespace RRZE\FAUdir;
+
+use RRZE\FAUdir\EnqueueScripts;
+use RRZE\FAUdir\FaudirShortcode;
+use RRZE\FAUdir\FaudirUtils;
+use RRZE\FAUdir\Template;
+use RRZE\FAUdir\Person;
+use RRZE\FAUdir\Debug;
+
+function fetch_fau_persons($limit = 60, $offset = 0, $params = []) {
     $api_key = FaudirUtils::getKey();
     $url = FaudirUtils::getApiBaseUrl() . 'persons?limit=' . $limit . '&offset=' . $offset;
 
@@ -70,10 +78,9 @@ function fetch_fau_persons($limit = 60, $offset = 0, $params = [])
 }
 
 // Fetch person by ID
-function fetch_fau_person_by_id($personId)
-{
+function fetch_fau_person_by_id($personId) {
     // Log the function call
-    //error_log("fetch_fau_person_by_id called with personId: {$personId}");
+    error_log("fetch_fau_person_by_id called with personId: {$personId}");
 
     $api_key = FaudirUtils::getKey();
     $url = FaudirUtils::getApiBaseUrl() . "persons/{$personId}";
@@ -109,8 +116,7 @@ function fetch_fau_person_by_id($personId)
  * @param array $params - Additional query parameters
  * @return array - Array of contacts
  */
-function fetch_fau_contacts($limit = 20, $offset = 0, $params = [])
-{
+function fetch_fau_contacts($limit = 20, $offset = 0, $params = []) {
     $api_key = FaudirUtils::getKey();
     $url = FaudirUtils::getApiBaseUrl() . 'contacts?limit=' . $limit . '&offset=' . $offset;
 
@@ -174,8 +180,7 @@ function fetch_fau_contacts($limit = 20, $offset = 0, $params = [])
 }
 
 // Fetch contact by ID
-function fetch_fau_contact_by_id($contactId)
-{
+function fetch_fau_contact_by_id($contactId) {
     $api_key = FaudirUtils::getKey();
     $url = FaudirUtils::getApiBaseUrl() . "contacts/{$contactId}";
 
@@ -201,8 +206,7 @@ function fetch_fau_contact_by_id($contactId)
  * @param array $params - Additional query parameters
  * @return array - Array of organizations
  */
-function fetch_fau_organizations($limit = 100, $offset = 1, $params = [])
-{
+function fetch_fau_organizations($limit = 100, $offset = 1, $params = []) {
     $api_key = FaudirUtils::getKey();
     $url = FaudirUtils::getApiBaseUrl() . 'organizations?limit=' . $limit . '&offset=' . $offset;
 
@@ -247,8 +251,7 @@ function fetch_fau_organizations($limit = 100, $offset = 1, $params = [])
 }
 
 // Fetch organization by ID
-function fetch_fau_organization_by_id($organizationId)
-{
+function fetch_fau_organization_by_id($organizationId) {
     $api_key = FaudirUtils::getKey();
     $url = FaudirUtils::getApiBaseUrl() . "organizations/{$organizationId}";
 
@@ -267,8 +270,7 @@ function fetch_fau_organization_by_id($organizationId)
     return json_decode($body, true) ?? [];
 }
 
-function fetch_and_format_workplaces($contactIdentifier)
-{
+function fetch_and_format_workplaces($contactIdentifier) {
     // error_log('Fetching workplaces for contact identifier: ' . $contactIdentifier);
 
     // Fetch contact data
@@ -391,8 +393,7 @@ function fetch_and_format_address($contactIdentifier)
     return implode("\n", $addressDetails);
 }
 
-function fetch_and_format_socials($contactIdentifier)
-{
+function fetch_and_format_socials($contactIdentifier) {
     //error_log('Fetching social media for contact identifier: ' . $contactIdentifier);
 
     // Fetch contact data
@@ -426,8 +427,7 @@ function fetch_and_format_socials($contactIdentifier)
 /**
  * AJAX handler for organization search
  */
-function rrze_faudir_search_org_callback()
-{
+function rrze_faudir_search_org_callback() {
     check_ajax_referer('rrze_faudir_api_nonce', 'security');
 
     $search_term = isset($_POST['search_term']) ? sanitize_text_field($_POST['search_term']) : '';
@@ -535,8 +535,7 @@ add_action('wp_ajax_rrze_faudir_search_org', 'rrze_faudir_search_org_callback');
 /**
  * Handle saving the default organization
  */
-function rrze_faudir_save_default_organization()
-{
+function rrze_faudir_save_default_organization() {
     if (!current_user_can('manage_options')) {
         wp_die(__('You do not have sufficient permissions to access this page.', 'rrze-faudir'));
     }

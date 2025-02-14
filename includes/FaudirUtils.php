@@ -1,5 +1,7 @@
 <?php
 
+namespace RRZE\FAUdir;
+
 defined('ABSPATH') || exit;
 
 class FaudirUtils {

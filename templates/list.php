@@ -1,6 +1,9 @@
 <?php
 // Template file for RRZE FAUDIR
 
+use RRZE\FAUdir\Debug;
+use RRZE\FAUdir\FAUdirUtils;
+
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
@@ -120,28 +123,7 @@ if (!defined('ABSPATH')) {
                                         }
                                     }
                                 }
-                           /*
-                            * TODO, Problem Funktionslabel wie "Professorinnen und Professoren" bei Orgname "Professur für Höchstleistungsrechnen"
-                                 
-                                $org = $contact['organization'];
-                                $orgname = '';
-                                    $isGerman = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_DE_formal') !== false;
-
-                                    // Determine the appropriate function label based on locale
-                                    if (!empty($contact['functionLabel'])) {
-                                        $function = $isGerman ?
-                                            ($contact['functionLabel']['de'] ?? '') : ($contact['functionLabel']['en'] ?? '');
-                                        
-                                        $orgname = $isGerman ?
-                                            ($org['longDescription']['de'] ?? '') : ($org['longDescription']['en'] ?? '');
-                                    }
-                                    if (!empty($function)) {
-                                        $function .= ' '.$orgname;
-                                    }
-
-                                    */
-
-
+   
                                 
                                 if (!empty($contact['workplaces'])) {
                                     foreach ($contact['workplaces'] as $workplace) {

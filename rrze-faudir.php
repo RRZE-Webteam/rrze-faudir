@@ -4,7 +4,7 @@
 Plugin Name: RRZE FAUdir
 Plugin URI: https://github.com/RRZE-Webteam/rrze-faudir
 Description: Plugin for displaying the FAU person and institution directory on websites.
-Version: 2.1.2
+Version: 2.1.3-0
 Author: RRZE Webteam
 License: GNU General Public License v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -14,13 +14,22 @@ Requires at least: 6.7
 Requires PHP: 8.2
 */
 
+
+namespace RRZE\FAUdir;
+
+use RRZE\FAUdir\Main;
+use RRZE\FAUdir\EnqueueScripts;
+use RRZE\FAUdir\FaudirUtils;
+use RRZE\FAUdir\Template;
+use RRZE\FAUdir\Person;
+use RRZE\FAUdir\Debug;
+
 // Define plugin constants
 define('RRZE_PLUGIN_FILE', __FILE__);
 define('RRZE_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('RRZE_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 defined('ABSPATH') || exit;
-
 // Check if the function exists before using it
 if (! function_exists('is_plugin_active')) {
     include_once(ABSPATH . 'wp-admin/includes/plugin.php');
@@ -30,11 +39,35 @@ if (! function_exists('is_plugin_active')) {
 const RRZE_PHP_VERSION = '8.2';
 const RRZE_WP_VERSION = '6.7';
 
+/**
+ * SPL Autoloader (PSR-4).
+ * @param string $class The fully-qualified class name.
+ * @return void
+ */
+spl_autoload_register(function ($class) {
+    $prefix = __NAMESPACE__;
+    $baseDir = __DIR__ . '/includes/';
+
+    $len = strlen($prefix);
+    if (strncmp($prefix, $class, $len) !== 0) {
+        return;
+    }
+
+    $relativeClass = substr($class, $len);
+    $file = $baseDir . str_replace('\\', '/', $relativeClass) . '.php';
+
+    if (file_exists($file)) {
+        require $file;
+    }
+});
+
+// Load the plugin's text domain for localization.
+add_action('init', fn() => load_plugin_textdomain('rrze-faudir', false, dirname(plugin_basename(__FILE__)) . '/languages'));
+
 
 
 // System requirements check
-function rrze_faudir_system_requirements()
-{
+function rrze_faudir_system_requirements() {
     $error = '';
     if (version_compare(PHP_VERSION, RRZE_PHP_VERSION, '<')) {
         $error = sprintf(
@@ -63,13 +96,8 @@ function rrze_faudir_system_requirements()
 
 // Initialize plugin if system requirements are met
 if (rrze_faudir_system_requirements()) {
-    // Load plugin textdomain for translations
-    function rrze_faudir_load_textdomain()  {
-        load_plugin_textdomain('rrze-faudir', false, dirname(plugin_basename(__FILE__)) . '/languages');
-    }
 
-    add_action('plugins_loaded', 'rrze_faudir_load_textdomain');
-
+    
 /*
  * 
  *  js file existiert nicht. Wozu braucht man das??
@@ -94,25 +122,26 @@ if (rrze_faudir_system_requirements()) {
     */
 
     // Include necessary files
-    require_once plugin_dir_path(__FILE__) . 'includes/shortcodes/fau_dir_shortcode.php';
+//    require_once plugin_dir_path(__FILE__) . 'includes/shortcodes/fau_dir_shortcode.php';
 
-    require_once plugin_dir_path(__FILE__) . 'includes/utils/enqueue_scripts.php';
-    require_once plugin_dir_path(__FILE__) . 'includes/utils/faudir_utils.php';
+//    require_once plugin_dir_path(__FILE__) . 'includes/utils/enqueue_scripts.php';
+//    require_once plugin_dir_path(__FILE__) . 'includes/utils/faudir_utils.php';
     require_once plugin_dir_path(__FILE__) . 'includes/utils/api-functions.php';
-    require_once plugin_dir_path(__FILE__) . 'includes/utils/Template.php';
+//    require_once plugin_dir_path(__FILE__) . 'includes/utils/Template.php';
     require_once plugin_dir_path(__FILE__) . 'includes/custom-post-type/custom-post-type.php';
     require_once plugin_dir_path(__FILE__) . 'includes/admin/settings-page.php';
-    require_once plugin_dir_path(__FILE__) . 'includes/config/icons.php';
 
-    require_once plugin_dir_path(__FILE__) . 'includes/Debug.php';
+//    require_once plugin_dir_path(__FILE__) . 'includes/Debug.php';
     
+    $main = new Main(__FILE__);
+    $main->onLoaded();
     
-    // Register and enqueue scripts
-    EnqueueScripts::register();
+
+
 
 
     // Schedule the event on plugin activation
-    register_activation_hook(__FILE__, 'schedule_check_person_availability');
+    register_activation_hook(__FILE__,  __NAMESPACE__ . '\schedule_check_person_availability');
     function schedule_check_person_availability() {
         if (!wp_next_scheduled('check_person_availability')) {
             wp_schedule_event(time(), 'hourly', 'check_person_availability');
@@ -120,9 +149,8 @@ if (rrze_faudir_system_requirements()) {
     }
 
     // Unschedule the event on plugin deactivation
-    register_deactivation_hook(__FILE__, 'unschedule_check_person_availability');
-    function unschedule_check_person_availability()
-    {
+    register_deactivation_hook(__FILE__,  __NAMESPACE__ . '\unschedule_check_person_availability');
+    function unschedule_check_person_availability()  {
         $timestamp = wp_next_scheduled('check_person_availability');
         if ($timestamp) {
             wp_unschedule_event($timestamp, 'check_person_availability');
@@ -130,9 +158,8 @@ if (rrze_faudir_system_requirements()) {
     }
 
     // Hook the function to check availability
-    add_action('check_person_availability', 'check_api_person_availability');
-    function check_api_person_availability()
-    {
+    add_action('check_person_availability',  __NAMESPACE__ . '\check_api_person_availability');
+    function check_api_person_availability()  {
         // Check if the job is already running
         if (get_transient('check_person_availability_running')) {
             // error_log('Cron job is already running.');
@@ -185,8 +212,8 @@ if (rrze_faudir_system_requirements()) {
     }
 
     // AJAX search function
-    add_action('wp_ajax_rrze_faudir_search_contacts', 'rrze_faudir_search_contacts');
-    add_action('wp_ajax_nopriv_rrze_faudir_search_contacts', 'rrze_faudir_search_contacts');
+    add_action('wp_ajax_rrze_faudir_search_contacts',  __NAMESPACE__ . '\rrze_faudir_search_contacts');
+    add_action('wp_ajax_nopriv_rrze_faudir_search_contacts',  __NAMESPACE__ . '\rrze_faudir_search_contacts');
     function rrze_faudir_search_contacts()   {
         check_ajax_referer('rrze_faudir_api_nonce', 'security');
 
@@ -214,16 +241,15 @@ if (rrze_faudir_system_requirements()) {
 }
 
 // Hook into 'init' to check plugin status and register the alias shortcode
-add_action('init', 'register_kontakt_as_faudir_shortcode_alias');
-
+add_action('init',  __NAMESPACE__ . '\register_kontakt_as_faudir_shortcode_alias');
 function register_kontakt_as_faudir_shortcode_alias() {
     // Include the plugin.php file to ensure is_plugin_active() is available
     include_once(ABSPATH . 'wp-admin/includes/plugin.php');
 
     // Check if the FAU-person plugin is not active
     if (!is_plugin_active('fau-person/fau-person.php')) {
-        add_shortcode('kontakt', 'kontakt_to_faudir_shortcode_alias');
-        add_shortcode('kontaktliste', 'kontaktliste_to_faudir_shortcode_alias');
+        add_shortcode('kontakt',  __NAMESPACE__ . '\kontakt_to_faudir_shortcode_alias');
+        add_shortcode('kontaktliste',  __NAMESPACE__ . '\kontaktliste_to_faudir_shortcode_alias');
     }
 }
 
@@ -241,8 +267,7 @@ function kontakt_to_faudir_shortcode_alias($atts, $content = null) {
 }
 
 // Function to handle the [kontaktliste] shortcode with specific format "list"
-function kontaktliste_to_faudir_shortcode_alias($atts, $content = null)
-{
+function kontaktliste_to_faudir_shortcode_alias($atts, $content = null) {
     // Ensure the format is set to "list"
     if (!isset($atts['format'])) {
         $atts['format'] = 'list';
@@ -258,8 +283,7 @@ function kontaktliste_to_faudir_shortcode_alias($atts, $content = null)
 }
 
 // Helper function to convert attributes array to string
-function shortcode_parse_atts_to_string($atts)
-{
+function shortcode_parse_atts_to_string($atts) {
     $output = '';
     foreach ($atts as $key => $value) {
         if (is_numeric($key)) {
@@ -272,8 +296,7 @@ function shortcode_parse_atts_to_string($atts)
 }
 
 
-function load_custom_person_template($template)
-{
+function load_custom_person_template($template) {
     if (get_query_var('custom_person') || is_singular('custom_person')) {
         $plugin_template = plugin_dir_path(__FILE__) . 'templates/single-custom_person.php';
         if (file_exists($plugin_template)) {
@@ -285,13 +308,11 @@ function load_custom_person_template($template)
     }
     return $template;
 }
-add_filter('template_include', 'load_custom_person_template', 99);
+add_filter('template_include',  __NAMESPACE__ . '\load_custom_person_template', 99);
 
 // Hook into plugin activation
-register_activation_hook(__FILE__, 'migrate_person_data_on_activation');
-
-function migrate_person_data_on_activation()
-{
+register_activation_hook(__FILE__,  __NAMESPACE__ . '\migrate_person_data_on_activation');
+function migrate_person_data_on_activation() {
     register_custom_taxonomy();
 
     $contact_posts = get_posts([
@@ -509,12 +530,11 @@ function migrate_person_data_on_activation()
     set_transient('rrze_faudir_not_imported_reasons', $not_imported_reasons, 60);
 
     // Add an action to display the notice
-    add_action('admin_notices', 'rrze_faudir_display_import_notice');
+    add_action('admin_notices',  __NAMESPACE__ . '\rrze_faudir_display_import_notice');
 }
 
 // Add this new function to display the notice
-function rrze_faudir_display_import_notice()
-{
+function rrze_faudir_display_import_notice() {
     // Only show on the plugins page
     $screen = get_current_screen();
     if ($screen->id !== 'plugins') {
@@ -586,27 +606,24 @@ function rrze_faudir_display_import_notice()
     }
 }
 // Use a higher priority number (15) to make it appear after the default activation message (priority 10)
-add_action('admin_notices', 'rrze_faudir_display_import_notice', 15);
+add_action('admin_notices', __NAMESPACE__ . '\rrze_faudir_display_import_notice', 15);
 
-function rrze_faudir_flush_rewrite_on_slug_change($old_value, $value, $option)
-{
+function rrze_faudir_flush_rewrite_on_slug_change($old_value, $value, $option) {
     if ($option === 'rrze_faudir_options' && $old_value['person_slug'] !== $value['person_slug']) {
         flush_rewrite_rules(); // Flush rewrite rules if the slug changes
     }
 }
-add_action('update_option_rrze_faudir_options', 'rrze_faudir_flush_rewrite_on_slug_change', 10, 3);
+add_action('update_option_rrze_faudir_options',  __NAMESPACE__ . '\rrze_faudir_flush_rewrite_on_slug_change', 10, 3);
 
-function rrze_faudir_save_permalink_settings()
-{
+function rrze_faudir_save_permalink_settings() {
     // Simulate visiting the Permalinks page to refresh rewrite rules
     global $wp_rewrite;
     $wp_rewrite->flush_rules();
 }
-add_action('admin_init', 'rrze_faudir_save_permalink_settings');
+add_action('admin_init',  __NAMESPACE__ . '\rrze_faudir_save_permalink_settings');
 
 // Register the custom taxonomy before migration
-function register_custom_person_taxonomies()
-{
+function register_custom_person_taxonomies() {
     $labels = array(
         'name'              => _x('Categories', 'taxonomy general name', 'rrze-faudir'),
         'singular_name'     => _x('Category', 'taxonomy singular name', 'rrze-faudir'),
@@ -634,10 +651,9 @@ function register_custom_person_taxonomies()
 }
 
 // Make sure to register the taxonomy on init as well
-add_action('init', 'register_custom_person_taxonomies');
+add_action('init',  __NAMESPACE__ . '\register_custom_person_taxonomies');
 
-function custom_cpt_404_message()
-{
+function custom_cpt_404_message() {
     global $wp_query;
 
     // Check query vars for custom_person post type
@@ -701,7 +717,7 @@ function custom_cpt_404_message()
         }
     }
 }
-add_action('template_redirect', 'custom_cpt_404_message');
+add_action('template_redirect',  __NAMESPACE__ . '\custom_cpt_404_message');
 
 // Register FAUdir Block
 function register_faudir_block() {
@@ -710,7 +726,7 @@ function register_faudir_block() {
         'skip_inner_blocks' => true
     ]);
 }
-add_action('init', 'register_faudir_block');
+add_action('init',  __NAMESPACE__ . '\register_faudir_block');
 
 // Render callback function for FAUdir block
 function render_faudir_block($attributes) {
