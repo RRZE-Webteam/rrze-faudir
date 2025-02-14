@@ -1,8 +1,10 @@
 <?php
 
+
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
+use RRZE\FAUdir\FaudirUtils;
 
 // Add admin menu
 function rrze_faudir_add_admin_menu() {
@@ -213,8 +215,7 @@ function rrze_faudir_shortcode_section_callback()
 }
 
 // Render functions
-function rrze_faudir_api_key_render()
-{
+function rrze_faudir_api_key_render() {
     if (FaudirUtils::isUsingNetworkKey()) {
         echo '<p>' . esc_html__('The API key is being used from the network installation.', 'rrze-faudir') . '</p>';
     } else {

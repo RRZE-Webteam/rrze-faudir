@@ -1,4 +1,7 @@
 <?php
+
+use RRZE\FAUdir\FaudirUtils;
+
 // Register the Custom Post Type
 function register_custom_person_post_type() {
     // Get the slug from the options; fallback to 'person' if not set.
@@ -31,6 +34,7 @@ function register_custom_person_post_type() {
         'rest_base'          => 'custom_person',
         'menu_position'      => 5,
         'capability_type'    => 'post',
+    	'menu_icon'         => 'dashicons-id'
     );
 
     register_post_type('custom_person', $args); // Keep 'custom_person' as the post type key

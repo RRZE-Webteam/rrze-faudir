@@ -30,10 +30,5 @@ jQuery(document).ready(function ($) {
             });
         }
     });
-    document.querySelectorAll('.social-icon').forEach(icon => {
-        const iconUrl = icon.dataset.iconUrl;
-        if (iconUrl) {
-            icon.style.setProperty('--icon-url', `url('${iconUrl}')`);
-        }
-    });
+    
 });

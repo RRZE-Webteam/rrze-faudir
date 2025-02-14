@@ -1,7 +1,7 @@
 /*
 * JavaScript Definitions for: 
 * Plugin: rrze-faudir
-* Version: 2.1.3-0
+* Version: 2.1.3-1
 */
 
 jQuery(document).ready(function ($) {
@@ -35,10 +35,5 @@ jQuery(document).ready(function ($) {
             });
         }
     });
-    document.querySelectorAll('.social-icon').forEach(icon => {
-        const iconUrl = icon.dataset.iconUrl;
-        if (iconUrl) {
-            icon.style.setProperty('--icon-url', `url('${iconUrl}')`);
-        }
-    });
+    
 });

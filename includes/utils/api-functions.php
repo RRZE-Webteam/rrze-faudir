@@ -8,7 +8,6 @@
  * @param array $params - Additional query parameters
  * @return array - Array of persons
  */
-namespace RRZE\FAUdir;
 
 use RRZE\FAUdir\EnqueueScripts;
 use RRZE\FAUdir\FaudirShortcode;
