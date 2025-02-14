@@ -135,6 +135,21 @@ class Person {
         return $this->rawdata;
     }
     
+    
+    public function getTargetURL(): string {
+        $contact_posts = get_posts([
+            'post_type' => 'custom_person',
+            'meta_key' => 'person_id',
+            'meta_value' => $this->identifier,
+            'posts_per_page' => 1, // Only fetch one post matching the person ID
+        ]);
+        $cpt_url = !empty($contact_posts) ? get_permalink($contact_posts[0]->ID) : '';
+                       
+        return $cpt_url;
+                        
+    }
+    
+    
     public function getView(?string $template = null): string {
         if (empty($template)) {
             $template = "Name : #displayname#".PHP_EOL;

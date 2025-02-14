@@ -31,6 +31,10 @@ class FaudirUtils {
         return self::API_BASE_URL;
     }
 
+    
+
+    
+    
     public static function getDefaultOutputFields() {
         $options = get_option('rrze_faudir_options');
         $default_output_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : [];
@@ -159,8 +163,7 @@ class FaudirUtils {
         if ((!is_array($data)) || (empty($data))) {
             return $output;
         }
-        $data = self::flatten_data_array($data);
-        
+        $data = self::flatten_data_array($data);     
         $htmlsurround = self::sanitize_htmlsurround($htmlsurround);
         
         
@@ -370,6 +373,215 @@ class FaudirUtils {
     
         return $output;
     }
+
+
+    /* 
+     * Get a Cell-List for Table-Content from typ name, value 
+     * Returns HTML for output
+     */
+    public static function getTableCellOutput(array $data, array $show = [], array $hide = [], array $reihenfolge = []): string {
+        $output = '';
+        if ((!is_array($data)) || (empty($data))) {
+            return $output;
+        }
+        $data = self::flatten_data_array($data);           
+       
+        
+        // Prüfen, ob Zip, City und Street im $data enthalten sind
+        $address = '';
+        $roompos = '';     
+        if (isset($data['zip']) || isset($data['city']) || isset($data['street'])) {
+            if (!empty($hide) && (in_array('zip', $hide, true) || in_array('city', $hide, true) || in_array('street', $hide, true))) {
+                // Wenn eines der Felder in $hide ist, Adresse nicht anzeigen
+                unset($data['zip'], $data['city'], $data['street']);
+            } else {
+                // Adresse zusammenfügen
+            
+                $address .= isset($data['street']) ? '<span itemprop="streetAdress">'.esc_html($data['street']).'</span>' : '';
+                if (isset($data['street']) && (isset($data['zip']) || isset($data['city']))) {
+                    $address .= ', ';
+                }
+                
+                $address .= isset($data['zip']) ?  '<span itemprop="postalCode">'.esc_html($data['zip']).'</span> ' : '';
+                $address .= isset($data['city']) ? '<span itemprop="addressLocality">'.esc_html($data['city']).'</span>' : '';
+                if (!empty($address)) {
+                    $address = '<span class="texticon address" itemprop="address" itemscope="" itemtype="https://schmea.org/PostalAddress">'.$address.'</span>';                  
+                    $address = '<td><span class="screen-reader-text">'.__('Address', 'rrze-faudir').': </span>' . $address . '</td>';
+                }
+
+                // Zip, City und Street aus der normalen Verarbeitung entfernen
+                unset($data['zip'], $data['city'], $data['street']);
+                $data['address'] = '<td>'.$address.'</td>';
+            }
+        }
+        
+        if (isset($data['room']) || isset($data['floor'])) {
+            if (!empty($hide) && (in_array('room', $hide, true) || in_array('floor', $hide, true) )) {
+                // Wenn eines der Felder in $hide ist, Raum und Stockwerk zusammensetzen
+                unset($data['room'], $data['floor']);
+            } else {
+                // Raum und Stockwerk zusammenfügen
+                if (!empty($show) && in_array('floor', $show, true)) {
+                    $roompos .= isset($data['floor']) ? esc_html($data['floor']).'. '.__('Floor','rrze-faudir') : '';
+                    if (isset($data['room']) && (isset($data['floor']))) {
+                        $roompos .= ', ';
+                    }
+                }
+                if (!empty($show) && in_array('room', $show, true)) {
+                    $roompos .= isset($data['room']) ?  __('Room','rrze-faudir').' '.esc_html($data['room']) : '';
+                }
+                if (!empty($roompos)) {
+                    $roompos = '<span class="screen-reader-text">'.__('Bureau', 'rrze-faudir').': </span><span class="texticon room">' . $roompos . '</span>';
+                }
+
+                // Zip, City und Street aus der normalen Verarbeitung entfernen
+                unset($data['room'], $data['floor']);
+                $data['roompos'] = '<td>'.$roompos.'</td>';
+            }
+        }
+        
+        
+        
+         // Falls eine spezifische Reihenfolge gegeben ist, sortiere die vorhandenen Felder zuerst
+        if (!empty($reihenfolge)) {
+            $priorisierteKeys = array_intersect($reihenfolge, array_keys($data)); // Nur vorhandene Felder aus Reihenfolge
+            $restlicheKeys = array_diff(array_keys($data), $priorisierteKeys); // Alle restlichen Felder
+            $sortierteKeys = array_merge($priorisierteKeys, $restlicheKeys); // Kombinierte Reihenfolge
+
+            // Sortiertes Array erzeugen
+            $data = array_merge(array_flip($sortierteKeys), $data);
+        }
+        
+    
+   //     $output .= Debug::get_html_var_dump($data);
+        foreach ($data as $name => $value) {
+            // Falls es sich um ein Unterarray "phones" handelt, das mehrere Nummern enthält
+             if ($name === 'phones' && is_array($value)) {
+                if (!empty($hide) && in_array('phone', $hide, true)) {
+                    continue;
+                }
+                if (!empty($show) && !in_array('phone', $show, true)) {
+                    continue;
+                }
+
+                // Mehrere Telefonnummern -> Ausgabe als Unterliste
+                if (count($value) > 1) {
+                    $output .= '<td><span class="screen-reader-text">'.__('Phone Numbers','rrze-faudir').':</span><ul class="phonelist">';
+                    foreach ($value as $phone) {
+                        if (preg_match('/^\+?[0-9\s\-\(\)]{7,20}$/', $phone)) {
+                            $formattedPhone = self::format_phone_number($phone);
+                            $telLink = preg_replace('/\s+/', '', $formattedPhone);
+                            $output .= '<li><a itemprop="telephone" href="tel:' . esc_attr($telLink) . '">' . esc_html($formattedPhone) . '</a></li>';
+                        } else {
+                            $output .= '<li>' . esc_html($phone) . '</li>';
+                        }
+                    }
+                    $output .= '</ul></td>';
+                }
+                // Genau eine Telefonnummer -> Direkte Ausgabe ohne Unterliste
+                elseif (count($value) === 1) {
+                    $phone = reset($value); // Erstes Element des Arrays holen
+                    if (preg_match('/^\+?[0-9\s\-\(\)]{7,20}$/', $phone)) {
+                        $formattedPhone = self::format_phone_number($phone);
+                        $telLink = preg_replace('/\s+/', '', $formattedPhone);
+                        $output .= '<td><span class="screen-reader-text">'.__('Phone','rrze-faudir').': </span><a itemprop="telephone" href="tel:' . esc_attr($telLink) . '">' . esc_html($formattedPhone) . '</a></td>';
+                    }
+                } else {
+                     $output .= '<td></td>';
+                }
+                continue;
+            } 
+            // Falls es sich um ein Unterarray "phones" handelt, das mehrere Nummern enthält
+            if ($name === 'mails' && is_array($value)) {
+                if (!empty($hide) && in_array('email', $hide, true)) {
+                    continue;
+                }
+                if (!empty($show) && !in_array('email', $show, true)) {
+                    continue;
+                }
+
+                // Mehrere Mailadressen -> Ausgabe als Unterliste
+                if (count($value) > 1) {
+                    $output .= '<td><span class="screen-reader-text">'.__('Email','rrze-faudir').':</span><ul class="maillist">';
+                    foreach ($value as $mail) {
+                        if (filter_var($mail, FILTER_VALIDATE_EMAIL)) {
+                            $output .= '<li><a itemprop="email" href="mailto:' . esc_attr($mail) . '">' . esc_html($mail) . '</a></li>';
+                        }
+                    }
+                    $output .= '</ul></td>';
+                }
+                // Genau eine Mailadresse -> Direkte Ausgabe ohne Unterliste
+                elseif (count($value) === 1) {
+                    $mail = reset($value); // Erstes Element des Arrays holen
+                    if (filter_var($mail, FILTER_VALIDATE_EMAIL)) {
+                        $output .= '<td><span class="screen-reader-text">'.__('Email','rrze-faudir').':</span><a itemprop="email" href="mailto:' . esc_attr($mail) . '">' . esc_html($mail) . '</a></td>';
+                    }
+                } else {
+                     $output .= '<td></td>';
+                }
+                continue;
+            } 
+            if ($name === 'address') {
+                $output .= $value;
+                continue;
+            }
+            if ($name === 'roompos') {
+                $output .= $value;
+                continue;
+            }
+            
+             // Wenn $hide gesetzt ist und der Key existiert, wird der Eintrag übersprungen
+            if (!empty($hide) && in_array($name, $hide, true)) {
+                continue;
+            }
+            // Wenn $show gesetzt ist und der Key NICHT enthalten ist, wird der Eintrag übersprungen
+            if (!empty($show) && !in_array($name, $show, true)) {
+                continue;
+            }
+            
+            
+            // Falls $value eine FAUMap-Adresse ist
+            if (preg_match('/^https?:\/\/karte\.fau\.de/i', $value)) {
+                $displayValue = __('Map','rrze-faudir');
+                $formattedValue = '<a href="' . esc_url($value) . '" itemprop="url">' . esc_html($displayValue) . '</a>';
+                
+                $output .= '<td><span class="website title">'.ucfirst(esc_html($name)).': </span>'.$formattedValue.'</td>';
+            }
+            
+            // Falls $value eine URL ist (http oder https)
+            elseif (preg_match('/^https?:\/\//i', $value)) {
+                $displayValue = preg_replace('/^https?:\/\//i', '', $value);
+                $formattedValue = '<a href="' . esc_url($value) . '" itemprop="url">' . esc_html($displayValue) . '</a>';
+                
+                $output .= '<td><span class="website title">'.ucfirst(esc_html($name)).': </span>'.$formattedValue.'</td>';
+            }
+            // Falls $value eine E-Mail-Adresse ist
+            elseif (filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                $formattedValue = '<a itemprop="email" href="mailto:' . esc_attr($value) . '">' . esc_html($value) . '</a>';
+                $output .= '<td class="link"><span class="title">'.ucfirst(esc_html($name)).': </span>'.$formattedValue.'</td>';
+            }
+            // Falls $value eine Telefonnummer ist
+            elseif (preg_match('/^\+?[0-9\s\-\(\)]{7,20}$/', $value)) {
+                $formattedPhone = self::format_phone_number($value); // Formatierte Nummer
+                $telLink = preg_replace('/\s+/', '', $formattedPhone); // Entferne Leerzeichen für den `tel:`-Link
+                $formattedValue = '<a itemprop="telephone" href="tel:' . esc_attr($telLink) . '">' . esc_html($formattedPhone) . '</a>';
+                $output .= '<td><span class="title">'.ucfirst(esc_html($name)).': </span>'.$formattedValue.'</td>';                       
+            
+               
+            } else {
+                $formattedValue = '<span class="value">'. esc_html($value). '</span>';
+            }
+
+            // Ausgabe in die Liste
+            $output .= '<td><span class="title">'.ucfirst(esc_html($name)).': </span>'.$formattedValue.'</td>';
+        }
+        
+ 
+        
+    
+        return $output;
+    }
+
     
     /*
      * Flatten Array in case its an Subarray
@@ -414,28 +626,4 @@ class FaudirUtils {
     }
 
     
-}
-
-
-// Obsolet in 2.2, but still needs to update the calling functions
-
-function get_social_icon_data($platform) {
-    if (!defined('RRZE_PLUGIN_FILE')) {
-        return [
-            'name' => $platform,
-            'css_class' => 'social-icon social-icon-' . $platform,
-            'icon_url' => '' // Fallback empty URL if constant not defined
-        ];
-    }
-
-    $iconMap = require RRZE_PLUGIN_PATH . 'includes/config/icons.php';
-    $platform = strtolower($platform);
-    $icon_name = isset($iconMap[$platform]) ? $iconMap[$platform] : 'link';
-
-    return [
-        'name' => $platform,
-        'css_class' => 'social-icon social-icon-' . $platform,
-        'icon_url' => RRZE_PLUGIN_URL . 'assets/fontawesome/svgs/brands/' . $icon_name . '.svg',
-        'icon_address' => RRZE_PLUGIN_URL . 'assets/fontawesome/svgs/solid/' . $icon_name . '.svg'
-    ];
 }

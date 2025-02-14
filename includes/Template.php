@@ -16,12 +16,9 @@ class Template {
     public function render($template_name, $data = []) {
         $template_path = $this->template_dir . $template_name . '.php';
         
-         error_log("Starting render for file ".$template_path);
-        
+       
         if (!file_exists($template_path)) {
-             error_log("File not found ".$template_path);
-            return ''; // Return an empty string if the template doesn't exist
-            
+            return ''; // Return an empty string if the template doesn't exist            
         }
 
         ob_start();

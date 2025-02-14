@@ -3,6 +3,7 @@
 
 use RRZE\FAUdir\Debug;
 use RRZE\FAUdir\FAUdirUtils;
+use RRZE\FAUdir\Person;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
@@ -25,7 +26,6 @@ if (!defined('ABSPATH')) {
                         'meta_value' => $person['identifier'],
                         'posts_per_page' => 1, // Only fetch one post matching the person ID
                     ]);
-                    $cpt_url = !empty($contact_posts) ? get_permalink($contact_posts[0]->ID) : '';
                     if (!empty($contact_posts)) {
                         // Loop through each contact post
                         foreach ($contact_posts as $post) : {
@@ -40,53 +40,20 @@ if (!defined('ABSPATH')) {
                             }
                         endforeach;
                     }
-
-                    // Use custom post type URL if multiple persons or no direct URL
-                    $final_url = (count($persons) > 1 || empty($url)) ? $cpt_url : $url; ?>
-
+                    ?>
                     <li itemscope itemtype="https://schema.org/Person">
-                        <!-- Full name with title -->
                         <?php
                         $options = get_option('rrze_faudir_options');
-                        $hard_sanitize = isset($options['hard_sanitize']) && $options['hard_sanitize'];
-                        $personal_title = '';
-                        $first_name = '';
-                        $nobility_title = '';
-                        $last_name = '';
-                        $title_suffix = '';
-                        if (in_array('personalTitle', $show_fields) && !in_array('personalTitle', $hide_fields)) {
-                            $personal_title = isset($person['personalTitle']) && !empty($person['personalTitle'])
-                                ? esc_html($person['personalTitle'])
-                                : '';
-                        }
-                        if (in_array('givenName', $show_fields) && !in_array('givenName', $hide_fields)) {
-                            $first_name = (isset($person['givenName']) && !empty($person['givenName']) ? esc_html($person['givenName']) : '');
-                        }
-                        if (in_array('titleOfNobility', $show_fields) && !in_array('titleOfNobility', $hide_fields)) {
-                            $nobility_title = (isset($person['titleOfNobility']) && !empty($person['titleOfNobility']) ? esc_html($person['titleOfNobility']) : '');
-                        }
-                        if (in_array('familyName', $show_fields) && !in_array('familyName', $hide_fields)) {
-                            $last_name = (isset($person['familyName']) && !empty($person['familyName']) ? esc_html($person['familyName']) : '');
-                        }
-                        if (in_array('personalTitleSuffix', $show_fields) && !in_array('personalTitleSuffix', $hide_fields)) {
-                            $title_suffix = (isset($person['personalTitleSuffix']) && !empty($person['personalTitleSuffix']) ? esc_html($person['personalTitleSuffix']) : '');
-                        }
+                        
+                        $pers = new Person($person);
+                        $displayname = $pers->getDisplayName(true, false, $show_fields, $hide_fields);
+                        $final_url = $pers->getTargetURL();
 
-                        $person_name_html = FaudirUtils::getPersonNameHtml([
-                            'hard_sanitize' => $hard_sanitize,
-                            'personal_title' => $personal_title,
-                            'first_name' => $first_name,
-                            'nobility_title' => $nobility_title,
-                            'last_name' => $last_name,
-                            'title_suffix' => $title_suffix,
-                            'identifier' => $person['identifier']
-                        ]);
-
-                        if (!empty($person_name_html)) { ?>
+                        if (!empty($displayname)) { ?>
                             <span class="displayname"><?php if (!empty($final_url)) { ?>
-                                    <a href="<?php echo esc_url($final_url); ?>"><?php echo $person_name_html; ?></a>
+                                    <a href="<?php echo esc_url($final_url); ?>"><?php echo $displayname; ?></a>
                                 <?php } else { 
-                                    echo $person_name_html;
+                                    echo $displayname;
                                 } ?>
                             </span>
                         <?php } 
@@ -100,8 +67,7 @@ if (!defined('ABSPATH')) {
                         $socials = [];
                         $org = '';
                         $function = '';
-                       
-                                    
+                         
                                     
                         // Collect emails and phones from workplaces, falling back to person email/phone if necessary
                         if (!empty($person['contacts'])) {
