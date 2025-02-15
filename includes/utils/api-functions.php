@@ -79,7 +79,7 @@ function fetch_fau_persons($limit = 60, $offset = 0, $params = []) {
 // Fetch person by ID
 function fetch_fau_person_by_id($personId) {
     // Log the function call
-    error_log("fetch_fau_person_by_id called with personId: {$personId}");
+    // error_log("fetch_fau_person_by_id called with personId: {$personId}");
 
     $api_key = FaudirUtils::getKey();
     $url = FaudirUtils::getApiBaseUrl() . "persons/{$personId}";

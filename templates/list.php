@@ -77,8 +77,7 @@ if (!defined('ABSPATH')) {
                                 if (!in_array($index, $displayed_contacts) && !empty($displayed_contacts)) {
                                     continue; // Skip this contact if it's not selected to be displayed
                                 }
-                                $workplaces = $contact['workplaces'];
-                                $socials = $contact['socials'];
+                           //     $workplaces = $contact['workplaces'];
                                 
                                 if (!empty($contact['socials'])) {
                                     $socials = [];
