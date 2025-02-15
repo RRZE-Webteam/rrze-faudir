@@ -340,14 +340,14 @@ function rrze_faudir_default_output_fields_render()
         'kompaktButton' => __('Kompakt Button', 'rrze-faudir'),
         'content' => __('Content', 'rrze-faudir'),
         'teasertext' => __('Teasertext', 'rrze-faudir'),
-        'socialmedia' => __('Social Media', 'rrze-faudir'),
+        'socialmedia' => __('Social Media and Websites', 'rrze-faudir'),
         'workplaces' => __('Workplaces', 'rrze-faudir'),
         'room' => __('Room', 'rrze-faudir'),
         'floor' => __('Floor', 'rrze-faudir'),
         'street' => __('Street', 'rrze-faudir'),
-        'zip' => __('Zip', 'rrze-faudir'),
+        'zip' => __('ZIP Code', 'rrze-faudir'),
         'city' => __('City', 'rrze-faudir'),
-        'faumap' => __('Fau Map', 'rrze-faudir'),
+        'faumap' => __('FAU Map', 'rrze-faudir'),
         'officehours' => __('Office Hours', 'rrze-faudir'),
         'consultationhours' => __('Consultation Hours', 'rrze-faudir'),
     );
@@ -491,22 +491,22 @@ function rrze_faudir_settings_page() {
                             <td>
                                 <fieldset>
                                     <p>
-                                        <label for="person-id"><?php echo esc_html__('API-Person-Identifier:', 'rrze-faudir'); ?></label><br>
+                                        <label for="person-id"><?php echo esc_html__('API-Person-Identifier', 'rrze-faudir'); ?>:</label><br>
                                         <input type="text" id="person-id" name="person-id" class="regular-text" />
                                     </p>
                                     <br>
                                     <p>
-                                        <label for="given-name"><?php echo esc_html__('Given Name:', 'rrze-faudir'); ?></label><br>
+                                        <label for="given-name"><?php echo esc_html__('Given Name', 'rrze-faudir'); ?>:</label><br>
                                         <input type="text" id="given-name" name="given-name" class="regular-text" />
                                     </p>
                                     <br>
                                     <p>
-                                        <label for="family-name"><?php echo esc_html__('Family Name:', 'rrze-faudir'); ?></label><br>
+                                        <label for="family-name"><?php echo esc_html__('Family Name', 'rrze-faudir'); ?>:</label><br>
                                         <input type="text" id="family-name" name="family-name" class="regular-text" />
                                     </p>
                                     <br>
                                     <p>
-                                        <label for="email"><?php echo esc_html__('Email:', 'rrze-faudir'); ?></label><br>
+                                        <label for="email"><?php echo esc_html__('Email', 'rrze-faudir'); ?>:</label><br>
                                         <input type="text" id="email" name="email" class="regular-text" />
                                     </p>
                                 </fieldset>
@@ -537,8 +537,8 @@ function rrze_faudir_settings_page() {
                 <div id="default-organization">
                     <h2><?php echo esc_html__('Current Default Organization', 'rrze-faudir'); ?></h2>
                     <p><?php echo esc_html__('This is the organization that will be used by default in shortcodes and blocks.', 'rrze-faudir'); ?></p>
-                    <p><strong><?php echo esc_html(__('Name:', 'rrze-faudir')); ?></strong> <?php echo esc_html($default_org['name']); ?></p>
-                    <p><strong><?php echo esc_html(__('Organization-Nr.:', 'rrze-faudir')); ?></strong> <?php echo esc_html($default_org['orgnr']); ?></p>
+                    <p><strong><?php echo esc_html(__('Name', 'rrze-faudir')); ?>:</strong> <?php echo esc_html($default_org['name']); ?></p>
+                    <p><strong><?php echo esc_html(__('Organization Number', 'rrze-faudir')); ?>:</strong> <?php echo esc_html($default_org['orgnr']); ?></p>
                     <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" style="display: inline;">
                         <?php wp_nonce_field('delete_default_organization'); ?>
                         <input type="hidden" name="action" value="delete_default_organization">
@@ -751,7 +751,7 @@ function rrze_faudir_search_person_ajax()
                     foreach ($contact['contacts'] as $contactDetail) {
                         $orgName = esc_html($contactDetail['organization']['name']);
                         $functionLabel = esc_html($contactDetail['functionLabel']['en']);
-                        $output .= "<p><strong>Organization:</strong> {$orgName} ({$functionLabel})</p>";
+                        $output .= "<p><strong>".__('Organization','rrze-faudir').":</strong> {$orgName} ({$functionLabel})</p>";
                     }
                 }
                 // Check if a post already exists with this identifier

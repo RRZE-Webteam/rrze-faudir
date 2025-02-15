@@ -295,34 +295,34 @@ function fetch_and_format_workplaces($contactIdentifier) {
         $workplaceDetails = [];
 
         if (!empty($workplace['room'])) {
-            $workplaceDetails[] = __('Room: ', 'rrze-faudir') . $workplace['room'];
+            $workplaceDetails[] = __('Room', 'rrze-faudir').': ' . $workplace['room'];
         }
         if (!empty($workplace['floor'])) {
-            $workplaceDetails[] = __('Floor: ', 'rrze-faudir') . $workplace['floor'];
+            $workplaceDetails[] = __('Floor', 'rrze-faudir').': ' . $workplace['floor'];
         }
         if (!empty($workplace['street'])) {
-            $workplaceDetails[] = __('Street: ', 'rrze-faudir') . $workplace['street'];
+            $workplaceDetails[] = __('Street', 'rrze-faudir').': ' . $workplace['street'];
         }
         if (!empty($workplace['zip'])) {
-            $workplaceDetails[] = __('ZIP: ', 'rrze-faudir') . $workplace['zip'];
+            $workplaceDetails[] = __('ZIP Code', 'rrze-faudir').': ' . $workplace['zip'];
         }
         if (!empty($workplace['city'])) {
-            $workplaceDetails[] = __('City: ', 'rrze-faudir') . $workplace['city'];
+            $workplaceDetails[] = __('City', 'rrze-faudir').': ' . $workplace['city'];
         }
         if (!empty($workplace['faumap'])) {
-            $workplaceDetails[] = __('FAU Map: ', 'rrze-faudir') . $workplace['faumap'];
+            $workplaceDetails[] = __('FAU Map', 'rrze-faudir').': ' . $workplace['faumap'];
         }
         if (!empty($workplace['phones'])) {
-            $workplaceDetails[] = __('Phones: ', 'rrze-faudir') . implode(', ', $workplace['phones']);
+            $workplaceDetails[] = __('Phones', 'rrze-faudir').': ' . implode(', ', $workplace['phones']);
         }
         if (!empty($workplace['fax'])) {
-            $workplaceDetails[] = __('Fax: ', 'rrze-faudir') . $workplace['fax'];
+            $workplaceDetails[] = __('Fax', 'rrze-faudir').': ' . $workplace['fax'];
         }
         if (!empty($workplace['url'])) {
-            $workplaceDetails[] = __('URL: ', 'rrze-faudir') . $workplace['url'];
+            $workplaceDetails[] = __('URL', 'rrze-faudir').': ' . $workplace['url'];
         }
         if (!empty($workplace['mails'])) {
-            $workplaceDetails[] = __('Emails: ', 'rrze-faudir') . implode(', ', $workplace['mails']);
+            $workplaceDetails[] = __('Emails', 'rrze-faudir').': ' . implode(', ', $workplace['mails']);
         }
         if (!empty($workplace['officeHours'])) {
             $officeHours = array_map(function ($hours) {
@@ -368,25 +368,25 @@ function fetch_and_format_address($contactIdentifier)
     $addressDetails = [];
 
     if (!empty($address['phone'])) {
-        $addressDetails[] = __('Phone: ', 'rrze-faudir') . $address['phone'];
+        $addressDetails[] = __('Phone', 'rrze-faudir').': ' . $address['phone'];
     }
     if (!empty($address['mail'])) {
-        $addressDetails[] = __('Email: ', 'rrze-faudir') . $address['mail'];
+        $addressDetails[] = __('Email', 'rrze-faudir').': ' . $address['mail'];
     }
     if (!empty($address['url'])) {
-        $addressDetails[] = __('URL: ', 'rrze-faudir') . $address['url'];
+        $addressDetails[] = __('URL', 'rrze-faudir').': ' . $address['url'];
     }
     if (!empty($address['street'])) {
-        $addressDetails[] = __('Street: ', 'rrze-faudir') . $address['street'];
+        $addressDetails[] = __('Street', 'rrze-faudir').': ' . $address['street'];
     }
     if (!empty($address['zip'])) {
-        $addressDetails[] = __('ZIP: ', 'rrze-faudir') . $address['zip'];
+        $addressDetails[] = __('ZIP Code', 'rrze-faudir').': ' . $address['zip'];
     }
     if (!empty($address['city'])) {
-        $addressDetails[] = __('City: ', 'rrze-faudir') . $address['city'];
+        $addressDetails[] = __('City', 'rrze-faudir').': ' . $address['city'];
     }
     if (!empty($address['faumap'])) {
-        $addressDetails[] = __('FAU Map: ', 'rrze-faudir') . $address['faumap'];
+        $addressDetails[] = __('FAU Map', 'rrze-faudir').': ' . $address['faumap'];
     }
 
     return implode("\n", $addressDetails);
@@ -471,19 +471,19 @@ function rrze_faudir_search_org_callback() {
                 $output .= '<div class="organization-card">';
                 $output .= "<h2 class='organization-name'>{$name}</h2>";
                 $output .= "<div class='organization-details'>";
-                $output .= "<p><strong>" . __('Organization ID:', 'rrze-faudir') . "</strong> {$identifier}</p>";
-                $output .= "<p><strong>" . __('Organizations-Nr.:', 'rrze-faudir') . "</strong> {$disambiguatingDescription}</p>";
+                $output .= "<p><strong>" . __('Organization ID', 'rrze-faudir') . ":</strong> {$identifier}</p>";
+                $output .= "<p><strong>" . __('Organization Number', 'rrze-faudir') . ":</strong> {$disambiguatingDescription}</p>";
 
                 // Add parent organization if available
                 if (!empty($org['parentOrganization'])) {
                     $parent_name = esc_html($org['parentOrganization']['name']);
-                    $output .= "<p><strong>" . __('Parent Organization:', 'rrze-faudir') . "</strong> {$parent_name}</p>";
+                    $output .= "<p><strong>" . __('Parent Organization', 'rrze-faudir') . ":</strong> {$parent_name}</p>";
                 }
 
                 // Add organization type if available
                 if (!empty($org['type'])) {
                     $type = esc_html($org['type']);
-                    $output .= "<p><strong>" . __('Type:', 'rrze-faudir') . "</strong> {$type}</p>";
+                    $output .= "<p><strong>" . __('Type', 'rrze-faudir') . ":</strong> {$type}</p>";
                 }
 
                 // Add address if available
@@ -498,13 +498,13 @@ function rrze_faudir_search_org_callback() {
                         $output .= "<p>" . esc_html($org['address']['zip'] ?? '') . " " . esc_html($org['address']['city'] ?? '') . "</p>";
                     }
                     if (!empty($org['address']['phone'])) {
-                        $output .= "<p><strong>" . __('Phone:', 'rrze-faudir') . "</strong> " . esc_html($org['address']['phone']) . "</p>";
+                        $output .= "<p><strong>" . __('Phone', 'rrze-faudir') . ":</strong> " . esc_html($org['address']['phone']) . "</p>";
                     }
                     if (!empty($org['address']['mail'])) {
-                        $output .= "<p><strong>" . __('Email:', 'rrze-faudir') . "</strong> " . esc_html($org['address']['mail']) . "</p>";
+                        $output .= "<p><strong>" . __('Email', 'rrze-faudir') . ":</strong> " . esc_html($org['address']['mail']) . "</p>";
                     }
                     if (!empty($org['address']['url'])) {
-                        $output .= "<p><strong>" . __('Website:', 'rrze-faudir') . "</strong> <a href='" . esc_url($org['address']['url']) . "' target='_blank'>" . esc_html($org['address']['url']) . "</a></p>";
+                        $output .= "<p><strong>" . __('Website', 'rrze-faudir') . ":</strong> <a href='" . esc_url($org['address']['url']) . "' target='_blank'>" . esc_html($org['address']['url']) . "</a></p>";
                     }
                     $output .= "</div>";
                 }

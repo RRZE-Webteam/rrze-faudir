@@ -125,7 +125,7 @@ if (!defined('ABSPATH')) {
                                 <?php if (in_array('socialmedia', $show_fields) && !in_array('socialmedia', $hide_fields)): ?>
                                     <?php if (!empty($person['contacts'][0]['socials'])) : ?>
                                         <div>
-                                            <span class="screen-reader-text"><?php echo esc_html__('Social Profiles:', 'rrze-faudir'); ?></span>
+                                            <span class="screen-reader-text"><?php echo esc_html__('Social Media and Websites', 'rrze-faudir'); ?>:</span>
                                             <ul class="socialmedia">
                                                 <?php foreach ($person['contacts'][0]['socials'] as $social):
                                                     $icon_data = get_social_icon_data($social['platform']);
@@ -183,7 +183,7 @@ if (!defined('ABSPATH')) {
                                             <?php endif; ?>
                                         <?php } ?>
 
-                                        <span class="screen-reader-text"><?php echo esc_html__('Workplaces:', 'rrze-faudir'); ?></span>
+                                        <span class="screen-reader-text"><?php echo esc_html__('Workplaces', 'rrze-faudir'); ?>:</span>
                                         <div>
                                             <?php if (empty($contact['workplaces'])) : ?>
                                                 <?php
@@ -198,7 +198,7 @@ if (!defined('ABSPATH')) {
                                                         <p>
                                                             <span class="<?php echo esc_attr($icon_data['css_class']); ?>"
                                                                 style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
-                                                            <span class="screen-reader-text"><?php echo esc_html__('Emails:', 'rrze-faudir'); ?></span>
+                                                            <span class="screen-reader-text"><?php echo esc_html__('Emails', 'rrze-faudir'); ?>:</span>
                                                             <a href="mailto:<?php echo esc_attr($email); ?>" itemprop="email"><?php echo esc_html($email); ?></a>
                                                         </p>
                                                     <?php }
@@ -212,7 +212,7 @@ if (!defined('ABSPATH')) {
                                                         <p>
                                                             <span class="<?php echo esc_attr($icon_data['css_class']); ?>"
                                                                 style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
-                                                            <span class="screen-reader-text"><?php echo esc_html__('Phone:', 'rrze-faudir'); ?></span>
+                                                            <span class="screen-reader-text"><?php echo esc_html__('Phone', 'rrze-faudir'); ?>:</span>
                                                             <span itemprop="telephone"><?php echo esc_html($phone); ?></span>
                                                         </p>
                                                 <?php }
@@ -232,7 +232,7 @@ if (!defined('ABSPATH')) {
                                                         <p><?php $icon_data = get_social_icon_data('email'); ?>
                                                             <span class="<?php echo esc_attr($icon_data['css_class']); ?>"
                                                                 style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
-                                                            <span class="screen-reader-text"><?php echo esc_html__('Emails:', 'rrze-faudir'); ?></span>
+                                                            <span class="screen-reader-text"><?php echo esc_html__('Emails', 'rrze-faudir'); ?>:</span>
                                                             <a href="mailto:<?php echo esc_attr($email); ?>" itemprop="email"><?php echo esc_html($email); ?></a>
                                                         </p>
                                                     <?php endforeach; ?>
@@ -245,7 +245,7 @@ if (!defined('ABSPATH')) {
                                                         <p><?php $icon_data = get_social_icon_data('phone'); ?>
                                                             <span class="<?php echo esc_attr($icon_data['css_class']); ?>"
                                                                 style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
-                                                            <span class="screen-reader-text"><?php echo esc_html__('Phone:', 'rrze-faudir'); ?></span>
+                                                            <span class="screen-reader-text"><?php echo esc_html__('Phone', 'rrze-faudir'); ?>:</span>
                                                             <span itemprop="telephone"><?php echo esc_html($phone); ?></span>
                                                         </p>
                                                     <?php endforeach; ?>
@@ -257,21 +257,21 @@ if (!defined('ABSPATH')) {
                                                     <?php $icon_data = get_social_icon_data('url'); ?>
                                                     <span class="<?php echo esc_attr($icon_data['css_class']); ?>"
                                                         style="background-image: url('<?php echo esc_url($icon_data['icon_address']); ?>')"></span>
-                                                    <span class="screen-reader-text"><?php echo esc_html__('Url:', 'rrze-faudir'); ?></span>
+                                                    <span class="screen-reader-text"><?php echo esc_html__('URL', 'rrze-faudir'); ?>:</span>
                                                     <a href="<?php echo esc_url($workplace['url']); ?>" itemprop="url"><?php echo esc_html($workplace['url']); ?></a><br>
                                                 <?php endif; ?>
                                             <?php endif; ?>
 
                                             <?php if (in_array('room', $show_fields) && !in_array('room', $hide_fields)) : ?>
                                                 <?php if (!empty($workplace['room'])) : ?>
-                                                    <span class="screen-reader-text"><?php echo esc_html__('Room:', 'rrze-faudir'); ?></span>
+                                                    <span class="screen-reader-text"><?php echo esc_html__('Room', 'rrze-faudir'); ?>:</span>
                                                     <?php echo esc_html($workplace['room']); ?><br>
                                                 <?php endif; ?>
                                             <?php endif; ?>
 
                                             <?php if (in_array('floor', $show_fields) && !in_array('floor', $hide_fields)) : ?>
                                                 <?php if (!empty($workplace['floor'])) : ?>
-                                                    <span class="screen-reader-text"><?php echo esc_html__('Floor:', 'rrze-faudir'); ?></span>
+                                                    <span class="screen-reader-text"><?php echo esc_html__('Floor', 'rrze-faudir'); ?>:</span>
                                                     <?php echo esc_html($workplace['floor']); ?><br>
                                                 <?php endif; ?>
                                             <?php endif; ?>
@@ -280,19 +280,19 @@ if (!defined('ABSPATH')) {
                                                 <span itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
                                                     <?php if (in_array('street', $show_fields) && !in_array('street', $hide_fields)) : ?>
                                                         <?php if (!empty($workplace['street'])) : ?>
-                                                            <span class="screen-reader-text"><?php echo esc_html__('Street:', 'rrze-faudir'); ?></span>
+                                                            <span class="screen-reader-text"><?php echo esc_html__('Street', 'rrze-faudir'); ?>:</span>
                                                             <span itemprop="streetAddress"><?php echo esc_html($workplace['street']); ?></span><br>
                                                         <?php endif; ?>
                                                     <?php endif; ?>
                                                     <?php if (in_array('zip', $show_fields) && !in_array('zip', $hide_fields)) : ?>
                                                         <?php if (!empty($workplace['zip'])) : ?>
-                                                            <span class="screen-reader-text"><?php echo esc_html__('ZIP Code:', 'rrze-faudir'); ?></span>
+                                                            <span class="screen-reader-text"><?php echo esc_html__('ZIP Code', 'rrze-faudir'); ?>:</span>
                                                             <span itemprop="postalCode"><?php echo esc_html($workplace['zip']); ?></span><br>
                                                         <?php endif; ?>
                                                     <?php endif; ?>
                                                     <?php if (in_array('city', $show_fields) && !in_array('city', $hide_fields)) : ?>
                                                         <?php if (!empty($workplace['city'])) : ?>
-                                                            <span class="screen-reader-text"><?php echo esc_html__('City:', 'rrze-faudir'); ?></span>
+                                                            <span class="screen-reader-text"><?php echo esc_html__('City', 'rrze-faudir'); ?>:</span>
                                                             <span itemprop="addressLocality"><?php echo esc_html($workplace['city']); ?></span><br>
                                                         <?php endif; ?>
                                                     <?php endif; ?>
@@ -301,7 +301,7 @@ if (!defined('ABSPATH')) {
 
                                             <?php if (in_array('faumap', $show_fields) && !in_array('faumap', $hide_fields)) : ?>
                                                 <?php if (!empty($workplace['faumap'])) : ?>
-                                                    <span class="screen-reader-text"><?php echo esc_html__('Map:', 'rrze-faudir'); ?></span>
+                                                    <span class="screen-reader-text"><?php echo esc_html__('FAU Map', 'rrze-faudir'); ?>:</span>
                                                     <a href="<?php echo esc_url($workplace['faumap']); ?>" target="_blank">
                                                         <?php echo esc_html__('View on Map', 'rrze-faudir'); ?>
                                                     </a><br>

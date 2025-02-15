@@ -55,7 +55,7 @@ function register_custom_taxonomy() {
                     'search_items'      => __('Search Categories', 'text-domain'),
                     'all_items'         => __('All Categories', 'text-domain'),
                     'parent_item'       => __('Parent Category', 'text-domain'),
-                    'parent_item_colon' => __('Parent Category:', 'text-domain'),
+                    'parent_item_colon' => __('Parent Category', 'text-domain'),
                     'edit_item'         => __('Edit Category', 'text-domain'),
                     'update_item'       => __('Update Category', 'text-domain'),
                     'add_new_item'      => __('Add New Category', 'text-domain'),

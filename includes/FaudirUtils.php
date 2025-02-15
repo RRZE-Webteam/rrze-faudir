@@ -62,13 +62,13 @@ class FaudirUtils {
     private static function getAcademicTitleLongVersion(string $prefix): string  {
         $prefixes = array(
             '' => __('Not specified', 'rrze-faudir'),
-            'Dr.' => __('Doktor', 'rrze-faudir'),
+            'Dr.' => __('Doctor', 'rrze-faudir'),
             'Prof.' => __('Professor', 'rrze-faudir'),
-            'Prof. Dr.' => __('Professor Doktor', 'rrze-faudir'),
+            'Prof. Dr.' => __('Professor Doctor', 'rrze-faudir'),
             'Prof. em.' => __('Professor (Emeritus)', 'rrze-faudir'),
-            'Prof. Dr. em.' => __('Professor Doktor (Emeritus)', 'rrze-faudir'),
-            'PD' => __('Privatdozent', 'rrze-faudir'),
-            'PD Dr.' => __('Privatdozent Doktor', 'rrze-faudir')
+            'Prof. Dr. em.' => __('Professor Doctor (Emeritus)', 'rrze-faudir'),
+            'PD' => __('Private lecturer', 'rrze-faudir'),
+            'PD Dr.' => __('Private lecturer Doctor', 'rrze-faudir')
         );
 
         return isset($prefixes[$prefix]) ? $prefixes[$prefix] : '';

@@ -140,7 +140,7 @@ if (!defined('ABSPATH')) {
                         $socialoutput = '';
                         if (in_array('socialmedia', $show_fields) && !in_array('socialmedia', $hide_fields)) {                            
                             if (!empty($socials)) {        
-                                $socialoutput = FaudirUtils::getListOutput($socials,'span',__('Portale', 'rrze-faudir'),'icon-list icon');
+                                $socialoutput = FaudirUtils::getListOutput($socials,'span',__('Social Media and Websites', 'rrze-faudir'),'icon-list icon');
                             }
 
                         }

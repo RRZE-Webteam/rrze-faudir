@@ -51,14 +51,14 @@ export default function Edit({ attributes, setAttributes }) {
         kompaktButton: __('Kompakt Button', 'rrze-faudir'),
         content: __('Content', 'rrze-faudir'),
         teasertext: __('Teasertext', 'rrze-faudir'),
-        socialmedia: __('Social Media', 'rrze-faudir'),
+        socialmedia: __('Social Media and Websites', 'rrze-faudir'),
         workplaces: __('Workplaces', 'rrze-faudir'),
         room: __('Room', 'rrze-faudir'),
         floor: __('Floor', 'rrze-faudir'),
         street: __('Street', 'rrze-faudir'),
-        zip: __('Zip', 'rrze-faudir'),
+        zip: __('ZIP Code', 'rrze-faudir'),
         city: __('City', 'rrze-faudir'),
-        faumap: __('Fau Map', 'rrze-faudir'),
+        faumap: __('FAU Map', 'rrze-faudir'),
         officehours: __('Office Hours', 'rrze-faudir'),
         consultationhours: __('Consultation Hours', 'rrze-faudir'),
     };
@@ -524,7 +524,7 @@ export default function Edit({ attributes, setAttributes }) {
                     />
 
                     <TextControl
-                        label={__('Organization Nr', 'rrze-faudir')}
+                        label={__('Organization Number', 'rrze-faudir')}
                         value={orgnr}
                         onChange={(value) => {
                    
