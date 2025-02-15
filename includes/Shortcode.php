@@ -12,11 +12,8 @@ defined('ABSPATH') || exit;
 
 
 class Shortcode { 
-    protected static $pluginFile;
 
-    public function __construct($pluginFile)  {
-        self::$pluginFile = plugin_dir_path($pluginFile);
-
+    public function __construct()  {
         add_shortcode('faudir', [$this, 'fetch_fau_data']);
     }
   
@@ -464,7 +461,7 @@ class Shortcode {
         });
 
         // Load the template and pass the sorted data
-        $template_dir = self::$pluginFile . 'templates/';
+        $template_dir = RRZE_PLUGIN_PATH . 'templates/';
         $template = new Template($template_dir);
 
         // Fix format assignment when empty

@@ -23,7 +23,7 @@ class Main {
     }
 
     public function onLoaded() {
-        $shortcode = new Shortcode($this->pluginFile);
+        $shortcode = new Shortcode();
         
         $enqueues = new EnqueueScripts($this->pluginFile);
        // Register and enqueue scripts

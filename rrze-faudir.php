@@ -23,6 +23,7 @@ use RRZE\FAUdir\FaudirUtils;
 use RRZE\FAUdir\Template;
 use RRZE\FAUdir\Person;
 use RRZE\FAUdir\Debug;
+use Exception;
 
 // Define plugin constants
 define('RRZE_PLUGIN_FILE', __FILE__);
@@ -122,18 +123,13 @@ if (rrze_faudir_system_requirements()) {
     */
 
     // Include necessary files
-//    require_once plugin_dir_path(__FILE__) . 'includes/shortcodes/fau_dir_shortcode.php';
 
-//    require_once plugin_dir_path(__FILE__) . 'includes/utils/enqueue_scripts.php';
-//    require_once plugin_dir_path(__FILE__) . 'includes/utils/faudir_utils.php';
     require_once plugin_dir_path(__FILE__) . 'includes/utils/api-functions.php';
-//    require_once plugin_dir_path(__FILE__) . 'includes/utils/Template.php';
     require_once plugin_dir_path(__FILE__) . 'includes/custom-post-type/custom-post-type.php';
     require_once plugin_dir_path(__FILE__) . 'includes/admin/settings-page.php';
 
-//    require_once plugin_dir_path(__FILE__) . 'includes/Debug.php';
     
-    $main = new Main(__FILE__);
+    $main = new Main(RRZE_PLUGIN_FILE);
     $main->onLoaded();
     
 
@@ -720,9 +716,9 @@ function custom_cpt_404_message() {
 add_action('template_redirect',  __NAMESPACE__ . '\custom_cpt_404_message');
 
 // Register FAUdir Block
-function register_faudir_block() {
+function register_faudir_block() {   
     register_block_type(plugin_dir_path(__FILE__) . '/faudir-block/build', [
-        'render_callback' => 'render_faudir_block',
+        'render_callback' =>  __NAMESPACE__ .'\\render_faudir_block',
         'skip_inner_blocks' => true
     ]);
 }
@@ -731,7 +727,7 @@ add_action('init',  __NAMESPACE__ . '\register_faudir_block');
 // Render callback function for FAUdir block
 function render_faudir_block($attributes) {
     try {
-        error_log('FAUDIR Block render started with attributes: ' . print_r($attributes, true));
+   //     error_log('FAUDIR Block render started with attributes: ' . print_r($attributes, true));
 
         if (!shortcode_exists('faudir')) {
             throw new Exception('FAUDIR shortcode is not registered');
@@ -811,7 +807,7 @@ function render_faudir_block($attributes) {
         }
         $shortcode .= ']';
 
-        error_log('Generated shortcode: ' . $shortcode);
+     //   error_log('Generated shortcode: ' . $shortcode);
 
         // Execute shortcode
         $output = do_shortcode($shortcode);
@@ -833,7 +829,7 @@ function render_faudir_block($attributes) {
 
 // Add editor assets
 add_action('enqueue_block_editor_assets', function() {
-    // Get the file paths
+    // Get the file paths    
     $js_path = plugin_dir_path(__FILE__) . 'faudir-block/build/index.js';
     $css_path = plugin_dir_path(__FILE__) . 'faudir-block/build/style.css';
 
