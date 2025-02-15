@@ -8,6 +8,8 @@
 
 namespace RRZE\FAUdir;
 
+defined('ABSPATH') || exit;
+
 class Contact {
     public array $context = [];
     public string $type = '';
@@ -19,9 +21,9 @@ class Contact {
     public string $familyName = '';
     public ?string $titleOfNobility = '';
     public ?string  $function = '';
-    public array $functionLabel = [];
-    public array $workplaces = [];
-    public array $organization_address = [];
+    public ?array $functionLabel = [];
+    public ?array $workplaces = [];
+    public ?array $organization_address = [];
 
     /**
      * Contact constructor

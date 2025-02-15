@@ -5,6 +5,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 use RRZE\FAUdir\FaudirUtils;
+use RRZE\FAUdir\Config;
 
 // Add admin menu
 function rrze_faudir_add_admin_menu() {
@@ -17,18 +18,13 @@ function rrze_faudir_add_admin_menu() {
     );
 }
 add_action('admin_menu', 'rrze_faudir_add_admin_menu');
-// Load default values from config.php
-function rrze_faudir_get_default_config() {
-    $config_path = plugin_dir_path(__FILE__) . 'config/config.php';
-    if (file_exists($config_path)) {
-        return include $config_path;
-    }
-    return [];
-}
+
 
 function rrze_faudir_settings_init() {
     // Load the default settings
-    $default_settings = rrze_faudir_get_default_config();
+    $config = new Config;
+    $default_settings = $config->getAll();
+    
     $options = get_option('rrze_faudir_options', []);
 
     // Merge the default settings with the saved options
@@ -226,55 +222,48 @@ function rrze_faudir_api_key_render() {
     }
 }
 
-function rrze_faudir_no_cache_logged_in_render()
-{
+function rrze_faudir_no_cache_logged_in_render() {
     $options = get_option('rrze_faudir_options');
     $checked = isset($options['no_cache_logged_in']) ? 'checked' : '';
     echo '<input type="checkbox" name="rrze_faudir_options[no_cache_logged_in]" value="1" ' .  esc_attr($checked) . '>';
     echo '<p class="description">' . esc_html__('Disable caching for logged-in editors.', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_cache_timeout_render()
-{
+function rrze_faudir_cache_timeout_render() {
     $options = get_option('rrze_faudir_options');
     $value = isset($options['cache_timeout']) ? max(intval($options['cache_timeout']), 15) : 15; // Ensure minimum value is 15
     echo '<input type="number" name="rrze_faudir_options[cache_timeout]" value="' . esc_attr($value) . '" min="15">';
     echo '<p class="description">' . esc_html__('Set the cache timeout in minutes (minimum 15 minutes).', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_transient_time_for_org_id_render()
-{
+function rrze_faudir_transient_time_for_org_id_render() {
     $options = get_option('rrze_faudir_options');
     $value = isset($options['transient_time_for_org_id']) ? max(intval($options['transient_time_for_org_id']), 1) : 1; // Ensure minimum value is 1
     echo '<input type="number" name="rrze_faudir_options[transient_time_for_org_id]" value="' . esc_attr($value) . '" min="1">';
     echo '<p class="description">' . esc_html__('Set the transient time in days for intermediate stored organization identifiers (minimum 1 day).', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_cache_org_timeout_render()
-{
+function rrze_faudir_cache_org_timeout_render() {
     $options = get_option('rrze_faudir_options');
     $value = isset($options['cache_org_timeout']) ? intval($options['cache_org_timeout']) : 1;
     echo '<input type="number" name="rrze_faudir_options[cache_org_timeout]" value="' . esc_attr($value) . '" min="1">';
     echo '<p class="description">' . esc_html__('Set the cache timeout in days for organization identifiers.', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_clear_cache_render()
-{
+function rrze_faudir_clear_cache_render() {
     echo '<button type="button" class="button button-secondary" id="clear-cache-button">' . esc_html__('Clear Cache Now', 'rrze-faudir') . '</button>';
     echo '<p class="description">' . esc_html__('Click the button to clear all cached data.', 'rrze-faudir') . '</p>';
 }
 
 
-function rrze_faudir_error_message_render()
-{
+function rrze_faudir_error_message_render() {
     $options = get_option('rrze_faudir_options');
     $checked = isset($options['show_error_message']) ? 'checked' : '';
     echo '<input type="checkbox" name="rrze_faudir_options[show_error_message]" value="1" ' . esc_attr($checked) . '>';
     echo '<p class="description">' . esc_html__('Show error messages for incorrect contact entries.', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_business_card_title_render()
-{
+function rrze_faudir_business_card_title_render() {
     $options = get_option('rrze_faudir_options');
     $default_title = esc_html__('More', 'rrze-faudir');
     $value = isset($options['business_card_title']) && !empty($options['business_card_title'])
@@ -291,16 +280,14 @@ function rrze_faudir_business_card_title_render()
     echo '<p class="description">' . esc_html__('Enter the title for the kompakt card read more button.', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_hard_sanitize_render()
-{
+function rrze_faudir_hard_sanitize_render() {
     $options = get_option('rrze_faudir_options');
     $checked = isset($options['hard_sanitize']) ? 'checked' : '';
     echo '<input type="checkbox" name="rrze_faudir_options[hard_sanitize]" value="1" ' . esc_attr($checked) . '>';
     echo '<p class="description">' . esc_html__('Hard Sanitize abbreviations.', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_person_slug_field()
-{
+function rrze_faudir_person_slug_field() {
     $options = get_option('rrze_faudir_options'); // Get all plugin options
     $default_slug = 'person'; // Default slug value
 
@@ -319,8 +306,7 @@ function rrze_faudir_person_slug_field()
     echo '<p class="description">' . esc_html__('Enter the slug for the person post type.', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_default_output_fields_render()
-{
+function rrze_faudir_default_output_fields_render() {
     $options = get_option('rrze_faudir_options');
     $default_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : array();
 
@@ -613,8 +599,7 @@ function rrze_faudir_settings_page() {
 <?php
 }
 
-function rrze_faudir_delete_default_organization()
-{
+function rrze_faudir_delete_default_organization() {
     if (!current_user_can('manage_options')) {
         wp_die(__('You do not have sufficient permissions to access this page.', 'rrze-faudir'));
     }
@@ -644,13 +629,12 @@ function rrze_faudir_delete_default_organization()
 add_action('admin_post_delete_default_organization', 'rrze_faudir_delete_default_organization');
 
 // Function to reset settings to defaults
-function rrze_faudir_reset_defaults()
-{
+function rrze_faudir_reset_defaults() {
     check_ajax_referer('rrze_faudir_reset_defaults_nonce', 'security');
 
-    // Load default values from config.php
-    $default_settings = rrze_faudir_get_default_config();
-
+    $config = new Config;
+    $default_settings = $config->getAll();
+    
     // Update the plugin options with the default values
     update_option('rrze_faudir_options', $default_settings);
 
@@ -671,8 +655,7 @@ function rrze_faudir_clear_cache()
 add_action('wp_ajax_rrze_faudir_clear_cache', 'rrze_faudir_clear_cache');
 
 // Add this function at the end of the file
-function rrze_faudir_search_person_ajax()
-{
+function rrze_faudir_search_person_ajax() {
     check_ajax_referer('rrze_faudir_api_nonce', 'security');
 
     $personId = isset($_POST['person_id']) ? sanitize_text_field($_POST['person_id']) : '';

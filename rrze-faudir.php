@@ -529,7 +529,7 @@ function migrate_person_data_on_activation() {
     add_action('admin_notices',  __NAMESPACE__ . '\rrze_faudir_display_import_notice');
 }
 
-// Add this new function to display the notice
+// Add this function to display the notice
 function rrze_faudir_display_import_notice() {
     // Only show on the plugins page
     $screen = get_current_screen();
