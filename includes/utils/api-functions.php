@@ -343,8 +343,7 @@ function fetch_and_format_workplaces($contactIdentifier) {
     return implode("\n\n", $formattedWorkplaces);
 }
 
-function fetch_and_format_address($contactIdentifier)
-{
+function fetch_and_format_address($contactIdentifier) {
     // error_log('Fetching address for contact identifier: ' . $contactIdentifier);
 
     // Fetch contact data

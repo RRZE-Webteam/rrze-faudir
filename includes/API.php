@@ -142,8 +142,7 @@ class API {
     * @param array $params - Additional query parameters
     * @return array - Array of contacts
     */
-    function getContacts($limit = 20, $offset = 0, $params = []) {
-    
+    function getContacts($limit = 20, $offset = 0, $params = []) { 
         if (!$this->api_key) {
             throw new \Exception("FAUdir\API (getContacts): API Key is required.");
         }
@@ -197,6 +196,53 @@ class API {
     }
 
     
+    
+    /**
+    * Fetch organizations from the FAU organizations API
+    * @param int $limit - Limit the number of organizations to fetch
+    * @param int $offset - Offset the number of organizations to fetch
+    * @param array $params - Additional query parameters
+    * @return array - Array of organizations
+    */
+    function getOrgList($limit = 100, $offset = 1, $params = []) {
+        if (!$this->api_key) {
+            throw new \Exception("FAUdir\API (getOrgList): API Key is required.");
+        }   
+        if (empty($params)) {
+            throw new \InvalidArgumentException('FAUdir\API (getContacts): Required params missing.');
+        }
+        $url = "{$this->baseUrl}/organizations";
+        $url .= '?limit=' . $limit . '&offset=' . $offset;
+        
+
+        $query_params = [
+            'q',
+            'sort',
+            'attrs',
+            'lq',
+            'rq',
+            'view',
+            'lf'
+        ];
+        // Loop through the parameters and append them to the URL if they exist in $params
+        foreach ($query_params as $param) {
+            if (!empty($params[$param])) {
+                $url .= '&' . $param . '=' . urlencode($params[$param]);
+            }
+        }
+        // Handle givenName and familyName as special cases to be combined into the 'q' parameter
+        if (!empty($params['orgnr'])) {
+            $url .= '&q=' . urlencode('^' . $params['orgnr']);
+        }
+        $response = $this->makeRequest($url, "REST");
+
+        if (!$response) {
+            error_log("FAUdir\API (getOrgList): No valid response from server on {$url}.");
+            return null;
+        }
+        return $response;
+  
+    }
     
     
      /**

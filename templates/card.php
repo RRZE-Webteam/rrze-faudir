@@ -1,6 +1,10 @@
 <?php
 // Template file for RRZE FAUDIR
 
+use RRZE\FAUdir\FAUdirUtils;
+use RRZE\FAUdir\Person;
+
+
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }

@@ -165,7 +165,6 @@ class Shortcode {
                 // Try English function label first
                 $lq_en = 'contacts.functionLabel.en[eq]=' . urlencode($function) .
                     '&contacts.organization.identifier[eq]=' . urlencode($defaultOrgIdentifier);
-               //  $response = fetch_fau_persons(0, 0, ['lq' => $lq_en]);
      
                 $response = $api->getPersons(0, 0, ['lq' => $lq_en]);
                 
@@ -173,7 +172,6 @@ class Shortcode {
                 if (empty($response['data'])) {
                     $lq_de = 'contacts.functionLabel.de[eq]=' . urlencode($function) .
                         '&contacts.organization.identifier[eq]=' . urlencode($defaultOrgIdentifier);
-           //         $response = fetch_fau_persons(0, 0, ['lq' => $lq_de]);
                     $response = $api->getPersons(0, 0, ['lq' => $lq_de]);
                 }
 
@@ -190,7 +188,8 @@ class Shortcode {
         // Closure to filter persons by organization and group ID
         $filter_persons = function ($persons, $orgnr, $groupid) {
             if (!empty($orgnr)) {
-                $orgData = self::fetch_fau_organizations(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
+                $api = new API(self::$config);
+                $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
                 if (!empty($orgData['data'])) {
                     $orgIdentifier = $orgData['data'][0]['identifier'];
                     $persons = array_filter($persons, function ($person) use ($orgIdentifier) {
@@ -255,10 +254,14 @@ class Shortcode {
         if (!empty($function)) {
             $persons = [];
             $api = new API(self::$config);
+            $person = new Person();
+            $person->setConfig(self::$config);
             
             if (!empty($orgnr)) {
                 // Case 1: Explicit orgnr is provided in shortcode - exact match for both org and function
-                $orgData = fetch_fau_organizations(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
+                
+                $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
+                
                 if (!empty($orgData['data'])) {
                     $org = $orgData['data'][0];
                     $identifier = $org['identifier'];
@@ -271,22 +274,26 @@ class Shortcode {
                     ];
 
                     $result = $api->getPersons(60, 0, $params);                  
-             //       $result = fetch_fau_persons(60, 0, $params);
 
                     // Process each person and filter contacts
-                    foreach ($result['data'] as $key => &$person) {
+                    foreach ($result['data'] as $key => &$persondata) {
                         // Enrich person data with full contact information
-                        $person = self::enrich_person_with_contacts($person);
+                        
+                        $person->populateFromData($persondata);
+                        $person->reloadContacts();
+                        $persondata = $person->toArray();
 
                         // Filter contacts based on function
-                        foreach ($person['contacts'] as $contactKey => $contact) {
-                            if ($contact['functionLabel']['de'] !== $function && $contact['functionLabel']['en'] !== $function || $contact['organization']['identifier'] !== $identifier) {
-                                unset($person['contacts'][$contactKey]);
+                        foreach ($persondata['contacts'] as $contactKey => $contact) {
+                            if ($contact['functionLabel']['de'] !== $function 
+                                    && $contact['functionLabel']['en'] !== $function 
+                                    || $contact['organization']['identifier'] !== $identifier) {
+                                unset($persondata['contacts'][$contactKey]);
                             }
                         }
 
                         // Remove person if no matching contacts remain
-                        if (count($person['contacts']) === 0) {
+                        if (count($persondata['contacts']) === 0) {
                             unset($result['data'][$key]);
                         }
                     }
@@ -312,21 +319,24 @@ class Shortcode {
                             'lq' => implode('&', $queryParts)
                         ];
 
-                   //     $result = fetch_fau_persons(60, 0, $params);
                         $result = $api->getPersons(60, 0, $params);  
                         
                         // Process each person and filter contacts
-                        foreach ($result['data'] as $key => &$person) {
-                            // Enrich person data with full contact information
-                            $person = self::enrich_person_with_contacts($person);
-
-                            foreach ($person['contacts'] as $contactKey => $contact) {
-                                if ($contact['functionLabel']['de'] !== $function && $contact['functionLabel']['en'] !== $function || !in_array($contact['organization']['identifier'], $ids)) {
-                                    unset($person['contacts'][$contactKey]);
+                        foreach ($result['data'] as $key => &$persondata) {
+                            
+                            $person->populateFromData($persondata);
+                            $person->reloadContacts();
+                            $persondata = $person->toArray();
+                            
+                            foreach ($persondata['contacts'] as $contactKey => $contact) {
+                                if ($contact['functionLabel']['de'] !== $function 
+                                        && $contact['functionLabel']['en'] !== $function 
+                                        || !in_array($contact['organization']['identifier'], $ids)) {
+                                    unset($persondata['contacts'][$contactKey]);
                                 }
                             }
 
-                            if (count($person['contacts']) === 0) {
+                            if (count($persondata['contacts']) === 0) {
                                 unset($result['data'][$key]);
                             }
                         }
@@ -378,7 +388,7 @@ class Shortcode {
                 $persons = self::process_persons_by_identifiers($person_identifiers);
             }
         } elseif (!empty($orgnr) && empty($post_id) && empty($identifiers) && empty($category) && empty($groupid) && empty($function)) {
-            $orgData = fetch_fau_organizations(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
+            $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
             if (!empty($orgData['data'])) {
                 $orgname = $orgData['data'][0]['name'];
                 $lq = 'contacts.organization.name[eq]=' . urlencode($orgname);
@@ -504,17 +514,17 @@ class Shortcode {
         $persons = [];
         $errors = [];
 
-        $api = new API(self::$config);
-        
+        $person = new Person();
+        $person->setConfig(self::$config);
+                
         foreach ($identifiers as $identifier) {
             $identifier = trim($identifier);
             if (!empty($identifier)) {                
-                $personData = $api->getPerson($identifier);
-                
-                if (!empty($personData)) {
-                    $persons[] = self::enrich_person_with_contacts($personData);
+                $found = $person->getPersonbyAPI($identifier);
+                if ($found) {
+                    $person->reloadContacts();
+                    $persons[] = $person->toArray();
                 } else {
-                    // Create a "person" entry that's a ctually an error message
                     $persons[] = [
                         'error' => true,
                         'message' => sprintf(__('Person with ID %s does not exist', 'rrze-faudir'), $identifier)
@@ -534,53 +544,24 @@ class Shortcode {
         $api = new API(self::$config);
         $data = $api->getPersons(0, 0, $params);
         
+        $person = new Person();
+        $person->setConfig(self::$config);
+        
         // $data = fetch_fau_persons(0, 0, $params);
 
         $persons = [];
         if (!empty($data['data'])) {
             foreach ($data['data'] as $person) {
-                $persons[] = self::enrich_person_with_contacts($person);
+                error_log("FAUdir\Shortcode (fetch_and_process_persons): Populate Persondata.");
+                $person->populateFromData($person);
+                $person->reloadContacts();
+                $persons[] = $person->toArray();  
             }
         }
 
         return $persons;
     }
 
-    /**
-     * Enrich a person's data with their contacts and organization details.
-     */
-    public static function enrich_person_with_contacts($person) {
-        $personContacts = [];
-
-        $api = new API(self::$config);
-        
-        if (!empty($person['contacts'])) {
-            foreach ($person['contacts'] as $contact) {
-                $contactIdentifier = $contact['identifier'] ?? null;
-                if ($contactIdentifier) {                  
-                    $contactData = $api->getContacts(0, 0, ['identifier' => $contactIdentifier]);
-                    
-                    
-                    if (!empty($contactData['data'])) {
-                        $contact = $contactData['data'][0];
-                        $organizationId = $contact['organization']['identifier'] ?? null;
-                        $organizationAddress = null;
-
-                        if ($organizationId) {
-                            $organizationData = $api->getOrgById($organizationId);
-                            $organizationAddress = $organizationData['address'] ?? 'Address not available';
-                        }
-
-                        $contact['organization_address'] = $organizationAddress;
-                        $personContacts[] = $contact;
-                    }
-                }
-            }
-        }
-
-        $person['contacts'] = $personContacts;
-        return $person;
-    }
 
 
 
