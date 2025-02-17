@@ -179,7 +179,7 @@ function render_person_additional_fields($post) {
             echo "<input type='text' name='" . esc_attr($meta_key) . "' id='" . esc_attr($meta_key) . "' value='" . esc_attr($value) . "' style='width: 100%;' $readonly /><br><br>";
             echo '<p><strong>' . __('The following data comes from the FAU IdM portal. A change of data is only possible by the persons or the appointed contact persons in the IdM portal.', 'rrze-faudir') . '</strong></p>';
             echo '<hr>';
-            echo '<h3>' . __('Person', 'rrze-faudir') . '</h3>';
+            echo '<h2>' . __('FAUdir', 'rrze-faudir').' ' .__('Data', 'rrze-faudir') . '</h2>';
             // Add a hidden input for person_id
             echo "<input type='hidden' id='hidden-person-id' value='" . esc_attr($value) . "' />";
         } elseif (in_array($meta_key, ['_content_en', '_teasertext_en', '_teasertext_de'])) {
@@ -196,7 +196,7 @@ function render_person_additional_fields($post) {
 
     // Render contacts section
     echo '<div class="contacts-wrapper">';
-    echo '<h3>' . __('Contacts', 'rrze-faudir') . '</h3>';
+    echo '<h3>'. __('FAUdir', 'rrze-faudir').' ' . __('Contacts', 'rrze-faudir') . '</h3>';
 
     $contacts = get_post_meta($post->ID, 'person_contacts', true) ?: array();
     $displayed_contacts = get_post_meta($post->ID, 'displayed_contacts', true) ?: array();
@@ -206,48 +206,54 @@ function render_person_additional_fields($post) {
     }
 
     foreach ($contacts as $index => $contact) {
-        $checked = in_array($index, $displayed_contacts) ? 'checked' : '';
-
-        echo '<div class="organization-block">';
+       
+        $checked = $activeblock = '';
+        if (in_array($index, $displayed_contacts)) {
+            $checked = 'checked="checked"';
+            $activeblock = ' activeblock';
+        }
+        
+        echo '<div class="organization-block'.$activeblock.'">';
         echo '<div class="organization-header">';
-        echo '<hr>';
-        echo '<h4>' . __('Contact', 'rrze-faudir') . ' ' . ($index + 1) . '</h4>';
+        echo '<h3>' . __('Contact', 'rrze-faudir') . ' ' . ($index + 1) . '</h3>';
         echo '<label>';
-        echo "<input type='checkbox' name='displayed_contacts[]' value='" . esc_attr($index) . "' $checked>";
+        echo "<input type='radio' name='displayed_contacts[]' value='" . esc_attr($index) . "' $checked>";
         echo __('Display this contact', 'rrze-faudir');
         echo '</label>';
         echo '</div>';
-
+        echo '<div class="organization-content'.$activeblock.'">';
+        
         // Add organization field
         echo '<div class="organization-wrapper">';
-        echo '<h5>' . __('Organization', 'rrze-faudir') . '</h5>';
+        echo '<h4>' . __('Organization', 'rrze-faudir') . '</h4>';
         echo '<input type="text" name="person_contacts[' . $index . '][organization]" value="' . esc_attr($contact['organization']) . '" class="widefat" readonly />';
         echo '</div>';
 
         // English Function
         echo '<div class="function-wrapper">';
-        echo '<h5>' . __('Function (English)', 'rrze-faudir') . '</h5>';
+        echo '<h4>' . __('Function (English)', 'rrze-faudir') . '</h4>';
         echo '<input type="text" name="person_contacts[' . $index . '][function_en]" value="' . esc_attr($contact['function_en'] ?? '') . '" class="widefat" readonly />';
         echo '</div>';
 
         // German Function
         echo '<div class="function-wrapper">';
-        echo '<h5>' . __('Function (German)', 'rrze-faudir') . '</h5>';
+        echo '<h4>' . __('Function (German)', 'rrze-faudir') . '</h4>';
         echo '<input type="text" name="person_contacts[' . $index . '][function_de]" value="' . esc_attr($contact['function_de'] ?? '') . '" class="widefat" readonly />';
         echo '</div>';
 
         // Add socials field
         echo '<div class="socials-wrapper">';
-        echo '<h5>' . __('Socials', 'rrze-faudir') . '</h5>';
-        echo '<textarea name="person_contacts[' . $index . '][socials]" class="widefat" readonly rows="10">' . esc_textarea($contact['socials'] ?? '') . '</textarea>';
+        echo '<h4>' . __('Socials', 'rrze-faudir') . '</h4>';
+        echo '<textarea name="person_contacts[' . $index . '][socials]" class="widefat" readonly rows="5">' . esc_textarea($contact['socials'] ?? '') . '</textarea>';
         echo '</div>';
 
         // Add workplace and address fields
         echo '<div class="workplace-wrapper">';
-        echo '<h5>' . __('Workplace', 'rrze-faudir') . '</h5>';
-        echo '<textarea name="person_contacts[' . $index . '][workplace]" class="widefat" readonly rows="10">' . esc_textarea($contact['workplace'] ?? '') . '</textarea>';
+        echo '<h4>' . __('Workplace', 'rrze-faudir') . '</h4>';
+        echo '<textarea name="person_contacts[' . $index . '][workplace]" class="widefat" readonly rows="6">' . esc_textarea($contact['workplace'] ?? '') . '</textarea>';
         echo '</div>';
 
+        echo '</div>';
         echo '</div>'; // .organization-block
     }
 

@@ -11,9 +11,6 @@ namespace RRZE\FAUdir;
 defined('ABSPATH') || exit;
 
 class Contact {
-    public array $context = [];
-    public string $type = '';
-    public string $id = '';
     public string $identifier = '';
     public array $person = [];
     public array $organization = [];
@@ -23,21 +20,14 @@ class Contact {
     public ?string  $function = '';
     public ?array $functionLabel = [];
     public ?array $workplaces = [];
+    public ?array $socials = [];
     public ?array $organization_address = [];
-
+    private array $rawdata;
     /**
      * Contact constructor
      */
     public function __construct(array $data = []) {
-        if (isset($data['@context']) && is_array($data['@context'])) {
-            $this->context = $data['@context'];
-        }
-        if (isset($data['@type']) && is_string($data['@type'])) {
-            $this->type = $data['@type'];
-        }
-        if (isset($data['@id']) && is_string($data['@id'])) {
-            $this->id = $data['@id'];
-        }
+
         if (isset($data['identifier']) && is_string($data['identifier'])) {
             $this->identifier = $data['identifier'];
         }
@@ -68,5 +58,25 @@ class Contact {
         if (isset($data['organization_address']) && is_array($data['organization_address'])) {
             $this->organization_address = $data['organization_address'];
         }
+        if (isset($data['socials']) && is_array($data['socials'])) {
+            $this->socials = $data['socials'];
+        }
+        
+           // Aktualisiere rawdata: Füge alle übrigen Schlüssel hinzu, die nicht zu den Standardfeldern gehören.
+        $usedKeys = [     
+            'identifier',
+            'person',
+            'organization',
+            'givenName',
+            'familyName',
+            'titleOfNobility',
+            'function',
+            'functionLabel',
+            'workplace',
+            'organization_address',
+            'socials'
+        ];
+        $remaining = array_diff_key($data, array_flip($usedKeys));
+        $this->rawdata = array_merge($this->rawdata, $remaining);
     }
 }

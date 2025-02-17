@@ -251,7 +251,9 @@ class Shortcode {
         };
 
         // Determine which logic to apply based on provided attributes
+        
         if (!empty($function)) {
+            // Display persons by function
             $persons = [];
             $api = new API(self::$config);
             $person = new Person();
@@ -347,12 +349,15 @@ class Shortcode {
                     }
                 }
             }
+            
         } elseif (!empty($post_id) && empty($identifiers) && empty($category) && empty($groupid) && empty($orgnr)) {
+            // display a single person by custom post id - mostly on the slug
             $persons = $fetch_persons_by_post_id($post_id);
         } elseif (!empty($identifiers) || !empty($post_id)) {
+            // display a single person by identifier or post id
             if (!empty($identifiers)) {
                 $persons = self::process_persons_by_identifiers($identifiers);
-            } elseif (!empty($post_id)) {
+            } elseif (!empty($post_id)) {                
                 $persons = $fetch_persons_by_post_id($post_id);
             }
             // Apply category filter if category is set
@@ -362,7 +367,10 @@ class Shortcode {
             // Apply organization and group filters if set
             $persons = $filter_persons($persons, $orgnr, $groupid);
         } elseif (!empty($category)) {
-            // Fetch by category
+            // get persons by category. 
+            // categories come from existing custom posts only. 
+            // Therfor we look there first for the identifiert
+ 
             $args = [
                 'post_type' => 'custom_person',
                 'tax_query' => [
@@ -388,6 +396,7 @@ class Shortcode {
                 $persons = self::process_persons_by_identifiers($person_identifiers);
             }
         } elseif (!empty($orgnr) && empty($post_id) && empty($identifiers) && empty($category) && empty($groupid) && empty($function)) {
+            // get persons by orgnr
             $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
             if (!empty($orgData['data'])) {
                 $orgname = $orgData['data'][0]['name'];

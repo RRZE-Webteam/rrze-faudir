@@ -23,6 +23,8 @@ class Person {
     public ?array $contacts;
     private array $rawdata;
     protected ?Config $config = null;
+    private ?int $postid;
+    
     
     public function __construct(array $data = []) {
         $this->identifier = $data['identifier'] ?? '';
@@ -35,6 +37,7 @@ class Person {
         $this->email = $data['email'] ?? '';
         $this->telephone = $data['telephone'] ?? '';         
         $this->contacts = $data['contacts'] ?? null;
+        $this->postid = $data['postid'] ?? 0;
         
 
         // Everything else that comes over data move in rawdata       
@@ -48,7 +51,8 @@ class Person {
             'pronoun',
             'email',
             'telephone',
-            'contacts'
+            'contacts',
+            'postid'
         ];
         $remaining = array_diff_key($data, array_flip($usedKeys));
         $this->rawdata = $remaining;
@@ -71,6 +75,7 @@ class Person {
             $this->pronoun             = '';
             $this->email               = '';
             $this->telephone           = '';
+            $this->postid              = 0;
             $this->contacts            = null;
 
             // Leere rawdata zurücksetzen
@@ -108,6 +113,9 @@ class Person {
         if (isset($data['contacts'])) {
             $this->contacts = $data['contacts'];
         }
+        if (isset($data['postid'])) {
+            $this->postid = $data['postid'];
+        }
 
         // Aktualisiere rawdata: Füge alle übrigen Schlüssel hinzu, die nicht zu den Standardfeldern gehören.
         $usedKeys = [
@@ -120,7 +128,8 @@ class Person {
             'pronoun',
             'email',
             'telephone',
-            'contacts'
+            'contacts',
+            'postid'
         ];
         $remaining = array_diff_key($data, array_flip($usedKeys));
         $this->rawdata = array_merge($this->rawdata, $remaining);
@@ -142,6 +151,7 @@ class Person {
             'email'                => $this->email,
             'telephone'            => $this->telephone,
             'contacts'             => $this->contacts,
+            'postid'                => $this->postid,
         ];
 
         // Füge alle restlichen Schlüssel und Werte (rawdata) hinzu,
@@ -165,16 +175,15 @@ class Person {
             $this->setConfig();
         }
         $api = new API($this->config);
-
         // Hole die Personendaten als Array über die API-Methode.
         $personData = $api->getPerson($identifier);
 
         if (empty($personData) || !is_array($personData)) {
             return false;
         }
-        error_log("FAUdir\Person (getPersonbyAPI): Got person data by {$identifier}, now populate.");
+        
         $this->populateFromData($personData);
-
+        error_log("FAUdir\Person (getPersonbyAPI): Got person data by {$identifier}.");
         return true;
     }
     
@@ -218,7 +227,7 @@ class Person {
                 }
             }
         }
-        error_log("FAUdir\Person (reloadContacts): Populated Personen with Contactdata.");
+        error_log("FAUdir\Person (reloadContacts): Populated Person with all avaible contactdata.");
         $this->contacts = $personContacts;
         return true;
     }
@@ -303,17 +312,68 @@ class Person {
     }
     
     
-    public function getTargetURL(): string {
+     public function getPostId(): int {
         $contact_posts = get_posts([
             'post_type' => 'custom_person',
             'meta_key' => 'person_id',
             'meta_value' => $this->identifier,
             'posts_per_page' => 1, // Only fetch one post matching the person ID
         ]);
-        $cpt_url = !empty($contact_posts) ? get_permalink($contact_posts[0]->ID) : '';
+        if (!empty($contact_posts)) {
+            $postid = $contact_posts[0]->ID;
+            $this->postid = $postid;
+            return $postid;
+        }
+        return 0;               
+    }
+    
+    public function getTargetURL(): string {       
+        if (empty($this->postid)) {
+            $postid = $this->getPostId();
+        } else {
+            $postid = $this->postid;
+        }
+        $cpt_url = '';
+        if ($this->postid !== 0) {
+            $cpt_url  =  get_permalink($postid); 
+        }
                        
-        return $cpt_url;
-                        
+        return $cpt_url;                       
+    }
+    
+    public function getPrimaryContact(): ?Contact {       
+        // Wenn es keinen Contact-Array gibt, dann gibt es kein Contact
+        if (empty($this->contacts)) {
+            return false;
+        }
+        
+        // Wenn es nur einen einzigen Contacteintrag gibt, dann returne diesen        
+        if (count($this->contacts)==1) {
+            return new Contact($this->contacts[0]);
+        }
+        
+        // get primary contact
+        if (empty($this->postid)) {
+            $postid = $this->getPostId();
+        } else {
+            $postid = $this->postid;
+        }
+        
+        if ($postid === 0) {
+            // No custum post entry, therfor i take the first entry
+            return new Contact($this->contacts[0]);            
+        }        
+        
+        $displayed_contacts = get_post_meta($postid, 'displayed_contacts', true) ?: []; // Retrieve displayed contact indexes
+        
+        
+        
+        if (($postid === 0) || (!isset($this->contacts[$postid]))) {
+            // no primary or first one
+            return new Contact($this->contacts[0]);
+        }
+        return new Contact($this->contacts[$postid]);
+                                     
     }
     
     

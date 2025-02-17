@@ -107,3 +107,23 @@
     }
 
 }
+
+
+.post-type-custom_person .edit-post-layout .edit-post-layout__metaboxes {
+    .organization-block {
+	padding: 6px 7px 7px 7px;
+	border-top: 1px solid black;
+	
+	
+	&:has(input[name="displayed_contacts[]"]:checked) {
+	    border: 2px solid green;
+	   padding: 5px;
+	}
+	
+	
+    }
+    .organization-content {
+	
+	
+    }
+}
