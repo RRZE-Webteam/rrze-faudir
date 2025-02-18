@@ -12,41 +12,42 @@ if (!defined('ABSPATH')) {
 <div class="faudir">
     <table class="format-table">
         <tbody>
-            <?php foreach ($persons as $person) { 
-                if (isset($person['error'])) { ?>
+            <?php foreach ($persons as $persondata) { 
+                if (isset($persondata['error'])) { ?>
                     <div class="faudir-error">
-                        <?php echo esc_html($person['message']); ?>
+                        <?php echo esc_html($persondata['message']); ?>
                     </div>
                 <?php } else { 
-                     if (!empty($person)) { 
+                     if (!empty($persondata)) { 
                         
                         $output = '';
-                        
-                        
-                        $output .=  Debug::get_html_var_dump($person);
-                        
-                       $output .= '<tr itemscope itemtype="https://schema.org/Person">';
-                       
-               
-                            $options = get_option('rrze_faudir_options');
-                            $pers = new Person($person);
-                            $displayname = $pers->getDisplayName(true, false, $show_fields, $hide_fields);
-                            $final_url = $pers->getTargetURL();
-                            
-                            
-                            if ($displayname) {
-                                $output .= '<th class="displayname">';
-                                if (!empty($final_url)) {
-                                    $output .= '<a itemprop="url" href="'.esc_url($final_url).'">';     
-                                }
-                                $output .= $displayname;
-                                if (!empty($final_url)) {
-                                     $output .= '</a>';
-                                }
-                                $output .= '</th>';
+                        $output .=  Debug::get_html_var_dump($persondata);
+                        $output .= '<tr itemscope itemtype="https://schema.org/Person">';
+    
+                 //       $options = get_option('rrze_faudir_options');
+                        $person = new Person($persondata);
+                        $displayname = $person->getDisplayName(true, false, $show_fields, $hide_fields);
+                        $final_url = $person->getTargetURL();
+
+
+                        if ($displayname) {
+                            $output .= '<th class="displayname">';
+                            if (!empty($final_url)) {
+                                $output .= '<a itemprop="url" href="'.esc_url($final_url).'">';     
                             }
+                            $output .= $displayname;
+                            if (!empty($final_url)) {
+                                 $output .= '</a>';
+                            }
+                            $output .= '</th>';
+                        }
                             
-                            
+                        $contact = $person->getPrimaryContact();
+                        $workplaces = $contact->getWorkplaces();
+                        
+                        $output .=  Debug::get_html_var_dump($workplaces);
+                        
+                        
                             
                             
                         $unique_emails = [];
@@ -61,23 +62,18 @@ if (!defined('ABSPATH')) {
                          
                                     
                         // Collect emails and phones from workplaces, falling back to person email/phone if necessary
-                        if (!empty($person['contacts'])) {
-                            $displayed_contacts = get_post_meta($post->ID, 'displayed_contacts', true) ?: []; // Retrieve displayed contact indexes
+                        if (!empty($contact)) {
                             
-                            // wo kommt hier das richtige $post her??
+                            $contactdata = $contact->toArray();
                             
-                            foreach ($person['contacts'] as $index => $contact) { // Use index to match against $displayed_contacts
-                                // Check if the current contact index is in $displayed_contacts
-                                if (!in_array($index, $displayed_contacts) && !empty($displayed_contacts)) {
-                                    continue; // Skip this contact if it's not selected to be displayed
-                                }
-                                $workplaces = $contact['workplaces'];
-                                $socials = $contact['socials'];
+ 
+                                $workplaces = $contactdata['workplaces'];
+                                $socials = $contactdata['socials'];
                                 
-                                if (!empty($contact['socials'])) {
+                                if (!empty($contactdata['socials'])) {
                                     $socials = [];
 
-                                    foreach ($contact['socials'] as $item) {
+                                    foreach ($contactdata['socials'] as $item) {
                                         if (isset($item['platform']) && isset($item['url'])) {
                                             $socials[$item['platform']] = $item['url'];
                                         }
@@ -85,8 +81,8 @@ if (!defined('ABSPATH')) {
                                 }
    
                                 
-                                if (!empty($contact['workplaces'])) {
-                                    foreach ($contact['workplaces'] as $workplace) {
+                                if (!empty($contactdata['workplaces'])) {
+                                    foreach ($contactdata['workplaces'] as $workplace) {
                                         // Handle emails
                                         if (!empty($workplace['mails'])) {
                                             foreach ($workplace['mails'] as $email) {
@@ -111,17 +107,17 @@ if (!defined('ABSPATH')) {
                                         }
                                     }
                                 }
-                            }
-                            if (empty($unique_emails) && !empty($person['email'])) {
-                                $workplaces['mails'][] = $person['email'];
-                            }
+                            
+                  //          if (empty($unique_emails) && !empty($person['email'])) {
+                  //              $workplaces['mails'][] = $person['email'];
+                  //          }
                         
-                            if (empty($unique_phones) && !empty($person['telephone'])) {
-                                $workplaces['phones'][] = $person['telephone'];
-                            }
+                  //          if (empty($unique_phones) && !empty($person['telephone'])) {
+                  //              $workplaces['phones'][] = $person['telephone'];
+                  //          }
                         }
-                        if (!empty($function)) {
-                            $workplaces['function'] = $function;
+                        if (!empty($contactdata['function'])) {
+                            $workplaces['function'] = $contactdata['function'];
                         }
              //         $output .= Debug::get_html_var_dump($workplaces);
              //           $output .= Debug::get_html_var_dump($show_fields);

@@ -191,7 +191,7 @@ class Person {
     /*
      * Contact-Daten befüllen
      */
-    public function reloadContacts(): bool {
+    public function reloadContacts(bool $loadorg = false): bool {
         $personContacts = [];
         
         // Falls keine Kontakte gesetzt sind, nichts tun
@@ -215,14 +215,39 @@ class Person {
                 if (!empty($contactData['data'])) {
                     $contact = $contactData['data'][0];
                     $organizationId = $contact['organization']['identifier'] ?? null;
-                    $organizationAddress = null;
 
-                    if ($organizationId) {
+                    if (($organizationId) && ($loadorg)) {
+                        // Wozu brauchen wir die Orgdaten eigentlich?
+                        // Addresse kommt doch aus dem Workplaces...
+                        
                         $organizationData = $api->getOrgById($organizationId);
-                        $organizationAddress = $organizationData['address'] ?? __('Address not available','rrze-faudir');
+                        
+                        
+                        if (!empty($organizationData['address'])) {
+                             $contact['org']['address'] = $organizationData['address'];                 
+                        }
+                        if (!empty($organizationData['identifier'])) {
+                             $contact['org']['identifier'] = $organizationData['identifier'];                 
+                        }
+                        if (!empty($organizationData['longDescription'])) {
+                             $contact['org']['longDescription'] = $organizationData['longDescription'];                 
+                        }
+                        if (!empty($organizationData['name'])) {
+                             $contact['org']['name'] = $organizationData['name'];                 
+                        }
+                        if (!empty($organizationData['disambiguatingDescription'])) {
+                             $contact['org']['disambiguatingDescription'] = $organizationData['disambiguatingDescription'];                 
+                        }
+                        if (!empty($organizationData['parentOrganization'])) {
+                             $contact['org']['parentOrganization'] = $organizationData['parentOrganization'];                 
+                        }
+                        if (!empty($organizationData['subOrganization'])) {
+                             $contact['org']['subOrganization'] = $organizationData['subOrganization'];                 
+                        }
+                    
+                        
                     }
 
-                    $contact['organization_address'] = $organizationAddress;
                     $personContacts[] = $contact;
                 }
             }
@@ -232,6 +257,18 @@ class Person {
         return true;
     }
     
+    /*
+     * Get Workplaces of Person as Array
+     */
+    public function getWorkplaces(): ?array {
+         // zuerst hole Primary Contact, falls vorhanden
+        $contact = $this->getPrimaryContact();
+        if ($contact) {
+            return $contact->getWorkplaces();
+                       
+        }
+        return null;          
+    }
     
     
     public function getDisplayName(bool $html = true, bool $hard_sanitize = false, array $show = [], array $hide = []): string {
@@ -364,16 +401,19 @@ class Person {
             return new Contact($this->contacts[0]);            
         }        
         
-        $displayed_contacts = get_post_meta($postid, 'displayed_contacts', true) ?: []; // Retrieve displayed contact indexes
+        $displayed_contacts = get_post_meta($postid, 'displayed_contacts', true);
         
-        
-        
-        if (($postid === 0) || (!isset($this->contacts[$postid]))) {
-            // no primary or first one
-            return new Contact($this->contacts[0]);
+        // downwardcompatbility
+        if (is_array($displayed_contacts)) {
+            $displayed_contacts = 0;
         }
-        return new Contact($this->contacts[$postid]);
-                                     
+    
+        if (isset($this->contacts[$displayed_contacts])) {
+             return new Contact($this->contacts[$displayed_contacts]);
+        } else {
+            return new Contact($this->contacts[0]);            
+        }
+                            
     }
     
     

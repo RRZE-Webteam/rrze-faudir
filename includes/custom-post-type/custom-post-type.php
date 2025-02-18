@@ -199,16 +199,20 @@ function render_person_additional_fields($post) {
     echo '<h3>'. __('FAUdir', 'rrze-faudir').' ' . __('Contacts', 'rrze-faudir') . '</h3>';
 
     $contacts = get_post_meta($post->ID, 'person_contacts', true) ?: array();
-    $displayed_contacts = get_post_meta($post->ID, 'displayed_contacts', true) ?: array();
+    
+    $displayed_contacts = intval( get_post_meta( $post->ID, 'displayed_contacts', true ) );
+
+    
+    // $displayed_contacts = get_post_meta($post->ID, 'displayed_contacts', true) ?: array();
     // If displayed_contacts is not set, default to selecting the first contact
     if (empty($displayed_contacts) && !empty($contacts)) {
-        $displayed_contacts = [0]; // Default to first contact
+        $displayed_contacts = 0;
     }
 
     foreach ($contacts as $index => $contact) {
        
         $checked = $activeblock = '';
-        if (in_array($index, $displayed_contacts)) {
+        if ($index === $displayed_contacts) {
             $checked = 'checked="checked"';
             $activeblock = ' activeblock';
         }
@@ -217,7 +221,7 @@ function render_person_additional_fields($post) {
         echo '<div class="organization-header">';
         echo '<h3>' . __('Contact', 'rrze-faudir') . ' ' . ($index + 1) . '</h3>';
         echo '<label>';
-        echo "<input type='radio' name='displayed_contacts[]' value='" . esc_attr($index) . "' $checked>";
+        echo "<input type='radio' name='displayed_contacts' value='" . esc_attr($index) . "' $checked>";
         echo __('Display this contact', 'rrze-faudir');
         echo '</label>';
         echo '</div>';
@@ -362,6 +366,10 @@ function save_person_additional_fields($post_id) {
     }
 
     // Save displayed_contacts
+    
+    update_post_meta($post_id, 'displayed_contacts', intval($_POST['displayed_contacts']));
+    /*
+    
     if (isset($_POST['displayed_contacts']) && is_array($_POST['displayed_contacts'])) {
         // Sanitize and save the displayed contacts
         $displayed_contacts = array_map('intval', $_POST['displayed_contacts']);
@@ -370,6 +378,8 @@ function save_person_additional_fields($post_id) {
         // If no contacts are selected, save an empty array
         update_post_meta($post_id, 'displayed_contacts', []);
     }
+     * 
+     */
 }
 
 
@@ -533,6 +543,8 @@ function rrze_faudir_create_custom_person() {
             // Save the organizations array as post meta
             update_post_meta($post_id, 'person_contacts', $contacts);
             // Handle displayed_contacts
+            
+            /*
             if (isset($_POST['displayed_contacts']) && is_array($_POST['displayed_contacts'])) {
                 // Sanitize and save the displayed contacts
                 $displayed_contacts = array_map('intval', $_POST['displayed_contacts']);
@@ -542,6 +554,8 @@ function rrze_faudir_create_custom_person() {
             }
 
             update_post_meta($post_id, 'displayed_contacts', $displayed_contacts);
+            */
+            update_post_meta($post_id, 'displayed_contacts', intval($_POST['displayed_contacts']));
 
             // Return success with both post ID and edit URL
             wp_send_json_success(array(

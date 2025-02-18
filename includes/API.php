@@ -259,6 +259,10 @@ class API {
         }
         $url = "{$this->baseUrl}/organizations/{$orgid}";
         
+        
+        // TODO: Add cache here, cause this requests will be repeated often 
+        // on list of people from the same department
+        
         $response = $this->makeRequest($url, "GET");
 
         if (!$response) {

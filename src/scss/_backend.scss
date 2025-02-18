@@ -113,17 +113,18 @@
     .organization-block {
 	padding: 6px 7px 7px 7px;
 	border-top: 1px solid black;
-	
-	
-	&:has(input[name="displayed_contacts[]"]:checked) {
-	    border: 2px solid green;
+	.organization-content {
+	    opacity: 0.6;
+	}
+	&:has(input[name="displayed_contacts"]:checked) {
+	   border: 2px solid green;
 	   padding: 5px;
+	   .organization-content {
+		opacity: 1;
+	   }
 	}
 	
 	
     }
-    .organization-content {
-	
-	
-    }
+
 }
