@@ -24,7 +24,7 @@ class Person {
     private array $rawdata;
     protected ?Config $config = null;
     private ?int $postid;
-    
+    private ?Contact $primary_contact;
     
     public function __construct(array $data = []) {
         $this->identifier = $data['identifier'] ?? '';
@@ -38,7 +38,7 @@ class Person {
         $this->telephone = $data['telephone'] ?? '';         
         $this->contacts = $data['contacts'] ?? null;
         $this->postid = $data['postid'] ?? 0;
-        
+        $this->primary_contact = null;
 
         // Everything else that comes over data move in rawdata       
         $usedKeys = [
@@ -77,7 +77,7 @@ class Person {
             $this->telephone           = '';
             $this->postid              = 0;
             $this->contacts            = null;
-
+            $this->primary_contact     = null;
             // Leere rawdata zurücksetzen
             $this->rawdata = [];
         }
@@ -262,6 +262,7 @@ class Person {
      */
     public function getWorkplaces(): ?array {
          // zuerst hole Primary Contact, falls vorhanden
+
         $contact = $this->getPrimaryContact();
         if ($contact) {
             return $contact->getWorkplaces();
@@ -270,7 +271,98 @@ class Person {
         return null;          
     }
     
+    /*
+     * Get Phone Numbers for person
+     * - if $person->telephone is set, use this.
+     * - if its empty use the phones address from active primary contact
+     * Cause a person can use more as one phone number, we result with an array
+     */ 
+    public function getPhone(): ?array {
+        $resphone = [];
+        if (!empty($this->telephone)) {
+            if ((is_string($this->telephone)) && (preg_match('/^\+?[0-9\s\-\(\)]{7,20}$/', $this->telephone)) ) {
+                $resphone[] = $this->telephone;
+            } elseif (is_array($this->telephone)) {           
+                foreach ($this->telephone as $i => $val) {
+                    if (preg_match('/^\+?[0-9\s\-\(\)]{7,20}$/', $this->telephone)) {
+                        $resphone[] = $val;
+                    }
+                }
+            }
+            return $resphone;
+        }
+        $workplaces = $this->getWorkplaces();
+        if (empty($workplaces)) {
+            return [];
+        }
+        
+        
+        $gatherphones = [];     
+        foreach ($workplaces as $num => $wdata) {
+            if (isset($wdata['phones'])) {
+                foreach ($wdata['phones'] as $i => $val) {
+                    if (preg_match('/^\+?[0-9\s\-\(\)]{7,20}$/', $val)) {
+                        $gatherphones[] = $val;
+                    }
+                 
+                }
+            }
+        }
+        if (!empty($gatherphones)) {
+            // Entferne etwaige Dupletten und returne dann die neu indizierte Liste
+            return array_values(array_unique($gatherphones));
+        }
+        return [];
+    }
+    /*
+     * Get Email address for person
+     * - if $person->email is set, use this.
+     * - if its empty use the email address from active primary contact
+     * Cause a person can use more as one mail adress, we result with an array
+     */ 
+    public function getEMail(): ?array {
+        $resmail = [];
+        if (!empty($this->email)) {
+            if ((is_string($this->email)) && (filter_var($this->email, FILTER_VALIDATE_EMAIL))) {
+                $resmail[] = $this->email;
+            } elseif (is_array($this->email)) {           
+                foreach ($this->email as $i => $val) {
+                    if (filter_var($val, FILTER_VALIDATE_EMAIL)) {
+                        $resmail[] = $val;
+                    }
+                }
+            }
+            return $resmail;
+        }
+        $workplaces = $this->getWorkplaces();
+        if (empty($workplaces)) {
+            return [];
+        }
+        
+        
+        $gathermails = [];     
+        foreach ($workplaces as $num => $wdata) {
+            if (isset($wdata['mails'])) {
+                foreach ($wdata['mails'] as $i => $val) {
+                    if (filter_var($val, FILTER_VALIDATE_EMAIL)) {
+                        $gathermails[] = $val;
+                    }
+                 
+                }
+            }
+        }
+        if (!empty($gathermails)) {
+            // Entferne etwaige Dupletten und returne dann die neu indizierte Liste
+            return array_values(array_unique($gathermails));
+        }
+        return [];
+    }
     
+    
+    
+    /*
+     * Create and get Displayname in semantic HTML
+     */
     public function getDisplayName(bool $html = true, bool $hard_sanitize = false, array $show = [], array $hide = []): string {
         if (empty($this->givenName) && empty($this->titleOfNobility) && empty($this->familyName) && empty($this->personalTitle)) {
             return '';
@@ -384,9 +476,15 @@ class Person {
             return false;
         }
         
+        if (!empty($this->primary_contact)) {
+            // we already calculated this, therfor we return this
+            return $this->primary_contact;
+        }
+        
         // Wenn es nur einen einzigen Contacteintrag gibt, dann returne diesen        
         if (count($this->contacts)==1) {
-            return new Contact($this->contacts[0]);
+            $this->primary_contact = new Contact($this->contacts[0]);
+            return $this->primary_contact;
         }
         
         // get primary contact
@@ -398,7 +496,8 @@ class Person {
         
         if ($postid === 0) {
             // No custum post entry, therfor i take the first entry
-            return new Contact($this->contacts[0]);            
+            $this->primary_contact = new Contact($this->contacts[0]);
+            return $this->primary_contact;         
         }        
         
         $displayed_contacts = get_post_meta($postid, 'displayed_contacts', true);
@@ -409,9 +508,11 @@ class Person {
         }
     
         if (isset($this->contacts[$displayed_contacts])) {
-             return new Contact($this->contacts[$displayed_contacts]);
+            $this->primary_contact = new Contact($this->contacts[$displayed_contacts]);
+            return $this->primary_contact;
         } else {
-            return new Contact($this->contacts[0]);            
+            $this->primary_contact = new Contact($this->contacts[0]);
+            return $this->primary_contact;
         }
                             
     }

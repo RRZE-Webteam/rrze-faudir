@@ -32,6 +32,13 @@ class FaudirUtils {
     }
 
     
+    
+    public static function getLang() {
+        $locale = get_locale();          
+        $lang = substr($locale, 0, 2);      
+
+        return ($lang === 'de') ? 'de' : 'en'; 
+    }
 
     
     

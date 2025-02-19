@@ -72,7 +72,7 @@ class Contact {
             'titleOfNobility',
             'function',
             'functionLabel',
-            'workplace',
+            'workplaces',
             'org',
             'socials'
         ];
@@ -148,7 +148,7 @@ class Contact {
             'titleOfNobility',
             'function',
             'functionLabel',
-            'workplace',
+            'workplaces',
             'org',
             'socials'
         ];
@@ -169,7 +169,7 @@ class Contact {
             'titleOfNobility'   => $this->titleOfNobility,
             'function'          => $this->function,
             'functionLabel'     => $this->functionLabel,
-            'workplace'         => $this->workplace,
+            'workplaces'        => $this->workplaces,
             'org'               => $this->org,
             'socials'           => $this->socials,
         ];
@@ -188,5 +188,81 @@ class Contact {
         }
         return $this->workplaces;   
     }
+    
+    /*
+     * Get Social/Website from Contact and transform them into a assoc. array
+     */
+    public function getSocialArray(): ?array {
+        if (empty($this->socials)) {
+            return null;
+        }
+
+        $reslist = [];
+        foreach ($this->socials as $item) {
+            if (isset($item['platform']) && isset($item['url'])) {
+                $reslist[$item['platform']] = $item['url'];
+            }
+        }
+        return $reslist;
+    }
+    
+    
+    /*
+     * Get the FunctionLabel
+     */
+    public function getFunctionLabel(string $lang = "de"): ?string {
+        if (empty($this->functionLabel)) {
+            return '';
+        }
+        if ((!empty($lang)) && (isset($this->functionLabel[$lang]))) {
+            return $this->functionLabel[$lang];
+        }
+        
+        if (!isset($this->functionLabel[$lang])) {
+            if (($lang === "de") && ($this->functionLabel["en"])) {
+                return $this->functionLabel["en"];
+            } elseif (($lang === "en") && ($this->functionLabel["de"])) {
+                return $this->functionLabel["en"];
+            }
+            return '';
+        }
+    }
+    
+    
+    /*
+     * Build JobTitle by Functionlabel and Orgname
+     */
+    public function getJobTitle(string $lang = "de"): ?string {
+        $label = $this->getFunctionLabel($lang);
+        
+        if (empty($label)) {
+            return '';
+        }
+        
+
+        if (empty($this->organization) || !isset($this->organization['longDescription'])) {
+            return $label;
+        }
+    
+        $jobtitle = $label;
+        $orgname = '';
+        if ((!empty($lang)) && (isset($this->organization['longDescription'][$lang]))) {
+            $orgname = $this->organization['longDescription'][$lang];
+        }
+        
+         if (!empty($lang) && !empty($this->organization['longDescription'][$lang])) {
+            $orgname = $this->organization['longDescription'][$lang];
+        } elseif ($lang === "de" && !empty($this->organization['longDescription']['en'])) {
+            $orgname = $this->organization['longDescription']['en'];
+        } elseif ($lang === "en" && !empty($this->organization['longDescription']['de'])) {
+            $orgname = $this->organization['longDescription']['de'];
+        }
+        if (!empty($orgname)) {
+            $jobtitle .= ' '.$orgname;
+        }
+        return $jobtitle;      
+    }
+    
+    
     
 }
