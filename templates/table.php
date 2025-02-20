@@ -4,6 +4,7 @@
 use RRZE\FAUdir\Debug;
 use RRZE\FAUdir\FAUdirUtils;
 use RRZE\FAUdir\Person;
+use RRZE\FAUdir\Config;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
@@ -12,9 +13,14 @@ if (!defined('ABSPATH')) {
 <div class="faudir">
     <?php
     
+     $config = new Config;
+        $available_fields = $config->get('avaible_fields');
     
      echo "<h2>Show</h2>". Debug::get_html_var_dump($show_fields);
      echo "<hr><h2>Hide</h2>". Debug::get_html_var_dump($hide_fields);
+     
+     
+     echo "<hr><h2>All fields</h2>". Debug::get_html_var_dump($available_fields);
      $noout = '';
     ?>    
     
@@ -35,7 +41,7 @@ if (!defined('ABSPATH')) {
                         $output .=  Debug::get_html_var_dump($persondata);
                         $output .= '<tr itemscope itemtype="https://schema.org/Person">';
     
-                 //       $options = get_option('rrze_faudir_options');
+                        
                         $person = new Person($persondata);
                         $displayname = $person->getDisplayName(true, false, $show_fields, $hide_fields);
                         $mailadresses= $person->getEMail();

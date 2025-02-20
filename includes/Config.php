@@ -54,7 +54,6 @@ class Config {
             'faumap'            => __('FAU Map', 'rrze-faudir'),
             'officehours'       => __('Office Hours', 'rrze-faudir'),
             'consultationhours' => __('Consultation Hours', 'rrze-faudir'),
-            'somethingnew'      => __('yeah', 'rrze-faudir')
         ];
          
 
