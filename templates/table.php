@@ -22,6 +22,16 @@ if (!defined('ABSPATH')) {
      
      echo "<hr><h2>All fields</h2>". Debug::get_html_var_dump($available_fields);
      $noout = '';
+     
+         $reihenfolge = ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext'];
+
+        // Zuerst die Schlüssel aus $reihenfolge (nur die, die in $available_fields existieren)
+        $ordered_keys = array_merge(
+            array_intersect($reihenfolge, array_keys($available_fields)),
+            // Dann alle übrigen Schlüssel aus $available_fields, die nicht in $reihenfolge enthalten sind
+            array_diff(array_keys($available_fields), $reihenfolge)
+        );
+     echo "<hr><h2>Reihenfolge alle:</h2>". Debug::get_html_var_dump($ordered_keys);
     ?>    
     
     <table class="format-table">
@@ -38,7 +48,7 @@ if (!defined('ABSPATH')) {
                      if (!empty($persondata)) { 
                         
                         $output = '';
-                        $output .=  Debug::get_html_var_dump($persondata);
+               //         $output .=  Debug::get_html_var_dump($persondata);
                         $output .= '<tr itemscope itemtype="https://schema.org/Person">';
     
                         
@@ -57,25 +67,24 @@ if (!defined('ABSPATH')) {
                             $workplaces['phones'] = $phonenumbers;                         
                             $socials = $contact->getSocialArray();
  
-                            $output .= '<td>'. Debug::get_html_var_dump($workplaces).'</td>';
+             //               $output .= '<td>'. Debug::get_html_var_dump($workplaces).'</td>';
                         }
                         
                         
                         /*
      *         
         'image'             => __('Image', 'rrze-faudir'),
-        'display_name'      => __('Display Name', 'rrze-faudir'),
-        'academic_title'    => __('Academic Title', 'rrze-faudir'),
-        'first_name'        => __('First Name', 'rrze-faudir'),
+        'displayname'      => __('Display Name', 'rrze-faudir'),
+        'honorificPrefix'    => __('Academic Title', 'rrze-faudir'),
+        'givenName'        => __('First Name', 'rrze-faudir'),
         'nobility_title'    => __('Nobility Title', 'rrze-faudir'),
-        'last_name'         => __('Last Name', 'rrze-faudir'),
-        'academic_suffix'   => __('Academic Suffix', 'rrze-faudir'),
+        'familyName'         => __('Last Name', 'rrze-faudir'),
+        'honorificSuffix'   => __('Academic Suffix', 'rrze-faudir'),
         'email'             => __('Email', 'rrze-faudir'),
         'phone'             => __('Phone', 'rrze-faudir'),
         'organization'      => __('Organization', 'rrze-faudir'),
         'function'          => __('Function', 'rrze-faudir'),
         'url'               => __('URL', 'rrze-faudir'),
-        'kompaktButton'     => __('Kompakt Button', 'rrze-faudir'),
         'content'           => __('Content', 'rrze-faudir'),
         'teasertext'        => __('Teasertext', 'rrze-faudir'),
         'socialmedia'       => __('Social Media and Websites', 'rrze-faudir'),
@@ -91,19 +100,19 @@ if (!defined('ABSPATH')) {
         'consultationhours' => __('Consultation Hours', 'rrze-faudir'),
      */
                         
-                        $reihenfolge = ['image', 'display_name', 'function', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext'];
-                        
-                     
-                        
+
+
+
                         $show_fields_lower = array_map('strtolower', $show_fields);
                         $hide_fields_lower = array_map('strtolower', $hide_fields);
 
-                        foreach ($reihenfolge as $key) {
+                        foreach ($ordered_keys as $key) {
                             $key_lower = strtolower($key);
                             if (in_array($key_lower, $show_fields_lower) && !in_array($key_lower, $hide_fields_lower)) {
                                 $output .= '<td>';
+                                  $output .= $key_lower. ': ';
                                 $value = '';
-                                if (($key === 'displayname') || ($key === 'display_name')) {
+                                if ($key === 'displayname')  {
                                     if ($displayname) {
                                         if (!empty($final_url)) {
                                              $value .= '<a itemprop="url" href="'.esc_url($final_url).'">';     
@@ -117,7 +126,7 @@ if (!defined('ABSPATH')) {
                                     if ($jobtitle) {
                                          $value = $jobtitle;                                      
                                     }       
-                                } elseif (($key === 'function') || ($key === 'jobtitle')) {
+                                } elseif ($key === 'jobtitle') {
                                     if ($jobtitle) {
                                          $value = $jobtitle;                                      
                                     }  

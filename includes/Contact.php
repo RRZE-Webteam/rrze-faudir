@@ -17,7 +17,8 @@ class Contact {
     public string $givenName = '';
     public string $familyName = '';
     public ?string $titleOfNobility = '';
-    public ?string  $function = '';
+    public ?string $function = '';
+    public ?string $jobTitle = '';
     public ?array $functionLabel = [];
     public ?array $workplaces = [];
     public ?array $socials = [];
@@ -46,6 +47,9 @@ class Contact {
         if (isset($data['titleOfNobility']) && is_string($data['titleOfNobility'])) {
             $this->titleOfNobility = $data['titleOfNobility'];
         }
+        if (isset($data['jobTitle']) && is_string($data['jobTitle'])) {
+            $this->jobTitle = $data['jobTitle'];
+        }
         if (isset($data['function']) && is_string($data['function'])) {
             $this->function = $data['function'];
         }
@@ -70,6 +74,7 @@ class Contact {
             'givenName',
             'familyName',
             'titleOfNobility',
+            'jobTitle',
             'function',
             'functionLabel',
             'workplaces',
@@ -93,6 +98,7 @@ class Contact {
             $this->givenName        = '';
             $this->familyName       = '';
             $this->titleOfNobility  = '';
+            $this->jobTitle         = '';
             $this->function         = '';
             $this->functionLabel    = [];
             $this->workplaces       = [];
@@ -119,11 +125,14 @@ class Contact {
         if (isset($data['familyName']) && is_string($data['familyName'])) {
             $this->familyName = $data['familyName'];
         }
+        if (isset($data['function']) && is_string($data['function'])) {
+            $this->function = $data['function'];
+        }
         if (isset($data['titleOfNobility']) && is_string($data['titleOfNobility'])) {
             $this->titleOfNobility = $data['titleOfNobility'];
         }
-        if (isset($data['function']) && is_string($data['function'])) {
-            $this->function = $data['function'];
+        if (isset($data['jobTitle']) && is_string($data['jobTitle'])) {
+            $this->jobTitle = $data['jobTitle'];
         }
         if (isset($data['functionLabel']) && is_array($data['functionLabel'])) {
             $this->functionLabel = $data['functionLabel'];
@@ -146,6 +155,7 @@ class Contact {
             'givenName',
             'familyName',
             'titleOfNobility',
+            'jobTitle',
             'function',
             'functionLabel',
             'workplaces',
@@ -168,6 +178,7 @@ class Contact {
             'familyName'        => $this->familyName,
             'titleOfNobility'   => $this->titleOfNobility,
             'function'          => $this->function,
+            'jobTitle'          => $this->jobTitle,
             'functionLabel'     => $this->functionLabel,
             'workplaces'        => $this->workplaces,
             'org'               => $this->org,
@@ -260,6 +271,7 @@ class Contact {
         if (!empty($orgname)) {
             $jobtitle .= ' '.$orgname;
         }
+        $this->jobTitle = $jobtitle;
         return $jobtitle;      
     }
     

@@ -56,9 +56,9 @@ if (!defined('ABSPATH')) {
                         $options = get_option('rrze_faudir_options');
                         $hard_sanitize = isset($options['hard_sanitize']) && $options['hard_sanitize'];
                         $personal_title = '';
-                        $first_name = '';
+                        $givenName = '';
                         $nobility_title = '';
-                        $last_name = '';
+                        $familyName = '';
                         $title_suffix = '';
                         if (in_array('personalTitle', $show_fields) && !in_array('personalTitle', $hide_fields)) {
                             $personal_title = isset($person['personalTitle']) && !empty($person['personalTitle']) 
@@ -66,13 +66,13 @@ if (!defined('ABSPATH')) {
                                 : '';
                         }
                         if (in_array('givenName', $show_fields) && !in_array('givenName', $hide_fields)) {
-                            $first_name = (isset($person['givenName']) && !empty($person['givenName']) ? esc_html($person['givenName']) : '');
+                            $givenName= (isset($person['givenName']) && !empty($person['givenName']) ? esc_html($person['givenName']) : '');
                         }
                         if (in_array('titleOfNobility', $show_fields) && !in_array('titleOfNobility', $hide_fields)) {
                             $nobility_title = (isset($person['titleOfNobility']) && !empty($person['titleOfNobility']) ? esc_html($person['titleOfNobility']) : '');
                         }
                         if (in_array('familyName', $show_fields) && !in_array('familyName', $hide_fields)) {
-                            $last_name = (isset($person['familyName']) && !empty($person['familyName']) ? esc_html($person['familyName']) : '');
+                            $familyName = (isset($person['familyName']) && !empty($person['familyName']) ? esc_html($person['familyName']) : '');
                         }
                         if (in_array('personalTitleSuffix', $show_fields) && !in_array('personalTitleSuffix', $hide_fields)) {
                             $title_suffix = (isset($person['personalTitleSuffix']) && !empty($person['personalTitleSuffix']) ? esc_html($person['personalTitleSuffix']) : '');
@@ -80,18 +80,18 @@ if (!defined('ABSPATH')) {
                         // Construct the full name
                         $fullName = trim(
                             ($personal_title) . ' ' .
-                                ($first_name) . ' ' .
+                                ($givenName) . ' ' .
                                 ($nobility_title) . ' ' .
-                                ($last_name) . ' ' .
+                                ($familyName) . ' ' .
                                 '(' . ($title_suffix) . ')'
                         );
 
                         $person_name_html = FaudirUtils::getPersonNameHtml([
                             'hard_sanitize' => $hard_sanitize,
                             'personal_title' => $personal_title,
-                            'first_name' => $first_name,
+                            'givenName' => $givenName,
                             'nobility_title' => $nobility_title,
-                            'last_name' => $last_name,
+                            'familyName' => $familyName,
                             'title_suffix' => $title_suffix,
                             'identifier' => $person['identifier']
                         ]);

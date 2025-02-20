@@ -33,7 +33,7 @@ export default function Edit({ attributes, setAttributes }) {
         url = '',
         buttonText = '',
         hideFields = [],
-        sort = 'last_name',
+        sort = 'familyName',
     } = attributes;
 
     const availableFields = {
@@ -47,9 +47,8 @@ export default function Edit({ attributes, setAttributes }) {
         email: __('Email', 'rrze-faudir'),
         phone: __('Phone', 'rrze-faudir'),
         organization: __('Organization', 'rrze-faudir'),
-        function: __('Function', 'rrze-faudir'),
+        jobTitle: __('Jobtitle', 'rrze-faudir'),
         url: __('Url', 'rrze-faudir'),
-        kompaktButton: __('Kompakt Button', 'rrze-faudir'),
         content: __('Content', 'rrze-faudir'),
         teasertext: __('Teasertext', 'rrze-faudir'),
         socialmedia: __('Social Media and Websites', 'rrze-faudir'),
@@ -75,7 +74,7 @@ export default function Edit({ attributes, setAttributes }) {
             'personalTitleSuffix',
             'email',
             'phone',
-            'function',
+            'jobTitle',
             'socialmedia',
             'titleOfNobility',
         ],
@@ -114,11 +113,11 @@ export default function Edit({ attributes, setAttributes }) {
 
     // Define required fields for each format
     const requiredFields = {
-        card: ['display_name', 'academic_title', 'first_name', 'last_name'],
-        table: ['display_name', 'academic_title', 'first_name', 'last_name'],
-        list: ['display_name', 'academic_title', 'first_name', 'last_name'],
-        kompakt: ['display_name', 'academic_title', 'first_name', 'last_name'],
-        page: ['display_name', 'academic_title', 'first_name', 'last_name']
+        card: ['displayname', 'honorificPrefix', 'givenName', 'familyName'],
+        table: ['displayname', 'honorificPrefix', 'givenName', 'familyName'],
+        list: ['displayname', 'honorificPrefix', 'givenName', 'familyName'],
+        kompakt: ['displayname', 'honorificPrefix', 'givenName', 'familyName'],
+        page: ['displayname', 'honorificPrefix', 'givenName', 'familyName']
     };
 
     useEffect(() => {
@@ -132,18 +131,17 @@ export default function Edit({ attributes, setAttributes }) {
                     // Map PHP field names to JavaScript field names
                     const fieldMapping = {
 			'image': 'image',
-                        'display_name': 'displayName',
-                        'academic_title': 'personalTitle',
-                        'first_name': 'givenName',
-                        'last_name': 'familyName',
-                        'academic_suffix': 'personalTitleSuffix',
+                        'displayname': 'displayName',
+                        'honorificPrefix': 'personalTitle',
+                        'givenName': 'givenName',
+                        'familyName': 'familyName',
+                        'honorificSuffix': 'personalTitleSuffix',
                         'nobility_title': 'titleOfNobility',
                         'email': 'email',
                         'phone': 'phone',
                         'organization': 'organization',
-                        'function': 'function',
+                        'jobTitle': 'jobTitle',
                         'url': 'url',
-                        'kompaktButton': 'kompaktButton',
                         'content': 'content',
                         'teasertext': 'teasertext',
                         'socialmedia': 'socialmedia',
@@ -528,9 +526,9 @@ export default function Edit({ attributes, setAttributes }) {
                     />
 
                     <TextControl
-                        label={__('Function', 'rrze-faudir')}
-                        value={attributes.function || ''}
-                        onChange={(value) => setAttributes({ function: value })}
+                        label={__('Job Title', 'rrze-faudir')}
+                        value={attributes.jobTitle || ''}
+                        onChange={(value) => setAttributes({ jobTitle: value })}
                     />
 
                     <TextControl
@@ -572,8 +570,8 @@ export default function Edit({ attributes, setAttributes }) {
                         label={__('Sort by', 'rrze-faudir')}
                         value={sort}
                         options={[
-                            { value: 'last_name', label: __('Last Name', 'rrze-faudir') },
-                            { value: 'title_last_name', label: __('Title and Last Name', 'rrze-faudir') },
+                            { value: 'familyName', label: __('Last Name', 'rrze-faudir') },
+                            { value: 'title_familyName', label: __('Title and Last Name', 'rrze-faudir') },
                             { value: 'function_head', label: __('Head of Department First', 'rrze-faudir') },
                             { value: 'function_proffesor', label: __('Professors First', 'rrze-faudir') },
                             { value: 'identifier_order', label: __('Identifier Order', 'rrze-faudir') },

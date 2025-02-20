@@ -47,7 +47,7 @@ class Shortcode {
                 'hide' => '',
                 'image' => '',
                 'groupid' => '',
-                'function' => '',
+                'jobtitle' => '',
                 'orgnr' => '',
                 'sort' => '',
                 'button-text' => '',
@@ -122,7 +122,7 @@ class Shortcode {
         $image_id = $atts['image'];
         $url = $atts['url'];
         $groupid = $atts['groupid'];
-        $function = $atts['function'];
+        $jobtitle = $atts['jobtitle'];
         $orgnr = $atts['orgnr'];
         $post_id = $atts['id'];
         $persons = [];
@@ -415,13 +415,13 @@ class Shortcode {
         }
 
         // Sorting logic based on the specified sorting options
-        $sort_option = $atts['sort'] ?? 'last_name'; // Default sorting by last name
+        $sort_option = $atts['sort'] ?? 'familyName'; // Default sorting by last name
         $collator = collator_create('de_DE'); // German locale for sorting
 
         // Sort the persons array
         usort($persons, function ($a, $b) use ($sort_option, $collator, $identifiers) {
             switch ($sort_option) {
-                case 'title_last_name':
+                case 'title_familyName':
                     $academic_titles = ['Prof. Dr.', 'Dr.', 'Prof.', ''];
                     $a_title = $a['personalTitle'] ?? '';
                     $b_title = $b['personalTitle'] ?? '';

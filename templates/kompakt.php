@@ -49,9 +49,9 @@ if (!defined('ABSPATH')) {
                 $options = get_option('rrze_faudir_options');
                 $hard_sanitize = isset($options['hard_sanitize']) && $options['hard_sanitize'];
                 $personal_title = '';
-                $first_name = '';
+                $givenName = '';
                 $nobility_title = '';
-                $last_name = '';
+                $familyName = '';
                 $title_suffix = '';
                 if (in_array('personalTitle', $show_fields) && !in_array('personalTitle', $hide_fields)) {
                     $personal_title = isset($person['personalTitle']) && !empty($person['personalTitle'])
@@ -59,13 +59,13 @@ if (!defined('ABSPATH')) {
                         : '';
                 }
                 if (in_array('givenName', $show_fields) && !in_array('givenName', $hide_fields)) {
-                    $first_name = (isset($person['givenName']) && !empty($person['givenName']) ? esc_html($person['givenName']) : '');
+                    $givenName = (isset($person['givenName']) && !empty($person['givenName']) ? esc_html($person['givenName']) : '');
                 }
                 if (in_array('titleOfNobility', $show_fields) && !in_array('titleOfNobility', $hide_fields)) {
                     $nobility_title = (isset($person['titleOfNobility']) && !empty($person['titleOfNobility']) ? esc_html($person['titleOfNobility']) : '');
                 }
                 if (in_array('familyName', $show_fields) && !in_array('familyName', $hide_fields)) {
-                    $last_name = (isset($person['familyName']) && !empty($person['familyName']) ? esc_html($person['familyName']) : '');
+                    $familyName = (isset($person['familyName']) && !empty($person['familyName']) ? esc_html($person['familyName']) : '');
                 }
                 if (in_array('personalTitleSuffix', $show_fields) && !in_array('personalTitleSuffix', $hide_fields)) {
                     $title_suffix = (isset($person['personalTitleSuffix']) && !empty($person['personalTitleSuffix']) ? esc_html($person['personalTitleSuffix']) : '');
@@ -73,18 +73,18 @@ if (!defined('ABSPATH')) {
                 // Construct the full name
                 $fullName = trim(
                     ($personal_title) . ' ' .
-                        ($first_name) . ' ' .
+                        ($givenName) . ' ' .
                         ($nobility_title) . ' ' .
-                        ($last_name) . ' ' .
+                        ($familyName) . ' ' .
                         '(' . ($title_suffix) . ')'
                 );
 
                 $person_name_html = FaudirUtils::getPersonNameHtml([
                     'hard_sanitize' => $hard_sanitize,
                     'personal_title' => $personal_title,
-                    'first_name' => $first_name,
+                    'givenName' => $givenName,
                     'nobility_title' => $nobility_title,
-                    'last_name' => $last_name,
+                    'familyName' => $familyName,
                     'title_suffix' => $title_suffix,
                     'identifier' => $person['identifier']
                 ]);
@@ -396,24 +396,7 @@ if (!defined('ABSPATH')) {
                         <?php endif; ?>
 
                     </div>
-                    <div>
-                        <?php
-                        if (in_array('kompaktButton', $show_fields) && !in_array('kompaktButton', $hide_fields)) {
-                            $options = get_option('rrze_faudir_options', []);
-
-                            if (isset($button_text) && !empty($button_text)) {
-                                $button_title = $button_text;
-                            } else {
-                                $button_title = isset($options['business_card_title']) && !empty($options['business_card_title'])
-                                    ? $options['business_card_title']
-                                    : esc_html__('Call up business card', 'rrze-faudir');
-                            }
-
-                            if (!empty($final_url)) {
-                                echo '<a href="' . esc_url($final_url) . '" class="business-card-link button-link">' . esc_html($button_title) . '</a>';
-                            }
-                        }
-                        ?></div>
+            
                 </div>
             <?php endif; ?>
         <?php endif; ?>

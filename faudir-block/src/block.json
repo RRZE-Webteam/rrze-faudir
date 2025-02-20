@@ -65,7 +65,7 @@
         },
         "sort": {
             "type": "string",
-            "default": "last_name"
+            "default": "familyName"
         }
     },
     "textdomain": "rrze-faudir",

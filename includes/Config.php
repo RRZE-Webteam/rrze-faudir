@@ -15,7 +15,7 @@ class Config {
         'show_error_message'        => false,
         'business_card_title'       => '',
         'hard_sanitize'             => false,
-        'default_output_fields'     => ['display_name', 'function', 'email', 'phone', 'url'], // Default fields      
+        'default_output_fields'     => ['displayname', 'jobTitle', 'email', 'phone', 'url'], // Default fields      
         
     ];
     
@@ -29,18 +29,17 @@ class Config {
              
         $this->config['avaible_fields'] = [
             'image'             => __('Image', 'rrze-faudir'),
-            'display_name'      => __('Display Name', 'rrze-faudir'),
-            'academic_title'    => __('Academic Title', 'rrze-faudir'),
-            'first_name'        => __('First Name', 'rrze-faudir'),
+            'displayname'      => __('Display Name', 'rrze-faudir'),
+            'honorificPrefix'    => __('Academic Title', 'rrze-faudir'),
+            'givenName'        => __('First Name', 'rrze-faudir'),
             'nobility_title'    => __('Nobility Title', 'rrze-faudir'),
-            'last_name'         => __('Last Name', 'rrze-faudir'),
-            'academic_suffix'   => __('Academic Suffix', 'rrze-faudir'),
+            'familyName'         => __('Last Name', 'rrze-faudir'),
+            'honorificSuffix'   => __('Academic Suffix', 'rrze-faudir'),
             'email'             => __('Email', 'rrze-faudir'),
             'phone'             => __('Phone', 'rrze-faudir'),
             'organization'      => __('Organization', 'rrze-faudir'),
-            'function'          => __('Function', 'rrze-faudir'),
+            'jobTitle'          => __('Job Title', 'rrze-faudir'),
             'url'               => __('URL', 'rrze-faudir'),
-            'kompaktButton'     => __('Kompakt Button', 'rrze-faudir'),
             'content'           => __('Content', 'rrze-faudir'),
             'teasertext'        => __('Teasertext', 'rrze-faudir'),
             'socialmedia'       => __('Social Media and Websites', 'rrze-faudir'),

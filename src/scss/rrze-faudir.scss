@@ -20,6 +20,9 @@
 // Formats
 @use 'formats/formats';
 
+// Settings for themes
+@use 'themes/themes'
+
 
 // and to the end we add the codes, we dont know where they are used.
 // maybe they became obsolet in the development and need to removed.

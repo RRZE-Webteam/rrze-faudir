@@ -47,14 +47,14 @@ class FaudirUtils {
         $default_output_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : [];
 
         $field_mapping = [
-            'display_name'      => 'displayName',
-            'academic_title'    => 'personalTitle',
-            'first_name'        => 'givenName',
+            'displayname'       => 'displayName',
+            'honorificPrefix'    => 'personalTitle',
+            'givenName'        => 'givenName',
             'nobility_title'    => 'titleOfNobility',
-            'last_name'         => 'familyName',
-            'academic_suffix'   => 'personalTitleSuffix',
+            'familyName'         => 'familyName',
+            'honorificSuffix'   => 'personalTitleSuffix',
             'organization'      => 'organization',
-            'function'          => 'function',
+            'jobTitle'          => 'jobTitle',
             'url'               => 'url'
         ];
 
@@ -84,14 +84,14 @@ class FaudirUtils {
     public static function getPersonNameHtml($person_data)  {
         $hard_sanitize = $person_data['hard_sanitize'] ?? false;
         $personal_title = $person_data['personal_title'] ?? '';
-        $first_name = $person_data['first_name'] ?? '';
+        $givenName = $person_data['givenName'] ?? '';
         $nobility_title = $person_data['nobility_title'] ?? '';
-        $last_name = $person_data['last_name'] ?? '';
+        $familyName = $person_data['familyName'] ?? '';
         $title_suffix = $person_data['title_suffix'] ?? '';
         $identifier = $person_data['identifier'] ?? '';
 
         // if all name parts are empty, return an empty string
-        if (empty($personal_title) && empty($first_name) && empty($nobility_title) && empty($last_name) && empty($title_suffix)) {
+        if (empty($personal_title) && empty($givenName) && empty($nobility_title) && empty($familyName) && empty($title_suffix)) {
             return '';
         }
 
@@ -107,14 +107,14 @@ class FaudirUtils {
                 $nameHtml .= '<span itemprop="honorificPrefix">' . esc_html($personal_title) . '</span> ';
             }
         }
-        if (!empty($first_name)) {
-            $nameHtml .= '<span itemprop="givenName">' . esc_html($first_name) . '</span> ';
+        if (!empty($givenName)) {
+            $nameHtml .= '<span itemprop="givenName">' . esc_html($givenName) . '</span> ';
         }
         if (!empty($nobility_title)) {
             $nameHtml .= '<span>' . esc_html($nobility_title) . '</span> ';
         }
-        if (!empty($last_name)) {
-            $nameHtml .= '<span itemprop="familyName">' . esc_html($last_name) . '</span> ';
+        if (!empty($familyName)) {
+            $nameHtml .= '<span itemprop="familyName">' . esc_html($familyName) . '</span> ';
         }
         if (!empty($title_suffix)) {
             $nameHtml .= '(<span itemprop="honorificSuffix">' . esc_html($title_suffix) . '</span>)';
