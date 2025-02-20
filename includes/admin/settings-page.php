@@ -310,33 +310,13 @@ function rrze_faudir_default_output_fields_render() {
     $options = get_option('rrze_faudir_options');
     $default_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : array();
 
-    // Available fields to display
-    $available_fields = array(
-        'display_name' => __('Display Name', 'rrze-faudir'),
-        'academic_title' => __('Academic Title', 'rrze-faudir'),
-        'first_name' => __('First Name', 'rrze-faudir'),
-        'nobility_title' => __('Nobility Title', 'rrze-faudir'),
-        'last_name' => __('Last Name', 'rrze-faudir'),
-        'academic_suffix' => __('Academic Suffix', 'rrze-faudir'),
-        'email' => __('Email', 'rrze-faudir'),
-        'phone' => __('Phone', 'rrze-faudir'),
-        'organization' => __('Organization', 'rrze-faudir'),
-        'function' => __('Function', 'rrze-faudir'),
-        'url' => __('URL', 'rrze-faudir'),
-        'kompaktButton' => __('Kompakt Button', 'rrze-faudir'),
-        'content' => __('Content', 'rrze-faudir'),
-        'teasertext' => __('Teasertext', 'rrze-faudir'),
-        'socialmedia' => __('Social Media and Websites', 'rrze-faudir'),
-        'workplaces' => __('Workplaces', 'rrze-faudir'),
-        'room' => __('Room', 'rrze-faudir'),
-        'floor' => __('Floor', 'rrze-faudir'),
-        'street' => __('Street', 'rrze-faudir'),
-        'zip' => __('ZIP Code', 'rrze-faudir'),
-        'city' => __('City', 'rrze-faudir'),
-        'faumap' => __('FAU Map', 'rrze-faudir'),
-        'officehours' => __('Office Hours', 'rrze-faudir'),
-        'consultationhours' => __('Consultation Hours', 'rrze-faudir'),
-    );
+    if (!empty($options['avaible_fields'])) {
+        $available_fields = $options['avaible_fields']; 
+    } else {
+        $config = new Config;
+        $available_fields = $config->get('avaible_fields');
+    }
+    
 
     // Set default state: all checkboxes checked if no selection exists
     if (empty($default_fields)) {
@@ -355,8 +335,7 @@ function rrze_faudir_default_output_fields_render() {
 }
 
 // Add the callback function
-function rrze_faudir_org_search_section_callback()
-{
+function rrze_faudir_org_search_section_callback() {
     echo '<p>' . esc_html__('Search for FAU organizations by name or identifier.', 'rrze-faudir') . '</p>';
 }
 

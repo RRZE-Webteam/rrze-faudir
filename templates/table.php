@@ -10,6 +10,14 @@ if (!defined('ABSPATH')) {
 }
 ?>
 <div class="faudir">
+    <?php
+    
+    
+     echo "<h2>Show</h2>". Debug::get_html_var_dump($show_fields);
+     echo "<hr><h2>Hide</h2>". Debug::get_html_var_dump($hide_fields);
+     $noout = '';
+    ?>    
+    
     <table class="format-table">
         <tbody>
             <?php
@@ -24,92 +32,128 @@ if (!defined('ABSPATH')) {
                      if (!empty($persondata)) { 
                         
                         $output = '';
-             //           $output .=  Debug::get_html_var_dump($persondata);
+                        $output .=  Debug::get_html_var_dump($persondata);
                         $output .= '<tr itemscope itemtype="https://schema.org/Person">';
     
                  //       $options = get_option('rrze_faudir_options');
                         $person = new Person($persondata);
                         $displayname = $person->getDisplayName(true, false, $show_fields, $hide_fields);
                         $mailadresses= $person->getEMail();
-                        $phonenumbers = $person->getPhone();
-                        
+                        $phonenumbers = $person->getPhone();                        
                         $final_url = $person->getTargetURL();
-
-
-                        if ($displayname) {
-                            $output .= '<th class="displayname">';
-                            if (!empty($final_url)) {
-                                $output .= '<a itemprop="url" href="'.esc_url($final_url).'">';     
-                            }
-                            $output .= $displayname;
-                            if (!empty($final_url)) {
-                                 $output .= '</a>';
-                            }
-                            $output .= '</th>';
-                        }
-                            
                         $contact = $person->getPrimaryContact();
-                        
-                        $workplaces = [];
-                        $socials = [];
-                        
-                        
-                        
-
-                        // Collect emails and phones from workplaces, falling back to person email/phone if necessary
                         if (!empty($contact)) {
                             
-                            $contactdata = $contact->toArray();
-                            
+                            $contactdata = $contact->toArray();     
                             $jobtitle = $contact->getJobTitle($lang);
                             $workplaces = $contact->getWorkplaces();
                             $workplaces['mails'] = $mailadresses;
-                            $workplaces['phones'] = $phonenumbers;
-                            
+                            $workplaces['phones'] = $phonenumbers;                         
                             $socials = $contact->getSocialArray();
  
                             $output .= '<td>'. Debug::get_html_var_dump($workplaces).'</td>';
                         }
+                        
+                        
+                        /*
+     *         
+        'image'             => __('Image', 'rrze-faudir'),
+        'display_name'      => __('Display Name', 'rrze-faudir'),
+        'academic_title'    => __('Academic Title', 'rrze-faudir'),
+        'first_name'        => __('First Name', 'rrze-faudir'),
+        'nobility_title'    => __('Nobility Title', 'rrze-faudir'),
+        'last_name'         => __('Last Name', 'rrze-faudir'),
+        'academic_suffix'   => __('Academic Suffix', 'rrze-faudir'),
+        'email'             => __('Email', 'rrze-faudir'),
+        'phone'             => __('Phone', 'rrze-faudir'),
+        'organization'      => __('Organization', 'rrze-faudir'),
+        'function'          => __('Function', 'rrze-faudir'),
+        'url'               => __('URL', 'rrze-faudir'),
+        'kompaktButton'     => __('Kompakt Button', 'rrze-faudir'),
+        'content'           => __('Content', 'rrze-faudir'),
+        'teasertext'        => __('Teasertext', 'rrze-faudir'),
+        'socialmedia'       => __('Social Media and Websites', 'rrze-faudir'),
+        'workplaces'        => __('Workplaces', 'rrze-faudir'),
+        'room'              => __('Room', 'rrze-faudir'),
+        'floor'             => __('Floor', 'rrze-faudir'),
+        'address'           => __('Address', 'rrze-faudir'),
+        'street'            => __('Street', 'rrze-faudir'),
+        'zip'               => __('ZIP Code', 'rrze-faudir'),
+        'city'              => __('City', 'rrze-faudir'),
+        'faumap'            => __('FAU Map', 'rrze-faudir'),
+        'officehours'       => __('Office Hours', 'rrze-faudir'),
+        'consultationhours' => __('Consultation Hours', 'rrze-faudir'),
+     */
+                        
+                        $reihenfolge = ['image', 'display_name', 'function', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext'];
+                        
+                     
+                        
+                        $show_fields_lower = array_map('strtolower', $show_fields);
+                        $hide_fields_lower = array_map('strtolower', $hide_fields);
 
+                        foreach ($reihenfolge as $key) {
+                            $key_lower = strtolower($key);
+                            if (in_array($key_lower, $show_fields_lower) && !in_array($key_lower, $hide_fields_lower)) {
+                                $output .= '<td>';
+                                $value = '';
+                                if (($key === 'displayname') || ($key === 'display_name')) {
+                                    if ($displayname) {
+                                        if (!empty($final_url)) {
+                                             $value .= '<a itemprop="url" href="'.esc_url($final_url).'">';     
+                                        }
+                                        $value .= $displayname;
+                                        if (!empty($final_url)) {
+                                             $value .= '</a>';
+                                        }
+                                    }     
+                               } elseif ($key === 'room')  {
+                                    if ($jobtitle) {
+                                         $value = $jobtitle;                                      
+                                    }       
+                                } elseif (($key === 'function') || ($key === 'jobtitle')) {
+                                    if ($jobtitle) {
+                                         $value = $jobtitle;                                      
+                                    }  
+                                } elseif (($key === 'socialmedia') || ($key === 'socials')) { 
+                                        $value = FaudirUtils::getListOutput($socials,'span',__('Social Media and Websites', 'rrze-faudir'),'icon-list icon');
+                                       
+                                } else {
+                                        $value = $key;
+                                        if (isset($contactdata[$key])) {
+                                            $value = $contactdata[$key];
+                                        } elseif ($workplaces[$key]) {
+                                             $value = $workplaces[$key];
+                                        }
+                                        
+                                }
+                                $output .= $value;
+                                $output .= '</td>';
+                             
+                            } else {
+                                $noout .= $key_lower. " ";
+                            }
+                        }
+                        
+                        
+                        
+              
+
+                    
              //         $output .= Debug::get_html_var_dump($workplaces);
              //           $output .= Debug::get_html_var_dump($show_fields);
              //           $output .= Debug::get_html_var_dump($hide_fields);
 
                      
                         
-                        
-                        
-                        
-                        
-                        $socialoutput = '';
-                        if (in_array('socialmedia', $show_fields) && !in_array('socialmedia', $hide_fields)) {                            
-                            if (!empty($socials)) {        
-                                $socialoutput = FaudirUtils::getListOutput($socials,'span',__('Social Media and Websites', 'rrze-faudir'),'icon-list icon');
-                            }
 
-                        }
-                        if (!empty($tablecells)) {
-                             $output .= $tablecells;
-                        }
-                        if (!empty($socialoutput)) {
-                             $output .= '<td>'.$socialoutput.'</td>';
-                        }
-                        
-                        
-                        // Output optional teasertext
-                        if (in_array('teasertext', $show_fields) && !in_array('teasertext', $hide_fields)) {
-                            if (!empty($teaser_lang)) {  
-                               $output .= '<td><span class="teasertext">'.wp_kses_post($teaser_lang).'</span></td>';
-                            }
-                        } 
-                        
-                            
                             
                             
                            
 
                         $output .= '</tr>';
                         echo $output;
+                        $noout .= '<br>';
                             
                     } else { ?>
                         <div class="faudir-error"><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?> </div>
@@ -118,4 +162,9 @@ if (!defined('ABSPATH')) {
                 } ?>
         </tbody>
     </table>
+    
+    <?php
+    
+    echo "NOT OUTPUTTET: $noout";
+    ?>
 </div>

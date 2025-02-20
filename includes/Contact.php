@@ -194,7 +194,7 @@ class Contact {
      */
     public function getSocialArray(): ?array {
         if (empty($this->socials)) {
-            return null;
+            return [];
         }
 
         $reslist = [];

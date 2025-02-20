@@ -47,15 +47,15 @@ class FaudirUtils {
         $default_output_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : [];
 
         $field_mapping = [
-            'display_name' => 'displayName',
-            'academic_title' => 'personalTitle',
-            'first_name' => 'givenName',
-            'nobility_title' => 'titleOfNobility',
-            'last_name' => 'familyName',
-            'academic_suffix' => 'personalTitleSuffix',
-            'organization' => 'organization',
-            'function' => 'function',
-            'url' => 'url'
+            'display_name'      => 'displayName',
+            'academic_title'    => 'personalTitle',
+            'first_name'        => 'givenName',
+            'nobility_title'    => 'titleOfNobility',
+            'last_name'         => 'familyName',
+            'academic_suffix'   => 'personalTitleSuffix',
+            'organization'      => 'organization',
+            'function'          => 'function',
+            'url'               => 'url'
         ];
 
         // Map fields from options to internal field names
@@ -136,6 +136,42 @@ class FaudirUtils {
         return $weekdayMap[$weekday] ?? __('Unknown','rrze-faudir');
     }
 
+    public static function getAddressHTML(array $data): string {
+        $address = $result = '';
+        
+        if ($data['name']) {
+            $address .= '<span itemprop="name">'.esc_html($data['name']).'</span>';       
+        }
+        if ($data['street']) {
+            $address .= '<span itemprop="streetAdress">'.esc_html($data['street']).'</span>';    
+        }
+        if ($data['postOfficeBoxNumber']) {
+            $address .= '<span class="screen-reader-text">'.__('Box Number', 'rrze-faudir').': </span><span itemprop="postOfficeBoxNumber">'.esc_html($data['postOfficeBoxNumber']).'</span>';    
+        }
+         if ($data['postalCode']) {
+            $address .= '<span itemprop="postalCode">'.esc_html($data['postalCode']).'</span>';    
+        } elseif ($data['zip']) {
+            $address .= '<span itemprop="postalCode">'.esc_html($data['zip']).'</span>';    
+        }
+        if ($data['addressLocality']) {
+            $address .= '<span itemprop="addressLocality">'.esc_html($data['addressLocality']).'</span>';    
+        } elseif ($data['city']) {
+            $address .= '<span itemprop="addressLocality">'.esc_html($data['city']).'</span>';    
+        }
+        if ($data['addressCountry']) {
+            $address .= '<span itemprop="addressCountry">'.esc_html($data['addressCountry']).'</span>';    
+        }
+        
+        
+        if (!empty($address)) {
+            $address = '<span class="texticon address" itemprop="address" itemscope="" itemtype="https://schema.org/PostalAddress">'.$address.'</span>';                  
+            $result = '<div><span class="screen-reader-text">'.__('Address', 'rrze-faudir').': </span>' . $address . '</div>';
+        }
+        return $result;
+    }
+        
+   
+    
     public static function filterContactsByCriteria($contacts, $includeDefaultOrg, $defaultOrgIds, $email)  {
         foreach ($contacts as $contactKey => $contact) {
             $shouldRemove = false;
@@ -165,7 +201,7 @@ class FaudirUtils {
      * Get a data list from typ name, value which gets displayed as list.
      * Returns HTML for output
      */
-    public static function getListOutput(array $data, string $htmlsurround = 'div', string $label = '', string $class = '',  array $show = [], array $hide = [], array $reihenfolge = []): string {
+    public static function getListOutput(array $data = [], string $htmlsurround = 'div', string $label = '', string $class = '',  array $show = [], array $hide = [], array $reihenfolge = []): string {
         $output = '';
         if ((!is_array($data)) || (empty($data))) {
             return $output;

@@ -37,6 +37,7 @@ export default function Edit({ attributes, setAttributes }) {
     } = attributes;
 
     const availableFields = {
+	image: __('Image', 'rrze-faudir'),
         displayName: __('Display Name', 'rrze-faudir'),
         personalTitle: __('Academic Title', 'rrze-faudir'),
         givenName: __('First Name', 'rrze-faudir'),
@@ -55,6 +56,7 @@ export default function Edit({ attributes, setAttributes }) {
         workplaces: __('Workplaces', 'rrze-faudir'),
         room: __('Room', 'rrze-faudir'),
         floor: __('Floor', 'rrze-faudir'),
+	address: __('Address', 'rrze-faudir'),
         street: __('Street', 'rrze-faudir'),
         zip: __('ZIP Code', 'rrze-faudir'),
         city: __('City', 'rrze-faudir'),
@@ -65,6 +67,7 @@ export default function Edit({ attributes, setAttributes }) {
 
     const formatFields = {
         card: [
+	    'image',
             'displayName',
             'personalTitle',
             'givenName',
@@ -77,6 +80,7 @@ export default function Edit({ attributes, setAttributes }) {
             'titleOfNobility',
         ],
         table: [
+	    'image',
             'displayName',
             'personalTitle',
             'givenName',
@@ -87,6 +91,9 @@ export default function Edit({ attributes, setAttributes }) {
             'url',
             'socialmedia',
             'titleOfNobility',
+	    'floor',
+	    'room',
+	    'address'
         ],
         list: [
             'displayName',
@@ -99,6 +106,7 @@ export default function Edit({ attributes, setAttributes }) {
             'url',
             'teasertext',
             'titleOfNobility',
+	    'address'
         ],
         kompakt: Object.keys(availableFields),
         page: Object.keys(availableFields),
@@ -123,6 +131,7 @@ export default function Edit({ attributes, setAttributes }) {
                 if (settings?.default_output_fields) {
                     // Map PHP field names to JavaScript field names
                     const fieldMapping = {
+			'image': 'image',
                         'display_name': 'displayName',
                         'academic_title': 'personalTitle',
                         'first_name': 'givenName',
@@ -146,7 +155,8 @@ export default function Edit({ attributes, setAttributes }) {
                         'city': 'city',
                         'faumap': 'faumap',
                         'officehours': 'officehours',
-                        'consultationhours': 'consultationhours'
+                        'consultationhours': 'consultationhours',
+			'address': 'address'
                     };
 
                     // Convert PHP field names to JavaScript field names
