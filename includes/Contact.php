@@ -201,6 +201,58 @@ class Contact {
     }
     
     /*
+     * Get Orgname
+     */
+    public function getOrganizationName(string $lang = "de"): ?string {
+        $res = '';
+        if  (!empty($this->organization)) {
+            if ((isset($this->organization['longDescription'])) && (isset($this->organization['longDescription'][$lang]))) {
+                $res = '<span itemprop="name">'.esc_html($this->organization['longDescription'][$lang]).'</span>';    
+            }
+        }
+        return $res;
+    }
+    
+    /*
+     * Generate Address Output for a Workplace
+     */
+    public function getAddressByWorkplace(array $workplace, bool $orgname = true, string $lang = "de"): ?string {
+        $address = $result = '';
+
+        if ($orgname) {
+            $address .= $this->getOrganizationName($lang);  
+        }
+
+        if ($workplace['street']) {
+            $address .= '<span itemprop="streetAdress">'.esc_html($workplace['street']).'</span>';    
+        }
+        if ($workplace['postOfficeBoxNumber']) {
+            $address .= '<span class="screen-reader-text">'.__('Box Number', 'rrze-faudir').': </span><span itemprop="postOfficeBoxNumber">'.esc_html($workplace['postOfficeBoxNumber']).'</span>';    
+        }
+         if ($workplace['postalCode']) {
+            $address .= '<span itemprop="postalCode">'.esc_html($workplace['postalCode']).'</span> ';    
+        } elseif ($workplace['zip']) {
+            $address .= '<span itemprop="postalCode">'.esc_html($workplace['zip']).'</span> ';    
+        }
+        if ($workplace['addressLocality']) {
+            $address .= '<span itemprop="addressLocality">'.esc_html($workplace['addressLocality']).'</span>';    
+        } elseif ($workplace['city']) {
+            $address .= '<span itemprop="addressLocality">'.esc_html($workplace['city']).'</span>';    
+        }
+        if ($workplace['addressCountry']) {
+            $address .= '<span itemprop="addressCountry">'.esc_html($workplace['addressCountry']).'</span>';    
+        }
+        
+        
+        if (!empty($address)) {
+            $address = '<span class="texticon address" itemprop="address" itemscope="" itemtype="https://schema.org/PostalAddress">'.$address.'</span>';                  
+            $result = '<div><span class="screen-reader-text">'.__('Address', 'rrze-faudir').': </span>' . $address . '</div>';
+        }
+        return $result;
+    }
+    
+    
+    /*
      * Get Social/Website from Contact and transform them into a assoc. array
      */
     public function getSocialArray(): ?array {

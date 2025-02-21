@@ -93,7 +93,10 @@ class Person {
             $this->familyName = $data['familyName'];
         }
         if (isset($data['personalTitle'])) {
-            $this->honorificPrefix = $data['honorificPrefix'];
+            $this->honorificPrefix = $data['personalTitle'];
+        }
+         if (isset($data['personalTitleSuffix'])) {
+            $this->honorificSuffix = $data['personalTitleSuffix'];
         }
         if (isset($data['honorificSuffix'])) {
             $this->honorificSuffix = $data['honorificSuffix'];

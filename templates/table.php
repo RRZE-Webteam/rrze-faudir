@@ -17,8 +17,8 @@ if (!defined('ABSPATH')) {
      $available_fields = $config->get('avaible_fields');
     
      echo "<h2>Show</h2>". Debug::get_html_var_dump($show_fields);
-     echo "<hr><h2>Hide</h2>". Debug::get_html_var_dump($hide_fields);
-     echo "<hr><h2>All fields</h2>". Debug::get_html_var_dump($available_fields);
+  //   echo "<hr><h2>Hide</h2>". Debug::get_html_var_dump($hide_fields);
+ //    echo "<hr><h2>All fields</h2>". Debug::get_html_var_dump($available_fields);
      $noout = '';
      
          $reihenfolge = ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext'];
@@ -29,8 +29,14 @@ if (!defined('ABSPATH')) {
             // Dann alle übrigen Schlüssel aus $available_fields, die nicht in $reihenfolge enthalten sind
             array_diff(array_keys($available_fields), $reihenfolge)
         );
-     echo "<hr><h2>Reihenfolge alle:</h2>". Debug::get_html_var_dump($ordered_keys);
+   //  echo "<hr><h2>Reihenfolge alle:</h2>". Debug::get_html_var_dump($ordered_keys);
+        echo "<h2>Personendata</h2>";
+         foreach ($persons as $persondata) { 
+              echo  Debug::get_html_var_dump($persondata);
+         }
+        
     ?>    
+    
     
     <table class="format-table">
         <tbody>
@@ -45,61 +51,27 @@ if (!defined('ABSPATH')) {
                     <?php } else { 
                      if (!empty($persondata)) { 
                         
-                        $output = '';
-               //         $output .=  Debug::get_html_var_dump($persondata);
+                        $output = '';          
                         $output .= '<tr itemscope itemtype="https://schema.org/Person">';
-    
-                        
+         
                         $person = new Person($persondata);
                         $displayname = $person->getDisplayName(true, false);
                         $mailadresses= $person->getEMail();
                         $phonenumbers = $person->getPhone();                        
                         $final_url = $person->getTargetURL();
                         $contact = $person->getPrimaryContact();
-                        if (!empty($contact)) {
-                            
+                        $jobtitle = '';
+                        $workplaces = [];
+                        
+                        if (!empty($contact)) { 
                             $contactdata = $contact->toArray();     
-                            $jobtitle = $contact->getJobTitle($lang);
                             $workplaces = $contact->getWorkplaces();
                             $workplaces['mails'] = $mailadresses;
                             $workplaces['phones'] = $phonenumbers;                         
                             $socials = $contact->getSocialArray();
  
-             //               $output .= '<td>'. Debug::get_html_var_dump($workplaces).'</td>';
                         }
                         
-                        
-                        /*
-     *         
-        'image'             => __('Image', 'rrze-faudir'),
-        'displayname'      => __('Display Name', 'rrze-faudir'),
-        'honorificPrefix'    => __('Academic Title', 'rrze-faudir'),
-        'givenName'        => __('First Name', 'rrze-faudir'),
-        'nobility_title'    => __('Nobility Title', 'rrze-faudir'),
-        'familyName'         => __('Last Name', 'rrze-faudir'),
-        'honorificSuffix'   => __('Academic Suffix', 'rrze-faudir'),
-        'email'             => __('Email', 'rrze-faudir'),
-        'phone'             => __('Phone', 'rrze-faudir'),
-        'organization'      => __('Organization', 'rrze-faudir'),
-        'function'          => __('Function', 'rrze-faudir'),
-        'url'               => __('URL', 'rrze-faudir'),
-        'content'           => __('Content', 'rrze-faudir'),
-        'teasertext'        => __('Teasertext', 'rrze-faudir'),
-        'socialmedia'       => __('Social Media and Websites', 'rrze-faudir'),
-        'workplaces'        => __('Workplaces', 'rrze-faudir'),
-        'room'              => __('Room', 'rrze-faudir'),
-        'floor'             => __('Floor', 'rrze-faudir'),
-        'address'           => __('Address', 'rrze-faudir'),
-        'street'            => __('Street', 'rrze-faudir'),
-        'zip'               => __('ZIP Code', 'rrze-faudir'),
-        'city'              => __('City', 'rrze-faudir'),
-        'faumap'            => __('FAU Map', 'rrze-faudir'),
-        'officehours'       => __('Office Hours', 'rrze-faudir'),
-        'consultationhours' => __('Consultation Hours', 'rrze-faudir'),
-     */
-                        
-
-
 
                         $show_fields_lower = array_map('strtolower', $show_fields);
                         $hide_fields_lower = array_map('strtolower', $hide_fields);
@@ -108,9 +80,8 @@ if (!defined('ABSPATH')) {
                             $key_lower = strtolower($key);
                             if (in_array($key_lower, $show_fields_lower) && !in_array($key_lower, $hide_fields_lower)) {
                                 $output .= '<td>';
-                                  $output .= $key_lower. ': ';
                                 $value = '';
-                                if ($key === 'displayname')  {
+                                if ($key_lower === 'displayname')  {
                                     if ($displayname) {
                                         if (!empty($final_url)) {
                                              $value .= '<a itemprop="url" href="'.esc_url($final_url).'">';     
@@ -120,17 +91,139 @@ if (!defined('ABSPATH')) {
                                              $value .= '</a>';
                                         }
                                     }     
-                               } elseif ($key === 'room')  {
-                                    if ($jobtitle) {
-                                         $value = $jobtitle;                                      
-                                    }       
-                                } elseif ($key === 'jobtitle') {
+
+                                    
+                                } elseif ($key_lower === 'jobtitle') {
+                                    $jobtitle = $contact->getJobTitle($lang);
                                     if ($jobtitle) {
                                          $value = $jobtitle;                                      
                                     }  
-                                } elseif (($key === 'socialmedia') || ($key === 'socials')) { 
+                                } elseif (($key_lower === 'socialmedia') || ($key_lower === 'socials')) { 
                                         $value = FaudirUtils::getListOutput($socials,'span',__('Social Media and Websites', 'rrze-faudir'),'icon-list icon');
-                                       
+                                
+                                        
+                                } elseif ($key_lower === 'room')  {
+                                    if (!empty($workplaces)) {
+                                            $room = '';
+                                            foreach ($workplaces as $w => $wdata) {
+                                                if (!empty($wdata['room'])) {
+                                                    $room .= '<span><span class="screen-reader-text">'.__('Room','rrze-faudir').': </span>'.esc_html($wdata['room']).'</span>';
+                                                }
+                                            }
+                                            $value = $room;      
+                                    }
+                                } elseif ($key_lower === 'email')  {     
+                                        $wval = '';                                    
+                                        foreach ($mailadresses as $mail) {
+                                            if (filter_var($mail, FILTER_VALIDATE_EMAIL)) {
+                                                $formattedValue = '<a itemprop="email" href="mailto:' . esc_attr($mail) . '">' . esc_html($mail) . '</a>';
+                                                $wval .= '<span><span class="screen-reader-text">'.__('Email','rrze-faudir').': </span>'.$formattedValue.'</span>';
+                                            }                 
+                                        }
+
+                                    $value = $wval;
+                                } elseif ($key_lower === 'phone')  {     
+                                   
+                                    $wval = '';                                    
+                                    foreach ($phonenumbers as $phone) {
+                                        $formattedPhone = FaudirUtils::format_phone_number($phone);
+                                        $telLink = preg_replace('/\s+/', '', $formattedPhone); // Entferne Leerzeichen für den `tel:`-Link
+                                        $formattedValue = '<a itemprop="telephone" href="tel:' . esc_attr($telLink) . '">' . esc_html($formattedPhone) . '</a>';
+                                        $wval .= '<span><span class="screen-reader-text">'.__('Phone','rrze-faudir').': </span>'.$formattedValue.'</span>';
+                                        
+                                    }
+                                    $value = $wval;      
+                                    
+                                } elseif ($key_lower === 'organization')  {    
+                                    $orgname = $contact->getOrganizationName($lang);
+                                    if ($jobtitle) {
+                                         $value = $orgname;                                      
+                                    }  
+                                    
+                                    
+                                } elseif ($key_lower === 'url')  {      
+                                   if (!empty($workplaces)) {
+                                            $wval = '';
+                                            foreach ($workplaces as $w => $wdata) {
+                                                if (!empty($wdata['url'])) {
+                                                    $displayValue = preg_replace('/^https?:\/\//i', '', $wdata['url']);     
+                                                    $formattedValue = '<a href="' . esc_url($wdata['url']) . '" itemprop="url">' . esc_html($displayValue) . '</a>';
+                                                    $wval .= '<li><span class="screen-reader-text">'.__('URL','rrze-faudir').': </span>'.$formattedValue.'</li>';
+                                                }
+                                            }
+                                            $value = $wval;      
+                                    }
+                                    
+                                    
+                                } elseif ($key_lower === 'content')  {             
+                                } elseif ($key_lower === 'teasertext')  {             
+                                } elseif ($key_lower === 'workplaces')  {             
+                                } elseif ($key_lower === 'floor')  {      
+                                     if (!empty($workplaces)) {
+                                            $wval = '';
+                                            foreach ($workplaces as $w => $wdata) {
+                                                if (!empty($wdata['floor'])) {
+                                                    $wval .= '<span><span class="screen-reader-text">'.__('Floor','rrze-faudir').': </span>'.esc_html($wdata['floor']).'</span>';
+                                                }
+                                            }
+                                            $value = $wval;      
+                                    }
+                                } elseif ($key_lower === 'address')  {     
+                                    if (!empty($workplaces)) {
+                                            $wval = '';
+                                            foreach ($workplaces as $w => $wdata) {
+                                               
+                                                $wval .= $contact->getAddressByWorkplace($wdata, false);
+                                            }
+                                            $value = $wval;      
+                                    }
+                                } elseif ($key_lower === 'street')  {        
+                                    if (!empty($workplaces)) {
+                                            $wval = '';
+                                            foreach ($workplaces as $w => $wdata) {
+                                                if (!empty($wdata['street'])) {
+                                                    $wval .= '<span><span class="screen-reader-text">'.__('Street','rrze-faudir').': </span>'.esc_html($wdata['street']).'</span>';
+                                                }
+                                            }
+                                            $value = $wval;      
+                                    }
+                                } elseif ($key_lower === 'zip')  {   
+                                     if (!empty($workplaces)) {
+                                            $wval = '';
+                                            foreach ($workplaces as $w => $wdata) {
+                                                if (!empty($wdata['zip'])) {
+                                                    $wval .= '<span><span class="screen-reader-text">'.__('Postal Code','rrze-faudir').': </span>'.esc_html($wdata['zip']).'</span>';
+                                                }
+                                            }
+                                            $value = $wval;      
+                                    }
+                                } elseif ($key_lower === 'city')  {        
+                                     if (!empty($workplaces)) {
+                                            $wval = '';
+                                            foreach ($workplaces as $w => $wdata) {
+                                                if (!empty($wdata['city'])) {
+                                                    $wval .= '<span><span class="screen-reader-text">'.__('City','rrze-faudir').': </span>'.esc_html($wdata['city']).'</span>';
+                                                }
+                                            }
+                                            $value = $wval;      
+                                    }
+                                } elseif ($key_lower === 'faumap')  {     
+                                        if (!empty($workplaces)) {
+                                            $faumap = '';
+                                            foreach ($workplaces as $w => $wdata) {
+                                                if (!empty($wdata['faumap'])) {
+                                                    if (preg_match('/^https?:\/\/karte\.fau\.de/i', $wdata['faumap'])) {
+                                                        $formattedValue = '<a href="' . esc_url($wdata['faumap']) . '" itemprop="url">' . esc_html($wdata['faumap']) . '</a>';
+                                                        $faumap .= '<span><span class="screen-reader-text">'.__('FAU Map','rrze-faudir').': </span>'.$formattedValue.'</span>';
+                                                    }
+                                                }
+                                            }
+                                            $value = $faumap;
+                                        }
+                               
+                                } elseif ($key_lower === 'officehours')  {             
+                                } elseif ($key_lower === 'consultationhours')  {             
+                                        
                                 } else {
                                         $value = $key;
                                         if (isset($contactdata[$key])) {
@@ -140,6 +233,9 @@ if (!defined('ABSPATH')) {
                                         }
                                         
                                 }
+                                if (empty($value)) {
+                                    $output .= "Empty ".$key_lower;
+                                }
                                 $output .= $value;
                                 $output .= '</td>';
                              
@@ -148,18 +244,6 @@ if (!defined('ABSPATH')) {
                             }
                         }
                         
-                        
-                        
-              
-
-                    
-             //         $output .= Debug::get_html_var_dump($workplaces);
-             //           $output .= Debug::get_html_var_dump($show_fields);
-             //           $output .= Debug::get_html_var_dump($hide_fields);
-
-                     
-                        
-
                             
                             
                            
@@ -176,8 +260,5 @@ if (!defined('ABSPATH')) {
         </tbody>
     </table>
     
-    <?php
-    
-    echo "NOT OUTPUTTET: $noout";
-    ?>
+
 </div>
