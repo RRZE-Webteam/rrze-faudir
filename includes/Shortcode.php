@@ -38,19 +38,19 @@ class Shortcode {
         // Extract the attributes from the shortcode
         $atts = shortcode_atts(
             array(
-                'category' => '',
-                'identifier' => '',
-                'id' => '',
-                'format' => 'kompakt',
-                'url' => '',
-                'show' => '',
-                'hide' => '',
-                'image' => '',
-                'groupid' => '',
-                'jobtitle' => '',
-                'orgnr' => '',
-                'sort' => '',
-                'button-text' => '',
+                'category'              => '',
+                'identifier'            => '',
+                'id'                    => '',
+                'format'                => 'compact',
+                'url'                   => '',
+                'show'                  => '',
+                'hide'                  => '',
+                'groupid'               => '',
+                'jobtitle'              => '',
+                'orgnr'                 => '',
+                'sort'                  => '',
+                'button-text'           => '',
+                'format-displayname'    => ''
             ),
             $atts
         );
@@ -97,35 +97,20 @@ class Shortcode {
         $hide_fields = array_map('trim', explode(',', $atts['hide']));
         
 
-        // Handle name-related fields logic
-        $name_fields = ['honorificPrefix', 'givenName', 'familyName', 'honorificSuffix', 'titleOfNobility'];
-
-        // If displayName is in show_fields, add all name-related fields
-        if (in_array('displayName', $show_fields)) {
-            $show_fields = array_merge($show_fields, $name_fields);
-        } else {
-            // Only keep explicitly selected name fields
-            foreach ($name_fields as $field) {
-                if (!in_array($field, $show_fields)) {
-                    $hide_fields[] = $field;
-                }
-            }
-        }
-
         // Remove duplicates and ensure arrays are unique
         $show_fields = array_unique($show_fields);
         $hide_fields = array_unique($hide_fields);
 
         // Extract the attributes from the shortcode
         $identifiers = empty($atts['identifier']) ? [] : explode(',', $atts['identifier']);
-        $category = $atts['category'];
-        $image_id = $atts['image'];
-        $url = $atts['url'];
-        $groupid = $atts['groupid'];
-        $jobtitle = $atts['jobtitle'];
-        $orgnr = $atts['orgnr'];
-        $post_id = $atts['id'];
-        $persons = [];
+        $category   = $atts['category'];
+        $url        = $atts['url'];
+        $groupid    = $atts['groupid'];
+        $jobtitle   = $atts['jobtitle'];
+        $orgnr      = $atts['orgnr'];
+        $post_id    = $atts['id'];
+        $format_displayname = $atts['format-displayname'];
+        $persons    = [];
 
         // Closure to fetch persons by post ID
         $fetch_persons_by_post_id = function ($post_id) {
@@ -408,12 +393,7 @@ class Shortcode {
             return;
         }
 
-        // Fetch the image URL if an image ID is provided
-        $image_url = '';
-        if (!empty($image_id) && is_numeric($image_id)) {
-            $image_url = wp_get_attachment_image_url($image_id, 'full');
-        }
-
+     
         // Sorting logic based on the specified sorting options
         $sort_option = $atts['sort'] ?? 'familyName'; // Default sorting by last name
         $collator = collator_create('de_DE'); // German locale for sorting
@@ -423,8 +403,8 @@ class Shortcode {
             switch ($sort_option) {
                 case 'title_familyName':
                     $academic_titles = ['Prof. Dr.', 'Dr.', 'Prof.', ''];
-                    $a_title = $a['personalTitle'] ?? '';
-                    $b_title = $b['personalTitle'] ?? '';
+                    $a_title = $a['honorificPrefix'] ?? '';
+                    $b_title = $b['honorificPrefix'] ?? '';
                     $a_title_pos = array_search($a_title, $academic_titles) !== false ? array_search($a_title, $academic_titles) : count($academic_titles);
                     $b_title_pos = array_search($b_title, $academic_titles) !== false ? array_search($b_title, $academic_titles) : count($academic_titles);
                     if ($a_title_pos !== $b_title_pos) {
@@ -496,23 +476,30 @@ class Shortcode {
 
         // Fix format assignment when empty
         if ($atts['format'] === '') {
-            $atts['format'] = 'kompakt';  // Use single = for assignment
+            $atts['format'] = 'compact';  // Use single = for assignment
+        } elseif ($atts['format'] === 'kompakt') {
+            $atts['format'] = 'compact';
         }
         if ($atts['format'] === 'liste') {
              $atts['format'] = 'list';
         }
 
+
+
         // Check if button text is set and not empty before passing it to the template
         $button_text = isset($atts['button-text']) && $atts['button-text'] !== '' ? $atts['button-text'] : '';
 
+        // check and sanitize for format for displayname
+        $format_displayname = isset($atts['format-displayname']) && $atts['format-displayname'] !== '' ? $atts['format-displayname'] : '';
  
         return $template->render($atts['format'], [
-            'show_fields' => $show_fields,
-            'hide_fields' => $hide_fields,
-            'persons' => $persons,
-            'image_url' => $image_url,
-            'url' => $url,
-            'button_text' => $button_text,
+            'show_fields'   => $show_fields,
+            'hide_fields'   => $hide_fields,
+            'format-displayname' => $format_displayname,
+            'persons'       => $persons,
+            'image_url'     => $image_url,
+            'url'           => $url,
+            'button_text'   => $button_text,
         ]);
     }
 

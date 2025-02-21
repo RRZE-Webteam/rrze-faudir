@@ -46,7 +46,7 @@ if (!defined('ABSPATH')) {
                         $options = get_option('rrze_faudir_options');
                         
                         $pers = new Person($person);
-                        $displayname = $pers->getDisplayName(true, false, $show_fields, $hide_fields);
+                        $displayname = $pers->getDisplayName(true, false);
                         $final_url = $pers->getTargetURL();
 
                         if (!empty($displayname)) { ?>

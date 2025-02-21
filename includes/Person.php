@@ -402,7 +402,7 @@ class Person {
             if (!empty($this->familyName)) {          
                 $nameHtml .= '<span itemprop="familyName">';        
                 // "titleOfNobility" is part of the familyName
-                if (!empty($this->titleOfNobility) && $shouldOutput('titleOfNobility')) {
+                if (!empty($this->titleOfNobility)) {
                     $nameHtml .= esc_html($this->titleOfNobility) . ' ';
                     $nameText .= esc_html($this->titleOfNobility) . ' ';
                 }

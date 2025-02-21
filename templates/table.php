@@ -51,7 +51,7 @@ if (!defined('ABSPATH')) {
     
                         
                         $person = new Person($persondata);
-                        $displayname = $person->getDisplayName(true, false, $show_fields, $hide_fields);
+                        $displayname = $person->getDisplayName(true, false);
                         $mailadresses= $person->getEMail();
                         $phonenumbers = $person->getPhone();                        
                         $final_url = $person->getTargetURL();
