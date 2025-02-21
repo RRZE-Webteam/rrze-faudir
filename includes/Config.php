@@ -29,12 +29,9 @@ class Config {
              
         $this->config['avaible_fields'] = [
             'image'             => __('Image', 'rrze-faudir'),
-            'displayname'      => __('Display Name', 'rrze-faudir'),
-            'honorificPrefix'    => __('Academic Title', 'rrze-faudir'),
-            'givenName'        => __('First Name', 'rrze-faudir'),
-            'titleOfNobility'    => __('Nobility Title', 'rrze-faudir'),
-            'familyName'         => __('Last Name', 'rrze-faudir'),
-            'honorificSuffix'   => __('Academic Suffix', 'rrze-faudir'),
+            'displayname'       => __('Display Name', 'rrze-faudir'),
+                // Einzelne Namensbestandteile werden später im Shortcode
+                // durch Änderung der Zusammensetzung von Displayname generiert
             'email'             => __('Email', 'rrze-faudir'),
             'phone'             => __('Phone', 'rrze-faudir'),
             'organization'      => __('Organization', 'rrze-faudir'),

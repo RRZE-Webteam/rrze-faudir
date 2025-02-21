@@ -141,16 +141,16 @@ class Person {
      */
     public function toArray(): array {
         $data = [
-            'identifier'           => $this->identifier,
-            'givenName'            => $this->givenName,
-            'familyName'           => $this->familyName,
-            'honorificPrefix'        => $this->honorificPrefix,
-            'honorificSuffix'  => $this->honorificSuffix,
-            'titleOfNobility'      => $this->titleOfNobility,
-            'pronoun'              => $this->pronoun,
-            'email'                => $this->email,
-            'telephone'            => $this->telephone,
-            'contacts'             => $this->contacts,
+            'identifier'            => $this->identifier,
+            'givenName'             => $this->givenName,
+            'familyName'            => $this->familyName,
+            'honorificPrefix'       => $this->honorificPrefix,
+            'honorificSuffix'       => $this->honorificSuffix,
+            'titleOfNobility'       => $this->titleOfNobility,
+            'pronoun'               => $this->pronoun,
+            'email'                 => $this->email,
+            'telephone'             => $this->telephone,
+            'contacts'              => $this->contacts,
             'postid'                => $this->postid,
         ];
 
@@ -363,84 +363,94 @@ class Person {
     /*
      * Create and get Displayname in semantic HTML
      */
-    public function getDisplayName(bool $html = true, bool $hard_sanitize = false, array $show = [], array $hide = []): string {
+    public function getDisplayName(bool $html = true, bool $hard_sanitize = false, string $format = ''): string {
         if (empty($this->givenName) && empty($this->familyName)) {
             return '';
         }
         $nameText = '';
         $nameHtml  = '';
 
-        // Wrapper für HTML-Ausgabe
-        $nameHtml .= '<span class="displayname" itemprop="name">';
+        if (empty($format)) {
+            // Wrapper für HTML-Ausgabe
+            $nameHtml .= '<span class="displayname" itemprop="name">';
 
-        // Hilfsfunktion: Überprüft, ob ein Feld ausgegeben werden soll.
-        // Falls $hide nicht leer ist und der Schlüssel darin enthalten ist, oder
-        // falls $show nicht leer ist und der Schlüssel nicht enthalten ist, wird FALSE zurückgegeben.
-        $shouldOutput = function(string $fieldKey) use ($show, $hide): bool {
-            if (!empty($hide) && in_array($fieldKey, $hide, true)) {
-                return false;
-            }
-            if (!empty($show) && !in_array($fieldKey, $show, true)) {
-                return false;
-            }
-            return true;
-        };
-
-        // "personalTitle"
-        if (!empty($this->honorificPrefix) && $shouldOutput('honorificPrefix')) {
-            if ($hard_sanitize) {
-                $long_version = self::getAcademicTitleLongVersion($this->honorificPrefix);
-                if (!empty($long_version)) {
-                    $nameHtml .= '<abbr title="' . esc_attr($long_version) . '" itemprop="honorificPrefix">' 
-                                . esc_html($this->honorificPrefix) . '</abbr> ';
+            // "personalTitle"
+            if (!empty($this->honorificPrefix)) {
+                if ($hard_sanitize) {
+                    $long_version = self::getAcademicTitleLongVersion($this->honorificPrefix);
+                    if (!empty($long_version)) {
+                        $nameHtml .= '<abbr title="' . esc_attr($long_version) . '" itemprop="honorificPrefix">' 
+                                    . esc_html($this->honorificPrefix) . '</abbr> ';
+                    } else {
+                        $nameHtml .= '<span itemprop="honorificPrefix">' . esc_html($this->honorificPrefix) . '</span> ';
+                    }
                 } else {
                     $nameHtml .= '<span itemprop="honorificPrefix">' . esc_html($this->honorificPrefix) . '</span> ';
                 }
-            } else {
-                $nameHtml .= '<span itemprop="honorificPrefix">' . esc_html($this->honorificPrefix) . '</span> ';
+                $nameText .= esc_html($this->honorificPrefix) . ' ';
             }
-            $nameText .= esc_html($this->honorificPrefix) . ' ';
-        }
 
-        // "givenName"
-        if (!empty($this->givenName) && $shouldOutput('givenName')) {
-            $nameHtml .= '<span itemprop="givenName">' . esc_html($this->givenName) . '</span> ';
-            $nameText .= esc_html($this->givenName) . ' ';
-        }
+            // "givenName"
+            if (!empty($this->givenName)) {
+                $nameHtml .= '<span itemprop="givenName">' . esc_html($this->givenName) . '</span> ';
+                $nameText .= esc_html($this->givenName) . ' ';
+            }
 
+
+
+            // "familyName"
+            if (!empty($this->familyName)) {          
+                $nameHtml .= '<span itemprop="familyName">';        
+                // "titleOfNobility" is part of the familyName
+                if (!empty($this->titleOfNobility) && $shouldOutput('titleOfNobility')) {
+                    $nameHtml .= esc_html($this->titleOfNobility) . ' ';
+                    $nameText .= esc_html($this->titleOfNobility) . ' ';
+                }
+
+                $nameHtml .= esc_html($this->familyName) . '</span> ';
+                $nameText .= esc_html($this->familyName) . ' ';
+            }
+
+            // "personalTitleSuffix"
+            if (!empty($this->honorificSuffix)) {
+                $nameHtml .= '(<span itemprop="honorificSuffix">' . esc_html($this->honorificSuffix) . '</span>)';
+                $nameText .= '(' . esc_html($this->honorificSuffix) . ')';
+            }
+
+            $nameHtml .= '</span>';
+
+            return $html ? $nameHtml : $nameText;
+        }
         
+        // format string is given. In this case display the name parts in the form that is displayed in the format
+        // add nor semantic nor commas or other signs
 
-        // "familyName"
-        if (!empty($this->familyName) && $shouldOutput('familyName')) {
-            
-            $nameHtml .= '<span itemprop="familyName">';
-            
-            // "titleOfNobility" is part of the familyName
-            if (!empty($this->titleOfNobility) && $shouldOutput('titleOfNobility')) {
-                $nameHtml .= esc_html($this->titleOfNobility) . ' ';
-                $nameText .= esc_html($this->titleOfNobility) . ' ';
-            }
-             
-            $nameHtml .= esc_html($this->familyName) . '</span> ';
-            $nameText .= esc_html($this->familyName) . ' ';
-        }
-
-        // "personalTitleSuffix"
-        if (!empty($this->honorificSuffix) && $shouldOutput('honorificSuffix')) {
-            $nameHtml .= '(<span itemprop="honorificSuffix">' . esc_html($this->honorificSuffix) . '</span>)';
-            $nameText .= '(' . esc_html($this->honorificSuffix) . ')';
-        }
-
-        $nameHtml .= '</span>';
-
-        return $html ? $nameHtml : $nameText;
+        // Platzhalter mit den entsprechenden Werten ersetzen
+        $replacements = [
+            '#givenName#' => $this->givenName ?? '',
+            '#displayname#' => $this->getDisplayName(false,false) ?? '',
+            '#familyName#' => $this->familyName ?? '',
+            '#honorificPrefix#' => $this->honorificPrefix ?? '',
+            '#honorificSuffix#' => $this->honorificSuffix ?? '',
+            '#titleOfNobility#' => $this->titleOfNobility ?? ''
+        ]; 
+        return str_replace(array_keys($replacements), array_values($replacements), $format);
+        
+        
     }  
     
+    
+    
+    /*
+     * Get Raw Data, Data that is not avaible as direct attribut of the object
+     */
     public function getRawData(): array {
         return $this->rawdata;
     }
     
-    
+    /*
+     * Get Post Id for a person
+     */
      public function getPostId(): int {
         $contact_posts = get_posts([
             'post_type' => 'custom_person',
@@ -522,23 +532,20 @@ class Person {
         if (empty($template)) {
             $template = "Name : #displayname#".PHP_EOL;
         }
-        
-
         // Platzhalter mit den entsprechenden Werten ersetzen
         $replacements = [
             '#identifier#' => $this->identifier ?? '',
             '#givenName#' => $this->givenName ?? '',
             '#displayname#' => $this->getDisplayName() ?? '',
             '#familyName#' => $this->familyName ?? '',
-            '#personalTitle#' => $this->personalTitle ?? '',
-            '#personalTitleSuffix#' => $this->personalTitleSuffix ?? '',
+            '#honorificPrefix#' => $this->honorificPrefix ?? '',
+            '#honorificSuffix#' => $this->honorificSuffix ?? '',
             '#titleOfNobility#' => $this->titleOfNobility ?? ''
-        ];
-
-                
+        ]; 
         return str_replace(array_keys($replacements), array_values($replacements), $template);
-
     }
+    
+    
     private static function getAcademicTitleLongVersion(string $prefix): string  {
         $prefixes = array(
             'Dr.' => __('Doctor', 'rrze-faudir'),
