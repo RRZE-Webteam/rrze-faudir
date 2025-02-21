@@ -3,6 +3,8 @@ Settings for FAU Einrichtungen theme
 */
 .fau-theme {
     .content-row .entry-content {
-        overflow-x: auto;
+	.faudir {		    
+	    overflow-x: auto;
+	}
     }    
 }
