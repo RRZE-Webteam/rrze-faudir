@@ -44,8 +44,8 @@ class FaudirUtils {
     
     public static function getDefaultOutputFields() {
         $options = get_option('rrze_faudir_options');
-        $default_output_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : [];
-
+        $default_show_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : [];
+/*
         $field_mapping = [
             'displayname'       => 'displayName',
             'honorificPrefix'    => 'personalTitle',
@@ -62,7 +62,7 @@ class FaudirUtils {
         $default_show_fields = array_map(function ($field) use ($field_mapping) {
             return isset($field_mapping[$field]) ? $field_mapping[$field] : $field;
         }, $default_output_fields);
-
+        */
         return array_unique($default_show_fields);
     }
 
@@ -83,11 +83,11 @@ class FaudirUtils {
 
     public static function getPersonNameHtml($person_data)  {
         $hard_sanitize = $person_data['hard_sanitize'] ?? false;
-        $personal_title = $person_data['personal_title'] ?? '';
+        $personal_title = $person_data['honorificPrefix'] ?? '';
         $givenName = $person_data['givenName'] ?? '';
-        $nobility_title = $person_data['nobility_title'] ?? '';
+        $nobility_title = $person_data['titleOfNobility'] ?? '';
         $familyName = $person_data['familyName'] ?? '';
-        $title_suffix = $person_data['title_suffix'] ?? '';
+        $title_suffix = $person_data['honorificSuffix'] ?? '';
         $identifier = $person_data['identifier'] ?? '';
 
         // if all name parts are empty, return an empty string

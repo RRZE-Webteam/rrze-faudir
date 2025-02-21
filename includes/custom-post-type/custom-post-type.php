@@ -144,12 +144,12 @@ function render_person_additional_fields($post) {
     $api_fields = [
         'person_name',
         'person_email',
-        'person_telephone',
-        'person_given_name',
-        'person_family_name',
-        'person_title',
-        'person_suffix',
-        'person_nobility_title',
+        'person_phone',
+        'person_givenName',
+        'person_familyName',
+        'person_honorificPrefix',
+        'person_honorificSuffix',
+        'person_titleOfNobility',
     ];
 
     $fields = [
@@ -159,12 +159,12 @@ function render_person_additional_fields($post) {
         'person_id' => __('API Person Identifier', 'rrze-faudir'),
         'person_name' => __('Name', 'rrze-faudir'),
         'person_email' => __('Email', 'rrze-faudir'),
-        'person_telephone' => __('Telephone', 'rrze-faudir'),
-        'person_given_name' => __('Given Name', 'rrze-faudir'),
-        'person_family_name' => __('Family Name', 'rrze-faudir'),
-        'person_title' => __('Title', 'rrze-faudir'),
-        'person_suffix' => __('Suffix', 'rrze-faudir'),
-        'person_nobility_title' => __('Nobility Title', 'rrze-faudir'),
+        'person_phone' => __('Telephone', 'rrze-faudir'),
+        'person_givenName' => __('Given Name', 'rrze-faudir'),
+        'person_familyName' => __('Family Name', 'rrze-faudir'),
+        'person_honorificPrefix' => __('Title', 'rrze-faudir'),
+        'person_honorificSuffix' => __('Suffix', 'rrze-faudir'),
+        'person_titleOfNobility' => __('Nobility Title', 'rrze-faudir'),
     ];
 
     // Render regular fields
@@ -302,9 +302,10 @@ function save_person_additional_fields($post_id) {
                 update_post_meta($post_id, 'person_name', sanitize_text_field($person['givenName'] . ' ' . $person['familyName']));
                 update_post_meta($post_id, 'person_email', sanitize_email($person['email'] ?? ''));
                 update_post_meta($post_id, 'person_telephone', sanitize_text_field($person['telephone'] ?? ''));
-                update_post_meta($post_id, 'person_given_name', sanitize_text_field($person['givenName'] ?? ''));
-                update_post_meta($post_id, 'person_family_name', sanitize_text_field($person['familyName'] ?? ''));
-                update_post_meta($post_id, 'person_title', sanitize_text_field($person['personalTitle'] ?? ''));
+                update_post_meta($post_id, 'person_givenName', sanitize_text_field($person['givenName'] ?? ''));
+                update_post_meta($post_id, 'person_familyName', sanitize_text_field($person['familyName'] ?? ''));
+                update_post_meta($post_id, 'person_honorificPrefix', sanitize_text_field($person['honorificPrefix'] ?? ''));
+                update_post_meta($post_id, 'person_honorificSuffix', sanitize_text_field($person['honorificSuffix'] ?? ''));
 
                 // Process organizations, functions, workplaces, and addresses
                 $contacts = array();
@@ -351,11 +352,11 @@ function save_person_additional_fields($post_id) {
         'person_name',
         'person_email',
         'person_telephone',
-        'person_given_name',
-        'person_family_name',
-        'person_title',
-        'person_suffix',
-        'person_nobility_title',
+        'person_givenName',
+        'person_familyName',
+        'person_honorificPrefix',
+        'person_honorificSuffix',
+        'person_titleOfNobility',
     ];
 
     // Save each field
@@ -445,9 +446,10 @@ function fetch_person_attributes() {
                     'person_name' => sanitize_text_field($person['givenName'] . ' ' . $person['familyName']),
                     'person_email' => sanitize_email($person['email'] ?? ''),
                     'person_telephone' => sanitize_email($person['telephone'] ?? ''),
-                    'person_given_name' => sanitize_text_field($person['givenName'] ?? ''),
-                    'person_family_name' => sanitize_text_field($person['familyName'] ?? ''),
-                    'person_title' => sanitize_text_field($person['personalTitle'] ?? ''),
+                    'person_givenName' => sanitize_text_field($person['givenName'] ?? ''),
+                    'person_familyName' => sanitize_text_field($person['familyName'] ?? ''),
+                    'person_honorificSuffix' => sanitize_text_field($person['honorificSuffix'] ?? ''),
+                    'person_honorificPrefix' => sanitize_text_field($person['honorificPrefix'] ?? ''),
                     'organizations' => $contacts
                 ));
             } else {
@@ -502,11 +504,11 @@ function rrze_faudir_create_custom_person() {
             update_post_meta($post_id, 'person_name', sanitize_text_field($person['givenName'] . ' ' . $person['familyName']));
             update_post_meta($post_id, 'person_email', sanitize_email($person['email'] ?? ''));
             update_post_meta($post_id, 'person_telephone', sanitize_email($person['telephone'] ?? ''));
-            update_post_meta($post_id, 'person_given_name', sanitize_text_field($person['givenName'] ?? ''));
-            update_post_meta($post_id, 'person_family_name', sanitize_text_field($person['familyName'] ?? ''));
-            update_post_meta($post_id, 'person_title', sanitize_text_field($person['personalTitle'] ?? ''));
-            update_post_meta($post_id, 'person_suffix', sanitize_text_field($person['personalTitleSuffix'] ?? ''));
-            update_post_meta($post_id, 'person_nobility_title', sanitize_text_field($person['titleOfNobility'] ?? ''));
+            update_post_meta($post_id, 'person_givenName', sanitize_text_field($person['givenName'] ?? ''));
+            update_post_meta($post_id, 'person_familyName', sanitize_text_field($person['familyName'] ?? ''));
+            update_post_meta($post_id, 'person_honorificPrefix', sanitize_text_field($person['honorificPrefix'] ?? ''));
+            update_post_meta($post_id, 'person_honorificPrefix', sanitize_text_field($person['honorificPrefix'] ?? ''));
+            update_post_meta($post_id, 'person_titleOfNobility', sanitize_text_field($person['titleOfNobility'] ?? ''));
 
             // Process organizations and functions
             $contacts = array();

@@ -14,12 +14,10 @@ if (!defined('ABSPATH')) {
     <?php
     
      $config = new Config;
-        $available_fields = $config->get('avaible_fields');
+     $available_fields = $config->get('avaible_fields');
     
      echo "<h2>Show</h2>". Debug::get_html_var_dump($show_fields);
      echo "<hr><h2>Hide</h2>". Debug::get_html_var_dump($hide_fields);
-     
-     
      echo "<hr><h2>All fields</h2>". Debug::get_html_var_dump($available_fields);
      $noout = '';
      

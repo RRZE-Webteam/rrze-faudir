@@ -14,8 +14,8 @@ class Person {
     public string $identifier;
     public string $givenName;
     public string $familyName;
-    public ?string $personalTitle;
-    public ?string $personalTitleSuffix;
+    public ?string $honorificPrefix;
+    public ?string $honorificSuffix;
     public ?string $titleOfNobility;   
     public ?string $pronoun;
     public ?string $email;
@@ -30,8 +30,8 @@ class Person {
         $this->identifier = $data['identifier'] ?? '';
         $this->givenName = $data['givenName'] ?? '';
         $this->familyName = $data['familyName'] ?? '';    
-        $this->personalTitle = $data['personalTitle'] ?? '';
-        $this->personalTitleSuffix = $data['personalTitleSuffix'] ?? '';
+        $this->honorificPrefix = $data['honorificPrefix'] ?? '';
+        $this->honorificSuffix = $data['honorificSuffix'] ?? '';
         $this->titleOfNobility = $data['titleOfNobility'] ?? '';       
         $this->pronoun = $data['pronoun'] ?? '';
         $this->email = $data['email'] ?? '';
@@ -45,8 +45,8 @@ class Person {
             'identifier',
             'givenName',
             'familyName',
-            'personalTitle',
-            'personalTitleSuffix',
+            'honorificPrefix',
+            'honorificSuffix',
             'titleOfNobility',
             'pronoun',
             'email',
@@ -69,8 +69,8 @@ class Person {
             $this->identifier          = '';
             $this->givenName           = '';
             $this->familyName          = '';
-            $this->personalTitle       = '';
-            $this->personalTitleSuffix = '';
+            $this->honorificPrefix       = '';
+            $this->honorificSuffix      = '';
             $this->titleOfNobility     = '';
             $this->pronoun             = '';
             $this->email               = '';
@@ -93,10 +93,10 @@ class Person {
             $this->familyName = $data['familyName'];
         }
         if (isset($data['personalTitle'])) {
-            $this->personalTitle = $data['personalTitle'];
+            $this->honorificPrefix = $data['honorificPrefix'];
         }
-        if (isset($data['personalTitleSuffix'])) {
-            $this->personalTitleSuffix = $data['personalTitleSuffix'];
+        if (isset($data['honorificSuffix'])) {
+            $this->honorificSuffix = $data['honorificSuffix'];
         }
         if (isset($data['titleOfNobility'])) {
             $this->titleOfNobility = $data['titleOfNobility'];
@@ -122,8 +122,8 @@ class Person {
             'identifier',
             'givenName',
             'familyName',
-            'personalTitle',
-            'personalTitleSuffix',
+            'honorificPrefix',
+            'honorificSuffix',
             'titleOfNobility',
             'pronoun',
             'email',
@@ -144,8 +144,8 @@ class Person {
             'identifier'           => $this->identifier,
             'givenName'            => $this->givenName,
             'familyName'           => $this->familyName,
-            'personalTitle'        => $this->personalTitle,
-            'personalTitleSuffix'  => $this->personalTitleSuffix,
+            'honorificPrefix'        => $this->honorificPrefix,
+            'honorificSuffix'  => $this->honorificSuffix,
             'titleOfNobility'      => $this->titleOfNobility,
             'pronoun'              => $this->pronoun,
             'email'                => $this->email,
@@ -364,7 +364,7 @@ class Person {
      * Create and get Displayname in semantic HTML
      */
     public function getDisplayName(bool $html = true, bool $hard_sanitize = false, array $show = [], array $hide = []): string {
-        if (empty($this->givenName) && empty($this->titleOfNobility) && empty($this->familyName) && empty($this->personalTitle)) {
+        if (empty($this->givenName) && empty($this->familyName)) {
             return '';
         }
         $nameText = '';
@@ -387,19 +387,19 @@ class Person {
         };
 
         // "personalTitle"
-        if (!empty($this->personalTitle) && $shouldOutput('personalTitle')) {
+        if (!empty($this->honorificPrefix) && $shouldOutput('honorificPrefix')) {
             if ($hard_sanitize) {
-                $long_version = self::getAcademicTitleLongVersion($this->personalTitle);
+                $long_version = self::getAcademicTitleLongVersion($this->honorificPrefix);
                 if (!empty($long_version)) {
                     $nameHtml .= '<abbr title="' . esc_attr($long_version) . '" itemprop="honorificPrefix">' 
-                                . esc_html($this->personalTitle) . '</abbr> ';
+                                . esc_html($this->honorificPrefix) . '</abbr> ';
                 } else {
-                    $nameHtml .= '<span itemprop="honorificPrefix">' . esc_html($this->personalTitle) . '</span> ';
+                    $nameHtml .= '<span itemprop="honorificPrefix">' . esc_html($this->honorificPrefix) . '</span> ';
                 }
             } else {
-                $nameHtml .= '<span itemprop="honorificPrefix">' . esc_html($this->personalTitle) . '</span> ';
+                $nameHtml .= '<span itemprop="honorificPrefix">' . esc_html($this->honorificPrefix) . '</span> ';
             }
-            $nameText .= esc_html($this->personalTitle) . ' ';
+            $nameText .= esc_html($this->honorificPrefix) . ' ';
         }
 
         // "givenName"
@@ -426,9 +426,9 @@ class Person {
         }
 
         // "personalTitleSuffix"
-        if (!empty($this->personalTitleSuffix) && $shouldOutput('personalTitleSuffix')) {
-            $nameHtml .= '(<span itemprop="honorificSuffix">' . esc_html($this->personalTitleSuffix) . '</span>)';
-            $nameText .= '(' . esc_html($this->personalTitleSuffix) . ')';
+        if (!empty($this->honorificSuffix) && $shouldOutput('honorificSuffix')) {
+            $nameHtml .= '(<span itemprop="honorificSuffix">' . esc_html($this->honorificSuffix) . '</span>)';
+            $nameText .= '(' . esc_html($this->honorificSuffix) . ')';
         }
 
         $nameHtml .= '</span>';

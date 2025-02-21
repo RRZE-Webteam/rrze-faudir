@@ -98,7 +98,7 @@ class Shortcode {
         
 
         // Handle name-related fields logic
-        $name_fields = ['personalTitle', 'givenName', 'familyName', 'personalTitleSuffix', 'titleOfNobility'];
+        $name_fields = ['honorificPrefix', 'givenName', 'familyName', 'honorificSuffix', 'titleOfNobility'];
 
         // If displayName is in show_fields, add all name-related fields
         if (in_array('displayName', $show_fields)) {

@@ -32,7 +32,7 @@ class Config {
             'displayname'      => __('Display Name', 'rrze-faudir'),
             'honorificPrefix'    => __('Academic Title', 'rrze-faudir'),
             'givenName'        => __('First Name', 'rrze-faudir'),
-            'nobility_title'    => __('Nobility Title', 'rrze-faudir'),
+            'titleOfNobility'    => __('Nobility Title', 'rrze-faudir'),
             'familyName'         => __('Last Name', 'rrze-faudir'),
             'honorificSuffix'   => __('Academic Suffix', 'rrze-faudir'),
             'email'             => __('Email', 'rrze-faudir'),
