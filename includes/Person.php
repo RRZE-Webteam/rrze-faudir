@@ -443,6 +443,35 @@ class Person {
     }  
     
     
+    /*
+     * Create signature of a person
+     */
+    /*
+     * Create and get Displayname in semantic HTML
+     */
+    public function getSignature(): string {
+        if (empty($this->givenName) && empty($this->familyName)) {
+            return '';
+        }
+        $firstLetter = $middleLetter = $lastLetter = $res = '';
+        
+        if (!empty($this->givenName)) {
+            $firstLetter = mb_substr($this->givenName, 0, 1, 'UTF-8'); 
+            $res =  mb_strtoupper($firstLetter, 'UTF-8');
+        }
+        if (!empty($this->titleOfNobility)) {
+            $middleLetter = mb_substr($this->titleOfNobility, 0, 1, 'UTF-8'); 
+            $res .=  mb_strtolower($middleLetter, 'UTF-8');
+        }
+        if (!empty($this->familyName)) {          
+            $lastLetter = mb_substr($this->familyName, 0, 1, 'UTF-8'); 
+            $res .= mb_strtoupper($lastLetter, 'UTF-8');
+        }
+
+        return $res;        
+    }  
+    
+    
     
     /*
      * Get Raw Data, Data that is not avaible as direct attribut of the object
@@ -480,7 +509,7 @@ class Person {
             $postid = $this->postid;
         }
         $cpt_url = '';
-        if ($this->postid !== 0) {
+        if ($postid !== 0) {
             $cpt_url  =  get_permalink($postid); 
         }
                        
@@ -497,7 +526,7 @@ class Person {
         } else {
             $postid = $this->postid;
         }
-        if ($this->postid !== 0) {
+        if ($postid !== 0) {
             if ($lang === 'de') {
                 $raw_content = get_post_field('post_content', $postid);
                 $content   = apply_filters('the_content', $raw_content);
@@ -521,7 +550,7 @@ class Person {
         } else {
             $postid = $this->postid;
         }
-        if ($this->postid !== 0) {
+        if ($postid !== 0) {
             if ($lang === 'de') {
                 $teaser_text_key = '_teasertext_de';
             } else {
@@ -531,6 +560,77 @@ class Person {
         }
                        
         return '';                       
+    }
+    
+    /*
+     * Get Image as HTML or Replacement
+     */
+    public function getImage(string $css_classes = '', string $figcaption = '', bool $signature = true): string {
+         if (empty($this->postid)) {
+            $postid = $this->getPostId();
+        } else {
+            $postid = $this->postid;
+        }
+        if ($postid !== 0) {
+            $thumb_id = get_post_thumbnail_id( $postid );
+             // Erhalte den Bildpfad, die Breite und Höhe des Bildes in der Größe "full" (oder einer anderen gewünschten Größe)
+             $img_src = wp_get_attachment_image_src( $thumb_id, 'full' );
+             if ($img_src ) {
+                $src    = $img_src[0];
+                $width  = $img_src[1];
+                $height = $img_src[2];
+
+                // Hole srcset und sizes, sofern verfügbar
+                $srcset = wp_get_attachment_image_srcset( $thumb_id, 'full' );
+                $sizes  = wp_get_attachment_image_sizes( $thumb_id, 'full' );
+                $alt = $this->getSignature();
+                
+                $html  = '<figure itemprop="image" itemscope itemtype="http://schema.org/ImageObject"';
+                if (!empty($css_classes)) {
+                    $html  .= ' class="' . esc_attr( $css_classes ) . '"';
+                }
+                $html .= '>';
+                $html .= '<img src="' . esc_url( $src ) . '" ';
+                if (!empty($alt)) {
+                    $html .= 'alt="' . esc_attr( $alt ) . '" ';
+                }
+                $html .= 'width="' . esc_attr( $width ) . '" ';
+                $html .= 'height="' . esc_attr( $height ) . '" ';
+                if ( $srcset ) {
+                    $html .= 'srcset="' . esc_attr( $srcset ) . '" ';
+                }
+                if ( $sizes ) {
+                    $html .= 'sizes="' . esc_attr( $sizes ) . '" ';
+                }
+                $html .= 'itemprop="contentUrl">';
+                $html .= '<meta itemprop="width" content="' . esc_attr( $width ) . '">';
+                $html .= '<meta itemprop="height" content="' . esc_attr( $height ) . '">';
+                if (!empty($figcaption)) {
+                    $html .= '<figcaption itemprop="caption">'.esc_html($figcaption).'</figcaption>';
+                }
+                $html .= '</figure>';
+
+                return $html;
+            }
+        }
+        
+        if ($signature) {
+            // No image returned, therefor create the text variant and return this
+            $alt = $this->getSignature();
+            $html  = '<figure ';
+            if (!empty($css_classes)) {
+               $css_classes .= ' signature';
+            } else {
+               $css_classes = 'signature';
+            }
+            $html  .= ' class="' . esc_attr( $css_classes ) . '"';
+            $html .= '>';
+            $html .= '<span class="text">'.$alt.'</span>';    
+            $html .= '</figure>';
+            return $html;
+        }
+        return '';
+        
     }
     
     

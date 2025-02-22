@@ -150,8 +150,9 @@ if (!defined('ABSPATH')) {
                                             }
                                             $value = $wval;      
                                     }
-                                    
-                                    
+                                } elseif ($key_lower === 'image')  {      
+                                    $value = $person->getImage();
+                                  
                                 } elseif ($key_lower === 'content')  {      
                                     $wval = $person->getContent($lang);
                                     if (!empty($wval)) {
