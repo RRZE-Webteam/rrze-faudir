@@ -469,6 +469,10 @@ class Person {
         return 0;               
     }
     
+    
+    /*
+     * Get permalink fpr custom post type
+     */       
     public function getTargetURL(): string {       
         if (empty($this->postid)) {
             $postid = $this->getPostId();
@@ -482,6 +486,53 @@ class Person {
                        
         return $cpt_url;                       
     }
+    
+    
+    /*
+     * Get Content from custom post
+     */
+    public function getContent(string $lang = 'de'): string {
+         if (empty($this->postid)) {
+            $postid = $this->getPostId();
+        } else {
+            $postid = $this->postid;
+        }
+        if ($this->postid !== 0) {
+            if ($lang === 'de') {
+                $raw_content = get_post_field('post_content', $postid);
+                $content   = apply_filters('the_content', $raw_content);
+            } else {
+                $raw_content = get_post_meta($postid, '_content_en', true);
+                $content   = apply_filters('the_content', $raw_content);
+            }
+            return $content;
+        }             
+        return '';  
+  
+    }
+    
+    
+    /*
+     * Get teasertext
+     */       
+    public function getTeasertext(string $lang = 'de'): string {       
+        if (empty($this->postid)) {
+            $postid = $this->getPostId();
+        } else {
+            $postid = $this->postid;
+        }
+        if ($this->postid !== 0) {
+            if ($lang === 'de') {
+                $teaser_text_key = '_teasertext_de';
+            } else {
+                $teaser_text_key = '_teasertext_en';
+            }
+            return get_post_meta($postid, $teaser_text_key, true);
+        }
+                       
+        return '';                       
+    }
+    
     
     public function getPrimaryContact(): ?Contact {       
         // Wenn es keinen Contact-Array gibt, dann gibt es kein Contact

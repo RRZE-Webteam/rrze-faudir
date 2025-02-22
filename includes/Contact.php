@@ -207,7 +207,14 @@ class Contact {
         $res = '';
         if  (!empty($this->organization)) {
             if ((isset($this->organization['longDescription'])) && (isset($this->organization['longDescription'][$lang]))) {
-                $res = '<span itemprop="name">'.esc_html($this->organization['longDescription'][$lang]).'</span>';    
+                $res = '<span class="organization" itemprop="name">'.esc_html($this->organization['longDescription'][$lang]).'</span>';    
+            } elseif (isset($this->organization['longDescription'])) {
+                // Org in searched lang nocht avaible, using the other one
+                if ($lang=== 'de') {
+                    $res = '<span class="organization" itemprop="name">'.esc_html($this->organization['longDescription']['en']).'</span>';    
+                } else {
+                    $res = '<span class="organization" itemprop="name">'.esc_html($this->organization['longDescription']['de']).'</span>';    
+                }
             }
         }
         return $res;

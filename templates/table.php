@@ -107,7 +107,7 @@ if (!defined('ABSPATH')) {
                                             $room = '';
                                             foreach ($workplaces as $w => $wdata) {
                                                 if (!empty($wdata['room'])) {
-                                                    $room .= '<span><span class="screen-reader-text">'.__('Room','rrze-faudir').': </span>'.esc_html($wdata['room']).'</span>';
+                                                    $room .= '<span class="room"><span class="screen-reader-text">'.__('Room','rrze-faudir').': </span>'.esc_html($wdata['room']).'</span>';
                                                 }
                                             }
                                             $value = $room;      
@@ -129,18 +129,15 @@ if (!defined('ABSPATH')) {
                                         $formattedPhone = FaudirUtils::format_phone_number($phone);
                                         $telLink = preg_replace('/\s+/', '', $formattedPhone); // Entferne Leerzeichen für den `tel:`-Link
                                         $formattedValue = '<a itemprop="telephone" href="tel:' . esc_attr($telLink) . '">' . esc_html($formattedPhone) . '</a>';
-                                        $wval .= '<span><span class="screen-reader-text">'.__('Phone','rrze-faudir').': </span>'.$formattedValue.'</span>';
+                                        $wval .= '<span class="phone"><span class="screen-reader-text">'.__('Phone','rrze-faudir').': </span>'.$formattedValue.'</span>';
                                         
                                     }
                                     $value = $wval;      
                                     
                                 } elseif ($key_lower === 'organization')  {    
-                                    $orgname = $contact->getOrganizationName($lang);
-                                    if ($jobtitle) {
-                                         $value = $orgname;                                      
-                                    }  
+                                    $value = $contact->getOrganizationName($lang);
                                     
-                                    
+                                  
                                 } elseif ($key_lower === 'url')  {      
                                    if (!empty($workplaces)) {
                                             $wval = '';
@@ -148,22 +145,30 @@ if (!defined('ABSPATH')) {
                                                 if (!empty($wdata['url'])) {
                                                     $displayValue = preg_replace('/^https?:\/\//i', '', $wdata['url']);     
                                                     $formattedValue = '<a href="' . esc_url($wdata['url']) . '" itemprop="url">' . esc_html($displayValue) . '</a>';
-                                                    $wval .= '<li><span class="screen-reader-text">'.__('URL','rrze-faudir').': </span>'.$formattedValue.'</li>';
+                                                    $wval .= '<span class="url"><span class="screen-reader-text">'.__('URL','rrze-faudir').': </span>'.$formattedValue.'</span>';
                                                 }
                                             }
                                             $value = $wval;      
                                     }
                                     
                                     
-                                } elseif ($key_lower === 'content')  {             
-                                } elseif ($key_lower === 'teasertext')  {             
+                                } elseif ($key_lower === 'content')  {      
+                                    $wval = $person->getContent($lang);
+                                    if (!empty($wval)) {
+                                        $value = '<div class="content">'.$wval.'</div>';
+                                    }
+                                } elseif ($key_lower === 'teasertext')  {     
+                                    $wval = $person->getTeasertext($lang);
+                                    if (!empty($wval)) {
+                                        $value = '<div class="teasertext">'.wp_kses_post($wval).'</div>';
+                                    }
                                 } elseif ($key_lower === 'workplaces')  {             
                                 } elseif ($key_lower === 'floor')  {      
                                      if (!empty($workplaces)) {
                                             $wval = '';
                                             foreach ($workplaces as $w => $wdata) {
                                                 if (!empty($wdata['floor'])) {
-                                                    $wval .= '<span><span class="screen-reader-text">'.__('Floor','rrze-faudir').': </span>'.esc_html($wdata['floor']).'</span>';
+                                                    $wval .= '<span class="floor"><span class="screen-reader-text">'.__('Floor','rrze-faudir').': </span>'.esc_html($wdata['floor']).'</span>';
                                                 }
                                             }
                                             $value = $wval;      
@@ -182,7 +187,7 @@ if (!defined('ABSPATH')) {
                                             $wval = '';
                                             foreach ($workplaces as $w => $wdata) {
                                                 if (!empty($wdata['street'])) {
-                                                    $wval .= '<span><span class="screen-reader-text">'.__('Street','rrze-faudir').': </span>'.esc_html($wdata['street']).'</span>';
+                                                    $wval .= '<span class="street"><span class="screen-reader-text">'.__('Street','rrze-faudir').': </span>'.esc_html($wdata['street']).'</span>';
                                                 }
                                             }
                                             $value = $wval;      
@@ -192,7 +197,7 @@ if (!defined('ABSPATH')) {
                                             $wval = '';
                                             foreach ($workplaces as $w => $wdata) {
                                                 if (!empty($wdata['zip'])) {
-                                                    $wval .= '<span><span class="screen-reader-text">'.__('Postal Code','rrze-faudir').': </span>'.esc_html($wdata['zip']).'</span>';
+                                                    $wval .= '<span class="zip"><span class="screen-reader-text">'.__('Postal Code','rrze-faudir').': </span>'.esc_html($wdata['zip']).'</span>';
                                                 }
                                             }
                                             $value = $wval;      
@@ -202,7 +207,7 @@ if (!defined('ABSPATH')) {
                                             $wval = '';
                                             foreach ($workplaces as $w => $wdata) {
                                                 if (!empty($wdata['city'])) {
-                                                    $wval .= '<span><span class="screen-reader-text">'.__('City','rrze-faudir').': </span>'.esc_html($wdata['city']).'</span>';
+                                                    $wval .= '<span class="city"><span class="screen-reader-text">'.__('City','rrze-faudir').': </span>'.esc_html($wdata['city']).'</span>';
                                                 }
                                             }
                                             $value = $wval;      
@@ -214,7 +219,7 @@ if (!defined('ABSPATH')) {
                                                 if (!empty($wdata['faumap'])) {
                                                     if (preg_match('/^https?:\/\/karte\.fau\.de/i', $wdata['faumap'])) {
                                                         $formattedValue = '<a href="' . esc_url($wdata['faumap']) . '" itemprop="url">' . esc_html($wdata['faumap']) . '</a>';
-                                                        $faumap .= '<span><span class="screen-reader-text">'.__('FAU Map','rrze-faudir').': </span>'.$formattedValue.'</span>';
+                                                        $faumap .= '<span class="faumap"><span class="screen-reader-text">'.__('FAU Map','rrze-faudir').': </span>'.$formattedValue.'</span>';
                                                     }
                                                 }
                                             }
