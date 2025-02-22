@@ -446,9 +446,6 @@ class Person {
     /*
      * Create signature of a person
      */
-    /*
-     * Create and get Displayname in semantic HTML
-     */
     public function getSignature(): string {
         if (empty($this->givenName) && empty($this->familyName)) {
             return '';
