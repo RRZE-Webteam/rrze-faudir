@@ -40,7 +40,6 @@ class Config {
             'content'           => __('Content', 'rrze-faudir'),
             'teasertext'        => __('Teasertext', 'rrze-faudir'),
             'socialmedia'       => __('Social Media and Websites', 'rrze-faudir'),
-            'workplaces'        => __('Workplaces', 'rrze-faudir'),
             'room'              => __('Room', 'rrze-faudir'),
             'floor'             => __('Floor', 'rrze-faudir'),
             'address'           => __('Address', 'rrze-faudir'),

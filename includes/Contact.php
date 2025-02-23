@@ -222,9 +222,11 @@ class Contact {
     
     /*
      * Get ConsultationHours by Workplace and return in semantic HTML
+     * with key = 'consultationHours' as parameter
+     *   key = 'officeHours' will use this array instead
      */    
-    public function getConsultationsHours(array $workplace): string {
-        if (empty($workplace['consultationHours'])) {
+    public function getConsultationsHours(array $workplace, string $key = 'consultationHours', bool $withaddress = true): string {
+        if ((empty($workplace)) || (empty($workplace[$key]))) {
             return '';
         } 
         
@@ -232,11 +234,16 @@ class Contact {
         $output .= '<div class="ContactPoint" itemprop="contactPoint" itemscope itemtype="https://schema.org/ContactPoint">';
         $output .= '<strong itemprop="contactType">'.esc_html__('Consultation Hours', 'rrze-faudir').':</strong>';
         
-        $num = count($workplace['consultationHours']);
+        if ($withaddress) {
+            
+            $addressdata = $this->getAddressByWorkplace($workplace, false);
+            $output .= $addressdata;
+        }
+        $num = count($workplace[$key]);
         if ($num > 1) {
             $output .= '<ul class="ContactPointList">';
         }
-        foreach ($workplace['consultationHours'] as $consultationHours) {
+        foreach ($workplace[$key] as $consultationHours) {
             if ($num > 1) {
                  $output .= '<li>';
             }

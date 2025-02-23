@@ -66,8 +66,8 @@ if (!defined('ABSPATH')) {
                         if (!empty($contact)) { 
                             $contactdata = $contact->toArray();     
                             $workplaces = $contact->getWorkplaces();
-                            $workplaces['mails'] = $mailadresses;
-                            $workplaces['phones'] = $phonenumbers;                         
+                      //      $workplaces['mails'] = $mailadresses;
+                      //      $workplaces['phones'] = $phonenumbers;                         
                             $socials = $contact->getSocialArray();
  
                         }
@@ -113,7 +113,8 @@ if (!defined('ABSPATH')) {
                                             $value = $room;      
                                     }
                                 } elseif ($key_lower === 'email')  {     
-                                        $wval = '';                                    
+                                        $wval = '';           
+                                        $mailadresses= $person->getEMail();
                                         foreach ($mailadresses as $mail) {
                                             if (filter_var($mail, FILTER_VALIDATE_EMAIL)) {
                                                 $formattedValue = '<a itemprop="email" href="mailto:' . esc_attr($mail) . '">' . esc_html($mail) . '</a>';
@@ -163,7 +164,6 @@ if (!defined('ABSPATH')) {
                                     if (!empty($wval)) {
                                         $value = '<div class="teasertext">'.wp_kses_post($wval).'</div>';
                                     }
-                                } elseif ($key_lower === 'workplaces')  {             
                                 } elseif ($key_lower === 'floor')  {      
                                      if (!empty($workplaces)) {
                                             $wval = '';
@@ -227,13 +227,22 @@ if (!defined('ABSPATH')) {
                                             $value = $faumap;
                                         }
                                
-                                } elseif ($key_lower === 'officehours')  {             
+                                } elseif ($key_lower === 'officehours')  {  
+                                    if (!empty($workplaces)) {
+                                            $hours = '';
+                                            foreach ($workplaces as $w => $wdata) {
+                                                if (!empty($wdata['officeHours'])) {
+                                                    $hours .= $contact->getConsultationsHours($wdata, 'officeHours');
+                                                }
+                                            }
+                                            $value = $hours;
+                                        }
                                 } elseif ($key_lower === 'consultationhours')  {             
                                         if (!empty($workplaces)) {
                                             $hours = '';
                                             foreach ($workplaces as $w => $wdata) {
                                                 if (!empty($wdata['consultationHours'])) {
-                                                    $hours .= $contact->getConsultationsHours($wdata);
+                                                    $hours .= $contact->getConsultationsHours($wdata );
                                                 }
                                             }
                                             $value = $hours;
@@ -246,9 +255,6 @@ if (!defined('ABSPATH')) {
                                              $value = $workplaces[$key];
                                         }
                                         
-                                }
-                                if (empty($value)) {
-                                    $output .= "Empty ".$key_lower;
                                 }
                                 $output .= $value;
                                 $output .= '</td>';
