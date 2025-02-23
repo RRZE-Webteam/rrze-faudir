@@ -221,6 +221,83 @@ class Contact {
     }
     
     /*
+     * Get ConsultationHours by Workplace and return in semantic HTML
+     */    
+    public function getConsultationsHours(array $workplace): string {
+        if (empty($workplace['consultationHours'])) {
+            return '';
+        } 
+        
+        $output = '';
+        $output .= '<div class="ContactPoint" itemprop="contactPoint" itemscope itemtype="https://schema.org/ContactPoint">';
+        $output .= '<strong itemprop="contactType">'.esc_html__('Consultation Hours', 'rrze-faudir').':</strong>';
+        
+        $num = count($workplace['consultationHours']);
+        if ($num > 1) {
+            $output .= '<ul class="ContactPointList">';
+        }
+        foreach ($workplace['consultationHours'] as $consultationHours) {
+            if ($num > 1) {
+                 $output .= '<li>';
+            }
+            
+            $output .= '<div class="hoursAvailable" itemprop="hoursAvailable" itemscope itemtype="https://schema.org/OpeningHoursSpecification">';
+            $output .= '<span class="weekday" itemprop="dayOfWeek" content="https://schema.org/';
+            $output .= esc_attr(self::getWeekdaySpec($consultationHours['weekday']));
+            $output .= '">';
+            $output .= esc_html(self::getWeekday($consultationHours['weekday'])).': ';
+            $output .= '<span itemprop="opens">'.esc_html($consultationHours['from']).'</span> - ';
+            $output .= '<span itemprop="close">'.esc_html($consultationHours['to']).'</span>';
+            $output .= '</span>';             
+            if (!empty($consultationHours['comment'])) {
+                $output .= '<p class="comment" itemprop="description">'.esc_html($consultationHours['comment']).'</p>';
+            }
+            if (!empty($consultationHours['url'])) {
+                $output .= '<p class="url" itemprop="url"><a href="'.esc_url($consultationHours['url']).'">'.esc_html($consultationHours['url']).'</a></p>';
+            }
+            $output .= '</div>';
+            if ($num > 1) {
+                $output .= '</li>';
+            }
+        }
+        
+        if ($num > 1) {
+            $output .= '</ul>';
+        }
+        $output .= '</div>';
+        return $output;
+    }
+    
+    
+    /*
+    * Get Weekday
+    */
+    private static function getWeekday($weekday): string {
+        $weekdayMap = [
+            0 => __('Sunday','rrze-faudir'),
+            1 => __('Monday','rrze-faudir'),
+            2 => __('Tuesday','rrze-faudir'),
+            3 => __('Wednesday','rrze-faudir'),
+            4 => __('Thursday','rrze-faudir'),
+            5 => __('Friday','rrze-faudir'),
+            6 => __('Saturday','rrze-faudir'),
+        ];
+        return $weekdayMap[$weekday] ?? __('Unknown','rrze-faudir');
+    }
+    private static function getWeekdaySpec($weekday): string {
+        $weekdayMap = [
+            0 => 'Sunday',
+            1 => 'Monday',
+            2 => 'Tuesday',
+            3 => 'Wednesday',
+            4 => 'Thursday',
+            5 => 'Friday',
+            6 => 'Saturday',
+        ];
+        return $weekdayMap[$weekday] ?? 'Unknown';
+    }
+    
+    /*
      * Generate Address Output for a Workplace
      */
     public function getAddressByWorkplace(array $workplace, bool $orgname = true, string $lang = "de"): ?string {
