@@ -15,39 +15,23 @@ if (!defined('ABSPATH')) {
     
      $config = new Config;
      $available_fields = $config->get('avaible_fields');
-    
-  //   echo "<h2>Show</h2>". Debug::get_html_var_dump($show_fields);
-  //   echo "<hr><h2>Hide</h2>". Debug::get_html_var_dump($hide_fields);
- //    echo "<hr><h2>All fields</h2>". Debug::get_html_var_dump($available_fields);
-     
-     $displayorder = config->get('default_display_order');
+     $displayorder = $config->get('default_display_order');
      if (!empty($displayorder)) {
         $reihenfolge = $displayorder['table'];
      } else {
         $reihenfolge = ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia'];
      }
-     
-     
-        // Zuerst die Schlüssel aus $reihenfolge (nur die, die in $available_fields existieren)
-        $ordered_keys = array_merge(
+
+    $ordered_keys = array_merge(
             array_intersect($reihenfolge, array_keys($available_fields)),
-            // Dann alle übrigen Schlüssel aus $available_fields, die nicht in $reihenfolge enthalten sind
             array_diff(array_keys($available_fields), $reihenfolge)
-        );
-   //  echo "<hr><h2>Reihenfolge alle:</h2>". Debug::get_html_var_dump($ordered_keys);
-        echo "<h2>Personendata</h2>";
-         foreach ($persons as $persondata) { 
-              echo  Debug::get_html_var_dump($persondata);
-         }
-        
+    );
+    $lang = FAUdirUtils::getLang();
+     
     ?>    
-    
-    
     <table class="format-table">
         <tbody>
             <?php
-                $lang = FAUdirUtils::getLang();
-                
                 foreach ($persons as $persondata) { 
                     if (isset($persondata['error'])) { ?>
                         <div class="faudir-error">
@@ -55,7 +39,6 @@ if (!defined('ABSPATH')) {
                         </div>
                     <?php } else { 
                      if (!empty($persondata)) { 
-                        
                         $output = '';          
                         $output .= '<tr itemscope itemtype="https://schema.org/Person">';
          
@@ -65,9 +48,7 @@ if (!defined('ABSPATH')) {
                         $phonenumbers = $person->getPhone();                        
                         $final_url = $person->getTargetURL();
                         $contact = $person->getPrimaryContact();
-                        $jobtitle = '';
                         $workplaces = [];
-                        
                         if (!empty($contact)) { 
                             $workplaces = $contact->getWorkplaces();                    
                         }
@@ -247,18 +228,12 @@ if (!defined('ABSPATH')) {
                                 $output .= '</td>';
                             }
                         }
-                        
-                            
-                            
-                           
-
-                        $output .= '</tr>';
-
-                            
+                        $output .= '</tr>'; 
+                        echo $output;
                     } else { ?>
                         <div class="faudir-error"><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?> </div>
-                    <?php }
-                }
+                <?php }
+                    }
                 } ?>
         </tbody>
     </table>
