@@ -19,10 +19,15 @@ if (!defined('ABSPATH')) {
   //   echo "<h2>Show</h2>". Debug::get_html_var_dump($show_fields);
   //   echo "<hr><h2>Hide</h2>". Debug::get_html_var_dump($hide_fields);
  //    echo "<hr><h2>All fields</h2>". Debug::get_html_var_dump($available_fields);
-     $noout = '';
      
-         $reihenfolge = ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext'];
-
+     $displayorder = config->get('default_display_order');
+     if (!empty($displayorder)) {
+        $reihenfolge = $displayorder['table'];
+     } else {
+        $reihenfolge = ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia'];
+     }
+     
+     
         // Zuerst die Schlüssel aus $reihenfolge (nur die, die in $available_fields existieren)
         $ordered_keys = array_merge(
             array_intersect($reihenfolge, array_keys($available_fields)),
@@ -64,10 +69,7 @@ if (!defined('ABSPATH')) {
                         $workplaces = [];
                         
                         if (!empty($contact)) { 
-//                            $contactdata = $contact->toArray();     
                             $workplaces = $contact->getWorkplaces();                    
-                            $socials = $contact->getSocialArray();
- 
                         }
                         
 
@@ -92,14 +94,9 @@ if (!defined('ABSPATH')) {
 
                                     
                                 } elseif ($key_lower === 'jobtitle') {
-                                    $jobtitle = $contact->getJobTitle($lang);
-                                    if ($jobtitle) {
-                                         $value = $jobtitle;                                      
-                                    }  
+                                    $value = $contact->getJobTitle($lang);
                                 } elseif (($key_lower === 'socialmedia') || ($key_lower === 'socials')) { 
-                                        $value = FaudirUtils::getListOutput($socials,'span',__('Social Media and Websites', 'rrze-faudir'),'icon-list icon');
-                                
-                                        
+                                    $value= $contact->getSocialMedia('span');
                                 } elseif ($key_lower === 'room')  {
                                     if (!empty($workplaces)) {
                                             $room = '';
@@ -244,21 +241,10 @@ if (!defined('ABSPATH')) {
                                                 }
                                             }
                                             $value = $hours;
-                                        }  
-                                } else {
-             //                           $value = $key;
-             //                           if (isset($contactdata[$key])) {
-             //                               $value = $contactdata[$key];
-            //                            } elseif ($workplaces[$key]) {
-            //                                 $value = $workplaces[$key];
-           //                             }
-                                        
+                                        }      
                                 }
                                 $output .= $value;
                                 $output .= '</td>';
-                             
-                            } else {
-                                $noout .= $key_lower. " ";
                             }
                         }
                         
@@ -267,8 +253,7 @@ if (!defined('ABSPATH')) {
                            
 
                         $output .= '</tr>';
-                        echo $output;
-                        $noout .= '<br>';
+
                             
                     } else { ?>
                         <div class="faudir-error"><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?> </div>

@@ -368,6 +368,58 @@ class Contact {
     
     
     /*
+     * Get Social Website Liste as semantic HTML
+     */
+    public function getSocialMedia(string $htmlsurround = 'div', string $class = 'icon-list icon', string $arialabel = ''): string {
+        $data = $this->getSocialArray();
+        if (empty($data)) {
+            return '';
+        }
+        if (empty($arialabel)) {
+            $arialabel = __('Social Media and Websites', 'rrze-faudir');
+        }
+        
+        
+        $htmlsurround = self::sanitize_htmlsurround($htmlsurround);
+        
+        
+        $output .= '<'.$htmlsurround;
+        if (!empty($arialabel)) {
+             $output .= ' aria-label="'.trim(esc_attr($arialabel)).'"';
+        }
+        if (!empty($class)) {
+             $output .= ' class="'.trim(esc_attr($class)).'"';
+        }
+        $output .= '>';
+        $output .= '<ul>';
+        foreach ($data as $name => $value) {
+            if (preg_match('/^https?:\/\//i', $value)) {
+                $displayValue = preg_replace('/^https?:\/\//i', '', $value);
+                $formattedValue = '<a href="' . esc_url($value) . '" itemprop="url">' . esc_html($displayValue) . '</a>';
+                $output .= '<li><span class="website title">'.ucfirst(esc_html($name)).': </span>'.$formattedValue.'</li>';
+            } elseif (filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                $formattedValue = '<a itemprop="email" href="mailto:' . esc_attr($value) . '">' . esc_html($value) . '</a>';
+                $output .= '<li><span class="email title">'.ucfirst(esc_html($name)).': </span>'.$formattedValue.'</li>';
+            } else {
+                $formattedValue = '<span class="value">'. esc_html($value). '</span>';
+                $output .= '<li><span class="title">'.ucfirst(esc_html($name)).': </span>'.$formattedValue.'</li>';                        
+            }
+        }
+        
+        $output .= '</'.$htmlsurround.'>';
+        return $output;
+        
+    }
+    /*
+     * Sanitize allowed HTML Tag for list outputs
+     */
+    private static function sanitize_htmlsurround(string $htmlsurround): string {
+        $allowed_tags = ['div', 'span', 'nav', 'p']; // Erlaubte Tags
+        $htmlsurround = strtolower(trim($htmlsurround)); // Kleinschreibung und Leerzeichen entfernen
+
+        return in_array($htmlsurround, $allowed_tags, true) ? $htmlsurround : 'div';
+    }
+    /*
      * Get Social/Website from Contact and transform them into a assoc. array
      */
     public function getSocialArray(): ?array {

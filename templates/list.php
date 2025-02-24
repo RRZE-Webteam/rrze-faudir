@@ -128,9 +128,7 @@ if (!defined('ABSPATH')) {
                         if (!empty($function)) {
                             $workplaces['function'] = $function;
                         }
-             //         $output .= Debug::get_html_var_dump($workplaces);
-             //           $output .= Debug::get_html_var_dump($show_fields);
-             //           $output .= Debug::get_html_var_dump($hide_fields);
+
 
                         $reihenfolge = ['function', 'url', 'mails', 'phones', 'street', 'zip', 'city', 'roompos', 'room', 'floor', 'address','faumap'];
                         // Output Workplace Data

@@ -16,6 +16,10 @@ class Config {
         'business_card_title'       => '',
         'hard_sanitize'             => false,
         'default_output_fields'     => ['displayname', 'jobTitle', 'email', 'phone', 'url'], // Default fields      
+        'default_display_order'     => [
+            'table' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext'],
+            'list'  => ['displayname', 'jobTitle', 'url', 'email', 'socialmedia', 'roompos', 'room', 'floor', 'address','faumap']
+        ]
         
     ];
     
