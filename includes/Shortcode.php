@@ -412,28 +412,28 @@ class Shortcode {
                     }
                     return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');
 
-                case 'function_head':
+                case 'head_first':
                     // Sort by 'head' in functionLabel
                     $a_is_head = false;
                     $b_is_head = false;
 
                     foreach ($a['contacts'] as $contact) {
-                        if (isset($contact['function']) && $contact['function'] === 'leader') {
-                            $a_is_professor = true;
+                        if (isset($contact['function']) && (($contact['function'] === 'leader') || ($contact['function'] === 'deputy'))) {
+                            $a_is_head = true;
                             break;
                         }
                     }
 
                     foreach ($b['contacts'] as $contact) {
                         if (isset($contact['function']) && $contact['function'] === 'professor') {
-                            $b_is_professor = true;
+                            $b_is_head = true;
                             break;
                         }
                     }
 
                     return $a_is_head === $b_is_head ? collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '') : ($a_is_head ? -1 : 1);
 
-                case 'function_proffesor':
+                case 'prof_first':
                     // Sort by 'professor' in functionLabel
                     $a_is_professor = false;
                     $b_is_professor = false;
