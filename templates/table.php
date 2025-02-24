@@ -30,10 +30,10 @@ if (!defined('ABSPATH')) {
             array_diff(array_keys($available_fields), $reihenfolge)
         );
    //  echo "<hr><h2>Reihenfolge alle:</h2>". Debug::get_html_var_dump($ordered_keys);
-   //     echo "<h2>Personendata</h2>";
-  //       foreach ($persons as $persondata) { 
-  //            echo  Debug::get_html_var_dump($persondata);
-  //       }
+        echo "<h2>Personendata</h2>";
+         foreach ($persons as $persondata) { 
+              echo  Debug::get_html_var_dump($persondata);
+         }
         
     ?>    
     
