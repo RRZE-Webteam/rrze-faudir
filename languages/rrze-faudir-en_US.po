@@ -5,8 +5,8 @@ msgstr ""
 "Project-Id-Version: rrze-faudir\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-faudir\n"
 "POT-Creation-Date: 2024-12-19T14:40:58+00:00\n"
-"PO-Revision-Date: 2024-12-19 15:42+0100\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2025-02-24 14:53+0000\n"
+"Last-Translator: Wolfgang Wiese <wolfgang.wiese@fau.de>\n"
 "Language-Team: English (United States)\n"
 "Language: en_US\n"
 "MIME-Version: 1.0\n"
@@ -14,12 +14,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Poedit-Basepath: ..\n"
-"X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;"
-"_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;"
-"esc_html_e;esc_html_x:1,2c\n"
+"X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:"
+"1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;"
+"esc_html_x:1,2c\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Generator: Poedit 3.5\n"
-"X-Loco-Version: 2.6.11; wp-6.6.2\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.7.1; wp-6.7.2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 
@@ -363,11 +363,11 @@ msgstr "Reset to Default Values"
 
 #: includes/admin/settings-page.php:469
 msgid ""
-"Please enter at least one search term. If more than one parameter is "
-"entered, the search results must contain all values (AND search)."
+"Please enter at least one search term. If more than one parameter is entered,"
+" the search results must contain all values (AND search)."
 msgstr ""
-"Please enter at least one search term. If more than one parameter is "
-"entered, the search results must contain all values (AND search)."
+"Please enter at least one search term. If more than one parameter is entered,"
+" the search results must contain all values (AND search)."
 
 #: includes/admin/settings-page.php:474
 msgid "Search Options"
@@ -561,7 +561,6 @@ msgid "Suffix"
 msgstr "Suffix"
 
 #: includes/custom-post-type/custom-post-type.php:179
-#, fuzzy
 msgid ""
 "Enter the internal \"API Person Identification\" of the person who can "
 "retrieve the data via FAU IdM here. The API person identifiers can view the "
@@ -588,7 +587,7 @@ msgstr ""
 #: includes/custom-post-type/custom-post-type.php:200
 #, fuzzy
 msgid "Contacts"
-msgstr "Search Contacts"
+msgstr "Contacts"
 
 #: includes/custom-post-type/custom-post-type.php:215
 msgid "Contact"
@@ -1153,102 +1152,3 @@ msgid ""
 "Please select persons or a category to display using the sidebar controls."
 msgstr ""
 "Please select persons or a category to display using the sidebar controls."
-
-#~ msgid "Please add an organization ID to display results."
-#~ msgstr "Please add an organization ID to display results."
-
-#~ msgid "Please select persons to display using the sidebar controls."
-#~ msgstr "Please select persons to display using the sidebar controls."
-
-#~ msgid "Category"
-#~ msgstr "Category"
-
-#~ msgid "No contact found."
-#~ msgstr "No contact found."
-
-#~ msgid "Error fetching person attributes."
-#~ msgstr "Error fetching person attributes."
-
-#~ msgid "Invalid person ID."
-#~ msgstr "Invalid person ID."
-
-#~ msgid "Showing:"
-#~ msgstr "Showing:"
-
-#~ msgid "Default fields"
-#~ msgstr "Default fields"
-
-#~ msgid "FAUDIR Block"
-#~ msgstr "FAUDIR Block"
-
-#~ msgid "Personal Title"
-#~ msgstr "Personal Title"
-
-#~ msgid "URL"
-#~ msgstr "URL"
-
-#~ msgid "Select a category..."
-#~ msgstr "Select a category…"
-
-#~ msgid "Add Person"
-#~ msgstr "Add Person"
-
-#~ msgid "Select a person..."
-#~ msgstr "Select a person…"
-
-#~ msgid "Selected Persons:"
-#~ msgstr "Selected Persons:"
-
-#~ msgid "No persons selected"
-#~ msgstr "No persons selected"
-
-#~ msgid "Format"
-#~ msgstr "Format"
-
-#~ msgid "Show Fields"
-#~ msgstr "Show Fields"
-
-#~ msgid "Organization number"
-#~ msgstr "Organization number"
-
-#~ msgid "Change Image"
-#~ msgstr "Change Image"
-
-#~ msgid "Select Image"
-#~ msgstr "Select Image"
-
-#~ msgid "Done"
-#~ msgstr "Done"
-
-#~ msgid "Search Contacts by Identifier"
-#~ msgstr "Search Contacts by Identifier"
-
-#~ msgid "Search by Name, Surname, Email or ID"
-#~ msgstr "Search by Name, Surname, Email or ID"
-
-#~ msgid "No contacts found."
-#~ msgstr "No contacts found."
-
-#~ msgid "Identifier:"
-#~ msgstr "Identifier:"
-
-#~ msgid "Contacts:"
-#~ msgstr "Contacts:"
-
-#~ msgid "Add"
-#~ msgstr "Add"
-
-#~ msgid "Previous"
-#~ msgstr "Previous"
-
-#~ msgid "Next"
-#~ msgstr "Next"
-
-#~ msgid "RRZE Blocks"
-#~ msgstr "RRZE Blocks"
-
-#~ msgid "Nobility Name"
-#~ msgstr "Nobility Name"
-
-#~ msgid "Every Hour"
-#~ msgstr "Every Hour"

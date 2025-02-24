@@ -225,20 +225,22 @@ class Contact {
      * with key = 'consultationHours' as parameter
      *   key = 'officeHours' will use this array instead
      */    
-    public function getConsultationsHours(array $workplace, string $key = 'consultationHours', bool $withaddress = true): string {
+    public function getConsultationsHours(array $workplace, string $key = 'consultationHours', bool $withaddress = true, string $lang = 'de'): string {
         if ((empty($workplace)) || (empty($workplace[$key]))) {
             return '';
         } 
         
         $output = '';
-        $output .= '<div class="ContactPoint" itemprop="contactPoint" itemscope itemtype="https://schema.org/ContactPoint">';
-        $output .= '<strong itemprop="contactType">'.esc_html__('Consultation Hours', 'rrze-faudir').':</strong>';
-        
-        if ($withaddress) {
-            
-            $addressdata = $this->getAddressByWorkplace($workplace, false);
-            $output .= $addressdata;
+        $output .= '<div class="ContactPoint '.esc_attr($key).'" itemprop="contactPoint" itemscope itemtype="https://schema.org/ContactPoint">';
+        $output .= '<strong itemprop="contactType">';
+        if ($key === 'officeHours') {
+            $output .= esc_html__('Office Hours', 'rrze-faudir');
+        } else {
+            $output .= esc_html__('Consultation Hours', 'rrze-faudir');
         }
+        $output .= ':</strong>';
+        
+        
         $num = count($workplace[$key]);
         if ($num > 1) {
             $output .= '<ul class="ContactPointList">';
@@ -271,10 +273,19 @@ class Contact {
         if ($num > 1) {
             $output .= '</ul>';
         }
+        
+        if ($withaddress) {
+            
+            if (!empty($workplace['room'])) {
+                $output .= '';
+            } 
+            $addressdata = $this->getAddressByWorkplace($workplace, false, $lang, true);
+            $output .= $addressdata;
+        }
+        
         $output .= '</div>';
         return $output;
     }
-    
     
     /*
     * Get Weekday
@@ -307,37 +318,50 @@ class Contact {
     /*
      * Generate Address Output for a Workplace
      */
-    public function getAddressByWorkplace(array $workplace, bool $orgname = true, string $lang = "de"): ?string {
+    public function getAddressByWorkplace(array $workplace, bool $orgname = true, string $lang = "de", bool $roomfloor = false): ?string {
         $address = $result = '';
 
         if ($orgname) {
             $address .= $this->getOrganizationName($lang);  
         }
+        if ($roomfloor) {
+            if ((!empty($workplace['room'])) ||  (!empty($workplace['floor']))) {
+                $address .= '<span itemprop="containedInPlace" itemscope itemtype="https://schema.org/Room">';
+                if (!empty($workplace['room'])) {
+                     $address .= '<span class="room">'.__('Room', 'rrze-faudir').': <span class="room" itemprop="roomNumber">'.$workplace['room'].'</span></span>';
+                
+                }
+                if (!empty($workplace['floor'])) {
+                    $address .= '<span class="floor">'.__('Floor', 'rrze-faudir').': <span class="floor" itemprop="floorLevel">'.$workplace['floor'].'</span></span>';
 
+                }
+                $address .= '</span>'; 
+            }
+        }
         if ($workplace['street']) {
-            $address .= '<span itemprop="streetAdress">'.esc_html($workplace['street']).'</span>';    
+            $address .= '<span class="street" itemprop="streetAdress">'.esc_html($workplace['street']).'</span>';    
         }
         if ($workplace['postOfficeBoxNumber']) {
-            $address .= '<span class="screen-reader-text">'.__('Box Number', 'rrze-faudir').': </span><span itemprop="postOfficeBoxNumber">'.esc_html($workplace['postOfficeBoxNumber']).'</span>';    
+            $address .= '<span class="postbox"><span class="screen-reader-text">'.__('Box Number', 'rrze-faudir').': </span><span itemprop="postOfficeBoxNumber">'.esc_html($workplace['postOfficeBoxNumber']).'</span></span>';    
         }
          if ($workplace['postalCode']) {
-            $address .= '<span itemprop="postalCode">'.esc_html($workplace['postalCode']).'</span> ';    
+            $address .= '<span class="postalCode" itemprop="postalCode">'.esc_html($workplace['postalCode']).'</span> ';    
         } elseif ($workplace['zip']) {
-            $address .= '<span itemprop="postalCode">'.esc_html($workplace['zip']).'</span> ';    
+            $address .= '<span class="postalCode" itemprop="postalCode">'.esc_html($workplace['zip']).'</span> ';    
         }
         if ($workplace['addressLocality']) {
-            $address .= '<span itemprop="addressLocality">'.esc_html($workplace['addressLocality']).'</span>';    
+            $address .= '<span class="addressLocality" itemprop="addressLocality">'.esc_html($workplace['addressLocality']).'</span>';    
         } elseif ($workplace['city']) {
-            $address .= '<span itemprop="addressLocality">'.esc_html($workplace['city']).'</span>';    
+            $address .= '<span class="addressLocality" itemprop="addressLocality">'.esc_html($workplace['city']).'</span>';    
         }
         if ($workplace['addressCountry']) {
-            $address .= '<span itemprop="addressCountry">'.esc_html($workplace['addressCountry']).'</span>';    
+            $address .= '<span class="addressCountry" itemprop="addressCountry">'.esc_html($workplace['addressCountry']).'</span>';    
         }
         
         
         if (!empty($address)) {
-            $address = '<span class="texticon address" itemprop="address" itemscope="" itemtype="https://schema.org/PostalAddress">'.$address.'</span>';                  
-            $result = '<div><span class="screen-reader-text">'.__('Address', 'rrze-faudir').': </span>' . $address . '</div>';
+            $address = '<span class="texticon" itemprop="address" itemscope="" itemtype="https://schema.org/PostalAddress">'.$address.'</span>';                  
+            $result = '<div class="address"><span class="screen-reader-text">'.__('Address', 'rrze-faudir').': </span>' . $address . '</div>';
         }
         return $result;
     }

@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
      $config = new Config;
      $available_fields = $config->get('avaible_fields');
     
-     echo "<h2>Show</h2>". Debug::get_html_var_dump($show_fields);
+  //   echo "<h2>Show</h2>". Debug::get_html_var_dump($show_fields);
   //   echo "<hr><h2>Hide</h2>". Debug::get_html_var_dump($hide_fields);
  //    echo "<hr><h2>All fields</h2>". Debug::get_html_var_dump($available_fields);
      $noout = '';
@@ -30,10 +30,10 @@ if (!defined('ABSPATH')) {
             array_diff(array_keys($available_fields), $reihenfolge)
         );
    //  echo "<hr><h2>Reihenfolge alle:</h2>". Debug::get_html_var_dump($ordered_keys);
-        echo "<h2>Personendata</h2>";
-         foreach ($persons as $persondata) { 
-              echo  Debug::get_html_var_dump($persondata);
-         }
+   //     echo "<h2>Personendata</h2>";
+  //       foreach ($persons as $persondata) { 
+  //            echo  Debug::get_html_var_dump($persondata);
+  //       }
         
     ?>    
     
@@ -64,10 +64,8 @@ if (!defined('ABSPATH')) {
                         $workplaces = [];
                         
                         if (!empty($contact)) { 
-                            $contactdata = $contact->toArray();     
-                            $workplaces = $contact->getWorkplaces();
-                      //      $workplaces['mails'] = $mailadresses;
-                      //      $workplaces['phones'] = $phonenumbers;                         
+//                            $contactdata = $contact->toArray();     
+                            $workplaces = $contact->getWorkplaces();                    
                             $socials = $contact->getSocialArray();
  
                         }
@@ -118,7 +116,7 @@ if (!defined('ABSPATH')) {
                                         foreach ($mailadresses as $mail) {
                                             if (filter_var($mail, FILTER_VALIDATE_EMAIL)) {
                                                 $formattedValue = '<a itemprop="email" href="mailto:' . esc_attr($mail) . '">' . esc_html($mail) . '</a>';
-                                                $wval .= '<span><span class="screen-reader-text">'.__('Email','rrze-faudir').': </span>'.$formattedValue.'</span>';
+                                                $wval .= '<span class="email"><span class="screen-reader-text">'.__('Email','rrze-faudir').': </span>'.$formattedValue.'</span>';
                                             }                 
                                         }
 
@@ -128,8 +126,8 @@ if (!defined('ABSPATH')) {
                                     $wval = '';                                    
                                     foreach ($phonenumbers as $phone) {
                                         $formattedPhone = FaudirUtils::format_phone_number($phone);
-                                        $telLink = preg_replace('/\s+/', '', $formattedPhone); // Entferne Leerzeichen für den `tel:`-Link
-                                        $formattedValue = '<a itemprop="telephone" href="tel:' . esc_attr($telLink) . '">' . esc_html($formattedPhone) . '</a>';
+                                        $cleanTel = preg_replace('/[^\+\d]/', '', $phone);
+                                        $formattedValue = '<a itemprop="telephone" href="tel:' . esc_attr($cleanTel) . '">' . esc_html($formattedPhone) . '</a>';
                                         $wval .= '<span class="phone"><span class="screen-reader-text">'.__('Phone','rrze-faudir').': </span>'.$formattedValue.'</span>';
                                         
                                     }
@@ -231,10 +229,10 @@ if (!defined('ABSPATH')) {
                                     if (!empty($workplaces)) {
                                             $hours = '';
                                             foreach ($workplaces as $w => $wdata) {
-                                                if (!empty($wdata['officeHours'])) {
-                                                    $hours .= $contact->getConsultationsHours($wdata, 'officeHours');
+                                                if (!empty($wdata['officeHours'])) { 
+                                                    $hours .= $contact->getConsultationsHours($wdata, 'officeHours', true, $lang);
                                                 }
-                                            }
+                                            } 
                                             $value = $hours;
                                         }
                                 } elseif ($key_lower === 'consultationhours')  {             
@@ -242,18 +240,18 @@ if (!defined('ABSPATH')) {
                                             $hours = '';
                                             foreach ($workplaces as $w => $wdata) {
                                                 if (!empty($wdata['consultationHours'])) {
-                                                    $hours .= $contact->getConsultationsHours($wdata );
+                                                    $hours .= $contact->getConsultationsHours($wdata, 'consultationHours', true, $lang );
                                                 }
                                             }
                                             $value = $hours;
                                         }  
                                 } else {
-                                        $value = $key;
-                                        if (isset($contactdata[$key])) {
-                                            $value = $contactdata[$key];
-                                        } elseif ($workplaces[$key]) {
-                                             $value = $workplaces[$key];
-                                        }
+             //                           $value = $key;
+             //                           if (isset($contactdata[$key])) {
+             //                               $value = $contactdata[$key];
+            //                            } elseif ($workplaces[$key]) {
+            //                                 $value = $workplaces[$key];
+           //                             }
                                         
                                 }
                                 $output .= $value;
