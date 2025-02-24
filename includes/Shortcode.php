@@ -34,7 +34,9 @@ class Shortcode {
         }
         // Get the default output fields using the utility function
         $default_show_fields = FaudirUtils::getDefaultOutputFields();
+        $lang = FaudirUtils::getLang();
 
+        
         // Extract the attributes from the shortcode
         $atts = shortcode_atts(
             array(

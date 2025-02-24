@@ -13,14 +13,14 @@ if (!defined('ABSPATH')) {
 <div class="faudir">
     <?php
     
-     $config = new Config;
-     $available_fields = $config->get('avaible_fields');
-     $displayorder = $config->get('default_display_order');
-     if (!empty($displayorder)) {
+    $config = new Config;
+    $available_fields = $config->get('avaible_fields');
+    $displayorder = $config->get('default_display_order');
+    if (!empty($displayorder)) {
         $reihenfolge = $displayorder['table'];
-     } else {
+    } else {
         $reihenfolge = ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia'];
-     }
+    }
 
     $ordered_keys = array_merge(
             array_intersect($reihenfolge, array_keys($available_fields)),
