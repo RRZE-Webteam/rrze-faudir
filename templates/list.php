@@ -27,10 +27,10 @@ if (!defined('ABSPATH')) {
         array_diff(array_keys($available_fields), $reihenfolge)
     );
 
-    echo "<h2>Personendata</h2>";
-     foreach ($persons as $persondata) { 
-          echo  Debug::get_html_var_dump($persondata);
-     }
+//    echo "<h2>Personendata</h2>";
+//     foreach ($persons as $persondata) { 
+//          echo  Debug::get_html_var_dump($persondata);
+//     }
          
     $lang = FAUdirUtils::getLang();
    
