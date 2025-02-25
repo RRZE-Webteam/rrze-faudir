@@ -308,7 +308,7 @@ class API {
 
         $body = wp_remote_retrieve_body($response);
         if (empty($body)) {
-            return $body;
+            return array('error' => true, 'message' => 'Empty content');
         }
 
         $data = json_decode($body, true);

@@ -499,7 +499,6 @@ class Shortcode {
             'hide_fields'   => $hide_fields,
             'format-displayname' => $format_displayname,
             'persons'       => $persons,
-            'image_url'     => $image_url,
             'url'           => $url,
             'button_text'   => $button_text,
         ]);

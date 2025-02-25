@@ -4,14 +4,11 @@
 /*----------------------------------------------------------------------------*/
 .faudir {
     .format-table {
-	.title-suffix {
-	    white-space: nowrap;
-	}
 
 	td {
 	    padding: 0.3rem;
 	    
-	    &.image {
+	    &.faudir-image {
 		min-width: var(--faudir-figure-tablesize,150px);
 		min-height: var(--faudir-figure-tablesize,150px);
 		
@@ -35,11 +32,12 @@
 		}
 		
 	    }
-	    &.displayname {
+	    &.faudir-displayname {
 		min-width: max-content;
+		white-space: nowrap;
 		font-weight: bold;
 	    }
-	    &.email {
+	    &.faudir-email {
 	       span.email {
 		    display: inline-block;
 		}

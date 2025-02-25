@@ -227,7 +227,7 @@ if (!defined('ABSPATH')) {
                                 }
                                 
                                 if (!empty($value)) {
-                                    $output .= '<li class="'.esc_attr($key_lower).'">';
+                                    $output .= '<li class="faudir-'.esc_attr($key_lower).'">';
                                     $output .= $value;
                                     $output .= '</li>';
                                 }

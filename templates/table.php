@@ -60,7 +60,7 @@ if (!defined('ABSPATH')) {
                         foreach ($ordered_keys as $key) {
                             $key_lower = strtolower($key);
                             if (in_array($key_lower, $show_fields_lower) && !in_array($key_lower, $hide_fields_lower)) {
-                                $output .= '<td class="'.esc_attr($key_lower).'">';
+                                $output .= '<td class="faudir-'.esc_attr($key_lower).'">';
                                 $value = '';
                                 if ($key_lower === 'displayname')  {
                                     if ($displayname) {

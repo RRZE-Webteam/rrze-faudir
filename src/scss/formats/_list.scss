@@ -6,7 +6,7 @@
     .format-list {
 	display: inline-grid;
 	
-	.displayname {
+	.faudir-displayname {
 	    a {
 		font-weight: bold;
 		text-decoration: none;
@@ -22,7 +22,7 @@
 	.text-list {
 	    ul {
 
-	       li.image {
+	       li.faudir-image {
 		    float: right;
 		    figure {
 			margin: 0;
@@ -34,12 +34,12 @@
 		    }
 		}
 	      
-	       li.image::after {
+	       li.faudir-image::after {
 		   content: "";
 	       }
 	       
 	       
-	       li.email {
+	       li.faudir-email {
 		   display: inline-flex;
 		   padding: 0;
 		   span.value::after {
