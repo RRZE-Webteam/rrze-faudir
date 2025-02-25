@@ -91,6 +91,9 @@
 		      	
 		    }
 		}
+		li::after {
+		    content: "";
+		}
 	     }
 	}
 	
