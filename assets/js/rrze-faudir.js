@@ -1,7 +1,7 @@
 /*
 * JavaScript Definitions for: 
 * Plugin: rrze-faudir
-* Version: 2.1.3-18
+* Version: 2.1.3-23
 */
 
 jQuery(document).ready(function ($) {
