@@ -52,8 +52,8 @@ if (!defined('ABSPATH')) {
                         if (!empty($contact)) { 
                             $workplaces = $contact->getWorkplaces();                    
                         }
-                        
-
+                                               
+                         
                         $show_fields_lower = array_map('strtolower', $show_fields);
                         $hide_fields_lower = array_map('strtolower', $hide_fields);
 

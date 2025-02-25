@@ -231,7 +231,7 @@ class Contact {
         } 
         
         $output = '';
-        $output .= '<div class="ContactPoint '.esc_attr($key).'" itemprop="contactPoint" itemscope itemtype="https://schema.org/ContactPoint">';
+        $output .= '<div class="ContactPoint" itemprop="contactPoint" itemscope itemtype="https://schema.org/ContactPoint">';
         $output .= '<strong itemprop="contactType">';
         if ($key === 'officeHours') {
             $output .= esc_html__('Office Hours', 'rrze-faudir');

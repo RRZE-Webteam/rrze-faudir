@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: rrze-faudir\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-faudir\n"
 "POT-Creation-Date: 2024-12-19T14:40:58+00:00\n"
-"PO-Revision-Date: 2025-02-24 14:49+0000\n"
+"PO-Revision-Date: 2025-02-25 11:15+0000\n"
 "Last-Translator: Wolfgang Wiese <wolfgang.wiese@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -372,7 +372,7 @@ msgstr "FAUdir"
 
 #: includes/admin/settings-page.php:13, includes/admin/settings-page.php:347
 msgid "FAUdir Settings"
-msgstr "RRZE-FAUdir Einstellungen"
+msgstr "FAUdir Einstellungen"
 
 #: includes/utils/api-functions.php:319
 #| msgid "Fax: "
@@ -388,7 +388,7 @@ msgstr "Filtern Sie nach Standardorganisation"
 #: templates/page.php:274, templates/table.php:170,
 #: includes/utils/api-functions.php:301
 msgid "Floor"
-msgstr "Etage"
+msgstr "Geschoss"
 
 #: includes/Contact.php:300, includes/FaudirUtils.php:133
 msgid "Friday"
@@ -536,7 +536,7 @@ msgstr "Nicht angegeben"
 #: includes/Config.php:50, includes/Contact.php:237, templates/compact.php:322,
 #: templates/page.php:316, includes/utils/api-functions.php:331
 msgid "Office Hours"
-msgstr "Sprechzeiten"
+msgstr "Bürozeiten"
 
 #: includes/Config.php:37, includes/admin/settings-page.php:716,
 #: includes/custom-post-type/custom-post-type.php:232
