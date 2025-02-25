@@ -25,7 +25,7 @@ export default function Edit({ attributes, setAttributes }) {
         showCategory = '',
         showPosts = '',
         selectedPersonIds = '',
-        selectedFormat = 'kompakt',
+        selectedFormat = 'compact',
         selectedFields = [],
         groupId = '',
         function: functionValue = '',
@@ -141,7 +141,7 @@ export default function Edit({ attributes, setAttributes }) {
                         'organization': 'organization',
                         'jobTitle': 'jobTitle',
                         'url': 'url',
-                        'content': 'content',
+//                        'content': 'content',
                         'teasertext': 'teasertext',
                         'socialmedia': 'socialmedia',
                         'room': 'room',
@@ -277,7 +277,7 @@ export default function Edit({ attributes, setAttributes }) {
         let updatedHideFields = attributes.hideFields || [];
 
         // Define name-related fields
-        const nameFields = ['personalTitle', 'givenName', 'familyName', 'personalTitleSuffix', 'titleOfNobility'];
+        const nameFields = ['personalTitle', 'givenName', 'familyName', 'honorificSuffix', 'titleOfNobility'];
 
         if (field === 'displayName') {
             if (isFieldSelected) {
@@ -482,7 +482,7 @@ export default function Edit({ attributes, setAttributes }) {
                             { value: 'list', label: __('List', 'rrze-faudir') },
                             { value: 'table', label: __('Table', 'rrze-faudir') },
                             { value: 'card', label: __('Card', 'rrze-faudir') },
-                            { value: 'kompakt', label: __('Kompakt', 'rrze-faudir') },
+                            { value: 'compact', label: __('Compact', 'rrze-faudir') },
                             { value: 'page', label: __('Page', 'rrze-faudir') },
                         ]}
                         onChange={handleFormatChange}
@@ -570,8 +570,8 @@ export default function Edit({ attributes, setAttributes }) {
                         options={[
                             { value: 'familyName', label: __('Last Name', 'rrze-faudir') },
                             { value: 'title_familyName', label: __('Title and Last Name', 'rrze-faudir') },
-                            { value: 'function_head', label: __('Head of Department First', 'rrze-faudir') },
-                            { value: 'function_proffesor', label: __('Professors First', 'rrze-faudir') },
+                            { value: 'head_first', label: __('Head of Department First', 'rrze-faudir') },
+                            { value: 'prof_first', label: __('Professors First', 'rrze-faudir') },
                             { value: 'identifier_order', label: __('Identifier Order', 'rrze-faudir') },
                         ]}
                         onChange={handleSortChange} // Use the new handler instead of direct setAttributes
