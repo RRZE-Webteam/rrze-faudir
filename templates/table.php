@@ -60,7 +60,7 @@ if (!defined('ABSPATH')) {
                         foreach ($ordered_keys as $key) {
                             $key_lower = strtolower($key);
                             if (in_array($key_lower, $show_fields_lower) && !in_array($key_lower, $hide_fields_lower)) {
-                                $output .= '<td>';
+                                $output .= '<td class="'.esc_attr($key_lower).'">';
                                 $value = '';
                                 if ($key_lower === 'displayname')  {
                                     if ($displayname) {
@@ -133,12 +133,12 @@ if (!defined('ABSPATH')) {
                                 } elseif ($key_lower === 'content')  {      
                                     $wval = $person->getContent($lang);
                                     if (!empty($wval)) {
-                                        $value = '<div class="content">'.$wval.'</div>';
+                                        $value = $wval;
                                     }
                                 } elseif ($key_lower === 'teasertext')  {     
                                     $wval = $person->getTeasertext($lang);
                                     if (!empty($wval)) {
-                                        $value = '<div class="teasertext">'.wp_kses_post($wval).'</div>';
+                                        $value = wp_kses_post($wval);
                                     }
                                 } elseif ($key_lower === 'floor')  {      
                                      if (!empty($workplaces)) {

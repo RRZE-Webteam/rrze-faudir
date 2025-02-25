@@ -9,7 +9,44 @@
 	}
 
 	td {
-	    min-width: 10rem;
+	    padding: 0.3rem;
+	    
+	    &.image {
+		min-width: var(--faudir-figure-tablesize,150px);
+		min-height: var(--faudir-figure-tablesize,150px);
+		
+		height: auto;
+		
+		figure {
+		    margin: 0;
+		    
+		    img {
+			height: var(--faudir-figure-tablesize,150px);
+			width: var(--faudir-figure-tablesize,150px);
+			object-fit: cover;
+		    }
+		    
+		}
+		figure.signature {
+		    height: var(--faudir-figure-tablesize,150px);
+		    width: var(--faudir-figure-tablesize,150px);
+		    text-align: center;
+		    align-content: center;
+		}
+		
+	    }
+	    &.displayname {
+		min-width: max-content;
+		font-weight: bold;
+	    }
+	    &.email {
+	       span.email {
+		    display: inline-block;
+		}
+	    }
+  
 	}
+	
+	
     }
 }

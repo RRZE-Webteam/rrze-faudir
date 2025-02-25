@@ -4,6 +4,8 @@
 /*----------------------------------------------------------------------------*/
 .faudir {
     .format-list {
+	display: inline-grid;
+	
 	.displayname {
 	    a {
 		font-weight: bold;
@@ -19,11 +21,12 @@
 	
 	.text-list {
 	    ul {
+
 	       li.image {
 		    float: right;
 		    figure {
 			margin: 0;
-			max-width: 150px;
+			max-width: var(--faudir-figure-listssize,150px);
 			height: auto;
 		    }
 		    figure.signature {
