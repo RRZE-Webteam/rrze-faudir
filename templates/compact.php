@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
 
 
     if (!empty($persons)) { ?>
-    <div class="format-compact-container">
+    <div class="format-compact">
     <?php foreach ($persons as $persondata) {
         if (isset($persondata['error'])) { ?>
             <div class="faudir-error">
@@ -39,14 +39,15 @@ if (!defined('ABSPATH')) {
                 }
                 ?>
 
-                <section class="format-compact" itemscope itemtype="https://schema.org/Person">
+                <section class="format-compact-container" itemscope itemtype="https://schema.org/Person">
                     <?php if (in_array('image', $show_fields) && !in_array('image', $hide_fields)) { ?>
                     <div class="profile-image-section">
                         <?php echo $person->getImage(); ?>
                     </div>
                     <?php } ?>
-                    <div class="profile-details">
-                        <?php
+                    <header class="profile-header">
+                       <?php 
+
                         $value = '';
                         if (!empty($final_url)) {
                             $value .= '<a itemprop="url" href="'.esc_url($final_url).'">';     
@@ -54,9 +55,7 @@ if (!defined('ABSPATH')) {
                         $value .= $displayname;
                         if (!empty($final_url)) {
                             $value .= '</a>';
-                        }
-                        echo '<header class="profile-header">';
-                        
+                        }                        
                         echo '<h1>'.$value.'</h1>';
                         
                         if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) {
@@ -65,9 +64,11 @@ if (!defined('ABSPATH')) {
                         if (in_array('jobTitle', $show_fields) && !in_array('jobTitle', $hide_fields)) {
                              echo '<p class="jobtitle">'. $contact->getJobTitle($lang).'</p>';
                         }
-                        echo '</header>';    
-                        
-                        
+                        ?>
+                
+                     </header>
+                     <div class="profile-details">   
+                        <?php
                         $address = '';
  
                         if (in_array('address', $show_fields) && !in_array('address', $hide_fields)) {
@@ -89,15 +90,17 @@ if (!defined('ABSPATH')) {
                         
                         if ((in_array('officehours', $show_fields) && !in_array('officehours', $hide_fields))
                          || (in_array('consultationhours', $show_fields) && !in_array('consultationhours', $hide_fields))) {
-                            echo '<div class="profile-consultation">';
+                           
+                            
                             if (!empty($workplaces)) {
                                 $hours = '';
+                                $cons = '';
                                 foreach ($workplaces as $w => $wdata) {
                                     if (!empty($wdata['consultationHours'])) {
                                         $hours .= $contact->getConsultationsHours($wdata, 'consultationHours', true, $lang );
                                     }
                                 }
-                                echo $hours;
+                                $cons .= $hours;
                                 
                                 $hours = '';
                                 foreach ($workplaces as $w => $wdata) {
@@ -105,9 +108,14 @@ if (!defined('ABSPATH')) {
                                         $hours .= $contact->getConsultationsHours($wdata, 'officeHours', true, $lang);
                                     }
                                 } 
-                                  echo $hours;
+                               $cons .= $hours;
+                               if (!empty($cons)) {   
+                                   echo '<div class="profile-consultation">';
+                                   echo $cons;
+                                   echo '</div>';
+                               }
                             }   
-                            echo '</div>';
+                           
                         }
             
                         
@@ -122,7 +130,7 @@ if (!defined('ABSPATH')) {
                                 }                 
                             }
                             if (!empty($wval)) {
-                                $contactlist .=  '<li>'.$wval.'</li>';
+                                $contactlist .=  '<li class="listcontent">'.$wval.'</li>';
                             }
                         }
                         
@@ -136,7 +144,7 @@ if (!defined('ABSPATH')) {
 
                             }
                             if (!empty($wval)) {
-                                $contactlist .= '<li>'.$wval.'</li>';
+                                $contactlist .= '<li class="listcontent">'.$wval.'</li>';
                             }
                         }
                         if (in_array('url', $show_fields) && !in_array('url', $hide_fields)) {
@@ -150,7 +158,7 @@ if (!defined('ABSPATH')) {
                                     }
                                 }
                                 if (!empty($wval)) {
-                                    $contactlist .= '<li>'.$wval.'</li>';
+                                    $contactlist .= '<li class="listcontent">'.$wval.'</li>';
                                 }
                             }
                         }
@@ -167,7 +175,7 @@ if (!defined('ABSPATH')) {
                                     }
                                 }
                                 if (!empty($faumap)) {
-                                    $contactlist .= '<li>'.$faumap.'</li>';
+                                    $contactlist .= '<li class="listcontent">'.$faumap.'</li>';
                                 }
                             }
                         }
@@ -182,26 +190,33 @@ if (!defined('ABSPATH')) {
                         }
                         
                         if (in_array('socialmedia', $show_fields) && !in_array('socialmedia', $hide_fields)) {
-                            echo '<div class="profile-socialmedia">';
-                            echo $contact->getSocialMedia('span');
-                            echo '</div>';
-                        }
-                        
-                        if (in_array('teasertext', $show_fields) && !in_array('teasertext', $hide_fields)) {                        
-                            $wval = $person->getTeasertext($lang);
-                            if (!empty($wval)) {
-                                echo '<div class="teasertext">';
-                                echo '<div class="value">'.wp_kses_post($wval).'</div>';
+                            $some = $contact->getSocialMedia('span');
+                            if (!empty($some)) {
+                                echo '<div class="profile-socialmedia">';
+                                echo $some;
                                 echo '</div>';
                             }
-                            
                         }
-                        
-                        
-                        
                         ?>
                     </div>
-                  
+                    <?php
+                    $profilcontent = '';
+                    if (in_array('teasertext', $show_fields) && !in_array('teasertext', $hide_fields)) {                        
+                            $wval = $person->getTeasertext($lang);
+                            if (!empty($wval)) {
+                                $profilcontent .= '<div class="teasertext">';
+                                $profilcontent .= wp_kses_post($wval);
+                                $profilcontent .= '</div>';
+                            }
+                        }
+                        
+                        if (!empty($profilcontent)) {
+                            echo '<div class="profile-content">';             
+                            echo $profilcontent;
+                            echo '</div>';
+                        }
+                        ?>
+                 
                 </section>    
             <?php } 
         } 

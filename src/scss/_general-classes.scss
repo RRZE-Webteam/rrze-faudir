@@ -44,34 +44,74 @@
 	}  
     }
     
+	
+    ul.maillist {
+	margin: 0;
+	display: inline;
+
+	li {
+	    display: inline-flex;
+	    padding: 0;
+	}
+	li::after {
+	    content: "/";
+	    margin-left: 0.2rem;
+	    margin-right: 0.1rem;
+	}
+	li:last-child::after {
+	    content: "";
+	}
+    }
+    .listcontent {
+	span.value {
+	    display: inline-flex;
+	    padding: 0;
+	}
+	span.value::after {
+	    content: "/";
+	    margin-left: 0.2rem;
+	    margin-right: 0.1rem;
+	}
+	span.value:last-child::after {
+	    content: "";
+	}
+    }
+
+
+    .workplace-address {
+	margin: 0 0 1rem 0;
+	.street,
+	.zipcity,
+	.postbox,
+	.addressCountry,
+	.roomfloor {
+	    display: flex;
+	}
+	.roomfloor {
+	    gap: 0 1rem;
+	}
+    }
     
-	ul.maillist {
-	    margin: 0;
-	    display: inline;
-	    
+    .workplace-hours {
+	margin: 0 0 1rem 0;
+	
+	.ContactPointList {
 	    li {
-		display: inline-flex;
+		list-style-type: none;
 		padding: 0;
 	    }
-	    li::after {
-		content: "/";
-		margin-left: 0.2rem;
-		margin-right: 0.1rem;
-	    }
-	    li:last-child::after {
-		content: "";
-	    }
-	    
 	}
-	.icon {
+    }
+    
+    .icon {
 
-	    .maillist {
-		    li:nth-child(n+2) a::before {    	
-			 background: none;
-			 width: 0;
-		    }
+	.maillist {
+		li:nth-child(n+2) a::before {    	
+		     background: none;
+		     width: 0;
 		}
-	}
+	    }
+    }
 	
     
 }

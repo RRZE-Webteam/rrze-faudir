@@ -231,7 +231,7 @@ class Contact {
         } 
         
         $output = '';
-        $output .= '<div class="ContactPoint" itemprop="contactPoint" itemscope itemtype="https://schema.org/ContactPoint">';
+        $output .= '<div class="workplace-hours" itemprop="contactPoint" itemscope itemtype="https://schema.org/ContactPoint">';
         $output .= '<strong itemprop="contactType">';
         if ($key === 'officeHours') {
             $output .= esc_html__('Office Hours', 'rrze-faudir');
@@ -326,7 +326,7 @@ class Contact {
         }
         if ($roomfloor) {
             if ((!empty($workplace['room'])) ||  (!empty($workplace['floor']))) {
-                $address .= '<span itemprop="containedInPlace" itemscope itemtype="https://schema.org/Room">';
+                $address .= '<span class="roomfloor" itemprop="containedInPlace" itemscope itemtype="https://schema.org/Room">';
                 if (!empty($workplace['room'])) {
                      $address .= '<span class="room">'.__('Room', 'rrze-faudir').': <span class="room" itemprop="roomNumber">'.$workplace['room'].'</span></span>';
                 
@@ -344,15 +344,22 @@ class Contact {
         if ($workplace['postOfficeBoxNumber']) {
             $address .= '<span class="postbox"><span class="screen-reader-text">'.__('Box Number', 'rrze-faudir').': </span><span itemprop="postOfficeBoxNumber">'.esc_html($workplace['postOfficeBoxNumber']).'</span></span>';    
         }
-         if ($workplace['postalCode']) {
-            $address .= '<span class="postalCode" itemprop="postalCode">'.esc_html($workplace['postalCode']).'</span> ';    
-        } elseif ($workplace['zip']) {
-            $address .= '<span class="postalCode" itemprop="postalCode">'.esc_html($workplace['zip']).'</span> ';    
+        
+        if (($workplace['postalCode']) && ($workplace['addressLocality'] || $workplace['city'])) {
+            $address .= '<span class="zipcity">';
         }
-        if ($workplace['addressLocality']) {
-            $address .= '<span class="addressLocality" itemprop="addressLocality">'.esc_html($workplace['addressLocality']).'</span>';    
-        } elseif ($workplace['city']) {
-            $address .= '<span class="addressLocality" itemprop="addressLocality">'.esc_html($workplace['city']).'</span>';    
+            if ($workplace['postalCode']) {
+                $address .= '<span class="postalCode" itemprop="postalCode">'.esc_html($workplace['postalCode']).'</span> ';    
+            } elseif ($workplace['zip']) {
+                $address .= '<span class="postalCode" itemprop="postalCode">'.esc_html($workplace['zip']).'</span> ';    
+            }
+            if ($workplace['addressLocality']) {
+                $address .= '<span class="addressLocality" itemprop="addressLocality">'.esc_html($workplace['addressLocality']).'</span>';    
+            } elseif ($workplace['city']) {
+                $address .= '<span class="addressLocality" itemprop="addressLocality">'.esc_html($workplace['city']).'</span>';    
+            }
+        if (($workplace['postalCode']) && ($workplace['addressLocality'] || $workplace['city'])) {    
+            $address .= '</span>';
         }
         if ($workplace['addressCountry']) {
             $address .= '<span class="addressCountry" itemprop="addressCountry">'.esc_html($workplace['addressCountry']).'</span>';    
@@ -361,7 +368,7 @@ class Contact {
         
         if (!empty($address)) {
             $address = '<span class="texticon" itemprop="address" itemscope="" itemtype="https://schema.org/PostalAddress">'.$address.'</span>';                  
-            $result = '<div class="address"><span class="screen-reader-text">'.__('Address', 'rrze-faudir').': </span>' . $address . '</div>';
+            $result = '<div class="workplace-address"><span class="screen-reader-text">'.__('Address', 'rrze-faudir').': </span>' . $address . '</div>';
         }
         return $result;
     }

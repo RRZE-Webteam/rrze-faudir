@@ -5,26 +5,123 @@
 
 
 .faudir {
-    .format-compact-wrapper {
-	
-    }
     .format-compact {
-	display: flex;
-	gap: 20px;
-	padding: 20px;
-	background-color: var(--color-white);
-	box-shadow: 0 4px 8px var(--color-ContentBorders);
-	margin-bottom: 20px;
-	border-radius: 8px;
+	
+	
+	container-name: container;
+	container-type: inline-size;
+    
+	.format-compact-container {
+	    --faudir-profile-image-size: 300px;
+	    --faudir-profile-padding: 1rem;
+	    
+	    display: grid;
+	    gap: 0;
+	    grid-template-areas:
+		"image"
+		"header"
+		"details";
+	    
+	    .profile-image-section {
+		background-color: #ccc; /* Falls kein Bild vorhanden ist */
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		border-radius: var(--faudir-figure-border-radius);
+		overflow: hidden;
+		grid-area: image;
+		width: var(--faudir-profile-image-size);
+		height: var(--faudir-profile-image-size);
+		
+		img {
+		    width: var(--faudir-profile-image-size);
+		    height: var(--faudir-profile-image-size);
+		    object-fit: cover;
+		    display: block;
+		}
+		figure {
+		    margin: 0;
+		}
+	    }
+	    
+	    .profile-header {
+		grid-area: header;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		padding: var(--faudir-profile-padding);
+	    }
 
-	img {
-	    width: 20%;
-	    object-fit: cover;
-	    max-height: 450px;
+
+	    .profile-details {
+		grid-area: details;
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 10px;
+		
+		
+		.profile-address, .profile-consultation, .profile-contact, .profile-socialmedia {
+		   border: 1px solid red;
+		   padding: var(--faudir-profile-padding);
+		}
+		
+		.profile-address {
+
+		}
+		.profile-consultation {
+
+		}
+		.profile-contact {
+
+		}
+		.profile-socialmedia {
+
+		}
+	    }
+	    .profile-content {
+		.teasertext {
+		 
+		}
+	    }
+	}
+	    	   
+	    
+
+	@container container (min-width: 480px) {
+		.format-compact-container {
+		    --faudir-profile-image-size: 240px;
+		    grid-template-areas:
+			"image header"
+			"details details";
+		    grid-template-columns: var(--faudir-profile-image-size) auto;
+		}
+
+		.profile-image-section {
+		    width: var(--faudir-profile-image-size);
+		    height: auto;
+		}
+	    }
+
+
+	@container container (min-width: 768px) {   
+	    .format-compact-container {
+		--faudir-profile-image-size: 300px;
+		grid-template-areas:
+		    "image header"
+		    "image details";
+		grid-template-columns: var(--faudir-profile-image-size) 1fr;
+		grid-template-rows: auto 1fr;
+		align-items: stretch;
+	    }
+
+	    .profile-image-section {
+		height: 100%; /* Volle Höhe des Containers */
+	    }
 	}
 
 	
-    }
 
-
+}
+    
 } 
