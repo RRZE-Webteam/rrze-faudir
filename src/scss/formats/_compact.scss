@@ -12,16 +12,20 @@
 	container-type: inline-size;
     
 	.format-compact-container {
-	    --faudir-profile-image-size: 300px;
+	    --faudir-profile-image-section-width: 100%;
+	    --faudir-profile-image-section-height: 120px;
+	    --faudir-profile-image-width: 100%;
+	    --faudir-profile-image-height: auto;
 	    --faudir-profile-padding: 0;
 	    --faudir-profile-compact-gab: 1rem;
 	    
 	    display: grid;
-	    gap: var(--faudir-profile-compact-gab);
+	    gap: 0;
 	    grid-template-areas:
 		"image"
 		"header"
 		"details";
+	    margin-bottom: 1rem;
 	    
 	    .profile-image-section {
 		background-color: #ccc; /* Falls kein Bild vorhanden ist */
@@ -32,12 +36,12 @@
 		border-radius: var(--faudir-figure-border-radius);
 		overflow: hidden;
 		grid-area: image;
-		width: var(--faudir-profile-image-size);
-		height: var(--faudir-profile-image-size);
+		width: var(--faudir-profile-image-section-width);
+		height: var(--faudir-profile-image-section-height);
 		
 		img {
-		    width: var(--faudir-profile-image-size);
-		    height: var(--faudir-profile-image-size);
+		    width: var(--faudir-profile-image-width);
+		    height: var(--faudir-profile-image-height);
 		    object-fit: cover;
 		    display: block;
 		}
@@ -52,6 +56,9 @@
 		flex-direction: column;
 		justify-content: center;
 		padding: var(--faudir-profile-padding);
+		 h1 {
+			margin-top: 0;
+		 }
 	    }
 
 
@@ -63,7 +70,7 @@
 		
 		
 		.profile-address, .profile-consultation, .profile-contact, .profile-socialmedia {
-		   border: 1px solid red;
+	//	   border: 1px solid red;
 		   padding: var(--faudir-profile-padding);
 		}
 		
@@ -87,17 +94,37 @@
 	    }
 	}
 	    	   
-	    
-
-	@container faudir-compact-container (min-width: 480px) {
+	@container faudir-compact-container (min-width: 320px) {
 		.format-compact-container {
-		    --faudir-profile-image-size: 240px;
+		    --faudir-profile-image-section-width: 120px;
+		    --faudir-profile-image-section-height: 120px;
+		    --faudir-profile-image-width: 120px;
+		    --faudir-profile-image-height: 120px;
+		    gap: var(--faudir-profile-compact-gab);
 		    grid-template-areas:
 			"image header"
 			"details details";
-		    grid-template-columns: var(--faudir-profile-image-size) auto;
+		    grid-template-columns: var(--faudir-profile-image-section-width) auto;
 		}
 
+		.profile-image-section {
+		    width: var(--faudir-profile-image-size);
+		    height: auto;
+		}
+	    }    
+
+	@container faudir-compact-container (min-width: 480px) {
+		.format-compact-container {
+		    --faudir-profile-image-section-width: 150px;
+		    --faudir-profile-image-section-height: 150px;
+		    --faudir-profile-image-width: 150px;
+		    --faudir-profile-image-height: 150px;
+		    grid-template-areas:
+			"image header"
+			"details details";
+		    grid-template-columns: var(--faudir-profile-image-section-width) auto;
+		}
+		
 		.profile-image-section {
 		    width: var(--faudir-profile-image-size);
 		    height: auto;
@@ -107,17 +134,29 @@
 
 	@container faudir-compact-container (min-width: 768px) {   
 	    .format-compact-container {
-		--faudir-profile-image-size: 300px;
+		--faudir-profile-image-section-width: 200px;
+		--faudir-profile-image-section-height: 200px;
+		--faudir-profile-image-width: 200px;
+		--faudir-profile-image-height: 200px;
 		grid-template-areas:
 		    "image header"
 		    "image details";
-		grid-template-columns: var(--faudir-profile-image-size) 1fr;
+		grid-template-columns: var(--faudir-profile-image-section-width) 1fr;
 		grid-template-rows: auto 1fr;
 		align-items: stretch;
 	    }
 
 	    .profile-image-section {
 		height: 100%; 
+	    }
+	}
+	
+	@container faudir-compact-container (min-width: 1200px) {   
+	    .format-compact-container {
+		--faudir-profile-image-section-width: 300px;
+		--faudir-profile-image-section-height: 300px;
+		--faudir-profile-image-width: 300px;
+		--faudir-profile-image-height: 300px;
 	    }
 	}
 

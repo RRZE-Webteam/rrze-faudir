@@ -19,6 +19,10 @@ class Config {
         'default_display_order'     => [
             'table' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext'],
             'list'  => ['displayname', 'jobTitle', 'url', 'email', 'socialmedia', 'roompos', 'room', 'floor', 'address','faumap']
+        ],
+        'avaible_fields_byformat'   => [
+            'table' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours'],
+            'list'  => ['displayname', 'jobTitle', 'url', 'email', 'socialmedia', 'roompos', 'room', 'floor', 'zip', 'street', 'city', 'faumap']
         ]
         
     ];
@@ -29,6 +33,8 @@ class Config {
     
 
     public function __construct() {
+        
+        
         $this->config['business_card_title'] = __('Call up business card', 'rrze-faudir');
              
         $this->config['avaible_fields'] = [
@@ -89,5 +95,30 @@ class Config {
     public function getAll(): array {
         return $this->config;
     }
+    
+    /*
+     * Get allowed fields for format
+     */
+    public function getFieldsByFormat(string $format = ''): array { 
+        if ((empty($format)) || (!isset($this->config['avaible_fields_byformat'][$format]))) {
+            return $this->config['avaible_fields'];
+        }
+               
+        $fieldlist = $this->config['avaible_fields_byformat'][$format];
+        $all = $this->config['avaible_fields'];
+        $res = [];
+        
+        foreach ($fieldlist as $num => $val) {
+            if ((!empty($val)) && (isset($all[$val]))) {
+                $res[$val] = $all[$val];
+            }
+        }
+        return $res;
+        
+    }
+
+    
+    
+    
 }
 

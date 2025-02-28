@@ -14,7 +14,10 @@ if (!defined('ABSPATH')) {
     <?php
     
     $config = new Config;
-    $available_fields = $config->get('avaible_fields');
+    $fieldsbyformat = $config->get('avaible_fields_byformat');
+    $available_fields = $config->getFieldsByFormat('table');
+     
+   
     $displayorder = $config->get('default_display_order');
     if (!empty($displayorder)) {
         $reihenfolge = $displayorder['table'];
@@ -28,6 +31,11 @@ if (!defined('ABSPATH')) {
     );
     $lang = FAUdirUtils::getLang();
      
+    
+    echo "<h2>Config</h2>";
+    
+          echo  Debug::get_html_var_dump($available_fields);
+        
     ?>    
     <table class="format-table">
         <tbody>
@@ -60,7 +68,7 @@ if (!defined('ABSPATH')) {
                         foreach ($ordered_keys as $key) {
                             $key_lower = strtolower($key);
                             if (in_array($key_lower, $show_fields_lower) && !in_array($key_lower, $hide_fields_lower)) {
-                                $output .= '<td class="faudir-'.esc_attr($key_lower).'">';
+                                
                                 $value = '';
                                 if ($key_lower === 'displayname')  {
                                     if ($displayname) {
@@ -83,7 +91,7 @@ if (!defined('ABSPATH')) {
                                             $room = '';
                                             foreach ($workplaces as $w => $wdata) {
                                                 if (!empty($wdata['room'])) {
-                                                    $room .= '<span class="room"><span class="screen-reader-text">'.__('Room','rrze-faudir').': </span>'.esc_html($wdata['room']).'</span>';
+                                                    $room .= '<span class="room">'.__('Room','rrze-faudir').': '.esc_html($wdata['room']).'</span>';
                                                 }
                                             }
                                             $value = $room;      
@@ -130,11 +138,6 @@ if (!defined('ABSPATH')) {
                                 } elseif ($key_lower === 'image')  {      
                                     $value = $person->getImage();
                                   
-                                } elseif ($key_lower === 'content')  {      
-                                    $wval = $person->getContent($lang);
-                                    if (!empty($wval)) {
-                                        $value = $wval;
-                                    }
                                 } elseif ($key_lower === 'teasertext')  {     
                                     $wval = $person->getTeasertext($lang);
                                     if (!empty($wval)) {
@@ -145,7 +148,7 @@ if (!defined('ABSPATH')) {
                                             $wval = '';
                                             foreach ($workplaces as $w => $wdata) {
                                                 if (!empty($wdata['floor'])) {
-                                                    $wval .= '<span class="floor"><span class="screen-reader-text">'.__('Floor','rrze-faudir').': </span>'.esc_html($wdata['floor']).'</span>';
+                                                    $wval .= '<span class="floor">'.__('Floor','rrze-faudir').': '.esc_html($wdata['floor']).'</span>';
                                                 }
                                             }
                                             $value = $wval;      
@@ -153,9 +156,18 @@ if (!defined('ABSPATH')) {
                                 } elseif ($key_lower === 'address')  {     
                                     if (!empty($workplaces)) {
                                             $wval = '';
-                                            foreach ($workplaces as $w => $wdata) {
-                                               
-                                                $wval .= $contact->getAddressByWorkplace($wdata, false);
+                                            $showmap = false;
+                                            if (in_array('faumap', $show_fields) && !in_array('faumap', $hide_fields)) {
+                                                $showmap = true;
+                                            }
+                                            $showroomfloor = false;
+                                            if ((in_array('room', $show_fields) && !in_array('room', $hide_fields))
+                                            || (in_array('floor', $show_fields) && !in_array('floor', $hide_fields))) {
+                                                $showroomfloor = true;
+                                            }
+                                        
+                                            foreach ($workplaces as $w => $wdata) {                                        
+                                                $wval .= $contact->getAddressByWorkplace($wdata, false, $lang, $showroomfloor, $showmap);
                                             }
                                             $value = $wval;      
                                     }
@@ -195,8 +207,8 @@ if (!defined('ABSPATH')) {
                                             foreach ($workplaces as $w => $wdata) {
                                                 if (!empty($wdata['faumap'])) {
                                                     if (preg_match('/^https?:\/\/karte\.fau\.de/i', $wdata['faumap'])) {
-                                                        $formattedValue = '<a href="' . esc_url($wdata['faumap']) . '" itemprop="url">' . esc_html($wdata['faumap']) . '</a>';
-                                                        $faumap .= '<span class="faumap"><span class="screen-reader-text">'.__('FAU Map','rrze-faudir').': </span>'.$formattedValue.'</span>';
+                                                        $formattedValue = '<a href="' . esc_url($wdata['faumap']) . '" itemprop="url">' . __('FAU Map', 'rrze-faudir') . '</a>';
+                                                        $faumap .= '<span class="faumap">'.__('Map','rrze-faudir').': '.$formattedValue.'</span>';
                                                     }
                                                 }
                                             }
@@ -206,9 +218,18 @@ if (!defined('ABSPATH')) {
                                 } elseif ($key_lower === 'officehours')  {  
                                     if (!empty($workplaces)) {
                                             $hours = '';
+                                            $showmap = false;
+                                            if (in_array('faumap', $show_fields) && !in_array('faumap', $hide_fields)) {
+                                                $showmap = true;
+                                            }
+                                            $showroomfloor = false;
+                                            if ((in_array('room', $show_fields) && !in_array('room', $hide_fields))
+                                            || (in_array('floor', $show_fields) && !in_array('floor', $hide_fields))) {
+                                                $showroomfloor = true;
+                                            }
                                             foreach ($workplaces as $w => $wdata) {
                                                 if (!empty($wdata['officeHours'])) { 
-                                                    $hours .= $contact->getConsultationsHours($wdata, 'officeHours', true, $lang);
+                                                    $hours .= $contact->getConsultationsHours($wdata, 'officeHours', true, $lang, $showroomfloor, $showmap);
                                                 }
                                             } 
                                             $value = $hours;
@@ -216,14 +237,24 @@ if (!defined('ABSPATH')) {
                                 } elseif ($key_lower === 'consultationhours')  {             
                                         if (!empty($workplaces)) {
                                             $hours = '';
+                                            $showmap = false;
+                                            if (in_array('faumap', $show_fields) && !in_array('faumap', $hide_fields)) {
+                                                $showmap = true;
+                                            }
+                                            $showroomfloor = false;
+                                            if ((in_array('room', $show_fields) && !in_array('room', $hide_fields))
+                                            || (in_array('floor', $show_fields) && !in_array('floor', $hide_fields))) {
+                                                $showroomfloor = true;
+                                            }
                                             foreach ($workplaces as $w => $wdata) {
                                                 if (!empty($wdata['consultationHours'])) {
-                                                    $hours .= $contact->getConsultationsHours($wdata, 'consultationHours', true, $lang );
+                                                    $hours .= $contact->getConsultationsHours($wdata, 'consultationHours', true, $lang, $showroomfloor, $showmap);
                                                 }
                                             }
                                             $value = $hours;
                                         }      
                                 }
+                                $output .= '<td class="faudir-'.esc_attr($key_lower).'">';
                                 $output .= $value;
                                 $output .= '</td>';
                             }

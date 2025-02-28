@@ -13,10 +13,11 @@ if (!defined('ABSPATH')) {
 <div class="faudir">
 <?php
     $config = new Config;
-    $available_fields = $config->get('avaible_fields');
+    $available_fields = $config->getFieldsByFormat('compact');
     $lang = FAUdirUtils::getLang();
 
 
+    
     if (!empty($persons)) { ?>
     <div class="format-compact">
     <?php foreach ($persons as $persondata) {
@@ -215,21 +216,22 @@ if (!defined('ABSPATH')) {
                     </div>
                     <?php
                     $profilcontent = '';
-                    if (in_array('teasertext', $show_fields) && !in_array('teasertext', $hide_fields)) {                        
+                    if (in_array('teasertext', $show_fields) && !in_array('teasertext', $hide_fields)) {    
+                        
                             $wval = $person->getTeasertext($lang);
                             if (!empty($wval)) {
                                 $profilcontent .= '<div class="teasertext">';
                                 $profilcontent .= wp_kses_post($wval);
                                 $profilcontent .= '</div>';
                             }
-                        }
+                    }
                         
-                        if (!empty($profilcontent)) {
-                            echo '<div class="profile-content">';             
-                            echo $profilcontent;
-                            echo '</div>';
-                        }
-                        ?>
+                    if (!empty($profilcontent)) {
+                        echo '<div class="profile-content">';             
+                        echo $profilcontent;
+                        echo '</div>';
+                    }
+                    ?>
                  
                 </section>    
             <?php } 
