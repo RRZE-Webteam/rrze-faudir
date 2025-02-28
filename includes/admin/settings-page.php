@@ -310,12 +310,12 @@ function rrze_faudir_default_output_fields_render() {
     $options = get_option('rrze_faudir_options');
     $default_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : array();
 
-    if (!empty($options['avaible_fields'])) {
-        $available_fields = $options['avaible_fields']; 
-    } else {
+ //   if (!empty($options['avaible_fields'])) {
+ //       $available_fields = $options['avaible_fields']; 
+//    } else {
         $config = new Config;
         $available_fields = $config->get('avaible_fields');
-    }
+//    }
     
 
     // Set default state: all checkboxes checked if no selection exists

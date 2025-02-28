@@ -113,7 +113,29 @@
 	    }
 
      }
-  
+    .profile-link {
+	text-align: right;
+	a {
+	    display: inline-flex;
+	    align-items: center;
+	}
+	
+	a::after {
+		background: currentColor;
+		mask-size: var(--_icon-mask-size, var(--faudir-icon-mask-size, 100%));
+		mask-repeat: no-repeat;
+		mask-position: center center;
+
+		display: inline-block;
+		width: var(--_icon-size, var(--faudir-icon-size));
+		height: var(--_icon-size, var(--faudir-icon-size));
+		content: "";
+		font-size: var(--_icon-size, var(--faudir-icon-size));
+		flex-shrink: 0;
+		margin-right: var(--_icon-margin-right, var(--faudir-icon-margin-right)); 
+		mask-image: var(--faudir-icon-right);
+	  }
+      }
 
      .fau-elemental & .icon-list  {
 	  --_icon-border-color: none;

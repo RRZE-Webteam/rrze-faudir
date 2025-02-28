@@ -213,8 +213,22 @@ if (!defined('ABSPATH')) {
                             }
                         }
                         ?>
-                    </div>
+                    
                     <?php
+                     if (in_array('link', $show_fields) && !in_array('link', $hide_fields) && isset($available_fields['link'])) {                          
+                            if (!empty($final_url)) {
+                                $link = '<div class="profile-link">';
+                                $link .= '<a class="buttonlink" itemprop="sameAs" href="'.esc_url($final_url).'">';     
+                                $link .= __('User profil', 'rrze-faudir');
+                                $link .= '</a>';
+                                $link .= '</div>';
+                                
+                                
+                                echo $link;
+                            }
+                    }
+                    
+                    
                     $profilcontent = '';
                     if (in_array('teasertext', $show_fields) && !in_array('teasertext', $hide_fields) && isset($available_fields['teasertext'])) {    
                         
@@ -226,7 +240,7 @@ if (!defined('ABSPATH')) {
                             }
                     }
                     
-                     if (in_array('content', $show_fields) && !in_array('content', $hide_fields) && isset($available_fields['content'])) {                          
+                    if (in_array('content', $show_fields) && !in_array('content', $hide_fields) && isset($available_fields['content'])) {                          
                             $wval = $person->getContent($lang);
                             if (!empty($wval)) {
                                 $profilcontent .= '<div class="content">';
@@ -241,7 +255,7 @@ if (!defined('ABSPATH')) {
                         echo '</div>';
                     }
                     ?>
-                 
+                 </div>
                 </section>    
             <?php } 
         } 

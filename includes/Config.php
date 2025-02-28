@@ -17,13 +17,13 @@ class Config {
         'hard_sanitize'             => false,
         'default_output_fields'     => ['displayname', 'jobTitle', 'email', 'phone', 'url'], // Default fields      
         'default_display_order'     => [
-            'table' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext'],
-            'list'  => ['displayname', 'jobTitle', 'url', 'email', 'socialmedia', 'roompos', 'room', 'floor', 'address','faumap']
+            'table' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'link'],
+            'list'  => ['displayname', 'jobTitle', 'url', 'email', 'socialmedia', 'roompos', 'room', 'floor', 'address','faumap', 'link']
         ],
         'avaible_fields_byformat'   => [
-            'table' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours'],
-            'list'  => ['displayname', 'jobTitle', 'url', 'email', 'socialmedia', 'roompos', 'room', 'floor', 'zip', 'street', 'city', 'faumap'],
-            'compact' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours'],
+            'table' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link'],
+            'list'  => ['displayname', 'jobTitle', 'url', 'email', 'socialmedia', 'roompos', 'room', 'floor', 'zip', 'street', 'city', 'faumap', 'link'],
+            'compact' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link'],
         ]
         
     ];
@@ -60,6 +60,7 @@ class Config {
             'faumap'            => __('FAU Map', 'rrze-faudir'),
             'officehours'       => __('Office Hours', 'rrze-faudir'),
             'consultationhours' => __('Consultation Hours', 'rrze-faudir'),
+            'link'              => __('Link to Profil', 'rrze-faudir')
         ];
          
 
