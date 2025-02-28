@@ -74,7 +74,6 @@
 		
 		
 		.profile-address, .profile-consultation, .profile-contact, .profile-socialmedia {
-	//	   border: 1px solid red;
 		   padding: var(--faudir-profile-padding);
 		}
 		
@@ -97,7 +96,9 @@
 		}
 	    }
 	}
-	    	   
+	
+	
+	
 	@container faudir-compact-container (min-width: 320px) {
 		.format-compact-container {
 		    --faudir-profile-image-section-width: 120px;
@@ -106,11 +107,16 @@
 		    --faudir-profile-image-height: 120px;
 		    gap: var(--faudir-profile-compact-gab);
 		    grid-template-areas:
+			"header"
+			"details";
+		    grid-template-columns: 1fr;
+		}
+		.format-compact-container:has(.profile-image-section) {
+		   grid-template-areas:
 			"image header"
 			"details details";
-		    grid-template-columns: var(--faudir-profile-image-section-width) auto;
-		}
-
+		   grid-template-columns: var(--faudir-profile-image-section-width) auto;
+		}  
 		.profile-image-section {
 		    width: var(--faudir-profile-image-size);
 		    height: auto;
@@ -124,11 +130,17 @@
 		    --faudir-profile-image-width: 150px;
 		    --faudir-profile-image-height: 150px;
 		    grid-template-areas:
+			"header"
+			"details";
+		    grid-template-columns: 1fr;
+		    border: 1px solid var(--faudir-border-color, #e9edf2);
+		}
+		.format-compact-container:has(.profile-image-section) {
+		   grid-template-areas:
 			"image header"
 			"details details";
-		    grid-template-columns: var(--faudir-profile-image-section-width) auto;
-		}
-		
+		   grid-template-columns: var(--faudir-profile-image-section-width) auto;
+		} 
 		.profile-image-section {
 		    width: var(--faudir-profile-image-size);
 		    height: auto;
@@ -143,13 +155,18 @@
 		--faudir-profile-image-width: 200px;
 		--faudir-profile-image-height: 200px;
 		grid-template-areas:
-		    "image header"
-		    "image details";
-		grid-template-columns: var(--faudir-profile-image-section-width) 1fr;
+		    "header"
+		    "details";
+		grid-template-columns: 1fr;
 		grid-template-rows: auto 1fr;
 		align-items: stretch;
 	    }
-
+	    .format-compact-container:has(.profile-image-section) {
+		   grid-template-areas:
+			 "image header"
+			"image details";
+		   grid-template-columns: var(--faudir-profile-image-section-width) 1fr;
+		}
 	    .profile-image-section {
 		height: 100%; 
 	    }
