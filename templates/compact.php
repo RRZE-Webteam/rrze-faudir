@@ -73,11 +73,23 @@ if (!defined('ABSPATH')) {
  
                         if (in_array('address', $show_fields) && !in_array('address', $hide_fields)) {
                             if (!empty($workplaces)) {
-                                    $wval = '';
-                                    foreach ($workplaces as $w => $wdata) {
-                                        $wval .= $contact->getAddressByWorkplace($wdata, false, $lang, true);
-                                    }
-                                    $address .= $wval;      
+                                
+                                $showmap = false;
+                                if (in_array('faumap', $show_fields) && !in_array('faumap', $hide_fields)) {
+                                    $showmap = true;
+                                }
+                                $showroomfloor = false;
+                                if ((in_array('room', $show_fields) && !in_array('room', $hide_fields))
+                                || (in_array('floor', $show_fields) && !in_array('floor', $hide_fields))) {
+                                    $showroomfloor = true;
+                                }
+                                
+                                
+                                $wval = '';
+                                foreach ($workplaces as $w => $wdata) {
+                                    $wval .= $contact->getAddressByWorkplace($wdata, false, $lang, $showroomfloor, $showmap);
+                                }
+                                $address .= $wval;      
                             }
                            
                         }
@@ -92,12 +104,22 @@ if (!defined('ABSPATH')) {
                          || (in_array('consultationhours', $show_fields) && !in_array('consultationhours', $hide_fields))) {
                            
                             
+                            $showmap = false;
+                            if (in_array('faumap', $show_fields) && !in_array('faumap', $hide_fields)) {
+                                $showmap = true;
+                            }
+                            $showroomfloor = false;
+                            if ((in_array('room', $show_fields) && !in_array('room', $hide_fields))
+                            || (in_array('floor', $show_fields) && !in_array('floor', $hide_fields))) {
+                                $showroomfloor = true;
+                            }
+                            
                             if (!empty($workplaces)) {
                                 $hours = '';
                                 $cons = '';
                                 foreach ($workplaces as $w => $wdata) {
                                     if (!empty($wdata['consultationHours'])) {
-                                        $hours .= $contact->getConsultationsHours($wdata, 'consultationHours', true, $lang );
+                                        $hours .= $contact->getConsultationsHours($wdata, 'consultationHours', true, $lang, $showroomfloor, $showmap );
                                     }
                                 }
                                 $cons .= $hours;
@@ -105,7 +127,7 @@ if (!defined('ABSPATH')) {
                                 $hours = '';
                                 foreach ($workplaces as $w => $wdata) {
                                     if (!empty($wdata['officeHours'])) { 
-                                        $hours .= $contact->getConsultationsHours($wdata, 'officeHours', true, $lang);
+                                        $hours .= $contact->getConsultationsHours($wdata, 'officeHours', true, $lang, $showroomfloor, $showmap);
                                     }
                                 } 
                                $cons .= $hours;
@@ -162,23 +184,7 @@ if (!defined('ABSPATH')) {
                                 }
                             }
                         }
-                         if (in_array('faumap', $show_fields) && !in_array('faumap', $hide_fields)) {
-                             if (!empty($workplaces)) {
-                                $faumap = '';
-                                foreach ($workplaces as $w => $wdata) {
-                                    if (!empty($wdata['faumap'])) {
-                                        if (preg_match('/^https?:\/\/karte\.fau\.de/i', $wdata['faumap'])) {
-                                            $displayValue = preg_replace('/^https?:\/\//i', '', $wdata['faumap']);     
-                                            $formattedValue = '<a href="' . esc_url($wdata['faumap']) . '" itemprop="url">' . esc_html($displayValue) . '</a>';
-                                            $faumap .= '<span class="value"><span class="screen-reader-text">'.__('FAU Map','rrze-faudir').': </span>'.$formattedValue.'</span>';
-                                        }
-                                    }
-                                }
-                                if (!empty($faumap)) {
-                                    $contactlist .= '<li class="listcontent">'.$faumap.'</li>';
-                                }
-                            }
-                        }
+                        
                         
                         
                         if (!empty($contactlist)) {                       

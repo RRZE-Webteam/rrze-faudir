@@ -225,7 +225,7 @@ class Contact {
      * with key = 'consultationHours' as parameter
      *   key = 'officeHours' will use this array instead
      */    
-    public function getConsultationsHours(array $workplace, string $key = 'consultationHours', bool $withaddress = true, string $lang = 'de'): string {
+    public function getConsultationsHours(array $workplace, string $key = 'consultationHours', bool $withaddress = true, string $lang = 'de', bool $roomfloor = false, bool $showmap = false): string {
         if ((empty($workplace)) || (empty($workplace[$key]))) {
             return '';
         } 
@@ -279,7 +279,7 @@ class Contact {
             if (!empty($workplace['room'])) {
                 $output .= '';
             } 
-            $addressdata = $this->getAddressByWorkplace($workplace, false, $lang, true);
+            $addressdata = $this->getAddressByWorkplace($workplace, false, $lang, $roomfloor, $showmap);
             $output .= $addressdata;
         }
         
@@ -318,26 +318,53 @@ class Contact {
     /*
      * Generate Address Output for a Workplace
      */
-    public function getAddressByWorkplace(array $workplace, bool $orgname = true, string $lang = "de", bool $roomfloor = false): ?string {
+    public function getAddressByWorkplace(array $workplace, bool $orgname = true, string $lang = "de", bool $roomfloor = false, bool $showmap = false): ?string {
         $address = $result = '';
 
         if ($orgname) {
             $address .= $this->getOrganizationName($lang);  
         }
-        if ($roomfloor) {
-            if ((!empty($workplace['room'])) ||  (!empty($workplace['floor']))) {
-                $address .= '<span class="roomfloor" itemprop="containedInPlace" itemscope itemtype="https://schema.org/Room">';
-                if (!empty($workplace['room'])) {
-                     $address .= '<span class="room">'.__('Room', 'rrze-faudir').': <span class="room" itemprop="roomNumber">'.$workplace['room'].'</span></span>';
+        if (($roomfloor) || ($showmap)) {
+            
+            if ((!empty($workplace['room'])) ||  (!empty($workplace['floor'])) || (!empty($workplace['faumap']))) {
+                $room = $floor = $map = '';        
+                if (($roomfloor) && (!empty($workplace['room']))) {
+                     $room = '<span class="room">'.__('Room', 'rrze-faudir').': <span class="room" itemprop="roomNumber">'.$workplace['room'].'</span></span>';           
+                }
+                if (($roomfloor) && (!empty($workplace['floor']))) {
+                    $floor = '<span class="floor">'.__('Floor', 'rrze-faudir').': <span class="floor" itemprop="floorLevel">'.$workplace['floor'].'</span></span>';
+                }
+                if (($showmap) && (!empty($workplace['faumap']))) {
+                    if (preg_match('/^https?:\/\/karte\.fau\.de/i', $workplace['faumap'])) {  
+                        $formattedValue = '<a href="' . esc_url($workplace['faumap']) . '" itemprop="hasMap" content="' . esc_url($workplace['faumap']) . '">' .__('FAU Map','rrze-faudir'). '</a>';
+                        $map = '<span class="faumap">'.__('Map','rrze-faudir').': '.$formattedValue.'</span>';
+                    }
+                }
                 
-                }
-                if (!empty($workplace['floor'])) {
-                    $address .= '<span class="floor">'.__('Floor', 'rrze-faudir').': <span class="floor" itemprop="floorLevel">'.$workplace['floor'].'</span></span>';
+                $address .= '<span class="roomfloor" itemprop="containedInPlace" itemscope itemtype="https://schema.org/Room">';
 
+                if (!empty($room)) {
+                    $address .= $room;
+                    if ((!empty($floor)) || (!empty($map))) {
+                        $address .= ', ';
+                    }
                 }
+                if (!empty($floor)) {
+                    $address .= $floor;
+                    if (!empty($map)) {
+                        $address .= ', ';
+                    }
+                }
+                if (!empty($map)) {
+                    $address .= $map;
+                }
+
                 $address .= '</span>'; 
             }
+
+           
         }
+        
         if ($workplace['street']) {
             $address .= '<span class="street" itemprop="streetAdress">'.esc_html($workplace['street']).'</span>';    
         }

@@ -8,15 +8,16 @@
     .format-compact {
 	
 	
-	container-name: container;
+	container-name: faudir-compact-container;
 	container-type: inline-size;
     
 	.format-compact-container {
 	    --faudir-profile-image-size: 300px;
-	    --faudir-profile-padding: 1rem;
+	    --faudir-profile-padding: 0;
+	    --faudir-profile-compact-gab: 1rem;
 	    
 	    display: grid;
-	    gap: 0;
+	    gap: var(--faudir-profile-compact-gab);
 	    grid-template-areas:
 		"image"
 		"header"
@@ -88,7 +89,7 @@
 	    	   
 	    
 
-	@container container (min-width: 480px) {
+	@container faudir-compact-container (min-width: 480px) {
 		.format-compact-container {
 		    --faudir-profile-image-size: 240px;
 		    grid-template-areas:
@@ -104,7 +105,7 @@
 	    }
 
 
-	@container container (min-width: 768px) {   
+	@container faudir-compact-container (min-width: 768px) {   
 	    .format-compact-container {
 		--faudir-profile-image-size: 300px;
 		grid-template-areas:
@@ -116,7 +117,7 @@
 	    }
 
 	    .profile-image-section {
-		height: 100%; /* Volle Höhe des Containers */
+		height: 100%; 
 	    }
 	}
 

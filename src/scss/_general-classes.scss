@@ -83,12 +83,12 @@
 	.street,
 	.zipcity,
 	.postbox,
-	.addressCountry,
-	.roomfloor {
+	.addressCountry {
 	    display: flex;
 	}
 	.roomfloor {
-	    gap: 0 1rem;
+	    margin-bottom: 0.5rem;
+	    display: inline-block;
 	}
     }
     
@@ -96,6 +96,9 @@
 	margin: 0 0 1rem 0;
 	
 	.ContactPointList {
+	    ul {
+		margin-left: 0;
+	    }
 	    li {
 		list-style-type: none;
 		padding: 0;
