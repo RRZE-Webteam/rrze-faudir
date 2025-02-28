@@ -232,13 +232,13 @@ class Contact {
         
         $output = '';
         $output .= '<div class="workplace-hours" itemprop="contactPoint" itemscope itemtype="https://schema.org/ContactPoint">';
-        $output .= '<strong itemprop="contactType">';
+        $output .= '<meta itemprop="contactType" content="';
         if ($key === 'officeHours') {
             $output .= esc_html__('Office Hours', 'rrze-faudir');
         } else {
             $output .= esc_html__('Consultation Hours', 'rrze-faudir');
         }
-        $output .= ':</strong>';
+        $output .= '">';
         
         
         $num = count($workplace[$key]);
@@ -395,7 +395,7 @@ class Contact {
         
         if (!empty($address)) {
             $address = '<span class="texticon" itemprop="address" itemscope="" itemtype="https://schema.org/PostalAddress">'.$address.'</span>';                  
-            $result = '<div class="workplace-address"><span class="screen-reader-text">'.__('Address', 'rrze-faudir').': </span>' . $address . '</div>';
+            $result = '<div class="workplace-address">' . $address . '</div>';
         }
         return $result;
     }

@@ -66,10 +66,14 @@
     a[href*="feed"]:before {
 	--_icon: var(--faudir-icon-feed);
     }
+    a[itemprop="telephone"]:before,
+    a[href*="tel:"]:before{
+	--_icon: var(--faudir-icon-phone);
+    }
     
-    a[href*=".ics"]:before,
-    a[href*=".ical"]:before {
-	--_icon: var(--faudir-icon-calendar);
+    a[href*="rss"]:before,
+    a[href*="feed"]:before {
+	--_icon: var(--faudir-icon-feed);
     }
     
     .texticon.room {

@@ -95,10 +95,9 @@
     .workplace-hours {
 	margin: 0 0 1rem 0;
 	
-	.ContactPointList {
-	    ul {
-		margin-left: 0;
-	    }
+	ul.ContactPointList {
+	    margin: 0.5rem 0;
+	    
 	    li {
 		list-style-type: none;
 		padding: 0;
@@ -106,15 +105,7 @@
 	}
     }
     
-    .icon {
-
-	.maillist {
-		li:nth-child(n+2) a::before {    	
-		     background: none;
-		     width: 0;
-		}
-	    }
-    }
+    
 	
     
 }

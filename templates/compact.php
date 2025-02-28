@@ -95,6 +95,7 @@ if (!defined('ABSPATH')) {
                         }
                         if (!empty($address)) {
                             echo '<div class="profile-address">';
+                            echo '<h2 class="address-title">'.__('Address', 'rrze-faudir').'</h2>';
                             echo $address;
                             echo '</div>';
                         }
@@ -115,14 +116,16 @@ if (!defined('ABSPATH')) {
                             }
                             
                             if (!empty($workplaces)) {
-                                $hours = '';
-                                $cons = '';
+                                $hours = $cons =  '';
                                 foreach ($workplaces as $w => $wdata) {
                                     if (!empty($wdata['consultationHours'])) {
                                         $hours .= $contact->getConsultationsHours($wdata, 'consultationHours', true, $lang, $showroomfloor, $showmap );
                                     }
                                 }
-                                $cons .= $hours;
+                                if (!empty($hours)) {
+                                        $cons .=  '<h2 class="consultation-title">'.__('Consultation Hours', 'rrze-faudir').'</h2>';
+                                        $cons .= $hours;
+                                }
                                 
                                 $hours = '';
                                 foreach ($workplaces as $w => $wdata) {
@@ -130,7 +133,11 @@ if (!defined('ABSPATH')) {
                                         $hours .= $contact->getConsultationsHours($wdata, 'officeHours', true, $lang, $showroomfloor, $showmap);
                                     }
                                 } 
-                               $cons .= $hours;
+                                if (!empty($hours)) {
+                                        $cons .=  '<h2 class="consultation-title">'. __('Office Hours', 'rrze-faudir').'</h2>';
+                                        $cons .= $hours;
+                                }
+                  
                                if (!empty($cons)) {   
                                    echo '<div class="profile-consultation">';
                                    echo $cons;
@@ -152,7 +159,7 @@ if (!defined('ABSPATH')) {
                                 }                 
                             }
                             if (!empty($wval)) {
-                                $contactlist .=  '<li class="listcontent">'.$wval.'</li>';
+                                $contactlist .=  '<li class="email listcontent">'.$wval.'</li>';
                             }
                         }
                         
@@ -166,7 +173,7 @@ if (!defined('ABSPATH')) {
 
                             }
                             if (!empty($wval)) {
-                                $contactlist .= '<li class="listcontent">'.$wval.'</li>';
+                                $contactlist .= '<li class="phone listcontent">'.$wval.'</li>';
                             }
                         }
                         if (in_array('url', $show_fields) && !in_array('url', $hide_fields)) {
@@ -180,7 +187,7 @@ if (!defined('ABSPATH')) {
                                     }
                                 }
                                 if (!empty($wval)) {
-                                    $contactlist .= '<li class="listcontent">'.$wval.'</li>';
+                                    $contactlist .= '<li class="url listcontent">'.$wval.'</li>';
                                 }
                             }
                         }
@@ -189,7 +196,8 @@ if (!defined('ABSPATH')) {
                         
                         if (!empty($contactlist)) {                       
                             echo '<div class="profile-contact">';
-                            echo '<ul>';
+                            echo '<h2 class="contact-title">'.__('Contact', 'rrze-faudir').'</h2>';
+                            echo '<ul class="icon">';
                             echo $contactlist;
                             echo '</ul>';
                             echo '</div>';
