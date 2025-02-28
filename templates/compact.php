@@ -41,7 +41,7 @@ if (!defined('ABSPATH')) {
                 ?>
 
                 <section class="format-compact-container" itemscope itemtype="https://schema.org/Person">
-                    <?php if (in_array('image', $show_fields) && !in_array('image', $hide_fields)) { ?>
+                    <?php if (in_array('image', $show_fields) && !in_array('image', $hide_fields) && isset($available_fields['image'])) { ?>
                     <div class="profile-image-section">
                         <?php echo $person->getImage(); ?>
                     </div>
@@ -59,10 +59,10 @@ if (!defined('ABSPATH')) {
                         }                        
                         echo '<h1>'.$value.'</h1>';
                         
-                        if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields)) {
+                        if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields) && isset($available_fields['organization'])) {
                             echo '<p class="organisation_name">'. $contact->getOrganizationName($lang).'</p>';
                         }
-                        if (in_array('jobTitle', $show_fields) && !in_array('jobTitle', $hide_fields)) {
+                        if (in_array('jobTitle', $show_fields) && !in_array('jobTitle', $hide_fields) && isset($available_fields['jobTitle'])) {
                              echo '<p class="jobtitle">'. $contact->getJobTitle($lang).'</p>';
                         }
                         ?>
@@ -72,7 +72,7 @@ if (!defined('ABSPATH')) {
                         <?php
                         $address = '';
  
-                        if (in_array('address', $show_fields) && !in_array('address', $hide_fields)) {
+                        if (in_array('address', $show_fields) && !in_array('address', $hide_fields) && isset($available_fields['address'])) {
                             if (!empty($workplaces)) {
                                 
                                 $showmap = false;
@@ -102,8 +102,8 @@ if (!defined('ABSPATH')) {
                         }
                         
                         
-                        if ((in_array('officehours', $show_fields) && !in_array('officehours', $hide_fields))
-                         || (in_array('consultationhours', $show_fields) && !in_array('consultationhours', $hide_fields))) {
+                        if ((in_array('officehours', $show_fields) && !in_array('officehours', $hide_fields) && isset($available_fields['officehours']))
+                         || (in_array('consultationhours', $show_fields) && !in_array('consultationhours', $hide_fields) && isset($available_fields['consultationhours']))) {
                            
                             
                             $showmap = false;
@@ -150,7 +150,7 @@ if (!defined('ABSPATH')) {
             
                         
                         $contactlist = '';
-                        if (in_array('email', $show_fields) && !in_array('email', $hide_fields)) {
+                        if (in_array('email', $show_fields) && !in_array('email', $hide_fields) && isset($available_fields['email'])) {
                             $mailadresses= $person->getEMail();
                             $wval = '';
                             foreach ($mailadresses as $mail) {
@@ -164,7 +164,7 @@ if (!defined('ABSPATH')) {
                             }
                         }
                         
-                        if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields)) {
+                        if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields) && isset($available_fields['phone'])) {
                             $wval = '';                                    
                             foreach ($phonenumbers as $phone) {
                                 $formattedPhone = FaudirUtils::format_phone_number($phone);
@@ -177,7 +177,7 @@ if (!defined('ABSPATH')) {
                                 $contactlist .= '<li class="phone listcontent">'.$wval.'</li>';
                             }
                         }
-                        if (in_array('url', $show_fields) && !in_array('url', $hide_fields)) {
+                        if (in_array('url', $show_fields) && !in_array('url', $hide_fields) && isset($available_fields['url'])) {
                             if (!empty($workplaces)) {
                                 $wval = '';
                                 foreach ($workplaces as $w => $wdata) {
@@ -204,7 +204,7 @@ if (!defined('ABSPATH')) {
                             echo '</div>';
                         }
                         
-                        if (in_array('socialmedia', $show_fields) && !in_array('socialmedia', $hide_fields)) {
+                        if (in_array('socialmedia', $show_fields) && !in_array('socialmedia', $hide_fields) && isset($available_fields['socialmedia'])) {
                             $some = $contact->getSocialMedia('span');
                             if (!empty($some)) {
                                 echo '<div class="profile-socialmedia">';
@@ -216,11 +216,20 @@ if (!defined('ABSPATH')) {
                     </div>
                     <?php
                     $profilcontent = '';
-                    if (in_array('teasertext', $show_fields) && !in_array('teasertext', $hide_fields)) {    
+                    if (in_array('teasertext', $show_fields) && !in_array('teasertext', $hide_fields) && isset($available_fields['teasertext'])) {    
                         
                             $wval = $person->getTeasertext($lang);
                             if (!empty($wval)) {
                                 $profilcontent .= '<div class="teasertext">';
+                                $profilcontent .= wp_kses_post($wval);
+                                $profilcontent .= '</div>';
+                            }
+                    }
+                    
+                     if (in_array('content', $show_fields) && !in_array('content', $hide_fields) && isset($available_fields['content'])) {                          
+                            $wval = $person->getContent($lang);
+                            if (!empty($wval)) {
+                                $profilcontent .= '<div class="content">';
                                 $profilcontent .= wp_kses_post($wval);
                                 $profilcontent .= '</div>';
                             }

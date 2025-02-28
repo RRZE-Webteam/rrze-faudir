@@ -105,7 +105,24 @@
 	}
     }
     
-    
-	
+    h1 {
+	font-size: var(--font-size-xl, 1.25rem);
+    }
+    h2 {
+	font-size: var(--font-size-normal, 1rem);
+    }
+    h3 {
+	font-size: var(--font-size-tiny, 0.938rem);
+    }
+    h4 {
+	font-size: var(--font-size-sm, 0.875rem);
+    }
+    h5 {
+	font-size: var(--font-size-xs, 0.76rem);
+    }
+
+    p.jobtitle {
+	font-weight: bold;
+    }
     
 }
