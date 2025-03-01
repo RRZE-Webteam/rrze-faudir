@@ -62,8 +62,7 @@ class Person {
      * Aktualisiert die Eigenschaften der Person anhand der übergebenen Daten.
      * @param array $data Das Array mit den neuen Personendaten.
      */
-    public function populateFromData(array $data, bool $clear = true): void {
-        
+    public function populateFromData(array $data, bool $clear = true): void { 
         if ($clear) {
             // Setze alle bekannten Felder auf ihre Standardwerte zurück.
             $this->identifier          = '';
@@ -709,6 +708,21 @@ class Person {
         );
 
         return isset($prefixes[$prefix]) ? $prefixes[$prefix] : '';
+    }
+    
+    /*
+     * Get a random identifier; Used for aria-labelledby if more entries 
+     * of the same person is displayed on the same page
+     */
+    public function getRandomId(string $prefix = ''): string {
+        $res = '';        
+        if (!empty($prefix)) {
+            $res = esc_attr($prefix);
+        }
+        $only_numbers = filter_var($this->identifier, FILTER_SANITIZE_NUMBER_INT);
+        $res .= $only_numbers.'-'.wp_rand(1000,5000);
+        
+        return $res;
     }
   
 }

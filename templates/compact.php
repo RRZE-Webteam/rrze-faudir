@@ -38,9 +38,10 @@ if (!defined('ABSPATH')) {
                 if (!empty($contact)) { 
                     $workplaces = $contact->getWorkplaces();                    
                 }
+                $aria_id = $person->getRandomId("section-title-");
                 ?>
 
-                <section class="format-compact-container" itemscope itemtype="https://schema.org/Person">
+                <section class="format-compact-container" aria-labelledby="<?php echo $aria_id;?>" itemscope itemtype="https://schema.org/Person">
                     <?php if (in_array('image', $show_fields) && !in_array('image', $hide_fields) && isset($available_fields['image'])) { ?>
                     <div class="profile-image-section">
                         <?php echo $person->getImage(); ?>
@@ -57,7 +58,7 @@ if (!defined('ABSPATH')) {
                         if (!empty($final_url)) {
                             $value .= '</a>';
                         }                        
-                        echo '<h1>'.$value.'</h1>';
+                        echo '<h1 id="'.$aria_id.'">'.$value.'</h1>';
                         
                         if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields) && isset($available_fields['organization'])) {
                             echo '<p class="organisation_name">'. $contact->getOrganizationName($lang).'</p>';

@@ -1,226 +1,150 @@
 <?php
 // Template file for RRZE FAUDIR
-
+use RRZE\FAUdir\Debug;
 use RRZE\FAUdir\FAUdirUtils;
 use RRZE\FAUdir\Person;
-
+use RRZE\FAUdir\Config;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
-?>
 
+?>
 <div class="faudir">
 <?php
-    if (!empty($persons)) : ?>
-    <div class="format-card-wrapper" role="list"> <!-- Flex container for the cards -->
-        <?php foreach ($persons as $person) : ?>
-            <?php if (isset($person['error'])): ?>
-                <div class="faudir-error">
-                    <?php echo esc_html($person['message']); ?>
-                </div>
-            <?php else: ?>
-                <?php if (!empty($person)) : ?>
-                    <?php
-                    $featured_image_url = '';
+    $config = new Config;
+    $available_fields = $config->getFieldsByFormat('card');
+    $lang = FAUdirUtils::getLang();
 
-                    // Check if a CPT with the same ID exists
-                    $contact_posts = get_posts([
-                        'post_type' => 'custom_person',
-                        'meta_key' => 'person_id',
-                        'meta_value' => $person['identifier'],
-                        'posts_per_page' => 1, // Only fetch one post matching the person ID
-                    ]);
-                    $cpt_url = !empty($contact_posts) ? get_permalink($contact_posts[0]->ID) : '';
 
-                    // Use custom post type URL if multiple persons or no direct URL
-                    $final_url = (count($persons) > 1 || empty($url)) ? $cpt_url : $url;
+    
+    if (!empty($persons)) { ?>
+    <div class="format-card">
+    <?php foreach ($persons as $persondata) {
+        if (isset($persondata['error'])) { ?>
+            <div class="faudir-error">
+                <?php echo esc_html($persondata['message']); ?>
+            </div>
+        <?php } else { 
+            if (!empty($persondata)) {
 
-                    // If there are contact posts, process them
-                    if (!empty($contact_posts)) {
-                        // Loop through each contact post
-                        foreach ($contact_posts as $post) : {
-                                // Check if the post has a UnivIS ID (person_id)
-                                $identifier = get_post_meta($post->ID, 'person_id', true);
+                $person = new Person($persondata);
+                $displayname = $person->getDisplayName(true, false);
+                $mailadresses= $person->getEMail();
+                $phonenumbers = $person->getPhone();                        
+                $final_url = $person->getTargetURL();
+                $contact = $person->getPrimaryContact();
+                $workplaces = [];
+                if (!empty($contact)) { 
+                    $workplaces = $contact->getWorkplaces();                    
+                }
+                $aria_id = $person->getRandomId("section-title-");
+                ?>
 
-                                // Compare the identifier with the current person's identifier
-                                if ($identifier === $person['identifier']) {
-                                    $featured_image_url = get_the_post_thumbnail_url($post->ID, 'full');
-                                }
-                            }
-                        endforeach;
-                    } ?>
-                    <article class="format-card" itemscope itemtype="https://schema.org/Person" role="listitem">
-                        <!-- Get Full name with title -->
-                        <?php
-                        $options = get_option('rrze_faudir_options');
-                        $hard_sanitize = isset($options['hard_sanitize']) && $options['hard_sanitize'];
-                        $personal_title = '';
-                        $givenName = '';
-                        $nobility_title = '';
-                        $familyName = '';
-                        $title_suffix = '';
-                        if (in_array('personalTitle', $show_fields) && !in_array('personalTitle', $hide_fields)) {
-                            $personal_title = isset($person['personalTitle']) && !empty($person['personalTitle']) 
-                                ? esc_html($person['personalTitle'])
-                                : '';
+                <section class="format-card-container" aria-labelledby="<?php echo $aria_id;?>" itemscope itemtype="https://schema.org/Person">
+                    <?php if (in_array('image', $show_fields) && !in_array('image', $hide_fields) && isset($available_fields['image'])) { ?>
+                    <div class="profile-image-section">
+                        <?php echo $person->getImage(); ?>
+                    </div>
+                    <?php } ?>
+                    <header class="profile-header">
+                       <?php 
+
+                        $value = '';
+                        if (!empty($final_url)) {
+                            $value .= '<a itemprop="url" href="'.esc_url($final_url).'">';     
                         }
-                        if (in_array('givenName', $show_fields) && !in_array('givenName', $hide_fields)) {
-                            $givenName= (isset($person['givenName']) && !empty($person['givenName']) ? esc_html($person['givenName']) : '');
+                        $value .= $displayname;
+                        if (!empty($final_url)) {
+                            $value .= '</a>';
+                        }                        
+                        echo '<h1 id="'.$aria_id.'">'.$value.'</h1>';
+                        
+                        if (in_array('organization', $show_fields) && !in_array('organization', $hide_fields) && isset($available_fields['organization'])) {
+                            echo '<p class="organisation_name">'. $contact->getOrganizationName($lang).'</p>';
                         }
-                        if (in_array('titleOfNobility', $show_fields) && !in_array('titleOfNobility', $hide_fields)) {
-                            $nobility_title = (isset($person['titleOfNobility']) && !empty($person['titleOfNobility']) ? esc_html($person['titleOfNobility']) : '');
-                        }
-                        if (in_array('familyName', $show_fields) && !in_array('familyName', $hide_fields)) {
-                            $familyName = (isset($person['familyName']) && !empty($person['familyName']) ? esc_html($person['familyName']) : '');
-                        }
-                        if (in_array('personalTitleSuffix', $show_fields) && !in_array('personalTitleSuffix', $hide_fields)) {
-                            $title_suffix = (isset($person['personalTitleSuffix']) && !empty($person['personalTitleSuffix']) ? esc_html($person['personalTitleSuffix']) : '');
-                        }
-                        // Construct the full name
-                        $fullName = trim(
-                            ($personal_title) . ' ' .
-                                ($givenName) . ' ' .
-                                ($nobility_title) . ' ' .
-                                ($familyName) . ' ' .
-                                '(' . ($title_suffix) . ')'
-                        );
-
-                        $person_name_html = FaudirUtils::getPersonNameHtml([
-                            'hard_sanitize' => $hard_sanitize,
-                            'personal_title' => $personal_title,
-                            'givenName' => $givenName,
-                            'nobility_title' => $nobility_title,
-                            'familyName' => $familyName,
-                            'title_suffix' => $title_suffix,
-                            'identifier' => $person['identifier']
-                        ]);
-
-                        // Image
-                        if (count($persons) === 1 && !empty($image_url)) {
-                            ?>
-                            <div itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
-                                <meta itemprop="identifier" content="<?php echo esc_attr($person['identifier']); ?>_image" />
-                                <?php
-                                $image_id = attachment_url_to_postid($image_url);
-                                $image_meta = wp_get_attachment_metadata($image_id);
-                                $width = isset($image_meta['width']) ? $image_meta['width'] : '';
-                                $height = isset($image_meta['height']) ? $image_meta['height'] : '';
-                                $caption = wp_get_attachment_caption($image_id);
-                                ?>
-                                <img src="<?php echo esc_url($image_url); ?>" 
-                                     alt="<?php echo esc_attr($fullName . ' Image'); ?>" 
-                                     itemprop="contentUrl" />
-                                <?php if ($width): ?><meta itemprop="width" content="<?php echo esc_attr($width); ?>" /><?php endif; ?>
-                                <?php if ($height): ?><meta itemprop="height" content="<?php echo esc_attr($height); ?>" /><?php endif; ?>
-                                <?php if ($caption): ?>
-                                    <meta itemprop="caption" content="<?php echo esc_attr($caption); ?>" />
-                                <?php endif; ?>
-                            </div>
-                            <?php
-                        } elseif (!empty($featured_image_url)) {
-                            ?>
-                            <div itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
-                                <meta itemprop="identifier" content="<?php echo esc_attr($person['identifier']); ?>_featured_image" />
-                                <?php
-                                $image_id = attachment_url_to_postid($featured_image_url);
-                                $image_meta = wp_get_attachment_metadata($image_id);
-                                $width = isset($image_meta['width']) ? $image_meta['width'] : '';
-                                $height = isset($image_meta['height']) ? $image_meta['height'] : '';
-                                $caption = wp_get_attachment_caption($image_id);
-                                ?>
-                                <img src="<?php echo esc_url($featured_image_url); ?>" 
-                                     alt="<?php echo esc_attr($fullName . ' Image'); ?>" 
-                                     itemprop="contentUrl" />
-                                <?php if ($width): ?><meta itemprop="width" content="<?php echo esc_attr($width); ?>" /><?php endif; ?>
-                                <?php if ($height): ?><meta itemprop="height" content="<?php echo esc_attr($height); ?>" /><?php endif; ?>
-                                <?php if ($caption): ?>
-                                    <meta itemprop="caption" content="<?php echo esc_attr($caption); ?>" />
-                                <?php endif; ?>
-                            </div>
-                            <?php
-                        } else {
-                            echo '<img src="' . esc_url(plugins_url('rrze-faudir/assets/images/platzhalter-unisex.png', dirname(__FILE__, 2))) . '" alt="' . esc_attr($fullName . ' Image') . '" itemprop="image" />';
-                        }
-
-                        // Name
-                        if (!empty($person_name_html)) {
-                            echo '<section class="card-section-title" aria-label="' . esc_attr($fullName) . '">';
-                            if (!empty($final_url)) {
-                                echo '<a href="' . esc_url($final_url) . '" aria-labelledby="name-' . esc_attr($person['identifier']) . '">';
-                                echo $person_name_html;
-                                echo '</a>';
-                            } else {
-                                echo $person_name_html;
-                            }
-                            echo '</section>';
+                        if (in_array('jobTitle', $show_fields) && !in_array('jobTitle', $hide_fields) && isset($available_fields['jobTitle'])) {
+                             echo '<p class="jobtitle">'. $contact->getJobTitle($lang).'</p>';
                         }
                         ?>
+                
+                     </header>
+                     <div class="profile-details">   
+                        <?php
+                         
+                        $contactlist = '';
+                        if (in_array('email', $show_fields) && !in_array('email', $hide_fields) && isset($available_fields['email'])) {
+                            $mailadresses= $person->getEMail();
+                            $wval = '';
+                            foreach ($mailadresses as $mail) {
+                                if (filter_var($mail, FILTER_VALIDATE_EMAIL)) {
+                                    $formattedValue = '<a itemprop="email" href="mailto:' . esc_attr($mail) . '">' . esc_html($mail) . '</a>';
+                                    $wval .= '<span class="value"><span class="screen-reader-text">'.__('Email','rrze-faudir').': </span>'.$formattedValue.'</span>';
+                                }                 
+                            }
+                            if (!empty($wval)) {
+                                $contactlist .=  '<li class="email listcontent">'.$wval.'</li>';
+                            }
+                        }
+                        
+                        if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields) && isset($available_fields['phone'])) {
+                            $wval = '';                                    
+                            foreach ($phonenumbers as $phone) {
+                                $formattedPhone = FaudirUtils::format_phone_number($phone);
+                                $cleanTel = preg_replace('/[^\+\d]/', '', $phone);
+                                $formattedValue = '<a itemprop="telephone" href="tel:' . esc_attr($cleanTel) . '">' . esc_html($formattedPhone) . '</a>';
+                                $wval .= '<span class="value"><span class="screen-reader-text">'.__('Phone','rrze-faudir').': </span>'.$formattedValue.'</span>';
 
-                        <!-- Function -->
-                        <?php if (!empty($person['contacts'])) : ?>
-                            <?php
-                            $displayedFunctions = []; // Track displayed functions to avoid duplicates
-                            
-                            // Get the post ID from the earlier contact posts query
-                            $post_id = !empty($contact_posts) ? $contact_posts[0]->ID : 0;
-                            $displayed_contacts = get_post_meta($post_id, 'displayed_contacts', true) ?: [];
-                            ?>
-
-                            <?php foreach ($person['contacts'] as $index => $contact)  : ?>
-                                <?php
-                                // Check if the current contact index is in $displayed_contacts
-                                if (!in_array($index, $displayed_contacts) && !empty($displayed_contacts)) {
-                                    continue; // Skip this contact if it's not selected to be displayed
-                                }
-                                if (in_array('function', $show_fields) && !in_array('function', $hide_fields)) {
-                                    $locale = get_locale();
-                                    $isGerman = strpos($locale, 'de_DE') !== false || strpos($locale, 'de_DE_formal') !== false;
-
-                                    // Determine the appropriate function label based on locale
-                                    $function = '';
-                                    if (!empty($contact['functionLabel'])) {
-                                        $function = $isGerman ?
-                                            ($contact['functionLabel']['de'] ?? '') : ($contact['functionLabel']['en'] ?? '');
+                            }
+                            if (!empty($wval)) {
+                                $contactlist .= '<li class="phone listcontent">'.$wval.'</li>';
+                            }
+                        }
+                        if (in_array('url', $show_fields) && !in_array('url', $hide_fields) && isset($available_fields['url'])) {
+                            if (!empty($workplaces)) {
+                                $wval = '';
+                                foreach ($workplaces as $w => $wdata) {
+                                    if (!empty($wdata['url'])) {
+                                        $displayValue = preg_replace('/^https?:\/\//i', '', $wdata['url']);     
+                                        $formattedValue = '<a href="' . esc_url($wdata['url']) . '" itemprop="url">' . esc_html($displayValue) . '</a>';
+                                        $wval .= '<span class="value"><span class="screen-reader-text">'.__('URL','rrze-faudir').': </span>'.$formattedValue.'</span>';
                                     }
-
-                                    // Check if the function has already been displayed
-                                    if (!empty($function) && !in_array($function, $displayedFunctions)) {
-                                        // Add the function to the displayed list to prevent duplicates
-                                        $displayedFunctions[] = $function;
-                                ?>
-                                        <p itemprop="jobTitle"><?php echo esc_html($function); ?></p>
-                                <?php
-                                    }
                                 }
-                                ?>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+                                if (!empty($wval)) {
+                                    $contactlist .= '<li class="url listcontent">'.$wval.'</li>';
+                                }
+                            }
+                        }
+                        
+                        
+                        
+                        if (!empty($contactlist)) {                       
+                            echo '<div class="profile-contact">';
+                            echo '<h2 class="contact-title">'.__('Contact', 'rrze-faudir').'</h2>';
+                            echo '<ul class="icon">';
+                            echo $contactlist;
+                            echo '</ul>';
+                            echo '</div>';
+                        }
+                        
+                        if (in_array('socialmedia', $show_fields) && !in_array('socialmedia', $hide_fields) && isset($available_fields['socialmedia'])) {
+                            $some = $contact->getSocialMedia('span');
+                            if (!empty($some)) {
+                                echo '<div class="profile-socialmedia">';
+                                echo $some;
+                                echo '</div>';
+                            }
+                        }
+                        ?>
+                     </div>
+                    
+                </section>    
+            <?php } 
+        } 
+    } ?>
+    </div>
+<?php } else { ?>
+    <div class="faudir-error"><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?></div>
+<?php } ?>
 
-                        <!-- Social Media -->
-                        <?php if (in_array('socialmedia', $show_fields) && !in_array('socialmedia', $hide_fields)): ?>
-                            <?php if (!empty($person['contacts'][0]['socials'])) : ?>
-                                <ul class="socialmedia">
-                                    <?php foreach ($person['contacts'][0]['socials'] as $social) :
-                                        $icon_data = get_social_icon_data($social['platform']);
-                                    ?>
-                                        <li>
-                                            <span class="screen-reader-text"> <?php echo esc_html(ucfirst($icon_data['name'])); ?>: </span>
-                                            <a href="<?php echo esc_url($social['url']); ?>"><?php echo esc_url($social['url']); ?></a>
-                                        </li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            <?php endif; ?>
-                        <?php endif; ?>
-
-                    </article> <!-- End of .card -->
-                <?php else : ?>
-                    <article><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?></article>
-                <?php endif; ?>
-            <?php endif; ?>
-        <?php endforeach; ?>
-    </div> <!-- End of .cards -->
-<?php else : ?>
-    <div class="faudir-error"><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir') ?> </div>
-<?php endif; ?>
 </div>

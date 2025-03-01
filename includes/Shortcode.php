@@ -544,8 +544,6 @@ class Shortcode {
         $person = new Person();
         $person->setConfig(self::$config);
         
-        // $data = fetch_fau_persons(0, 0, $params);
-
         $persons = [];
         if (!empty($data['data'])) {
             foreach ($data['data'] as $person) {

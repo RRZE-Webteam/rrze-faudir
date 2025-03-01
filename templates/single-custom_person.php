@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
 get_header();
 ?>
 
-<main id="main" class="site-main faudir">
+<main id="main" class="site-main faudir-custom-post">
     <?php
     while (have_posts()) :
         the_post();
