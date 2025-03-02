@@ -305,13 +305,9 @@ function rrze_faudir_default_output_fields_render() {
     $options = get_option('rrze_faudir_options');
     $default_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : array();
 
- //   if (!empty($options['avaible_fields'])) {
- //       $available_fields = $options['avaible_fields']; 
-//    } else {
         $config = new Config;
         $available_fields = $config->get('avaible_fields');
-//    }
-    
+        $fieldlist = $config->getAvaibleFieldlist();
 
     // Set default state: all checkboxes checked if no selection exists
     if (empty($default_fields)) {
@@ -323,7 +319,23 @@ function rrze_faudir_default_output_fields_render() {
         $checked = in_array($field, $default_fields); // Check if the field is in the default fields array
         echo "<label for='" . esc_attr('rrze_faudir_default_output_fields_' . $field) . "'>";
         echo "<input type='checkbox' id='" . esc_attr('rrze_faudir_default_output_fields_' . $field) . "' name='rrze_faudir_options[default_output_fields][]' value='" . esc_attr($field) . "' " . checked($checked, true, false) . ">";
-        echo esc_html($label) . "</label><br>";
+        echo esc_html($label) . "</label>";
+        $missing = '';
+        foreach ($fieldlist as $fl => $entries) {
+            if (isset($fieldlist[$fl]) && in_array($field, $fieldlist[$fl], true)) {
+                // can use
+            } else {
+                if (!empty($missing)) {
+                    $missing .= ', ';
+                }
+                $missing .= $fl;
+            }
+        }
+        if (!empty($missing)) {
+            echo ' <em>('.__('Not avaible for the following formats', 'rrze_faudir').': '.$missing.')</em>';
+        }
+        echo "<br>";
+        
     }
     echo '</fieldset>';
     echo '<p class="description">' . esc_html__('Select the fields to display by default in shortcodes and blocks.', 'rrze-faudir') . '</p>';

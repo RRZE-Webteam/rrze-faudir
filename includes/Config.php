@@ -37,10 +37,7 @@ class Config {
     
 
     public function __construct() {
-        
-        
-        $this->config['business_card_title'] = __('Call up business card', 'rrze-faudir');
-             
+        $this->config['business_card_title'] = __('Call up business card', 'rrze-faudir');         
         $this->config['avaible_fields'] = [
             'image'             => __('Image', 'rrze-faudir'),
             'displayname'       => __('Display Name', 'rrze-faudir'),
@@ -121,7 +118,9 @@ class Config {
         return $res;
         
     }
-
+    public function getAvaibleFieldlist(): array {
+        return $this->config['avaible_fields_byformat'];
+    }
     
     
     
