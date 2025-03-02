@@ -368,27 +368,27 @@ class Contact {
         if ($workplace['street']) {
             $address .= '<span class="street" itemprop="streetAdress">'.esc_html($workplace['street']).'</span>';    
         }
-        if ($workplace['postOfficeBoxNumber']) {
+        if (!empty($workplace['postOfficeBoxNumber'])) {
             $address .= '<span class="postbox"><span class="screen-reader-text">'.__('Box Number', 'rrze-faudir').': </span><span itemprop="postOfficeBoxNumber">'.esc_html($workplace['postOfficeBoxNumber']).'</span></span>';    
         }
         
-        if (($workplace['postalCode']) && ($workplace['addressLocality'] || $workplace['city'])) {
+        if ((!empty($workplace['postalCode'])) && (!empty($workplace['addressLocality']) || (!empty($workplace['city'])))) {
             $address .= '<span class="zipcity">';
         }
-            if ($workplace['postalCode']) {
+        if (!empty(!empty($workplace['postalCode']))) {
                 $address .= '<span class="postalCode" itemprop="postalCode">'.esc_html($workplace['postalCode']).'</span> ';    
-            } elseif ($workplace['zip']) {
+        } elseif (!empty($workplace['zip'])) {
                 $address .= '<span class="postalCode" itemprop="postalCode">'.esc_html($workplace['zip']).'</span> ';    
-            }
-            if ($workplace['addressLocality']) {
-                $address .= '<span class="addressLocality" itemprop="addressLocality">'.esc_html($workplace['addressLocality']).'</span>';    
-            } elseif ($workplace['city']) {
-                $address .= '<span class="addressLocality" itemprop="addressLocality">'.esc_html($workplace['city']).'</span>';    
-            }
-        if (($workplace['postalCode']) && ($workplace['addressLocality'] || $workplace['city'])) {    
+        }
+        if (!empty($workplace['addressLocality'])) {
+            $address .= '<span class="addressLocality" itemprop="addressLocality">'.esc_html($workplace['addressLocality']).'</span>';    
+        } elseif (!empty($workplace['city'])) {
+            $address .= '<span class="addressLocality" itemprop="addressLocality">'.esc_html($workplace['city']).'</span>';    
+        }
+        if ((!empty($workplace['postalCode'])) && (!empty($workplace['addressLocality']) || !empty($workplace['city']))) {    
             $address .= '</span>';
         }
-        if ($workplace['addressCountry']) {
+        if (!empty($workplace['addressCountry'])) {
             $address .= '<span class="addressCountry" itemprop="addressCountry">'.esc_html($workplace['addressCountry']).'</span>';    
         }
         
@@ -416,7 +416,7 @@ class Contact {
         
         $htmlsurround = self::sanitize_htmlsurround($htmlsurround);
         
-        
+        $output = '';
         $output .= '<'.$htmlsurround;
         if (!empty($arialabel)) {
              $output .= ' aria-label="'.trim(esc_attr($arialabel)).'"';
