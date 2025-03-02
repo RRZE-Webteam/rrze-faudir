@@ -32,9 +32,8 @@ if (!defined('ABSPATH')) {
     $lang = FAUdirUtils::getLang();
      
     
-    echo "<h2>Config</h2>";
-    
-          echo  Debug::get_html_var_dump($available_fields);
+  //  echo "<h2>Config</h2>";
+  //    echo  Debug::get_html_var_dump($available_fields);
         
     ?>    
     <table class="format-table">
