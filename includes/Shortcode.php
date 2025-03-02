@@ -51,6 +51,7 @@ class Shortcode {
                 'jobtitle'              => '',
                 'orgnr'                 => '',
                 'sort'                  => '',
+                'function'              => '',
                 'button-text'           => '',
                 'format-displayname'    => ''
             ),
@@ -106,6 +107,8 @@ class Shortcode {
         // Extract the attributes from the shortcode
         $identifiers = empty($atts['identifier']) ? [] : explode(',', $atts['identifier']);
         $category   = $atts['category'];
+         
+        $function   = $atts['function'];
         $url        = $atts['url'];
         $groupid    = $atts['groupid'];
         $jobtitle   = $atts['jobtitle'];
@@ -238,14 +241,13 @@ class Shortcode {
         };
 
         // Determine which logic to apply based on provided attributes
-        
+        $api = new API(self::$config);
+        // Display persons by function
+        $persons = [];
+        $person = new Person();
+        $person->setConfig(self::$config);
+
         if (!empty($function)) {
-            // Display persons by function
-            $persons = [];
-            $api = new API(self::$config);
-            $person = new Person();
-            $person->setConfig(self::$config);
-            
             if (!empty($orgnr)) {
                 // Case 1: Explicit orgnr is provided in shortcode - exact match for both org and function
                 
@@ -263,7 +265,8 @@ class Shortcode {
                     ];
 
                     $result = $api->getPersons(60, 0, $params);                  
-
+                    Debug::log('Shortcode','error',"Look for function $function and orgnr $orgnr");
+                    
                     // Process each person and filter contacts
                     foreach ($result['data'] as $key => &$persondata) {
                         // Enrich person data with full contact information

@@ -642,7 +642,7 @@ class Person {
         }
         
         // Wenn es nur einen einzigen Contacteintrag gibt, dann returne diesen        
-        if (count($this->contacts)==1) {
+        if ((count($this->contacts)==1) && (!empty($this->contacts[0]))) {
             $this->primary_contact = new Contact($this->contacts[0]);
             return $this->primary_contact;
         }
@@ -654,7 +654,7 @@ class Person {
             $postid = $this->postid;
         }
         
-        if ($postid === 0) {
+        if (($postid === 0) && (!empty($this->contacts[0]))) {
             // No custum post entry, therfor i take the first entry
             $this->primary_contact = new Contact($this->contacts[0]);
             return $this->primary_contact;         
