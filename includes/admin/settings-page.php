@@ -184,29 +184,24 @@ add_action('admin_init', 'rrze_faudir_settings_init');
 
 
 // Callback functions
-function rrze_faudir_api_section_callback()
-{
+function rrze_faudir_api_section_callback() {
     echo '<p>' . esc_html__('Configure the API settings for accessing the FAU person and institution directory.', 'rrze-faudir') . '</p>';
 }
 
 
-function rrze_faudir_cache_section_callback()
-{
+function rrze_faudir_cache_section_callback() {
     echo '<p>' . esc_html__('Configure caching settings for the plugin.', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_error_section_callback()
-{
+function rrze_faudir_error_section_callback() {
     echo '<p>' . esc_html__('Handle error messages for invalid contact entries.', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_business_card_section_callback()
-{
+function rrze_faudir_business_card_section_callback() {
     echo '<p>' . esc_html__('Configure the business card link settings.', 'rrze-faudir') . '</p>';
 }
 
-function rrze_faudir_shortcode_section_callback()
-{
+function rrze_faudir_shortcode_section_callback() {
     echo '<p>' . esc_html__('Configure the shortcode settings.', 'rrze-faudir') . '</p>';
 }
 
