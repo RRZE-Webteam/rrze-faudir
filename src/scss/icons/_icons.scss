@@ -90,6 +90,10 @@
 		      background: var(--_icon-background-color-hover);
 		      	
 		    }
+		    &.listcontent span.value::after {
+			margin-left: 0;
+			margin-right: 0;
+		    }
 		}
 		li::after {
 		    content: "";
