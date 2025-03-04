@@ -23,7 +23,7 @@ function register_custom_person_post_type() {
             'not_found'          => __('No persons found.', 'rrze-faudir'),
         ),
         'public'             => true,
-        'has_archive'        => true,
+        'has_archive'        => false,
         'rewrite'            => array(
             'slug' => $slug, // Use dynamic slug
             'with_front' => false // Optional: Disable prefix (like /blog/)
