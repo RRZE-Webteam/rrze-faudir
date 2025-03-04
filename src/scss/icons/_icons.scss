@@ -1,0 +1,159 @@
+/*----------------------------------------------------------------------------*/
+/* _symbols 
+/* Created on : 31.01.2025, 17:28:46
+/*----------------------------------------------------------------------------*/
+
+@use "cp-defaults";
+@use "cp-websites";
+@use "cp-fau";
+
+.faudir {
+   .icon {
+
+       span.texticon,
+       a {
+	   text-decoration: none;
+	   display: inline-flex;
+	   align-items: center;
+	   gap: 0 0.1rem;
+	   
+	   background-color: var(--_icon_background-color, inherit);
+	   border-width: var(--_icon-border-width, 0);
+	   border-style: var(--_icon-border-style, solid);
+	   border-color: var(--_icon-border-color, none);
+	   border-radius: var(--_icon-border-radius, var(--border-radius, 50%));
+	   
+       }
+       a:hover, a:focus {
+	   text-decoration: underline;
+	   text-decoration-thickness: inherit;
+       }
+       
+       
+	span.texticon::before,
+	a::before {
+	   background: currentColor;
+	   mask-size: var(--_icon-mask-size, var(--faudir-icon-mask-size, 100%));
+	   mask-repeat: no-repeat;
+	   mask-position: center center;
+	   
+	   display: inline-block;
+	   width: var(--_icon-size, var(--faudir-icon-size));
+	   height: var(--_icon-size, var(--faudir-icon-size));
+	   content: "";
+	   font-size: var(--_icon-size, var(--faudir-icon-size));
+	   flex-shrink: 0;
+	   margin-right: var(--_icon-margin-right, var(--faudir-icon-margin-right)); 
+	}
+	span.texticon::before {
+	     mask-image: var(--_icon, var(--faudir-icon-default));
+	}
+	a::before {
+	   mask-image: var(--_icon, var(--faudir-icon-url));
+
+	}
+	
+
+	&.icon-list {
+	    --_icon-border-color: var(--color-Text, currentColor);
+	    --_icon-border-width: 1px;
+	    --_icon-border-radius: 50%;
+	    --_icon_background-color: white;
+	    --_icon-mask-size: 1rem;
+	    --_outer_icon-size: 1.8rem;
+	    --_icon-size:  clamp(var(--faudir-min-iconwidth, 24px), var(--_outer_icon-size, var(--faudir-icon-size, 1.5rem)), 42px);
+	    --_icon-border-color-hover: var(--_icon_background-color);
+	    --_icon-color-hover: var(--_icon_background-color);		
+	    --_icon-background-color-hover: var(--color-Text, currentColor);
+	    
+	     ul {
+		margin: 0;
+		display: inline;
+		padding: 0;
+		
+		li {
+		    display: inline;
+		    padding: 0;
+
+		    a {
+			vertical-align: bottom;
+		       width: var(--_icon-size);
+		       height: var(--_icon-size);
+		       overflow: hidden;
+		       margin-right: var(--faudir-icon-margin-right, 5px);
+		       margin-left: var(--faudir-icon-margin-right, 5px);
+		    }
+		    a:hover, 
+		    a:focus {
+			--_icon-border-color: var(--_icon-border-color-hover);	
+		      color: var(--_icon-color-hover);			 
+		      background: var(--_icon-background-color-hover);
+		      	
+		    }
+		    &.listcontent span.value::after {
+			margin-left: 0;
+			margin-right: 0;
+		    }
+		}
+		li::after {
+		    content: "";
+		}
+	     }
+	}
+	
+     }
+     ul.icon {
+	 margin-left: 0;
+	 li {
+	     list-style-type: none;
+	      padding: 0;
+	 }
+
+	.maillist {
+		li:nth-child(n+2) a::before {    	
+		     background: none;
+		     width: 0;
+		}
+	    }
+
+     }
+    .profile-link {
+	text-align: right;
+	a {
+	    display: inline-flex;
+	    align-items: center;
+	}
+	
+	a::after {
+		background: currentColor;
+		mask-size: var(--_icon-mask-size, var(--faudir-icon-mask-size, 100%));
+		mask-repeat: no-repeat;
+		mask-position: center center;
+
+		display: inline-block;
+		width: var(--_icon-size, var(--faudir-icon-size));
+		height: var(--_icon-size, var(--faudir-icon-size));
+		content: "";
+		font-size: var(--_icon-size, var(--faudir-icon-size));
+		flex-shrink: 0;
+		margin-right: var(--_icon-margin-right, var(--faudir-icon-margin-right)); 
+		mask-image: var(--faudir-icon-right);
+	  }
+      }
+
+     .fau-elemental & .icon-list  {
+	  --_icon-border-color: none;
+	  --_icon-border-style: none;
+	  --_icon-border-width: 0;
+	  --_icon-border-color-hover: inherit;
+	  --_icon-color-hover: var(--color-Text, currentColor);
+	  --_icon-background-color-hover: inherit;
+	  --_icon-border-width: 2px;
+	  --_icon-border-radius: 0;
+
+	  a:hover, a:focus {
+	    --_icon-border-style: none none solid none;
+	    --_icon-border-color: var(--color-Text, currentColor);
+	  }
+     }
+}

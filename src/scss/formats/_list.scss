@@ -1,0 +1,68 @@
+/*----------------------------------------------------------------------------*/
+/* _list 
+/* Created on : 30.01.2025, 10:39:41
+/*----------------------------------------------------------------------------*/
+.faudir {
+    .format-list {
+	display: inline-grid;
+	
+	.faudir-displayname {
+	    a {
+		font-weight: bold;
+		text-decoration: none;
+		color: var(--faudir-color-list-displayname);
+		
+		&:hover, &:focus {
+		    text-decoration: underline;
+		}
+	    }
+	}
+	
+	
+	.text-list {
+	    ul {
+
+	       li.faudir-image {
+		    float: right;
+		    figure {
+			margin: 0;
+			max-width: var(--faudir-figure-listssize,150px);
+			height: auto;
+		    }
+		    figure.signature {
+			display: none;
+		    }
+		}
+	      
+	       li.faudir-image::after {
+		   content: "";
+	       }
+	       
+	       
+	       li.faudir-email {
+		   display: inline-flex;
+		   padding: 0;
+		   span.value::after {
+			content: "/";
+			margin-left: 0.2rem;
+			margin-right: 0.1rem;
+		    }
+		    span.value:last-child::after {
+			content: "";
+		    }
+		
+		
+		}
+	   
+
+
+	   }
+
+       }
+
+	
+    }
+    
+    
+   
+}

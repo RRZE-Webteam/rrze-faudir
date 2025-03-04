@@ -1,0 +1,30 @@
+// Main SCSS file for RRZE FAUDIR
+
+// Definition for Custom properties
+@use 'settings';
+
+// For Blocks
+@use 'blocks/blocks';
+// General classes
+@use 'general-classes';
+
+// Settings-Page in Backend
+@use 'backend';
+
+// Symbols
+@use 'icons/icons';
+
+// Formats
+@use 'formats/formats';
+
+// Settings for themes
+@use 'themes/themes'
+
+
+// and to the end we add the codes, we dont know where they are used.
+// maybe they became obsolet in the development and need to removed.
+// @use 'unknown-use';
+
+
+
+

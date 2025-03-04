@@ -1,0 +1,130 @@
+/*----------------------------------------------------------------------------*/
+/* _backend 
+/*  Settings-Page  and Custom Post Editor
+/* Created on : 30.01.2025, 09:06:35
+/*----------------------------------------------------------------------------*/
+
+.faudir-settings {
+    .contacts-wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	padding-top: 20px;
+    }
+
+    .organizations-wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	padding-top: 20px;
+    }
+
+    .contact-card,
+    .organizations-wrapper .organization-card {
+	background-color: var(--color-white);
+	border-radius: 10px;
+	box-shadow: 0px 4px 6px var(--color-ContentBorders);
+	padding: 20px;
+	width: calc(33.333% - 20px);
+	box-sizing: border-box;
+	transition: transform 0.2s ease-in-out;
+
+	&:hover {
+	    transform: translateY(-5px);
+	}
+
+	h2.contact-name {
+	    font-size: var(--font-size-h2, 1.5rem);
+	    margin-bottom: 10px;
+	    color: var(--color-KontrastDunkel);
+	}
+
+	p {
+	    margin: 5px 0;
+	    color: var(--color-MetaTextDefault);
+
+	    strong {
+		color: var(--color-black);
+	    }
+	}
+
+	h3 {
+	    font-size: 1.2em;
+	    margin-top: 15px;
+	    color: var(--color-MetaTextDefault);
+	}
+	
+	
+	// Responsive styles
+	@media (max-width: 768px) {
+		width: calc(50% - 20px);
+	}
+	@media (max-width: 480px) {
+		width: 100%;
+	}
+	
+    }
+
+    #search-person-form > table > tbody > tr:nth-child(1) > td {
+	padding: 10px 0px;
+    }
+
+
+    .edit-button {
+	background: #007cba;
+	color: white;
+	border: none;
+	padding: 5px 10px;
+	border-radius: 3px;
+	cursor: pointer;
+    }
+
+    .edit-button:hover {
+	background: #006ba1;
+    }
+    
+    
+    
+    
+    .edit-person span,
+    .add-person span {
+	vertical-align: middle;
+    }
+
+}
+
+// Used only in the classic version of the custom post editor, 
+// therfor out of .faudir-settings class
+.generate-shortcode {
+    margin: 10px 0;
+    padding: 10px;
+    background: #f1f1f1;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    
+    input {
+	width: 70%;
+    }
+
+}
+
+
+.post-type-custom_person .edit-post-layout .edit-post-layout__metaboxes {
+    .organization-block {
+	padding: 6px 7px 7px 7px;
+	border-top: 1px solid black;
+	.organization-content {
+	    opacity: 0.6;
+	}
+	&:has(input[name="displayed_contacts"]:checked) {
+	   border: 2px solid green;
+	   padding: 5px;
+	   .organization-content {
+		opacity: 1;
+	   }
+	}
+	
+	
+    }
+
+}

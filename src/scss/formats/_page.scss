@@ -1,0 +1,199 @@
+/*----------------------------------------------------------------------------*/
+/* _page 
+/* Created on : 30.01.2025, 10:57:51
+/*----------------------------------------------------------------------------*/
+
+
+.faudir {
+    .format-page {
+	
+	
+	container-name: faudir-page-container;
+	container-type: inline-size;
+    
+	.format-page-container {
+	    --faudir-profile-image-section-width: 100%;
+	    --faudir-profile-image-section-height: 150px;
+	    --faudir-profile-image-width: 100%;
+	    --faudir-profile-image-height: auto;
+	    --faudir-profile-padding: 0;
+	    --faudir-profile-page-gab: 1rem;
+	    
+	    display: grid;
+	    gap: 0;
+	    grid-template-areas:
+		"image"
+		"header"
+		"details"
+		"contentregion";
+	    margin-bottom: 1rem;
+	    
+	    .profile-image-section {
+		background-color: #ccc; /* Falls kein Bild vorhanden ist */
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		border-radius: var(--faudir-figure-border-radius);
+		overflow: hidden;
+		grid-area: image;
+		width: var(--faudir-profile-image-section-width);
+		height: var(--faudir-profile-image-section-height);
+		
+		img {
+		    width: var(--faudir-profile-image-width);
+		    height: var(--faudir-profile-image-height);
+		    object-fit: cover;
+		    display: block;
+		}
+		figure {
+		    margin: 0;
+		}
+	    }
+	    
+	    .profile-header {
+		grid-area: header;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		padding: var(--faudir-profile-padding);
+		 h1 {
+			margin-top: 0;
+		 }
+		 p.jobtitle,
+		 p.organisation_name {
+		     padding-bottom: 0;
+		 }
+	    }
+
+
+	    .profile-details {
+		grid-area: details;
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 10px;
+		
+		
+		.profile-address, .profile-consultation, .profile-contact, .profile-socialmedia {
+		   padding: var(--faudir-profile-padding);
+		}
+		
+		.profile-address {
+
+		}
+		.profile-consultation {
+
+		}
+		.profile-contact {
+
+		}
+		.profile-socialmedia {
+
+		}
+	    }
+	    .profile-content-region {
+		grid-area: contentregion;
+	    }
+	    .profile-content {
+		.teasertext {
+		 
+		}
+	    }
+	    
+	}
+	
+	
+	
+	@container faudir-page-container (min-width: 320px) {
+		.format-page-container {
+		    --faudir-profile-image-section-width: 150px;
+		    --faudir-profile-image-section-height: 150px;
+		    --faudir-profile-image-width: 150px;
+		    --faudir-profile-image-height: 150px;
+		    gap: var(--faudir-profile-page-gab);
+		    grid-template-areas:
+			"header"
+			"details"
+			"contentregion";
+		    grid-template-columns: 1fr;
+		}
+		.format-page-container:has(.profile-image-section) {
+		   grid-template-areas:
+			"header image"
+			"details details"
+			"contentregion contentregion";
+		   grid-template-columns: auto var(--faudir-profile-image-section-width);
+		}  
+		.profile-image-section {
+		    width: var(--faudir-profile-image-size);
+		    height: auto;
+		}
+	    }    
+
+	@container faudir-page-container (min-width: 480px) {
+		.format-page-container {
+		    --faudir-profile-image-section-width: 180px;
+		    --faudir-profile-image-section-height: 180px;
+		    --faudir-profile-image-width: 180px;
+		    --faudir-profile-image-height: 180px;
+		    grid-template-areas:
+			"header"
+			"details"
+			"contentregion";
+		    grid-template-columns: 1fr;
+		    padding: 5px;
+		}
+		.format-page-container:has(.profile-image-section) {
+		   grid-template-areas:
+			"header image"
+			"details details"
+			"contentregion contentregion";
+		   grid-template-columns: auto var(--faudir-profile-image-section-width);
+		} 
+		.profile-image-section {
+		    width: var(--faudir-profile-image-size);
+		    height: auto;
+		}
+	    }
+
+
+	@container faudir-page-container (min-width: 768px) {   
+	    .format-page-container {
+		--faudir-profile-image-section-width: 300px;
+		--faudir-profile-image-section-height: 300px;
+		--faudir-profile-image-width: 300px;
+		--faudir-profile-image-height: 300px;
+		grid-template-areas:
+		    "header"
+		    "details"
+		    "contentregion";
+		grid-template-columns: 1fr;
+		grid-template-rows: 1fr auto;
+		align-items: stretch;
+	    }
+	    .format-page-container:has(.profile-image-section) {
+		   grid-template-areas:
+			 "header image"
+			"details image"
+			"contentregion contentregion";
+		   grid-template-columns: 1fr var(--faudir-profile-image-section-width);
+		}
+	    .profile-image-section {
+		height: 100%; 
+	    }
+	}
+	
+	@container faudir-page-container (min-width: 1200px) {   
+	    .format-page-container {
+		--faudir-profile-image-section-width: 320px;
+		--faudir-profile-image-section-height: 320px;
+		--faudir-profile-image-width: 320px;
+		--faudir-profile-image-height: 320px;
+	    }
+	}
+
+	
+
+    }
+    
+} 

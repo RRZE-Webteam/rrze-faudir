@@ -1,0 +1,26 @@
+/*----------------------------------------------------------------------------*/
+/* _settings 
+/* Created on : 28.01.2025, 16:27:58
+/*----------------------------------------------------------------------------*/
+
+// Add global styles here
+.faudir {
+   
+    --faudir-color-list-displayname: var(--color-content-links, #222);
+    
+    
+    --faudir-icon-size: 1.2rem;
+    --faudir-icon-margin-right: 0.5rem;
+    --faudir-icon-color-hover: red; // var(--color-branding-primary, var(--color-content-links-hover, red));
+    --faudir-icon-mask-size: 100%;
+    --faudir-min-iconwidth: 24px;  // based on WCAG 2.2, 2.5.8 "Target Size (Minimum)"
+  
+    --faudir-figure-listssize: 150px;
+    --faudir-figure-tablesize: 150px;
+    
+    --faudir-figure-border-radius: var(--border-radius, 0);
+    --faudir-border-color: var(--color-ContentBorders, #e9edf2);
+    
+    
+}
+

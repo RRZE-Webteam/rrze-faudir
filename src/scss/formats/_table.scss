@@ -1,0 +1,50 @@
+/*----------------------------------------------------------------------------*/
+/* _table 
+/* Created on : 30.01.2025, 11:34:05
+/*----------------------------------------------------------------------------*/
+.faudir {
+    .format-table {
+
+	td {
+	    padding: 0.3rem;
+	    
+	    &.faudir-image {
+		min-width: var(--faudir-figure-tablesize,150px);
+		min-height: var(--faudir-figure-tablesize,150px);
+		
+		height: auto;
+		
+		figure {
+		    margin: 0;
+		    
+		    img {
+			height: var(--faudir-figure-tablesize,150px);
+			width: var(--faudir-figure-tablesize,150px);
+			object-fit: cover;
+		    }
+		    
+		}
+		figure.signature {
+		    height: var(--faudir-figure-tablesize,150px);
+		    width: var(--faudir-figure-tablesize,150px);
+		    text-align: center;
+		    align-content: center;
+		}
+		
+	    }
+	    &.faudir-displayname {
+		min-width: max-content;
+		white-space: nowrap;
+		font-weight: bold;
+	    }
+	    &.faudir-email {
+	       span.email {
+		    display: inline-block;
+		}
+	    }
+  
+	}
+	
+	
+    }
+}

@@ -1,0 +1,84 @@
+/*----------------------------------------------------------------------------*/
+/* card 
+/* Settings for Format Card
+/* Created on : 30.01.2025, 09:54:26
+/*----------------------------------------------------------------------------*/
+
+.faudir {   
+    .format-card {
+	--faudir-profile-image-section-width: 150px;
+	--faudir-profile-image-width: 150px;
+	--faudir-profile-image-height: 150px;
+	--faudir-profile-padding: 0;
+	--faudir-profile-card-gab: 1rem;
+	--faudir-figure-border-radius: 50%;
+	
+	container-name: faudir-card-container;
+	container-type: inline-size;
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--faudir-profile-card-gab);
+	justify-content: center;
+    }
+
+
+   
+    .format-card-container {
+	width: var(--faudir-profile-image-section-width);
+	height: auto;
+	
+	.profile-image-section {
+		background-color: #ccc; /* Falls kein Bild vorhanden ist */
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		border-radius: var(--faudir-figure-border-radius);
+		overflow: hidden;
+		width: var(--faudir-profile-image-width);
+		height: var(--faudir-profile-image-height);
+		
+		aspect-ratio: 1;
+		object-fit: cover;
+		margin: 0 auto;
+		
+		img {
+		    width: var(--faudir-profile-image-width);
+		    height: var(--faudir-profile-image-height);
+		    object-fit: cover;
+		    display: block;
+		}
+		figure {
+		    margin: 0;
+		}
+	}
+	.profile-header, .profile-details {
+	    text-align: center;
+	}
+    
+    }
+    @container faudir-card-container (min-width: 480px) {
+	.format-card-container {
+	    --faudir-profile-image-section-width: 180px;
+	    --faudir-profile-image-width: 180px;
+	    --faudir-profile-image-height: 180px;
+	    --faudir-profile-padding: 0;
+	    --faudir-profile-card-gab: 2rem;
+	}
+    }
+    @container faudir-card-container (min-width: 768px) {   
+	.format-card-container {
+	    --faudir-profile-image-section-width: 200px;
+	    --faudir-profile-image-width: 200px;
+	    --faudir-profile-image-height: 200px;
+	}
+    }
+    @container faudir-card-container (min-width: 1024px) {   
+	.format-card-container {
+	    --faudir-profile-image-section-width: 250px;
+	    --faudir-profile-image-width: 240px;
+	    --faudir-profile-image-height: 240px;
+	    --faudir-profile-card-gab: 2.2rem;
+	}
+    }
+}
