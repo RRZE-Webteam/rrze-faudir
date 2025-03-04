@@ -4,7 +4,6 @@ import * as sassCompiler from 'sass';
 import sourcemaps from 'gulp-sourcemaps';
 import concat from 'gulp-concat';
 import wpPot from 'gulp-wp-pot';
-import svgmin from 'gulp-svgmin';
 import touch from 'gulp-touch-cmd';
 import header from 'gulp-header';
 import { readFileSync } from 'fs';
@@ -171,13 +170,6 @@ export function makepot() {
       })
     )
     .pipe(dest('languages/' + info.textdomain + '.pot')); // Zielordner der .pot-Datei
-}
-
-// Task zur SVG-Optimierung
-export function svg() {
-  return src('src/svg/**/*.svg')
-    .pipe(svgmin()) // SVG-Optimierung
-    .pipe(dest('dist/svg')); // Zielordner
 }
 
 // Watch-Task zur Überwachung von Änderungen

@@ -1,6 +1,6 @@
 {
     "name": "rrze-faudir",
-    "version": "2.1.4",
+    "version": "2.1.6",
     "description": "Plugin for displaying the FAUdir and institution directory on websites.",
     "main": "rrze-faudir.php",
     "textdomain": "rrze-faudir",
@@ -41,7 +41,6 @@
         "gulp": "^5.0.0",
         "gulp-concat": "^2.6.1",
         "gulp-sass": "^5.0.0",
-        "gulp-svgmin": "^4.1.0",
         "gulp-wp-pot": "^2.5.0",
         "sass": "^1.77.8"
     },
