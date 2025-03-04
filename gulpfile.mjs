@@ -256,6 +256,6 @@ export default series(upversionpatch, css, jsMain, jsAdmin);
 export const build = series(upversionpatch, css, jsMain, jsAdmin, createReadme);
 
 // Dev Version
-export const dev = series(devversion, devcss, devjsMain, jsAdmin);
+export const dev = series(devversion, devcss, devjsMain, jsAdmin, createReadme);
 
 
