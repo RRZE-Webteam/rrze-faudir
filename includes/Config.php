@@ -24,7 +24,7 @@ class Config {
             'table' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link'],
             'list'  => ['displayname', 'jobTitle', 'url', 'email', 'socialmedia', 'roompos', 'room', 'floor', 'zip', 'street', 'city', 'faumap', 'link'],
             'compact' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link'],
-            'page' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'content', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link'],
+            'page' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'content', 'zip', 'street', 'city', 'officehours', 'consultationhours'],
             'card'  => ['image', 'displayname', 'jobTitle', 'organization', 'url', 'email', 'socialmedia', 'link'],
 
         ]
