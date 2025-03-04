@@ -48,7 +48,6 @@ class Shortcode {
                 'show'                  => '',
                 'hide'                  => '',
                 'groupid'               => '',
-                'jobtitle'              => '',
                 'orgnr'                 => '',
                 'sort'                  => '',
                 'function'              => '',
@@ -111,7 +110,6 @@ class Shortcode {
         $function   = $atts['function'];
         $url        = $atts['url'];
         $groupid    = $atts['groupid'];
-        $jobtitle   = $atts['jobtitle'];
         $orgnr      = $atts['orgnr'];
         $post_id    = $atts['id'];
         $format_displayname = $atts['format-displayname'];

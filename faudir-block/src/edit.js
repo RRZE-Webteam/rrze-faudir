@@ -14,7 +14,6 @@ export default function Edit({ attributes, setAttributes }) {
     const [posts, setPosts] = useState([]);
     const [isLoadingCategories, setIsLoadingCategories] = useState(true);
     const [isLoadingPosts, setIsLoadingPosts] = useState(false);
-    const [defaultButtonText, setDefaultButtonText] = useState('');
     const [defaultOrgNr, setDefaultOrgNr] = useState(null);
     const [renderKey, setRenderKey] = useState(0);
 
@@ -31,7 +30,6 @@ export default function Edit({ attributes, setAttributes }) {
         function: functionValue = '',
         orgnr = '',
         url = '',
-        buttonText = '',
         hideFields = [],
         sort = 'familyName',
     } = attributes;
@@ -76,6 +74,7 @@ export default function Edit({ attributes, setAttributes }) {
             'jobTitle',
             'socialmedia',
             'titleOfNobility',
+	    'organization'
         ],
         table: [
 	    'image',
@@ -91,7 +90,8 @@ export default function Edit({ attributes, setAttributes }) {
             'titleOfNobility',
 	    'floor',
 	    'room',
-	    'address'
+	    'address',
+	    'organization'
         ],
         list: [
             'displayName',
@@ -239,21 +239,7 @@ export default function Edit({ attributes, setAttributes }) {
         });
     }, [selectedCategory, functionValue, orgnr]);
 
-    useEffect(() => {
-        if (!buttonText) {
-            apiFetch({ 
-                path: '/wp/v2/settings/rrze_faudir_options'
-            }).then((settings) => {
-                if (settings?.business_card_title) {
-                    setDefaultButtonText(settings.business_card_title);
-                    setAttributes({ buttonText: settings.business_card_title });
-                }
-            }).catch((error) => {
-                console.error('Error fetching button text:', error);
-            });
-        }
-    }, []); // Empty dependency array means this runs once on mount
-
+   
     const togglePostSelection = (postId, personId) => {
         const updatedSelectedPosts = selectedPosts.includes(postId)
             ? selectedPosts.filter((id) => id !== postId)
@@ -524,12 +510,6 @@ export default function Edit({ attributes, setAttributes }) {
                     />
 
                     <TextControl
-                        label={__('Job Title', 'rrze-faudir')}
-                        value={attributes.jobTitle || ''}
-                        onChange={(value) => setAttributes({ jobTitle: value })}
-                    />
-
-                    <TextControl
                         label={__('Organization Number', 'rrze-faudir')}
                         value={orgnr}
                         onChange={(value) => {
@@ -549,21 +529,7 @@ export default function Edit({ attributes, setAttributes }) {
                             {__('Default organization will be used if empty.', 'rrze-faudir')}
                         </div>
                     )}
-                     <TextControl
-                        label={__('Custom url', 'rrze-faudir')}
-                        value={url}
-                        onChange={(value) => setAttributes({ url: value })}
-                    />
-                    {/* Button Text Field - Only for Kompakt Format */}
-                    {selectedFormat === 'kompakt' && (
-                        <TextControl
-                            label={__('Button Text', 'rrze-faudir')}
-                            help={__('Default: ', 'rrze-faudir') + defaultButtonText}
-                            value={buttonText}
-                            onChange={(value) => setAttributes({ buttonText: value })}
-                            placeholder={defaultButtonText}
-                        />
-                    )}
+                   
                     <SelectControl
                         label={__('Sort by', 'rrze-faudir')}
                         value={sort}
@@ -596,7 +562,6 @@ export default function Edit({ attributes, setAttributes }) {
                                     selectedFormat: attributes.selectedFormat,
                                     selectedFields: attributes.selectedFields.length > 0 ? attributes.selectedFields : null, // Only pass if fields are selected
                                     hideFields: attributes.hideFields,  // Add hideFields
-                                    buttonText: attributes.buttonText,
                                     url: attributes.url,
                                     sort: attributes.sort
                                 } : 
@@ -607,7 +572,6 @@ export default function Edit({ attributes, setAttributes }) {
                                     selectedFormat: attributes.selectedFormat,
                                     selectedFields: attributes.selectedFields.length > 0 ? attributes.selectedFields : null, // Only pass if fields are selected
                                     hideFields: attributes.hideFields,  // Add hideFields
-                                    buttonText: attributes.buttonText,
                                     url: attributes.url,
                                     groupId: attributes.groupId,
                                     sort: attributes.sort
@@ -618,7 +582,6 @@ export default function Edit({ attributes, setAttributes }) {
                                     selectedFields: attributes.selectedFields.length > 0 ? attributes.selectedFields : null, // Only pass if fields are selected
                                     hideFields: attributes.hideFields,  // Add hideFields
                                     selectedFormat: attributes.selectedFormat,
-                                    buttonText: attributes.buttonText,
                                     url: attributes.url,
                                     groupId: attributes.groupId,
                                     sort: attributes.sort

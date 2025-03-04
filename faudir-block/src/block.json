@@ -47,10 +47,7 @@
             "type": "string",
             "default": ""
         },
-        "buttonText": {
-            "type": "string",
-            "default": ""
-        },
+
         "hideFields": {
             "type": "array",
             "default": []
