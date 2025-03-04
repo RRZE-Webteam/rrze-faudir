@@ -496,9 +496,9 @@ class Person {
     
     
     /*
-     * Get permalink fpr custom post type
+     * Get permalink for custom post type
      */       
-    public function getTargetURL(): string {       
+    public function getTargetURL(bool $fallbackfaudir = true): string {       
         if (empty($this->postid)) {
             $postid = $this->getPostId();
         } else {
@@ -508,7 +508,12 @@ class Person {
         if ($postid !== 0) {
             $cpt_url  =  get_permalink($postid); 
         }
-                       
+        if ((empty($cpt_url)) && ($fallbackfaudir)) {
+            if (empty($this->config)) {
+                $this->setConfig();
+            }
+            $cpt_url = $this->config->get('faudir-url').'public/person/'.$this->identifier;
+        }                
         return $cpt_url;                       
     }
     

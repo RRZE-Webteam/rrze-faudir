@@ -156,6 +156,18 @@ function rrze_faudir_settings_init() {
         'rrze_faudir_settings_shortcode',
         'rrze_faudir_shortcode_section'
     );
+    add_settings_field(
+        'rrze_faudir_hard_sanitize',
+        __('Fallback FAUdir link', 'rrze-faudir'),
+        'rrze_faudir_fallback_link_faudir',
+        'rrze_faudir_settings_shortcode',
+        'rrze_faudir_shortcode_section'
+    );
+    
+    
+    
+    
+    
     
     // Add Organization Search Section
     add_settings_section(
@@ -270,6 +282,13 @@ function rrze_faudir_hard_sanitize_render() {
     echo '<input type="checkbox" name="rrze_faudir_options[hard_sanitize]" value="1" ' . checked( 1, $options['hard_sanitize'], false ) . '>';
     echo '<p class="description">' . esc_html__('Hard Sanitize abbreviations.', 'rrze-faudir') .' <em>('.__('Only the essential academic titles are permitted. Labels for the respective disciplines are removed.', 'rrze-faudir') . ')</em></p>';
 }
+
+function rrze_faudir_fallback_link_faudir() {
+    $options = get_option('rrze_faudir_options');
+    echo '<input type="checkbox" name="rrze_faudir_options[fallback_link_faudir]" value="1" ' . checked( 1, $options['fallback_link_faudir'], false ) . '>';
+    echo '<p class="description">' . esc_html__('On using profil links, fallback to the public faudir portal, if no local custom post is avaible.', 'rrze-faudir') .'</p>';
+}
+
 
 function rrze_faudir_person_slug_field() {
     $options = get_option('rrze_faudir_options'); // Get all plugin options
@@ -391,11 +410,6 @@ function rrze_faudir_settings_page() {
                 <?php submit_button(); ?>
             </div>
 
-            <!-- Business Card Link Tab -->
-            <div id="tab-4" class="tab-content" style="display:none;">
-                <?php do_settings_sections('rrze_faudir_settings_business_card'); ?>
-                <?php submit_button(); ?>
-            </div>
 
             <!-- Shortcode Settings Tab -->
             <div id="tab-6" class="tab-content" style="display:none;">

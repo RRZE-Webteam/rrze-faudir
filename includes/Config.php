@@ -9,12 +9,14 @@ class Config {
     private array $config = [
         'api_key'                   => '',
         'api-baseurl'               => 'https://api.fau.de/pub/v1/opendir/',
+        'faudir-url'                => 'https://faudir.fau.de/',
         'no_cache_logged_in'        => false,
         'cache_timeout'             => 15, // Minimum 15 minutes
         'transient_time_for_org_id' => 1, // Minimum 1 day
         'show_error_message'        => false,
         'business_card_title'       => '',
         'hard_sanitize'             => false,
+        'fallback_link_faudir'      => false,
         'default_output_fields'     => ['displayname', 'jobTitle', 'email', 'phone', 'url'], // Default fields      
         'default_display_order'     => [
             'table' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'link'],

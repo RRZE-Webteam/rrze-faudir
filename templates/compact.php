@@ -36,9 +36,11 @@ if (!defined('ABSPATH')) {
                 $displayname = $person->getDisplayName(true, false);
                 $mailadresses= $person->getEMail();
                 $phonenumbers = $person->getPhone();                        
-                $final_url = $person->getTargetURL();
+                $final_url = $person->getTargetURL($opt['fallback_link_faudir']);
                 $contact = $person->getPrimaryContact();
                 $workplaces = [];
+                
+               
                 if (!empty($contact)) { 
                     $workplaces = $contact->getWorkplaces();                    
                 }
