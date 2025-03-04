@@ -75,6 +75,10 @@
     a[href*="feed"]:before {
 	--_icon: var(--faudir-icon-feed);
     }
+     a[itemprop="sameAs"]:before {
+	--_icon: var(--faudir-icon-contact);
+    }
+    
     
     .texticon.room {
 	--_icon: var(--faudir-icon-room);

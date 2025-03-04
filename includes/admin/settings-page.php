@@ -6,6 +6,7 @@ if (!defined('ABSPATH')) {
 }
 use RRZE\FAUdir\FaudirUtils;
 use RRZE\FAUdir\Config;
+use RRZE\FAUdir\Debug;
 
 // Add admin menu
 function rrze_faudir_add_admin_menu() {
@@ -79,9 +80,6 @@ function rrze_faudir_settings_init() {
     );
 
 
-
-
-
     add_settings_field(
         'rrze_faudir_cache_timeout',
         __('Cache Timeout (in minutes)', 'rrze-faudir'),
@@ -121,29 +119,6 @@ function rrze_faudir_settings_init() {
         'rrze_faudir_error_section'
     );
 
-    // Business Card Link Section
-    add_settings_section(
-        'rrze_faudir_business_card_section',
-        __('Business Card Link', 'rrze-faudir'),
-        'rrze_faudir_business_card_section_callback',
-        'rrze_faudir_settings_business_card'
-    );
-
-    add_settings_field(
-        'rrze_faudir_business_card_title',
-        __('Kompakt Card Button Title', 'rrze-faudir'),
-        'rrze_faudir_business_card_title_render',
-        'rrze_faudir_settings_business_card',
-        'rrze_faudir_business_card_section'
-    );
-    add_settings_field(
-        'rrze_faudir_hard_sanitize',
-        __('Hard Sanitize', 'rrze-faudir'),
-        'rrze_faudir_hard_sanitize_render',
-        'rrze_faudir_settings_business_card',
-        'rrze_faudir_business_card_section'
-    );
-
     // Contacts Search Section
     add_settings_section(
         'rrze_faudir_contacts_search_section',
@@ -167,6 +142,21 @@ function rrze_faudir_settings_init() {
         'rrze_faudir_shortcode_section'
     );
 
+    add_settings_field(
+        'rrze_faudir_business_card_title',
+        __('Kompakt Card Button Title', 'rrze-faudir'),
+        'rrze_faudir_business_card_title_render',
+        'rrze_faudir_settings_shortcode',
+        'rrze_faudir_shortcode_section'
+    );
+    add_settings_field(
+        'rrze_faudir_hard_sanitize',
+        __('Hard Sanitize', 'rrze-faudir'),
+        'rrze_faudir_hard_sanitize_render',
+        'rrze_faudir_settings_shortcode',
+        'rrze_faudir_shortcode_section'
+    );
+    
     // Add Organization Search Section
     add_settings_section(
         'rrze_faudir_org_search_section',
@@ -219,9 +209,9 @@ function rrze_faudir_api_key_render() {
 
 function rrze_faudir_no_cache_logged_in_render() {
     $options = get_option('rrze_faudir_options');
-    $checked = isset($options['no_cache_logged_in']) ? 'checked' : '';
-    echo '<input type="checkbox" name="rrze_faudir_options[no_cache_logged_in]" value="1" ' .  esc_attr($checked) . '>';
+    echo '<input type="checkbox" name="rrze_faudir_options[no_cache_logged_in]" value="1" ' .  checked( 1, $options['no_cache_logged_in'], false ) . '>';
     echo '<p class="description">' . esc_html__('Disable caching for logged-in editors.', 'rrze-faudir') . '</p>';
+
 }
 
 function rrze_faudir_cache_timeout_render() {
@@ -253,9 +243,9 @@ function rrze_faudir_clear_cache_render() {
 
 function rrze_faudir_error_message_render() {
     $options = get_option('rrze_faudir_options');
-    $checked = isset($options['show_error_message']) ? 'checked' : '';
-    echo '<input type="checkbox" name="rrze_faudir_options[show_error_message]" value="1" ' . esc_attr($checked) . '>';
+    echo '<input type="checkbox" name="rrze_faudir_options[show_error_message]" value="1" ' . checked( 1, $options['show_error_message'], false ) . '>';
     echo '<p class="description">' . esc_html__('Show error messages for incorrect contact entries.', 'rrze-faudir') . '</p>';
+   
 }
 
 function rrze_faudir_business_card_title_render() {
@@ -272,14 +262,13 @@ function rrze_faudir_business_card_title_render() {
     }
 
     echo '<input type="text" name="rrze_faudir_options[business_card_title]" value="' . esc_attr($value) . '" size="50">';
-    echo '<p class="description">' . esc_html__('Enter the title for the kompakt card read more button.', 'rrze-faudir') . '</p>';
+    echo '<p class="description">' . esc_html__('Link title for optional links pointing to the users detail page.', 'rrze-faudir') .'</p>';
 }
 
 function rrze_faudir_hard_sanitize_render() {
     $options = get_option('rrze_faudir_options');
-    $checked = isset($options['hard_sanitize']) ? 'checked' : '';
-    echo '<input type="checkbox" name="rrze_faudir_options[hard_sanitize]" value="1" ' . esc_attr($checked) . '>';
-    echo '<p class="description">' . esc_html__('Hard Sanitize abbreviations.', 'rrze-faudir') . '</p>';
+    echo '<input type="checkbox" name="rrze_faudir_options[hard_sanitize]" value="1" ' . checked( 1, $options['hard_sanitize'], false ) . '>';
+    echo '<p class="description">' . esc_html__('Hard Sanitize abbreviations.', 'rrze-faudir') .' <em>('.__('Only the essential academic titles are permitted. Labels for the respective disciplines are removed.', 'rrze-faudir') . ')</em></p>';
 }
 
 function rrze_faudir_person_slug_field() {
@@ -332,7 +321,7 @@ function rrze_faudir_default_output_fields_render() {
             }
         }
         if (!empty($missing)) {
-            echo ' <em>('.__('Not avaible for the following formats', 'rrze_faudir').': '.$missing.')</em>';
+            echo ' <em>('.__('Not avaible for the following formats', 'rrze_faudir').':</em> <code>'.$missing.'</code>)';
         }
         echo "<br>";
         
@@ -364,9 +353,6 @@ function rrze_faudir_settings_page() {
             </a>
             <a href="#tab-3" class="nav-tab">
                 <?php echo esc_html__('Error Handling', 'rrze-faudir'); ?>
-            </a>
-            <a href="#tab-4" class="nav-tab">
-                <?php echo esc_html__('Kompakt Card Button', 'rrze-faudir'); ?>
             </a>
             <a href="#tab-5" class="nav-tab">
                 <?php echo esc_html__('Search Contacts', 'rrze-faudir'); ?>
@@ -401,6 +387,7 @@ function rrze_faudir_settings_page() {
             <!-- Error Handling Tab -->
             <div id="tab-3" class="tab-content" style="display:none;">
                 <?php do_settings_sections('rrze_faudir_settings_error'); ?>
+                
                 <?php submit_button(); ?>
             </div>
 
@@ -630,8 +617,7 @@ add_action('wp_ajax_rrze_faudir_reset_defaults', 'rrze_faudir_reset_defaults');
 
 
 // Clear Cache Function
-function rrze_faudir_clear_cache()
-{
+function rrze_faudir_clear_cache() {
     global $wpdb;
     // Delete all transients related to the plugin's cache
     $wpdb->query("DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '%_transient_rrze_faudir%'");

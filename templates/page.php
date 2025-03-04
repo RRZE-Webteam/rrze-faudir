@@ -223,7 +223,13 @@ if (!defined('ABSPATH')) {
                             if (!empty($final_url)) {
                                 $link = '<div class="profile-link">';
                                 $link .= '<a class="buttonlink" itemprop="sameAs" href="'.esc_url($final_url).'">';     
-                                $link .= __('User profil', 'rrze-faudir');
+                                $opt = $config->getOptions();                       
+                                $linkttitle = $opt['business_card_title'];
+                                if (empty($linkttitle)) {
+                                     $linkttitle  = __('User profil', 'rrze-faudir');
+                                }
+                                
+                                $link .= $linkttitle;
                                 $link .= '</a>';
                                 $link .= '</div>';
                                 

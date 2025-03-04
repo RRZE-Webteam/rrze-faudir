@@ -219,8 +219,15 @@ if (!defined('ABSPATH')) {
                      if (in_array('link', $show_fields) && !in_array('link', $hide_fields) && isset($available_fields['link'])) {                          
                             if (!empty($final_url)) {
                                 $link = '<div class="profile-link">';
-                                $link .= '<a class="buttonlink" itemprop="sameAs" href="'.esc_url($final_url).'">';     
-                                $link .= __('User profil', 'rrze-faudir');
+                                $link .= '<a class="buttonlink" itemprop="sameAs" href="'.esc_url($final_url).'">';  
+                                
+                                $opt = $config->getOptions();                       
+                                $linkttitle = $opt['business_card_title'];
+                                if (empty($linkttitle)) {
+                                     $linkttitle  = __('User profil', 'rrze-faudir');
+                                }
+                                
+                                $link .= $linkttitle;
                                 $link .= '</a>';
                                 $link .= '</div>';
                                 

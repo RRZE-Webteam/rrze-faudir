@@ -115,7 +115,21 @@ if (!defined('ABSPATH')) {
                                 }
                             }
                         }
-                        
+                         if (in_array('link', $show_fields) && !in_array('link', $hide_fields) && isset($available_fields['link'])) {                          
+                            if (!empty($final_url)) {
+                                $opt = $config->getOptions();                       
+                                $displayValue = $opt['business_card_title'];
+                                if (empty($displayValue)) {
+                                     $displayValue = preg_replace('/^https?:\/\//i', '', $final_url);     
+                                }
+
+                                $formattedValue = '<a href="' . esc_url($final_url) . '" itemprop="sameAs">' . esc_html($displayValue) . '</a>';
+                                $wval = '<span class="value"><span class="screen-reader-text">'.__('URL','rrze-faudir').': </span>'.$formattedValue.'</span>';
+                                $contactlist .= '<li class="profilurl listcontent">'.$wval.'</li>';
+                                
+                               
+                            }
+                    }
                         
                         
                         if (!empty($contactlist)) {                       
