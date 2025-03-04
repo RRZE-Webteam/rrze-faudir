@@ -13,9 +13,9 @@ if (!defined('ABSPATH')) {
 <div class="faudir">
     <?php 
     
-    $config = new Config;
-    
+    $config = new Config;    
     $available_fields = $config->getFieldsByFormat('list');
+    $opt = $config->getOptions();        
 
     
     $displayorder = $config->get('default_display_order');
@@ -41,11 +41,14 @@ if (!defined('ABSPATH')) {
          <ul class="format-list">
             <?php
             foreach ($persons as $persondata) { 
-                    if (isset($persondata['error'])) { ?>
-                        <li class="faudir-error">
+                    if (isset($persondata['error'])) {  
+                        if ($opt['show_error_message']) {
+                        ?>
+                        <div class="faudir-error">
                             <?php echo esc_html($persondata['message']); ?>
-                        </li>
-                    <?php } else { 
+                        </div>
+                        <?php }
+                    } else { 
                      if (!empty($persondata)) { 
                         $output = '';          
                         $output .= '<li class="text-list" itemscope itemtype="https://schema.org/Person">';

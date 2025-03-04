@@ -14,6 +14,7 @@ if (!defined('ABSPATH')) {
 <?php
     $config = new Config;
     $available_fields = $config->getFieldsByFormat('card');
+    $opt = $config->getOptions();        
     $lang = FAUdirUtils::getLang();
 
 
@@ -21,11 +22,14 @@ if (!defined('ABSPATH')) {
     if (!empty($persons)) { ?>
     <div class="format-card">
     <?php foreach ($persons as $persondata) {
-        if (isset($persondata['error'])) { ?>
+        if (isset($persondata['error'])) {  
+            if ($opt['show_error_message']) {
+            ?>
             <div class="faudir-error">
                 <?php echo esc_html($persondata['message']); ?>
             </div>
-        <?php } else { 
+            <?php }
+        } else { 
             if (!empty($persondata)) {
 
                 $person = new Person($persondata);
@@ -117,7 +121,7 @@ if (!defined('ABSPATH')) {
                         }
                          if (in_array('link', $show_fields) && !in_array('link', $hide_fields) && isset($available_fields['link'])) {                          
                             if (!empty($final_url)) {
-                                $opt = $config->getOptions();                       
+                                               
                                 $displayValue = $opt['business_card_title'];
                                 if (empty($displayValue)) {
                                      $displayValue = preg_replace('/^https?:\/\//i', '', $final_url);     

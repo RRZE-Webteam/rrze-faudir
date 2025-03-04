@@ -14,6 +14,7 @@ if (!defined('ABSPATH')) {
 <?php
     $config = new Config;
     $available_fields = $config->getFieldsByFormat('compact');
+    $opt = $config->getOptions();        
     $lang = FAUdirUtils::getLang();
 
 
@@ -21,11 +22,14 @@ if (!defined('ABSPATH')) {
     if (!empty($persons)) { ?>
     <div class="format-compact">
     <?php foreach ($persons as $persondata) {
-        if (isset($persondata['error'])) { ?>
+        if (isset($persondata['error'])) {  
+            if ($opt['show_error_message']) {
+            ?>
             <div class="faudir-error">
                 <?php echo esc_html($persondata['message']); ?>
             </div>
-        <?php } else { 
+            <?php }
+        } else { 
             if (!empty($persondata)) {
 
                 $person = new Person($persondata);

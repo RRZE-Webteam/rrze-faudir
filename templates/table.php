@@ -16,6 +16,7 @@ if (!defined('ABSPATH')) {
     $config = new Config;
     $fieldsbyformat = $config->get('avaible_fields_byformat');
     $available_fields = $config->getFieldsByFormat('table');
+    $opt = $config->getOptions();        
      
    
     $displayorder = $config->get('default_display_order');
@@ -31,20 +32,20 @@ if (!defined('ABSPATH')) {
     );
     $lang = FAUdirUtils::getLang();
      
-    
-  //  echo "<h2>Config</h2>";
-  //    echo  Debug::get_html_var_dump($available_fields);
-        
+
     ?>    
     <table class="format-table">
         <tbody>
             <?php
                 foreach ($persons as $persondata) { 
-                    if (isset($persondata['error'])) { ?>
+                    if (isset($persondata['error'])) {  
+                        if ($opt['show_error_message']) {
+                        ?>
                         <div class="faudir-error">
                             <?php echo esc_html($persondata['message']); ?>
                         </div>
-                    <?php } else { 
+                        <?php }
+                    } else { 
                      if (!empty($persondata)) { 
                         $output = '';          
                         $output .= '<tr itemscope itemtype="https://schema.org/Person">';

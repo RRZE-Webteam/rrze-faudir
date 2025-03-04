@@ -2,7 +2,7 @@ jQuery(document).ready(function ($) {
     let currentPage = 1;
 
     function loadContacts(page) {
-        console.log('Loading contacts for page:', page);
+  //      console.log('Loading contacts for page:', page);
         $.ajax({
             url: rrzeFaudirAjax.ajax_url,
             method: 'POST',
@@ -21,7 +21,7 @@ jQuery(document).ready(function ($) {
                 }
             },
             error: function (xhr, status, error) {
-                console.error('AJAX request failed:', status, error);
+     //           console.error('AJAX request failed:', status, error);
                 $('#contacts-list').html('<p>An error occurred during the request.</p>');
             }
         });
@@ -109,11 +109,11 @@ jQuery(document).ready(function ($) {
         var email = $('#email').val().trim();
         var includeDefaultOrg = $('#include-default-org').is(':checked') ? '1' : '0';
 
-        console.log('Person ID:', personId);
-        console.log('Given Name:', givenName);
-        console.log('Family Name:', familyName);
-        console.log('Email:', email);
-        console.log('Include Default Organization:', includeDefaultOrg);
+//        console.log('Person ID:', personId);
+//        console.log('Given Name:', givenName);
+//        console.log('Family Name:', familyName);
+//        console.log('Email:', email);
+//        console.log('Include Default Organization:', includeDefaultOrg);
         if (personId.length > 0 || givenName.length > 0 || familyName.length > 0 || email.length > 0) {
             $.ajax({
                 url: rrzeFaudirAjax.ajax_url,
@@ -128,7 +128,7 @@ jQuery(document).ready(function ($) {
                     include_default_org: includeDefaultOrg
                 },
                 success: function (response) {
-                    console.log('Response:', response);
+           //        console.log('Response:', response);
                     if (response.success) {
                         $('#contacts-list').html(response.data);
                     } else {
@@ -136,7 +136,7 @@ jQuery(document).ready(function ($) {
                     }
                 },
                 error: function (xhr, status, error) {
-                    console.error('AJAX request failed:', status, error);
+          //          console.error('AJAX request failed:', status, error);
                     $('#contacts-list').html('<p>An error occurred during the request.</p>');
                 }
             });
@@ -181,7 +181,7 @@ jQuery(document).ready(function ($) {
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                console.error('AJAX error:', textStatus, errorThrown);
+      //          console.error('AJAX error:', textStatus, errorThrown);
                 alert('An error occurred while creating the custom person. Please check the console for more details.');
             },
             complete: function () {
@@ -245,7 +245,7 @@ jQuery(document).ready(function ($) {
                 }
             },
             error: function (xhr, status, error) {
-                console.error('AJAX error:', status, error);
+   //             console.error('AJAX error:', status, error);
                 alert('Error fetching person data. Please check the console for details.');
             }
         });
@@ -267,7 +267,7 @@ jQuery(document).ready(function ($) {
                     search_term: searchTerm
                 },
                 success: function (response) {
-                    console.log('Organization search response:', response);
+     //               console.log('Organization search response:', response);
                     if (response.success) {
                         $('#organizations-list').html(response.data);
                     } else {
@@ -275,7 +275,7 @@ jQuery(document).ready(function ($) {
                     }
                 },
                 error: function (xhr, status, error) {
-                    console.error('AJAX request failed:', status, error);
+       //             console.error('AJAX request failed:', status, error);
                     $('#organizations-list').html('<p>An error occurred during the request.</p>');
                 }
             });
