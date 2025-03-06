@@ -340,7 +340,7 @@ function rrze_faudir_default_output_fields_render() {
             }
         }
         if (!empty($missing)) {
-            echo ' <em>('.__('Not avaible for the following formats', 'rrze_faudir').':</em> <code>'.$missing.'</code>)';
+            echo ' <em>('. esc_html__('Not avaible for the following formats', 'rrze-faudir').':</em> <code>'.$missing.'</code>)';
         }
         echo "<br>";
         
