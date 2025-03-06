@@ -11,8 +11,8 @@ use RRZE\FAUdir\Debug;
 // Add admin menu
 function rrze_faudir_add_admin_menu() {
     add_options_page(
-        __('FAUdir Settings', 'rrze-faudir'),
-        __('FAUdir', 'rrze-faudir'),
+        __('RRZE FAUdir Settings', 'rrze-faudir'),
+        __('RRZE FAUdir', 'rrze-faudir'),
         'manage_options',
         'rrze-faudir',
         'rrze_faudir_settings_page'
