@@ -106,25 +106,27 @@
     }
     
     h1 {
-	font-size: var(--font-size-xl, 1.25rem);
+	font-size: var(--faudir-h1-font-size, 1.25rem);
     }
     h2 {
-	font-size: var(--font-size-normal, 1rem);
+	font-size: var(--faudir-h2-font-size, 1rem);
     }
     h3 {
-	font-size: var(--font-size-tiny, 0.938rem);
+	font-size: var(--faudir-h3-font-size, 0.938rem);
     }
     h4 {
-	font-size: var(--font-size-sm, 0.875rem);
+	font-size: var(--faudir-41-font-size, 0.875rem);
     }
     h5 {
-	font-size: var(--font-size-xs, 0.76rem);
+	font-size: var(--faudir-h5-font-size, 0.76rem);
     }
 
     p.jobtitle {
 	font-weight: bold;
     }
     a {
-	color: var(--color-links);
+	color: var(--faudir-color-links);
     }
 }
+
+
