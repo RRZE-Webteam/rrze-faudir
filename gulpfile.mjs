@@ -11,6 +11,7 @@ import uglify from 'gulp-uglify';
 import bump from 'gulp-bump';
 import semver from 'semver';
 import gulpFile from 'gulp-file';
+import { exec } from 'child_process';
 
 const { src, dest, series, watch } = gulp;
 const sass = gulpSass(sassCompiler);
@@ -180,7 +181,16 @@ export function watchTask() {
   watch('src/js/*.js', devjsMain); // Überwachung von JS-Dateien
 }
 
-
+/*
+ * Build Block Editor Block by usung wordpress-scripts in faudir-block directory
+ */
+export function buildFaudirBlock(cb) {
+    exec('npm run build:block', { cwd: './faudir-block' }, (err, stdout, stderr) => {
+        console.log(stdout); // Ausgabe von npm run build
+        console.error(stderr); // Zeigt Fehler an, falls vorhanden
+        cb(err); // Callback mit Fehlerbehandlung
+    });
+}
 
 /*
  * Update Version on Patch-Level
@@ -241,11 +251,14 @@ export function createReadme() {
 }
 
 
+// Nur den Block neu bauen
+export const buildBlock = series(buildFaudirBlock);
+
 // Standard-Task
 export default series(upversionpatch, css, jsMain, jsAdmin);
     
 // Production
-export const build = series(upversionpatch, css, jsMain, jsAdmin, createReadme);
+export const build = series(upversionpatch, css, jsMain, jsAdmin, createReadme, buildFaudirBlock);
 
 // Dev Version
 export const dev = series(devversion, devcss, devjsMain, jsAdmin, createReadme);

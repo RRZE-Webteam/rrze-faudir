@@ -13,11 +13,10 @@ import { registerBlockType } from '@wordpress/blocks';
  * @see https://www.npmjs.com/package/@wordpress/scripts#using-css
  */
 
-
 /**
  * Internal dependencies
  */
-import Edit from './edit';
+import Edit from './edit.js';
 import metadata from './block.json';
 
 /**
