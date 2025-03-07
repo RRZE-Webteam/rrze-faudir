@@ -31,7 +31,6 @@ export default function Edit( { attributes, setAttributes } ) {
 		selectedPersonIds = '',
 		selectedFormat = 'compact',
 		selectedFields = [],
-		groupId = '',
 		function: functionValue = '',
 		orgnr = '',
 		url = '',
@@ -207,6 +206,7 @@ export default function Edit( { attributes, setAttributes } ) {
 				if ( settings?.default_organization?.orgnr ) {
 					setDefaultOrgNr( settings.default_organization );
 				}
+				
 			} )
 			.catch( ( error ) => {
 				console.error(
@@ -393,7 +393,6 @@ export default function Edit( { attributes, setAttributes } ) {
 		selectedFields: attributes.selectedFields,
 		selectedFormat: attributes.selectedFormat,
 		selectedCategory: attributes.selectedCategory,
-		groupId: attributes.groupId,
 		function: attributes.function,
 		...( attributes.orgnr && { orgnr: attributes.orgnr } ), // Only include orgnr if it's not empty
 		url: attributes.url,
@@ -621,14 +620,7 @@ export default function Edit( { attributes, setAttributes } ) {
 					} ) }
 
 					{ /* New Input Fields for Group Id, Function, Organization Nr */ }
-					<TextControl
-						label={ __( 'Group Id', 'rrze-faudir' ) }
-						value={ groupId }
-						onChange={ ( value ) =>
-							setAttributes( { groupId: value } )
-						}
-					/>
-
+					
 					<TextControl
 						label={ __( 'Organization Number', 'rrze-faudir' ) }
 						value={ orgnr }
@@ -688,13 +680,14 @@ export default function Edit( { attributes, setAttributes } ) {
 								label: __( 'Identifier Order', 'rrze-faudir' ),
 							},
 						] }
-						onChange={ handleSortChange } // Use the new handler instead of direct setAttributes
+						onChange={ handleSortChange }
 					/>
 				</PanelBody>
 			</InspectorControls>
 			<div { ...blockProps }>
 				{ attributes.selectedPersonIds?.length > 0 ||
 				attributes.selectedCategory ||
+				attributes.orgnr ||
 				( attributes.function &&
 					( attributes.orgnr || defaultOrgNr ) ) ? (
 					<>
@@ -738,11 +731,11 @@ export default function Edit( { attributes, setAttributes } ) {
 													: null, // Only pass if fields are selected
 											hideFields: attributes.hideFields, // Add hideFields
 											url: attributes.url,
-											groupId: attributes.groupId,
 											sort: attributes.sort,
 									  }
 									: // Case 3: selectedPersonIds
-									  {
+									attributes.selectedPersonIds?.length > 0
+									?  {
 											selectedPersonIds:
 												attributes.selectedPersonIds,
 											selectedFields:
@@ -754,9 +747,22 @@ export default function Edit( { attributes, setAttributes } ) {
 											selectedFormat:
 												attributes.selectedFormat,
 											url: attributes.url,
-											groupId: attributes.groupId,
 											sort: attributes.sort,
-									  } ),
+									  }
+									: // Case 4: orgnr als eigenständiger Fall
+									attributes.orgnr
+									? {
+									    orgnr: attributes.orgnr,
+									    selectedFormat: attributes.selectedFormat,
+									    selectedFields: attributes.selectedFields.length > 0 ? attributes.selectedFields : null,
+									    hideFields: attributes.hideFields,
+									    url: attributes.url,
+									    sort: attributes.sort,
+									}
+									: // Falls keiner der Fälle greift, leere Attribute übergeben
+									{}
+									
+								),
 							} }
 						/>
 					</>

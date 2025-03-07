@@ -4,7 +4,7 @@
 Plugin Name: RRZE FAUdir
 Plugin URI: https://github.com/RRZE-Webteam/rrze-faudir
 Description: Plugin for displaying the FAU person and institution directory on websites.
-Version: 2.1.17
+Version: 2.1.19
 Author: RRZE Webteam
 License: GNU General Public License v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -727,7 +727,7 @@ add_action('init',  __NAMESPACE__ . '\register_faudir_block');
 // Render callback function for FAUdir block
 function render_faudir_block($attributes) {
     try {
-   //     error_log('FAUDIR Block render started with attributes: ' . print_r($attributes, true));
+        error_log('FAUDIR Block render started with attributes: ' . print_r($attributes, true));
 
         if (!shortcode_exists('faudir')) {
             throw new Exception('FAUDIR shortcode is not registered');
@@ -743,7 +743,7 @@ function render_faudir_block($attributes) {
         // First check if we have function and orgnr
         if (!empty($attributes['function'])) {
             $shortcode_atts = [
-                'format' => $attributes['selectedFormat'] ?? 'kompakt',
+                'format' => $attributes['selectedFormat'] ?? 'compact',
                 'function' => $attributes['function'],
                 'orgnr' => !empty($attributes['orgnr']) ? $attributes['orgnr'] : $defaultOrgIdentifier
             ];
@@ -751,7 +751,7 @@ function render_faudir_block($attributes) {
         // Then check for category
         else if (!empty($attributes['selectedCategory'])) {
             $shortcode_atts = [
-                'format' => $attributes['selectedFormat'] ?? 'kompakt',
+                'format' => $attributes['selectedFormat'] ?? 'compact',
                 'category' => $attributes['selectedCategory']
             ];
             
@@ -763,12 +763,21 @@ function render_faudir_block($attributes) {
         // Finally check for selectedPersonIds without category
         else if (!empty($attributes['selectedPersonIds'])) {
             $shortcode_atts = [
-                'format' => $attributes['selectedFormat'] ?? 'kompakt',
+                'format' => $attributes['selectedFormat'] ?? 'compact',
                 'identifier' => is_array($attributes['selectedPersonIds']) ? 
                     implode(',', $attributes['selectedPersonIds']) : 
                     $attributes['selectedPersonIds']
             ];
         }
+        
+        // Org without other parameters from above given
+        else if (!empty($attributes['orgnr'])) {
+            $shortcode_atts = [
+                'format' => $attributes['selectedFormat'] ?? 'compact',
+                'orgnr' =>  $attributes['orgnr']
+            ];
+        }
+        
         else {
             throw new Exception(__('Neither person IDs, function+orgnr, nor category were provided', 'rrze-faudir'));
         }
@@ -780,11 +789,6 @@ function render_faudir_block($attributes) {
         
         if (!empty($attributes['hideFields'])) {
             $shortcode_atts['hide'] = implode(',', $attributes['hideFields']);
-        }
-
-
-        if (!empty($attributes['groupId'])) {
-            $shortcode_atts['groupid'] = $attributes['groupId'];
         }
 
         if (!empty($attributes['url'])) {

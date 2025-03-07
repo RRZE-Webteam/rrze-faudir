@@ -32,10 +32,7 @@
 			"type": "array",
 			"default": []
 		},
-		"groupId": {
-			"type": "string",
-			"default": ""
-		},
+
 		"function": {
 			"type": "string",
 			"default": ""

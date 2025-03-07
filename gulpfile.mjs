@@ -177,8 +177,8 @@ export function makepot() {
 // Der Watch-Task wird zur Entwicklung verwendet, daher hier nur 
 // Dev-Versionen erstellen
 export function watchTask() {
-  watch('src/scss/*.scss', devcss); // Überwachung von SCSS-Dateien
-  watch('src/js/*.js', devjsMain); // Überwachung von JS-Dateien
+  watch('src/scss/*.scss', devcss); 
+  watch('src/js/*.js', devjsMain); 
 }
 
 /*
@@ -186,9 +186,9 @@ export function watchTask() {
  */
 export function buildFaudirBlock(cb) {
     exec('npm run build:block', { cwd: './faudir-block' }, (err, stdout, stderr) => {
-        console.log(stdout); // Ausgabe von npm run build
-        console.error(stderr); // Zeigt Fehler an, falls vorhanden
-        cb(err); // Callback mit Fehlerbehandlung
+        console.log(stdout); 
+        console.error(stderr); 
+        cb(err); 
     });
 }
 

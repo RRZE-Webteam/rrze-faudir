@@ -47,7 +47,6 @@ class Shortcode {
                 'url'                   => '',
                 'show'                  => '',
                 'hide'                  => '',
-                'groupid'               => '',
                 'orgnr'                 => '',
                 'sort'                  => '',
                 'function'              => '',
@@ -109,7 +108,6 @@ class Shortcode {
          
         $function   = $atts['function'];
         $url        = $atts['url'];
-        $groupid    = $atts['groupid'];
         $orgnr      = $atts['orgnr'];
         $post_id    = $atts['id'];
         $format_displayname = $atts['format-displayname'];
@@ -174,12 +172,12 @@ class Shortcode {
         };
 
         // Closure to filter persons by organization and group ID
-        $filter_persons = function ($persons, $orgnr, $groupid) {
+        $filter_persons = function ($persons, $orgnr) {
             if (!empty($orgnr)) {
                 $api = new API(self::$config);
-                $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
-                if (!empty($orgData['data'])) {
-                    $orgIdentifier = $orgData['data'][0]['identifier'];
+                $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . $orgnr]);
+                if (!empty($orgdata['data'])) {
+                    $orgIdentifier = $orgdata['data'][0]['identifier'];
                     $persons = array_filter($persons, function ($person) use ($orgIdentifier) {
                         foreach ($person['contacts'] as $contact) {
                             if ($contact['organization']['identifier'] === $orgIdentifier) {
@@ -191,16 +189,7 @@ class Shortcode {
                 }
             }
 
-            if (!empty($groupid)) {
-                $persons = array_filter($persons, function ($person) use ($groupid) {
-                    foreach ($person['contacts'] as $contact) {
-                        if ($contact['organization']['identifier'] === $groupid) {
-                            return true;
-                        }
-                    }
-                    return false;
-                });
-            }
+          
 
             return $persons;
         };
@@ -249,10 +238,10 @@ class Shortcode {
             if (!empty($orgnr)) {
                 // Case 1: Explicit orgnr is provided in shortcode - exact match for both org and function
                 
-                $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
+                $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . $orgnr]);
                 
-                if (!empty($orgData['data'])) {
-                    $org = $orgData['data'][0];
+                if (!empty($orgdata['data'])) {
+                    $org = $orgdata['data'][0];
                     $identifier = $org['identifier'];
 
                     $queryParts = [];
@@ -338,7 +327,7 @@ class Shortcode {
                 }
             }
             
-        } elseif (!empty($post_id) && empty($identifiers) && empty($category) && empty($groupid) && empty($orgnr)) {
+        } elseif (!empty($post_id) && empty($identifiers) && empty($category) && empty($orgnr)) {
             // display a single person by custom post id - mostly on the slug
             $persons = $fetch_persons_by_post_id($post_id);
         } elseif (!empty($identifiers) || !empty($post_id)) {
@@ -353,7 +342,7 @@ class Shortcode {
                 $persons = $filter_persons_by_category($persons, $category);
             }
             // Apply organization and group filters if set
-            $persons = $filter_persons($persons, $orgnr, $groupid);
+            $persons = $filter_persons($persons, $orgnr);
         } elseif (!empty($category)) {
             // get persons by category. 
             // categories come from existing custom posts only. 
@@ -383,14 +372,17 @@ class Shortcode {
             if (!empty($person_identifiers)) {
                 $persons = self::process_persons_by_identifiers($person_identifiers);
             }
-        } elseif (!empty($orgnr) && empty($post_id) && empty($identifiers) && empty($category) && empty($groupid) && empty($function)) {
+        } elseif (!empty($orgnr) && empty($post_id) && empty($identifiers) && empty($category) && empty($function)) {
             // get persons by orgnr
-            $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
-            if (!empty($orgData['data'])) {
-                $orgname = $orgData['data'][0]['name'];
-                $lq = 'contacts.organization.name[eq]=' . urlencode($orgname);
+           // error_log("FAUdir\Shortcode (fetch_and_render_fau_data): By Orgnr: {$orgnr}");       
+           $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . $orgnr]);
+           
+            if (!empty($orgdata['data'])) {
+                $orgid = $orgdata['data'][0]['identifier'];
+                $lq = 'contacts.organization.identifier[eq]=' . $orgid;
                 $persons = self::fetch_and_process_persons($lq);
             }
+            
         } else {
             error_log('Invalid combination of attributes.');
             return;
@@ -547,9 +539,9 @@ class Shortcode {
         
         $persons = [];
         if (!empty($data['data'])) {
-            foreach ($data['data'] as $person) {
+            foreach ($data['data'] as $persondata) {
                 error_log("FAUdir\Shortcode (fetch_and_process_persons): Populate Persondata.");
-                $person->populateFromData($person);
+                $person->populateFromData($persondata);
                 $person->reloadContacts();
                 $persons[] = $person->toArray();  
             }
