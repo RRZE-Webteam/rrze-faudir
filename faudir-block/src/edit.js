@@ -32,6 +32,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		selectedFormat = 'compact',
 		selectedFields = [],
 		function: functionValue = '',
+		role = '',
 		orgnr = '',
 		url = '',
 		hideFields = [],
@@ -110,7 +111,7 @@ export default function Edit( { attributes, setAttributes } ) {
 			'titleOfNobility',
 			'address',
 		],
-		kompakt: Object.keys( availableFields ),
+		compact: Object.keys( availableFields ),
 		page: Object.keys( availableFields ),
 	};
 
@@ -119,12 +120,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		card: [ 'displayname', 'honorificPrefix', 'givenName', 'familyName' ],
 		table: [ 'displayname', 'honorificPrefix', 'givenName', 'familyName' ],
 		list: [ 'displayname', 'honorificPrefix', 'givenName', 'familyName' ],
-		kompakt: [
-			'displayname',
-			'honorificPrefix',
-			'givenName',
-			'familyName',
-		],
+		compact: ['displayname','honorificPrefix','givenName','familyName' ],
 		page: [ 'displayname', 'honorificPrefix', 'givenName', 'familyName' ],
 	};
 
@@ -203,6 +199,7 @@ export default function Edit( { attributes, setAttributes } ) {
 			path: '/wp/v2/settings/rrze_faudir_options',
 		} )
 			.then( ( settings ) => {
+			    console.error('DATA SETTINGS', settings);
 				if ( settings?.default_organization?.orgnr ) {
 					setDefaultOrgNr( settings.default_organization );
 				}
@@ -254,7 +251,7 @@ export default function Edit( { attributes, setAttributes } ) {
 				console.error( 'Error fetching posts:', error );
 				setIsLoadingPosts( false );
 			} );
-	}, [ selectedCategory, functionValue, orgnr ] );
+	}, [ selectedCategory, orgnr ] );
 
 	const togglePostSelection = ( postId, personId ) => {
 		const updatedSelectedPosts = selectedPosts.includes( postId )
@@ -393,7 +390,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		selectedFields: attributes.selectedFields,
 		selectedFormat: attributes.selectedFormat,
 		selectedCategory: attributes.selectedCategory,
-		function: attributes.function,
+		role: attributes.role,
 		...( attributes.orgnr && { orgnr: attributes.orgnr } ), // Only include orgnr if it's not empty
 		url: attributes.url,
 	};
@@ -411,6 +408,14 @@ export default function Edit( { attributes, setAttributes } ) {
 	const handleSortChange = ( value ) => {
 		setAttributes( { sort: value } );
 		setRenderKey( ( prev ) => prev + 1 ); // Force re-render
+	};
+	
+	// Also render again if the orgnr changes
+	const handleOrgNrChange = ( value ) => {
+		setAttributes( { orgnr: value } );
+		if ( value.length > 4 ) {
+		    setRenderKey( ( prev ) => prev + 1 ); // Force re-render
+		}
 	};
 
 	// 1. Add memoization for expensive computations
@@ -596,19 +601,12 @@ export default function Edit( { attributes, setAttributes } ) {
 												label={
 													<>
 														{
-															availableFields[
-																field
-															]
+															availableFields[field]
 														}
 													</>
 												}
-												checked={ selectedFields.includes(
-													field
-												) }
-												onChange={ () =>
-													toggleFieldSelection(
-														field
-													)
+												checked={ selectedFields.includes(field) }
+												onChange={ () => toggleFieldSelection(field)
 												}
 											/>
 										</div>
@@ -624,9 +622,10 @@ export default function Edit( { attributes, setAttributes } ) {
 					<TextControl
 						label={ __( 'Organization Number', 'rrze-faudir' ) }
 						value={ orgnr }
-						onChange={ ( value ) => {
-							setAttributes( { orgnr: value } );
-						} }
+						onChange={ handleOrgNrChange }
+						type="text"
+						help={ __( 'Please enter at least 10 digits.', 'rrze-faudir' ) }
+						inputProps={{ pattern: '\\d{10,}' }} 
 					/>
 					{ defaultOrgNr && ! orgnr && (
 						<div
@@ -688,7 +687,7 @@ export default function Edit( { attributes, setAttributes } ) {
 				{ attributes.selectedPersonIds?.length > 0 ||
 				attributes.selectedCategory ||
 				attributes.orgnr ||
-				( attributes.function &&
+				( attributes.role &&
 					( attributes.orgnr || defaultOrgNr ) ) ? (
 					<>
 						{ /* Format console log as WordPress shortcode */ }
@@ -698,9 +697,9 @@ export default function Edit( { attributes, setAttributes } ) {
 							block="rrze-faudir/block"
 							attributes={ {
 								// Case 1: function + orgnr
-								...( attributes.function
+								...( attributes.role
 									? {
-											function: attributes.function,
+											role: attributes.role,
 											...( attributes.orgnr && {
 												orgnr: attributes.orgnr,
 											} ),
@@ -775,7 +774,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						} }
 					>
 						<p>
-							{ attributes.function
+							{ attributes.role
 								? defaultOrgNr
 									? __(
 											'Using default organization.',

@@ -17,7 +17,13 @@ if (!defined('ABSPATH')) {
     $opt = $config->getOptions();        
     $lang = FAUdirUtils::getLang();
 
-
+    
+    $dbopt = get_option('rrze_faudir_options', []);
+     
+     
+    //echo "DB OPTIONS:<br>";
+    //echo Debug::get_html_var_dump($dbopt);
+    //echo "<hr>";
     
     if (!empty($persons)) { ?>
     <div class="format-compact">

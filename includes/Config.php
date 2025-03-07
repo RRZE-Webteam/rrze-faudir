@@ -64,6 +64,34 @@ class Config {
             'consultationhours' => __('Consultation Hours', 'rrze-faudir'),
             'link'              => __('Link to Profil', 'rrze-faudir')
         ];
+        
+        $this->config['person_roles'] = [
+            'administrative_employee'   => __('Administrative Employee', 'rrze-faudir'),
+            'adjunct_professor'         => __('Adjunct professors', 'rrze-faudir'),
+            'assistentprofessor'        => __('Privat dozent', 'rrze-faudir'),
+            'campo_administrator'       => __('Campo administrator', 'rrze-faudir'),
+            'deputy'                    => __('Deputy leader', 'rrze-faudir'),
+            'doctoratecandidate_without_contract'   => __('Doctoral candidate', 'rrze-faudir'),
+            'employee'                  => __('Employee', 'rrze-faudir'),
+            'guestlecturer'             => __('Visiting lecturers', 'rrze-faudir'),
+            'guestresearcher'           => __('Visiting researchers', 'rrze-faudir'),
+            'honorary_professor'        => __('Honorary professors', 'rrze-faudir'),
+            'idm_coordinator'           => __('IdM Coordinator', 'rrze-faudir'),
+            'it_support_staff'          => __('IT Support Staff', 'rrze-faudir'),
+            'junior_professor'          => __('Assistant professors', 'rrze-faudir'),
+            'leader'                    => __('Head', 'rrze-faudir'),
+            'professor'                 => __('Professors', 'rrze-faudir'),
+            'researchassistant'         => __('Research assistant', 'rrze-faudir'),
+            'retired_professor'         => __('Retired professors', 'rrze-faudir'),
+            'scholarshipholder'         => __('Scholarship holder', 'rrze-faudir'),
+            'scientific_employee'       => __('Research associates', 'rrze-faudir'),
+            'secretary'                 => __('Secretary', 'rrze-faudir'),
+            'studentemployee'           => __('Student employee', 'rrze-faudir'),
+            'technical_employee'        => __('Tecnical employee', 'rrze-faudir'),
+            'trainee'                   => __('Trainee', 'rrze-faudir'),
+            'visitinglecturer'          => __('Lecturers', 'rrze-faudir'),
+            'workplace_manager'         => __('Workplace manaher', 'rrze-faudir'),
+        ];
          
 
     }
@@ -136,6 +164,7 @@ class Config {
         return $settings;
     }
     
+ 
     
 }
 

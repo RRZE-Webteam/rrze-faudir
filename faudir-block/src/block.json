@@ -33,7 +33,7 @@
 			"default": []
 		},
 
-		"function": {
+		"role": {
 			"type": "string",
 			"default": ""
 		},

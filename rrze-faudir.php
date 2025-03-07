@@ -741,10 +741,10 @@ function render_faudir_block($attributes) {
         $defaultOrgIdentifier = isset($default_org['id']) ? $default_org['id'] : '';
 
         // First check if we have function and orgnr
-        if (!empty($attributes['function'])) {
+        if (!empty($attributes['role'])) {
             $shortcode_atts = [
                 'format' => $attributes['selectedFormat'] ?? 'compact',
-                'function' => $attributes['function'],
+                'role' => $attributes['role'],
                 'orgnr' => !empty($attributes['orgnr']) ? $attributes['orgnr'] : $defaultOrgIdentifier
             ];
         } 
@@ -863,17 +863,18 @@ add_action('rest_api_init', function () {
     register_rest_route('wp/v2/settings', 'rrze_faudir_options', array(
         'methods' => 'GET',
         'callback' => function () {
-            $options = get_option('rrze_faudir_options', []);
+                $config = new Config;
+                $options = $config->getOptions();  
+                $roles = $config->get('person_roles');
+        //    $options = get_option('rrze_faudir_options', []);
             return [
                 'default_output_fields' => isset($options['default_output_fields']) ? 
-                    $options['default_output_fields'] : 
-                    [],
+                    $options['default_output_fields'] : [],
                 'business_card_title' => isset($options['business_card_title']) ? 
-                    $options['business_card_title'] : 
-                    __('More Information', 'rrze-faudir'),
+                    $options['business_card_title'] :  __('More Information', 'rrze-faudir'),
+                'person_roles' => $roles,
                 'default_organization' => isset($options['default_organization']) ? 
-                    $options['default_organization'] : 
-                    null
+                    $options['default_organization'] :  null
             ];
         },
         'permission_callback' => function () {
