@@ -239,10 +239,11 @@ class Shortcode {
         $person->setConfig(self::$config);
 
         if (!empty($role)) {
+              Debug::log('Shortcode','error',"Look for function $role");
             if (!empty($orgnr)) {
                 // Case 1: Explicit orgnr is provided in shortcode - exact match for both org and function
                 
-                $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=^' . $orgnr]);
+                $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . $orgnr]);
                 
                 if (!empty($orgdata['data'])) {
                     $org = $orgdata['data'][0];
@@ -268,7 +269,8 @@ class Shortcode {
 
                         // Filter contacts based on function
                         foreach ($persondata['contacts'] as $contactKey => $contact) {
-                            if ($contact['functionLabel']['de'] !== $role 
+                            if ($contact['function'] !== $role                                     
+                                    && $contact['functionLabel']['de'] !== $role 
                                     && $contact['functionLabel']['en'] !== $role 
                                     || $contact['organization']['identifier'] !== $identifier) {
                                 unset($persondata['contacts'][$contactKey]);
@@ -312,7 +314,8 @@ class Shortcode {
                             $persondata = $person->toArray();
                             
                             foreach ($persondata['contacts'] as $contactKey => $contact) {
-                                if ($contact['functionLabel']['de'] !== $role 
+                                if ($contact['function'] !== $role 
+                                        && $contact['functionLabel']['de'] !== $role 
                                         && $contact['functionLabel']['en'] !== $role 
                                         || !in_array($contact['organization']['identifier'], $ids)) {
                                     unset($persondata['contacts'][$contactKey]);
@@ -379,7 +382,7 @@ class Shortcode {
         } elseif (!empty($orgnr) && empty($post_id) && empty($identifiers) && empty($category) && empty($role)) {
             // get persons by orgnr
            // error_log("FAUdir\Shortcode (fetch_and_render_fau_data): By Orgnr: {$orgnr}");       
-           $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=^' . $orgnr]);
+           $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . $orgnr]);
            
             if (!empty($orgdata['data'])) {
                 $orgid = $orgdata['data'][0]['identifier'];
@@ -544,7 +547,7 @@ class Shortcode {
         $persons = [];
         if (!empty($data['data'])) {
             foreach ($data['data'] as $persondata) {
-                error_log("FAUdir\Shortcode (fetch_and_process_persons): Populate Persondata.");
+          //      error_log("FAUdir\Shortcode (fetch_and_process_persons): Populate Persondata.");
                 $person->populateFromData($persondata);
                 $person->reloadContacts();
                 $persons[] = $person->toArray();  

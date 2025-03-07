@@ -16,7 +16,7 @@ export default function Edit( { attributes, setAttributes } ) {
 	// Enhanced translation test
 
 	const [ categories, setCategories ] = useState( [] );
-	const [ posts, setPosts ] = useState( [] );
+	const [ posts, setPosts, setDisplayedPosts ] = useState( [] );
 	const [ isLoadingCategories, setIsLoadingCategories ] = useState( true );
 	const [ isLoadingPosts, setIsLoadingPosts ] = useState( false );
 	const [ defaultOrgNr, setDefaultOrgNr ] = useState( null );
@@ -31,7 +31,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		selectedPersonIds = '',
 		selectedFormat = 'compact',
 		selectedFields = [],
-		function: functionValue = '',
+	//	function: functionValue = '',
 		role = '',
 		orgnr = '',
 		url = '',
@@ -150,7 +150,7 @@ export default function Edit( { attributes, setAttributes } ) {
 							organization: 'organization',
 							jobTitle: 'jobTitle',
 							url: 'url',
-							//                        'content': 'content',
+							content: 'content',
 							teasertext: 'teasertext',
 							socialmedia: 'socialmedia',
 							room: 'room',
@@ -173,6 +173,11 @@ export default function Edit( { attributes, setAttributes } ) {
 							selectedFields: mappedFields,
 						} );
 					}
+				//	if ( settings?.person_roles ) {
+				//		setAttributes( {
+				//			setPersonRoles: settings.person_roles ,
+				//		} );					   		
+				//	}
 				} )
 				.catch( ( error ) => {
 					console.error( 'Error fetching default fields:', error );
@@ -199,11 +204,15 @@ export default function Edit( { attributes, setAttributes } ) {
 			path: '/wp/v2/settings/rrze_faudir_options',
 		} )
 			.then( ( settings ) => {
-			    console.error('DATA SETTINGS', settings);
+		//	    console.error('DATA SETTINGS in component mount', settings);
 				if ( settings?.default_organization?.orgnr ) {
 					setDefaultOrgNr( settings.default_organization );
 				}
-				
+		//		if ( settings?.person_roles ) {
+		//			setAttributes( {
+		//			    setPersonRoles: settings.person_roles ,
+		//			} );
+		//		}				
 			} )
 			.catch( ( error ) => {
 				console.error(
@@ -413,7 +422,7 @@ export default function Edit( { attributes, setAttributes } ) {
 	// Also render again if the orgnr changes
 	const handleOrgNrChange = ( value ) => {
 		setAttributes( { orgnr: value } );
-		if ( value.length > 4 ) {
+		if ( value.length > 8 ) {
 		    setRenderKey( ( prev ) => prev + 1 ); // Force re-render
 		}
 	};
@@ -477,20 +486,14 @@ export default function Edit( { attributes, setAttributes } ) {
 									onChange={ () => {
 										// If the category is already selected, unselect it by setting to empty string
 										const newCategory =
-											selectedCategory === category.name
-												? ''
-												: category.name;
+											selectedCategory === category.name ? '' : category.name;
 										setAttributes( {
 											selectedCategory: newCategory,
 											// Clear selected posts when unchecking category
 											selectedPosts:
-												newCategory === ''
-													? []
-													: selectedPosts,
+												newCategory === '' ? [] : selectedPosts,
 											selectedPersonIds:
-												newCategory === ''
-													? []
-													: selectedPersonIds,
+												newCategory === '' ? [] : selectedPersonIds,
 										} );
 									} }
 								/>
@@ -681,6 +684,12 @@ export default function Edit( { attributes, setAttributes } ) {
 						] }
 						onChange={ handleSortChange }
 					/>
+					<TextControl
+						label={ __( 'Role', 'rrze-faudir' ) }
+						value={role}
+						onChange={(value) => setAttributes({ role: value })}
+						type="text"
+					/>
 				</PanelBody>
 			</InspectorControls>
 			<div { ...blockProps }>
@@ -759,7 +768,13 @@ export default function Edit( { attributes, setAttributes } ) {
 									    sort: attributes.sort,
 									}
 									: // Falls keiner der Fälle greift, leere Attribute übergeben
-									{}
+									{
+									    selectedFormat: attributes.selectedFormat,
+									    selectedFields: attributes.selectedFields.length > 0 ? attributes.selectedFields : null,
+									    hideFields: attributes.hideFields,
+									    url: attributes.url,
+									    sort: attributes.sort,
+									}
 									
 								),
 							} }

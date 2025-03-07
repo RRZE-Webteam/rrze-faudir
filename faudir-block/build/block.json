@@ -32,7 +32,7 @@
       "type": "array",
       "default": []
     },
-    "function": {
+    "role": {
       "type": "string",
       "default": ""
     },

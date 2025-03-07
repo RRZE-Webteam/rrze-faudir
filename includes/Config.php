@@ -76,8 +76,8 @@ class Config {
             'guestlecturer'             => __('Visiting lecturers', 'rrze-faudir'),
             'guestresearcher'           => __('Visiting researchers', 'rrze-faudir'),
             'honorary_professor'        => __('Honorary professors', 'rrze-faudir'),
-            'idm_coordinator'           => __('IdM Coordinator', 'rrze-faudir'),
-            'it_support_staff'          => __('IT Support Staff', 'rrze-faudir'),
+            'idm_coordinator'           => __('IdM coordinator', 'rrze-faudir'),
+            'it_support_staff'          => __('IT support staff', 'rrze-faudir'),
             'junior_professor'          => __('Assistant professors', 'rrze-faudir'),
             'leader'                    => __('Head', 'rrze-faudir'),
             'professor'                 => __('Professors', 'rrze-faudir'),
@@ -87,10 +87,10 @@ class Config {
             'scientific_employee'       => __('Research associates', 'rrze-faudir'),
             'secretary'                 => __('Secretary', 'rrze-faudir'),
             'studentemployee'           => __('Student employee', 'rrze-faudir'),
-            'technical_employee'        => __('Tecnical employee', 'rrze-faudir'),
+            'technical_employee'        => __('Technical employee', 'rrze-faudir'),
             'trainee'                   => __('Trainee', 'rrze-faudir'),
-            'visitinglecturer'          => __('Lecturers', 'rrze-faudir'),
-            'workplace_manager'         => __('Workplace manaher', 'rrze-faudir'),
+            'visitinglecturer'          => __('Visiting lecturers', 'rrze-faudir'),
+            'workplace_manager'         => __('Workplace manager', 'rrze-faudir'),
         ];
          
 
