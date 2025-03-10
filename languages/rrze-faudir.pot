@@ -1,5 +1,6 @@
 # Copyright (C) 2025 rrze-faudir
 # This file is distributed under the same license as the rrze-faudir package.
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: rrze-faudir\n"
@@ -8,56 +9,947 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: RRZE-Webteam <webmaster@fau.de> (https://www.rrze.fau.de)\n"
 "Last-Translator: RRZE-Webteam <webmaster@fau.de> (https://www.rrze.fau.de)\n"
-"POT-Creation-Date: 2025-03-06 11:16+0000\n"
+"POT-Creation-Date: 2025-03-10 10:41+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/RRZE-Webteam/rrze-faudir/issues\n"
 "X-Poedit-Basepath: ..\n"
-"X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
+"X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:"
+"1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;"
+"esc_html_x:1,2c\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Language: \n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: Loco https://localise.biz/"
 
-#. translators: 1: Current WordPress version 2: Required WordPress version
-#: rrze-faudir.php:83
-msgid "Your WordPress version (%1$s) is outdated. Please upgrade to WordPress %2$s or higher."
-msgstr ""
-
-#: rrze-faudir.php:76
-msgid "Your PHP version (%1$s) is outdated. Please upgrade to PHP %2$s or higher."
-msgstr ""
-
-#: rrze-faudir.php:234
-msgid "No contacts found with the provided identifier."
-msgstr ""
-
-#: rrze-faudir.php:517, rrze-faudir.php:507, rrze-faudir.php:497
-msgid "Person with Univis ID "
-msgstr ""
-
-#: rrze-faudir.php:517, rrze-faudir.php:507, rrze-faudir.php:497
-msgid " already exists."
-msgstr ""
-
-#: rrze-faudir.php:514, rrze-faudir.php:504, rrze-faudir.php:494
-msgid "Missing Univis ID for person: "
-msgstr ""
-
-#. translators: %d: number of imported persons
-#: rrze-faudir.php:547
-msgid "%d person was successfully imported from the old plugin."
-msgid_plural "%d persons were successfully imported from the old plugin."
-msgstr[0] ""
-msgstr[1] ""
-
-#. translators: %d: number of not imported persons
+#. %d: number of not imported persons
 #: rrze-faudir.php:559
 msgid "%d person was not able to be imported from the old plugin."
 msgid_plural "%d persons were not able to be imported from the old plugin."
 msgstr[0] ""
 msgstr[1] ""
 
-#: rrze-faudir.php:569
-msgid "You now have the option to set a custom slug for person pages in the settings. If you don't set a unique slug, existing person pages from the old plugin may be overridden by the new plugin's person pages. To prevent this, please ensure that you configure a custom slug in the settings if you want to keep the old pages intact."
+#. %d: number of imported persons
+#: rrze-faudir.php:547
+msgid "%d person was successfully imported from the old plugin."
+msgid_plural "%d persons were successfully imported from the old plugin."
+msgstr[0] ""
+msgstr[1] ""
+
+#: faudir-block/src/edit.js:48
+msgid "Academic Suffix"
+msgstr ""
+
+#: faudir-block/src/edit.js:45
+msgid "Academic Title"
+msgstr ""
+
+#: rrze-faudir.php:632
+msgid "Add New Category"
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:18
+msgid "Add New Person"
+msgstr ""
+
+#: includes/EnqueueScripts.php:64
+msgid "Adding..."
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:106
+msgid "Additional Fields"
+msgstr ""
+
+#: templates/page.php:104 templates/compact.php:112 includes/Config.php:58
+#: includes/utils/api-functions.php:491 faudir-block/src/edit.js:60
+msgid "Address"
+msgstr ""
+
+#: includes/Config.php:70
+msgid "Adjunct professors"
+msgstr ""
+
+#: includes/Config.php:69
+msgid "Administrative Employee"
+msgstr ""
+
+#: includes/admin/settings-page.php:639
+msgid "All cache cleared successfully."
+msgstr ""
+
+#: rrze-faudir.php:627
+msgid "All Categories"
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:21
+msgid "All Persons"
+msgstr ""
+
+#: rrze-faudir.php:497 rrze-faudir.php:507 rrze-faudir.php:517
+msgid "already exists"
+msgstr ""
+
+#: includes/admin/settings-page.php:53
+msgid "API Key"
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:159
+msgid "API Person Identifier"
+msgstr ""
+
+#: includes/admin/settings-page.php:46 includes/admin/settings-page.php:368
+msgid "API Settings"
+msgstr ""
+
+#: includes/admin/settings-page.php:467
+msgid "API-Person-Identifier"
+msgstr ""
+
+#: includes/EnqueueScripts.php:62
+msgid "Are you sure you want to clear the cache?"
+msgstr ""
+
+#: includes/admin/settings-page.php:518
+msgid "Are you sure you want to delete the default organization?"
+msgstr ""
+
+#: includes/admin/settings-page.php:570
+msgid "Are you sure you want to reset all settings to their default values?"
+msgstr ""
+
+#: includes/Config.php:81
+msgid "Assistant professors"
+msgstr ""
+
+#: faudir-block/build/block.json:1 faudir-block/src/block.json:1
+msgctxt "block description"
+msgid "Display FAUdir information"
+msgstr ""
+
+#: faudir-block/build/block.json:1 faudir-block/src/block.json:1
+msgctxt "block title"
+msgid "FAUdir"
+msgstr ""
+
+#: includes/Contact.php:372
+msgid "Box Number"
+msgstr ""
+
+#: includes/admin/settings-page.php:69 includes/admin/settings-page.php:371
+msgid "Cache Settings"
+msgstr ""
+
+#: includes/admin/settings-page.php:85
+msgid "Cache Timeout (in minutes)"
+msgstr ""
+
+#: includes/Config.php:42
+msgid "Call up business card"
+msgstr ""
+
+#: includes/Config.php:72
+msgid "Campo administrator"
+msgstr ""
+
+#: faudir-block/src/edit.js:576
+msgid "Card"
+msgstr ""
+
+#: rrze-faudir.php:634
+msgid "Categories"
+msgstr ""
+
+#: templates/table.php:199 templates/list.php:223 includes/Config.php:61
+#: includes/utils/api-functions.php:310 includes/utils/api-functions.php:385
+#: faudir-block/src/edit.js:63
+msgid "City"
+msgstr ""
+
+#: includes/admin/settings-page.php:99
+msgid "Clear All Cache"
+msgstr ""
+
+#: includes/admin/settings-page.php:251
+msgid "Clear Cache Now"
+msgstr ""
+
+#: includes/admin/settings-page.php:423
+msgid "Click the button below to reset all settings to their default values."
+msgstr ""
+
+#: includes/admin/settings-page.php:252
+msgid "Click the button to clear all cached data."
+msgstr ""
+
+#: faudir-block/src/edit.js:580
+msgid "Compact"
+msgstr ""
+
+#: includes/admin/settings-page.php:195
+msgid "Configure caching settings for the plugin."
+msgstr ""
+
+#: includes/admin/settings-page.php:190
+msgid ""
+"Configure the API settings for accessing the FAU person and institution "
+"directory."
+msgstr ""
+
+#: includes/admin/settings-page.php:203
+msgid "Configure the business card link settings."
+msgstr ""
+
+#: includes/admin/settings-page.php:207
+msgid "Configure the shortcode settings."
+msgstr ""
+
+#: templates/page.php:197 templates/compact.php:140 includes/Config.php:64
+#: includes/Contact.php:239 includes/utils/api-functions.php:337
+#: faudir-block/src/edit.js:66
+msgid "Consultation Hours"
+msgstr ""
+
+#: templates/page.php:160 templates/compact.php:213 templates/card.php:141
+#: includes/custom-post-type/custom-post-type.php:222
+msgid "Contact"
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:199
+msgid "Contacts"
+msgstr ""
+
+#: includes/Config.php:53 faudir-block/src/edit.js:55
+msgid "Content"
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:156
+msgid "Content (English)"
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:134
+msgid "Copy shortcode to Clipboard"
+msgstr ""
+
+#: includes/admin/settings-page.php:511
+msgid "Current Default Organization"
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:566
+msgid "Custom person created successfully!"
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:182
+msgid "Data"
+msgstr ""
+
+#: includes/admin/settings-page.php:605
+msgid "Default organization has been deleted."
+msgstr ""
+
+#: includes/utils/api-functions.php:576
+msgid "Default organization has been saved."
+msgstr ""
+
+#: faudir-block/src/edit.js:647
+msgid "Default organization will be used if empty."
+msgstr ""
+
+#: includes/admin/settings-page.php:139
+msgid "Default Output Fields"
+msgstr ""
+
+#: includes/admin/settings-page.php:519
+msgid "Delete Default Organization"
+msgstr ""
+
+#: includes/Config.php:73
+msgid "Deputy leader"
+msgstr ""
+
+#: includes/admin/settings-page.php:225
+msgid "Disable caching for logged-in editors."
+msgstr ""
+
+#: includes/Config.php:45 faudir-block/src/edit.js:44
+msgid "Display Name"
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:225
+msgid "Display this contact"
+msgstr ""
+
+#: includes/Person.php:706
+msgid "Doctor"
+msgstr ""
+
+#: includes/Config.php:74
+msgid "Doctoral candidate"
+msgstr ""
+
+#: includes/EnqueueScripts.php:63 includes/admin/settings-page.php:739
+msgid "Edit"
+msgstr ""
+
+#: rrze-faudir.php:630
+msgid "Edit Category"
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:19
+msgid "Edit Person"
+msgstr ""
+
+#: templates/table.php:105 templates/list.php:104 templates/page.php:119
+#: templates/compact.php:172 templates/card.php:86 includes/Config.php:48
+#: includes/admin/settings-page.php:482 includes/utils/api-functions.php:373
+#: includes/utils/api-functions.php:503
+#: includes/custom-post-type/custom-post-type.php:161
+#: faudir-block/src/edit.js:50
+msgid "Email"
+msgstr ""
+
+#: includes/utils/api-functions.php:325
+msgid "Emails"
+msgstr ""
+
+#: includes/Config.php:75
+msgid "Employee"
+msgstr ""
+
+#: includes/admin/settings-page.php:539
+msgid "Enter organization name or identifier"
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:178
+msgid ""
+"Enter the internal \"API Person Identification\" of the person who can "
+"retrieve the data via FAU IdM here. The API person identifiers can view the "
+"persons themselves in the IdM portal in the view of the Personal Data. "
+"Contact persons and facility lines can access this value for other persons "
+"in their organization through the management of FAUdir. Alternatively, use "
+"the search for the settings under settings -> RRZE FAUdir -> API"
+msgstr ""
+
+#: includes/admin/settings-page.php:309
+msgid "Enter the slug for the person post type."
+msgstr ""
+
+#: includes/admin/settings-page.php:218
+msgid "Enter your API key here."
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:574
+msgid "Error creating custom person: Failed to fetch person details."
+msgstr ""
+
+#: includes/utils/api-functions.php:74 includes/utils/api-functions.php:175
+#: includes/utils/api-functions.php:246
+msgid "Error decoding JSON data."
+msgstr ""
+
+#: includes/admin/settings-page.php:109 includes/admin/settings-page.php:374
+msgid "Error Handling"
+msgstr ""
+
+#: includes/utils/api-functions.php:168
+msgid "Error retrieving data or contacts not found."
+msgstr ""
+
+#: includes/utils/api-functions.php:69 includes/utils/api-functions.php:163
+#: includes/utils/api-functions.php:239
+msgid "Error retrieving data: "
+msgstr ""
+
+#: includes/EnqueueScripts.php:69
+msgid "Error saving organization."
+msgstr ""
+
+#: includes/admin/settings-page.php:703 includes/utils/api-functions.php:451
+#, php-format
+msgid "Error: %s"
+msgstr ""
+
+#: includes/admin/settings-page.php:579
+msgid "Failed to reset settings. Please try again."
+msgstr ""
+
+#: includes/admin/settings-page.php:161
+msgid "Fallback FAUdir link"
+msgstr ""
+
+#: includes/admin/settings-page.php:477
+#: includes/custom-post-type/custom-post-type.php:164
+msgid "Family Name"
+msgstr ""
+
+#: templates/table.php:210 includes/Config.php:62 includes/Contact.php:339
+#: includes/utils/api-functions.php:313 includes/utils/api-functions.php:388
+#: faudir-block/src/edit.js:64
+msgid "FAU Map"
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:182
+#: includes/custom-post-type/custom-post-type.php:199
+msgid "FAUdir"
+msgstr ""
+
+#: includes/admin/settings-page.php:362
+msgid "FAUdir Settings"
+msgstr ""
+
+#: includes/utils/api-functions.php:319
+msgid "Fax"
+msgstr ""
+
+#: includes/admin/settings-page.php:455
+msgid "Filter by default organization"
+msgstr ""
+
+#: faudir-block/src/edit.js:46
+msgid "First Name"
+msgstr ""
+
+#: templates/table.php:151 templates/list.php:173 includes/Config.php:57
+#: includes/Contact.php:335 includes/utils/api-functions.php:301
+#: faudir-block/src/edit.js:59
+msgid "Floor"
+msgstr ""
+
+#: includes/Contact.php:300
+msgid "Friday"
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:238
+msgid "Function (English)"
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:244
+msgid "Function (German)"
+msgstr ""
+
+#: includes/admin/settings-page.php:472
+#: includes/custom-post-type/custom-post-type.php:163
+msgid "Given Name"
+msgstr ""
+
+#: includes/admin/settings-page.php:199
+msgid "Handle error messages for invalid contact entries."
+msgstr ""
+
+#: includes/admin/settings-page.php:154
+msgid "Hard Sanitize"
+msgstr ""
+
+#: includes/admin/settings-page.php:283
+msgid "Hard Sanitize abbreviations."
+msgstr ""
+
+#: includes/Config.php:82
+msgid "Head"
+msgstr ""
+
+#: faudir-block/src/edit.js:671
+msgid "Head of Department First"
+msgstr ""
+
+#: includes/Config.php:78
+msgid "Honorary professors"
+msgstr ""
+
+#. URI of the plugin
+msgid "https://github.com/RRZE-Webteam/rrze-faudir"
+msgstr ""
+
+#: faudir-block/src/edit.js:682
+msgid "Identifier Order"
+msgstr ""
+
+#: includes/Config.php:79
+msgid "IdM coordinator"
+msgstr ""
+
+#: includes/Config.php:44 faudir-block/src/edit.js:43
+msgid "Image"
+msgstr ""
+
+#: includes/Config.php:80
+msgid "IT support staff"
+msgstr ""
+
+#: includes/Config.php:51
+msgid "Job Title"
+msgstr ""
+
+#: faudir-block/src/edit.js:53
+msgid "Jobtitle"
+msgstr ""
+
+#: includes/admin/settings-page.php:147
+msgid "Kompakt Card Button Title"
+msgstr ""
+
+#: faudir-block/src/edit.js:47 faudir-block/src/edit.js:660
+msgid "Last Name"
+msgstr ""
+
+#: includes/admin/settings-page.php:277
+msgid "Link title for optional links pointing to the users detail page."
+msgstr ""
+
+#: includes/Config.php:65
+msgid "Link to Profil"
+msgstr ""
+
+#: faudir-block/src/edit.js:568
+msgid "List"
+msgstr ""
+
+#: faudir-block/src/edit.js:520
+msgid "Loading persons..."
+msgstr ""
+
+#: templates/table.php:211 includes/Contact.php:340
+msgid "Map"
+msgstr ""
+
+#: rrze-faudir.php:494 rrze-faudir.php:504 rrze-faudir.php:514
+msgid "Missing Univis ID for person: "
+msgstr ""
+
+#: includes/Contact.php:296
+msgid "Monday"
+msgstr ""
+
+#: includes/admin/settings-page.php:265
+msgid "More"
+msgstr ""
+
+#: rrze-faudir.php:874
+msgid "More Information"
+msgstr ""
+
+#: includes/admin/settings-page.php:513
+#: includes/custom-post-type/custom-post-type.php:160
+msgid "Name"
+msgstr ""
+
+#: rrze-faudir.php:782
+msgid "Neither person IDs, function+orgnr, nor category were provided"
+msgstr ""
+
+#: rrze-faudir.php:633
+msgid "New Category Name"
+msgstr ""
+
+#: includes/utils/api-functions.php:355 includes/utils/api-functions.php:363
+msgid "No address available"
+msgstr ""
+
+#: includes/admin/settings-page.php:76
+msgid "No Caching for Logged-in Editors"
+msgstr ""
+
+#: rrze-faudir.php:668 rrze-faudir.php:698 templates/table.php:265
+#: templates/list.php:283 templates/list.php:289 templates/page.php:279
+#: templates/compact.php:285 templates/card.php:165
+msgid "No contact entry could be found."
+msgstr ""
+
+#: rrze-faudir.php:234
+msgid "No contacts found with the provided identifier."
+msgstr ""
+
+#: includes/admin/settings-page.php:749
+msgid "No contacts found. Please verify the IdM-Kennung or names provided."
+msgstr ""
+
+#: includes/utils/api-functions.php:527
+msgid "No organizations found. Please try a different search term."
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:23
+msgid "No persons found."
+msgstr ""
+
+#: faudir-block/src/edit.js:552
+msgid "No posts available."
+msgstr ""
+
+#: includes/utils/api-functions.php:403 includes/utils/api-functions.php:411
+msgid "No social media available"
+msgstr ""
+
+#: includes/utils/api-functions.php:281 includes/utils/api-functions.php:289
+msgid "No workplaces available"
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:167
+msgid "Nobility Title"
+msgstr ""
+
+#: includes/admin/settings-page.php:343
+msgid "Not avaible for the following formats"
+msgstr ""
+
+#: templates/page.php:208 templates/compact.php:151 includes/Config.php:63
+#: includes/Contact.php:237 includes/utils/api-functions.php:331
+#: faudir-block/src/edit.js:65
+msgid "Office Hours"
+msgstr ""
+
+#: includes/admin/settings-page.php:289
+msgid ""
+"On using profil links, fallback to the public faudir portal, if no local "
+"custom post is avaible."
+msgstr ""
+
+#: includes/admin/settings-page.php:283
+msgid ""
+"Only the essential academic titles are permitted. Labels for the respective "
+"disciplines are removed."
+msgstr ""
+
+#: includes/Config.php:50 includes/admin/settings-page.php:723
+#: includes/custom-post-type/custom-post-type.php:232
+#: faudir-block/src/edit.js:52
+msgid "Organization"
+msgstr ""
+
+#: includes/EnqueueScripts.php:68
+msgid "Organization has been saved as default."
+msgstr ""
+
+#: includes/utils/api-functions.php:473
+msgid "Organization ID"
+msgstr ""
+
+#: includes/admin/settings-page.php:514 includes/utils/api-functions.php:474
+#: faudir-block/src/edit.js:626
+msgid "Organization Number"
+msgstr ""
+
+#: faudir-block/src/edit.js:584
+msgid "Page"
+msgstr ""
+
+#: rrze-faudir.php:628
+msgid "Parent Category"
+msgstr ""
+
+#: rrze-faudir.php:629
+msgid "Parent Category:"
+msgstr ""
+
+#: includes/utils/api-functions.php:479
+msgid "Parent Organization"
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:16
+msgid "Person"
+msgstr ""
+
+#: includes/admin/settings-page.php:60
+msgid "Person Slug"
+msgstr ""
+
+#: includes/Shortcode.php:527
+#, php-format
+msgid "Person with ID %s does not exist"
+msgstr ""
+
+#: rrze-faudir.php:497 rrze-faudir.php:507 rrze-faudir.php:517
+msgid "Person with Univis ID "
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:15
+#: includes/custom-post-type/custom-post-type.php:17
+msgid "Persons"
+msgstr ""
+
+#: templates/table.php:117 templates/list.php:116 templates/page.php:133
+#: templates/compact.php:186 templates/card.php:100 includes/Config.php:49
+#: includes/utils/api-functions.php:370 includes/utils/api-functions.php:500
+#: faudir-block/src/edit.js:51
+msgid "Phone"
+msgstr ""
+
+#: includes/utils/api-functions.php:316
+msgid "Phones"
+msgstr ""
+
+#: faudir-block/src/edit.js:798
+msgid ""
+"Please configure a default organization in the plugin settings or add an "
+"organization ID to display results."
+msgstr ""
+
+#: includes/utils/api-functions.php:434
+msgid "Please enter a search term"
+msgstr ""
+
+#: faudir-block/src/edit.js:630
+msgid "Please enter at least 10 digits."
+msgstr ""
+
+#: includes/admin/settings-page.php:445
+msgid ""
+"Please enter at least one search term. If more than one parameter is entered,"
+" the search results must contain all values (AND search)."
+msgstr ""
+
+#: faudir-block/src/edit.js:802
+msgid ""
+"Please select persons or a category to display using the sidebar controls."
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"Plugin for displaying the FAU person and institution directory on websites."
+msgstr ""
+
+#: templates/table.php:189 templates/list.php:213
+msgid "Postal Code"
+msgstr ""
+
+#: includes/Config.php:71
+msgid "Privat dozent"
+msgstr ""
+
+#: includes/Person.php:711
+msgid "Private lecturer"
+msgstr ""
+
+#: includes/Person.php:712
+msgid "Private lecturer doctor"
+msgstr ""
+
+#: includes/Person.php:707
+msgid "Professor"
+msgstr ""
+
+#: includes/Person.php:709
+msgid "Professor (Emeritus)"
+msgstr ""
+
+#: includes/Person.php:708
+msgid "Professor Doctor"
+msgstr ""
+
+#: includes/Person.php:710
+msgid "Professor Doctor (Emeritus)"
+msgstr ""
+
+#: includes/Config.php:83
+msgid "Professors"
+msgstr ""
+
+#: faudir-block/src/edit.js:678
+msgid "Professors First"
+msgstr ""
+
+#: includes/Config.php:84
+msgid "Research assistant"
+msgstr ""
+
+#: includes/Config.php:87
+msgid "Research associates"
+msgstr ""
+
+#: includes/admin/settings-page.php:386
+msgid "Reset Settings"
+msgstr ""
+
+#: includes/admin/settings-page.php:422
+msgid "Reset to Default Settings"
+msgstr ""
+
+#: includes/admin/settings-page.php:425
+msgid "Reset to Default Values"
+msgstr ""
+
+#: includes/Config.php:85
+msgid "Retired professors"
+msgstr ""
+
+#: faudir-block/src/edit.js:688
+msgid "Role"
+msgstr ""
+
+#: templates/table.php:94 templates/list.php:93 includes/Config.php:56
+#: includes/Contact.php:332 includes/utils/api-functions.php:298
+#: faudir-block/src/edit.js:58
+msgid "Room"
+msgstr ""
+
+#. Name of the plugin
+#: includes/admin/settings-page.php:15
+msgid "RRZE FAUdir"
+msgstr ""
+
+#: includes/admin/settings-page.php:14
+msgid "RRZE FAUdir Settings"
+msgstr ""
+
+#. Author of the plugin
+msgid "RRZE Webteam"
+msgstr ""
+
+#: includes/Contact.php:301
+msgid "Saturday"
+msgstr ""
+
+#: includes/EnqueueScripts.php:67 includes/utils/api-functions.php:519
+msgid "Save as Default Organization"
+msgstr ""
+
+#: includes/EnqueueScripts.php:66
+msgid "Saved"
+msgstr ""
+
+#: includes/EnqueueScripts.php:65
+msgid "Saving..."
+msgstr ""
+
+#: includes/Config.php:86
+msgid "Scholarship holder"
+msgstr ""
+
+#: includes/admin/settings-page.php:491 includes/admin/settings-page.php:544
+msgid "Search"
+msgstr ""
+
+#: rrze-faudir.php:626
+msgid "Search Categories"
+msgstr ""
+
+#: includes/admin/settings-page.php:125 includes/admin/settings-page.php:377
+#: includes/admin/settings-page.php:433
+msgid "Search Contacts"
+msgstr ""
+
+#: includes/admin/settings-page.php:354
+msgid "Search for FAU organizations by name or identifier."
+msgstr ""
+
+#: includes/admin/settings-page.php:450
+msgid "Search Options"
+msgstr ""
+
+#: includes/admin/settings-page.php:175 includes/admin/settings-page.php:380
+#: includes/admin/settings-page.php:526
+msgid "Search Organizations"
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:22
+msgid "Search Persons"
+msgstr ""
+
+#: includes/admin/settings-page.php:535
+msgid "Search Term"
+msgstr ""
+
+#: includes/admin/settings-page.php:462
+msgid "Search Terms"
+msgstr ""
+
+#: includes/Config.php:88
+msgid "Secretary"
+msgstr ""
+
+#: faudir-block/src/edit.js:478
+msgid "Select Category"
+msgstr ""
+
+#: faudir-block/src/edit.js:596
+msgid "Select Fields"
+msgstr ""
+
+#: faudir-block/src/edit.js:563
+msgid "Select Format"
+msgstr ""
+
+#: faudir-block/src/edit.js:516
+msgid "Select Persons"
+msgstr ""
+
+#: includes/admin/settings-page.php:349
+msgid "Select the fields to display by default in shortcodes and blocks."
+msgstr ""
+
+#: includes/admin/settings-page.php:247
+msgid "Set the cache timeout in days for organization identifiers."
+msgstr ""
+
+#: includes/admin/settings-page.php:233
+msgid "Set the cache timeout in minutes (minimum 15 minutes)."
+msgstr ""
+
+#: includes/admin/settings-page.php:240
+msgid ""
+"Set the transient time in days for intermediate stored organization "
+"identifiers (minimum 1 day)."
+msgstr ""
+
+#: faudir-block/src/edit.js:465
+msgid "Settings"
+msgstr ""
+
+#: includes/admin/settings-page.php:576 includes/admin/settings-page.php:628
+msgid "Settings have been reset to default values."
+msgstr ""
+
+#: includes/admin/settings-page.php:133 includes/admin/settings-page.php:383
+msgid "Shortcode Settings"
+msgstr ""
+
+#: faudir-block/src/edit.js:468
+msgid "Show Category"
+msgstr ""
+
+#: includes/admin/settings-page.php:116
+msgid "Show Error Message for Invalid Contacts"
+msgstr ""
+
+#: includes/admin/settings-page.php:259
+msgid "Show error messages for incorrect contact entries."
+msgstr ""
+
+#: faudir-block/src/edit.js:506
+msgid "Show Persons"
+msgstr ""
+
+#: includes/Config.php:55 includes/Contact.php:413 faudir-block/src/edit.js:57
+msgid "Social Media and Websites"
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:250
+msgid "Socials"
+msgstr ""
+
+#: faudir-block/src/edit.js:655
+msgid "Sort by"
+msgstr ""
+
+#: templates/table.php:179 templates/list.php:203 includes/Config.php:59
+#: includes/utils/api-functions.php:304 includes/utils/api-functions.php:379
+#: faudir-block/src/edit.js:61
+msgid "Street"
+msgstr ""
+
+#: includes/Config.php:89
+msgid "Student employee"
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:166
+msgid "Suffix"
+msgstr ""
+
+#: includes/Contact.php:295
+msgid "Sunday"
+msgstr ""
+
+#: faudir-block/src/edit.js:572
+msgid "Table"
 msgstr ""
 
 #: rrze-faudir.php:624
@@ -70,582 +962,6 @@ msgctxt "taxonomy singular name"
 msgid "Category"
 msgstr ""
 
-#: rrze-faudir.php:626
-msgid "Search Categories"
-msgstr ""
-
-#: rrze-faudir.php:627
-msgid "All Categories"
-msgstr ""
-
-#: rrze-faudir.php:628
-msgid "Parent Category"
-msgstr ""
-
-#: rrze-faudir.php:629
-msgid "Parent Category:"
-msgstr ""
-
-#: rrze-faudir.php:630
-msgid "Edit Category"
-msgstr ""
-
-#: rrze-faudir.php:631
-msgid "Update Category"
-msgstr ""
-
-#: rrze-faudir.php:632
-msgid "Add New Category"
-msgstr ""
-
-#: rrze-faudir.php:633
-msgid "New Category Name"
-msgstr ""
-
-#: rrze-faudir.php:634
-msgid "Categories"
-msgstr ""
-
-#: rrze-faudir.php:698, rrze-faudir.php:668, templates/card.php:165, templates/compact.php:279, templates/list.php:289, templates/list.php:283, templates/page.php:279, templates/table.php:265
-msgid "No contact entry could be found."
-msgstr ""
-
-#: rrze-faudir.php:773
-msgid "Neither person IDs, function+orgnr, nor category were provided"
-msgstr ""
-
-#: rrze-faudir.php:869
-msgid "More Information"
-msgstr ""
-
-#: includes/Config.php:42
-msgid "Call up business card"
-msgstr ""
-
-#: includes/Config.php:44
-msgid "Image"
-msgstr ""
-
-#: includes/Config.php:45
-msgid "Display Name"
-msgstr ""
-
-#: includes/Config.php:48, templates/card.php:86, templates/compact.php:166, templates/list.php:104, templates/page.php:119, templates/table.php:105, includes/admin/settings-page.php:482, includes/custom-post-type/custom-post-type.php:161, includes/utils/api-functions.php:373, includes/utils/api-functions.php:503
-msgid "Email"
-msgstr ""
-
-#: includes/Config.php:49, templates/card.php:100, templates/compact.php:180, templates/list.php:116, templates/page.php:133, templates/table.php:117, includes/utils/api-functions.php:370, includes/utils/api-functions.php:500
-msgid "Phone"
-msgstr ""
-
-#: includes/Config.php:50, includes/admin/settings-page.php:723, includes/custom-post-type/custom-post-type.php:232
-msgid "Organization"
-msgstr ""
-
-#: includes/Config.php:51
-msgid "Job Title"
-msgstr ""
-
-#: includes/Config.php:52, templates/card.php:114, templates/card.php:131, templates/compact.php:194, templates/list.php:132, templates/page.php:147, templates/table.php:133, includes/utils/api-functions.php:322, includes/utils/api-functions.php:376
-msgid "URL"
-msgstr ""
-
-#: includes/Config.php:53
-msgid "Content"
-msgstr ""
-
-#: includes/Config.php:54
-msgid "Teasertext"
-msgstr ""
-
-#: includes/Config.php:55, includes/Contact.php:413
-msgid "Social Media and Websites"
-msgstr ""
-
-#: includes/Config.php:56, includes/Contact.php:332, templates/list.php:93, templates/table.php:94, includes/utils/api-functions.php:298
-msgid "Room"
-msgstr ""
-
-#: includes/Config.php:57, includes/Contact.php:335, templates/list.php:173, templates/table.php:151, includes/utils/api-functions.php:301
-msgid "Floor"
-msgstr ""
-
-#: includes/Config.php:58, templates/compact.php:106, templates/page.php:104, includes/utils/api-functions.php:491
-msgid "Address"
-msgstr ""
-
-#: includes/Config.php:59, templates/list.php:203, templates/table.php:179, includes/utils/api-functions.php:304, includes/utils/api-functions.php:379
-msgid "Street"
-msgstr ""
-
-#: includes/Config.php:60, includes/utils/api-functions.php:307, includes/utils/api-functions.php:382
-msgid "ZIP Code"
-msgstr ""
-
-#: includes/Config.php:61, templates/list.php:223, templates/table.php:199, includes/utils/api-functions.php:310, includes/utils/api-functions.php:385
-msgid "City"
-msgstr ""
-
-#: includes/Config.php:62, includes/Contact.php:339, templates/table.php:210, includes/utils/api-functions.php:313, includes/utils/api-functions.php:388
-msgid "FAU Map"
-msgstr ""
-
-#: includes/Config.php:63, includes/Contact.php:237, templates/compact.php:145, templates/page.php:208, includes/utils/api-functions.php:331
-msgid "Office Hours"
-msgstr ""
-
-#: includes/Config.php:64, includes/Contact.php:239, templates/compact.php:134, templates/page.php:197, includes/utils/api-functions.php:337
-msgid "Consultation Hours"
-msgstr ""
-
-#: includes/Config.php:65
-msgid "Link to Profil"
-msgstr ""
-
-#: includes/Contact.php:295
-msgid "Sunday"
-msgstr ""
-
-#: includes/Contact.php:296
-msgid "Monday"
-msgstr ""
-
-#: includes/Contact.php:297
-msgid "Tuesday"
-msgstr ""
-
-#: includes/Contact.php:298
-msgid "Wednesday"
-msgstr ""
-
-#: includes/Contact.php:299
-msgid "Thursday"
-msgstr ""
-
-#: includes/Contact.php:300
-msgid "Friday"
-msgstr ""
-
-#: includes/Contact.php:301
-msgid "Saturday"
-msgstr ""
-
-#: includes/Contact.php:303
-msgid "Unknown"
-msgstr ""
-
-#: includes/Contact.php:340, templates/table.php:211
-msgid "Map"
-msgstr ""
-
-#: includes/Contact.php:372
-msgid "Box Number"
-msgstr ""
-
-#: includes/EnqueueScripts.php:62
-msgid "Are you sure you want to clear the cache?"
-msgstr ""
-
-#: includes/EnqueueScripts.php:63, includes/admin/settings-page.php:739
-msgid "Edit"
-msgstr ""
-
-#: includes/EnqueueScripts.php:64
-msgid "Adding..."
-msgstr ""
-
-#: includes/EnqueueScripts.php:65
-msgid "Saving..."
-msgstr ""
-
-#: includes/EnqueueScripts.php:66
-msgid "Saved"
-msgstr ""
-
-#: includes/EnqueueScripts.php:67, includes/utils/api-functions.php:519
-msgid "Save as Default Organization"
-msgstr ""
-
-#: includes/EnqueueScripts.php:68
-msgid "Organization has been saved as default."
-msgstr ""
-
-#: includes/EnqueueScripts.php:69
-msgid "Error saving organization."
-msgstr ""
-
-#: includes/Person.php:706
-msgid "Doctor"
-msgstr ""
-
-#: includes/Person.php:707
-msgid "Professor"
-msgstr ""
-
-#: includes/Person.php:708
-msgid "Professor Doctor"
-msgstr ""
-
-#: includes/Person.php:709
-msgid "Professor (Emeritus)"
-msgstr ""
-
-#: includes/Person.php:710
-msgid "Professor Doctor (Emeritus)"
-msgstr ""
-
-#: includes/Person.php:711
-msgid "Private lecturer"
-msgstr ""
-
-#: includes/Person.php:712
-msgid "Private lecturer doctor"
-msgstr ""
-
-#: includes/Shortcode.php:528
-msgid "Person with ID %s does not exist"
-msgstr ""
-
-#: templates/card.php:141, templates/compact.php:207, templates/page.php:160, includes/custom-post-type/custom-post-type.php:222
-msgid "Contact"
-msgstr ""
-
-#: templates/compact.php:233, templates/list.php:146, templates/page.php:233
-msgid "User profil"
-msgstr ""
-
-#: templates/list.php:213, templates/table.php:189
-msgid "Postal Code"
-msgstr ""
-
-#: includes/admin/settings-page.php:14
-msgid "RRZE FAUdir Settings"
-msgstr ""
-
-#: includes/admin/settings-page.php:15
-msgid "RRZE FAUdir"
-msgstr ""
-
-#: includes/admin/settings-page.php:46, includes/admin/settings-page.php:368
-msgid "API Settings"
-msgstr ""
-
-#: includes/admin/settings-page.php:53
-msgid "API Key"
-msgstr ""
-
-#: includes/admin/settings-page.php:60
-msgid "Person Slug"
-msgstr ""
-
-#: includes/admin/settings-page.php:69, includes/admin/settings-page.php:371
-msgid "Cache Settings"
-msgstr ""
-
-#: includes/admin/settings-page.php:76
-msgid "No Caching for Logged-in Editors"
-msgstr ""
-
-#: includes/admin/settings-page.php:85
-msgid "Cache Timeout (in minutes)"
-msgstr ""
-
-#: includes/admin/settings-page.php:92
-msgid "Transient Time for Organization ID (in days)"
-msgstr ""
-
-#: includes/admin/settings-page.php:99
-msgid "Clear All Cache"
-msgstr ""
-
-#: includes/admin/settings-page.php:109, includes/admin/settings-page.php:374
-msgid "Error Handling"
-msgstr ""
-
-#: includes/admin/settings-page.php:116
-msgid "Show Error Message for Invalid Contacts"
-msgstr ""
-
-#: includes/admin/settings-page.php:125, includes/admin/settings-page.php:377, includes/admin/settings-page.php:433
-msgid "Search Contacts"
-msgstr ""
-
-#: includes/admin/settings-page.php:133, includes/admin/settings-page.php:383
-msgid "Shortcode Settings"
-msgstr ""
-
-#: includes/admin/settings-page.php:139
-msgid "Default Output Fields"
-msgstr ""
-
-#: includes/admin/settings-page.php:147
-msgid "Kompakt Card Button Title"
-msgstr ""
-
-#: includes/admin/settings-page.php:154
-msgid "Hard Sanitize"
-msgstr ""
-
-#: includes/admin/settings-page.php:161
-msgid "Fallback FAUdir link"
-msgstr ""
-
-#: includes/admin/settings-page.php:175, includes/admin/settings-page.php:380, includes/admin/settings-page.php:526
-msgid "Search Organizations"
-msgstr ""
-
-#: includes/admin/settings-page.php:190
-msgid "Configure the API settings for accessing the FAU person and institution directory."
-msgstr ""
-
-#: includes/admin/settings-page.php:195
-msgid "Configure caching settings for the plugin."
-msgstr ""
-
-#: includes/admin/settings-page.php:199
-msgid "Handle error messages for invalid contact entries."
-msgstr ""
-
-#: includes/admin/settings-page.php:203
-msgid "Configure the business card link settings."
-msgstr ""
-
-#: includes/admin/settings-page.php:207
-msgid "Configure the shortcode settings."
-msgstr ""
-
-#: includes/admin/settings-page.php:218
-msgid "Enter your API key here."
-msgstr ""
-
-#: includes/admin/settings-page.php:213
-msgid "The API key is being used from the network installation."
-msgstr ""
-
-#: includes/admin/settings-page.php:225
-msgid "Disable caching for logged-in editors."
-msgstr ""
-
-#: includes/admin/settings-page.php:233
-msgid "Set the cache timeout in minutes (minimum 15 minutes)."
-msgstr ""
-
-#: includes/admin/settings-page.php:240
-msgid "Set the transient time in days for intermediate stored organization identifiers (minimum 1 day)."
-msgstr ""
-
-#: includes/admin/settings-page.php:247
-msgid "Set the cache timeout in days for organization identifiers."
-msgstr ""
-
-#: includes/admin/settings-page.php:251
-msgid "Clear Cache Now"
-msgstr ""
-
-#: includes/admin/settings-page.php:252
-msgid "Click the button to clear all cached data."
-msgstr ""
-
-#: includes/admin/settings-page.php:259
-msgid "Show error messages for incorrect contact entries."
-msgstr ""
-
-#: includes/admin/settings-page.php:265
-msgid "More"
-msgstr ""
-
-#: includes/admin/settings-page.php:277
-msgid "Link title for optional links pointing to the users detail page."
-msgstr ""
-
-#: includes/admin/settings-page.php:283
-msgid "Hard Sanitize abbreviations."
-msgstr ""
-
-#: includes/admin/settings-page.php:283
-msgid "Only the essential academic titles are permitted. Labels for the respective disciplines are removed."
-msgstr ""
-
-#: includes/admin/settings-page.php:289
-msgid "On using profil links, fallback to the public faudir portal, if no local custom post is avaible."
-msgstr ""
-
-#: includes/admin/settings-page.php:309
-msgid "Enter the slug for the person post type."
-msgstr ""
-
-#: includes/admin/settings-page.php:343
-msgid "Not avaible for the following formats"
-msgstr ""
-
-#: includes/admin/settings-page.php:349
-msgid "Select the fields to display by default in shortcodes and blocks."
-msgstr ""
-
-#: includes/admin/settings-page.php:354
-msgid "Search for FAU organizations by name or identifier."
-msgstr ""
-
-#: includes/admin/settings-page.php:362
-msgid "FAUdir Settings"
-msgstr ""
-
-#: includes/admin/settings-page.php:386
-msgid "Reset Settings"
-msgstr ""
-
-#: includes/admin/settings-page.php:422
-msgid "Reset to Default Settings"
-msgstr ""
-
-#: includes/admin/settings-page.php:423
-msgid "Click the button below to reset all settings to their default values."
-msgstr ""
-
-#: includes/admin/settings-page.php:425
-msgid "Reset to Default Values"
-msgstr ""
-
-#: includes/admin/settings-page.php:445
-msgid "Please enter at least one search term. If more than one parameter is entered, the search results must contain all values (AND search)."
-msgstr ""
-
-#: includes/admin/settings-page.php:450
-msgid "Search Options"
-msgstr ""
-
-#: includes/admin/settings-page.php:455
-msgid "Filter by default organization"
-msgstr ""
-
-#: includes/admin/settings-page.php:462
-msgid "Search Terms"
-msgstr ""
-
-#: includes/admin/settings-page.php:467
-msgid "API-Person-Identifier"
-msgstr ""
-
-#: includes/admin/settings-page.php:472, includes/custom-post-type/custom-post-type.php:163
-msgid "Given Name"
-msgstr ""
-
-#: includes/admin/settings-page.php:477, includes/custom-post-type/custom-post-type.php:164
-msgid "Family Name"
-msgstr ""
-
-#: includes/admin/settings-page.php:491, includes/admin/settings-page.php:544
-msgid "Search"
-msgstr ""
-
-#: includes/admin/settings-page.php:511
-msgid "Current Default Organization"
-msgstr ""
-
-#: includes/admin/settings-page.php:512
-msgid "This is the organization that will be used by default in shortcodes and blocks."
-msgstr ""
-
-#: includes/admin/settings-page.php:513, includes/custom-post-type/custom-post-type.php:160
-msgid "Name"
-msgstr ""
-
-#: includes/admin/settings-page.php:514, includes/utils/api-functions.php:474
-msgid "Organization Number"
-msgstr ""
-
-#: includes/admin/settings-page.php:518
-msgid "Are you sure you want to delete the default organization?"
-msgstr ""
-
-#: includes/admin/settings-page.php:519
-msgid "Delete Default Organization"
-msgstr ""
-
-#: includes/admin/settings-page.php:535
-msgid "Search Term"
-msgstr ""
-
-#: includes/admin/settings-page.php:539
-msgid "Enter organization name or identifier"
-msgstr ""
-
-#: includes/admin/settings-page.php:570
-msgid "Are you sure you want to reset all settings to their default values?"
-msgstr ""
-
-#: includes/admin/settings-page.php:576, includes/admin/settings-page.php:628
-msgid "Settings have been reset to default values."
-msgstr ""
-
-#: includes/admin/settings-page.php:579
-msgid "Failed to reset settings. Please try again."
-msgstr ""
-
-#: includes/admin/settings-page.php:591, includes/utils/api-functions.php:538
-msgid "You do not have sufficient permissions to access this page."
-msgstr ""
-
-#: includes/admin/settings-page.php:605
-msgid "Default organization has been deleted."
-msgstr ""
-
-#: includes/admin/settings-page.php:639
-msgid "All cache cleared successfully."
-msgstr ""
-
-#: includes/admin/settings-page.php:749
-msgid "No contacts found. Please verify the IdM-Kennung or names provided."
-msgstr ""
-
-#: includes/admin/settings-page.php:703, includes/utils/api-functions.php:451
-msgid "Error: %s"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:15, includes/custom-post-type/custom-post-type.php:17
-msgid "Persons"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:16
-msgid "Person"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:18
-msgid "Add New Person"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:19
-msgid "Edit Person"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:20
-msgid "View Person"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:21
-msgid "All Persons"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:22
-msgid "Search Persons"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:23
-msgid "No persons found."
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:106
-msgid "Additional Fields"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:134
-msgid "Copy shortcode to Clipboard"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:156
-msgid "Content (English)"
-msgstr ""
-
 #: includes/custom-post-type/custom-post-type.php:157
 msgid "Teaser Text (English)"
 msgstr ""
@@ -654,138 +970,150 @@ msgstr ""
 msgid "Teaser Text (German)"
 msgstr ""
 
-#: includes/custom-post-type/custom-post-type.php:159
-msgid "API Person Identifier"
+#: includes/Config.php:54 faudir-block/src/edit.js:56
+msgid "Teasertext"
+msgstr ""
+
+#: includes/Config.php:90
+msgid "Technical employee"
 msgstr ""
 
 #: includes/custom-post-type/custom-post-type.php:162
 msgid "Telephone"
 msgstr ""
 
+#: includes/admin/settings-page.php:213
+msgid "The API key is being used from the network installation."
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:180
+msgid ""
+"The following data comes from the FAU IdM portal. A change of data is only "
+"possible by the persons or the appointed contact persons in the IdM portal."
+msgstr ""
+
+#: includes/admin/settings-page.php:512
+msgid ""
+"This is the organization that will be used by default in shortcodes and "
+"blocks."
+msgstr ""
+
+#: includes/Contact.php:299
+msgid "Thursday"
+msgstr ""
+
 #: includes/custom-post-type/custom-post-type.php:165
 msgid "Title"
 msgstr ""
 
-#: includes/custom-post-type/custom-post-type.php:166
-msgid "Suffix"
+#: faudir-block/src/edit.js:664
+msgid "Title and Last Name"
 msgstr ""
 
-#: includes/custom-post-type/custom-post-type.php:167
-msgid "Nobility Title"
+#: faudir-block/src/edit.js:49
+msgid "Title of Nobility"
 msgstr ""
 
-#: includes/custom-post-type/custom-post-type.php:178
-msgid "Enter the internal \"API Person Identification\" of the person who can retrieve the data via FAU IdM here. The API person identifiers can view the persons themselves in the IdM portal in the view of the Personal Data. Contact persons and facility lines can access this value for other persons in their organization through the management of FAUdir. Alternatively, use the search for the settings under settings -> RRZE FAUdir -> API"
+#: includes/Config.php:91
+msgid "Trainee"
 msgstr ""
 
-#: includes/custom-post-type/custom-post-type.php:180
-msgid "The following data comes from the FAU IdM portal. A change of data is only possible by the persons or the appointed contact persons in the IdM portal."
+#: includes/admin/settings-page.php:92
+msgid "Transient Time for Organization ID (in days)"
 msgstr ""
 
-#: includes/custom-post-type/custom-post-type.php:182, includes/custom-post-type/custom-post-type.php:199
-msgid "FAUdir"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:182
-msgid "Data"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:199
-msgid "Contacts"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:225
-msgid "Display this contact"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:238
-msgid "Function (English)"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:244
-msgid "Function (German)"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:250
-msgid "Socials"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:256
-msgid "Workplace"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:566
-msgid "Custom person created successfully!"
-msgstr ""
-
-#: includes/custom-post-type/custom-post-type.php:574
-msgid "Error creating custom person: Failed to fetch person details."
-msgstr ""
-
-#: includes/utils/api-functions.php:69, includes/utils/api-functions.php:163, includes/utils/api-functions.php:239
-msgid "Error retrieving data: "
-msgstr ""
-
-#: includes/utils/api-functions.php:74, includes/utils/api-functions.php:175, includes/utils/api-functions.php:246
-msgid "Error decoding JSON data."
-msgstr ""
-
-#: includes/utils/api-functions.php:168
-msgid "Error retrieving data or contacts not found."
-msgstr ""
-
-#: includes/utils/api-functions.php:281, includes/utils/api-functions.php:289
-msgid "No workplaces available"
-msgstr ""
-
-#: includes/utils/api-functions.php:316
-msgid "Phones"
-msgstr ""
-
-#: includes/utils/api-functions.php:319
-msgid "Fax"
-msgstr ""
-
-#: includes/utils/api-functions.php:325
-msgid "Emails"
-msgstr ""
-
-#: includes/utils/api-functions.php:329, includes/utils/api-functions.php:335
-msgid "Weekday "
-msgstr ""
-
-#: includes/utils/api-functions.php:355, includes/utils/api-functions.php:363
-msgid "No address available"
-msgstr ""
-
-#: includes/utils/api-functions.php:403, includes/utils/api-functions.php:411
-msgid "No social media available"
-msgstr ""
-
-#: includes/utils/api-functions.php:434
-msgid "Please enter a search term"
-msgstr ""
-
-#: includes/utils/api-functions.php:527
-msgid "No organizations found. Please try a different search term."
-msgstr ""
-
-#: includes/utils/api-functions.php:473
-msgid "Organization ID"
-msgstr ""
-
-#: includes/utils/api-functions.php:479
-msgid "Parent Organization"
+#: includes/Contact.php:297
+msgid "Tuesday"
 msgstr ""
 
 #: includes/utils/api-functions.php:485
 msgid "Type"
 msgstr ""
 
+#: includes/Contact.php:303
+msgid "Unknown"
+msgstr ""
+
+#: rrze-faudir.php:631
+msgid "Update Category"
+msgstr ""
+
+#: templates/table.php:133 templates/list.php:132 templates/page.php:147
+#: templates/compact.php:200 templates/card.php:114 templates/card.php:131
+#: includes/Config.php:52 includes/utils/api-functions.php:322
+#: includes/utils/api-functions.php:376 faudir-block/src/edit.js:54
+msgid "URL"
+msgstr ""
+
+#: templates/list.php:146 templates/page.php:233 templates/compact.php:239
+msgid "User profil"
+msgstr ""
+
+#: faudir-block/src/edit.js:794
+msgid "Using default organization."
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:20
+msgid "View Person"
+msgstr ""
+
+#: includes/Config.php:76 includes/Config.php:92
+msgid "Visiting lecturers"
+msgstr ""
+
+#: includes/Config.php:77
+msgid "Visiting researchers"
+msgstr ""
+
 #: includes/utils/api-functions.php:506
 msgid "Website"
 msgstr ""
 
-#: includes/utils/api-functions.php:576
-msgid "Default organization has been saved."
+#: includes/Contact.php:298
+msgid "Wednesday"
+msgstr ""
+
+#: includes/utils/api-functions.php:329 includes/utils/api-functions.php:335
+msgid "Weekday "
+msgstr ""
+
+#: includes/custom-post-type/custom-post-type.php:256
+msgid "Workplace"
+msgstr ""
+
+#: includes/Config.php:93
+msgid "Workplace manager"
+msgstr ""
+
+#: includes/admin/settings-page.php:591 includes/utils/api-functions.php:538
+msgid "You do not have sufficient permissions to access this page."
+msgstr ""
+
+#: rrze-faudir.php:569
+msgid ""
+"You now have the option to set a custom slug for person pages in the "
+"settings. If you don't set a unique slug, existing person pages from the old "
+"plugin may be overridden by the new plugin's person pages. To prevent this, "
+"please ensure that you configure a custom slug in the settings if you want "
+"to keep the old pages intact."
+msgstr ""
+
+#. 1: Current PHP version 2: Required PHP version
+#: rrze-faudir.php:76
+#, php-format
+msgid ""
+"Your PHP version (%1$s) is outdated. Please upgrade to PHP %2$s or higher."
+msgstr ""
+
+#. 1: Current WordPress version 2: Required WordPress version
+#: rrze-faudir.php:83
+#, php-format
+msgid ""
+"Your WordPress version (%1$s) is outdated. Please upgrade to WordPress %2$s "
+"or higher."
+msgstr ""
+
+#: includes/Config.php:60 includes/utils/api-functions.php:307
+#: includes/utils/api-functions.php:382 faudir-block/src/edit.js:62
+msgid "ZIP Code"
 msgstr ""

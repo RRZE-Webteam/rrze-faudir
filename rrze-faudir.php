@@ -4,7 +4,7 @@
 Plugin Name: RRZE FAUdir
 Plugin URI: https://github.com/RRZE-Webteam/rrze-faudir
 Description: Plugin for displaying the FAU person and institution directory on websites.
-Version: 2.1.21
+Version: 2.1.25
 Author: RRZE Webteam
 License: GNU General Public License v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -494,7 +494,7 @@ function migrate_person_data_on_activation() {
                             $not_imported_reasons[] = __('Missing Univis ID for person: ', 'rrze-faudir') . $post->post_title;
                         } else {
                             $not_imported_count++;
-                            $not_imported_reasons[] = __('Person with Univis ID ', 'rrze-faudir') . $univisid . __(' already exists.', 'rrze-faudir');
+                            $not_imported_reasons[] = __('Person with Univis ID ', 'rrze-faudir') . $univisid .' '. __('already exists', 'rrze-faudir'). '.';
                         }
                     }
                 } else {
@@ -504,7 +504,7 @@ function migrate_person_data_on_activation() {
                         $not_imported_reasons[] = __('Missing Univis ID for person: ', 'rrze-faudir') . $post->post_title;
                     } else {
                         $not_imported_count++;
-                        $not_imported_reasons[] = __('Person with Univis ID ', 'rrze-faudir') . $univisid . __(' already exists.', 'rrze-faudir');
+                        $not_imported_reasons[] = __('Person with Univis ID ', 'rrze-faudir') . $univisid .' '. __('already exists', 'rrze-faudir'). '.';
                     }
                 }
             } else {
@@ -514,7 +514,7 @@ function migrate_person_data_on_activation() {
                     $not_imported_reasons[] = __('Missing Univis ID for person: ', 'rrze-faudir') . $post->post_title;
                 } else {
                     $not_imported_count++;
-                    $not_imported_reasons[] = __('Person with Univis ID ', 'rrze-faudir') . $univisid . __(' already exists.', 'rrze-faudir');
+                    $not_imported_reasons[] = __('Person with Univis ID ', 'rrze-faudir') . $univisid .' '. __('already exists', 'rrze-faudir'). '.';
                 }
             }
         }
@@ -855,6 +855,7 @@ add_action('enqueue_block_editor_assets', function() {
     }
     
     wp_set_script_translations('rrze-faudir-block-script', 'rrze-faudir', plugin_dir_path(__FILE__) . 'languages');
+    
     wp_enqueue_script('rrze-faudir-block-script');
 });
 
