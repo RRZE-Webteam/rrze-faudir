@@ -97,31 +97,6 @@ function rrze_faudir_system_requirements() {
 
 // Initialize plugin if system requirements are met
 if (rrze_faudir_system_requirements()) {
-
-    
-/*
- * 
- *  js file existiert nicht. Wozu braucht man das??
-    function rrze_faudir_enqueue_scripts() {
-        // Register your script with the dependencies
-        wp_enqueue_script(
-            'rrze-faudir-script',
-            plugin_dir_url(__FILE__) . 'assets/js/script.js',
-            ['wp-i18n', 'wp-element'], // Include wp-i18n for translations
-            '1.0.0',
-            true
-        );
-
-        // Load translations for your script
-        wp_set_script_translations(
-            'rrze-faudir-script', // Script handle
-            'rrze-faudir',        // Text domain
-            plugin_dir_path(__FILE__) . 'languages' // Path to your .json files
-        );
-    }
-     add_action('wp_enqueue_scripts', 'rrze_faudir_enqueue_scripts');
-    */
-
     // Include necessary files
 
     require_once plugin_dir_path(__FILE__) . 'includes/utils/api-functions.php';
@@ -164,9 +139,6 @@ if (rrze_faudir_system_requirements()) {
 
         // Set a transient to indicate the job is running
         set_transient('check_person_availability_running', true, 60); // 60 seconds
-
-        // Log the start of the cron job
-        // error_log('Cron job check_person_availability started.');
 
         // Your existing code to check person availability
         $args = array(
@@ -236,60 +208,6 @@ if (rrze_faudir_system_requirements()) {
     }
 }
 
-// Hook into 'init' to check plugin status and register the alias shortcode
-add_action('init',  __NAMESPACE__ . '\register_kontakt_as_faudir_shortcode_alias');
-function register_kontakt_as_faudir_shortcode_alias() {
-    // Include the plugin.php file to ensure is_plugin_active() is available
-    include_once(ABSPATH . 'wp-admin/includes/plugin.php');
-
-    // Check if the FAU-person plugin is not active
-    if (!is_plugin_active('fau-person/fau-person.php')) {
-        add_shortcode('kontakt',  __NAMESPACE__ . '\kontakt_to_faudir_shortcode_alias');
-        add_shortcode('kontaktliste',  __NAMESPACE__ . '\kontaktliste_to_faudir_shortcode_alias');
-    }
-}
-
-// Function to handle the [kontakt] shortcode and redirect to [faudir]
-function kontakt_to_faudir_shortcode_alias($atts, $content = null) {
-    // Pass all attributes and content to the [faudir] shortcode
-    $atts_string = '';
-    if (!empty($atts)) {
-        foreach ($atts as $key => $value) {
-            $atts_string .= $key . '="' . esc_attr($value) . '" ';
-        }
-    }
-
-    return do_shortcode(shortcode_unautop('[faudir ' . trim($atts_string) . ']' . $content . '[/faudir]'));
-}
-
-// Function to handle the [kontaktliste] shortcode with specific format "list"
-function kontaktliste_to_faudir_shortcode_alias($atts, $content = null) {
-    // Ensure the format is set to "list"
-    if (!isset($atts['format'])) {
-        $atts['format'] = 'list';
-    }
-
-    // Convert attributes to string
-    $atts_string = '';
-    foreach ($atts as $key => $value) {
-        $atts_string .= $key . '="' . esc_attr($value) . '" ';
-    }
-
-    return do_shortcode(shortcode_unautop('[faudir ' . trim($atts_string) . ']' . $content . '[/faudir]'));
-}
-
-// Helper function to convert attributes array to string
-function shortcode_parse_atts_to_string($atts) {
-    $output = '';
-    foreach ($atts as $key => $value) {
-        if (is_numeric($key)) {
-            $output .= " $value";
-        } else {
-            $output .= sprintf(' %s="%s"', $key, esc_attr($value));
-        }
-    }
-    return trim($output);
-}
 
 
 function load_custom_person_template($template) {
@@ -684,8 +602,12 @@ function custom_cpt_404_message() {
         }
     } else {
         // Check the request URI for /person/ slug
+        $options = get_option('rrze_faudir_options');
+        $slug = isset($options['person_slug']) && !empty($options['person_slug']) ? sanitize_title($options['person_slug']) : 'faudir'; // Default
+        
+        
         $request_uri = $_SERVER['REQUEST_URI'];
-        if (strpos($request_uri, '/person/') !== false) {
+        if (strpos($request_uri,  '/' . $slug . '/') !== false) {
             $wp_query->set_404();
             status_header(404);
 
