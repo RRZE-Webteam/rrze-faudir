@@ -47,16 +47,19 @@ class Shortcode {
                 'url'                   => '',
                 'show'                  => '',
                 'hide'                  => '',
-                'groupid'               => '',
                 'orgnr'                 => '',
                 'sort'                  => '',
                 'function'              => '',
+                'role'                  => '',
                 'button-text'           => '',
                 'format-displayname'    => ''
             ),
             $atts
         );
 
+        if ((!empty($atts['function'])) && (empty( $atts['role']))) {
+            $atts['role'] = $atts['function'];
+        }
         // Convert explicitly set 'show' values to an array and merge with default fields
         $explicit_show_fields = array_filter(array_map('trim', explode(',', $atts['show'])));
         $merged_show_fields = array_unique(array_merge($default_show_fields, $explicit_show_fields));
@@ -107,9 +110,8 @@ class Shortcode {
         $identifiers = empty($atts['identifier']) ? [] : explode(',', $atts['identifier']);
         $category   = $atts['category'];
          
-        $function   = $atts['function'];
+        $role       = $atts['role'];
         $url        = $atts['url'];
-        $groupid    = $atts['groupid'];
         $orgnr      = $atts['orgnr'];
         $post_id    = $atts['id'];
         $format_displayname = $atts['format-displayname'];
@@ -143,7 +145,7 @@ class Shortcode {
         };
 
         // Closure to fetch persons by function and default organization
-        $fetch_persons_by_function = function ($function) {
+        $fetch_persons_by_function = function ($role) {
             $options = get_option('rrze_faudir_options', []);
             $default_org = $options['default_organization'] ?? null;
             $defaultOrgIdentifier = $default_org ? $default_org['id'] : '';
@@ -151,14 +153,14 @@ class Shortcode {
             
             if (!empty($defaultOrgIdentifier)) {
                 // Try English function label first
-                $lq_en = 'contacts.functionLabel.en[eq]=' . urlencode($function) .
+                $lq_en = 'contacts.functionLabel.en[eq]=' . urlencode($role) .
                     '&contacts.organization.identifier[eq]=' . urlencode($defaultOrgIdentifier);
      
                 $response = $api->getPersons(0, 0, ['lq' => $lq_en]);
                 
                 // If no results, try German function label
                 if (empty($response['data'])) {
-                    $lq_de = 'contacts.functionLabel.de[eq]=' . urlencode($function) .
+                    $lq_de = 'contacts.functionLabel.de[eq]=' . urlencode($role) .
                         '&contacts.organization.identifier[eq]=' . urlencode($defaultOrgIdentifier);
                     $response = $api->getPersons(0, 0, ['lq' => $lq_de]);
                 }
@@ -174,12 +176,12 @@ class Shortcode {
         };
 
         // Closure to filter persons by organization and group ID
-        $filter_persons = function ($persons, $orgnr, $groupid) {
+        $filter_persons = function ($persons, $orgnr) {
             if (!empty($orgnr)) {
                 $api = new API(self::$config);
-                $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
-                if (!empty($orgData['data'])) {
-                    $orgIdentifier = $orgData['data'][0]['identifier'];
+                $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . $orgnr]);
+                if (!empty($orgdata['data'])) {
+                    $orgIdentifier = $orgdata['data'][0]['identifier'];
                     $persons = array_filter($persons, function ($person) use ($orgIdentifier) {
                         foreach ($person['contacts'] as $contact) {
                             if ($contact['organization']['identifier'] === $orgIdentifier) {
@@ -191,16 +193,7 @@ class Shortcode {
                 }
             }
 
-            if (!empty($groupid)) {
-                $persons = array_filter($persons, function ($person) use ($groupid) {
-                    foreach ($person['contacts'] as $contact) {
-                        if ($contact['organization']['identifier'] === $groupid) {
-                            return true;
-                        }
-                    }
-                    return false;
-                });
-            }
+          
 
             return $persons;
         };
@@ -245,14 +238,15 @@ class Shortcode {
         $person = new Person();
         $person->setConfig(self::$config);
 
-        if (!empty($function)) {
+        if (!empty($role)) {
+              Debug::log('Shortcode','error',"Look for function $role");
             if (!empty($orgnr)) {
                 // Case 1: Explicit orgnr is provided in shortcode - exact match for both org and function
                 
-                $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
+                $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . $orgnr]);
                 
-                if (!empty($orgData['data'])) {
-                    $org = $orgData['data'][0];
+                if (!empty($orgdata['data'])) {
+                    $org = $orgdata['data'][0];
                     $identifier = $org['identifier'];
 
                     $queryParts = [];
@@ -263,7 +257,7 @@ class Shortcode {
                     ];
 
                     $result = $api->getPersons(60, 0, $params);                  
-                    Debug::log('Shortcode','error',"Look for function $function and orgnr $orgnr");
+                    Debug::log('Shortcode','error',"Look for function $role and orgnr $orgnr");
                     
                     // Process each person and filter contacts
                     foreach ($result['data'] as $key => &$persondata) {
@@ -275,8 +269,9 @@ class Shortcode {
 
                         // Filter contacts based on function
                         foreach ($persondata['contacts'] as $contactKey => $contact) {
-                            if ($contact['functionLabel']['de'] !== $function 
-                                    && $contact['functionLabel']['en'] !== $function 
+                            if ($contact['function'] !== $role                                     
+                                    && $contact['functionLabel']['de'] !== $role 
+                                    && $contact['functionLabel']['en'] !== $role 
                                     || $contact['organization']['identifier'] !== $identifier) {
                                 unset($persondata['contacts'][$contactKey]);
                             }
@@ -319,8 +314,9 @@ class Shortcode {
                             $persondata = $person->toArray();
                             
                             foreach ($persondata['contacts'] as $contactKey => $contact) {
-                                if ($contact['functionLabel']['de'] !== $function 
-                                        && $contact['functionLabel']['en'] !== $function 
+                                if ($contact['function'] !== $role 
+                                        && $contact['functionLabel']['de'] !== $role 
+                                        && $contact['functionLabel']['en'] !== $role 
                                         || !in_array($contact['organization']['identifier'], $ids)) {
                                     unset($persondata['contacts'][$contactKey]);
                                 }
@@ -338,7 +334,7 @@ class Shortcode {
                 }
             }
             
-        } elseif (!empty($post_id) && empty($identifiers) && empty($category) && empty($groupid) && empty($orgnr)) {
+        } elseif (!empty($post_id) && empty($identifiers) && empty($category) && empty($orgnr)) {
             // display a single person by custom post id - mostly on the slug
             $persons = $fetch_persons_by_post_id($post_id);
         } elseif (!empty($identifiers) || !empty($post_id)) {
@@ -353,7 +349,7 @@ class Shortcode {
                 $persons = $filter_persons_by_category($persons, $category);
             }
             // Apply organization and group filters if set
-            $persons = $filter_persons($persons, $orgnr, $groupid);
+            $persons = $filter_persons($persons, $orgnr);
         } elseif (!empty($category)) {
             // get persons by category. 
             // categories come from existing custom posts only. 
@@ -383,14 +379,17 @@ class Shortcode {
             if (!empty($person_identifiers)) {
                 $persons = self::process_persons_by_identifiers($person_identifiers);
             }
-        } elseif (!empty($orgnr) && empty($post_id) && empty($identifiers) && empty($category) && empty($groupid) && empty($function)) {
+        } elseif (!empty($orgnr) && empty($post_id) && empty($identifiers) && empty($category) && empty($role)) {
             // get persons by orgnr
-            $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . urlencode($orgnr)]);
-            if (!empty($orgData['data'])) {
-                $orgname = $orgData['data'][0]['name'];
-                $lq = 'contacts.organization.name[eq]=' . urlencode($orgname);
+           // error_log("FAUdir\Shortcode (fetch_and_render_fau_data): By Orgnr: {$orgnr}");       
+           $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . $orgnr]);
+           
+            if (!empty($orgdata['data'])) {
+                $orgid = $orgdata['data'][0]['identifier'];
+                $lq = 'contacts.organization.identifier[eq]=' . $orgid;
                 $persons = self::fetch_and_process_persons($lq);
             }
+            
         } else {
             error_log('Invalid combination of attributes.');
             return;
@@ -547,9 +546,9 @@ class Shortcode {
         
         $persons = [];
         if (!empty($data['data'])) {
-            foreach ($data['data'] as $person) {
-                error_log("FAUdir\Shortcode (fetch_and_process_persons): Populate Persondata.");
-                $person->populateFromData($person);
+            foreach ($data['data'] as $persondata) {
+          //      error_log("FAUdir\Shortcode (fetch_and_process_persons): Populate Persondata.");
+                $person->populateFromData($persondata);
                 $person->reloadContacts();
                 $persons[] = $person->toArray();  
             }

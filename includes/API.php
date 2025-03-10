@@ -204,7 +204,7 @@ class API {
     * @param array $params - Additional query parameters
     * @return array - Array of organizations
     */
-    function getOrgList($limit = 100, $offset = 1, $params = []) {
+    function getOrgList($limit = 100, $offset = 0, $params = []) {
         if (!$this->api_key) {
             throw new \Exception("FAUdir\API (getOrgList): API Key is required.");
         }   

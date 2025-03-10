@@ -1,71 +1,69 @@
 {
-    "$schema": "https://schemas.wp.org/trunk/block.json",
-    "apiVersion": 2,
-    "name": "rrze-faudir/block",
-    "title": "FAUdir",
-    "category": "custom-fau-category",
-    "icon": "businessperson",
-    "description": "Display FAUdir information",
-    "supports": {
-        "html": false,
-        "anchor": true
-    },
-    "attributes": {
-        "selectedCategory": {
-            "type": "string",
-            "default": ""
-        },
-        "selectedPosts": {
-            "type": "array",
-            "default": []
-        },
-        "selectedPersonIds": {
-            "type": "array",
-            "default": []
-        },
-        "selectedFormat": {
-            "type": "string",
-            "default": "kompakt"
-        },
-        "selectedFields": {
-            "type": "array",
-            "default": []
-        },
-        "groupId": {
-            "type": "string",
-            "default": ""
-        },
-        "function": {
-            "type": "string",
-            "default": ""
-        },
-        "orgnr": {
-            "type": "string",
-            "default": ""
-        },
-        "url": {
-            "type": "string",
-            "default": ""
-        },
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "rrze-faudir/block",
+	"title": "FAUdir",
+	"category": "rrze",
+	"icon": "businessperson",
+	"description": "Display FAUdir information",
+	"keywords": "FAUdir, UnivIS, Person, Contact, Kontakt, FAU",
+	"supports": {
+		"html": false,
+		"anchor": true
+	},
+	"attributes": {
+		"selectedCategory": {
+			"type": "string",
+			"default": ""
+		},
+		"selectedPosts": {
+			"type": "array",
+			"default": []
+		},
+		"selectedPersonIds": {
+			"type": "array",
+			"default": []
+		},
+		"selectedFormat": {
+			"type": "string",
+			"default": "kompakt"
+		},
+		"selectedFields": {
+			"type": "array",
+			"default": []
+		},
 
-        "hideFields": {
-            "type": "array",
-            "default": []
-        },
-        "showCategory": {
-            "type": "boolean",
-            "default": false
-        },
-        "showPosts": {
-            "type": "boolean",
-            "default": false
-        },
-        "sort": {
-            "type": "string",
-            "default": "familyName"
-        }
-    },
-    "textdomain": "rrze-faudir",
-    "editorScript": "file:./index.js",
-    "editorStyle": "file:./index.css"
+		"role": {
+			"type": "string",
+			"default": ""
+		},
+		"orgnr": {
+			"type": "string",
+			"default": ""
+		},
+		"url": {
+			"type": "string",
+			"default": ""
+		},
+
+		"hideFields": {
+			"type": "array",
+			"default": []
+		},
+		"showCategory": {
+			"type": "boolean",
+			"default": false
+		},
+		"showPosts": {
+			"type": "boolean",
+			"default": false
+		},
+		"sort": {
+			"type": "string",
+			"default": "familyName"
+		}
+	},
+	"textdomain": "rrze-faudir",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css"
 }

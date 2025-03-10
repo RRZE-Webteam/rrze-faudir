@@ -3,9 +3,10 @@
   "apiVersion": 2,
   "name": "rrze-faudir/block",
   "title": "FAUdir",
-  "category": "custom-fau-category",
+  "category": "rrze",
   "icon": "businessperson",
   "description": "Display FAUdir information",
+  "keywords": "FAUdir, UnivIS, Person, Contact, Kontakt, FAU",
   "supports": {
     "html": false,
     "anchor": true
@@ -31,11 +32,7 @@
       "type": "array",
       "default": []
     },
-    "groupId": {
-      "type": "string",
-      "default": ""
-    },
-    "function": {
+    "role": {
       "type": "string",
       "default": ""
     },

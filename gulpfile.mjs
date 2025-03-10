@@ -11,6 +11,9 @@ import uglify from 'gulp-uglify';
 import bump from 'gulp-bump';
 import semver from 'semver';
 import gulpFile from 'gulp-file';
+import i18next from 'gulp-i18next-conv';
+import through2 from 'through2';
+import { exec } from 'child_process';
 
 const { src, dest, series, watch } = gulp;
 const sass = gulpSass(sassCompiler);
@@ -159,7 +162,7 @@ export function jsAdmin() {
 
 // Task zum Generieren der .pot-Datei
 export function makepot() {
-  return src(['**/*.php', '!vendor/**']) // PHP-Dateien, Vendor ausschließen
+  return src(['**/*.php', '**/*.js', '!vendor/**']) // PHP-Dateien, Vendor ausschließen
     .pipe(
       wpPot({
         domain: info.textdomain, // Text-Domain
@@ -172,15 +175,66 @@ export function makepot() {
     .pipe(dest('languages/' + info.textdomain + '.pot')); // Zielordner der .pot-Datei
 }
 
+
+// Funktion zur Anpassung der JSON-Struktur an das WordPress-Format
+function formatForWordPress() {
+    return through2.obj(function (file, _, cb) {
+        if (file.isBuffer()) {
+            let jsonContent = JSON.parse(file.contents.toString());
+
+            // WordPress-kompatible Struktur
+            let wpJson = {
+                locale_data: {
+                    messages: {
+                        "": {
+                            "domain": "rrze-faudir"
+                        }
+                    }
+                }
+            };
+
+            // JSON-Schlüssel hinzufügen
+            Object.keys(jsonContent).forEach(key => {
+                wpJson.locale_data.messages[key] = [jsonContent[key]];
+            });
+
+            // Aktualisierte JSON-Struktur speichern
+            file.contents = Buffer.from(JSON.stringify(wpJson, null, 2));
+        }
+        cb(null, file);
+    });
+}
+
+
+// Funktion zur Konvertierung von .po nach .json
+export function convertPoToJson() {
+    return src("languages/*.po")
+        .pipe(i18next())
+	.pipe(formatForWordPress())
+        .pipe(dest('languages/'))
+	.pipe(touch());
+};
+
+
+
 // Watch-Task zur Überwachung von Änderungen
 // Der Watch-Task wird zur Entwicklung verwendet, daher hier nur 
 // Dev-Versionen erstellen
 export function watchTask() {
-  watch('src/scss/*.scss', devcss); // Überwachung von SCSS-Dateien
-  watch('src/js/*.js', devjsMain); // Überwachung von JS-Dateien
+  watch('src/scss/*.scss', devcss); 
+  watch('src/js/*.js', devjsMain); 
 }
 
-
+/*
+ * Build Block Editor Block by using wordpress-scripts in faudir-block directory
+ */
+export function buildFaudirBlock(cb) {
+    exec('npm run build:block', { cwd: './faudir-block' }, (err, stdout, stderr) => {
+        console.log(stdout); 
+        console.error(stderr); 
+        cb(err); 
+    });
+}
 
 /*
  * Update Version on Patch-Level
@@ -241,11 +295,16 @@ export function createReadme() {
 }
 
 
+export const pot = series(makepot);
+
+// Nur den Block neu bauen
+export const buildBlock = series(buildFaudirBlock);
+
 // Standard-Task
 export default series(upversionpatch, css, jsMain, jsAdmin);
     
 // Production
-export const build = series(upversionpatch, css, jsMain, jsAdmin, createReadme);
+export const build = series(upversionpatch, css, jsMain, jsAdmin, createReadme, buildFaudirBlock);
 
 // Dev Version
 export const dev = series(devversion, devcss, devjsMain, jsAdmin, createReadme);

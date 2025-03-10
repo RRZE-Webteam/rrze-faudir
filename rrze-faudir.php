@@ -4,7 +4,7 @@
 Plugin Name: RRZE FAUdir
 Plugin URI: https://github.com/RRZE-Webteam/rrze-faudir
 Description: Plugin for displaying the FAU person and institution directory on websites.
-Version: 2.1.8
+Version: 2.1.25
 Author: RRZE Webteam
 License: GNU General Public License v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -494,7 +494,7 @@ function migrate_person_data_on_activation() {
                             $not_imported_reasons[] = __('Missing Univis ID for person: ', 'rrze-faudir') . $post->post_title;
                         } else {
                             $not_imported_count++;
-                            $not_imported_reasons[] = __('Person with Univis ID ', 'rrze-faudir') . $univisid . __(' already exists.', 'rrze-faudir');
+                            $not_imported_reasons[] = __('Person with Univis ID ', 'rrze-faudir') . $univisid .' '. __('already exists', 'rrze-faudir'). '.';
                         }
                     }
                 } else {
@@ -504,7 +504,7 @@ function migrate_person_data_on_activation() {
                         $not_imported_reasons[] = __('Missing Univis ID for person: ', 'rrze-faudir') . $post->post_title;
                     } else {
                         $not_imported_count++;
-                        $not_imported_reasons[] = __('Person with Univis ID ', 'rrze-faudir') . $univisid . __(' already exists.', 'rrze-faudir');
+                        $not_imported_reasons[] = __('Person with Univis ID ', 'rrze-faudir') . $univisid .' '. __('already exists', 'rrze-faudir'). '.';
                     }
                 }
             } else {
@@ -514,7 +514,7 @@ function migrate_person_data_on_activation() {
                     $not_imported_reasons[] = __('Missing Univis ID for person: ', 'rrze-faudir') . $post->post_title;
                 } else {
                     $not_imported_count++;
-                    $not_imported_reasons[] = __('Person with Univis ID ', 'rrze-faudir') . $univisid . __(' already exists.', 'rrze-faudir');
+                    $not_imported_reasons[] = __('Person with Univis ID ', 'rrze-faudir') . $univisid .' '. __('already exists', 'rrze-faudir'). '.';
                 }
             }
         }
@@ -727,7 +727,7 @@ add_action('init',  __NAMESPACE__ . '\register_faudir_block');
 // Render callback function for FAUdir block
 function render_faudir_block($attributes) {
     try {
-   //     error_log('FAUDIR Block render started with attributes: ' . print_r($attributes, true));
+     //   error_log('FAUDIR Block render started with attributes: ' . print_r($attributes, true));
 
         if (!shortcode_exists('faudir')) {
             throw new Exception('FAUDIR shortcode is not registered');
@@ -741,17 +741,17 @@ function render_faudir_block($attributes) {
         $defaultOrgIdentifier = isset($default_org['id']) ? $default_org['id'] : '';
 
         // First check if we have function and orgnr
-        if (!empty($attributes['function'])) {
+        if (!empty($attributes['role'])) {
             $shortcode_atts = [
-                'format' => $attributes['selectedFormat'] ?? 'kompakt',
-                'function' => $attributes['function'],
+                'format' => $attributes['selectedFormat'] ?? 'compact',
+                'role' => $attributes['role'],
                 'orgnr' => !empty($attributes['orgnr']) ? $attributes['orgnr'] : $defaultOrgIdentifier
             ];
         } 
         // Then check for category
         else if (!empty($attributes['selectedCategory'])) {
             $shortcode_atts = [
-                'format' => $attributes['selectedFormat'] ?? 'kompakt',
+                'format' => $attributes['selectedFormat'] ?? 'compact',
                 'category' => $attributes['selectedCategory']
             ];
             
@@ -763,12 +763,21 @@ function render_faudir_block($attributes) {
         // Finally check for selectedPersonIds without category
         else if (!empty($attributes['selectedPersonIds'])) {
             $shortcode_atts = [
-                'format' => $attributes['selectedFormat'] ?? 'kompakt',
+                'format' => $attributes['selectedFormat'] ?? 'compact',
                 'identifier' => is_array($attributes['selectedPersonIds']) ? 
                     implode(',', $attributes['selectedPersonIds']) : 
                     $attributes['selectedPersonIds']
             ];
         }
+        
+        // Org without other parameters from above given
+        else if (!empty($attributes['orgnr'])) {
+            $shortcode_atts = [
+                'format' => $attributes['selectedFormat'] ?? 'compact',
+                'orgnr' =>  $attributes['orgnr']
+            ];
+        }
+        
         else {
             throw new Exception(__('Neither person IDs, function+orgnr, nor category were provided', 'rrze-faudir'));
         }
@@ -780,11 +789,6 @@ function render_faudir_block($attributes) {
         
         if (!empty($attributes['hideFields'])) {
             $shortcode_atts['hide'] = implode(',', $attributes['hideFields']);
-        }
-
-
-        if (!empty($attributes['groupId'])) {
-            $shortcode_atts['groupid'] = $attributes['groupId'];
         }
 
         if (!empty($attributes['url'])) {
@@ -816,7 +820,7 @@ function render_faudir_block($attributes) {
         return $output;
 
     } catch (Exception $e) {
-        error_log('FAUDIR Block Error: ' . $e->getMessage());
+  //      error_log('FAUDIR Block Error: ' . $e->getMessage());
         return sprintf(
             '<div class="faudir-error">%s</div>',
             esc_html($e->getMessage())
@@ -851,6 +855,7 @@ add_action('enqueue_block_editor_assets', function() {
     }
     
     wp_set_script_translations('rrze-faudir-block-script', 'rrze-faudir', plugin_dir_path(__FILE__) . 'languages');
+    
     wp_enqueue_script('rrze-faudir-block-script');
 });
 
@@ -859,17 +864,18 @@ add_action('rest_api_init', function () {
     register_rest_route('wp/v2/settings', 'rrze_faudir_options', array(
         'methods' => 'GET',
         'callback' => function () {
-            $options = get_option('rrze_faudir_options', []);
+                $config = new Config;
+                $options = $config->getOptions();  
+                $roles = $config->get('person_roles');
+        //    $options = get_option('rrze_faudir_options', []);
             return [
                 'default_output_fields' => isset($options['default_output_fields']) ? 
-                    $options['default_output_fields'] : 
-                    [],
+                    $options['default_output_fields'] : [],
                 'business_card_title' => isset($options['business_card_title']) ? 
-                    $options['business_card_title'] : 
-                    __('More Information', 'rrze-faudir'),
+                    $options['business_card_title'] :  __('More Information', 'rrze-faudir'),
+                'person_roles' => $roles,
                 'default_organization' => isset($options['default_organization']) ? 
-                    $options['default_organization'] : 
-                    null
+                    $options['default_organization'] :  null
             ];
         },
         'permission_callback' => function () {
