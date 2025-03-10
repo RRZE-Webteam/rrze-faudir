@@ -523,7 +523,9 @@ function rrze_faudir_display_import_notice() {
 add_action('admin_notices', __NAMESPACE__ . '\rrze_faudir_display_import_notice', 15);
 
 function rrze_faudir_flush_rewrite_on_slug_change($old_value, $value, $option) {
-    if ($option === 'rrze_faudir_options' && $old_value['person_slug'] !== $value['person_slug']) {
+    if (  ($option === 'rrze_faudir_options') 
+             && (!empty($old_value['person_slug'])) 
+             && ($old_value['person_slug'] !== $value['person_slug'])) {
         flush_rewrite_rules(); // Flush rewrite rules if the slug changes
     }
 }
