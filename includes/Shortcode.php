@@ -492,8 +492,7 @@ class Shortcode {
         $button_text = isset($atts['button-text']) && $atts['button-text'] !== '' ? $atts['button-text'] : '';
 
         // check and sanitize for format for displayname
-        $format_displayname = wp_kses($format_displayname, array('a' => array( 'href' => array(),'title' => array() ), 'br' => array(), 'em' => array(), 'strong' => array(), 'b' => array()) );
-       
+        $format_displayname = wp_strip_all_tags($format_displayname);
         
         return $template->render($atts['format'], [
             'show_fields'   => $show_fields,
