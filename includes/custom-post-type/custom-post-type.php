@@ -8,7 +8,7 @@ function register_custom_person_post_type() {
     $options = get_option('rrze_faudir_options');
     $slug = isset($options['person_slug']) && !empty($options['person_slug'])
         ? sanitize_title($options['person_slug'])
-        : 'person'; // Default to 'person'
+        : 'faudir'; // Default
 
     $args = array(
         'labels' => array(
@@ -618,3 +618,47 @@ function add_taxonomy_to_person_rest($response, $post, $request)
     return $response;
 }
 add_filter('rest_prepare_custom_person', 'add_taxonomy_to_person_rest', 10, 3);
+
+
+
+// Hook into 'init' to check plugin status and register the alias shortcode
+add_action('init',  __NAMESPACE__ . '\register_kontakt_as_faudir_shortcode_alias');
+function register_kontakt_as_faudir_shortcode_alias() {
+    // Include the plugin.php file to ensure is_plugin_active() is available
+    include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+
+    // Check if the FAU-person plugin is not active
+    if (!is_plugin_active('fau-person/fau-person.php')) {
+        add_shortcode('kontakt',  __NAMESPACE__ . '\kontakt_to_faudir_shortcode_alias');
+        add_shortcode('kontaktliste',  __NAMESPACE__ . '\kontaktliste_to_faudir_shortcode_alias');
+    }
+}
+
+// Function to handle the [kontakt] shortcode and redirect to [faudir]
+function kontakt_to_faudir_shortcode_alias($atts, $content = null) {
+    // Pass all attributes and content to the [faudir] shortcode
+    $atts_string = '';
+    if (!empty($atts)) {
+        foreach ($atts as $key => $value) {
+            $atts_string .= $key . '="' . esc_attr($value) . '" ';
+        }
+    }
+
+    return do_shortcode(shortcode_unautop('[faudir ' . trim($atts_string) . ']' . $content . '[/faudir]'));
+}
+
+// Function to handle the [kontaktliste] shortcode with specific format "list"
+function kontaktliste_to_faudir_shortcode_alias($atts, $content = null) {
+    // Ensure the format is set to "list"
+    if (!isset($atts['format'])) {
+        $atts['format'] = 'list';
+    }
+
+    // Convert attributes to string
+    $atts_string = '';
+    foreach ($atts as $key => $value) {
+        $atts_string .= $key . '="' . esc_attr($value) . '" ';
+    }
+
+    return do_shortcode(shortcode_unautop('[faudir ' . trim($atts_string) . ']' . $content . '[/faudir]'));
+}

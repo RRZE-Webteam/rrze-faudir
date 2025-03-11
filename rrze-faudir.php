@@ -4,7 +4,7 @@
 Plugin Name: RRZE FAUdir
 Plugin URI: https://github.com/RRZE-Webteam/rrze-faudir
 Description: Plugin for displaying the FAU person and institution directory on websites.
-Version: 2.1.25
+Version: 2.1.27
 Author: RRZE Webteam
 License: GNU General Public License v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -97,31 +97,6 @@ function rrze_faudir_system_requirements() {
 
 // Initialize plugin if system requirements are met
 if (rrze_faudir_system_requirements()) {
-
-    
-/*
- * 
- *  js file existiert nicht. Wozu braucht man das??
-    function rrze_faudir_enqueue_scripts() {
-        // Register your script with the dependencies
-        wp_enqueue_script(
-            'rrze-faudir-script',
-            plugin_dir_url(__FILE__) . 'assets/js/script.js',
-            ['wp-i18n', 'wp-element'], // Include wp-i18n for translations
-            '1.0.0',
-            true
-        );
-
-        // Load translations for your script
-        wp_set_script_translations(
-            'rrze-faudir-script', // Script handle
-            'rrze-faudir',        // Text domain
-            plugin_dir_path(__FILE__) . 'languages' // Path to your .json files
-        );
-    }
-     add_action('wp_enqueue_scripts', 'rrze_faudir_enqueue_scripts');
-    */
-
     // Include necessary files
 
     require_once plugin_dir_path(__FILE__) . 'includes/utils/api-functions.php';
@@ -164,9 +139,6 @@ if (rrze_faudir_system_requirements()) {
 
         // Set a transient to indicate the job is running
         set_transient('check_person_availability_running', true, 60); // 60 seconds
-
-        // Log the start of the cron job
-        // error_log('Cron job check_person_availability started.');
 
         // Your existing code to check person availability
         $args = array(
@@ -236,60 +208,6 @@ if (rrze_faudir_system_requirements()) {
     }
 }
 
-// Hook into 'init' to check plugin status and register the alias shortcode
-add_action('init',  __NAMESPACE__ . '\register_kontakt_as_faudir_shortcode_alias');
-function register_kontakt_as_faudir_shortcode_alias() {
-    // Include the plugin.php file to ensure is_plugin_active() is available
-    include_once(ABSPATH . 'wp-admin/includes/plugin.php');
-
-    // Check if the FAU-person plugin is not active
-    if (!is_plugin_active('fau-person/fau-person.php')) {
-        add_shortcode('kontakt',  __NAMESPACE__ . '\kontakt_to_faudir_shortcode_alias');
-        add_shortcode('kontaktliste',  __NAMESPACE__ . '\kontaktliste_to_faudir_shortcode_alias');
-    }
-}
-
-// Function to handle the [kontakt] shortcode and redirect to [faudir]
-function kontakt_to_faudir_shortcode_alias($atts, $content = null) {
-    // Pass all attributes and content to the [faudir] shortcode
-    $atts_string = '';
-    if (!empty($atts)) {
-        foreach ($atts as $key => $value) {
-            $atts_string .= $key . '="' . esc_attr($value) . '" ';
-        }
-    }
-
-    return do_shortcode(shortcode_unautop('[faudir ' . trim($atts_string) . ']' . $content . '[/faudir]'));
-}
-
-// Function to handle the [kontaktliste] shortcode with specific format "list"
-function kontaktliste_to_faudir_shortcode_alias($atts, $content = null) {
-    // Ensure the format is set to "list"
-    if (!isset($atts['format'])) {
-        $atts['format'] = 'list';
-    }
-
-    // Convert attributes to string
-    $atts_string = '';
-    foreach ($atts as $key => $value) {
-        $atts_string .= $key . '="' . esc_attr($value) . '" ';
-    }
-
-    return do_shortcode(shortcode_unautop('[faudir ' . trim($atts_string) . ']' . $content . '[/faudir]'));
-}
-
-// Helper function to convert attributes array to string
-function shortcode_parse_atts_to_string($atts) {
-    $output = '';
-    foreach ($atts as $key => $value) {
-        if (is_numeric($key)) {
-            $output .= " $value";
-        } else {
-            $output .= sprintf(' %s="%s"', $key, esc_attr($value));
-        }
-    }
-    return trim($output);
-}
 
 
 function load_custom_person_template($template) {
@@ -605,7 +523,9 @@ function rrze_faudir_display_import_notice() {
 add_action('admin_notices', __NAMESPACE__ . '\rrze_faudir_display_import_notice', 15);
 
 function rrze_faudir_flush_rewrite_on_slug_change($old_value, $value, $option) {
-    if ($option === 'rrze_faudir_options' && $old_value['person_slug'] !== $value['person_slug']) {
+    if (  ($option === 'rrze_faudir_options') 
+             && (!empty($old_value['person_slug'])) 
+             && ($old_value['person_slug'] !== $value['person_slug'])) {
         flush_rewrite_rules(); // Flush rewrite rules if the slug changes
     }
 }
@@ -684,8 +604,12 @@ function custom_cpt_404_message() {
         }
     } else {
         // Check the request URI for /person/ slug
+        $options = get_option('rrze_faudir_options');
+        $slug = isset($options['person_slug']) && !empty($options['person_slug']) ? sanitize_title($options['person_slug']) : 'faudir'; // Default
+        
+        
         $request_uri = $_SERVER['REQUEST_URI'];
-        if (strpos($request_uri, '/person/') !== false) {
+        if (strpos($request_uri,  '/' . $slug . '/') !== false) {
             $wp_query->set_404();
             status_header(404);
 
@@ -727,7 +651,7 @@ add_action('init',  __NAMESPACE__ . '\register_faudir_block');
 // Render callback function for FAUdir block
 function render_faudir_block($attributes) {
     try {
-     //   error_log('FAUDIR Block render started with attributes: ' . print_r($attributes, true));
+     //  error_log('FAUDIR Block render started with attributes: ' . print_r($attributes, true));
 
         if (!shortcode_exists('faudir')) {
             throw new Exception('FAUDIR shortcode is not registered');
@@ -794,6 +718,9 @@ function render_faudir_block($attributes) {
         if (!empty($attributes['url'])) {
             $shortcode_atts['url'] = $attributes['url'];
         }
+        if (!empty($attributes['format_displayname'])) {
+            $shortcode_atts['format_displayname'] = $attributes['format_displayname'];
+        }
 
         if (!empty($attributes['sort'])) {
             $shortcode_atts['sort'] = $attributes['sort'];
@@ -808,7 +735,7 @@ function render_faudir_block($attributes) {
         }
         $shortcode .= ']';
 
-     //   error_log('Generated shortcode: ' . $shortcode);
+    //   error_log('Generated shortcode: ' . $shortcode);
 
         // Execute shortcode
         $output = do_shortcode($shortcode);

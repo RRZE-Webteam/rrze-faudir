@@ -365,7 +365,7 @@ class Person {
     /*
      * Create and get Displayname in semantic HTML
      */
-    public function getDisplayName(bool $html = true, bool $hard_sanitize = false, string $format = ''): string {
+    public function getDisplayName(bool $html = true, bool $hard_sanitize = false, string $format = '', array $show = [], array $hide = []): string {
         if (empty($this->givenName) && empty($this->familyName)) {
             return '';
         }
@@ -377,7 +377,7 @@ class Person {
             $nameHtml .= '<span class="displayname" itemprop="name">';
 
             // "personalTitle"
-            if (!empty($this->honorificPrefix)) {
+            if ((!empty($this->honorificPrefix)) && (!in_array('honorificPrefix', $hide))) {
                 if ($hard_sanitize) {
                     $long_version = self::getAcademicTitleLongVersion($this->honorificPrefix);
                     if (!empty($long_version)) {
@@ -393,7 +393,7 @@ class Person {
             }
 
             // "givenName"
-            if (!empty($this->givenName)) {
+            if ((!empty($this->givenName))  && (!in_array('givenName', $hide))) { 
                 $nameHtml .= '<span itemprop="givenName">' . esc_html($this->givenName) . '</span> ';
                 $nameText .= esc_html($this->givenName) . ' ';
             }
@@ -401,10 +401,10 @@ class Person {
 
 
             // "familyName"
-            if (!empty($this->familyName)) {          
+            if ((!empty($this->familyName))  && (!in_array('familyName', $hide))) { 
                 $nameHtml .= '<span itemprop="familyName">';        
                 // "titleOfNobility" is part of the familyName
-                if (!empty($this->titleOfNobility)) {
+                if ((!empty($this->titleOfNobility))  && (!in_array('titleOfNobility', $hide))) { 
                     $nameHtml .= esc_html($this->titleOfNobility) . ' ';
                     $nameText .= esc_html($this->titleOfNobility) . ' ';
                 }
@@ -414,7 +414,7 @@ class Person {
             }
 
             // "personalTitleSuffix"
-            if (!empty($this->honorificSuffix)) {
+            if ((!empty($this->honorificSuffix))  && (!in_array('honorificSuffix', $hide))) { 
                 $nameHtml .= '(<span itemprop="honorificSuffix">' . esc_html($this->honorificSuffix) . '</span>)';
                 $nameText .= '(' . esc_html($this->honorificSuffix) . ')';
             }
@@ -427,6 +427,13 @@ class Person {
         // format string is given. In this case display the name parts in the form that is displayed in the format
         // add nor semantic nor commas or other signs
 
+        
+        
+        $nameHtml = '';
+        if ($html) {
+            $nameHtml = '<span class="displayname" itemprop="name">';
+        }
+        
         // Platzhalter mit den entsprechenden Werten ersetzen
         $replacements = [
             '#givenName#' => $this->givenName ?? '',
@@ -436,9 +443,11 @@ class Person {
             '#honorificSuffix#' => $this->honorificSuffix ?? '',
             '#titleOfNobility#' => $this->titleOfNobility ?? ''
         ]; 
-        return str_replace(array_keys($replacements), array_values($replacements), $format);
-        
-        
+        $nameHtml .= str_replace(array_keys($replacements), array_values($replacements), $format);
+        if ($html) {
+            $nameHtml .= '</span>';
+        }
+        return $nameHtml;
     }  
     
     

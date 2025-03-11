@@ -90,7 +90,17 @@
     .add-person span {
 	vertical-align: middle;
     }
-
+    
+    table.faudir-attributs {
+	width: 100%;
+	td, th, td p {
+	    font-size: 1.5;
+	}
+	td, th {
+	    padding: 0.3rem 0;
+	}
+    }
+    
 }
 
 // Used only in the classic version of the custom post editor, 

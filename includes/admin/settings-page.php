@@ -315,6 +315,7 @@ function rrze_faudir_default_output_fields_render() {
 
         $config = new Config;
         $available_fields = $config->get('avaible_fields');
+        $formatnames = $config->get('formatnames');
         $fieldlist = $config->getAvaibleFieldlist();
 
     // Set default state: all checkboxes checked if no selection exists
@@ -322,30 +323,39 @@ function rrze_faudir_default_output_fields_render() {
         $default_fields = array_keys($available_fields); // Use all available fields by default
     }
 
-    echo '<fieldset>';
+    echo '<table class="faudir-attributs">';
+    echo '<tr>';
+    echo '<th>'.esc_html__('Output data', 'rrze-faudir').'</th>';
+    echo '<th>'.esc_html__('Fieldname for Show/Hide-Attribut in Shortcodes', 'rrze-faudir').'</th>';
+    echo '<th>'.esc_html__('Avaible in formats', 'rrze-faudir').'</th>';
+    echo '</tr>';
     foreach ($available_fields as $field => $label) {
         $checked = in_array($field, $default_fields); // Check if the field is in the default fields array
+        echo "<tr>";
+        echo "<th>";
         echo "<label for='" . esc_attr('rrze_faudir_default_output_fields_' . $field) . "'>";
         echo "<input type='checkbox' id='" . esc_attr('rrze_faudir_default_output_fields_' . $field) . "' name='rrze_faudir_options[default_output_fields][]' value='" . esc_attr($field) . "' " . checked($checked, true, false) . ">";
         echo esc_html($label) . "</label>";
-        $missing = '';
+        echo "</th>";
+        echo "<td>";
+        echo '<code>'.$field.'</code>';
+        echo "</td>";
+        $canuse = '';
         foreach ($fieldlist as $fl => $entries) {
             if (isset($fieldlist[$fl]) && in_array($field, $fieldlist[$fl], true)) {
-                // can use
-            } else {
-                if (!empty($missing)) {
-                    $missing .= ', ';
+                 if (!empty($canuse)) {
+                    $canuse .= ', ';
                 }
-                $missing .= $fl;
+                $canuse .= $formatnames[$fl];
             }
         }
-        if (!empty($missing)) {
-            echo ' <em>('. esc_html__('Not avaible for the following formats', 'rrze-faudir').':</em> <code>'.$missing.'</code>)';
+        if (!empty($canuse)) {
+            echo '<td>'.$canuse.'</td>';
         }
-        echo "<br>";
-        
+
+        echo "</tr>";
     }
-    echo '</fieldset>';
+    echo '</table>';
     echo '<p class="description">' . esc_html__('Select the fields to display by default in shortcodes and blocks.', 'rrze-faudir') . '</p>';
 }
 

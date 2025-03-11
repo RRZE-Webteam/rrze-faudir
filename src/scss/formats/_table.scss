@@ -4,7 +4,7 @@
 /*----------------------------------------------------------------------------*/
 .faudir {
     .format-table {
-
+	margin: var(--faudir-format-margins);
 	td {
 	    padding: 0.3rem;
 	    
