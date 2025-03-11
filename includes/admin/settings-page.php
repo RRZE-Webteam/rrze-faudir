@@ -279,14 +279,14 @@ function rrze_faudir_business_card_title_render() {
 
 function rrze_faudir_hard_sanitize_render() {
     $options = get_option('rrze_faudir_options');
-    echo '<input type="checkbox" name="rrze_faudir_options[hard_sanitize]" value="1" ' . checked( 1, $options['hard_sanitize'], false ) . '>';
-    echo '<p class="description">' . esc_html__('Hard Sanitize abbreviations.', 'rrze-faudir') .' <em>('.__('Only the essential academic titles are permitted. Labels for the respective disciplines are removed.', 'rrze-faudir') . ')</em></p>';
+    echo '<label><input type="checkbox" name="rrze_faudir_options[hard_sanitize]" value="1" ' . checked( 1, $options['hard_sanitize'], false ) . '>';
+    echo '<span>' . esc_html__('Hard Sanitize abbreviations.', 'rrze-faudir') .' <em>('.__('Only the essential academic titles are permitted. Labels for the respective disciplines are removed.', 'rrze-faudir') . ')</em></span></label>';
 }
 
 function rrze_faudir_fallback_link_faudir() {
     $options = get_option('rrze_faudir_options');
-    echo '<input type="checkbox" name="rrze_faudir_options[fallback_link_faudir]" value="1" ' . checked( 1, $options['fallback_link_faudir'], false ) . '>';
-    echo '<p class="description">' . esc_html__('On using profil links, fallback to the public faudir portal, if no local custom post is avaible.', 'rrze-faudir') .'</p>';
+    echo '<label><input type="checkbox" name="rrze_faudir_options[fallback_link_faudir]" value="1" ' . checked( 1, $options['fallback_link_faudir'], false ) . '>';
+    echo '<span>' . esc_html__('On using profil links, fallback to the public faudir portal, if no local custom post is avaible.', 'rrze-faudir') .'</span></label>';
 }
 
 
