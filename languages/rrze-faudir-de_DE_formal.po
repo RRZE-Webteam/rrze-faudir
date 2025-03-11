@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: rrze-faudir\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-faudir\n"
 "POT-Creation-Date: 2024-12-19T14:40:58+00:00\n"
-"PO-Revision-Date: 2025-03-10 11:54+0000\n"
+"PO-Revision-Date: 2025-03-11 13:10+0000\n"
 "Last-Translator: Wolfgang Wiese <wolfgang.wiese@fau.de>\n"
 "Language-Team: Deutsch (Sie)\n"
 "Language: de_DE_formal\n"
@@ -42,7 +42,7 @@ msgstr[1] "%d Personen wurden erfolgreich aus dem alten Plugin importiert."
 
 #: faudir-block/src/edit.js:48
 msgid "Academic Suffix"
-msgstr "Akademischer Titel"
+msgstr "Namenszusatz"
 
 #: faudir-block/src/edit.js:45
 msgid "Academic Title"
@@ -75,7 +75,7 @@ msgstr "Entsandte Professoren"
 
 #: includes/Config.php:69
 msgid "Administrative Employee"
-msgstr ""
+msgstr "Verwaltungsmitarbeitende"
 
 #: includes/admin/settings-page.php:639
 msgid "All cache cleared successfully."
@@ -128,7 +128,7 @@ msgstr ""
 
 #: includes/Config.php:81
 msgid "Assistant professors"
-msgstr ""
+msgstr "Privatdozentinnen und Privatdozenten"
 
 #: faudir-block/build/block.json:1 faudir-block/src/block.json:1
 msgctxt "block description"
@@ -300,7 +300,7 @@ msgstr "Doktor"
 
 #: includes/Config.php:74
 msgid "Doctoral candidate"
-msgstr ""
+msgstr "Doktorand"
 
 #: includes/EnqueueScripts.php:63 includes/admin/settings-page.php:739
 msgid "Edit"
@@ -504,7 +504,7 @@ msgstr "Bild"
 
 #: includes/Config.php:80
 msgid "IT support staff"
-msgstr ""
+msgstr "Mitarbeiter des IT-Supports"
 
 #: includes/Config.php:51
 msgid "Job Title"
@@ -804,7 +804,7 @@ msgstr "Forschungsassistenz"
 
 #: includes/Config.php:87
 msgid "Research associates"
-msgstr ""
+msgstr "Wissenschaftliche Mitarbeiter"
 
 #: includes/admin/settings-page.php:386
 msgid "Reset Settings"
@@ -820,7 +820,7 @@ msgstr "Auf Standardwerte zurücksetzen"
 
 #: includes/Config.php:85
 msgid "Retired professors"
-msgstr ""
+msgstr "Professoren im Ruhestand"
 
 #: faudir-block/src/edit.js:688
 msgid "Role"
@@ -863,7 +863,7 @@ msgstr "Sparen…"
 
 #: includes/Config.php:86
 msgid "Scholarship holder"
-msgstr ""
+msgstr "Stipendiat"
 
 #: includes/admin/settings-page.php:491 includes/admin/settings-page.php:544
 msgid "Search"
@@ -1121,11 +1121,11 @@ msgstr "Person anzeigen"
 
 #: includes/Config.php:76 includes/Config.php:92
 msgid "Visiting lecturers"
-msgstr ""
+msgstr "Lehrbeauftragte"
 
 #: includes/Config.php:77
 msgid "Visiting researchers"
-msgstr ""
+msgstr "Gastforscher"
 
 #: includes/utils/api-functions.php:506
 #| msgid "Website:"
