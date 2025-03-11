@@ -9,7 +9,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: RRZE-Webteam <webmaster@fau.de> (https://www.rrze.fau.de)\n"
 "Last-Translator: RRZE-Webteam <webmaster@fau.de> (https://www.rrze.fau.de)\n"
-"POT-Creation-Date: 2025-03-11 12:59+0000\n"
+"POT-Creation-Date: 2025-03-11 14:11+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/RRZE-Webteam/rrze-faudir/issues\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:"
@@ -74,7 +74,7 @@ msgstr ""
 msgid "Administrative Employee"
 msgstr ""
 
-#: includes/admin/settings-page.php:639
+#: includes/admin/settings-page.php:649
 msgid "All cache cleared successfully."
 msgstr ""
 
@@ -98,11 +98,11 @@ msgstr ""
 msgid "API Person Identifier"
 msgstr ""
 
-#: includes/admin/settings-page.php:46 includes/admin/settings-page.php:368
+#: includes/admin/settings-page.php:46 includes/admin/settings-page.php:378
 msgid "API Settings"
 msgstr ""
 
-#: includes/admin/settings-page.php:467
+#: includes/admin/settings-page.php:477
 msgid "API-Person-Identifier"
 msgstr ""
 
@@ -110,16 +110,20 @@ msgstr ""
 msgid "Are you sure you want to clear the cache?"
 msgstr ""
 
-#: includes/admin/settings-page.php:518
+#: includes/admin/settings-page.php:528
 msgid "Are you sure you want to delete the default organization?"
 msgstr ""
 
-#: includes/admin/settings-page.php:570
+#: includes/admin/settings-page.php:580
 msgid "Are you sure you want to reset all settings to their default values?"
 msgstr ""
 
 #: includes/Config.php:81
 msgid "Assistant professors"
+msgstr ""
+
+#: includes/admin/settings-page.php:330
+msgid "Avaible in formats"
 msgstr ""
 
 #: faudir-block/build/block.json:1 faudir-block/src/block.json:1
@@ -136,7 +140,7 @@ msgstr ""
 msgid "Box Number"
 msgstr ""
 
-#: includes/admin/settings-page.php:69 includes/admin/settings-page.php:371
+#: includes/admin/settings-page.php:69 includes/admin/settings-page.php:381
 msgid "Cache Settings"
 msgstr ""
 
@@ -152,7 +156,7 @@ msgstr ""
 msgid "Campo administrator"
 msgstr ""
 
-#: faudir-block/src/edit.js:581
+#: includes/Config.php:99 faudir-block/src/edit.js:581
 msgid "Card"
 msgstr ""
 
@@ -178,7 +182,7 @@ msgstr ""
 msgid "Clear Cache Now"
 msgstr ""
 
-#: includes/admin/settings-page.php:423
+#: includes/admin/settings-page.php:433
 msgid "Click the button below to reset all settings to their default values."
 msgstr ""
 
@@ -186,7 +190,7 @@ msgstr ""
 msgid "Click the button to clear all cached data."
 msgstr ""
 
-#: faudir-block/src/edit.js:585
+#: includes/Config.php:100 faudir-block/src/edit.js:585
 msgid "Compact"
 msgstr ""
 
@@ -235,7 +239,7 @@ msgstr ""
 msgid "Copy shortcode to Clipboard"
 msgstr ""
 
-#: includes/admin/settings-page.php:511
+#: includes/admin/settings-page.php:521
 msgid "Current Default Organization"
 msgstr ""
 
@@ -247,7 +251,7 @@ msgstr ""
 msgid "Data"
 msgstr ""
 
-#: includes/admin/settings-page.php:605
+#: includes/admin/settings-page.php:615
 msgid "Default organization has been deleted."
 msgstr ""
 
@@ -263,7 +267,7 @@ msgstr ""
 msgid "Default Output Fields"
 msgstr ""
 
-#: includes/admin/settings-page.php:519
+#: includes/admin/settings-page.php:529
 msgid "Delete Default Organization"
 msgstr ""
 
@@ -291,7 +295,7 @@ msgstr ""
 msgid "Doctoral candidate"
 msgstr ""
 
-#: includes/EnqueueScripts.php:63 includes/admin/settings-page.php:739
+#: includes/EnqueueScripts.php:63 includes/admin/settings-page.php:749
 msgid "Edit"
 msgstr ""
 
@@ -305,7 +309,7 @@ msgstr ""
 
 #: templates/table.php:109 templates/list.php:108 templates/page.php:123
 #: templates/compact.php:176 templates/card.php:90 includes/Config.php:48
-#: includes/admin/settings-page.php:482 includes/utils/api-functions.php:373
+#: includes/admin/settings-page.php:492 includes/utils/api-functions.php:373
 #: includes/utils/api-functions.php:503
 #: includes/custom-post-type/custom-post-type.php:161
 #: faudir-block/src/edit.js:51
@@ -320,7 +324,7 @@ msgstr ""
 msgid "Employee"
 msgstr ""
 
-#: includes/admin/settings-page.php:539
+#: includes/admin/settings-page.php:549
 msgid "Enter organization name or identifier"
 msgstr ""
 
@@ -351,7 +355,7 @@ msgstr ""
 msgid "Error decoding JSON data."
 msgstr ""
 
-#: includes/admin/settings-page.php:109 includes/admin/settings-page.php:374
+#: includes/admin/settings-page.php:109 includes/admin/settings-page.php:384
 msgid "Error Handling"
 msgstr ""
 
@@ -368,12 +372,12 @@ msgstr ""
 msgid "Error saving organization."
 msgstr ""
 
-#: includes/admin/settings-page.php:703 includes/utils/api-functions.php:451
+#: includes/admin/settings-page.php:713 includes/utils/api-functions.php:451
 #, php-format
 msgid "Error: %s"
 msgstr ""
 
-#: includes/admin/settings-page.php:579
+#: includes/admin/settings-page.php:589
 msgid "Failed to reset settings. Please try again."
 msgstr ""
 
@@ -381,7 +385,7 @@ msgstr ""
 msgid "Fallback FAUdir link"
 msgstr ""
 
-#: includes/admin/settings-page.php:477
+#: includes/admin/settings-page.php:487
 #: includes/custom-post-type/custom-post-type.php:164
 msgid "Family Name"
 msgstr ""
@@ -397,7 +401,7 @@ msgstr ""
 msgid "FAUdir"
 msgstr ""
 
-#: includes/admin/settings-page.php:362
+#: includes/admin/settings-page.php:372
 msgid "FAUdir Settings"
 msgstr ""
 
@@ -405,7 +409,11 @@ msgstr ""
 msgid "Fax"
 msgstr ""
 
-#: includes/admin/settings-page.php:455
+#: includes/admin/settings-page.php:329
+msgid "Fieldname for Show/Hide-Attribut in Shortcodes"
+msgstr ""
+
+#: includes/admin/settings-page.php:465
 msgid "Filter by default organization"
 msgstr ""
 
@@ -431,7 +439,7 @@ msgstr ""
 msgid "Function (German)"
 msgstr ""
 
-#: includes/admin/settings-page.php:472
+#: includes/admin/settings-page.php:482
 #: includes/custom-post-type/custom-post-type.php:163
 msgid "Given Name"
 msgstr ""
@@ -504,7 +512,7 @@ msgstr ""
 msgid "Link to Profil"
 msgstr ""
 
-#: faudir-block/src/edit.js:573
+#: includes/Config.php:97 faudir-block/src/edit.js:573
 msgid "List"
 msgstr ""
 
@@ -532,7 +540,7 @@ msgstr ""
 msgid "More Information"
 msgstr ""
 
-#: includes/admin/settings-page.php:513
+#: includes/admin/settings-page.php:523
 #: includes/custom-post-type/custom-post-type.php:160
 msgid "Name"
 msgstr ""
@@ -563,7 +571,7 @@ msgstr ""
 msgid "No contacts found with the provided identifier."
 msgstr ""
 
-#: includes/admin/settings-page.php:749
+#: includes/admin/settings-page.php:759
 msgid "No contacts found. Please verify the IdM-Kennung or names provided."
 msgstr ""
 
@@ -591,10 +599,6 @@ msgstr ""
 msgid "Nobility Title"
 msgstr ""
 
-#: includes/admin/settings-page.php:343
-msgid "Not avaible for the following formats"
-msgstr ""
-
 #: templates/page.php:212 templates/compact.php:155 includes/Config.php:63
 #: includes/Contact.php:237 includes/utils/api-functions.php:331
 #: faudir-block/src/edit.js:66
@@ -613,7 +617,7 @@ msgid ""
 "disciplines are removed."
 msgstr ""
 
-#: includes/Config.php:50 includes/admin/settings-page.php:723
+#: includes/Config.php:50 includes/admin/settings-page.php:733
 #: includes/custom-post-type/custom-post-type.php:232
 #: faudir-block/src/edit.js:53
 msgid "Organization"
@@ -627,12 +631,16 @@ msgstr ""
 msgid "Organization ID"
 msgstr ""
 
-#: includes/admin/settings-page.php:514 includes/utils/api-functions.php:474
+#: includes/admin/settings-page.php:524 includes/utils/api-functions.php:474
 #: faudir-block/src/edit.js:631
 msgid "Organization Number"
 msgstr ""
 
-#: faudir-block/src/edit.js:589
+#: includes/admin/settings-page.php:328
+msgid "Output data"
+msgstr ""
+
+#: includes/Config.php:101 faudir-block/src/edit.js:589
 msgid "Page"
 msgstr ""
 
@@ -695,7 +703,7 @@ msgstr ""
 msgid "Please enter at least 10 digits."
 msgstr ""
 
-#: includes/admin/settings-page.php:445
+#: includes/admin/settings-page.php:455
 msgid ""
 "Please enter at least one search term. If more than one parameter is entered,"
 " the search results must contain all values (AND search)."
@@ -759,15 +767,15 @@ msgstr ""
 msgid "Research associates"
 msgstr ""
 
-#: includes/admin/settings-page.php:386
+#: includes/admin/settings-page.php:396
 msgid "Reset Settings"
 msgstr ""
 
-#: includes/admin/settings-page.php:422
+#: includes/admin/settings-page.php:432
 msgid "Reset to Default Settings"
 msgstr ""
 
-#: includes/admin/settings-page.php:425
+#: includes/admin/settings-page.php:435
 msgid "Reset to Default Values"
 msgstr ""
 
@@ -818,7 +826,7 @@ msgstr ""
 msgid "Scholarship holder"
 msgstr ""
 
-#: includes/admin/settings-page.php:491 includes/admin/settings-page.php:544
+#: includes/admin/settings-page.php:501 includes/admin/settings-page.php:554
 msgid "Search"
 msgstr ""
 
@@ -826,21 +834,21 @@ msgstr ""
 msgid "Search Categories"
 msgstr ""
 
-#: includes/admin/settings-page.php:125 includes/admin/settings-page.php:377
-#: includes/admin/settings-page.php:433
+#: includes/admin/settings-page.php:125 includes/admin/settings-page.php:387
+#: includes/admin/settings-page.php:443
 msgid "Search Contacts"
 msgstr ""
 
-#: includes/admin/settings-page.php:354
+#: includes/admin/settings-page.php:364
 msgid "Search for FAU organizations by name or identifier."
 msgstr ""
 
-#: includes/admin/settings-page.php:450
+#: includes/admin/settings-page.php:460
 msgid "Search Options"
 msgstr ""
 
-#: includes/admin/settings-page.php:175 includes/admin/settings-page.php:380
-#: includes/admin/settings-page.php:526
+#: includes/admin/settings-page.php:175 includes/admin/settings-page.php:390
+#: includes/admin/settings-page.php:536
 msgid "Search Organizations"
 msgstr ""
 
@@ -848,11 +856,11 @@ msgstr ""
 msgid "Search Persons"
 msgstr ""
 
-#: includes/admin/settings-page.php:535
+#: includes/admin/settings-page.php:545
 msgid "Search Term"
 msgstr ""
 
-#: includes/admin/settings-page.php:462
+#: includes/admin/settings-page.php:472
 msgid "Search Terms"
 msgstr ""
 
@@ -876,7 +884,7 @@ msgstr ""
 msgid "Select Persons"
 msgstr ""
 
-#: includes/admin/settings-page.php:349
+#: includes/admin/settings-page.php:359
 msgid "Select the fields to display by default in shortcodes and blocks."
 msgstr ""
 
@@ -898,11 +906,11 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: includes/admin/settings-page.php:576 includes/admin/settings-page.php:628
+#: includes/admin/settings-page.php:586 includes/admin/settings-page.php:638
 msgid "Settings have been reset to default values."
 msgstr ""
 
-#: includes/admin/settings-page.php:133 includes/admin/settings-page.php:383
+#: includes/admin/settings-page.php:133 includes/admin/settings-page.php:393
 msgid "Shortcode Settings"
 msgstr ""
 
@@ -952,7 +960,7 @@ msgstr ""
 msgid "Sunday"
 msgstr ""
 
-#: faudir-block/src/edit.js:577
+#: includes/Config.php:98 faudir-block/src/edit.js:577
 msgid "Table"
 msgstr ""
 
@@ -996,7 +1004,7 @@ msgid ""
 "possible by the persons or the appointed contact persons in the IdM portal."
 msgstr ""
 
-#: includes/admin/settings-page.php:512
+#: includes/admin/settings-page.php:522
 msgid ""
 "This is the organization that will be used by default in shortcodes and "
 "blocks."
@@ -1089,7 +1097,7 @@ msgstr ""
 msgid "Workplace manager"
 msgstr ""
 
-#: includes/admin/settings-page.php:591 includes/utils/api-functions.php:538
+#: includes/admin/settings-page.php:601 includes/utils/api-functions.php:538
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 

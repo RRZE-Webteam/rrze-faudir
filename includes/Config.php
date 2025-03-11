@@ -93,6 +93,14 @@ class Config {
             'workplace_manager'         => __('Workplace manager', 'rrze-faudir'),
         ];
          
+        $this->config['formatnames'] = [
+            'list'      => __( 'List', 'rrze-faudir' ),
+            'table'     => __( 'Table', 'rrze-faudir' ),
+            'card'      => __( 'Card', 'rrze-faudir' ),
+            'compact'   => __( 'Compact', 'rrze-faudir' ),
+            'page'      => __( 'Page', 'rrze-faudir' ),
+            
+        ];
 
     }
     

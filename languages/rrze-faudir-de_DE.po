@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: rrze-faudir\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-faudir\n"
 "POT-Creation-Date: 2024-12-19T14:40:58+00:00\n"
-"PO-Revision-Date: 2025-03-11 13:12+0000\n"
+"PO-Revision-Date: 2025-03-11 14:12+0000\n"
 "Last-Translator: Wolfgang Wiese <wolfgang.wiese@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -74,7 +74,7 @@ msgstr "Entsandte Professoren"
 msgid "Administrative Employee"
 msgstr "Verwaltungsmitarbeitende"
 
-#: includes/admin/settings-page.php:639
+#: includes/admin/settings-page.php:649
 msgid "All cache cleared successfully."
 msgstr "Der gesamte Cache wurde erfolgreich gelöscht."
 
@@ -99,11 +99,11 @@ msgstr "API-Schlüssel"
 msgid "API Person Identifier"
 msgstr "API-Personenkennung"
 
-#: includes/admin/settings-page.php:46 includes/admin/settings-page.php:368
+#: includes/admin/settings-page.php:46 includes/admin/settings-page.php:378
 msgid "API Settings"
 msgstr "API-Einstellungen"
 
-#: includes/admin/settings-page.php:467
+#: includes/admin/settings-page.php:477
 #| msgid "API-Person-Identifier:"
 msgid "API-Person-Identifier"
 msgstr "API-Personenkennung"
@@ -112,11 +112,11 @@ msgstr "API-Personenkennung"
 msgid "Are you sure you want to clear the cache?"
 msgstr "Sind Sie sicher, dass Sie den Cache leeren möchten?"
 
-#: includes/admin/settings-page.php:518
+#: includes/admin/settings-page.php:528
 msgid "Are you sure you want to delete the default organization?"
 msgstr "Möchten Sie die Standardorganisation wirklich löschen?"
 
-#: includes/admin/settings-page.php:570
+#: includes/admin/settings-page.php:580
 msgid "Are you sure you want to reset all settings to their default values?"
 msgstr ""
 "Sind Sie sicher, dass Sie alle Einstellungen auf die Standardwerte "
@@ -125,6 +125,10 @@ msgstr ""
 #: includes/Config.php:81
 msgid "Assistant professors"
 msgstr "Privatdozentinnen und Privatdozenten"
+
+#: includes/admin/settings-page.php:330
+msgid "Avaible in formats"
+msgstr "Verfügbare Formate"
 
 #: faudir-block/build/block.json:1 faudir-block/src/block.json:1
 msgctxt "block description"
@@ -140,7 +144,7 @@ msgstr "FAUdir"
 msgid "Box Number"
 msgstr "Postfach"
 
-#: includes/admin/settings-page.php:69 includes/admin/settings-page.php:371
+#: includes/admin/settings-page.php:69 includes/admin/settings-page.php:381
 msgid "Cache Settings"
 msgstr "Cache-Einstellungen"
 
@@ -156,7 +160,7 @@ msgstr "Visitenkarte aufrufen"
 msgid "Campo administrator"
 msgstr "Campo Beauftragter"
 
-#: faudir-block/src/edit.js:581
+#: includes/Config.php:99 faudir-block/src/edit.js:581
 msgid "Card"
 msgstr "Visitenkarte"
 
@@ -182,7 +186,7 @@ msgstr "Alle Caches löschen"
 msgid "Clear Cache Now"
 msgstr "Cache jetzt löschen"
 
-#: includes/admin/settings-page.php:423
+#: includes/admin/settings-page.php:433
 msgid "Click the button below to reset all settings to their default values."
 msgstr ""
 "Klicken Sie auf die Schaltfläche unten, um alle Einstellungen auf die "
@@ -194,7 +198,7 @@ msgstr ""
 "Klicken Sie auf die Schaltfläche, um alle zwischengespeicherten Daten zu "
 "löschen."
 
-#: faudir-block/src/edit.js:585
+#: includes/Config.php:100 faudir-block/src/edit.js:585
 msgid "Compact"
 msgstr "Kompakt"
 
@@ -235,7 +239,7 @@ msgstr "Kontakte"
 
 #: includes/Config.php:53 faudir-block/src/edit.js:56
 msgid "Content"
-msgstr "Biographie"
+msgstr "Inhaltsbereich"
 
 #: includes/custom-post-type/custom-post-type.php:156
 msgid "Content (English)"
@@ -245,7 +249,7 @@ msgstr "Inhalt (Englisch)"
 msgid "Copy shortcode to Clipboard"
 msgstr "Shortcode in die Zwischenablage kopieren"
 
-#: includes/admin/settings-page.php:511
+#: includes/admin/settings-page.php:521
 msgid "Current Default Organization"
 msgstr "Aktuelle Standardorganisation"
 
@@ -257,7 +261,7 @@ msgstr "Der gesamte Cache wurde erfolgreich gelöscht!"
 msgid "Data"
 msgstr "Daten"
 
-#: includes/admin/settings-page.php:605
+#: includes/admin/settings-page.php:615
 msgid "Default organization has been deleted."
 msgstr "Die Standardorganisation wurde gelöscht."
 
@@ -273,7 +277,7 @@ msgstr "Wenn leer, wird hier die voreingestellte Organisation verwendet."
 msgid "Default Output Fields"
 msgstr "Standardausgabefelder"
 
-#: includes/admin/settings-page.php:519
+#: includes/admin/settings-page.php:529
 msgid "Delete Default Organization"
 msgstr "Standardorganisation löschen"
 
@@ -302,7 +306,7 @@ msgstr "Doktor"
 msgid "Doctoral candidate"
 msgstr "Doktorand"
 
-#: includes/EnqueueScripts.php:63 includes/admin/settings-page.php:739
+#: includes/EnqueueScripts.php:63 includes/admin/settings-page.php:749
 msgid "Edit"
 msgstr "Bearbeiten"
 
@@ -316,7 +320,7 @@ msgstr "Person bearbeiten"
 
 #: templates/table.php:109 templates/list.php:108 templates/page.php:123
 #: templates/compact.php:176 templates/card.php:90 includes/Config.php:48
-#: includes/admin/settings-page.php:482 includes/utils/api-functions.php:373
+#: includes/admin/settings-page.php:492 includes/utils/api-functions.php:373
 #: includes/utils/api-functions.php:503
 #: includes/custom-post-type/custom-post-type.php:161
 #: faudir-block/src/edit.js:51
@@ -332,7 +336,7 @@ msgstr "E-Mail-Adressen"
 msgid "Employee"
 msgstr "Angestellte"
 
-#: includes/admin/settings-page.php:539
+#: includes/admin/settings-page.php:549
 msgid "Enter organization name or identifier"
 msgstr "Geben Sie den Namen oder die Kennung der Organisation ein"
 
@@ -372,7 +376,7 @@ msgstr ""
 msgid "Error decoding JSON data."
 msgstr "Fehler beim Dekodieren der JSON-Daten."
 
-#: includes/admin/settings-page.php:109 includes/admin/settings-page.php:374
+#: includes/admin/settings-page.php:109 includes/admin/settings-page.php:384
 msgid "Error Handling"
 msgstr "Fehlerbehandlung"
 
@@ -389,12 +393,12 @@ msgstr "Fehler beim Abrufen der Daten: "
 msgid "Error saving organization."
 msgstr "Fehler beim Speichern der Organisation."
 
-#: includes/admin/settings-page.php:703 includes/utils/api-functions.php:451
+#: includes/admin/settings-page.php:713 includes/utils/api-functions.php:451
 #, php-format
 msgid "Error: %s"
 msgstr "Fehler: %s"
 
-#: includes/admin/settings-page.php:579
+#: includes/admin/settings-page.php:589
 msgid "Failed to reset settings. Please try again."
 msgstr ""
 "Einstellungen konnten nicht zurückgesetzt werden. Bitte versuchen Sie es "
@@ -404,7 +408,7 @@ msgstr ""
 msgid "Fallback FAUdir link"
 msgstr "Fallback auf FAUdir"
 
-#: includes/admin/settings-page.php:477
+#: includes/admin/settings-page.php:487
 #: includes/custom-post-type/custom-post-type.php:164
 msgid "Family Name"
 msgstr "Nachname"
@@ -421,7 +425,7 @@ msgstr "FAU Karte"
 msgid "FAUdir"
 msgstr "FAUdir"
 
-#: includes/admin/settings-page.php:362
+#: includes/admin/settings-page.php:372
 msgid "FAUdir Settings"
 msgstr "FAUdir Einstellungen"
 
@@ -430,7 +434,11 @@ msgstr "FAUdir Einstellungen"
 msgid "Fax"
 msgstr "Fax"
 
-#: includes/admin/settings-page.php:455
+#: includes/admin/settings-page.php:329
+msgid "Fieldname for Show/Hide-Attribut in Shortcodes"
+msgstr "Feldname für Show/Hide-Parameter von Shortcodes"
+
+#: includes/admin/settings-page.php:465
 msgid "Filter by default organization"
 msgstr "Filtern Sie nach Standardorganisation"
 
@@ -456,7 +464,7 @@ msgstr "Funktion (Englisch)"
 msgid "Function (German)"
 msgstr "Funktion (Deutsch)"
 
-#: includes/admin/settings-page.php:472
+#: includes/admin/settings-page.php:482
 #: includes/custom-post-type/custom-post-type.php:163
 msgid "Given Name"
 msgstr "Vorname"
@@ -530,7 +538,7 @@ msgstr "Text für den Link zur Profilseite"
 msgid "Link to Profil"
 msgstr "Link zur Profilseite"
 
-#: faudir-block/src/edit.js:573
+#: includes/Config.php:97 faudir-block/src/edit.js:573
 msgid "List"
 msgstr "Liste"
 
@@ -559,7 +567,7 @@ msgstr "Mehr"
 msgid "More Information"
 msgstr "Weitere Informationen"
 
-#: includes/admin/settings-page.php:513
+#: includes/admin/settings-page.php:523
 #: includes/custom-post-type/custom-post-type.php:160
 msgid "Name"
 msgstr "Name"
@@ -590,7 +598,7 @@ msgstr "Es konnte kein Kontakteintrag gefunden werden."
 msgid "No contacts found with the provided identifier."
 msgstr "Keine Kontakte mit der angegebenen Kennung gefunden."
 
-#: includes/admin/settings-page.php:749
+#: includes/admin/settings-page.php:759
 msgid "No contacts found. Please verify the IdM-Kennung or names provided."
 msgstr ""
 "Keine Kontakte gefunden. Bitte überprüfen Sie die IdM-Kennung oder die "
@@ -622,10 +630,6 @@ msgstr "Keine Arbeitsplätze verfügbar"
 msgid "Nobility Title"
 msgstr "Adelstitel"
 
-#: includes/admin/settings-page.php:343
-msgid "Not avaible for the following formats"
-msgstr "Nicht verfügbar für Ausgaben im folgenden Format"
-
 #: templates/page.php:212 templates/compact.php:155 includes/Config.php:63
 #: includes/Contact.php:237 includes/utils/api-functions.php:331
 #: faudir-block/src/edit.js:66
@@ -648,7 +652,7 @@ msgstr ""
 "Es werden lediglich die essentiellen Bestandteile des akademischen Titels "
 "angezeigt. Angaben zu Fachdisziplinen werden entfernt."
 
-#: includes/Config.php:50 includes/admin/settings-page.php:723
+#: includes/Config.php:50 includes/admin/settings-page.php:733
 #: includes/custom-post-type/custom-post-type.php:232
 #: faudir-block/src/edit.js:53
 msgid "Organization"
@@ -663,13 +667,17 @@ msgstr "Organisation wurde als Standard gespeichert."
 msgid "Organization ID"
 msgstr "Organisations-ID"
 
-#: includes/admin/settings-page.php:514 includes/utils/api-functions.php:474
+#: includes/admin/settings-page.php:524 includes/utils/api-functions.php:474
 #: faudir-block/src/edit.js:631
 #| msgid "Organization Nr"
 msgid "Organization Number"
 msgstr "Organisationsnr"
 
-#: faudir-block/src/edit.js:589
+#: includes/admin/settings-page.php:328
+msgid "Output data"
+msgstr "Ausgabedaten"
+
+#: includes/Config.php:101 faudir-block/src/edit.js:589
 msgid "Page"
 msgstr "Seite"
 
@@ -736,7 +744,7 @@ msgstr "Bitte geben Sie einen Suchbegriff ein"
 msgid "Please enter at least 10 digits."
 msgstr "Bitte geben Sie 10 Zahlen ein."
 
-#: includes/admin/settings-page.php:445
+#: includes/admin/settings-page.php:455
 msgid ""
 "Please enter at least one search term. If more than one parameter is entered,"
 " the search results must contain all values (AND search)."
@@ -806,15 +814,15 @@ msgstr "Forschungsassistenz"
 msgid "Research associates"
 msgstr "Wissenschaftliche Mitarbeiter"
 
-#: includes/admin/settings-page.php:386
+#: includes/admin/settings-page.php:396
 msgid "Reset Settings"
 msgstr "Einstellungen zurücksetzen"
 
-#: includes/admin/settings-page.php:422
+#: includes/admin/settings-page.php:432
 msgid "Reset to Default Settings"
 msgstr "Auf Standardeinstellungen zurücksetzen"
 
-#: includes/admin/settings-page.php:425
+#: includes/admin/settings-page.php:435
 msgid "Reset to Default Values"
 msgstr "Auf Standardwerte zurücksetzen"
 
@@ -865,7 +873,7 @@ msgstr "Sparen…"
 msgid "Scholarship holder"
 msgstr "Stipendiat"
 
-#: includes/admin/settings-page.php:491 includes/admin/settings-page.php:544
+#: includes/admin/settings-page.php:501 includes/admin/settings-page.php:554
 msgid "Search"
 msgstr "Suchen"
 
@@ -873,21 +881,21 @@ msgstr "Suchen"
 msgid "Search Categories"
 msgstr "Kategorien suchen"
 
-#: includes/admin/settings-page.php:125 includes/admin/settings-page.php:377
-#: includes/admin/settings-page.php:433
+#: includes/admin/settings-page.php:125 includes/admin/settings-page.php:387
+#: includes/admin/settings-page.php:443
 msgid "Search Contacts"
 msgstr "Kontakte suchen"
 
-#: includes/admin/settings-page.php:354
+#: includes/admin/settings-page.php:364
 msgid "Search for FAU organizations by name or identifier."
 msgstr "Suche Sie nach FAU-Organisationen nach Namen oder Kennung."
 
-#: includes/admin/settings-page.php:450
+#: includes/admin/settings-page.php:460
 msgid "Search Options"
 msgstr "Suchoptionen"
 
-#: includes/admin/settings-page.php:175 includes/admin/settings-page.php:380
-#: includes/admin/settings-page.php:526
+#: includes/admin/settings-page.php:175 includes/admin/settings-page.php:390
+#: includes/admin/settings-page.php:536
 msgid "Search Organizations"
 msgstr "Suchorganisationen"
 
@@ -895,11 +903,11 @@ msgstr "Suchorganisationen"
 msgid "Search Persons"
 msgstr "Personen suchen"
 
-#: includes/admin/settings-page.php:535
+#: includes/admin/settings-page.php:545
 msgid "Search Term"
 msgstr "Suchbegriff"
 
-#: includes/admin/settings-page.php:462
+#: includes/admin/settings-page.php:472
 msgid "Search Terms"
 msgstr "Suchbegriffe"
 
@@ -923,7 +931,7 @@ msgstr "Wähle Format"
 msgid "Select Persons"
 msgstr "Wähle Personen"
 
-#: includes/admin/settings-page.php:349
+#: includes/admin/settings-page.php:359
 msgid "Select the fields to display by default in shortcodes and blocks."
 msgstr ""
 "Wählen Sie die Felder aus, die standardmäßig in Shortcodes und Blöcken "
@@ -949,11 +957,11 @@ msgstr ""
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: includes/admin/settings-page.php:576 includes/admin/settings-page.php:628
+#: includes/admin/settings-page.php:586 includes/admin/settings-page.php:638
 msgid "Settings have been reset to default values."
 msgstr "Einstellungen wurden auf die Standardwerte zurückgesetzt."
 
-#: includes/admin/settings-page.php:133 includes/admin/settings-page.php:383
+#: includes/admin/settings-page.php:133 includes/admin/settings-page.php:393
 msgid "Shortcode Settings"
 msgstr "Shortcode-Einstellungen"
 
@@ -1003,7 +1011,7 @@ msgstr "Suffix"
 msgid "Sunday"
 msgstr "Sonntag"
 
-#: faudir-block/src/edit.js:577
+#: includes/Config.php:98 faudir-block/src/edit.js:577
 msgid "Table"
 msgstr "Tabelle"
 
@@ -1050,7 +1058,7 @@ msgstr ""
 "ist nur von den Personen oder den beauftragten Kontaktpersonen im IdM Portal "
 "möglich."
 
-#: includes/admin/settings-page.php:512
+#: includes/admin/settings-page.php:522
 msgid ""
 "This is the organization that will be used by default in shortcodes and "
 "blocks."
@@ -1148,7 +1156,7 @@ msgstr "Arbeitsplatz"
 msgid "Workplace manager"
 msgstr "Arbeitsplatz-Beauftragter"
 
-#: includes/admin/settings-page.php:591 includes/utils/api-functions.php:538
+#: includes/admin/settings-page.php:601 includes/utils/api-functions.php:538
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 "Sie verfügen nicht über die erforderlichen Berechtigungen, um auf diese "
