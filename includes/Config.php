@@ -23,11 +23,11 @@ class Config {
             'list'  => ['displayname', 'jobTitle', 'url', 'email', 'socialmedia', 'roompos', 'room', 'floor', 'address','faumap', 'link']
         ],
         'avaible_fields_byformat'   => [
-            'table' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link'],
-            'list'  => ['displayname', 'jobTitle', 'url', 'email', 'socialmedia', 'roompos', 'room', 'floor', 'zip', 'street', 'city', 'faumap', 'link'],
-            'compact' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link'],
-            'page' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'content', 'zip', 'street', 'city', 'officehours', 'consultationhours'],
-            'card'  => ['image', 'displayname', 'jobTitle', 'organization', 'url', 'email', 'socialmedia', 'link'],
+            'table' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],
+            'list'  => ['displayname', 'jobTitle', 'url', 'email', 'socialmedia', 'roompos', 'room', 'floor', 'zip', 'street', 'city', 'faumap', 'link', 'format_displayname'],
+            'compact' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],
+            'page' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'content', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'format_displayname'],
+            'card'  => ['image', 'displayname', 'jobTitle', 'organization', 'url', 'email', 'socialmedia', 'link', 'format_displayname'],
 
         ]
         

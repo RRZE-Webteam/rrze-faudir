@@ -34,6 +34,7 @@ export default function Edit( { attributes, setAttributes } ) {
 	//	function: functionValue = '',
 		role = '',
 		orgnr = '',
+		format_displayname = '',
 		url = '',
 		hideFields = [],
 		sort = 'familyName',
@@ -63,8 +64,8 @@ export default function Edit( { attributes, setAttributes } ) {
 		city: __( 'City', 'rrze-faudir' ),
 		faumap: __( 'FAU Map', 'rrze-faudir' ),
 		officehours: __( 'Office Hours', 'rrze-faudir' ),
-		consultationhours: __( 'Consultation Hours', 'rrze-faudir' ),
-	};
+		consultationhours: __( 'Consultation Hours', 'rrze-faudir' )
+	    };
 
 	const formatFields = {
 		card: [
@@ -402,6 +403,8 @@ export default function Edit( { attributes, setAttributes } ) {
 		role: attributes.role,
 		...( attributes.orgnr && { orgnr: attributes.orgnr } ), // Only include orgnr if it's not empty
 		url: attributes.url,
+		format_displayname: attributes.format_displayname,
+
 	};
 
 	// Add ServerSideRender with debounce
@@ -411,12 +414,20 @@ export default function Edit( { attributes, setAttributes } ) {
 			setKey( ( prev ) => prev + 1 );
 		}, 300 ); // 300ms debounce
 		return () => clearTimeout( timer );
-	}, [ ...Object.values( blockAttributes ), sort ] ); // Use blockAttributes instead of attributes
+	}, [ ...Object.values( blockAttributes ), sort, format_displayname ] ); // Use blockAttributes instead of attributes
 
 	// Also update the renderKey when sort changes
 	const handleSortChange = ( value ) => {
 		setAttributes( { sort: value } );
 		setRenderKey( ( prev ) => prev + 1 ); // Force re-render
+	};
+	
+	// Also update the renderKey when format_displayname changes
+	const handleFormatDisplaynameChange = ( value ) => {
+		setAttributes( { format_displayname: value } );
+		if ( value.length > 6 ) {
+		    setRenderKey( ( prev ) => prev + 1 ); // Force re-render
+		}
 	};
 	
 	// Also render again if the orgnr changes
@@ -517,10 +528,7 @@ export default function Edit( { attributes, setAttributes } ) {
 
 							{ isLoadingPosts ? (
 								<p>
-									{ __(
-										'Loading persons...',
-										'rrze-faudir'
-									) }
+									{ __('Loading persons...','rrze-faudir') }
 								</p>
 							) : posts.length > 0 ? (
 								<>
@@ -549,10 +557,7 @@ export default function Edit( { attributes, setAttributes } ) {
 								</>
 							) : (
 								<p>
-									{ __(
-										'No posts available.',
-										'rrze-faudir'
-									) }
+									{ __('No posts available.','rrze-faudir') }
 								</p>
 							) }
 						</>
@@ -644,10 +649,7 @@ export default function Edit( { attributes, setAttributes } ) {
 								className="dashicons dashicons-info"
 								style={ { marginRight: '5px' } }
 							></span>
-							{ __(
-								'Default organization will be used if empty.',
-								'rrze-faudir'
-							) }
+							{ __('Default organization will be used if empty.','rrze-faudir') }
 						</div>
 					) }
 
@@ -661,17 +663,11 @@ export default function Edit( { attributes, setAttributes } ) {
 							},
 							{
 								value: 'title_familyName',
-								label: __(
-									'Title and Last Name',
-									'rrze-faudir'
-								),
+								label: __('Title and Last Name','rrze-faudir'),
 							},
 							{
 								value: 'head_first',
-								label: __(
-									'Head of Department First',
-									'rrze-faudir'
-								),
+								label: __('Head of Department First','rrze-faudir'),
 							},
 							{
 								value: 'prof_first',
@@ -688,6 +684,12 @@ export default function Edit( { attributes, setAttributes } ) {
 						label={ __( 'Role', 'rrze-faudir' ) }
 						value={role}
 						onChange={(value) => setAttributes({ role: value })}
+						type="text"
+					/>
+					<TextControl
+						label={ __( 'Change display format', 'rrze-faudir' ) }
+						value={format_displayname}
+						onChange={ handleFormatDisplaynameChange }
 						type="text"
 					/>
 				</PanelBody>
@@ -722,6 +724,7 @@ export default function Edit( { attributes, setAttributes } ) {
 											hideFields: attributes.hideFields, // Add hideFields
 											url: attributes.url,
 											sort: attributes.sort,
+											format_displayname: attributes.format_displayname,
 									  }
 									: // Case 2: category
 									attributes.selectedCategory
@@ -740,6 +743,7 @@ export default function Edit( { attributes, setAttributes } ) {
 											hideFields: attributes.hideFields, // Add hideFields
 											url: attributes.url,
 											sort: attributes.sort,
+											format_displayname: attributes.format_displayname,
 									  }
 									: // Case 3: selectedPersonIds
 									attributes.selectedPersonIds?.length > 0
@@ -756,6 +760,7 @@ export default function Edit( { attributes, setAttributes } ) {
 												attributes.selectedFormat,
 											url: attributes.url,
 											sort: attributes.sort,
+											format_displayname: attributes.format_displayname,
 									  }
 									: // Case 4: orgnr als eigenständiger Fall
 									attributes.orgnr
@@ -766,6 +771,7 @@ export default function Edit( { attributes, setAttributes } ) {
 									    hideFields: attributes.hideFields,
 									    url: attributes.url,
 									    sort: attributes.sort,
+									    format_displayname: attributes.format_displayname,
 									}
 									: // Falls keiner der Fälle greift, leere Attribute übergeben
 									{
@@ -774,6 +780,7 @@ export default function Edit( { attributes, setAttributes } ) {
 									    hideFields: attributes.hideFields,
 									    url: attributes.url,
 									    sort: attributes.sort,
+									    format_displayname: attributes.format_displayname,
 									}
 									
 								),
@@ -791,18 +798,9 @@ export default function Edit( { attributes, setAttributes } ) {
 						<p>
 							{ attributes.role
 								? defaultOrgNr
-									? __(
-											'Using default organization.',
-											'rrze-faudir'
-									  )
-									: __(
-											'Please configure a default organization in the plugin settings or add an organization ID to display results.',
-											'rrze-faudir'
-									  )
-								: __(
-										'Please select persons or a category to display using the sidebar controls.',
-										'rrze-faudir'
-								  ) }
+									? __('Using default organization.','rrze-faudir')
+									: __('Please configure a default organization in the plugin settings or add an organization ID to display results.','rrze-faudir')
+								: __('Please select persons or a category to display using the sidebar controls.','rrze-faudir') }
 						</p>
 					</div>
 				) }

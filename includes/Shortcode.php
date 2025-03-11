@@ -52,7 +52,7 @@ class Shortcode {
                 'function'              => '',
                 'role'                  => '',
                 'button-text'           => '',
-                'format-displayname'    => ''
+                'format_displayname'     => ''
             ),
             $atts
         );
@@ -114,7 +114,7 @@ class Shortcode {
         $url        = $atts['url'];
         $orgnr      = $atts['orgnr'];
         $post_id    = $atts['id'];
-        $format_displayname = $atts['format-displayname'];
+        $format_displayname = $atts['format_displayname'];
         $persons    = [];
 
         // Closure to fetch persons by post ID
@@ -492,12 +492,13 @@ class Shortcode {
         $button_text = isset($atts['button-text']) && $atts['button-text'] !== '' ? $atts['button-text'] : '';
 
         // check and sanitize for format for displayname
-        $format_displayname = isset($atts['format-displayname']) && $atts['format-displayname'] !== '' ? $atts['format-displayname'] : '';
- 
+        $format_displayname = wp_kses($format_displayname, array('a' => array( 'href' => array(),'title' => array() ), 'br' => array(), 'em' => array(), 'strong' => array(), 'b' => array()) );
+       
+        
         return $template->render($atts['format'], [
             'show_fields'   => $show_fields,
             'hide_fields'   => $hide_fields,
-            'format-displayname' => $format_displayname,
+            'format_displayname' => $format_displayname,
             'persons'       => $persons,
             'url'           => $url,
             'button_text'   => $button_text,

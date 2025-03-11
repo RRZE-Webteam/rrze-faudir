@@ -59,6 +59,10 @@
     "sort": {
       "type": "string",
       "default": "familyName"
+    },
+    "format_displayname": {
+      "type": "string",
+      "default": ""
     }
   },
   "textdomain": "rrze-faudir",

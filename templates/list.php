@@ -54,7 +54,11 @@ if (!defined('ABSPATH')) {
                         $output .= '<li class="text-list" itemscope itemtype="https://schema.org/Person">';
          
                         $person = new Person($persondata);
-                        $displayname = $person->getDisplayName(true, false);
+                        $formatstring = '';
+                        if (!empty($format_displayname)) {
+                            $formatstring = $format_displayname;
+                        }
+                        $displayname = $person->getDisplayName(true, false,$formatstring,$show_fields,$hide_fields);
                         $mailadresses= $person->getEMail();
                         $phonenumbers = $person->getPhone();                        
                         $final_url = $person->getTargetURL();
