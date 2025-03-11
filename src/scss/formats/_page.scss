@@ -10,7 +10,8 @@
 	
 	container-name: faudir-page-container;
 	container-type: inline-size;
-    
+	margin: var(--faudir-format-margins);
+	
 	.format-page-container {
 	    --faudir-profile-image-section-width: 100%;
 	    --faudir-profile-image-section-height: 150px;
