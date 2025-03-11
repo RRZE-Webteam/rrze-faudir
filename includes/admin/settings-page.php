@@ -130,13 +130,13 @@ function rrze_faudir_settings_init() {
     // Shortcode Settings Section
     add_settings_section(
         'rrze_faudir_shortcode_section',
-        __('Shortcode Settings', 'rrze-faudir'),
+        __('Default Output Fields', 'rrze-faudir'),
         'rrze_faudir_shortcode_section_callback',
         'rrze_faudir_settings_shortcode'
     );
     add_settings_field(
         'rrze_faudir_default_output_fields',
-        __('Default Output Fields', 'rrze-faudir'),
+        __('Output fields for formats', 'rrze-faudir'),
         'rrze_faudir_default_output_fields_render',
         'rrze_faudir_settings_shortcode',
         'rrze_faudir_shortcode_section'
@@ -204,7 +204,7 @@ function rrze_faudir_business_card_section_callback() {
 }
 
 function rrze_faudir_shortcode_section_callback() {
-    echo '<p>' . esc_html__('Configure the shortcode settings.', 'rrze-faudir') . '</p>';
+    echo '<p>' . esc_html__('Configure the defaul fields for the output formats.', 'rrze-faudir') . '</p>';
 }
 
 // Render functions
@@ -214,23 +214,23 @@ function rrze_faudir_api_key_render() {
     } else {
         $options = get_option('rrze_faudir_options');
         $apiKey = isset($options['api_key']) ? esc_attr($options['api_key']) : '';
-        echo '<input type="text" name="rrze_faudir_options[api_key]" value="' .  esc_attr($apiKey) . '" size="50">';
-        echo '<p class="description">' . esc_html__('Enter your API key here.', 'rrze-faudir') . '</p>';
+        echo '<label><input type="text" name="rrze_faudir_options[api_key]" value="' .  esc_attr($apiKey) . '" size="50">';
+        echo '<p class="description">' . esc_html__('Enter your API key here.', 'rrze-faudir') . '</p></label>';
     }
 }
 
 function rrze_faudir_no_cache_logged_in_render() {
     $options = get_option('rrze_faudir_options');
-    echo '<input type="checkbox" name="rrze_faudir_options[no_cache_logged_in]" value="1" ' .  checked( 1, $options['no_cache_logged_in'], false ) . '>';
-    echo '<p class="description">' . esc_html__('Disable caching for logged-in editors.', 'rrze-faudir') . '</p>';
+    echo '<label><input type="checkbox" name="rrze_faudir_options[no_cache_logged_in]" value="1" ' .  checked( 1, $options['no_cache_logged_in'], false ) . '>';
+    echo '<span>' . esc_html__('Disable caching for logged-in editors.', 'rrze-faudir') . '</span></label>';
 
 }
 
 function rrze_faudir_cache_timeout_render() {
     $options = get_option('rrze_faudir_options');
     $value = isset($options['cache_timeout']) ? max(intval($options['cache_timeout']), 15) : 15; // Ensure minimum value is 15
-    echo '<input type="number" name="rrze_faudir_options[cache_timeout]" value="' . esc_attr($value) . '" min="15">';
-    echo '<p class="description">' . esc_html__('Set the cache timeout in minutes (minimum 15 minutes).', 'rrze-faudir') . '</p>';
+    echo '<label><input type="number" name="rrze_faudir_options[cache_timeout]" value="' . esc_attr($value) . '" min="15">';
+    echo '<p  class="description">' . esc_html__('Set the cache timeout in minutes (minimum 15 minutes).', 'rrze-faudir') . '</p></label>';
 }
 
 function rrze_faudir_transient_time_for_org_id_render() {
@@ -243,8 +243,8 @@ function rrze_faudir_transient_time_for_org_id_render() {
 function rrze_faudir_cache_org_timeout_render() {
     $options = get_option('rrze_faudir_options');
     $value = isset($options['cache_org_timeout']) ? intval($options['cache_org_timeout']) : 1;
-    echo '<input type="number" name="rrze_faudir_options[cache_org_timeout]" value="' . esc_attr($value) . '" min="1">';
-    echo '<p class="description">' . esc_html__('Set the cache timeout in days for organization identifiers.', 'rrze-faudir') . '</p>';
+    echo '<label><input type="number" name="rrze_faudir_options[cache_org_timeout]" value="' . esc_attr($value) . '" min="1">';
+    echo '<p class="description">' . esc_html__('Set the cache timeout in days for organization identifiers.', 'rrze-faudir') . '</p></label>';
 }
 
 function rrze_faudir_clear_cache_render() {
@@ -255,8 +255,8 @@ function rrze_faudir_clear_cache_render() {
 
 function rrze_faudir_error_message_render() {
     $options = get_option('rrze_faudir_options');
-    echo '<input type="checkbox" name="rrze_faudir_options[show_error_message]" value="1" ' . checked( 1, $options['show_error_message'], false ) . '>';
-    echo '<p class="description">' . esc_html__('Show error messages for incorrect contact entries.', 'rrze-faudir') . '</p>';
+    echo '<label><input type="checkbox" name="rrze_faudir_options[show_error_message]" value="1" ' . checked( 1, $options['show_error_message'], false ) . '>';
+    echo '<span>' . esc_html__('Show error messages for incorrect contact entries.', 'rrze-faudir') . '</span></label>';
    
 }
 
@@ -292,12 +292,10 @@ function rrze_faudir_fallback_link_faudir() {
 
 function rrze_faudir_person_slug_field() {
     $options = get_option('rrze_faudir_options'); // Get all plugin options
-    $default_slug = 'person'; // Default slug value
+    $default_slug = 'faudir'; // Default slug value
 
     // Retrieve the saved slug or use the default if not set
-    $slug = isset($options['person_slug']) && !empty($options['person_slug'])
-        ? sanitize_text_field($options['person_slug'])
-        : $default_slug;
+    $slug = isset($options['person_slug']) && !empty($options['person_slug']) ? sanitize_text_field($options['person_slug']) : $default_slug;
 
     // Save the default slug if not already set
     if (!isset($options['person_slug']) || empty($options['person_slug'])) {
@@ -322,7 +320,7 @@ function rrze_faudir_default_output_fields_render() {
     if (empty($default_fields)) {
         $default_fields = array_keys($available_fields); // Use all available fields by default
     }
-
+    
     echo '<table class="faudir-attributs">';
     echo '<tr>';
     echo '<th>'.esc_html__('Output data', 'rrze-faudir').'</th>';
@@ -374,15 +372,7 @@ function rrze_faudir_settings_page() {
 
         <!-- Tabs Navigation -->
         <h2 class="nav-tab-wrapper">
-            <a href="#tab-1" class="nav-tab nav-tab-active">
-                <?php echo esc_html__('API Settings', 'rrze-faudir'); ?>
-            </a>
-            <a href="#tab-2" class="nav-tab">
-                <?php echo esc_html__('Cache Settings', 'rrze-faudir'); ?>
-            </a>
-            <a href="#tab-3" class="nav-tab">
-                <?php echo esc_html__('Error Handling', 'rrze-faudir'); ?>
-            </a>
+            
             <a href="#tab-5" class="nav-tab">
                 <?php echo esc_html__('Search Contacts', 'rrze-faudir'); ?>
             </a>
@@ -390,36 +380,17 @@ function rrze_faudir_settings_page() {
                 <?php echo esc_html__('Search Organizations', 'rrze-faudir'); ?>
             </a>
             <a href="#tab-6" class="nav-tab">
-                <?php echo esc_html__('Shortcode Settings', 'rrze-faudir'); ?>
+                <?php echo esc_html__('Default Output Fields', 'rrze-faudir'); ?>
+                 
             </a>
             <a href="#tab-7" class="nav-tab">
-                <?php echo esc_html__('Reset Settings', 'rrze-faudir'); ?>
+                <?php echo esc_html__('Advanced Settings', 'rrze-faudir'); ?>
             </a>
         </h2>
 
         <!-- Tabs Content -->
         <form action="options.php" method="post">
             <?php settings_fields('rrze_faudir_settings'); ?>
-
-            <!-- API Settings Tab -->
-            <div id="tab-1" class="tab-content">
-                <?php do_settings_sections('rrze_faudir_settings'); ?>
-                <?php submit_button(); ?>
-            </div>
-
-            <!-- Cache Settings Tab -->
-            <div id="tab-2" class="tab-content" style="display:none;">
-                <?php do_settings_sections('rrze_faudir_settings_cache'); ?>
-                <?php submit_button(); ?>
-            </div>
-
-            <!-- Error Handling Tab -->
-            <div id="tab-3" class="tab-content" style="display:none;">
-                <?php do_settings_sections('rrze_faudir_settings_error'); ?>
-                
-                <?php submit_button(); ?>
-            </div>
-
 
             <!-- Shortcode Settings Tab -->
             <div id="tab-6" class="tab-content" style="display:none;">
@@ -429,11 +400,21 @@ function rrze_faudir_settings_page() {
 
             <!-- Reset Settings Tab -->
             <div id="tab-7" class="tab-content" style="display:none;">
-                <h3><?php echo esc_html__('Reset to Default Settings', 'rrze-faudir'); ?></h3>
-                <p><?php echo esc_html__('Click the button below to reset all settings to their default values.', 'rrze-faudir'); ?></p>
-                <button type="button" class="button button-secondary" id="reset-to-defaults-button">
-                    <?php echo esc_html__('Reset to Default Values', 'rrze-faudir'); ?>
-                </button>
+                <?php do_settings_sections('rrze_faudir_settings'); ?>
+                <hr>
+                <?php do_settings_sections('rrze_faudir_settings_cache'); ?>
+                <hr>
+                <?php do_settings_sections('rrze_faudir_settings_error'); ?>                
+                <?php submit_button(); ?>
+                
+                <hr>
+                <div class="danger-zone">
+                    <h3><?php echo esc_html__('Reset to Default Settings', 'rrze-faudir'); ?></h3>
+                    <p><?php echo esc_html__('Click the button below to reset all settings to their default values.', 'rrze-faudir'); ?></p>
+                    <button type="button" class="button button-secondary" id="reset-to-defaults-button">
+                        <?php echo esc_html__('Reset to Default Values', 'rrze-faudir'); ?>
+                    </button>
+                </div>
             </div>
         </form>
 

@@ -101,6 +101,17 @@
 	}
     }
     
+    .danger-zone {
+	margin: 2rem 0.5rem 0.5rem 0.5rem;
+	border: 3px solid var(--faudir-color-alert);
+	padding: 1rem;
+	
+	button#reset-to-defaults-button {
+	    background: red;
+	    color: white;
+	}
+    }
+    
 }
 
 // Used only in the classic version of the custom post editor, 
