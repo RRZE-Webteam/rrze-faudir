@@ -93,11 +93,26 @@
     
     table.faudir-attributs {
 	width: 100%;
+	th {
+	    width: auto;
+	}
 	td, th, td p {
 	    font-size: 1.5;
+	    line-height: 1.5;
 	}
 	td, th {
 	    padding: 0.3rem 0;
+	}
+    }
+    
+    .danger-zone {
+	margin: 2rem 0.5rem 0.5rem 0.5rem;
+	border: 3px solid var(--faudir-color-alert);
+	padding: 1rem;
+	
+	button#reset-to-defaults-button {
+	    background: red;
+	    color: white;
 	}
     }
     

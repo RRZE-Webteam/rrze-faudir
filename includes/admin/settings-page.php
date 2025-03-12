@@ -40,6 +40,82 @@ function rrze_faudir_settings_init() {
         )
     );
 
+     // Contacts Search Section
+    add_settings_section(
+        'rrze_faudir_contacts_search_section',
+        __('Search Contacts', 'rrze-faudir'),
+        'rrze_faudir_contacts_search_section_callback',
+        'rrze_faudir_settings_contacts_search'
+    );
+    
+    
+    // Add Organization Search Section
+    add_settings_section(
+        'rrze_faudir_org_search_section',
+        __('Search Organizations', 'rrze-faudir'),
+        'rrze_faudir_org_search_section_callback',
+        'rrze_faudir_settings_org_search'
+    );
+    
+    
+    
+   
+
+    // Shortcode Settings Section
+    add_settings_section(
+        'rrze_faudir_shortcode_section',
+        __('Default Output Fields', 'rrze-faudir'),
+        'rrze_faudir_shortcode_section_callback',
+        'rrze_faudir_settings_shortcode'
+    );
+    add_settings_field(
+        'rrze_faudir_default_output_fields',
+        __('Output fields for formats', 'rrze-faudir'),
+        'rrze_faudir_default_output_fields_render',
+        'rrze_faudir_settings_shortcode',
+        'rrze_faudir_shortcode_section'
+    );
+
+    add_settings_field(
+        'rrze_faudir_business_card_title',
+        __('Kompakt Card Button Title', 'rrze-faudir'),
+        'rrze_faudir_business_card_title_render',
+        'rrze_faudir_settings_shortcode',
+        'rrze_faudir_shortcode_section'
+    );
+    add_settings_field(
+        'rrze_faudir_hard_sanitize',
+        __('Hard Sanitize', 'rrze-faudir'),
+        'rrze_faudir_hard_sanitize_render',
+        'rrze_faudir_settings_shortcode',
+        'rrze_faudir_shortcode_section'
+    );
+    add_settings_field(
+        'rrze_faudir_hard_sanitize',
+        __('Fallback FAUdir link', 'rrze-faudir'),
+        'rrze_faudir_fallback_link_faudir',
+        'rrze_faudir_settings_shortcode',
+        'rrze_faudir_shortcode_section'
+    );
+    
+    
+    
+     // Profilpage Output fields
+    add_settings_section(
+        'rrze_faudir_profilpage_section',
+        __('Profilpage', 'rrze-faudir'),
+        'rrze_faudir_profilpage_section_callback',
+        'rrze_faudir_settings_profilpage'
+    );
+    add_settings_field(
+        'rrze_faudir_profilpage_output_fields',
+        __('Data fields that are shown on the profil page', 'rrze-faudir'),
+        'rrze_faudir_profilpage_output_fields_render',
+        'rrze_faudir_settings_profilpage',
+        'rrze_faudir_profilpage_section'
+    );
+    
+    
     // API Settings Section
     add_settings_section(
         'rrze_faudir_api_section',
@@ -119,63 +195,10 @@ function rrze_faudir_settings_init() {
         'rrze_faudir_error_section'
     );
 
-    // Contacts Search Section
-    add_settings_section(
-        'rrze_faudir_contacts_search_section',
-        __('Search Contacts', 'rrze-faudir'),
-        'rrze_faudir_contacts_search_section_callback',
-        'rrze_faudir_settings_contacts_search'
-    );
-
-    // Shortcode Settings Section
-    add_settings_section(
-        'rrze_faudir_shortcode_section',
-        __('Shortcode Settings', 'rrze-faudir'),
-        'rrze_faudir_shortcode_section_callback',
-        'rrze_faudir_settings_shortcode'
-    );
-    add_settings_field(
-        'rrze_faudir_default_output_fields',
-        __('Default Output Fields', 'rrze-faudir'),
-        'rrze_faudir_default_output_fields_render',
-        'rrze_faudir_settings_shortcode',
-        'rrze_faudir_shortcode_section'
-    );
-
-    add_settings_field(
-        'rrze_faudir_business_card_title',
-        __('Kompakt Card Button Title', 'rrze-faudir'),
-        'rrze_faudir_business_card_title_render',
-        'rrze_faudir_settings_shortcode',
-        'rrze_faudir_shortcode_section'
-    );
-    add_settings_field(
-        'rrze_faudir_hard_sanitize',
-        __('Hard Sanitize', 'rrze-faudir'),
-        'rrze_faudir_hard_sanitize_render',
-        'rrze_faudir_settings_shortcode',
-        'rrze_faudir_shortcode_section'
-    );
-    add_settings_field(
-        'rrze_faudir_hard_sanitize',
-        __('Fallback FAUdir link', 'rrze-faudir'),
-        'rrze_faudir_fallback_link_faudir',
-        'rrze_faudir_settings_shortcode',
-        'rrze_faudir_shortcode_section'
-    );
     
     
     
     
-    
-    
-    // Add Organization Search Section
-    add_settings_section(
-        'rrze_faudir_org_search_section',
-        __('Search Organizations', 'rrze-faudir'),
-        'rrze_faudir_org_search_section_callback',
-        'rrze_faudir_settings_org_search'
-    );
 
     // Note: The search form will be handled in the settings page itself, no need for a settings field here.
 
@@ -204,33 +227,82 @@ function rrze_faudir_business_card_section_callback() {
 }
 
 function rrze_faudir_shortcode_section_callback() {
-    echo '<p>' . esc_html__('Configure the shortcode settings.', 'rrze-faudir') . '</p>';
+    echo '<p>' . esc_html__('Configure the default fields for the output formats.', 'rrze-faudir') . '</p>';
 }
 
+function rrze_faudir_profilpage_section_callback() {
+    echo '<p>' . esc_html__('Configure the default output fields for the profile page of a single person.', 'rrze-faudir') . '</p>';
+}
+
+
+
+
 // Render functions
+function rrze_faudir_profilpage_output_fields_render() {       
+    $config = new Config;
+    $opt = $config->getOptions(); 
+    $available_fields = $config->get('avaible_fields');
+                        
+    if ((empty($opt['output_fields_endpoint'])) && isset($opt['default_output_fields_endpoint']) && (!empty($opt['default_output_fields_endpoint']))) {
+        $opt['output_fields_endpoint'] = $opt['default_output_fields_endpoint'];
+    }
+        
+          
+    echo '<table class="faudir-attributs">';
+    echo '<tr>';
+    echo '<th>'.esc_html__('Output data', 'rrze-faudir').'</th>';
+    echo '<th>'.esc_html__('Default value', 'rrze-faudir').'</th>';
+    echo '</tr>';
+     foreach ($available_fields as $field => $label) {
+        $checked = in_array($field, $opt['output_fields_endpoint']); 
+
+        echo "<tr>";
+        echo "<th>";
+        echo "<label for='" . esc_attr('rrze_faudir_2profilpage_output_fields' . $field) . "'>";
+        echo "<input type='checkbox' id='" . esc_attr('rrze_faudir_2profilpage_output_fields' . $field) . "' name='rrze_faudir_options[output_fields_endpoint][]' value='" . esc_attr($field) . "' " . checked($checked, true, false) . ">";
+        echo esc_html($label) . "</label>";
+        echo "</th>";
+        echo "<td>";
+        $checked = in_array($field, $opt['default_output_fields_endpoint']); 
+        if ($checked) {
+            echo __('Visible','rrze-faudir');
+        } else {
+            echo __('Invisible','rrze-faudir');
+        }
+        
+        echo "</td>";
+
+        echo "</tr>";
+    }
+    echo '</table>';
+    echo '<p class="description">' . esc_html__('Select the fields to display in the profil page of a single person.', 'rrze-faudir') . '</p>';
+}
+
+
+
 function rrze_faudir_api_key_render() {
     if (FaudirUtils::isUsingNetworkKey()) {
         echo '<p>' . esc_html__('The API key is being used from the network installation.', 'rrze-faudir') . '</p>';
     } else {
         $options = get_option('rrze_faudir_options');
         $apiKey = isset($options['api_key']) ? esc_attr($options['api_key']) : '';
-        echo '<input type="text" name="rrze_faudir_options[api_key]" value="' .  esc_attr($apiKey) . '" size="50">';
-        echo '<p class="description">' . esc_html__('Enter your API key here.', 'rrze-faudir') . '</p>';
+        echo '<label><input type="text" name="rrze_faudir_options[api_key]" value="' .  esc_attr($apiKey) . '" size="50">';
+        echo '<p class="description">' . esc_html__('Enter your API key here.', 'rrze-faudir') . '</p></label>';
     }
 }
 
 function rrze_faudir_no_cache_logged_in_render() {
     $options = get_option('rrze_faudir_options');
-    echo '<input type="checkbox" name="rrze_faudir_options[no_cache_logged_in]" value="1" ' .  checked( 1, $options['no_cache_logged_in'], false ) . '>';
-    echo '<p class="description">' . esc_html__('Disable caching for logged-in editors.', 'rrze-faudir') . '</p>';
+    echo '<label><input type="checkbox" name="rrze_faudir_options[no_cache_logged_in]" value="1" ' .  checked( 1, $options['no_cache_logged_in'], false ) . '>';
+    echo '<span>' . esc_html__('Disable caching for logged-in editors.', 'rrze-faudir') . '</span></label>';
 
 }
 
 function rrze_faudir_cache_timeout_render() {
     $options = get_option('rrze_faudir_options');
     $value = isset($options['cache_timeout']) ? max(intval($options['cache_timeout']), 15) : 15; // Ensure minimum value is 15
-    echo '<input type="number" name="rrze_faudir_options[cache_timeout]" value="' . esc_attr($value) . '" min="15">';
-    echo '<p class="description">' . esc_html__('Set the cache timeout in minutes (minimum 15 minutes).', 'rrze-faudir') . '</p>';
+    echo '<label><input type="number" name="rrze_faudir_options[cache_timeout]" value="' . esc_attr($value) . '" min="15">';
+    echo '<p  class="description">' . esc_html__('Set the cache timeout in minutes (minimum 15 minutes).', 'rrze-faudir') . '</p></label>';
 }
 
 function rrze_faudir_transient_time_for_org_id_render() {
@@ -243,8 +315,8 @@ function rrze_faudir_transient_time_for_org_id_render() {
 function rrze_faudir_cache_org_timeout_render() {
     $options = get_option('rrze_faudir_options');
     $value = isset($options['cache_org_timeout']) ? intval($options['cache_org_timeout']) : 1;
-    echo '<input type="number" name="rrze_faudir_options[cache_org_timeout]" value="' . esc_attr($value) . '" min="1">';
-    echo '<p class="description">' . esc_html__('Set the cache timeout in days for organization identifiers.', 'rrze-faudir') . '</p>';
+    echo '<label><input type="number" name="rrze_faudir_options[cache_org_timeout]" value="' . esc_attr($value) . '" min="1">';
+    echo '<p class="description">' . esc_html__('Set the cache timeout in days for organization identifiers.', 'rrze-faudir') . '</p></label>';
 }
 
 function rrze_faudir_clear_cache_render() {
@@ -255,14 +327,17 @@ function rrze_faudir_clear_cache_render() {
 
 function rrze_faudir_error_message_render() {
     $options = get_option('rrze_faudir_options');
-    echo '<input type="checkbox" name="rrze_faudir_options[show_error_message]" value="1" ' . checked( 1, $options['show_error_message'], false ) . '>';
-    echo '<p class="description">' . esc_html__('Show error messages for incorrect contact entries.', 'rrze-faudir') . '</p>';
+    echo '<label><input type="checkbox" name="rrze_faudir_options[show_error_message]" value="1" ' . checked( 1, $options['show_error_message'], false ) . '>';
+    echo '<span>' . esc_html__('Show error messages for incorrect contact entries.', 'rrze-faudir') . '</span></label>';
    
 }
 
 function rrze_faudir_business_card_title_render() {
     $options = get_option('rrze_faudir_options');
-    $default_title = esc_html__('More', 'rrze-faudir');
+    
+    $config = new Config;
+    $default_title = $config->get('business_card_title');
+    
     $value = isset($options['business_card_title']) && !empty($options['business_card_title'])
         ? sanitize_text_field($options['business_card_title'])
         : $default_title;
@@ -279,25 +354,23 @@ function rrze_faudir_business_card_title_render() {
 
 function rrze_faudir_hard_sanitize_render() {
     $options = get_option('rrze_faudir_options');
-    echo '<input type="checkbox" name="rrze_faudir_options[hard_sanitize]" value="1" ' . checked( 1, $options['hard_sanitize'], false ) . '>';
-    echo '<p class="description">' . esc_html__('Hard Sanitize abbreviations.', 'rrze-faudir') .' <em>('.__('Only the essential academic titles are permitted. Labels for the respective disciplines are removed.', 'rrze-faudir') . ')</em></p>';
+    echo '<label><input type="checkbox" name="rrze_faudir_options[hard_sanitize]" value="1" ' . checked( 1, $options['hard_sanitize'], false ) . '>';
+    echo '<span>' . esc_html__('Hard Sanitize abbreviations.', 'rrze-faudir') .' <em>('.__('Only the essential academic titles are permitted. Labels for the respective disciplines are removed.', 'rrze-faudir') . ')</em></span></label>';
 }
 
 function rrze_faudir_fallback_link_faudir() {
     $options = get_option('rrze_faudir_options');
-    echo '<input type="checkbox" name="rrze_faudir_options[fallback_link_faudir]" value="1" ' . checked( 1, $options['fallback_link_faudir'], false ) . '>';
-    echo '<p class="description">' . esc_html__('On using profil links, fallback to the public faudir portal, if no local custom post is avaible.', 'rrze-faudir') .'</p>';
+    echo '<label><input type="checkbox" name="rrze_faudir_options[fallback_link_faudir]" value="1" ' . checked( 1, $options['fallback_link_faudir'], false ) . '>';
+    echo '<span>' . esc_html__('On using profil links, fallback to the public faudir portal, if no local custom post is avaible.', 'rrze-faudir') .'</span></label>';
 }
 
 
 function rrze_faudir_person_slug_field() {
     $options = get_option('rrze_faudir_options'); // Get all plugin options
-    $default_slug = 'person'; // Default slug value
+    $default_slug = 'faudir'; // Default slug value
 
     // Retrieve the saved slug or use the default if not set
-    $slug = isset($options['person_slug']) && !empty($options['person_slug'])
-        ? sanitize_text_field($options['person_slug'])
-        : $default_slug;
+    $slug = isset($options['person_slug']) && !empty($options['person_slug']) ? sanitize_text_field($options['person_slug']) : $default_slug;
 
     // Save the default slug if not already set
     if (!isset($options['person_slug']) || empty($options['person_slug'])) {
@@ -313,16 +386,16 @@ function rrze_faudir_default_output_fields_render() {
     $options = get_option('rrze_faudir_options');
     $default_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : array();
 
-        $config = new Config;
-        $available_fields = $config->get('avaible_fields');
-        $formatnames = $config->get('formatnames');
-        $fieldlist = $config->getAvaibleFieldlist();
+    $config = new Config;
+    $available_fields = $config->get('avaible_fields');
+    $formatnames = $config->get('formatnames');
+    $fieldlist = $config->getAvaibleFieldlist();
 
     // Set default state: all checkboxes checked if no selection exists
     if (empty($default_fields)) {
         $default_fields = array_keys($available_fields); // Use all available fields by default
     }
-
+    
     echo '<table class="faudir-attributs">';
     echo '<tr>';
     echo '<th>'.esc_html__('Output data', 'rrze-faudir').'</th>';
@@ -346,7 +419,7 @@ function rrze_faudir_default_output_fields_render() {
                  if (!empty($canuse)) {
                     $canuse .= ', ';
                 }
-                $canuse .= $formatnames[$fl];
+                $canuse .= $formatnames[$fl].' (<code>'.$fl.'</code>)';
             }
         }
         if (!empty($canuse)) {
@@ -374,26 +447,21 @@ function rrze_faudir_settings_page() {
 
         <!-- Tabs Navigation -->
         <h2 class="nav-tab-wrapper">
-            <a href="#tab-1" class="nav-tab nav-tab-active">
-                <?php echo esc_html__('API Settings', 'rrze-faudir'); ?>
-            </a>
-            <a href="#tab-2" class="nav-tab">
-                <?php echo esc_html__('Cache Settings', 'rrze-faudir'); ?>
-            </a>
-            <a href="#tab-3" class="nav-tab">
-                <?php echo esc_html__('Error Handling', 'rrze-faudir'); ?>
-            </a>
-            <a href="#tab-5" class="nav-tab">
+            
+            <a href="#tab-1" class="nav-tab">
                 <?php echo esc_html__('Search Contacts', 'rrze-faudir'); ?>
             </a>
-            <a href="#tab-8" class="nav-tab">
+            <a href="#tab-2" class="nav-tab">
                 <?php echo esc_html__('Search Organizations', 'rrze-faudir'); ?>
             </a>
-            <a href="#tab-6" class="nav-tab">
-                <?php echo esc_html__('Shortcode Settings', 'rrze-faudir'); ?>
+            <a href="#tab-3" class="nav-tab">
+                <?php echo esc_html__('Default Output Fields', 'rrze-faudir'); ?>
             </a>
-            <a href="#tab-7" class="nav-tab">
-                <?php echo esc_html__('Reset Settings', 'rrze-faudir'); ?>
+            <a href="#tab-4" class="nav-tab">
+                <?php echo esc_html__('Profilpage', 'rrze-faudir'); ?>
+            </a>
+            <a href="#tab-5" class="nav-tab">
+                <?php echo esc_html__('Advanced Settings', 'rrze-faudir'); ?>
             </a>
         </h2>
 
@@ -401,44 +469,40 @@ function rrze_faudir_settings_page() {
         <form action="options.php" method="post">
             <?php settings_fields('rrze_faudir_settings'); ?>
 
-            <!-- API Settings Tab -->
-            <div id="tab-1" class="tab-content">
-                <?php do_settings_sections('rrze_faudir_settings'); ?>
-                <?php submit_button(); ?>
-            </div>
-
-            <!-- Cache Settings Tab -->
-            <div id="tab-2" class="tab-content" style="display:none;">
-                <?php do_settings_sections('rrze_faudir_settings_cache'); ?>
-                <?php submit_button(); ?>
-            </div>
-
-            <!-- Error Handling Tab -->
-            <div id="tab-3" class="tab-content" style="display:none;">
-                <?php do_settings_sections('rrze_faudir_settings_error'); ?>
-                
-                <?php submit_button(); ?>
-            </div>
-
-
             <!-- Shortcode Settings Tab -->
-            <div id="tab-6" class="tab-content" style="display:none;">
+            <div id="tab-3" class="tab-content" style="display:none;">
                 <?php do_settings_sections('rrze_faudir_settings_shortcode'); ?>
+                <?php submit_button(); ?>
+            </div>
+            
+              <!-- Profilpage Settings Tab -->
+            <div id="tab-4" class="tab-content" style="display:none;">
+                <?php do_settings_sections('rrze_faudir_settings_profilpage'); ?>
                 <?php submit_button(); ?>
             </div>
 
             <!-- Reset Settings Tab -->
-            <div id="tab-7" class="tab-content" style="display:none;">
-                <h3><?php echo esc_html__('Reset to Default Settings', 'rrze-faudir'); ?></h3>
-                <p><?php echo esc_html__('Click the button below to reset all settings to their default values.', 'rrze-faudir'); ?></p>
-                <button type="button" class="button button-secondary" id="reset-to-defaults-button">
-                    <?php echo esc_html__('Reset to Default Values', 'rrze-faudir'); ?>
-                </button>
+            <div id="tab-5" class="tab-content" style="display:none;">
+                <?php do_settings_sections('rrze_faudir_settings'); ?>
+                <hr>
+                <?php do_settings_sections('rrze_faudir_settings_cache'); ?>
+                <hr>
+                <?php do_settings_sections('rrze_faudir_settings_error'); ?>                
+                <?php submit_button(); ?>
+                
+                <hr>
+                <div class="danger-zone">
+                    <h3><?php echo esc_html__('Reset to Default Settings', 'rrze-faudir'); ?></h3>
+                    <p><?php echo esc_html__('Click the button below to reset all settings to their default values.', 'rrze-faudir'); ?></p>
+                    <button type="button" class="button button-secondary" id="reset-to-defaults-button">
+                        <?php echo esc_html__('Reset to Default Values', 'rrze-faudir'); ?>
+                    </button>
+                </div>
             </div>
         </form>
 
         <!-- Contacts Search Tab -->
-        <div id="tab-5" class="tab-content" style="display:none;">
+        <div id="tab-1" class="tab-content" style="display:none;">
             <h2>
                 <?php echo esc_html__('Search Contacts', 'rrze-faudir'); ?>
             </h2>
@@ -511,7 +575,7 @@ function rrze_faudir_settings_page() {
         </div>
 
         <!-- Organizations Search Tab -->
-        <div id="tab-8" class="tab-content" style="display:none;">
+        <div id="tab-2" class="tab-content" style="display:none;">
             <!-- Default Organization -->
             <?php
             $default_org = get_option('rrze_faudir_options', array())['default_organization'] ?? null;

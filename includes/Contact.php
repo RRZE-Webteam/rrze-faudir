@@ -341,25 +341,30 @@ class Contact {
                     }
                 }
                 
-                $address .= '<span class="roomfloor" itemprop="containedInPlace" itemscope itemtype="https://schema.org/Room">';
-
+                $adressparts = '';
+                
                 if (!empty($room)) {
-                    $address .= $room;
+                    $adressparts .= $room;
                     if ((!empty($floor)) || (!empty($map))) {
-                        $address .= ', ';
+                        $adressparts .= ', ';
                     }
                 }
                 if (!empty($floor)) {
-                    $address .= $floor;
+                    $adressparts .= $floor;
                     if (!empty($map)) {
-                        $address .= ', ';
+                        $adressparts .= ', ';
                     }
                 }
                 if (!empty($map)) {
-                    $address .= $map;
+                    $adressparts .= $map;
                 }
 
-                $address .= '</span>'; 
+                if (!empty($adressparts)) {
+                    $address .= '<span class="roomfloor" itemprop="containedInPlace" itemscope itemtype="https://schema.org/Room">';
+                    $address .= $adressparts;
+                    $address .= '</span>'; 
+                }
+              
             }
 
            

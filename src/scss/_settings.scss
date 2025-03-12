@@ -4,7 +4,7 @@
 /*----------------------------------------------------------------------------*/
 
 // Add global styles here
-.faudir {
+.faudir, .faudir-settings {
    
     --faudir-color-list-displayname: var(--color-content-links, #222);
     --faudir-color-links:  var(--color-links, #444);
@@ -28,5 +28,7 @@
     --faudir-h5-font-size: var(--font-size-xs,  0.76rem);
     
     --faudir-format-margins: 1rem auto;
+    
+    --faudir-color-alert: var(--color-Notice, #a71c18);
 
 }
