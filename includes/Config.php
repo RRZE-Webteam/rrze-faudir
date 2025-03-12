@@ -16,8 +16,7 @@ class Config {
         'show_error_message'        => false,
         'business_card_title'       => '',
         'hard_sanitize'             => false,
-        'fallback_link_faudir'      => false,
-        'default_output_fields'     => ['displayname', 'jobTitle', 'email', 'phone', 'url'], // Default fields      
+        'fallback_link_faudir'      => true,
         'default_display_order'     => [
             'table' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'link'],
             'list'  => ['displayname', 'jobTitle', 'url', 'email', 'socialmedia', 'roompos', 'room', 'floor', 'address','faumap', 'link']
@@ -28,14 +27,14 @@ class Config {
             'compact' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],
             'page' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'content', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'format_displayname'],
             'card'  => ['image', 'displayname', 'jobTitle', 'organization', 'url', 'email', 'socialmedia', 'link', 'format_displayname'],
-
+        ],
+        'default_output_fields'     => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia'], // Default fields      
+        'default_output_fields_endpoint' => [
+            'image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor',  
+            'teasertext', 'content', 'zip', 'street', 'city', 'officehours', 'consultationhours'
         ]
         
     ];
-    
-    
-
-    
     
 
     public function __construct() {

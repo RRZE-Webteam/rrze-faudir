@@ -93,8 +93,12 @@
     
     table.faudir-attributs {
 	width: 100%;
+	th {
+	    width: auto;
+	}
 	td, th, td p {
 	    font-size: 1.5;
+	    line-height: 1.5;
 	}
 	td, th {
 	    padding: 0.3rem 0;

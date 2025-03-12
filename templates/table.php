@@ -218,7 +218,27 @@ if (!defined('ABSPATH')) {
                                             }
                                             $value = $faumap;
                                         }
-                               
+                               } elseif ($key_lower === 'link')  {     
+                                        if (!empty($final_url)) {
+                                            $link = '<span class="profile-link">';
+                                            $link .= '<a class="buttonlink" itemprop="sameAs" href="'.esc_url($final_url).'">';  
+
+                                            $opt = $config->getOptions();                       
+                                            $linkttitle = $opt['business_card_title'];
+                                            if (empty($linkttitle)) {
+                                                 $linkttitle  = __('User profil', 'rrze-faudir');
+                                            }
+
+                                            $link .= $linkttitle;
+                                            $link .= '</a>';
+                                            $link .= '</span>';
+
+                                            $value = $link;
+
+                                        }
+
+ 
+                                        
                                 } elseif ($key_lower === 'officehours')  {  
                                     if (!empty($workplaces)) {
                                             $hours = '';
