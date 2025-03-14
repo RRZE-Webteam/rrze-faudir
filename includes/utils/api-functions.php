@@ -16,65 +16,6 @@ use RRZE\FAUdir\Template;
 use RRZE\FAUdir\Person;
 use RRZE\FAUdir\Debug;
 
-function fetch_fau_persons($limit = 60, $offset = 0, $params = []) {
-    $api_key = FaudirUtils::getKey();
-    $url = FaudirUtils::getApiBaseUrl() . 'persons?limit=' . $limit . '&offset=' . $offset;
-
-    // Define allowed query parameters and map them to their corresponding keys
-    $query_params = [
-        'q',
-        'sort',
-        'attrs',
-        'lq',
-        'rq',
-        'view',
-        'lf'
-    ];
-
-    $logUrl = '';
-
-    // Loop through the parameters and append them to the URL if they exist in $params
-    foreach ($query_params as $param) {
-        if (!empty($params[$param])) {
-            $logUrl .= '&' . $param . '=' . $params[$param];
-            $url .= '&' . $param . '=' . urlencode($params[$param]);
-        }
-    }
-
-    error_log('$logUrl: ' . $logUrl);
-
-    // Handle givenName and familyName as special cases to be combined into the 'q' parameter
-    if (!empty($params['givenName'])) {
-        $url .= '&q=' . urlencode('^' . $params['givenName']);
-    }
-    if (!empty($params['familyName'])) {
-        $url .= '&q=' . urlencode('^' . $params['familyName']);
-    }
-    if (!empty($params['identifier'])) {
-        $url .= '&q=' . urlencode('^' . $params['identifier']);
-    }
-    if (!empty($params['email'])) {
-        $url .= '&q=' . urlencode('^' . $params['email']);
-    }
-
-    // error_log('Fetching persons with URL: ' . $url);
-    $response = wp_remote_get($url, array(
-        'headers' => array(
-            'accept' => 'application/json',
-            'X-API-KEY' => $api_key,
-        ),
-    ));
-
-    if (is_wp_error($response)) {
-        return __('Error retrieving data: ', 'rrze-faudir') . $response->get_error_message();
-    }
-    $body = wp_remote_retrieve_body($response);
-    $data = json_decode($body, true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        return __('Error decoding JSON data.', 'rrze-faudir');
-    }
-    return $data ?? [];
-}
 
 // Fetch person by ID
 function fetch_fau_person_by_id($personId) {

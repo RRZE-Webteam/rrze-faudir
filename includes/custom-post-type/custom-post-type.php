@@ -1,6 +1,8 @@
 <?php
 
 use RRZE\FAUdir\FaudirUtils;
+use RRZE\FAUdir\Config;
+use RRZE\FAUdir\API;
 
 // Register the Custom Post Type
 function register_custom_person_post_type() {
@@ -266,6 +268,7 @@ function render_person_additional_fields($post) {
 
 
 function save_person_additional_fields($post_id) {
+    
     // Verify nonce
     if (!isset($_POST['person_additional_fields_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['person_additional_fields_nonce'])), 'save_person_additional_fields')) {
         return;
@@ -280,7 +283,9 @@ function save_person_additional_fields($post_id) {
     if (!current_user_can('edit_post', $post_id)) {
         return;
     }
-
+    $config = new Config();
+    $api = new API($config);
+    
     // Get the person ID
     $person_id = sanitize_text_field(wp_unslash($_POST['person_id'] ?? ''));
 
@@ -290,7 +295,7 @@ function save_person_additional_fields($post_id) {
         $params = ['identifier' => $person_id];
 
         // Fetch person attributes using the custom function
-        $response = fetch_fau_persons(60, 0, $params);
+        $response = $api->getPersons(60, 0, $params);
 
         // Check if the response is a valid array
         if (is_array($response) && isset($response['data'])) {
@@ -416,8 +421,10 @@ function fetch_person_attributes() {
     $person_id = sanitize_text_field($_POST['person_id']);
 
     if (!empty($person_id)) {
+        $config = new Config();
+        $api = new API($config);
         $params = ['identifier' => $person_id];
-        $response = fetch_fau_persons(60, 0, $params);
+        $response = $api->getPersons(60, 0, $params);
 
         if (is_array($response) && isset($response['data'])) {
             $person = $response['data'][0] ?? null;
@@ -491,10 +498,12 @@ function rrze_faudir_create_custom_person() {
 
     // Set the person_id meta field
     update_post_meta($post_id, 'person_id', $person_id);
-
+    
+    $config = new Config();    
+    $api = new API($config);
     // Fetch additional person attributes
     $params = ['identifier' => $person_id];
-    $response = fetch_fau_persons(60, 0, $params);
+    $response = $api->getPersons(60, 0, $params);
 
     if (is_array($response) && isset($response['data'])) {
         $person = $response['data'][0] ?? null;
@@ -507,7 +516,7 @@ function rrze_faudir_create_custom_person() {
             update_post_meta($post_id, 'person_givenName', sanitize_text_field($person['givenName'] ?? ''));
             update_post_meta($post_id, 'person_familyName', sanitize_text_field($person['familyName'] ?? ''));
             update_post_meta($post_id, 'person_honorificPrefix', sanitize_text_field($person['honorificPrefix'] ?? ''));
-            update_post_meta($post_id, 'person_honorificPrefix', sanitize_text_field($person['honorificPrefix'] ?? ''));
+            update_post_meta($post_id, 'person_honorificSuffix', sanitize_text_field($person['honorificSuffix'] ?? ''));
             update_post_meta($post_id, 'person_titleOfNobility', sanitize_text_field($person['titleOfNobility'] ?? ''));
 
             // Process organizations and functions

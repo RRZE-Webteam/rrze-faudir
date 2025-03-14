@@ -6,6 +6,7 @@ if (!defined('ABSPATH')) {
 }
 use RRZE\FAUdir\FaudirUtils;
 use RRZE\FAUdir\Config;
+use RRZE\FAUdir\API;
 use RRZE\FAUdir\Debug;
 
 // Add admin menu
@@ -741,11 +742,15 @@ function rrze_faudir_search_person_ajax() {
     if (!empty($familyName)) {
         $queryParts[] = 'familyName[ireg]=' . $familyName;
     }
+    $config = new Config();
+    $api = new API($config);
+    
     if (!empty($email)) {
+       
+        $response = $api->getContacts(1, 0, ['lq' => 'workplaces.mails[ireg]=' . $email]);
         // search for contacts with the email
-        $response = fetch_fau_contacts(1, 0, ['lq' => 'workplaces.mails[ireg]=' . $email]);
-        // error_log('Response: ' . print_r($response, true));
-        // if no contact is found, search the persons
+
+        // if no contact mail in workplaces found, search in person main data
         if (empty($response['data'])) {
             $queryParts[] = 'email[ireg]=' . $email;
         } else {
@@ -762,7 +767,7 @@ function rrze_faudir_search_person_ajax() {
         'lq' => implode('&', $queryParts)
     ];
 
-    $response = fetch_fau_persons(60, 0, $params);
+    $response = $api->getPersons(60, 0, $params);
 
     foreach ($response['data'] as $key => $person) {
         $response['data'][$key]['contacts'] = FaudirUtils::filterContactsByCriteria(
