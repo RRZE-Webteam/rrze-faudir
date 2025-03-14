@@ -26,7 +26,7 @@ class Maintenance {
     }
     
     public function register_hooks() {
-         error_log('Maintenance\register_hooks');
+
         //Aktivierungshook
         register_activation_hook(RRZE_PLUGIN_FILE, [$this, 'migrate_person_data_on_activation']);
         
@@ -76,7 +76,7 @@ class Maintenance {
                     $data = json_decode($body, true);
                     if ($data === null) {
                          $not_imported_count++;
-                         $not_imported_reasons[] = __('Person with Univis ID ', 'rrze-faudir') . $univisid .' '. __('cannot be found on UnivIS. Account either removed or UnivIS Id wrong', 'rrze-faudir'). '.';
+                         $not_imported_reasons[] = __('Person with UnivIS ID', 'rrze-faudir'). ': <em>'. $post->post_title.'</em>, <code>' . $univisid .'</code> '. __('cannot be found on UnivIS. Account either removed or UnivIS Id wrong', 'rrze-faudir'). '.';
 
                     } else {
 
@@ -223,20 +223,20 @@ class Maintenance {
                                // Separate messages for each case
                                if (empty($univisid)) {
                                    $not_imported_count++;
-                                   $not_imported_reasons[] = __('Missing UnivIS ID for person: ', 'rrze-faudir') . $post->post_title;
+                                   $not_imported_reasons[] = __('Missing UnivIS ID for person', 'rrze-faudir').': <em>'. $post->post_title.'</em>';
                                } else {
                                    $not_imported_count++;
-                                   $not_imported_reasons[] = __('Person with UnivIS ID ', 'rrze-faudir') . $univisid .' '. __('already exists', 'rrze-faudir'). '.';
+                                   $not_imported_reasons[] = __('Person with UnivIS ID', 'rrze-faudir').':  <em>'. $post->post_title.'</em>, <code>' . $univisid .'</code> '. __('already exists', 'rrze-faudir'). '.';
                                }
                            }
                        } else {
                            // Separate messages for each case
                            if (empty($univisid)) {
                                $not_imported_count++;
-                               $not_imported_reasons[] = __('Missing UnivIS ID for person: ', 'rrze-faudir') . $post->post_title;
+                               $not_imported_reasons[] = __('Missing UnivIS ID for person', 'rrze-faudir').': <em>' . $post->post_title.'</em>';
                            } else {
                                $not_imported_count++;
-                               $not_imported_reasons[] = __('Person with UnivIS ID ', 'rrze-faudir') . $univisid .' '. __('already exists or cannot be found on FAUdir', 'rrze-faudir'). '.';
+                               $not_imported_reasons[] = __('Person with UnivIS ID', 'rrze-faudir').':  <em>'. $post->post_title.'</em>, <code>' . $univisid .'</code> '. __('already exists or cannot be found on FAUdir', 'rrze-faudir'). '.';
                            }
                        }
                     }   
@@ -244,10 +244,10 @@ class Maintenance {
                     // Separate messages for each case
                     if (empty($univisid)) {
                         $not_imported_count++;
-                        $not_imported_reasons[] = __('Missing UnivIS ID for person: ', 'rrze-faudir') . $post->post_title;
+                        $not_imported_reasons[] = __('Missing UnivIS ID for person', 'rrze-faudir').': <em>'. $post->post_title.'</em>';
                     } else {
                         $not_imported_count++;
-                        $not_imported_reasons[] = __('Person with UnivIS ID ', 'rrze-faudir') . $univisid .' '. __('already exists', 'rrze-faudir'). '.';
+                        $not_imported_reasons[] = __('Person with UnivIS ID', 'rrze-faudir'). ': <em>'. $post->post_title.'</em>, <code>' . $univisid .'</code> '. __('already exists', 'rrze-faudir'). '.';
                     }
                 }
             }
@@ -298,9 +298,6 @@ class Maintenance {
                 $not_imported_count
             );
 
-            // Slug configuration warning
-            $slug_warning = __('You now have the option to set a custom slug for person pages in the settings. If you don\'t set a unique slug, existing person pages from the old plugin may be overridden by the new plugin\'s person pages. To prevent this, please ensure that you configure a custom slug in the settings if you want to keep the old pages intact.', 'rrze-faudir');
-
             // Display all messages
             if ($imported_count > 0) {
                 printf(
@@ -308,27 +305,23 @@ class Maintenance {
                     esc_html($import_message)
                 );
             }
-            printf(
-                '<div class="notice notice-warning is-dismissible"><p>%s</p></div>',
-                esc_html($slug_warning)
-            );
+
             if ($not_imported_count > 0) {
-                printf(
-                    '<div class="notice notice-error is-dismissible"><p>%s</p></div>',
-                    esc_html($not_imported_message)
-                );
-            }
-
-            // Display not imported reasons
-            if (!empty($not_imported_reasons)) {
-                foreach ($not_imported_reasons as $reason) {
-                    printf(
-                        '<div class="notice notice-error is-dismissible"><p>%s</p></div>',
-                        esc_html($reason)
-                    );
+                $errorout = '<div class="notice notice-error is-dismissible">';
+                $errorout .= '<p>'.esc_html($not_imported_message).':</p>';
+               
+                // Display not imported reasons
+                if (!empty($not_imported_reasons)) {
+                    $errorout .= '<ul>';
+                    foreach ($not_imported_reasons as $reason) {
+                        $errorout .= '<li>'.$reason.'</li>';
+                    }
+                    $errorout .= '</ul>';
+                  
                 }
+                $errorout .= '</div>';
+                echo $errorout;
             }
-
             delete_transient('rrze_faudir_imported_count');
             delete_transient('rrze_faudir_not_imported_count');
             delete_transient('rrze_faudir_not_imported_reasons');

@@ -9,7 +9,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: RRZE-Webteam <webmaster@fau.de> (https://www.rrze.fau.de)\n"
 "Last-Translator: RRZE-Webteam <webmaster@fau.de> (https://www.rrze.fau.de)\n"
-"POT-Creation-Date: 2025-03-14 12:51+0000\n"
+"POT-Creation-Date: 2025-03-14 13:22+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/RRZE-Webteam/rrze-faudir/issues\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:"
@@ -553,7 +553,7 @@ msgstr ""
 
 #: includes/Maintenance.php:226 includes/Maintenance.php:236
 #: includes/Maintenance.php:247
-msgid "Missing UnivIS ID for person: "
+msgid "Missing UnivIS ID for person"
 msgstr ""
 
 #: includes/Contact.php:296
@@ -699,11 +699,11 @@ msgstr ""
 
 #: includes/Maintenance.php:229 includes/Maintenance.php:239
 #: includes/Maintenance.php:250
-msgid "Person with UnivIS ID "
+msgid "Person with UnivIS ID"
 msgstr ""
 
 #: includes/Maintenance.php:79
-msgid "Person with Univis ID "
+msgid "Person with Univis ID"
 msgstr ""
 
 #: includes/custom-post-type/custom-post-type.php:17
@@ -1137,15 +1137,6 @@ msgstr ""
 
 #: includes/admin/settings-page.php:666 includes/utils/api-functions.php:479
 msgid "You do not have sufficient permissions to access this page."
-msgstr ""
-
-#: includes/Maintenance.php:302
-msgid ""
-"You now have the option to set a custom slug for person pages in the "
-"settings. If you don't set a unique slug, existing person pages from the old "
-"plugin may be overridden by the new plugin's person pages. To prevent this, "
-"please ensure that you configure a custom slug in the settings if you want "
-"to keep the old pages intact."
 msgstr ""
 
 #. 1: Current PHP version 2: Required PHP version

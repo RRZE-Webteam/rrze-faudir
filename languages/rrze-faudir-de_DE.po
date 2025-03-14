@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: rrze-faudir\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-faudir\n"
 "POT-Creation-Date: 2024-12-19T14:40:58+00:00\n"
-"PO-Revision-Date: 2025-03-14 12:52+0000\n"
+"PO-Revision-Date: 2025-03-14 13:25+0000\n"
 "Last-Translator: Wolfgang Wiese <wolfgang.wiese@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -171,8 +171,8 @@ msgstr "Campo Beauftragter"
 #: includes/Maintenance.php:79
 msgid "cannot be found on UnivIS. Account either removed or UnivIS Id wrong"
 msgstr ""
-"konnte nicht im UnivIS gefunden werden. Der Account urde entweder entfernt "
-"oder die UnivIS Id ist falsch."
+"konnte nicht im UnivIS gefunden werden. Der Account wurde entweder entfernt "
+"oder die UnivIS Id ist falsch"
 
 #: includes/Config.php:98 faudir-block/src/edit.js:581
 msgid "Card"
@@ -582,9 +582,9 @@ msgstr "Karte"
 
 #: includes/Maintenance.php:226 includes/Maintenance.php:236
 #: includes/Maintenance.php:247
-#| msgid "Missing Univis ID for person: "
-msgid "Missing UnivIS ID for person: "
-msgstr "Die UnivIS Id für die Person konnte nicht gefunden werden:"
+#| msgid "Missing UnivIS ID for person: "
+msgid "Missing UnivIS ID for person"
+msgstr "Die UnivIS Id für die Person konnte nicht gefunden werden"
 
 #: includes/Contact.php:296
 msgid "Monday"
@@ -740,12 +740,14 @@ msgstr "Person mit ID %s existiert nicht"
 
 #: includes/Maintenance.php:229 includes/Maintenance.php:239
 #: includes/Maintenance.php:250
-msgid "Person with UnivIS ID "
-msgstr "Person mit der UnivIS Id"
+#| msgid "Person with UnivIS ID "
+msgid "Person with UnivIS ID"
+msgstr "Person mit UnivIS Id"
 
 #: includes/Maintenance.php:79
-msgid "Person with Univis ID "
-msgstr "Person mit Univis-Ausweis "
+#| msgid "Person with Univis ID "
+msgid "Person with Univis ID"
+msgstr "Person mit UnivIS Id"
 
 #: includes/custom-post-type/custom-post-type.php:17
 #: includes/custom-post-type/custom-post-type.php:19
@@ -1203,22 +1205,6 @@ msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 "Sie verfügen nicht über die erforderlichen Berechtigungen, um auf diese "
 "Seite zuzugreifen."
-
-#: includes/Maintenance.php:302
-msgid ""
-"You now have the option to set a custom slug for person pages in the "
-"settings. If you don't set a unique slug, existing person pages from the old "
-"plugin may be overridden by the new plugin's person pages. To prevent this, "
-"please ensure that you configure a custom slug in the settings if you want "
-"to keep the old pages intact."
-msgstr ""
-"Sie haben jetzt die Möglichkeit, in den Einstellungen einen "
-"benutzerdefinierten Slug für Personenseiten festzulegen. Wenn Sie keinen "
-"eindeutigen Slug festlegen, werden vorhandene Personenseiten des alten "
-"Plugins möglicherweise durch die Personenseiten des neuen Plugins "
-"überschrieben. Um dies zu verhindern, stellen Sie bitte sicher, dass Sie in "
-"den Einstellungen einen benutzerdefinierten Slug konfigurieren, wenn Sie die "
-"alten Seiten intakt halten möchten."
 
 #. 1: Current PHP version 2: Required PHP version
 #: rrze-faudir.php:78
