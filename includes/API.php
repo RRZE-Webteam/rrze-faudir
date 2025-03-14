@@ -88,6 +88,8 @@ class API {
         $url = "{$this->baseUrl}/persons";
     
         $url .= '?limit=' . $limit . '&offset=' . $offset;
+        $param_uri = '';
+        
          // Define allowed query parameters and map them to their corresponding keys
         $query_params = [
             'q',
@@ -99,38 +101,40 @@ class API {
             'lf'
         ];
 
-        $logUrl = '';
 
         // Loop through the parameters and append them to the URL if they exist in $params
         foreach ($query_params as $param) {
             if (!empty($params[$param])) {
-                $url .= '&' . $param . '=' . urlencode($params[$param]);
+                $param_uri .= '&' . $param . '=' . urlencode($params[$param]);
             }
         }
 
         // Handle givenName and familyName as special cases to be combined into the 'q' parameter
         if (!empty($params['givenName'])) {
-            $url .= '&q=' . urlencode('^' . $params['givenName']);
+            $param_uri .= '&q=' . urlencode('^' . $params['givenName']);
         }
         if (!empty($params['familyName'])) {
-            $url .= '&q=' . urlencode('^' . $params['familyName']);
+            $param_uri .= '&q=' . urlencode('^' . $params['familyName']);
         }
         if (!empty($params['identifier'])) {
-            $url .= '&q=' . urlencode('^' . $params['identifier']);
+            $param_uri .= '&q=' . urlencode('^' . $params['identifier']);
         }
         if (!empty($params['email'])) {
-            $url .= '&q=' . urlencode('^' . $params['email']);
+            $param_uri .= '&q=' . urlencode('^' . $params['email']);
         }
+        if (!empty($param_uri)) {
+            $url .= $param_uri;
+            $response = $this->makeRequest($url, "REST");
 
-        
-        $response = $this->makeRequest($url, "REST");
-
-        if (!$response) {
-            error_log("FAUdir\API (getPersons): No response from server on {$url}.");
-            return null;
+            if (!$response) {
+                error_log("FAUdir\API (getPersons): No response from server on {$url}.");
+                return null;
+            }
+            return $response;
         }
+        error_log("FAUdir\API (getPersons): No params to query for.");
+        return [];
 
-        return $response;
     }   
    
    
@@ -150,9 +154,9 @@ class API {
             throw new \InvalidArgumentException('FAUdir\API (getContacts): Required params missing.');
         }
         $url = "{$this->baseUrl}/contacts";
-    
         $url .= '?limit=' . $limit . '&offset=' . $offset;
-
+        $param_uri = '';
+        
         // Define allowed query parameters and map them to their corresponding keys
         $query_params = [
             'q',
@@ -167,35 +171,38 @@ class API {
         // Loop through the parameters and append them to the URL if they exist in $params
         foreach ($query_params as $param) {
             if (!empty($params[$param])) {
-                $url .= '&' . $param . '=' . urlencode($params[$param]);
+                $param_uri .= '&' . $param . '=' . urlencode($params[$param]);
             }
         }
 
         // Handle givenName and familyName as special cases to be combined into the 'q' parameter
         if (!empty($params['givenName'])) {
-            $url .= '&q=' . urlencode('^' . $params['givenName']);
+            $param_uri .= '&q=' . urlencode('^' . $params['givenName']);
         }
         if (!empty($params['familyName'])) {
-            $url .= '&q=' . urlencode('^' . $params['familyName']);
+            $param_uri .= '&q=' . urlencode('^' . $params['familyName']);
         }
         if (!empty($params['identifier'])) {
-            $url .= '&q=' . urlencode('^' . $params['identifier']);
+            $param_uri .= '&q=' . urlencode('^' . $params['identifier']);
         }
         if (!empty($params['email'])) {
-            $url .= '&q=' . urlencode('^' . $params['email']);
+            $param_uri .= '&q=' . urlencode('^' . $params['email']);
         }
         
-        $response = $this->makeRequest($url, "REST");
+        if (!empty($param_uri)) {
+            $url .= $param_uri;
+            $response = $this->makeRequest($url, "REST");
 
-        if (!$response) {
-            error_log("FAUdir\API (getContacts): No response from server on {$url}.");
-            return null;
+            if (!$response) {
+                error_log("FAUdir\API (getContacts): No response from server on {$url}.");
+                return null;
+            }
+
+            return $response;
         }
-
-        return $response;
+        error_log("FAUdir\API (getContacts): No params to query for.");
+        return [];
     }
-
-    
     
     /**
     * Fetch organizations from the FAU organizations API
