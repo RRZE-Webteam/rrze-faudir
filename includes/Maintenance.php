@@ -69,7 +69,6 @@ class Maintenance {
 
                 if ($univisid && !$existing_person) {
 
-                    error_log('UnivISId found: ' . $univisid);
                     // Make Univis api call using Univis ID
                     $url = 'http://univis.uni-erlangen.de/prg?search=persons&id=' . $univisid . '&show=json';
                     $response = wp_remote_get($url);
@@ -80,8 +79,6 @@ class Maintenance {
                          $not_imported_reasons[] = __('Person with Univis ID ', 'rrze-faudir') . $univisid .' '. __('cannot be found on UnivIS. Account either removed or UnivIS Id wrong', 'rrze-faudir'). '.';
 
                     } else {
-                        error_log('UnivIS Response JSONDATA: ' . print_r($data, true));
-
 
                        // Extract person data
                        $person = $data['Person'][0];
@@ -96,9 +93,6 @@ class Maintenance {
                        $queryParts = [];
                        $personId = null;
 
-
-                       error_log('UnivIS Response: ' . print_r($person, true));
-
                        $api = new API(self::$config);
 
                        if (!empty($identifier)) {
@@ -106,9 +100,7 @@ class Maintenance {
                        } else if (!empty($email)) {
                            // search for contacts with the email
                            
-                           $response = $api->getContacts(1, 0, ['lq' => 'workplaces.mails=' . $email]);
-                           error_log('getContacts Response: ' . print_r($response, true));
-                           
+                           $response = $api->getContacts(1, 0, ['lq' => 'workplaces.mails=' . $email]);                           
                            if (empty($response['data'])) {
                                $queryParts[] = 'email=' . $email;
                            } else {
@@ -132,9 +124,6 @@ class Maintenance {
                            $person = $response['data'][0] ?? null; // there should only be one match
 
                            if ($person) {
-                               error_log('Response API First Person: ' . print_r($person, true));
-
-
                                // Get data from old post
                                $thumbnail_id = get_post_thumbnail_id($post->ID);
                                $short_description = get_post_meta($post->ID, 'fau_person_description', true);
@@ -234,20 +223,20 @@ class Maintenance {
                                // Separate messages for each case
                                if (empty($univisid)) {
                                    $not_imported_count++;
-                                   $not_imported_reasons[] = __('Missing Univis ID for person: ', 'rrze-faudir') . $post->post_title;
+                                   $not_imported_reasons[] = __('Missing UnivIS ID for person: ', 'rrze-faudir') . $post->post_title;
                                } else {
                                    $not_imported_count++;
-                                   $not_imported_reasons[] = __('Person with Univis ID ', 'rrze-faudir') . $univisid .' '. __('already exists', 'rrze-faudir'). '.';
+                                   $not_imported_reasons[] = __('Person with UnivIS ID ', 'rrze-faudir') . $univisid .' '. __('already exists', 'rrze-faudir'). '.';
                                }
                            }
                        } else {
                            // Separate messages for each case
                            if (empty($univisid)) {
                                $not_imported_count++;
-                               $not_imported_reasons[] = __('Missing Univis ID for person: ', 'rrze-faudir') . $post->post_title;
+                               $not_imported_reasons[] = __('Missing UnivIS ID for person: ', 'rrze-faudir') . $post->post_title;
                            } else {
                                $not_imported_count++;
-                               $not_imported_reasons[] = __('Person with Univis ID ', 'rrze-faudir') . $univisid .' '. __('already exists or cannot be found on FAUdir', 'rrze-faudir'). '.';
+                               $not_imported_reasons[] = __('Person with UnivIS ID ', 'rrze-faudir') . $univisid .' '. __('already exists or cannot be found on FAUdir', 'rrze-faudir'). '.';
                            }
                        }
                     }   
@@ -255,10 +244,10 @@ class Maintenance {
                     // Separate messages for each case
                     if (empty($univisid)) {
                         $not_imported_count++;
-                        $not_imported_reasons[] = __('Missing Univis ID for person: ', 'rrze-faudir') . $post->post_title;
+                        $not_imported_reasons[] = __('Missing UnivIS ID for person: ', 'rrze-faudir') . $post->post_title;
                     } else {
                         $not_imported_count++;
-                        $not_imported_reasons[] = __('Person with Univis ID ', 'rrze-faudir') . $univisid .' '. __('already exists', 'rrze-faudir'). '.';
+                        $not_imported_reasons[] = __('Person with UnivIS ID ', 'rrze-faudir') . $univisid .' '. __('already exists', 'rrze-faudir'). '.';
                     }
                 }
             }
