@@ -17,38 +17,6 @@ use RRZE\FAUdir\Person;
 use RRZE\FAUdir\Debug;
 
 
-// Fetch person by ID
-function fetch_fau_person_by_id($personId) {
-    // Log the function call
-    // error_log("fetch_fau_person_by_id called with personId: {$personId}");
-
-    $api_key = FaudirUtils::getKey();
-    $url = FaudirUtils::getApiBaseUrl() . "persons/{$personId}";
-
-    $response = wp_remote_get($url, array(
-        'headers' => array(
-            'accept' => 'application/json',
-            'X-API-KEY' => $api_key,
-        ),
-    ));
-
-    if (is_wp_error($response)) {
-        return array('error' => true, 'message' => 'Error retrieving data: ' . $response->get_error_message());
-    }
-
-    $body = wp_remote_retrieve_body($response);
-    if (empty($body)) {
-        return $body;
-    }
-
-    $data = json_decode($body, true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        return array('error' => true, 'message' => 'Error decoding JSON data');
-    }
-
-    return $data;
-}
-
 /**
  * Fetch contacts from the FAU contacts API
  * @param int $limit - Limit the number of contacts to fetch
