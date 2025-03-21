@@ -32,6 +32,19 @@ class Maintenance {
         
         //  Admin Notices
         add_action('admin_notices', [$this, 'rrze_faudir_display_import_notice'], 15);
+        
+        // Slug-Änderung überwachen
+        add_action('update_option_rrze_faudir_options',  [$this, 'rrze_faudir_flush_rewrite_on_slug_change'], 10, 3);
+        
+        // Rewrite-Regeln speichern
+        add_action('admin_init', [$this, 'rrze_faudir_save_permalink_settings']);
+        
+        // CRON/Scheduler functions
+        register_activation_hook(RRZE_PLUGIN_FILE, [$this, 'on_plugin_activation']);
+        register_deactivation_hook(RRZE_PLUGIN_FILE, [$this, 'on_plugin_deactivation']);
+        add_action('rrze-faudir_check_person_availability', [$this, 'check_api_person_availability']);
+
+        
     }
 
 
@@ -329,4 +342,84 @@ class Maintenance {
     }
 
 
+    public function rrze_faudir_flush_rewrite_on_slug_change($old_value, $value, $option) {
+        if (  ($option === 'rrze_faudir_options') 
+                 && (isset($old_value['person_slug'])) 
+                 && (isset($value['person_slug'])) 
+                 && ($old_value['person_slug'] !== $value['person_slug'])) {
+            flush_rewrite_rules(); // Flush rewrite rules if the slug changes
+        }
+    }
+
+    public function rrze_faudir_save_permalink_settings(): void  {
+        // Simulate visiting the Permalinks page to refresh rewrite rules
+        global $wp_rewrite;
+        $wp_rewrite->flush_rules();
+    }
+
+    
+    // CRON Scheduler: activate on plugin activating
+    public function on_plugin_activation(): void {
+        if (!wp_next_scheduled('rrze-faudir_check_person_availability')) {
+            wp_schedule_event(time(), 'hourly', 'rrze-faudir_check_person_availability');
+        }
+    }
+    
+    
+    // CRON Scheduler: deactivate on plugin deactivation
+    public function on_plugin_deactivation(): void {
+        $timestamp = wp_next_scheduled('rrze-faudir_check_person_availability');
+        if ($timestamp) {
+            wp_unschedule_event($timestamp, 'rrze-faudir_check_person_availability');
+        }
+    }
+
+    // Main Task for scheduler
+    public function check_api_person_availability(): void {
+        if (get_transient('check_person_availability_running')) {
+            return;
+        }
+        
+        
+     //   error_log('RRZE FAUdir\Maintenance::check_api_person_availability: Start Cron job check_person_availability.');
+        set_transient('check_person_availability_running', true, 60);
+        $api = new API(self::$config);
+        
+        
+        $args = [
+            'post_type'      => 'custom_person',
+            'post_status'    => 'publish',
+            'posts_per_page' => 1000,
+        ];
+
+        $posts = get_posts($args);
+
+        foreach ($posts as $post) {
+            $person_id = get_post_meta($post->ID, 'person_id', true);
+
+            if (empty($person_id)) {
+                wp_update_post([
+                    'ID'          => $post->ID,
+                    'post_status' => 'draft',
+                ]);
+                continue;
+            }
+
+            $person_data = $api->getPerson($person_id);
+            if ($person_data === false || empty($person_data)) {
+                wp_update_post([
+                    'ID'          => $post->ID,
+                    'post_status' => 'draft',
+                ]);
+          //       error_log('RRZE FAUdir\Maintenance::check_api_person_availability: Person with FAUdir Identifier '.  $person_id. ' moved to draft.');
+            }
+        }
+
+        delete_transient('check_person_availability_running');
+     //   error_log('RRZE FAUdir\Maintanace::check_api_person_availability: Cron job check_person_availability completed.');
+        
+    }
+
+    
+    
 }
