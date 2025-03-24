@@ -391,29 +391,6 @@ function save_person_additional_fields($post_id) {
 
 add_action('save_post', 'save_person_additional_fields');
 
-// TODO:
-// Take a look if this is not handled in admin.js - file js/custom-person.js isnt found anyway
-
-function enqueue_custom_person_scripts($hook) {
-    // Only load on post edit screens for our custom post type
-    if ($hook == 'post-new.php' || $hook == 'post.php') {
-        global $post;
-        if ($post && $post->post_type === 'custom_person') {
-            wp_enqueue_script(
-                'custom-person-script',
-                plugins_url('/js/custom-person.js', dirname(__FILE__)),
-                array('jquery'),
-                null,
-                true
-            );
-            wp_localize_script('custom-person-script', 'customPerson', array(
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce'    => wp_create_nonce('custom_person_nonce')
-            ));
-        }
-    }
-}
-// add_action('admin_enqueue_scripts', 'enqueue_custom_person_scripts');
 
 function fetch_person_attributes() {
     check_ajax_referer('custom_person_nonce', 'nonce');

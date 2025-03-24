@@ -690,7 +690,10 @@ function rrze_faudir_delete_default_organization() {
 }
 add_action('admin_post_delete_default_organization', 'rrze_faudir_delete_default_organization');
 
-// Function to reset settings to defaults
+
+/*
+ * Function to reset settings to defaults 
+ */
 function rrze_faudir_reset_defaults() {
     check_ajax_referer('rrze_faudir_reset_defaults_nonce', 'security');
 
@@ -705,7 +708,9 @@ function rrze_faudir_reset_defaults() {
 add_action('wp_ajax_rrze_faudir_reset_defaults', 'rrze_faudir_reset_defaults');
 
 
-// Clear Cache Function
+/*
+ * Clear Cache Function
+ */
 function rrze_faudir_clear_cache() {
     global $wpdb;
     // Delete all transients related to the plugin's cache
@@ -715,7 +720,10 @@ function rrze_faudir_clear_cache() {
 }
 add_action('wp_ajax_rrze_faudir_clear_cache', 'rrze_faudir_clear_cache');
 
-// Add this function at the end of the file
+
+/*
+ * Search Person via Ajax
+ */
 function rrze_faudir_search_person_ajax() {
     check_ajax_referer('rrze_faudir_api_nonce', 'security');
 
@@ -831,9 +839,11 @@ function rrze_faudir_search_person_ajax() {
 }
 add_action('wp_ajax_rrze_faudir_search_person', 'rrze_faudir_search_person_ajax');
 
-// Add this new function
+
+/*
+ * Sanitize Options
+ */
 function rrze_faudir_sanitize_options($new_options) {
-    // Get existing options
     $existing_options = get_option('rrze_faudir_options', array());
     
     // Only preserve default_organization if it exists in current options

@@ -390,16 +390,11 @@ class Maintenance {
             // Entferne den alten Cron-Job
             wp_unschedule_event($timestamp, $old_hook);
 
-            // Optional: Logging für Debug-Zwecke
-           error_log('[FAUdir] Alter Cron-Job wurde entfernt: ' . $old_hook);
         }
 
         // Wenn der neue Hook noch nicht existiert, planen
         if (!wp_next_scheduled($new_hook)) {
             wp_schedule_event(time(), 'hourly', $new_hook);
-
-            // Optional: Logging
-            error_log('[FAUdir] Neuer Cron-Job registriert: ' . $new_hook);
         }
     }
     

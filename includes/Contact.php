@@ -449,6 +449,7 @@ class Contact {
         return $output;
         
     }
+    
     /*
      * Sanitize allowed HTML Tag for list outputs
      */
@@ -458,6 +459,7 @@ class Contact {
 
         return in_array($htmlsurround, $allowed_tags, true) ? $htmlsurround : 'div';
     }
+    
     /*
      * Get Social/Website from Contact and transform them into a assoc. array
      */
