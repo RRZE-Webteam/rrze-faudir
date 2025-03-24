@@ -44,6 +44,8 @@ class Maintenance {
         register_deactivation_hook(RRZE_PLUGIN_FILE, [$this, 'on_plugin_deactivation']);
         add_action('rrze-faudir_check_person_availability', [$this, 'check_api_person_availability']);
 
+        // Check for old scheduler Namens
+        $this->migrate_scheduler_hook();
         
     }
 
@@ -373,7 +375,35 @@ class Maintenance {
             wp_unschedule_event($timestamp, 'rrze-faudir_check_person_availability');
         }
     }
+    
+    /*
+     * Migrate Function für alten Scheduler Namen
+     */
+    public function migrate_scheduler_hook(): void {
+        // Prüfen, ob der alte Cron-Job noch geplant ist
+        $old_hook = 'check_person_availability';
+        $new_hook = 'rrze-faudir_check_person_availability';
 
+        $timestamp = wp_next_scheduled($old_hook);
+
+        if ($timestamp) {
+            // Entferne den alten Cron-Job
+            wp_unschedule_event($timestamp, $old_hook);
+
+            // Optional: Logging für Debug-Zwecke
+           error_log('[FAUdir] Alter Cron-Job wurde entfernt: ' . $old_hook);
+        }
+
+        // Wenn der neue Hook noch nicht existiert, planen
+        if (!wp_next_scheduled($new_hook)) {
+            wp_schedule_event(time(), 'hourly', $new_hook);
+
+            // Optional: Logging
+            error_log('[FAUdir] Neuer Cron-Job registriert: ' . $new_hook);
+        }
+    }
+    
+    
     // Main Task for scheduler
     public function check_api_person_availability(): void {
         if (get_transient('check_person_availability_running')) {
