@@ -19,10 +19,10 @@ use RRZE\FAUdir\Debug;
 
 
 class Maintenance {
-    protected static $config;
-    
+    protected ?Config $config = null;
+            
     public function __construct(Config $configdata) {
-        self::$config = $configdata;
+        $this->config = $configdata;
     }
     
     public function register_hooks() {
@@ -60,9 +60,10 @@ class Maintenance {
 
         // Initialize counters and reasons array
         $imported_count = 0;
+        $imported_list = [];
         $not_imported_count = 0;
         $not_imported_reasons = [];
-
+        
         if (!empty($contact_posts)) {
             foreach ($contact_posts as $post) {
 
@@ -108,14 +109,15 @@ class Maintenance {
                        $queryParts = [];
                        $personId = null;
 
-                       $api = new API(self::$config);
+                       $api = new API($this->config);
 
                        if (!empty($identifier)) {
                            $queryParts[] = 'uid=' . $identifier;
                        } else if (!empty($email)) {
                            // search for contacts with the email
                            
-                           $response = $api->getContacts(1, 0, ['lq' => 'workplaces.mails=' . $email]);                           
+                           $response = $api->getContacts(1, 0, ['lq' => 'workplaces.mails=' . $email]);          
+                          
                            if (empty($response['data'])) {
                                $queryParts[] = 'email=' . $email;
                            } else {
@@ -146,18 +148,36 @@ class Maintenance {
 
                                // Get all contacts for the person
                                $contacts = array();
+                               $lastorgid = '';
+                               
+                               $org = new Organization();
+                               $org->setConfig($this->config);
+                               
                                foreach ($person['contacts'] as $contact) {
                                    // Get the identifier
                                    $contactIdentifier = $contact['identifier'];
                                    $organizationIdentifier = $contact['organization']['identifier'];
-
+                                   
+                                   $cont = new Contact($contact);
+                                   $cont->setConfig($this->config);
+                                   $cont->getContactbyAPI($contact['identifier']);
+                                          
+                                   if ((empty($lastorgid)) || ($lastorgid !== $organizationIdentifier)) {
+                                        $success = $org->getOrgbyAPI($organizationIdentifier);
+                                        if ($success) {
+                                            $lastorgid = $organizationIdentifier;
+                                        }
+                                   }
+                                   
+                                 
+                                           
                                    $contacts[] = array(
                                        'organization' => sanitize_text_field($contact['organization']['name'] ?? ''),
-                                       'socials' => fetch_and_format_socials($contactIdentifier),
-                                       'workplace' => fetch_and_format_workplaces($contactIdentifier),
-                                       'address' => fetch_and_format_address($organizationIdentifier),
-                                       'function_en' => $contact['functionLabel']['en'] ?? '',
-                                       'function_de' => $contact['functionLabel']['de'] ?? '',
+                                       'socials' => $cont->getSocialString(),
+                                       'workplace' => $cont->getWorkplacesString(),
+                                       'address' => $org->getAdressString(),
+                                       'function_en' => $cont->functionLabel['en'] ?? '',
+                                       'function_de' => $cont->functionLabel['de'] ?? '',
                                    );
                                }
 
@@ -233,6 +253,7 @@ class Maintenance {
                                // Increment counter after successful import
                                if ($new_post_id && !is_wp_error($new_post_id)) {
                                    $imported_count++;
+                                   $imported_list[] = __('Person successfully importet', 'rrze-faudir').': <em>'. $post->post_title.'</em>';
                                }
                            } else {
                                // Separate messages for each case
@@ -241,7 +262,7 @@ class Maintenance {
                                    $not_imported_reasons[] = __('Missing UnivIS ID for person', 'rrze-faudir').': <em>'. $post->post_title.'</em>';
                                } else {
                                    $not_imported_count++;
-                                   $not_imported_reasons[] = __('Person with UnivIS ID', 'rrze-faudir').':  <em>'. $post->post_title.'</em>, <code>' . $univisid .'</code> '. __('already exists', 'rrze-faudir'). '.';
+                                   $not_imported_reasons[] = __('Person with UnivIS ID', 'rrze-faudir').':  <em>'. $post->post_title.'</em>, <code>' . $univisid .'</code> '. __('could not be importet. Possible Reasons: Either E-Mail-Adress from UnivIS wasnt found in public FAUdir entry or person name is not unique in FAUdir', 'rrze-faudir'). '.';
                                }
                            }
                        } else {
@@ -270,6 +291,7 @@ class Maintenance {
 
         // Store the counts and reasons in transients to display them later
         set_transient('rrze_faudir_imported_count', $imported_count, 60);
+        set_transient('rrze_faudir_imported_list', $imported_list, 60);
         set_transient('rrze_faudir_not_imported_count', $not_imported_count, 60);
         set_transient('rrze_faudir_not_imported_reasons', $not_imported_reasons, 60);
 
@@ -286,6 +308,8 @@ class Maintenance {
         }
 
         $imported_count = get_transient('rrze_faudir_imported_count');
+        $imported_list = get_transient('rrze_faudir_imported_list');
+        
         $not_imported_count = get_transient('rrze_faudir_not_imported_count');
         $not_imported_reasons = get_transient('rrze_faudir_not_imported_reasons');
         if ($imported_count !== false || $not_imported_count !== false) {
@@ -315,15 +339,25 @@ class Maintenance {
 
             // Display all messages
             if ($imported_count > 0) {
-                printf(
-                    '<div class="notice notice-success is-dismissible"><p>%s</p></div>',
-                    esc_html($import_message)
-                );
+                $success = '<div class="notice notice-success is-dismissible">';
+                $success .= '<p>'.esc_html($import_message).'</p>';
+                
+                 // Display imported 
+                if (!empty($imported_list)) {
+                    $success .= '<ul>';
+                    foreach ($imported_list as $reason) {
+                        $success .= '<li>'.$reason.'</li>';
+                    }
+                    $success .= '</ul>';
+                  
+                }
+                $success .= '</div>';
+                echo $success;
             }
 
             if ($not_imported_count > 0) {
                 $errorout = '<div class="notice notice-error is-dismissible">';
-                $errorout .= '<p>'.esc_html($not_imported_message).':</p>';
+                $errorout .= '<p>'.esc_html($not_imported_message).'</p>';
                
                 // Display not imported reasons
                 if (!empty($not_imported_reasons)) {
@@ -338,6 +372,7 @@ class Maintenance {
                 echo $errorout;
             }
             delete_transient('rrze_faudir_imported_count');
+            delete_transient('rrze_faudir_imported_list');
             delete_transient('rrze_faudir_not_imported_count');
             delete_transient('rrze_faudir_not_imported_reasons');
         }
@@ -408,7 +443,7 @@ class Maintenance {
         
      //   error_log('RRZE FAUdir\Maintenance::check_api_person_availability: Start Cron job check_person_availability.');
         set_transient('check_person_availability_running', true, 60);
-        $api = new API(self::$config);
+        $api = new API($this->config);
         
         
         $args = [

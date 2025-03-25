@@ -65,10 +65,37 @@ class API {
             error_log("FAUdir\API (getPerson): No response from server on {$url}.");
             return null;
         }
-
-        // Wandelt das Array in ein Profil-Objekt um
         return $response;
     }
+    
+    
+     /**
+     * Get a person
+     * @param personid
+     * @return array|null on not found
+     */
+    public function getContact(string $contactId): ?array {
+        if (!$this->api_key) {
+            throw new \Exception("FAUdir\API (getContact): API Key is required.");
+        }
+        if (empty($contactId)) {
+            throw new \InvalidArgumentException('FAUdir\API (getContact): Required field personid missing.');
+        }
+        $url = "{$this->baseUrl}/contacts/{$contactId}";
+        
+        $response = $this->makeRequest($url, "GET");
+
+        if (!$response) {
+            error_log("FAUdir\API (getContact): No response from server on {$url}.");
+            return null;
+        }
+
+        return $response;
+    }
+    
+    
+    
+    
     
     
     /*
