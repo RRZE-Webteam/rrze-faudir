@@ -187,7 +187,7 @@ if (!defined('ABSPATH')) {
                                         }
                                         $showroomfloor = false;
                                         if ((in_array('room', $show_fields) && !in_array('room', $hide_fields))
-                                        || (in_array('floor', $show_fields) && !in_array('floor', $hide_fields))) {
+                                        && (in_array('floor', $show_fields) && !in_array('floor', $hide_fields))) {
                                             $showroomfloor = true;
                                         }
                                         
@@ -239,7 +239,7 @@ if (!defined('ABSPATH')) {
                                             }
                                             $showroomfloor = false;
                                             if ((in_array('room', $show_fields) && !in_array('room', $hide_fields))
-                                            || (in_array('floor', $show_fields) && !in_array('floor', $hide_fields))) {
+                                            && (in_array('floor', $show_fields) && !in_array('floor', $hide_fields))) {
                                                 $showroomfloor = true;
                                             }
                                             
