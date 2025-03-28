@@ -9,7 +9,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: RRZE-Webteam <webmaster@fau.de> (https://www.rrze.fau.de)\n"
 "Last-Translator: RRZE-Webteam <webmaster@fau.de> (https://www.rrze.fau.de)\n"
-"POT-Creation-Date: 2025-03-14 13:22+0000\n"
+"POT-Creation-Date: 2025-03-28 08:58+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/RRZE-Webteam/rrze-faudir/issues\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:"
@@ -24,14 +24,14 @@ msgstr ""
 "X-Generator: Loco https://localise.biz/"
 
 #. %d: number of not imported persons
-#: includes/Maintenance.php:292
+#: includes/Maintenance.php:331
 msgid "%d person was not able to be imported from the old plugin."
 msgid_plural "%d persons were not able to be imported from the old plugin."
 msgstr[0] ""
 msgstr[1] ""
 
 #. %d: number of imported persons
-#: includes/Maintenance.php:280
+#: includes/Maintenance.php:319
 msgid "%d person was successfully imported from the old plugin."
 msgid_plural "%d persons were successfully imported from the old plugin."
 msgstr[0] ""
@@ -45,7 +45,7 @@ msgstr ""
 msgid "Academic Title"
 msgstr ""
 
-#: rrze-faudir.php:258
+#: rrze-faudir.php:173
 msgid "Add New Category"
 msgstr ""
 
@@ -62,7 +62,7 @@ msgid "Additional Fields"
 msgstr ""
 
 #: templates/page.php:108 templates/compact.php:116 includes/Config.php:57
-#: includes/utils/api-functions.php:432 faudir-block/src/edit.js:61
+#: includes/utils/api-functions.php:400 faudir-block/src/edit.js:61
 msgid "Address"
 msgstr ""
 
@@ -78,11 +78,11 @@ msgstr ""
 msgid "Advanced Settings"
 msgstr ""
 
-#: includes/admin/settings-page.php:714
+#: includes/admin/settings-page.php:719
 msgid "All cache cleared successfully."
 msgstr ""
 
-#: rrze-faudir.php:253
+#: rrze-faudir.php:168
 msgid "All Categories"
 msgstr ""
 
@@ -90,11 +90,11 @@ msgstr ""
 msgid "All Persons"
 msgstr ""
 
-#: includes/Maintenance.php:229 includes/Maintenance.php:250
+#: includes/Maintenance.php:286
 msgid "already exists"
 msgstr ""
 
-#: includes/Maintenance.php:239
+#: includes/Maintenance.php:275
 msgid "already exists or cannot be found on FAUdir"
 msgstr ""
 
@@ -144,7 +144,7 @@ msgctxt "block title"
 msgid "FAUdir"
 msgstr ""
 
-#: includes/Contact.php:377
+#: includes/Contact.php:472
 msgid "Box Number"
 msgstr ""
 
@@ -164,7 +164,7 @@ msgstr ""
 msgid "Campo administrator"
 msgstr ""
 
-#: includes/Maintenance.php:79
+#: includes/Maintenance.php:95
 msgid "cannot be found on UnivIS. Account either removed or UnivIS Id wrong"
 msgstr ""
 
@@ -172,7 +172,7 @@ msgstr ""
 msgid "Card"
 msgstr ""
 
-#: rrze-faudir.php:260
+#: rrze-faudir.php:175
 msgid "Categories"
 msgstr ""
 
@@ -180,8 +180,9 @@ msgstr ""
 msgid "Change display format"
 msgstr ""
 
-#: templates/table.php:203 templates/list.php:227 includes/Config.php:60
-#: includes/utils/api-functions.php:251 includes/utils/api-functions.php:326
+#: templates/table.php:203 templates/list.php:227 includes/Organization.php:159
+#: includes/Config.php:60 includes/Contact.php:259
+#: includes/utils/api-functions.php:219 includes/utils/api-functions.php:294
 #: faudir-block/src/edit.js:64
 msgid "City"
 msgstr ""
@@ -230,8 +231,8 @@ msgid ""
 msgstr ""
 
 #: templates/page.php:201 templates/compact.php:144 includes/Config.php:63
-#: includes/Contact.php:239 includes/utils/api-functions.php:278
-#: faudir-block/src/edit.js:67
+#: includes/Contact.php:286 includes/Contact.php:334
+#: includes/utils/api-functions.php:246 faudir-block/src/edit.js:67
 msgid "Consultation Hours"
 msgstr ""
 
@@ -256,11 +257,17 @@ msgstr ""
 msgid "Copy shortcode to Clipboard"
 msgstr ""
 
+#: includes/Maintenance.php:265
+msgid ""
+"could not be importet. Possible Reasons: Either E-Mail-Adress from UnivIS "
+"wasnt found in public FAUdir entry or person name is not unique in FAUdir"
+msgstr ""
+
 #: includes/admin/settings-page.php:586
 msgid "Current Default Organization"
 msgstr ""
 
-#: includes/custom-post-type/custom-post-type.php:575
+#: includes/custom-post-type/custom-post-type.php:552
 msgid "Custom person created successfully!"
 msgstr ""
 
@@ -276,7 +283,7 @@ msgstr ""
 msgid "Default organization has been deleted."
 msgstr ""
 
-#: includes/utils/api-functions.php:517
+#: includes/utils/api-functions.php:485
 msgid "Default organization has been saved."
 msgstr ""
 
@@ -320,11 +327,11 @@ msgstr ""
 msgid "Doctoral candidate"
 msgstr ""
 
-#: includes/EnqueueScripts.php:63 includes/admin/settings-page.php:818
+#: includes/EnqueueScripts.php:63 includes/admin/settings-page.php:826
 msgid "Edit"
 msgstr ""
 
-#: rrze-faudir.php:256
+#: rrze-faudir.php:171
 msgid "Edit Category"
 msgstr ""
 
@@ -333,15 +340,16 @@ msgid "Edit Person"
 msgstr ""
 
 #: templates/table.php:109 templates/list.php:108 templates/page.php:123
-#: templates/compact.php:176 templates/card.php:90 includes/Config.php:47
-#: includes/admin/settings-page.php:557 includes/utils/api-functions.php:314
-#: includes/utils/api-functions.php:444
+#: templates/compact.php:176 templates/card.php:90
+#: includes/Organization.php:147 includes/Config.php:47
+#: includes/admin/settings-page.php:557 includes/utils/api-functions.php:282
+#: includes/utils/api-functions.php:412
 #: includes/custom-post-type/custom-post-type.php:163
 #: faudir-block/src/edit.js:51
 msgid "Email"
 msgstr ""
 
-#: includes/utils/api-functions.php:266
+#: includes/Contact.php:274 includes/utils/api-functions.php:234
 msgid "Emails"
 msgstr ""
 
@@ -371,11 +379,11 @@ msgstr ""
 msgid "Enter your API key here."
 msgstr ""
 
-#: includes/custom-post-type/custom-post-type.php:583
+#: includes/custom-post-type/custom-post-type.php:560
 msgid "Error creating custom person: Failed to fetch person details."
 msgstr ""
 
-#: includes/utils/api-functions.php:116 includes/utils/api-functions.php:187
+#: includes/utils/api-functions.php:84 includes/utils/api-functions.php:155
 msgid "Error decoding JSON data."
 msgstr ""
 
@@ -383,11 +391,11 @@ msgstr ""
 msgid "Error Handling"
 msgstr ""
 
-#: includes/utils/api-functions.php:109
+#: includes/utils/api-functions.php:77
 msgid "Error retrieving data or contacts not found."
 msgstr ""
 
-#: includes/utils/api-functions.php:104 includes/utils/api-functions.php:180
+#: includes/utils/api-functions.php:72 includes/utils/api-functions.php:148
 msgid "Error retrieving data: "
 msgstr ""
 
@@ -395,7 +403,7 @@ msgstr ""
 msgid "Error saving organization."
 msgstr ""
 
-#: includes/admin/settings-page.php:782 includes/utils/api-functions.php:392
+#: includes/admin/settings-page.php:790 includes/utils/api-functions.php:360
 #, php-format
 msgid "Error: %s"
 msgstr ""
@@ -413,8 +421,9 @@ msgstr ""
 msgid "Family Name"
 msgstr ""
 
-#: templates/table.php:214 includes/Config.php:61 includes/Contact.php:339
-#: includes/utils/api-functions.php:254 includes/utils/api-functions.php:329
+#: templates/table.php:214 includes/Organization.php:162 includes/Config.php:61
+#: includes/Contact.php:262 includes/Contact.php:434
+#: includes/utils/api-functions.php:222 includes/utils/api-functions.php:297
 #: faudir-block/src/edit.js:65
 msgid "FAU Map"
 msgstr ""
@@ -428,7 +437,7 @@ msgstr ""
 msgid "FAUdir Settings"
 msgstr ""
 
-#: includes/utils/api-functions.php:260
+#: includes/Contact.php:268 includes/utils/api-functions.php:228
 msgid "Fax"
 msgstr ""
 
@@ -445,12 +454,12 @@ msgid "First Name"
 msgstr ""
 
 #: templates/table.php:155 templates/list.php:177 includes/Config.php:56
-#: includes/Contact.php:335 includes/utils/api-functions.php:242
-#: faudir-block/src/edit.js:60
+#: includes/Contact.php:250 includes/Contact.php:430
+#: includes/utils/api-functions.php:210 faudir-block/src/edit.js:60
 msgid "Floor"
 msgstr ""
 
-#: includes/Contact.php:300
+#: includes/Contact.php:395
 msgid "Friday"
 msgstr ""
 
@@ -547,20 +556,20 @@ msgstr ""
 msgid "Loading persons..."
 msgstr ""
 
-#: templates/table.php:215 includes/Contact.php:340
+#: templates/table.php:215 includes/Contact.php:435
 msgid "Map"
 msgstr ""
 
-#: includes/Maintenance.php:226 includes/Maintenance.php:236
-#: includes/Maintenance.php:247
+#: includes/Maintenance.php:262 includes/Maintenance.php:272
+#: includes/Maintenance.php:283
 msgid "Missing UnivIS ID for person"
 msgstr ""
 
-#: includes/Contact.php:296
+#: includes/Contact.php:391
 msgid "Monday"
 msgstr ""
 
-#: rrze-faudir.php:508
+#: rrze-faudir.php:423
 msgid "More Information"
 msgstr ""
 
@@ -569,15 +578,16 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: rrze-faudir.php:412
+#: rrze-faudir.php:327
 msgid "Neither person IDs, function+orgnr, nor category were provided"
 msgstr ""
 
-#: rrze-faudir.php:259
+#: rrze-faudir.php:174
 msgid "New Category Name"
 msgstr ""
 
-#: includes/utils/api-functions.php:296 includes/utils/api-functions.php:304
+#: includes/Organization.php:135 includes/utils/api-functions.php:264
+#: includes/utils/api-functions.php:272
 msgid "No address available"
 msgstr ""
 
@@ -585,21 +595,21 @@ msgstr ""
 msgid "No Caching for Logged-in Editors"
 msgstr ""
 
-#: rrze-faudir.php:294 rrze-faudir.php:328 templates/table.php:289
+#: rrze-faudir.php:209 rrze-faudir.php:243 templates/table.php:289
 #: templates/list.php:287 templates/list.php:293 templates/page.php:283
 #: templates/compact.php:289 templates/card.php:169
 msgid "No contact entry could be found."
 msgstr ""
 
-#: rrze-faudir.php:206
+#: rrze-faudir.php:139
 msgid "No contacts found with the provided identifier."
 msgstr ""
 
-#: includes/admin/settings-page.php:828
+#: includes/admin/settings-page.php:836
 msgid "No contacts found. Please verify the IdM-Kennung or names provided."
 msgstr ""
 
-#: includes/utils/api-functions.php:468
+#: includes/utils/api-functions.php:436
 msgid "No organizations found. Please try a different search term."
 msgstr ""
 
@@ -611,11 +621,13 @@ msgstr ""
 msgid "No posts available."
 msgstr ""
 
-#: includes/utils/api-functions.php:344 includes/utils/api-functions.php:352
+#: includes/Contact.php:581 includes/utils/api-functions.php:312
+#: includes/utils/api-functions.php:320
 msgid "No social media available"
 msgstr ""
 
-#: includes/utils/api-functions.php:222 includes/utils/api-functions.php:230
+#: includes/Contact.php:238 includes/utils/api-functions.php:190
+#: includes/utils/api-functions.php:198
 msgid "No workplaces available"
 msgstr ""
 
@@ -624,8 +636,8 @@ msgid "Nobility Title"
 msgstr ""
 
 #: templates/page.php:212 templates/compact.php:155 includes/Config.php:62
-#: includes/Contact.php:237 includes/utils/api-functions.php:272
-#: faudir-block/src/edit.js:66
+#: includes/Contact.php:280 includes/Contact.php:332
+#: includes/utils/api-functions.php:240 faudir-block/src/edit.js:66
 msgid "Office Hours"
 msgstr ""
 
@@ -641,7 +653,7 @@ msgid ""
 "disciplines are removed."
 msgstr ""
 
-#: includes/Config.php:49 includes/admin/settings-page.php:802
+#: includes/Config.php:49 includes/admin/settings-page.php:810
 #: includes/custom-post-type/custom-post-type.php:234
 #: faudir-block/src/edit.js:53
 msgid "Organization"
@@ -651,11 +663,11 @@ msgstr ""
 msgid "Organization has been saved as default."
 msgstr ""
 
-#: includes/utils/api-functions.php:414
+#: includes/utils/api-functions.php:382
 msgid "Organization ID"
 msgstr ""
 
-#: includes/admin/settings-page.php:589 includes/utils/api-functions.php:415
+#: includes/admin/settings-page.php:589 includes/utils/api-functions.php:383
 #: faudir-block/src/edit.js:631
 msgid "Organization Number"
 msgstr ""
@@ -672,15 +684,15 @@ msgstr ""
 msgid "Page"
 msgstr ""
 
-#: rrze-faudir.php:254
+#: rrze-faudir.php:169
 msgid "Parent Category"
 msgstr ""
 
-#: rrze-faudir.php:255
+#: rrze-faudir.php:170
 msgid "Parent Category:"
 msgstr ""
 
-#: includes/utils/api-functions.php:420
+#: includes/utils/api-functions.php:388
 msgid "Parent Organization"
 msgstr ""
 
@@ -692,18 +704,18 @@ msgstr ""
 msgid "Person Slug"
 msgstr ""
 
+#: includes/Maintenance.php:256
+msgid "Person successfully importet"
+msgstr ""
+
 #: includes/Shortcode.php:527
 #, php-format
 msgid "Person with ID %s does not exist"
 msgstr ""
 
-#: includes/Maintenance.php:229 includes/Maintenance.php:239
-#: includes/Maintenance.php:250
+#: includes/Maintenance.php:95 includes/Maintenance.php:265
+#: includes/Maintenance.php:275 includes/Maintenance.php:286
 msgid "Person with UnivIS ID"
-msgstr ""
-
-#: includes/Maintenance.php:79
-msgid "Person with Univis ID"
 msgstr ""
 
 #: includes/custom-post-type/custom-post-type.php:17
@@ -712,13 +724,14 @@ msgid "Persons"
 msgstr ""
 
 #: templates/table.php:121 templates/list.php:120 templates/page.php:137
-#: templates/compact.php:190 templates/card.php:104 includes/Config.php:48
-#: includes/utils/api-functions.php:311 includes/utils/api-functions.php:441
+#: templates/compact.php:190 templates/card.php:104
+#: includes/Organization.php:144 includes/Config.php:48
+#: includes/utils/api-functions.php:279 includes/utils/api-functions.php:409
 #: faudir-block/src/edit.js:52
 msgid "Phone"
 msgstr ""
 
-#: includes/utils/api-functions.php:257
+#: includes/Contact.php:265 includes/utils/api-functions.php:225
 msgid "Phones"
 msgstr ""
 
@@ -728,7 +741,7 @@ msgid ""
 "organization ID to display results."
 msgstr ""
 
-#: includes/utils/api-functions.php:375
+#: includes/utils/api-functions.php:343
 msgid "Please enter a search term"
 msgstr ""
 
@@ -821,8 +834,8 @@ msgid "Role"
 msgstr ""
 
 #: templates/table.php:98 templates/list.php:97 includes/Config.php:55
-#: includes/Contact.php:332 includes/utils/api-functions.php:239
-#: faudir-block/src/edit.js:59
+#: includes/Contact.php:247 includes/Contact.php:427
+#: includes/utils/api-functions.php:207 faudir-block/src/edit.js:59
 msgid "Room"
 msgstr ""
 
@@ -839,11 +852,11 @@ msgstr ""
 msgid "RRZE Webteam"
 msgstr ""
 
-#: includes/Contact.php:301
+#: includes/Contact.php:396
 msgid "Saturday"
 msgstr ""
 
-#: includes/EnqueueScripts.php:67 includes/utils/api-functions.php:460
+#: includes/EnqueueScripts.php:67 includes/utils/api-functions.php:428
 msgid "Save as Default Organization"
 msgstr ""
 
@@ -863,7 +876,7 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: rrze-faudir.php:252
+#: rrze-faudir.php:167
 msgid "Search Categories"
 msgstr ""
 
@@ -943,7 +956,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: includes/admin/settings-page.php:651 includes/admin/settings-page.php:703
+#: includes/admin/settings-page.php:651 includes/admin/settings-page.php:706
 msgid "Settings have been reset to default values."
 msgstr ""
 
@@ -963,7 +976,7 @@ msgstr ""
 msgid "Show Persons"
 msgstr ""
 
-#: includes/Config.php:54 includes/Contact.php:418 faudir-block/src/edit.js:58
+#: includes/Config.php:54 includes/Contact.php:513 faudir-block/src/edit.js:58
 msgid "Social Media and Websites"
 msgstr ""
 
@@ -975,8 +988,9 @@ msgstr ""
 msgid "Sort by"
 msgstr ""
 
-#: templates/table.php:183 templates/list.php:207 includes/Config.php:58
-#: includes/utils/api-functions.php:245 includes/utils/api-functions.php:320
+#: templates/table.php:183 templates/list.php:207 includes/Organization.php:153
+#: includes/Config.php:58 includes/Contact.php:253
+#: includes/utils/api-functions.php:213 includes/utils/api-functions.php:288
 #: faudir-block/src/edit.js:62
 msgid "Street"
 msgstr ""
@@ -989,7 +1003,7 @@ msgstr ""
 msgid "Suffix"
 msgstr ""
 
-#: includes/Contact.php:295
+#: includes/Contact.php:390
 msgid "Sunday"
 msgstr ""
 
@@ -997,12 +1011,12 @@ msgstr ""
 msgid "Table"
 msgstr ""
 
-#: rrze-faudir.php:250
+#: rrze-faudir.php:165
 msgctxt "taxonomy general name"
 msgid "Categories"
 msgstr ""
 
-#: rrze-faudir.php:251
+#: rrze-faudir.php:166
 msgctxt "taxonomy singular name"
 msgid "Category"
 msgstr ""
@@ -1043,7 +1057,7 @@ msgid ""
 "blocks."
 msgstr ""
 
-#: includes/Contact.php:299
+#: includes/Contact.php:394
 msgid "Thursday"
 msgstr ""
 
@@ -1067,26 +1081,27 @@ msgstr ""
 msgid "Transient Time for Organization ID (in days)"
 msgstr ""
 
-#: includes/Contact.php:297
+#: includes/Contact.php:392
 msgid "Tuesday"
 msgstr ""
 
-#: includes/utils/api-functions.php:426
+#: includes/utils/api-functions.php:394
 msgid "Type"
 msgstr ""
 
-#: includes/Contact.php:303
+#: includes/Contact.php:398
 msgid "Unknown"
 msgstr ""
 
-#: rrze-faudir.php:257
+#: rrze-faudir.php:172
 msgid "Update Category"
 msgstr ""
 
 #: templates/table.php:137 templates/list.php:136 templates/page.php:151
 #: templates/compact.php:204 templates/card.php:118 templates/card.php:135
-#: includes/Config.php:51 includes/utils/api-functions.php:263
-#: includes/utils/api-functions.php:317 faudir-block/src/edit.js:55
+#: includes/Organization.php:150 includes/Config.php:51
+#: includes/Contact.php:271 includes/utils/api-functions.php:231
+#: includes/utils/api-functions.php:285 faudir-block/src/edit.js:55
 msgid "URL"
 msgstr ""
 
@@ -1115,15 +1130,16 @@ msgstr ""
 msgid "Visiting researchers"
 msgstr ""
 
-#: includes/utils/api-functions.php:447
+#: includes/utils/api-functions.php:415
 msgid "Website"
 msgstr ""
 
-#: includes/Contact.php:298
+#: includes/Contact.php:393
 msgid "Wednesday"
 msgstr ""
 
-#: includes/utils/api-functions.php:270 includes/utils/api-functions.php:276
+#: includes/Contact.php:278 includes/Contact.php:284
+#: includes/utils/api-functions.php:238 includes/utils/api-functions.php:244
 msgid "Weekday "
 msgstr ""
 
@@ -1135,7 +1151,7 @@ msgstr ""
 msgid "Workplace manager"
 msgstr ""
 
-#: includes/admin/settings-page.php:666 includes/utils/api-functions.php:479
+#: includes/admin/settings-page.php:666 includes/utils/api-functions.php:447
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
@@ -1154,7 +1170,8 @@ msgid ""
 "or higher."
 msgstr ""
 
-#: includes/Config.php:59 includes/utils/api-functions.php:248
-#: includes/utils/api-functions.php:323 faudir-block/src/edit.js:63
+#: includes/Organization.php:156 includes/Config.php:59
+#: includes/Contact.php:256 includes/utils/api-functions.php:216
+#: includes/utils/api-functions.php:291 faudir-block/src/edit.js:63
 msgid "ZIP Code"
 msgstr ""

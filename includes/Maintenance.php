@@ -27,7 +27,7 @@ class Maintenance {
     
     public function register_hooks() {
 
-        //Aktivierungshook
+        // Aktivierungshook
         register_activation_hook(RRZE_PLUGIN_FILE, [$this, 'migrate_person_data_on_activation']);
         
         //  Admin Notices

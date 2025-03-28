@@ -3,6 +3,8 @@
 use RRZE\FAUdir\FaudirUtils;
 use RRZE\FAUdir\Config;
 use RRZE\FAUdir\API;
+use RRZE\FAUdir\Organization;
+use RRZE\FAUdir\Contact;
 
 // Register the Custom Post Type
 function register_custom_person_post_type() {
@@ -285,7 +287,8 @@ function save_person_additional_fields($post_id) {
     }
     $config = new Config();
     $api = new API($config);
-    
+    $org = new Organization();
+    $org->setConfig($config);    
     // Get the person ID
     $person_id = sanitize_text_field(wp_unslash($_POST['person_id'] ?? ''));
 
@@ -321,10 +324,17 @@ function save_person_additional_fields($post_id) {
                         $function_en = $contactInfo['functionLabel']['en'] ?? '';
                         $function_de = $contactInfo['functionLabel']['de'] ?? '';
 
+                        
+                        $cont = new Contact($contactInfo);
+                        $cont->setConfig($config);
+                        $cont->getContactbyAPI($contactInfo['identifier']);
+
+                        $org->getOrgbyAPI($org_identifier);
+                        
                         // Fetch workplace, address, and socials for this contact
-                        $workplace = fetch_and_format_workplaces($contactInfo['identifier'] ?? '');
-                        $address = fetch_and_format_address($org_identifier);
-                        $socials = fetch_and_format_socials($contactInfo['identifier'] ?? '');
+                        $workplace = $cont->getWorkplacesString();
+                        $address = $org->getAdressString();
+                        $socials = $cont->getSocialString();
 
                         // Add each organization as a separate entry
                         $contacts[] = array(
@@ -374,18 +384,7 @@ function save_person_additional_fields($post_id) {
     // Save displayed_contacts
     
     update_post_meta($post_id, 'displayed_contacts', intval($_POST['displayed_contacts']));
-    /*
-    
-    if (isset($_POST['displayed_contacts']) && is_array($_POST['displayed_contacts'])) {
-        // Sanitize and save the displayed contacts
-        $displayed_contacts = array_map('intval', $_POST['displayed_contacts']);
-        update_post_meta($post_id, 'displayed_contacts', $displayed_contacts);
-    } else {
-        // If no contacts are selected, save an empty array
-        update_post_meta($post_id, 'displayed_contacts', []);
-    }
-     * 
-     */
+
 }
 
 
@@ -402,7 +401,8 @@ function fetch_person_attributes() {
         $api = new API($config);
         $params = ['identifier' => $person_id];
         $response = $api->getPersons(60, 0, $params);
-
+        
+        
         if (is_array($response) && isset($response['data'])) {
             $person = $response['data'][0] ?? null;
 
@@ -481,7 +481,10 @@ function rrze_faudir_create_custom_person() {
     // Fetch additional person attributes
     $params = ['identifier' => $person_id];
     $response = $api->getPersons(60, 0, $params);
-
+    
+    $org = new Organization();
+    $org->setConfig($config);
+    
     if (is_array($response) && isset($response['data'])) {
         $person = $response['data'][0] ?? null;
 
@@ -503,7 +506,8 @@ function rrze_faudir_create_custom_person() {
                 $options = get_option('rrze_faudir_options', array());
                 $defaultOrg = $options['default_organization'] ?? null;
                 $defaultOrgIds = $defaultOrg ? $defaultOrg['ids'] : [];
-
+                
+                
                 // Filter contacts based on default organization
                 $filteredContacts = FaudirUtils::filterContactsByCriteria(
                     $person['contacts'],
@@ -511,17 +515,25 @@ function rrze_faudir_create_custom_person() {
                     $defaultOrgIds,
                     '' // email (empty since we're not filtering by email here)
                 );
-
+                
                 foreach ($filteredContacts as $contact) {
                     // Get the identifier
                     $contactIdentifier = $contact['identifier'];
                     $organizationIdentifier = $contact['organization']['identifier'];
 
+                    $cont = new Contact($contact);
+                    $cont->setConfig($config);
+                    $cont->getContactbyAPI($contact['identifier']);
+                    
+                    $org->getOrgbyAPI($organizationIdentifier);
+
+        
+                                   
                     $contacts[] = array(
                         'organization' => sanitize_text_field($contact['organization']['name'] ?? ''),
-                        'socials' => fetch_and_format_socials($contactIdentifier),
-                        'workplace' => fetch_and_format_workplaces($contactIdentifier),
-                        'address' => fetch_and_format_address($organizationIdentifier),
+                        'socials' => $cont->getSocialString(),
+                        'workplace' => $cont->getWorkplacesString(),
+                        'address' => $org->getAdressString(),
                         'function_en' => $contact['functionLabel']['en'] ?? '',
                         'function_de' => $contact['functionLabel']['de'] ?? '',
                     );
@@ -531,18 +543,6 @@ function rrze_faudir_create_custom_person() {
             // Save the organizations array as post meta
             update_post_meta($post_id, 'person_contacts', $contacts);
             // Handle displayed_contacts
-            
-            /*
-            if (isset($_POST['displayed_contacts']) && is_array($_POST['displayed_contacts'])) {
-                // Sanitize and save the displayed contacts
-                $displayed_contacts = array_map('intval', $_POST['displayed_contacts']);
-            } else {
-                // Default to the first contact if not provided
-                $displayed_contacts = !empty($contacts) ? [0] : [];
-            }
-
-            update_post_meta($post_id, 'displayed_contacts', $displayed_contacts);
-            */
             update_post_meta($post_id, 'displayed_contacts', intval($_POST['displayed_contacts']));
 
             // Return success with both post ID and edit URL
