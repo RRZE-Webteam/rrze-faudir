@@ -32,8 +32,28 @@ class Config {
         'default_output_fields_endpoint' => [
             'image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor',  
             'teasertext', 'content', 'zip', 'street', 'city', 'officehours', 'consultationhours'
+        ],        
+        'args_person_to_faudir' => [
+            "titel"         => 'honorificPrefix',
+            "name"          => 'displayname',
+            "suffix"        => 'honorificSuffix',
+            "workLocation"  => 'city',
+            "organisation"  => 'organization',
+            "worksFor"      => 'organization',
+            "abteilung"      => 'organization',
+            "telefon"       => 'phone',
+            "mail"          => 'email',
+            "webseite"      => 'url',
+            "sprechzeiten"  => 'consultationhours',
+            "adresse"       => 'address',
+            "bild"          => 'image',
+            "permalink"     => 'link',
+            "description"   => 'content',
+            "department"    => 'organization',
+            "kurzauszug"    => 'teasertext',
+            "raum"          => 'room',
+            "position"      => 'jobTitle',
         ]
-        
     ];
     
 

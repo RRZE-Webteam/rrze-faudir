@@ -18,7 +18,12 @@ class Shortcode {
     public function __construct(Config $configdata) {
      //   $this->config = $configdata;
         self::$config = $configdata;
+        
+        // Haupt-Shortcode registrieren
         add_shortcode('faudir', [$this, 'fetch_fau_data']);
+        
+        // Alias-Shortcodes registrieren
+        add_action('init', [$this, 'register_aliases']);
     }
   
     // Shortcode function
@@ -101,6 +106,16 @@ class Shortcode {
         $show_fields = array_map('trim', explode(',', $atts['show']));
         $hide_fields = array_map('trim', explode(',', $atts['hide']));
         
+        // Map etwaige alte show/hide Args aus fau-person auf neue Parameternamen
+        $mapping = self::$config->get('args_person_to_faudir') ?? [];
+        $show_fields = array_map(function ($field) use ($mapping) {
+            return $mapping[$field] ?? $field;
+        }, array_map('trim', explode(',', $atts['show'] ?? '')));
+
+        // $hide_fields mit Mapping umsetzen
+        $hide_fields = array_map(function ($field) use ($mapping) {
+            return $mapping[$field] ?? $field;
+        }, array_map('trim', explode(',', $atts['hide'] ?? '')));
 
         // Remove duplicates and ensure arrays are unique
         $show_fields = array_unique($show_fields);
@@ -133,14 +148,15 @@ class Shortcode {
 
             $person_posts = get_posts($args);
             $person_identifiers = array();
-
+            
             foreach ($person_posts as $person_post) {
                 $person_id = get_post_meta($person_post->ID, 'person_id', true);
+              //    error_log("FAUdir\Shortcode (): Got Persons Identifier: {$person_id}");       
                 if (!empty($person_id)) {
                     $person_identifiers[] = $person_id;
                 }
             }
-
+           
             return self::process_persons_by_identifiers($person_identifiers);
         };
 
@@ -336,6 +352,7 @@ class Shortcode {
             
         } elseif (!empty($post_id) && empty($identifiers) && empty($category) && empty($orgnr)) {
             // display a single person by custom post id - mostly on the slug
+           //  error_log("FAUdir\Shortcode (fetch_persons_by_post_id): Search By id=: {$post_id}");       
             $persons = $fetch_persons_by_post_id($post_id);
         } elseif (!empty($identifiers) || !empty($post_id)) {
             // display a single person by identifier or post id
@@ -485,6 +502,9 @@ class Shortcode {
         if ($atts['format'] === 'liste') {
              $atts['format'] = 'list';
         }
+         if ($atts['format'] === 'sidebar') {
+             $atts['format'] = 'compact';
+        }
 
 
 
@@ -558,6 +578,35 @@ class Shortcode {
     }
 
 
+    public function register_aliases(): void {
+        include_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+        if (!is_plugin_active('fau-person/fau-person.php')) {
+            add_shortcode('kontakt', [$this, 'kontakt_to_faudir']);
+            add_shortcode('kontaktliste', [$this, 'kontaktliste_to_faudir']);
+        }
+    }
+
+    public function kontakt_to_faudir($atts, $content = null): string {
+        $atts_string = $this->atts_to_string($atts);
+        return do_shortcode(shortcode_unautop('[faudir ' . $atts_string . ']' . $content . '[/faudir]'));
+    }
+
+    public function kontaktliste_to_faudir($atts, $content = null): string {
+        if (!isset($atts['format'])) {
+            $atts['format'] = 'list';
+        }
+        $atts_string = $this->atts_to_string($atts);
+        return do_shortcode(shortcode_unautop('[faudir ' . $atts_string . ']' . $content . '[/faudir]'));
+    }
+
+    protected function atts_to_string(array $atts): string {
+        $atts_string = '';
+        foreach ($atts as $key => $value) {
+            $atts_string .= $key . '="' . esc_attr($value) . '" ';
+        }
+        return trim($atts_string);
+    }
 
 
 }
