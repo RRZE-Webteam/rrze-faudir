@@ -122,7 +122,7 @@ class Organization {
         }
         
         $this->fromArray($data);
-        error_log("FAUdir\Organization (getOrgbyAPI): Got org data by {$identifier}.");
+      //  error_log("FAUdir\Organization (getOrgbyAPI): Got org data by {$identifier}.");
         return true;
     }
     

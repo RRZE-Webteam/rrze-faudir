@@ -93,9 +93,8 @@ class API {
         return $response;
     }
     
-    
-    
-    
+   
+  
     
     
     /*
@@ -238,7 +237,7 @@ class API {
     * @param array $params - Additional query parameters
     * @return array - Array of organizations
     */
-    function getOrgList($limit = 100, $offset = 0, $params = []) {
+    public function getOrgList($limit = 100, $offset = 0, $params = []): ?array {
         if (!$this->api_key) {
             throw new \Exception("FAUdir\API (getOrgList): API Key is required.");
         }   
