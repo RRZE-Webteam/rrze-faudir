@@ -34,6 +34,7 @@ class Main {
         // Rufe Maintenance Hooks auf
         $maintenance = new Maintenance($this->config);
         $maintenance->register_hooks();
+        
     
     }
 

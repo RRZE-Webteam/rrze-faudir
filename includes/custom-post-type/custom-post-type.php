@@ -3,6 +3,8 @@
 use RRZE\FAUdir\FaudirUtils;
 use RRZE\FAUdir\Config;
 use RRZE\FAUdir\API;
+use RRZE\FAUdir\Organization;
+use RRZE\FAUdir\Contact;
 
 // Register the Custom Post Type
 function register_custom_person_post_type() {
@@ -285,7 +287,8 @@ function save_person_additional_fields($post_id) {
     }
     $config = new Config();
     $api = new API($config);
-    
+    $org = new Organization();
+    $org->setConfig($config);    
     // Get the person ID
     $person_id = sanitize_text_field(wp_unslash($_POST['person_id'] ?? ''));
 
@@ -321,10 +324,17 @@ function save_person_additional_fields($post_id) {
                         $function_en = $contactInfo['functionLabel']['en'] ?? '';
                         $function_de = $contactInfo['functionLabel']['de'] ?? '';
 
+                        
+                        $cont = new Contact($contactInfo);
+                        $cont->setConfig($config);
+                        $cont->getContactbyAPI($contactInfo['identifier']);
+
+                        $org->getOrgbyAPI($org_identifier);
+                        
                         // Fetch workplace, address, and socials for this contact
-                        $workplace = fetch_and_format_workplaces($contactInfo['identifier'] ?? '');
-                        $address = fetch_and_format_address($org_identifier);
-                        $socials = fetch_and_format_socials($contactInfo['identifier'] ?? '');
+                        $workplace = $cont->getWorkplacesString();
+                        $address = $org->getAdressString();
+                        $socials = $cont->getSocialString();
 
                         // Add each organization as a separate entry
                         $contacts[] = array(
@@ -374,46 +384,12 @@ function save_person_additional_fields($post_id) {
     // Save displayed_contacts
     
     update_post_meta($post_id, 'displayed_contacts', intval($_POST['displayed_contacts']));
-    /*
-    
-    if (isset($_POST['displayed_contacts']) && is_array($_POST['displayed_contacts'])) {
-        // Sanitize and save the displayed contacts
-        $displayed_contacts = array_map('intval', $_POST['displayed_contacts']);
-        update_post_meta($post_id, 'displayed_contacts', $displayed_contacts);
-    } else {
-        // If no contacts are selected, save an empty array
-        update_post_meta($post_id, 'displayed_contacts', []);
-    }
-     * 
-     */
+
 }
 
 
 add_action('save_post', 'save_person_additional_fields');
 
-// TODO:
-// Take a look if this is not handled in admin.js - file js/custom-person.js isnt found anyway
-
-function enqueue_custom_person_scripts($hook) {
-    // Only load on post edit screens for our custom post type
-    if ($hook == 'post-new.php' || $hook == 'post.php') {
-        global $post;
-        if ($post && $post->post_type === 'custom_person') {
-            wp_enqueue_script(
-                'custom-person-script',
-                plugins_url('/js/custom-person.js', dirname(__FILE__)),
-                array('jquery'),
-                null,
-                true
-            );
-            wp_localize_script('custom-person-script', 'customPerson', array(
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce'    => wp_create_nonce('custom_person_nonce')
-            ));
-        }
-    }
-}
-// add_action('admin_enqueue_scripts', 'enqueue_custom_person_scripts');
 
 function fetch_person_attributes() {
     check_ajax_referer('custom_person_nonce', 'nonce');
@@ -425,7 +401,8 @@ function fetch_person_attributes() {
         $api = new API($config);
         $params = ['identifier' => $person_id];
         $response = $api->getPersons(60, 0, $params);
-
+        
+        
         if (is_array($response) && isset($response['data'])) {
             $person = $response['data'][0] ?? null;
 
@@ -504,7 +481,10 @@ function rrze_faudir_create_custom_person() {
     // Fetch additional person attributes
     $params = ['identifier' => $person_id];
     $response = $api->getPersons(60, 0, $params);
-
+    
+    $org = new Organization();
+    $org->setConfig($config);
+    
     if (is_array($response) && isset($response['data'])) {
         $person = $response['data'][0] ?? null;
 
@@ -526,7 +506,8 @@ function rrze_faudir_create_custom_person() {
                 $options = get_option('rrze_faudir_options', array());
                 $defaultOrg = $options['default_organization'] ?? null;
                 $defaultOrgIds = $defaultOrg ? $defaultOrg['ids'] : [];
-
+                
+                
                 // Filter contacts based on default organization
                 $filteredContacts = FaudirUtils::filterContactsByCriteria(
                     $person['contacts'],
@@ -534,17 +515,25 @@ function rrze_faudir_create_custom_person() {
                     $defaultOrgIds,
                     '' // email (empty since we're not filtering by email here)
                 );
-
+                
                 foreach ($filteredContacts as $contact) {
                     // Get the identifier
                     $contactIdentifier = $contact['identifier'];
                     $organizationIdentifier = $contact['organization']['identifier'];
 
+                    $cont = new Contact($contact);
+                    $cont->setConfig($config);
+                    $cont->getContactbyAPI($contact['identifier']);
+                    
+                    $org->getOrgbyAPI($organizationIdentifier);
+
+        
+                                   
                     $contacts[] = array(
                         'organization' => sanitize_text_field($contact['organization']['name'] ?? ''),
-                        'socials' => fetch_and_format_socials($contactIdentifier),
-                        'workplace' => fetch_and_format_workplaces($contactIdentifier),
-                        'address' => fetch_and_format_address($organizationIdentifier),
+                        'socials' => $cont->getSocialString(),
+                        'workplace' => $cont->getWorkplacesString(),
+                        'address' => $org->getAdressString(),
                         'function_en' => $contact['functionLabel']['en'] ?? '',
                         'function_de' => $contact['functionLabel']['de'] ?? '',
                     );
@@ -554,18 +543,6 @@ function rrze_faudir_create_custom_person() {
             // Save the organizations array as post meta
             update_post_meta($post_id, 'person_contacts', $contacts);
             // Handle displayed_contacts
-            
-            /*
-            if (isset($_POST['displayed_contacts']) && is_array($_POST['displayed_contacts'])) {
-                // Sanitize and save the displayed contacts
-                $displayed_contacts = array_map('intval', $_POST['displayed_contacts']);
-            } else {
-                // Default to the first contact if not provided
-                $displayed_contacts = !empty($contacts) ? [0] : [];
-            }
-
-            update_post_meta($post_id, 'displayed_contacts', $displayed_contacts);
-            */
             update_post_meta($post_id, 'displayed_contacts', intval($_POST['displayed_contacts']));
 
             // Return success with both post ID and edit URL
@@ -586,8 +563,7 @@ function rrze_faudir_create_custom_person() {
 add_action('wp_ajax_rrze_faudir_create_custom_person', 'rrze_faudir_create_custom_person');
 
 // Add this function to register the meta field for REST API
-function register_person_meta()
-{
+function register_person_meta() {
     register_post_meta('custom_person', 'person_id', array(
         'show_in_rest' => true,
         'single' => true,
@@ -628,46 +604,3 @@ function add_taxonomy_to_person_rest($response, $post, $request)
 }
 add_filter('rest_prepare_custom_person', 'add_taxonomy_to_person_rest', 10, 3);
 
-
-
-// Hook into 'init' to check plugin status and register the alias shortcode
-add_action('init',  __NAMESPACE__ . '\register_kontakt_as_faudir_shortcode_alias');
-function register_kontakt_as_faudir_shortcode_alias() {
-    // Include the plugin.php file to ensure is_plugin_active() is available
-    include_once(ABSPATH . 'wp-admin/includes/plugin.php');
-
-    // Check if the FAU-person plugin is not active
-    if (!is_plugin_active('fau-person/fau-person.php')) {
-        add_shortcode('kontakt',  __NAMESPACE__ . '\kontakt_to_faudir_shortcode_alias');
-        add_shortcode('kontaktliste',  __NAMESPACE__ . '\kontaktliste_to_faudir_shortcode_alias');
-    }
-}
-
-// Function to handle the [kontakt] shortcode and redirect to [faudir]
-function kontakt_to_faudir_shortcode_alias($atts, $content = null) {
-    // Pass all attributes and content to the [faudir] shortcode
-    $atts_string = '';
-    if (!empty($atts)) {
-        foreach ($atts as $key => $value) {
-            $atts_string .= $key . '="' . esc_attr($value) . '" ';
-        }
-    }
-
-    return do_shortcode(shortcode_unautop('[faudir ' . trim($atts_string) . ']' . $content . '[/faudir]'));
-}
-
-// Function to handle the [kontaktliste] shortcode with specific format "list"
-function kontaktliste_to_faudir_shortcode_alias($atts, $content = null) {
-    // Ensure the format is set to "list"
-    if (!isset($atts['format'])) {
-        $atts['format'] = 'list';
-    }
-
-    // Convert attributes to string
-    $atts_string = '';
-    foreach ($atts as $key => $value) {
-        $atts_string .= $key . '="' . esc_attr($value) . '" ';
-    }
-
-    return do_shortcode(shortcode_unautop('[faudir ' . trim($atts_string) . ']' . $content . '[/faudir]'));
-}

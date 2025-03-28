@@ -24,6 +24,8 @@ class Contact {
     public ?array $socials = [];
     public ?array $org = [];
     private array $rawdata;
+    protected ?Config $config = null;
+    
     /**
      * Contact constructor
      */
@@ -191,6 +193,34 @@ class Contact {
     }
     
     /*
+     * Config setzen
+     */
+    public function setConfig(?Config $config = null): void {
+        $this->config = $config ?? new Config();
+    }
+    
+    /*
+     * Hole eine Contact via Identifier von der API
+     */
+    public function getContactbyAPI(string $identifier): bool {
+        if (empty($this->config)) {
+            $this->setConfig();
+        }
+        $api = new API($this->config);
+        // Hole die Personendaten als Array über die API-Methode.
+        $data = $api->getContact($identifier);
+
+        if (empty($data) || !is_array($data)) {
+            return false;
+        }
+        
+        $this->populateFromData($data);
+      //  error_log("FAUdir\Contact (getContactbyAPI): Got contact data by {$identifier}.");
+        return true;
+    }
+    
+    
+    /*
      * Get workplaces and return as Array if exists
      */  
     public function getWorkplaces(): ?array {
@@ -199,6 +229,71 @@ class Contact {
         }
         return $this->workplaces;   
     }
+    
+     /*
+     * Get workplaces and return as Array if exists
+     */  
+    public function getWorkplacesString(): string {
+        if (empty($this->workplaces)) {
+            return __('No workplaces available', 'rrze-faudir');
+        }
+        
+        // Format workplaces into a string
+        $formattedWorkplaces = [];
+        foreach ($this->workplaces as $workplace) {
+            $workplaceDetails = [];
+
+            if (!empty($workplace['room'])) {
+                $workplaceDetails[] = __('Room', 'rrze-faudir').': ' . $workplace['room'];
+            }
+            if (!empty($workplace['floor'])) {
+                $workplaceDetails[] = __('Floor', 'rrze-faudir').': ' . $workplace['floor'];
+            }
+            if (!empty($workplace['street'])) {
+                $workplaceDetails[] = __('Street', 'rrze-faudir').': ' . $workplace['street'];
+            }
+            if (!empty($workplace['zip'])) {
+                $workplaceDetails[] = __('ZIP Code', 'rrze-faudir').': ' . $workplace['zip'];
+            }
+            if (!empty($workplace['city'])) {
+                $workplaceDetails[] = __('City', 'rrze-faudir').': ' . $workplace['city'];
+            }
+            if (!empty($workplace['faumap'])) {
+                $workplaceDetails[] = __('FAU Map', 'rrze-faudir').': ' . $workplace['faumap'];
+            }
+            if (!empty($workplace['phones'])) {
+                $workplaceDetails[] = __('Phones', 'rrze-faudir').': ' . implode(', ', $workplace['phones']);
+            }
+            if (!empty($workplace['fax'])) {
+                $workplaceDetails[] = __('Fax', 'rrze-faudir').': ' . $workplace['fax'];
+            }
+            if (!empty($workplace['url'])) {
+                $workplaceDetails[] = __('URL', 'rrze-faudir').': ' . $workplace['url'];
+            }
+            if (!empty($workplace['mails'])) {
+                $workplaceDetails[] = __('Emails', 'rrze-faudir').': ' . implode(', ', $workplace['mails']);
+            }
+            if (!empty($workplace['officeHours'])) {
+                $officeHours = array_map(function ($hours) {
+                    return __('Weekday ', 'rrze-faudir') . $hours['weekday'] . ': ' . $hours['from'] . ' - ' . $hours['to'];
+                }, $workplace['officeHours']);
+                $workplaceDetails[] = __('Office Hours', 'rrze-faudir') . implode('; ', $officeHours);
+            }
+            if (!empty($workplace['consultationHours'])) {
+                $consultationHours = array_map(function ($hours) {
+                    return __('Weekday ', 'rrze-faudir') . $hours['weekday'] . ': ' . $hours['from'] . ' - ' . $hours['to'] . ' (' . $hours['comment'] . ') ' . $hours['url'];
+                }, $workplace['consultationHours']);
+                $workplaceDetails[] = __('Consultation Hours', 'rrze-faudir') . implode('; ', $consultationHours);
+            }
+
+            $formattedWorkplaces[] = implode("\n", $workplaceDetails);
+        }
+
+        return implode("\n\n", $formattedWorkplaces);
+        
+        
+    }
+    
     
     /*
      * Get Orgname
@@ -449,6 +544,7 @@ class Contact {
         return $output;
         
     }
+    
     /*
      * Sanitize allowed HTML Tag for list outputs
      */
@@ -458,6 +554,7 @@ class Contact {
 
         return in_array($htmlsurround, $allowed_tags, true) ? $htmlsurround : 'div';
     }
+    
     /*
      * Get Social/Website from Contact and transform them into a assoc. array
      */
@@ -474,6 +571,27 @@ class Contact {
         }
         return $reslist;
     }
+    
+    
+    /*
+     * Get Socials as String
+     */
+     public function getSocialString(): string {
+        if (empty($this->socials)) {
+             return __('No social media available', 'rrze-faudir');
+        }
+            
+        // Format social media into a string
+        $formattedSocials = [];
+        foreach ($this->socials as $social) {
+            if (!empty($social['platform']) && !empty($social['url'])) {
+                $formattedSocials[] = ucfirst($social['platform']) . ': ' . $social['url'];
+            }
+        }
+
+        return implode("\n", $formattedSocials);
+     }
+
     
     
     /*

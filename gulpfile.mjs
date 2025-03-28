@@ -39,10 +39,8 @@ let info;
 function initialize() {
     const data = readFileSync('./package.json', 'utf-8');
     info = JSON.parse(data);
- //   console.log("Info erfolgreich geladen:", info); // Debug-Ausgabe
 }
 
-// Initialisierung direkt beim Laden des Skripts
 initialize();
 
 /**
@@ -242,9 +240,9 @@ function devversion() {
 }
 
 export function createReadme() {
-    return gulpFile('readme.txt', '', { src: true }) // Erstelle eine leere Datei
+    return gulpFile('readme.txt', '', { src: true }) 
 	.pipe(header(readmebanner, { info: info }))
-        .pipe(dest('./')) // Speichere die Datei im aktuellen Verzeichnis
+        .pipe(dest('./'))
 	.pipe(touch())
 	.on('end', () => {
             console.log('readme.txt wurde erfolgreich erstellt.');

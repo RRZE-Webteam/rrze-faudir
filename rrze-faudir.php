@@ -4,7 +4,7 @@
 Plugin Name: RRZE FAUdir
 Plugin URI: https://github.com/RRZE-Webteam/rrze-faudir
 Description: Plugin for displaying the FAU person and institution directory on websites.
-Version: 2.2.5
+Version: 2.2.9
 Author: RRZE Webteam
 License: GNU General Public License v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -101,9 +101,8 @@ function rrze_faudir_system_requirements() {
 if (rrze_faudir_system_requirements()) {
     // Include necessary files
 
-    require_once plugin_dir_path(__FILE__) . 'includes/utils/api-functions.php';
     require_once plugin_dir_path(__FILE__) . 'includes/custom-post-type/custom-post-type.php';
-    require_once plugin_dir_path(__FILE__) . 'includes/admin/settings-page.php';
+    require_once plugin_dir_path(__FILE__) . 'includes/Settings.php';
 
     
     $main = new Main(RRZE_PLUGIN_FILE);
@@ -111,73 +110,6 @@ if (rrze_faudir_system_requirements()) {
     
     
 
-    // Schedule the event on plugin activation
-    register_activation_hook(__FILE__,  __NAMESPACE__ . '\schedule_check_person_availability');
-    function schedule_check_person_availability() {
-        if (!wp_next_scheduled('check_person_availability')) {
-            wp_schedule_event(time(), 'hourly', 'check_person_availability');
-        }
-    }
-
-    // Unschedule the event on plugin deactivation
-    register_deactivation_hook(__FILE__,  __NAMESPACE__ . '\unschedule_check_person_availability');
-    function unschedule_check_person_availability()  {
-        $timestamp = wp_next_scheduled('check_person_availability');
-        if ($timestamp) {
-            wp_unschedule_event($timestamp, 'check_person_availability');
-        }
-    }
-
-    // Hook the function to check availability
-    add_action('check_person_availability',  __NAMESPACE__ . '\check_api_person_availability');
-    function check_api_person_availability()  {
-        // Check if the job is already running
-        if (get_transient('check_person_availability_running')) {
-            // error_log('Cron job is already running.');
-            return;
-        }
-
-        // Set a transient to indicate the job is running
-        set_transient('check_person_availability_running', true, 60); // 60 seconds
-
-        // Your existing code to check person availability
-        $args = array(
-            'post_type' => 'custom_person',
-            'post_status' => 'publish', 
-            'posts_per_page' => 1000,
-        );
-        $posts = get_posts($args);
-
-        foreach ($posts as $post) {
-            $person_id = get_post_meta($post->ID, 'person_id', true);
-
-            // Check if person_id is empty
-            if (empty($person_id)) {
-                wp_update_post(array(
-                    'ID' => $post->ID,
-                    'post_status' => 'draft',
-                ));
-                continue; // Skip to the next post
-            }
-
-            // Make API request to check if person is accessible
-            $person_data = fetch_fau_person_by_id($person_id);
-
-            // If the response indicates an error with status code 404, update the post to draft
-            if ($person_data === false || empty($person_data)) {
-                wp_update_post(array(
-                    'ID' => $post->ID,
-                    'post_status' => 'draft',
-                ));
-            }
-        }
-
-        // Delete the transient to indicate the job is finished
-        delete_transient('check_person_availability_running');
-
-        // Log the completion of the cron job
-        // error_log('Cron job check_person_availability completed.');
-    }
 
     // AJAX search function
     add_action('wp_ajax_rrze_faudir_search_contacts',  __NAMESPACE__ . '\rrze_faudir_search_contacts');
@@ -225,24 +157,6 @@ function load_custom_person_template($template) {
 add_filter('template_include',  __NAMESPACE__ . '\load_custom_person_template', 99);
 
 
-
-
-function rrze_faudir_flush_rewrite_on_slug_change($old_value, $value, $option) {
-    if (  ($option === 'rrze_faudir_options') 
-             && (isset($old_value['person_slug'])) 
-             && (isset($value['person_slug'])) 
-             && ($old_value['person_slug'] !== $value['person_slug'])) {
-        flush_rewrite_rules(); // Flush rewrite rules if the slug changes
-    }
-}
-add_action('update_option_rrze_faudir_options',  __NAMESPACE__ . '\rrze_faudir_flush_rewrite_on_slug_change', 10, 3);
-
-function rrze_faudir_save_permalink_settings() {
-    // Simulate visiting the Permalinks page to refresh rewrite rules
-    global $wp_rewrite;
-    $wp_rewrite->flush_rules();
-}
-add_action('admin_init',  __NAMESPACE__ . '\rrze_faudir_save_permalink_settings');
 
 // Register the custom taxonomy before migration
 function register_custom_person_taxonomies() {
