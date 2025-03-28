@@ -857,61 +857,6 @@ function rrze_faudir_sanitize_options($new_options) {
 
 
 
-
-/**
- * Fetch organizations from the FAU organizations API
- * @param int $limit - Limit the number of organizations to fetch
- * @param int $offset - Offset the number of organizations to fetch
- * @param array $params - Additional query parameters
- * @return array - Array of organizations
- */
-function fetch_fau_organizations($limit = 100, $offset = 1, $params = []) {
-    $api_key = FaudirUtils::getKey();
-    $url = FaudirUtils::getApiBaseUrl() . 'organizations?limit=' . $limit . '&offset=' . $offset;
-
-    $query_params = [
-        'q',
-        'sort',
-        'attrs',
-        'lq',
-        'rq',
-        'view',
-        'lf'
-    ];
-    // Loop through the parameters and append them to the URL if they exist in $params
-    foreach ($query_params as $param) {
-        if (!empty($params[$param])) {
-            $url .= '&' . $param . '=' . urlencode($params[$param]);
-        }
-    }
-    // Handle givenName and familyName as special cases to be combined into the 'q' parameter
-    if (!empty($params['orgnr'])) {
-        $url .= '&q=' . urlencode('^' . $params['orgnr']);
-    }
-    $response = wp_remote_get($url, array(
-        'headers' => array(
-            'accept' => 'application/json',
-            'X-API-KEY' => $api_key,
-        ),
-    ));
-
-    if (is_wp_error($response)) {
-        return __('Error retrieving data: ', 'rrze-faudir') . $response->get_error_message();
-    }
-
-    $body = wp_remote_retrieve_body($response);
-    $data = json_decode($body, true);
-
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        return __('Error decoding JSON data.', 'rrze-faudir');
-    }
-
-    return $data;
-}
-
-
-
-
 /**
  * AJAX handler for organization search
  */
