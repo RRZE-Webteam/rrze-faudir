@@ -123,10 +123,12 @@ class Shortcode {
 
         // Extract the attributes from the shortcode
         $identifiers = empty($atts['identifier']) ? [] : explode(',', $atts['identifier']);
-        $category   = $atts['category'];
-         
+        $category   = $atts['category'];     
+            // Ausgabe nach Kategorie
         $role       = $atts['role'];
+            // Ausgabe von Personen nach functionlabel und Sprachvarianten
         $url        = $atts['url'];
+            
         $orgnr      = $atts['orgnr'];
         $post_id    = $atts['id'];
         $format_displayname = $atts['format_displayname'];

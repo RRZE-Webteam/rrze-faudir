@@ -49,7 +49,7 @@ get_header();
                         }
 
                     
-                    echo do_shortcode('[faudir identifier="' . esc_attr($person_id) . '"'.$show.' format="page"]');
+                    echo do_shortcode('[faudir identifier="' . esc_attr($person_id) . '"'.$show.' url="#" format="page"]');
                     ?>
                 </div>
             </div>

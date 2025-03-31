@@ -40,8 +40,10 @@ if (!defined('ABSPATH')) {
                 $displayname = $person->getDisplayName(true, false,$formatstring,$show_fields,$hide_fields);
                 $mailadresses= $person->getEMail();
                 $phonenumbers = $person->getPhone();                        
-                if (!empty($url)) {
+                if (!empty($url) && ($url !== '#')) {
                     $final_url = $url;
+                } elseif ($url == '#') {
+                    $final_url = '';
                 } else {
                     $final_url = $person->getTargetURL($opt['fallback_link_faudir']);
                 }
