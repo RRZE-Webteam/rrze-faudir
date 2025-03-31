@@ -502,9 +502,10 @@ class Shortcode {
         if ($atts['format'] === 'liste') {
              $atts['format'] = 'list';
         }
-         if ($atts['format'] === 'sidebar') {
+        if (($atts['format'] === 'sidebar') || ($atts['format'] === 'sidebar')) {
              $atts['format'] = 'compact';
         }
+
 
 
 

@@ -186,33 +186,35 @@ if (!defined('ABSPATH')) {
                             }
                             $showroomfloor = false;
                             if ((in_array('room', $show_fields) && !in_array('room', $hide_fields))
-                            || (in_array('floor', $show_fields) && !in_array('floor', $hide_fields))) {
+                            && (in_array('floor', $show_fields) && !in_array('floor', $hide_fields))) {
                                 $showroomfloor = true;
                             }
                             
                             if (!empty($workplaces)) {
                                 $hours = $cons =  '';
-                                foreach ($workplaces as $w => $wdata) {
-                                    if (!empty($wdata['consultationHours'])) {
-                                        $hours .= $contact->getConsultationsHours($wdata, 'consultationHours', true, $lang, $showroomfloor, $showmap );
+                                if (in_array('consultationhours', $show_fields) && !in_array('consultationhours', $hide_fields) && isset($available_fields['consultationhours'])) {
+                                    foreach ($workplaces as $w => $wdata) {
+                                        if (!empty($wdata['consultationHours'])) {
+                                            $hours .= $contact->getConsultationsHours($wdata, 'consultationHours', true, $lang, $showroomfloor, $showmap );
+                                        }
+                                    }
+                                    if (!empty($hours)) {
+                                            $cons .=  '<h2 class="consultation-title">'.__('Consultation Hours', 'rrze-faudir').'</h2>';
+                                            $cons .= $hours;
                                     }
                                 }
-                                if (!empty($hours)) {
-                                        $cons .=  '<h2 class="consultation-title">'.__('Consultation Hours', 'rrze-faudir').'</h2>';
-                                        $cons .= $hours;
-                                }
-                                
                                 $hours = '';
-                                foreach ($workplaces as $w => $wdata) {
-                                    if (!empty($wdata['officeHours'])) { 
-                                        $hours .= $contact->getConsultationsHours($wdata, 'officeHours', true, $lang, $showroomfloor, $showmap);
+                                if (in_array('officehours', $show_fields) && !in_array('officehours', $hide_fields) && isset($available_fields['officehours'])) {
+                                    foreach ($workplaces as $w => $wdata) {
+                                        if (!empty($wdata['officeHours'])) { 
+                                            $hours .= $contact->getConsultationsHours($wdata, 'officeHours', true, $lang, $showroomfloor, $showmap);
+                                        }
+                                    } 
+                                    if (!empty($hours)) {
+                                            $cons .=  '<h2 class="consultation-title">'. __('Office Hours', 'rrze-faudir').'</h2>';
+                                            $cons .= $hours;
                                     }
-                                } 
-                                if (!empty($hours)) {
-                                        $cons .=  '<h2 class="consultation-title">'. __('Office Hours', 'rrze-faudir').'</h2>';
-                                        $cons .= $hours;
                                 }
-                  
                                if (!empty($cons)) {   
                                    echo '<div class="profile-consultation">';
                                    echo $cons;
