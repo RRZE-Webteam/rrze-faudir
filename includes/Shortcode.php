@@ -57,7 +57,8 @@ class Shortcode {
                 'function'              => '',
                 'role'                  => '',
                 'button-text'           => '',
-                'format_displayname'     => ''
+                'format_displayname'    => '',
+                'display'               => 'person'
             ),
             $atts
         );
@@ -123,131 +124,27 @@ class Shortcode {
 
         // Extract the attributes from the shortcode
         $identifiers = empty($atts['identifier']) ? [] : explode(',', $atts['identifier']);
+            // FAUdir Identifier von einer oder mehreren Personen
         $category   = $atts['category'];     
             // Ausgabe nach Kategorie
         $role       = $atts['role'];
             // Ausgabe von Personen nach functionlabel und Sprachvarianten
         $url        = $atts['url'];
-            
+            // optionale URL der Person überschreiben
         $orgnr      = $atts['orgnr'];
+            // ORGnr der Einrichtung, falls Personen danach angezeigt werden sollen
         $post_id    = $atts['id'];
+            // Personen POst ID falls diese angezeigt werden soll
+        $display    = $atts['display'];
+            // Art der anzuzeigendenden Daten.  Default: Person. Alternativ: Org
         $format_displayname = $atts['format_displayname'];
+            // optionale Formataenderung für die Darstellung des Namens
+        
+       
+        
         $persons    = [];
 
-        // Closure to fetch persons by post ID
-        $fetch_persons_by_post_id = function ($post_id) {
-            $args = [
-                'post_type'      => 'custom_person',
-                'meta_query'     => [
-                    [
-                        'key'     => 'old_person_post_id',
-                        'value'   => intval($post_id),
-                        'compare' => '=',
-                    ],
-                ],
-                'posts_per_page' => 1,
-            ];
 
-            $person_posts = get_posts($args);
-            $person_identifiers = array();
-            
-            foreach ($person_posts as $person_post) {
-                $person_id = get_post_meta($person_post->ID, 'person_id', true);
-              //    error_log("FAUdir\Shortcode (): Got Persons Identifier: {$person_id}");       
-                if (!empty($person_id)) {
-                    $person_identifiers[] = $person_id;
-                }
-            }
-           
-            return self::process_persons_by_identifiers($person_identifiers);
-        };
-
-        // Closure to fetch persons by function and default organization
-        $fetch_persons_by_function = function ($role) {
-            $options = get_option('rrze_faudir_options', []);
-            $default_org = $options['default_organization'] ?? null;
-            $defaultOrgIdentifier = $default_org ? $default_org['id'] : '';
-            $api = new API(self::$config);
-            
-            if (!empty($defaultOrgIdentifier)) {
-                // Try English function label first
-                $lq_en = 'contacts.functionLabel.en[eq]=' . urlencode($role) .
-                    '&contacts.organization.identifier[eq]=' . urlencode($defaultOrgIdentifier);
-     
-                $response = $api->getPersons(0, 0, ['lq' => $lq_en]);
-                
-                // If no results, try German function label
-                if (empty($response['data'])) {
-                    $lq_de = 'contacts.functionLabel.de[eq]=' . urlencode($role) .
-                        '&contacts.organization.identifier[eq]=' . urlencode($defaultOrgIdentifier);
-                    $response = $api->getPersons(0, 0, ['lq' => $lq_de]);
-                }
-
-                if (!empty($response['data'])) {
-                    $person_identifiers = array_map(function ($person) {
-                        return $person['identifier'];
-                    }, $response['data']);
-                    return self::process_persons_by_identifiers($person_identifiers);
-                }
-            }
-            return [];
-        };
-
-        // Closure to filter persons by organization and group ID
-        $filter_persons = function ($persons, $orgnr) {
-            if (!empty($orgnr)) {
-                $api = new API(self::$config);
-                $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . $orgnr]);
-                if (!empty($orgdata['data'])) {
-                    $orgIdentifier = $orgdata['data'][0]['identifier'];
-                    $persons = array_filter($persons, function ($person) use ($orgIdentifier) {
-                        foreach ($person['contacts'] as $contact) {
-                            if ($contact['organization']['identifier'] === $orgIdentifier) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    });
-                }
-            }
-
-          
-
-            return $persons;
-        };
-
-        // Closure to filter persons by category
-        $filter_persons_by_category = function ($persons, $category) {
-            if (empty($category)) {
-                return $persons;
-            }
-
-            $args = [
-                'post_type' => 'custom_person',
-                'tax_query' => [
-                    [
-                        'taxonomy' => 'custom_taxonomy',
-                        'field'    => 'slug',
-                        'terms'    => $category,
-                    ],
-                ],
-                'posts_per_page' => -1,
-            ];
-
-            $person_posts = get_posts($args);
-            $category_person_ids = array();
-
-            foreach ($person_posts as $person_post) {
-                $person_id = get_post_meta($person_post->ID, 'person_id', true);
-                if (!empty($person_id)) {
-                    $category_person_ids[] = $person_id;
-                }
-            }
-
-            return array_filter($persons, function ($person) use ($category_person_ids) {
-                return in_array($person['identifier'], $category_person_ids);
-            });
-        };
 
         // Determine which logic to apply based on provided attributes
         $api = new API(self::$config);
@@ -257,14 +154,22 @@ class Shortcode {
         $person->setConfig(self::$config);
 
         if (!empty($role)) {
-              Debug::log('Shortcode','error',"Look for function $role");
+            // Display Persons by Role (FAUdir Function)
+            
+      //        Debug::log('Shortcode','error',"Look for function $role");
             if (!empty($orgnr)) {
                 // Case 1: Explicit orgnr is provided in shortcode - exact match for both org and function
                 
                 $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . $orgnr]);
+          
+                // TODO wir brauchen für den Fall der gekürzten OrgNr eine neue Schleife mit
+                //         $orgdata = $api->getOrgList(20, 0, ['lq' => 'disambiguatingDescription[reg]=^' . $orgnr]);
+                // Danach müssen wir aber über alle Orgs gehen un dnicht wie nachfolgend nur die erste nehmen!
                 
                 if (!empty($orgdata['data'])) {
                     $org = $orgdata['data'][0];
+                        // Hier nimmt er nur den ersten!!
+                    
                     $identifier = $org['identifier'];
 
                     $queryParts = [];
@@ -275,9 +180,6 @@ class Shortcode {
                     ];
 
                     $result = $api->getPersons(60, 0, $params);                  
-                    Debug::log('Shortcode','error',"Look for function $role and orgnr $orgnr");
-                    
-                    // Process each person and filter contacts
                     foreach ($result['data'] as $key => &$persondata) {
                         // Enrich person data with full contact information
                         
@@ -289,8 +191,10 @@ class Shortcode {
                         foreach ($persondata['contacts'] as $contactKey => $contact) {
                             if ($contact['function'] !== $role                                     
                                     && $contact['functionLabel']['de'] !== $role 
-                                    && $contact['functionLabel']['en'] !== $role 
+                                    && $contact['functionLabel']['en'] !== $role
                                     || $contact['organization']['identifier'] !== $identifier) {
+//                                Debug::log("unset person by search in $orgnr: ".$persondata['identifier']." ".$persondata['familyName']." (".$contact['organization']['identifier']."/".$identifier  );
+
                                 unset($persondata['contacts'][$contactKey]);
                             }
                         }
@@ -307,21 +211,18 @@ class Shortcode {
                 }
             } else {
                 // Case 2: Only function is specified - use default org prefix
-                if (empty($identifiers) && empty($post_id) && empty($orgnr) && empty($category)) {
                     $options = get_option('rrze_faudir_options', []);
                     $default_org = $options['default_organization'] ?? null;
 
                     if (!empty($default_org['orgnr'])) {
                         $ids = $default_org['ids'];
-                        // Extract first 6 digits for prefix matching
-
                         $queryParts[] = 'contacts.organization.identifier[reg]=^(' . implode('|', $ids) . ')$';
 
                         // Format the query according to the specified pattern
                         $params = [
                             'lq' => implode('&', $queryParts)
                         ];
-
+Debug::log('Shortcode','error',"Look for function $role in org mit ids: " . implode('|', $ids) );
                         $result = $api->getPersons(60, 0, $params);  
                         
                         // Process each person and filter contacts
@@ -349,52 +250,29 @@ class Shortcode {
                             $persons = array_values($result['data']);
                         }
                     }
-                }
+                
             }
             
         } elseif (!empty($post_id) && empty($identifiers) && empty($category) && empty($orgnr)) {
             // display a single person by custom post id - mostly on the slug
            //  error_log("FAUdir\Shortcode (fetch_persons_by_post_id): Search By id=: {$post_id}");       
-            $persons = $fetch_persons_by_post_id($post_id);
+            $persons = self::fetchPersonsByPostId($post_id);
         } elseif (!empty($identifiers) || !empty($post_id)) {
             // display a single person by identifier or post id
             if (!empty($identifiers)) {
                 $persons = self::process_persons_by_identifiers($identifiers);
             } elseif (!empty($post_id)) {                
-                $persons = $fetch_persons_by_post_id($post_id);
+                $persons = self::fetchPersonsByPostId($post_id);
             }
             // Apply category filter if category is set
             if (!empty($category)) {
-                $persons = $filter_persons_by_category($persons, $category);
+                $persons = self::filterPersonsByCategory($persons, $category);
             }
             // Apply organization and group filters if set
-            $persons = $filter_persons($persons, $orgnr);
+            $persons = self::filterPersonsByOrganization($persons, $orgnr);
         } elseif (!empty($category)) {
             // get persons by category. 
-            // categories come from existing custom posts only. 
-            // Therfor we look there first for the identifiert
- 
-            $args = [
-                'post_type' => 'custom_person',
-                'tax_query' => [
-                    [
-                        'taxonomy' => 'custom_taxonomy',
-                        'field'    => 'slug',
-                        'terms'    => $category,
-                    ],
-                ],
-                'posts_per_page' => -1,
-            ];
-            $person_posts = get_posts($args);
-            $person_identifiers = array();
-
-            foreach ($person_posts as $person_post) {
-                $person_id = get_post_meta($person_post->ID, 'person_id', true);
-                if (!empty($person_id)) {
-                    $person_identifiers[] = $person_id;
-                }
-            }
-
+            $person_identifiers = self::getPersonIdentifiersByCategory($category);
             if (!empty($person_identifiers)) {
                 $persons = self::process_persons_by_identifiers($person_identifiers);
             }
@@ -526,6 +404,159 @@ class Shortcode {
             'button_text'   => $button_text,
         ]);
     }
+    
+    
+    
+   /*
+    * Hole personeneinträge aus dem CPT, die zu einer definierten Kategorie gehören
+    */ 
+    public static function getPersonIdentifiersByCategory(string $category): array {
+        if (empty($category)) {
+            return [];
+        }
+
+        $taxonomy = self::$config['person_taxonomy'] ?? 'custom_taxonomy';
+        $post_type = self::$config['person_post_type'] ?? 'custom_person';
+
+        $args = [
+            'post_type'      => $post_type,
+            'tax_query'      => [
+                [
+                    'taxonomy' => $taxonomy,
+                    'field'    => 'slug',
+                    'terms'    => $category,
+                ],
+            ],
+            'posts_per_page' => -1,
+        ];
+
+        $person_posts = get_posts($args);
+        $person_identifiers = [];
+
+        foreach ($person_posts as $person_post) {
+            $person_id = get_post_meta($person_post->ID, 'person_id', true);
+            if (!empty($person_id)) {
+                $person_identifiers[] = $person_id;
+            }
+        }
+
+        return $person_identifiers;
+    }
+
+
+    /*
+     * Filter Personen nach ihrer Org
+     */
+    public static function filterPersonsByOrganization(array $persons, string $orgnr): array {
+        if (empty($orgnr)) {
+            return $persons;
+        }
+
+        $api = new API(self::$config);
+        $orgdata = $api->getOrgList(0, 0, [
+            'lq' => 'disambiguatingDescription[eq]=' . $orgnr
+        ]);
+
+        if (!empty($orgdata['data'][0]['identifier'])) {
+            $orgIdentifier = $orgdata['data'][0]['identifier'];
+
+            $persons = array_filter($persons, function ($person) use ($orgIdentifier) {
+                foreach ($person['contacts'] as $contact) {
+                    if (
+                        !empty($contact['organization']['identifier']) &&
+                        $contact['organization']['identifier'] === $orgIdentifier
+                    ) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+        }
+
+        return $persons;
+    }
+
+
+    /*
+     * Rufe poersonen aus der gegebenen Kategorie ab
+     */
+    public static function filterPersonsByCategory(array $persons, string $category): array {
+        if (empty($category)) {
+            return $persons;
+        }
+
+        // Taxonomie-Slug aus der Konfiguration lesen (Fallback: 'custom_taxonomy')
+        $taxonomy = self::$config['person_taxonomy'] ?? 'custom_taxonomy';
+        $post_type = self::$config['person_post_type'] ?? 'custom_person';
+        
+        $args = [
+            'post_type'      => $post_type,
+            'tax_query'      => [
+                [
+                    'taxonomy' => $taxonomy,
+                    'field'    => 'slug',
+                    'terms'    => $category,
+                ],
+            ],
+            'posts_per_page' => -1,
+        ];
+
+        $person_posts = get_posts($args);
+        $category_person_ids = [];
+
+        foreach ($person_posts as $person_post) {
+            $person_id = get_post_meta($person_post->ID, 'person_id', true);
+            if (!empty($person_id)) {
+                $category_person_ids[] = $person_id;
+            }
+        }
+
+        return array_filter($persons, function ($person) use ($category_person_ids) {
+            return in_array($person['identifier'], $category_person_ids);
+        });
+    }
+
+    
+    /*
+     * Abruf der Personendaten anhand der Post-ID
+     */
+    public static function fetchPersonsByPostId(int $post_id): array {
+        $person_identifiers = [];
+        $post_type = self::$config['person_post_type'] ?? 'custom_person';
+        
+        $args = [
+            'post_type'      => $post_type,
+            'meta_query'     => [
+                [
+                    'key'     => 'old_person_post_id',
+                    'value'   => intval($post_id),
+                    'compare' => '=',
+                ],
+            ],
+            'posts_per_page' => 1,
+        ];
+
+        $person_posts = get_posts($args);
+        if (!empty($person_posts)) {
+            foreach ($person_posts as $person_post) {
+                $person_id = get_post_meta($person_post->ID, 'person_id', true);
+                if (!empty($person_id)) {
+                    $person_identifiers[] = $person_id;
+                }
+            }
+        } else {
+            // 3. Fallback: Prüfe ob $post_id existiert und ein person_id-Feld besitzt
+            $post = get_post($post_id);
+            if ($post) {
+                $fallback_person_id = get_post_meta($post_id, 'person_id', true);
+                if (!empty($fallback_person_id)) {
+                    $person_identifiers[] = $fallback_person_id;
+                }
+            }
+        }
+        return self::process_persons_by_identifiers($person_identifiers);
+    }
+
 
     /**
      * Process persons by a list of identifiers.

@@ -4,7 +4,7 @@
 Plugin Name: RRZE FAUdir
 Plugin URI: https://github.com/RRZE-Webteam/rrze-faudir
 Description: Plugin for displaying the FAU person and institution directory on websites.
-Version: 2.2.12-0
+Version: 2.2.12-1
 Author: RRZE Webteam
 License: GNU General Public License v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -160,6 +160,7 @@ add_filter('template_include',  __NAMESPACE__ . '\load_custom_person_template', 
 
 // Register the custom taxonomy before migration
 function register_custom_person_taxonomies() {
+        error_log('register_custom_person_taxonomies from Main called');
     $labels = array(
         'name'              => _x('Categories', 'taxonomy general name', 'rrze-faudir'),
         'singular_name'     => _x('Category', 'taxonomy singular name', 'rrze-faudir'),
@@ -173,7 +174,11 @@ function register_custom_person_taxonomies() {
         'new_item_name'     => __('New Category Name', 'rrze-faudir'),
         'menu_name'         => __('Categories', 'rrze-faudir'),
     );
-
+if (!taxonomy_exists('custom_taxonomy')) {
+       error_log('register_custom_person_taxonomies from Main,  and taxonomy doent exists');
+} else {
+      error_log('register_custom_person_taxonomies from Main, even if taxonomy exists.');
+}
     register_taxonomy('custom_taxonomy', 'custom_person', array(
         'hierarchical'      => true,
         'labels'           => $labels,

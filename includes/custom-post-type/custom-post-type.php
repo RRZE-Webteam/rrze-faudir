@@ -9,6 +9,7 @@ use RRZE\FAUdir\Contact;
 // Register the Custom Post Type
 function register_custom_person_post_type() {
     // Get the slug from the options; fallback to 'person' if not set.
+     error_log('register_custom_person_post_type called');
     $options = get_option('rrze_faudir_options');
     $slug = isset($options['person_slug']) && !empty($options['person_slug'])
         ? sanitize_title($options['person_slug'])
@@ -48,7 +49,9 @@ add_action('init', 'register_custom_person_post_type', 15);
 
 function register_custom_taxonomy() {
     // Register the taxonomy
+     error_log('register_custom_taxonomy called');
     if (!taxonomy_exists('custom_taxonomy')) {
+                 error_log('do register_taxonomy');
         register_taxonomy(
             'custom_taxonomy', // Taxonomy slug
             'custom_person', // Custom Post Type to attach the taxonomy
@@ -83,7 +86,9 @@ function register_custom_taxonomy() {
 
             )
         );
-    }
+    } else {
+         error_log('register_custom_taxonomy: but nothing todo, cause exists');
+    } 
 }
 add_action('init', 'register_custom_taxonomy');
 

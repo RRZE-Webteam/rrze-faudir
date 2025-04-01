@@ -53,7 +53,12 @@ class Config {
             "kurzauszug"    => 'teasertext',
             "raum"          => 'room',
             "position"      => 'jobTitle',
-        ]
+        ],
+        
+        'person_taxonomy'   => 'custom_taxonomy',
+            // TODO: CHange to a non generic name!
+        'person_post_type'  => 'custom_person'
+            // TODO: CHange to a non generic name!
     ];
     
 
