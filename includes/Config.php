@@ -28,6 +28,13 @@ class Config {
             'page' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'content', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'format_displayname'],
             'card'  => ['image', 'displayname', 'jobTitle', 'organization', 'url', 'email', 'socialmedia', 'link', 'format_displayname'],
         ],
+        'default_display'   => 'person',
+        'avaible_formats_by_display'   => [
+            'person'    => ['compact', 'table', 'list',  'page', 'card'],               
+            'org'       => ['compact'],
+             // in all cases: first entry is default for the given display
+        ],
+        
         'default_output_fields'     => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia'], // Default fields      
         'default_output_fields_endpoint' => [
             'image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor',  

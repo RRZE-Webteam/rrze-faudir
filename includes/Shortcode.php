@@ -58,11 +58,14 @@ class Shortcode {
                 'role'                  => '',
                 'button-text'           => '',
                 'format_displayname'    => '',
-                'display'               => 'person'
+                'display'               => ''
             ),
             $atts
         );
-
+        if (empty($atts['display'])) {
+            $atts['display'] = self::$config->get('default_display');
+        }
+        
         if ((!empty($atts['function'])) && (empty( $atts['role']))) {
             $atts['role'] = $atts['function'];
         }
@@ -118,10 +121,22 @@ class Shortcode {
             return $mapping[$field] ?? $field;
         }, array_map('trim', explode(',', $atts['hide'] ?? '')));
 
-        // Remove duplicates and ensure arrays are unique
+         // Remove duplicates and ensure arrays are unique
         $show_fields = array_unique($show_fields);
         $hide_fields = array_unique($hide_fields);
 
+        if ($atts['display'] == 'org') {
+            return self::createOrgOutput($atts, $show_fields, $hide_fields);
+        } else {
+            return self::createPersonOutput($atts, $show_fields, $hide_fields);
+        }
+    }
+
+    
+    /*
+     * Create Output for Person Display
+     */
+    public static function createPersonOutput(array $atts, array $show_fields, array $hide_fields): string {     
         // Extract the attributes from the shortcode
         $identifiers = empty($atts['identifier']) ? [] : explode(',', $atts['identifier']);
             // FAUdir Identifier von einer oder mehreren Personen
@@ -139,15 +154,11 @@ class Shortcode {
             // Art der anzuzeigendenden Daten.  Default: Person. Alternativ: Org
         $format_displayname = $atts['format_displayname'];
             // optionale Formataenderung für die Darstellung des Namens
-        
-       
-        
-        $persons    = [];
 
-
-
-        // Determine which logic to apply based on provided attributes
+    
         $api = new API(self::$config);
+        
+        
         // Display persons by function
         $persons = [];
         $person = new Person();
@@ -289,7 +300,7 @@ Debug::log('Shortcode','error',"Look for function $role in org mit ids: " . impl
             
         } else {
             error_log('Invalid combination of attributes.');
-            return;
+            return '';
         }
 
      
@@ -373,29 +384,14 @@ Debug::log('Shortcode','error',"Look for function $role in org mit ids: " . impl
         $template_dir = RRZE_PLUGIN_PATH . 'templates/';
         $template = new Template($template_dir);
 
-        // Fix format assignment when empty
-        if ($atts['format'] === '') {
-            $atts['format'] = 'compact';  // Use single = for assignment
-        } elseif ($atts['format'] === 'kompakt') {
-            $atts['format'] = 'compact';
-        }
-        if ($atts['format'] === 'liste') {
-             $atts['format'] = 'list';
-        }
-        if (($atts['format'] === 'sidebar') || ($atts['format'] === 'sidebar')) {
-             $atts['format'] = 'compact';
-        }
-
-
-
-
         // Check if button text is set and not empty before passing it to the template
         $button_text = isset($atts['button-text']) && $atts['button-text'] !== '' ? $atts['button-text'] : '';
 
         // check and sanitize for format for displayname
         $format_displayname = wp_strip_all_tags($format_displayname);
+        $format = self::validateFormat($atts['format'], $display);
         
-        return $template->render($atts['format'], [
+        return $template->render($format, [
             'show_fields'   => $show_fields,
             'hide_fields'   => $hide_fields,
             'format_displayname' => $format_displayname,
@@ -406,6 +402,44 @@ Debug::log('Shortcode','error',"Look for function $role in org mit ids: " . impl
     }
     
     
+    /*
+     * Create Output for Org Display
+     */
+    public static function createOrgOutput(array $atts, array $show_fields, array $hide_fields): string {     
+        return "BLUB";
+    }
+    
+    /*
+     * Check the given format for validty and return it if its avaible, otherwise 
+     * the default format
+     */
+    public static function validateFormat(string $format = '', string $display = ''): string {
+        $allformats =   self::$config->get('avaible_formats_by_display');
+        if ((empty($display))  ||  (!isset($allformats[$display]))) {
+            $display = self::$config->get('default_display');
+        }
+
+        if (empty($format)) {
+            return  $allformats[$display][0];
+        }
+   
+        // first fix for typo or old names:     
+        if ($format === 'kompakt') {
+            $format = 'compact';
+        } elseif ($format === 'liste') {
+            $format = 'list';
+        }
+        
+
+        // Now check if its valid, otherwise return the default.
+         // Wenn ein Format übergeben wurde, prüfen ob es gültig ist
+        if (!empty($format) && in_array($format, $allformats[$display], true)) {
+            return $format;
+        }
+
+        // Fallback
+        return $allformats[$display][0];
+    }
     
    /*
     * Hole personeneinträge aus dem CPT, die zu einer definierten Kategorie gehören
@@ -415,8 +449,8 @@ Debug::log('Shortcode','error',"Look for function $role in org mit ids: " . impl
             return [];
         }
 
-        $taxonomy = self::$config['person_taxonomy'] ?? 'custom_taxonomy';
-        $post_type = self::$config['person_post_type'] ?? 'custom_person';
+        $taxonomy = self::$config->get('person_taxonomy') ?? 'custom_taxonomy';
+        $post_type = self::$config->get('person_post_type') ?? 'custom_person';
 
         $args = [
             'post_type'      => $post_type,
@@ -486,8 +520,8 @@ Debug::log('Shortcode','error',"Look for function $role in org mit ids: " . impl
         }
 
         // Taxonomie-Slug aus der Konfiguration lesen (Fallback: 'custom_taxonomy')
-        $taxonomy = self::$config['person_taxonomy'] ?? 'custom_taxonomy';
-        $post_type = self::$config['person_post_type'] ?? 'custom_person';
+        $taxonomy = self::$config->get('person_taxonomy') ?? 'custom_taxonomy';
+        $post_type = self::$config->get('person_post_type') ?? 'custom_person';
         
         $args = [
             'post_type'      => $post_type,
@@ -522,7 +556,7 @@ Debug::log('Shortcode','error',"Look for function $role in org mit ids: " . impl
      */
     public static function fetchPersonsByPostId(int $post_id): array {
         $person_identifiers = [];
-        $post_type = self::$config['person_post_type'] ?? 'custom_person';
+        $post_type = self::$config->get('person_post_type') ?? 'custom_person';
         
         $args = [
             'post_type'      => $post_type,
