@@ -263,7 +263,7 @@ class API {
                 $url .= '&' . $param . '=' . urlencode($params[$param]);
             }
         }
-        // Handle givenName and familyName as special cases to be combined into the 'q' parameter
+        // Handle orgnr as special cases to be combined into the 'q' parameter
         if (!empty($params['orgnr'])) {
             $url .= '&q=' . urlencode('^' . $params['orgnr']);
         }

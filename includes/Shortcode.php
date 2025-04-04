@@ -7,6 +7,7 @@ use RRZE\FAUdir\FaudirUtils;
 use RRZE\FAUdir\Template;
 use RRZE\FAUdir\Debug;
 use RRZE\FAUdir\API;
+use RRZE\FAUdir\Organization;
 
 defined('ABSPATH') || exit;
 
@@ -16,12 +17,10 @@ class Shortcode {
     protected static $config;
     
     public function __construct(Config $configdata) {
-     //   $this->config = $configdata;
         self::$config = $configdata;
         
         // Haupt-Shortcode registrieren
         add_shortcode('faudir', [$this, 'fetch_fau_data']);
-        
         // Alias-Shortcodes registrieren
         add_action('init', [$this, 'register_aliases']);
     }
@@ -53,6 +52,7 @@ class Shortcode {
                 'show'                  => '',
                 'hide'                  => '',
                 'orgnr'                 => '',
+                'orgid'                 => '',
                 'sort'                  => '',
                 'function'              => '',
                 'role'                  => '',
@@ -74,28 +74,22 @@ class Shortcode {
         $merged_show_fields = array_unique(array_merge($default_show_fields, $explicit_show_fields));
         $atts['show'] = implode(', ', $merged_show_fields);
 
-        // Retrieve plugin options
-        $options = get_option('rrze_faudir_options');
-        $no_cache_logged_in = isset($options['no_cache_logged_in']) && $options['no_cache_logged_in'];
-
         // If user is logged in and no-cache option is enabled, always fetch fresh data
+        $options = get_option('rrze_faudir_options');
+        $no_cache_logged_in = isset($options['no_cache_logged_in']) && $options['no_cache_logged_in'];    
         if ($no_cache_logged_in && is_user_logged_in()) {
             return self::fetch_and_render_fau_data($atts);
         }
 
-        // Generate a unique cache key based on the shortcode attributes
         $cache_key = 'faudir_shortcode_' . md5(serialize($atts));
-
-        // Retrieve cache timeout from plugin settings (use default if not set)
         $cache_timeout = isset($options['cache_timeout']) ? intval($options['cache_timeout']) * 60 : 900; // Default to 15 minutes
 
         // Check if cached data exists
         $cached_data = get_transient($cache_key);
         if ($cached_data !== false) {
-            return $cached_data; // Return cached data if available
+            return $cached_data; 
         }
-
-     
+        
         // Fetch and render fresh data
         $output = self::fetch_and_render_fau_data($atts);
 
@@ -105,6 +99,10 @@ class Shortcode {
         return $output;
     }
 
+    
+    /*
+     * Create Output for Shortcode 
+     */
     public static function fetch_and_render_fau_data($atts) {
         // Convert 'show' and 'hide' attributes into arrays
         $show_fields = array_map('trim', explode(',', $atts['show']));
@@ -168,7 +166,7 @@ class Shortcode {
             // Display Persons by Role (FAUdir Function)
             
       //        Debug::log('Shortcode','error',"Look for function $role");
-            if (!empty($orgnr)) {
+            if (Organization::isOrgnr($orgnr)) {
                 // Case 1: Explicit orgnr is provided in shortcode - exact match for both org and function
                 
                 $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . $orgnr]);
@@ -182,7 +180,6 @@ class Shortcode {
                         // Hier nimmt er nur den ersten!!
                     
                     $identifier = $org['identifier'];
-
                     $queryParts = [];
                     $queryParts[] = 'contacts.organization.identifier[eq]=' . $identifier;
 
@@ -233,7 +230,6 @@ class Shortcode {
                         $params = [
                             'lq' => implode('&', $queryParts)
                         ];
-Debug::log('Shortcode','error',"Look for function $role in org mit ids: " . implode('|', $ids) );
                         $result = $api->getPersons(60, 0, $params);  
                         
                         // Process each person and filter contacts
@@ -390,8 +386,8 @@ Debug::log('Shortcode','error',"Look for function $role in org mit ids: " . impl
         // check and sanitize for format for displayname
         $format_displayname = wp_strip_all_tags($format_displayname);
         $format = self::validateFormat($atts['format'], $display);
-        
-        return $template->render($format, [
+        $templatefile = $display.'_'.$format;
+        return $template->render($templatefile, [
             'show_fields'   => $show_fields,
             'hide_fields'   => $hide_fields,
             'format_displayname' => $format_displayname,
@@ -406,11 +402,78 @@ Debug::log('Shortcode','error',"Look for function $role in org mit ids: " . impl
      * Create Output for Org Display
      */
     public static function createOrgOutput(array $atts, array $show_fields, array $hide_fields): string {     
-        return "BLUB";
+        $orgnr      = $atts['orgnr'];
+            // Org Nr der Einrichtung, die anzuzeigen ist
+        $orgid      = $atts['orgid'];
+            // Org Identifier der Einrichtung, die anzuzeigen ist
+        $display    = $atts['display'];
+            // Art der anzuzeigendenden Daten.   
+        $url        = $atts['url'];
+            // optionale URL der ORG überschreiben
+        
+        $org = new Organization();
+        
+        if (Organization::isOrgnr($orgnr)) {   
+            $org->getOrgbyOrgnr($orgnr);
+            $orgdata = $org->toArray();
+        } elseif (!empty($orgid)) {
+            $orgid = Organization::sanitizeOrgIdentifier($orgid);
+            
+            if (Organization::isOrgIdentifier($orgid)) {
+                $org->getOrgbyAPI($orgid);
+                $orgdata = $org->toArray();
+            } else {
+                return self::createErrorOut(__('Bad value for parameter orgid', 'rrze-faudir'), 'createOrgOutput');
+            }
+
+        } else {
+            return self::createErrorOut(__('Invalid oder missing parameter orgnr or orgid', 'rrze-faudir'), 'createOrgOutput');
+        }
+        
+        
+           
+        $template_dir = RRZE_PLUGIN_PATH . 'templates/';
+        $template = new Template($template_dir);
+
+        // check and sanitize for format for displayname
+        $format = self::validateFormat($atts['format'], $display);
+        $templatefile = $display.'_'.$format;
+        return $template->render($templatefile, [
+            'show_fields'   => $show_fields,
+            'hide_fields'   => $hide_fields,
+            'orgdata'       => $orgdata,
+            'url'           => $url,
+        ]);
+       
+        
+        
     }
     
+    
     /*
-     * Check the given format for validty and return it if its avaible, otherwise 
+     * Create Error Output in cases it is not promptet within templates
+     */
+    public static function createErrorOut(string $error, string $errorloginfo = ''): string {
+        if (empty($error)) {
+            $error = __('Error on creating output', 'rrze-faudir');
+        }
+        error_log('FAUdir/Shortcode ('.$errorloginfo.'): '. $error);
+        $out = '<div class="faudir">';  
+        $config = new Config;
+        $opt = $config->getOptions(); 
+        if ($opt['show_error_message']) {
+          $out .= '<div class="faudir-error">';
+          $out .= $error;
+          $out .= '</div>';
+        }
+        $out .= '</div>';
+        return $out;
+    }
+    
+    
+    
+    /*
+     * Check the given format for validity and return it if its avaible, otherwise 
      * the default format
      */
     public static function validateFormat(string $format = '', string $display = ''): string {

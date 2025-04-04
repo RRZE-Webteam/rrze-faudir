@@ -18,6 +18,7 @@ class Template {
         
        
         if (!file_exists($template_path)) {
+            error_log('FAUdir/Template: Template file doesnt exists: '. $template_path);
             return ''; // Return an empty string if the template doesn't exist            
         }
 
