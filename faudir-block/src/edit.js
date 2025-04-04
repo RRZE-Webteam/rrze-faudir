@@ -31,7 +31,6 @@ export default function Edit( { attributes, setAttributes } ) {
 		selectedPersonIds = '',
 		selectedFormat = 'compact',
 		selectedFields = [],
-	//	function: functionValue = '',
 		role = '',
 		orgnr = '',
 		format_displayname = '',

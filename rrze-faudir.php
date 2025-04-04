@@ -158,42 +158,6 @@ add_filter('template_include',  __NAMESPACE__ . '\load_custom_person_template', 
 
 
 
-// Register the custom taxonomy before migration
-function register_custom_person_taxonomies() {
-        error_log('register_custom_person_taxonomies from Main called');
-    $labels = array(
-        'name'              => _x('Categories', 'taxonomy general name', 'rrze-faudir'),
-        'singular_name'     => _x('Category', 'taxonomy singular name', 'rrze-faudir'),
-        'search_items'      => __('Search Categories', 'rrze-faudir'),
-        'all_items'         => __('All Categories', 'rrze-faudir'),
-        'parent_item'       => __('Parent Category', 'rrze-faudir'),
-        'parent_item_colon' => __('Parent Category:', 'rrze-faudir'),
-        'edit_item'         => __('Edit Category', 'rrze-faudir'),
-        'update_item'       => __('Update Category', 'rrze-faudir'),
-        'add_new_item'      => __('Add New Category', 'rrze-faudir'),
-        'new_item_name'     => __('New Category Name', 'rrze-faudir'),
-        'menu_name'         => __('Categories', 'rrze-faudir'),
-    );
-if (!taxonomy_exists('custom_taxonomy')) {
-       error_log('register_custom_person_taxonomies from Main,  and taxonomy doent exists');
-} else {
-      error_log('register_custom_person_taxonomies from Main, even if taxonomy exists.');
-}
-    register_taxonomy('custom_taxonomy', 'custom_person', array(
-        'hierarchical'      => true,
-        'labels'           => $labels,
-        'show_ui'          => true,
-        'show_admin_column' => true,
-        'query_var'        => true,
-        'rewrite'          => array('slug' => 'person-category'),
-        'show_in_rest'     => true,
-        'rest_base'        => 'custom_taxonomy',
-    ));
-}
-
-// Make sure to register the taxonomy on init as well
-add_action('init',  __NAMESPACE__ . '\register_custom_person_taxonomies');
-
 function custom_cpt_404_message() {
     global $wp_query;
 

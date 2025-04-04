@@ -6,6 +6,12 @@ use RRZE\FAUdir\API;
 use RRZE\FAUdir\Organization;
 use RRZE\FAUdir\Contact;
 
+
+/*
+ * TODO: Diese ganze Lib in eine Class umwandeln und redundante Teile (taxonomien aufräumen!)
+ */
+
+
 // Register the Custom Post Type
 function register_custom_person_post_type() {
     // Get the slug from the options; fallback to 'person' if not set.
@@ -51,7 +57,7 @@ function register_custom_taxonomy() {
     // Register the taxonomy
      error_log('register_custom_taxonomy called');
     if (!taxonomy_exists('custom_taxonomy')) {
-                 error_log('do register_taxonomy');
+        error_log('do register_taxonomy');
         register_taxonomy(
             'custom_taxonomy', // Taxonomy slug
             'custom_person', // Custom Post Type to attach the taxonomy
@@ -91,6 +97,51 @@ function register_custom_taxonomy() {
     } 
 }
 add_action('init', 'register_custom_taxonomy');
+
+
+
+/*
+ * Die folgenden Funktionen waren vorher in der rrze-faudir.php und scheinen obsolet
+ * TODO: AUfräumen. Zunächst aber hierhin kopiert 
+ */
+
+
+// Register the custom taxonomy before migration
+function register_custom_person_taxonomies() {
+        error_log('register_custom_person_taxonomies from Main called');
+    $labels = array(
+        'name'              => _x('Categories', 'taxonomy general name', 'rrze-faudir'),
+        'singular_name'     => _x('Category', 'taxonomy singular name', 'rrze-faudir'),
+        'search_items'      => __('Search Categories', 'rrze-faudir'),
+        'all_items'         => __('All Categories', 'rrze-faudir'),
+        'parent_item'       => __('Parent Category', 'rrze-faudir'),
+        'parent_item_colon' => __('Parent Category:', 'rrze-faudir'),
+        'edit_item'         => __('Edit Category', 'rrze-faudir'),
+        'update_item'       => __('Update Category', 'rrze-faudir'),
+        'add_new_item'      => __('Add New Category', 'rrze-faudir'),
+        'new_item_name'     => __('New Category Name', 'rrze-faudir'),
+        'menu_name'         => __('Categories', 'rrze-faudir'),
+    );
+if (!taxonomy_exists('custom_taxonomy')) {
+       error_log('register_custom_person_taxonomies ,  and taxonomy doent exists');
+} else {
+      error_log('register_custom_person_taxonomies , even if taxonomy exists.');
+}
+    register_taxonomy('custom_taxonomy', 'custom_person', array(
+        'hierarchical'      => true,
+        'labels'           => $labels,
+        'show_ui'          => true,
+        'show_admin_column' => true,
+        'query_var'        => true,
+        'rewrite'          => array('slug' => 'person-category'),
+        'show_in_rest'     => true,
+        'rest_base'        => 'custom_taxonomy',
+    ));
+}
+
+// Make sure to register the taxonomy on init as well
+add_action('init',  'register_custom_person_taxonomies');
+
 
 // Bug #119
 /* function add_taxonomy_meta_box() {
