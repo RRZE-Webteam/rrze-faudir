@@ -6,6 +6,7 @@ defined('ABSPATH') || exit;
 
 use RRZE\FAUdir\Maintenance;
 use RRZE\FAUdir\BlockRegistration;
+use RRZE\FAUdir\REST;
 /**
  * Hauptklasse
  */
@@ -26,7 +27,7 @@ class Main {
     }
 
     public function onLoaded() {
-           
+        new REST();
         $shortcode = new Shortcode($this->config);
         new BlockRegistration();
         

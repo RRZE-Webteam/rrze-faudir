@@ -258,38 +258,3 @@ add_action('enqueue_block_editor_assets', function() {
     
     wp_enqueue_script('rrze-faudir-block-script');
 });
-
-// Add this to your existing plugin file where other REST routes are registered
-add_action('rest_api_init', function () {
-    register_rest_route('wp/v2/settings', 'rrze_faudir_options', array(
-        'methods' => 'GET',
-        'callback' => function () {
-                $config = new Config;
-                $options = $config->getOptions();  
-                $roles = $config->get('person_roles');
-        //    $options = get_option('rrze_faudir_options', []);
-            return [
-                'default_output_fields' => isset($options['default_output_fields']) ? 
-                    $options['default_output_fields'] : [],
-                'business_card_title' => isset($options['business_card_title']) ? 
-                    $options['business_card_title'] :  __('More Information', 'rrze-faudir'),
-                'person_roles' => $roles,
-                'default_organization' => isset($options['default_organization']) ? 
-                    $options['default_organization'] :  null
-            ];
-        },
-        'permission_callback' => function () {
-            return current_user_can('edit_posts');
-        }
-    ));
-});
-add_filter( 'block_categories_all' , function( $categories ) {
-
-    // Adding a new category.
-	$categories[] = array(
-		'slug'  => 'custom-fau-category',
-		'title' => 'Fau'
-	);
-
-	return $categories;
-} );

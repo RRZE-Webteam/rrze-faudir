@@ -5,6 +5,9 @@ defined('ABSPATH') || exit;
 
 use Exception;
 
+/**
+ * Handles Block Registration, Localization and Rendering of the FAUdir Block.
+ */
 class BlockRegistration
 {
     public function __construct()
