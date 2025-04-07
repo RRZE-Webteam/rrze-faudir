@@ -6,8 +6,8 @@
     "textdomain": "rrze-faudir",
     "scripts": {
         "build": "gulp",
-        "build:block": "wp-scripts build faudir-block/src/index.js --webpack-copy-php",
-        "start": "wp-scripts start --webpack-copy-php  --cwd faudir-block",
+        "build:block": "wp-scripts build",
+        "start": "wp-scripts start",
         "format": "wp-scripts format --cwd faudir-block",
         "lint:css": "wp-scripts lint-style --cwd faudir-block",
         "lint:js": "wp-scripts lint-js --cwd faudir-block",
