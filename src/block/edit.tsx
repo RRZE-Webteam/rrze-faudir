@@ -7,11 +7,11 @@ import {
   SelectControl,
   TextControl,
 } from '@wordpress/components';
-import {useState, useEffect, useMemo} from '@wordpress/element';
+import {useState, useEffect} from '@wordpress/element';
 import ServerSideRender from '@wordpress/server-side-render';
 import apiFetch, {APIFetchOptions} from '@wordpress/api-fetch';
 import './editor.scss';
-import {availableFields, requiredFields, formatFields, fieldMapping} from "./defaults";
+import {availableFields, formatFields, fieldMapping} from "./defaults";
 
 interface EditProps {
   attributes: {
@@ -107,8 +107,6 @@ interface CustomPersonRESTApi {
 export default function Edit({attributes, setAttributes}: EditProps) {
   const [categories, setCategories] = useState([]);
   const [posts, setPosts] = useState([]);
-  const [displayedPosts, setDisplayedPosts] = useState([]);
-  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
   const [defaultOrgNr, setDefaultOrgNr] = useState(null);
   const [renderKey, setRenderKey] = useState(0);
@@ -117,16 +115,14 @@ export default function Edit({attributes, setAttributes}: EditProps) {
   const {
     selectedCategory = '',
     selectedPosts = [],
-    showCategory = '',
-    showPosts = '',
-    selectedPersonIds = '',
+    showCategory = false,
+    showPosts = false,
+    selectedPersonIds = [],
     selectedFormat = 'compact',
     selectedFields = [],
     role = '',
     orgnr = '',
     format_displayname = '',
-    url = '',
-    hideFields = [],
     sort = 'familyName',
   } = attributes;
 
@@ -172,11 +168,9 @@ export default function Edit({attributes, setAttributes}: EditProps) {
     apiFetch({path: '/wp/v2/custom_taxonomy?per_page=100'})
       .then((data: WPCategory[]) => {
         setCategories(data);
-        setIsLoadingCategories(false);
       })
       .catch((error) => {
         console.error('Error fetching categories:', error);
-        setIsLoadingCategories(false);
       });
   }, []);
 
@@ -223,7 +217,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
     } as APIFetchOptions)
       .then((data: CustomPersonRESTApi[]) => {
         setPosts(data);
-        setDisplayedPosts(data.slice(0, 100));
+        //setDisplayedPosts(data.slice(0, 100));
 
         if (selectedCategory) {
           const categoryPosts = data.map((post) => post.id);
@@ -244,7 +238,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
       });
   }, [selectedCategory, orgnr]);
 
-  const togglePostSelection = (postId: number, personId: number) => {
+  const togglePostSelection = (postId: number) => {
     const updatedSelectedPosts = selectedPosts.includes(postId)
       ? selectedPosts.filter((id) => id !== postId)
       : [...selectedPosts, postId];
@@ -398,13 +392,13 @@ export default function Edit({attributes, setAttributes}: EditProps) {
   }, [...Object.values(blockAttributes), sort, format_displayname]); // Use blockAttributes instead of attributes
 
   // Also update the renderKey when sort changes
-  const handleSortChange = (value) => {
+  const handleSortChange = (value: string) => {
     setAttributes({sort: value});
     setRenderKey((prev) => prev + 1); // Force re-render
   };
 
   // Also update the renderKey when format_displayname changes
-  const handleFormatDisplaynameChange = (value) => {
+  const handleFormatDisplaynameChange = (value: string) => {
     setAttributes({format_displayname: value});
     if (value.length > 6) {
       setRenderKey((prev) => prev + 1); // Force re-render
@@ -412,29 +406,18 @@ export default function Edit({attributes, setAttributes}: EditProps) {
   };
 
   // Also render again if the orgnr changes
-  const handleOrgNrChange = (value) => {
+  const handleOrgNrChange = (value: string) => {
     setAttributes({orgnr: value});
     if (value.length > 8) {
       setRenderKey((prev) => prev + 1); // Force re-render
     }
   };
 
-  // 1. Add memoization for expensive computations
-  const memoizedPosts = useMemo(
-    () =>
-      posts.map((post) => ({
-        id: post.id,
-        title: post.title.rendered,
-        personId: post.meta?.person_id,
-      })),
-    [posts]
-  );
-
   // 2. Implement debouncing for the ServerSideRender
   const debouncedRenderKey = useDebounce(renderKey, 500);
 
-  // Add this custom hook at the top of your file
-  function useDebounce(value, delay) {
+  // Delay for UserInput?
+  function useDebounce(value: number, delay: number) {
     const [debouncedValue, setDebouncedValue] = useState(value);
 
     useEffect(() => {
@@ -528,8 +511,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
                         }
                         onChange={() =>
                           togglePostSelection(
-                            post.id,
-                            post.meta?.person_id
+                            post.id
                           )
                         }
                       />
@@ -587,16 +569,9 @@ export default function Edit({attributes, setAttributes}: EditProps) {
                       style={{marginBottom: '8px'}}
                     >
                       <CheckboxControl
-                        label={
-                          <>
-                            {
-                              availableFields[field]
-                            }
-                          </>
-                        }
+                        label={String(availableFields[field])}
                         checked={selectedFields.includes(field)}
-                        onChange={() => toggleFieldSelection(field)
-                        }
+                        onChange={() => toggleFieldSelection(field)}
                       />
                     </div>
                   ))}
@@ -614,7 +589,6 @@ export default function Edit({attributes, setAttributes}: EditProps) {
             onChange={handleOrgNrChange}
             type="text"
             help={__('Please enter at least 10 digits.', 'rrze-faudir')}
-            inputProps={{pattern: '\\d{10,}'}}
           />
           {defaultOrgNr && !orgnr && (
             <div

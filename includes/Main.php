@@ -28,11 +28,11 @@ class Main {
 
     public function onLoaded() {
         new REST();
-        $shortcode = new Shortcode($this->config);
-        new BlockRegistration();
-        
         $enqueues = new EnqueueScripts($this->pluginFile);
         $enqueues->register();
+
+        $shortcode = new Shortcode($this->config);
+        new BlockRegistration();
     
         // Rufe Maintenance Hooks auf
         $maintenance = new Maintenance($this->config);

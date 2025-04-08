@@ -6,9 +6,14 @@ interface FormatFieldsSet {
   list: string[];
   compact: string[];
   page: string[];
+  [key: string]: string[];
 }
 
-export const availableFields = {
+interface AvailableFieldsSet {
+  [key: string]: string;
+}
+
+export const availableFields: AvailableFieldsSet = {
   image: __('Image', 'rrze-faudir'),
   displayName: __('Display Name', 'rrze-faudir'),
   honorificPrefix: __('Academic Title', 'rrze-faudir'),

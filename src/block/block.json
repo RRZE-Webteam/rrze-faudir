@@ -74,5 +74,5 @@
   },
   "textdomain": "rrze-faudir",
   "editorScript": "file:./index.js",
-  "editorStyle": "file:./index.css"
+  "editorStyle": "rrze-faudir"
 }

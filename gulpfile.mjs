@@ -184,7 +184,7 @@ export function watchTask() {
  * Build Block Editor Block by using wordpress-scripts in faudir-block directory
  */
 export function buildFaudirBlock(cb) {
-    exec('npm run build:block', { cwd: './faudir-block' }, (err, stdout, stderr) => {
+    exec('npm run build:block', (err, stdout, stderr) => {
         console.log(stdout); 
         console.error(stderr); 
         cb(err); 
