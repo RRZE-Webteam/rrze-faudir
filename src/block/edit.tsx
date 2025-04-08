@@ -2,15 +2,13 @@ import {__} from '@wordpress/i18n';
 import {InspectorControls, useBlockProps} from '@wordpress/block-editor';
 import {
   PanelBody,
-  CheckboxControl,
   ToggleControl,
-  SelectControl,
   TextControl,
 } from '@wordpress/components';
 import {useState, useEffect} from '@wordpress/element';
 import CustomServerSideRender from "./components/CustomServerSideRender";
 import apiFetch, {APIFetchOptions} from '@wordpress/api-fetch';
-import {availableFields, formatFields, fieldMapping} from "./defaults";
+import {fieldMapping} from "./defaults";
 import OrganizationNumberDetector from "./components/OrganizationNumberDetector";
 import PersonSelector from "./components/PersonSelector";
 import CategorySelector from "./components/CategorySelector";
@@ -122,12 +120,8 @@ export default function Edit({attributes, setAttributes}: EditProps) {
     showCategory = false,
     showPosts = false,
     selectedPersonIds = [],
-    selectedFormat = 'compact',
-    selectedFields = [],
     role = '',
     orgnr = '',
-    format_displayname = '',
-    sort = 'familyName',
   } = attributes;
 
   useEffect(() => {
@@ -202,8 +196,6 @@ export default function Edit({attributes, setAttributes}: EditProps) {
     } as APIFetchOptions)
       .then((data: CustomPersonRESTApi[]) => {
         setPosts(data);
-        //setDisplayedPosts(data.slice(0, 100));
-
         if (selectedCategory) {
           const categoryPosts = data.map((post) => post.id);
           const categoryPersonIds = data
