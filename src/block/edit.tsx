@@ -8,9 +8,8 @@ import {
   TextControl,
 } from '@wordpress/components';
 import {useState, useEffect} from '@wordpress/element';
-import ServerSideRender from '@wordpress/server-side-render';
+import CustomServerSideRender from "./components/CustomServerSideRender";
 import apiFetch, {APIFetchOptions} from '@wordpress/api-fetch';
-import './editor.scss';
 import {availableFields, formatFields, fieldMapping} from "./defaults";
 
 interface EditProps {
@@ -655,93 +654,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
         attributes.orgnr ||
         (attributes.role &&
           (attributes.orgnr || defaultOrgNr)) ? (
-          <>
-            { /* Format console log as WordPress shortcode */}
-
-            <ServerSideRender
-              key={debouncedRenderKey}
-              block="rrze-faudir/block"
-              attributes={{
-                // Case 1: function + orgnr
-                ...(attributes.role
-                    ? {
-                      role: attributes.role,
-                      ...(attributes.orgnr && {
-                        orgnr: attributes.orgnr,
-                      }),
-                      selectedFormat:
-                      attributes.selectedFormat,
-                      selectedFields:
-                        attributes.selectedFields
-                          .length > 0
-                          ? attributes.selectedFields
-                          : null, // Only pass if fields are selected
-                      hideFields: attributes.hideFields, // Add hideFields
-                      url: attributes.url,
-                      sort: attributes.sort,
-                      format_displayname: attributes.format_displayname,
-                    }
-                    : // Case 2: category
-                    attributes.selectedCategory
-                      ? {
-                        selectedCategory:
-                        attributes.selectedCategory,
-                        selectedPersonIds:
-                        attributes.selectedPersonIds,
-                        selectedFormat:
-                        attributes.selectedFormat,
-                        selectedFields:
-                          attributes.selectedFields
-                            .length > 0
-                            ? attributes.selectedFields
-                            : null, // Only pass if fields are selected
-                        hideFields: attributes.hideFields, // Add hideFields
-                        url: attributes.url,
-                        sort: attributes.sort,
-                        format_displayname: attributes.format_displayname,
-                      }
-                      : // Case 3: selectedPersonIds
-                      attributes.selectedPersonIds?.length > 0
-                        ? {
-                          selectedPersonIds:
-                          attributes.selectedPersonIds,
-                          selectedFields:
-                            attributes.selectedFields
-                              .length > 0
-                              ? attributes.selectedFields
-                              : null, // Only pass if fields are selected
-                          hideFields: attributes.hideFields, // Add hideFields
-                          selectedFormat:
-                          attributes.selectedFormat,
-                          url: attributes.url,
-                          sort: attributes.sort,
-                          format_displayname: attributes.format_displayname,
-                        }
-                        : // Case 4: orgnr als eigenständiger Fall
-                        attributes.orgnr
-                          ? {
-                            orgnr: attributes.orgnr,
-                            selectedFormat: attributes.selectedFormat,
-                            selectedFields: attributes.selectedFields.length > 0 ? attributes.selectedFields : null,
-                            hideFields: attributes.hideFields,
-                            url: attributes.url,
-                            sort: attributes.sort,
-                            format_displayname: attributes.format_displayname,
-                          }
-                          : // Falls keiner der Fälle greift, leere Attribute übergeben
-                          {
-                            selectedFormat: attributes.selectedFormat,
-                            selectedFields: attributes.selectedFields.length > 0 ? attributes.selectedFields : null,
-                            hideFields: attributes.hideFields,
-                            url: attributes.url,
-                            sort: attributes.sort,
-                            format_displayname: attributes.format_displayname,
-                          }
-
-                ),
-              }}
-            />
-          </>
+          <CustomServerSideRender attributes={blockAttributes} debouncedRenderKey={key}/>
         ) : (
           <div
             style={{
