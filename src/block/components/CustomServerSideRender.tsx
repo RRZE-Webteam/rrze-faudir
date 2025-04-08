@@ -1,10 +1,13 @@
 import ServerSideRender from "@wordpress/server-side-render";
+import { EditProps } from "../edit";
 
+interface CustomServerSideRenderProps {
+  attributes: EditProps['attributes'];
+}
 
-export default function CustomServerSideRender({attributes, debouncedRenderKey}: any) {
+export default function CustomServerSideRender({attributes}: CustomServerSideRenderProps) {
   return (
     <ServerSideRender
-      key={debouncedRenderKey}
       block="rrze-faudir/block"
       attributes={{
         // Case 1: function + orgnr

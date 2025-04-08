@@ -71,7 +71,7 @@ class BlockRegistration
     public static function render_faudir_block($attributes): string
     {
         try {
-            //  error_log('FAUDIR Block render started with attributes: ' . print_r($attributes, true));
+            error_log('FAUDIR Block render started with attributes: ' . print_r($attributes, true));
 
             if (!shortcode_exists('faudir')) {
                 throw new Exception('FAUDIR shortcode is not registered');
