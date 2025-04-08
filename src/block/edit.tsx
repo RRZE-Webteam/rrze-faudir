@@ -9,15 +9,15 @@ import {
 } from '@wordpress/components';
 import {useState, useEffect, useMemo} from '@wordpress/element';
 import ServerSideRender from '@wordpress/server-side-render';
-import apiFetch from '@wordpress/api-fetch';
+import apiFetch, {APIFetchOptions} from '@wordpress/api-fetch';
 import './editor.scss';
 import {availableFields, requiredFields, formatFields, fieldMapping} from "./defaults";
 
 interface EditProps {
   attributes: {
     selectedCategory: string;
-    selectedPosts: string[];
-    selectedPersonIds: string[];
+    selectedPosts: number[];
+    selectedPersonIds: number[];
     selectedFormat: string;
     selectedFields: string[];
     role: string;
@@ -33,6 +33,76 @@ interface EditProps {
   clientId: string;
   blockProps: any;
 }
+
+interface WPCategory {
+  id: number;
+  count: number;
+  description: string;
+  link: string;
+  name: string;
+  slug: string;
+  taxonomy: string;
+  parent: number;
+  meta?: any;
+  _links?: any;
+}
+
+interface SettingsRESTApi {
+  default_output_fields: string[];
+  business_card_title: string;
+  person_roles: PersonRoles[];
+  default_organization: DefaultOrganization | null;
+}
+
+interface PersonRoles {
+  [roleKey: string]: string;
+}
+
+interface DefaultOrganization {
+  orgnr?: number;
+}
+
+interface CustomPersonParams {
+  per_page: number;
+  _fields: string;
+  orderby: string;
+  order: string;
+  custom_taxonomy?: string;
+}
+
+interface CustomPersonRESTApi {
+  id: number;
+  date: string;
+  date_gmt: string;
+  guid: {
+    rendered: string;
+  }
+  modified: string;
+  modified_gmt: string;
+  slug: string;
+  status: string;
+  type: string;
+  link: string;
+  title: {
+    rendered: string;
+  }
+  content: {
+    rendered: string;
+    protected: boolean;
+  }
+  featured_media: number;
+  template: string;
+  meta: {
+    person_id: number;
+    person_name: string;
+  }
+  custom_taxonomy?: number[];
+  class_list: {
+    [key: string]: string;
+  }
+  _links: any;
+}
+
 
 export default function Edit({attributes, setAttributes}: EditProps) {
   const [categories, setCategories] = useState([]);
@@ -69,7 +139,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
       apiFetch({
         path: '/wp/v2/settings/rrze_faudir_options',
       })
-        .then((settings) => {
+        .then((settings: any) => {
           console.log('DATA SETTINGS in component mount', settings);
           // Update the fields if defaults exist
           if (settings?.default_output_fields) {
@@ -78,8 +148,8 @@ export default function Edit({attributes, setAttributes}: EditProps) {
 
             // Convert PHP field names to JavaScript field names
             const mappedFields = settings.default_output_fields
-              .map((field) => fieldMapping[field])
-              .filter((field) => field !== undefined); // Remove any unmapped fields
+              .map((field: string) => fieldMapping[field])
+              .filter((field: string) => field !== undefined); // Remove any unmapped fields
 
             setAttributes({
               selectedFields: mappedFields,
@@ -100,7 +170,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
   useEffect(() => {
     // Fetch categories from the REST API
     apiFetch({path: '/wp/v2/custom_taxonomy?per_page=100'})
-      .then((data) => {
+      .then((data: WPCategory[]) => {
         setCategories(data);
         setIsLoadingCategories(false);
       })
@@ -115,7 +185,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
     apiFetch({
       path: '/wp/v2/settings/rrze_faudir_options',
     })
-      .then((settings) => {
+      .then((settings: SettingsRESTApi) => {
         //	    console.error('DATA SETTINGS in component mount', settings);
         if (settings?.default_organization?.orgnr) {
           setDefaultOrgNr(settings.default_organization);
@@ -136,7 +206,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
 
   useEffect(() => {
     setIsLoadingPosts(true);
-    const params = {
+    const params: CustomPersonParams = {
       per_page: 100,
       _fields: 'id,title,meta',
       orderby: 'title',
@@ -150,8 +220,8 @@ export default function Edit({attributes, setAttributes}: EditProps) {
     apiFetch({
       path: '/wp/v2/custom_person?per_page=100',
       params: params,
-    })
-      .then((data) => {
+    } as APIFetchOptions)
+      .then((data: CustomPersonRESTApi[]) => {
         setPosts(data);
         setDisplayedPosts(data.slice(0, 100));
 
@@ -174,7 +244,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
       });
   }, [selectedCategory, orgnr]);
 
-  const togglePostSelection = (postId, personId) => {
+  const togglePostSelection = (postId: number, personId: number) => {
     const updatedSelectedPosts = selectedPosts.includes(postId)
       ? selectedPosts.filter((id) => id !== postId)
       : [...selectedPosts, postId];
@@ -192,7 +262,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
     setRenderKey((prev) => prev + 1);
   };
 
-  const toggleFieldSelection = (field) => {
+  const toggleFieldSelection = (field: string) => {
     const isFieldSelected = selectedFields.includes(field);
     let updatedSelectedFields;
     let updatedHideFields = attributes.hideFields || [];
@@ -272,7 +342,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
   };
 
   // Modify the format change handler
-  const handleFormatChange = (value) => {
+  const handleFormatChange = (value: string) => {
     setAttributes({selectedFormat: value});
 
     // Force re-render
@@ -286,7 +356,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
       apiFetch({
         path: '/wp/v2/settings/rrze_faudir_options',
       })
-        .then((settings) => {
+        .then((settings: SettingsRESTApi) => {
           if (settings?.default_output_fields) {
             const formatSpecificFields =
               formatFields[value] || [];

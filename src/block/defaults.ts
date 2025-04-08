@@ -1,5 +1,13 @@
 import {__} from "@wordpress/i18n";
 
+interface FormatFieldsSet {
+  card: string[];
+  table: string[];
+  list: string[];
+  compact: string[];
+  page: string[];
+}
+
 export const availableFields = {
   image: __('Image', 'rrze-faudir'),
   displayName: __('Display Name', 'rrze-faudir'),
@@ -27,7 +35,7 @@ export const availableFields = {
   consultationhours: __('Consultation Hours', 'rrze-faudir')
 };
 
-export const formatFields = {
+export const formatFields: FormatFieldsSet = {
   card: [
     'image',
     'displayName',
@@ -85,7 +93,7 @@ export const requiredFields = {
   page: ['displayname', 'honorificPrefix', 'givenName', 'familyName'],
 };
 
-export const fieldMapping = {
+export const fieldMapping: Record<string, string> = {
   image: 'image',
   displayname: 'displayName',
   honorificPrefix: 'honorificPrefix',
