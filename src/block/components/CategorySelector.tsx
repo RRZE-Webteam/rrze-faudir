@@ -1,39 +1,47 @@
 import {__} from "@wordpress/i18n";
-import {CheckboxControl} from "@wordpress/components";
+import {FormTokenField, __experimentalHeading as Heading} from "@wordpress/components";
 
 interface CategorySelectorProps {
   categories: any[];
   selectedCategory: string;
-  selectedPosts: number[];
-  selectedPersonIds: number[];
   setAttributes: (newAttrs: object) => void;
 }
-export default function CategorySelector({categories, selectedCategory, selectedPosts, selectedPersonIds, setAttributes}: CategorySelectorProps) {
+
+export default function CategorySelector({
+ categories,
+ selectedCategory,
+ setAttributes,
+}: CategorySelectorProps) {
+  const selectedTokens =
+    selectedCategory.trim().length > 0
+      ? selectedCategory.split(",").map((token) => token.trim())
+      : [];
+  const suggestions = categories.map((category) => category.name);
+  console.log(selectedCategory);
+  const onChangeTokenList = (newTokens: string[]) => {
+    const validatedTokens = newTokens.filter((token) =>
+      suggestions.includes(token)
+    );
+
+    const newCategoryString = validatedTokens.join(", ");
+
+    setAttributes({
+      selectedCategory: newCategoryString,
+      selectedPosts: [],
+      selectedPersons: [],
+    });
+  };
+
   return (
     <>
-      <h4>{__('Select Category', 'rrze-faudir')}</h4>
-      {categories.map((category) => (
-        <CheckboxControl
-          key={category.id}
-          label={category.name}
-          checked={
-            selectedCategory === category.name
-          }
-          onChange={() => {
-            // If the category is already selected, unselect it by setting to empty string
-            const newCategory =
-              selectedCategory === category.name ? '' : category.name;
-            setAttributes({
-              selectedCategory: newCategory,
-              // Clear selected posts when unchecking category
-              selectedPosts:
-                newCategory === '' ? [] : selectedPosts,
-              selectedPersonIds:
-                newCategory === '' ? [] : selectedPersonIds,
-            });
-          }}
-        />
-      ))}
+      <Heading level={4}>{__("Select Categories", "rrze-faudir")}</Heading>
+      <FormTokenField
+        __next40pxDefaultSize
+        label={__("Type to add categories", "rrze-faudir")}
+        value={selectedTokens}
+        suggestions={suggestions}
+        onChange={onChangeTokenList}
+      />
     </>
   );
 }

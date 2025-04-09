@@ -13,6 +13,7 @@ export interface EditProps {
     showPosts: boolean;
     sort: string;
     format_displayname: string;
+    initialSetup: boolean;
   };
   setAttributes: (attributes: Partial<EditProps["attributes"]>) => void;
   clientId: string;
@@ -44,7 +45,7 @@ export interface PersonRoles {
 }
 
 export interface DefaultOrganization {
-  orgnr?: number;
+  orgnr?: string;
 }
 
 export interface CustomPersonParams {

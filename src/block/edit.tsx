@@ -43,6 +43,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
     selectedPersonIds = [],
     role = '',
     orgnr = '',
+    initialSetup
   } = attributes;
 
   useEffect(() => {
@@ -117,17 +118,6 @@ export default function Edit({attributes, setAttributes}: EditProps) {
     } as APIFetchOptions)
       .then((data: CustomPersonRESTApi[]) => {
         setPosts(data);
-        if (selectedCategory) {
-          const categoryPosts = data.map((post) => post.id);
-          const categoryPersonIds = data
-            .map((post) => post.meta?.person_id)
-            .filter(Boolean);
-
-          setAttributes({
-            selectedPosts: categoryPosts,
-            selectedPersonIds: categoryPersonIds,
-          });
-        }
         setIsLoadingPosts(false);
       })
       .catch((error) => {
@@ -154,7 +144,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
   };
 
   return (
-    <>
+    <div {...blockProps}>
       <InspectorControls>
         <PanelBody title={__('Settings', 'rrze-faudir')}>
           <ToggleControl
@@ -168,8 +158,6 @@ export default function Edit({attributes, setAttributes}: EditProps) {
             <CategorySelector
               categories={categories}
               selectedCategory={selectedCategory}
-              selectedPosts={selectedPosts}
-              selectedPersonIds={selectedPersonIds}
               setAttributes={setAttributes}
             />
           )}
@@ -208,17 +196,23 @@ export default function Edit({attributes, setAttributes}: EditProps) {
           <NameFormatSelector attributes={attributes} setAttributes={setAttributes}/>
         </PanelBody>
       </InspectorControls>
-      <div {...blockProps}>
-        {attributes.selectedPersonIds?.length > 0 ||
-        attributes.selectedCategory ||
-        attributes.orgnr ||
-        (attributes.role &&
-          (attributes.orgnr || defaultOrgNr)) ? (
+      <>
+        {!initialSetup ? (
           <CustomServerSideRender attributes={attributes}/>
         ) : (
-          <CustomPlaceholder attributes={attributes} setAttributes={setAttributes} isOrg={isOrg} setIsOrg={setIsOrg}/>
+          <CustomPlaceholder
+            attributes={attributes}
+            setAttributes={setAttributes}
+            isOrg={isOrg}
+            setIsOrg={setIsOrg}
+            isLoadingPosts={isLoadingPosts}
+            posts={posts}
+            selectedPosts={selectedPosts}
+            togglePostSelection={togglePostSelection}
+            categories={categories}
+          />
         )}
-      </div>
-    </>
+      </>
+    </div>
   );
 }
