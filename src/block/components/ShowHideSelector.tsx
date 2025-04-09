@@ -1,7 +1,7 @@
 import {availableFields, formatFields} from "../defaults";
 import {__} from "@wordpress/i18n";
 import {CheckboxControl} from "@wordpress/components";
-import {EditProps} from "../edit";
+import {EditProps} from "../types";
 
 interface ShowHideSelectorProps {
   attributes: EditProps["attributes"];

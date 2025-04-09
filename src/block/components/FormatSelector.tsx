@@ -2,7 +2,7 @@ import {__} from "@wordpress/i18n";
 import {SelectControl} from "@wordpress/components";
 import {formatFields} from "../defaults";
 import apiFetch, {APIFetchOptions} from '@wordpress/api-fetch';
-import { EditProps, SettingsRESTApi } from "../edit";
+import { EditProps, SettingsRESTApi } from "../types";
 interface FormatSelectorProps {
   attributes: EditProps["attributes"];
   setAttributes: EditProps["setAttributes"];

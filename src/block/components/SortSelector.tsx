@@ -1,6 +1,6 @@
 import {SelectControl} from "@wordpress/components";
 import {__} from "@wordpress/i18n";
-import {EditProps} from "../edit";
+import {EditProps} from "../types";
 
 interface SortSelectorProps {
   attributes: EditProps['attributes'];

@@ -4,6 +4,7 @@ import {
   PanelBody,
   ToggleControl,
   TextControl,
+  Notice
 } from '@wordpress/components';
 import {useState, useEffect} from '@wordpress/element';
 import CustomServerSideRender from "./components/CustomServerSideRender";
@@ -15,103 +16,23 @@ import CategorySelector from "./components/CategorySelector";
 import FormatSelector from "./components/FormatSelector";
 import ShowHideSelector from "./components/ShowHideSelector";
 import NameFormatSelector from "./components/NameFormatSelector";
-
-export interface EditProps {
-  attributes: {
-    selectedCategory: string;
-    selectedPosts: number[];
-    selectedPersonIds: number[];
-    selectedFormat: string;
-    selectedFields: string[];
-    role: string;
-    orgnr: string;
-    url: string;
-    hideFields: string[];
-    showCategory: boolean;
-    showPosts: boolean;
-    sort: string;
-    format_displayname: string;
-  };
-  setAttributes: (attributes: Partial<EditProps["attributes"]>) => void;
-  clientId: string;
-  blockProps: any;
-}
-
-interface WPCategory {
-  id: number;
-  count: number;
-  description: string;
-  link: string;
-  name: string;
-  slug: string;
-  taxonomy: string;
-  parent: number;
-  meta?: any;
-  _links?: any;
-}
-
-export interface SettingsRESTApi {
-  default_output_fields: string[];
-  business_card_title: string;
-  person_roles: PersonRoles[];
-  default_organization: DefaultOrganization | null;
-}
-
-interface PersonRoles {
-  [roleKey: string]: string;
-}
-
-interface DefaultOrganization {
-  orgnr?: number;
-}
-
-interface CustomPersonParams {
-  per_page: number;
-  _fields: string;
-  orderby: string;
-  order: string;
-  custom_taxonomy?: string;
-}
-
-interface CustomPersonRESTApi {
-  id: number;
-  date: string;
-  date_gmt: string;
-  guid: {
-    rendered: string;
-  }
-  modified: string;
-  modified_gmt: string;
-  slug: string;
-  status: string;
-  type: string;
-  link: string;
-  title: {
-    rendered: string;
-  }
-  content: {
-    rendered: string;
-    protected: boolean;
-  }
-  featured_media: number;
-  template: string;
-  meta: {
-    person_id: number;
-    person_name: string;
-  }
-  custom_taxonomy?: number[];
-  class_list: {
-    [key: string]: string;
-  }
-  _links: any;
-}
-
+import {
+  EditProps,
+  WPCategory,
+  CustomPersonParams,
+  CustomPersonRESTApi,
+  SettingsRESTApi,
+  PersonRoles,
+  DefaultOrganization
+} from "./types";
+import CustomPlaceholder from "./components/CustomPlaceholder";
 
 export default function Edit({attributes, setAttributes}: EditProps) {
   const [categories, setCategories] = useState([]);
   const [posts, setPosts] = useState([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
   const [defaultOrgNr, setDefaultOrgNr] = useState(null);
+  const [isOrg, setIsOrg] = useState(false);
 
   const blockProps = useBlockProps();
   const {
@@ -236,7 +157,6 @@ export default function Edit({attributes, setAttributes}: EditProps) {
     <>
       <InspectorControls>
         <PanelBody title={__('Settings', 'rrze-faudir')}>
-
           <ToggleControl
             label={__('Show Category', 'rrze-faudir')}
             checked={showCategory}
@@ -244,7 +164,6 @@ export default function Edit({attributes, setAttributes}: EditProps) {
               setAttributes({showCategory: !showCategory})
             }
           />
-
           {showCategory && (
             <CategorySelector
               categories={categories}
@@ -254,7 +173,6 @@ export default function Edit({attributes, setAttributes}: EditProps) {
               setAttributes={setAttributes}
             />
           )}
-
           <ToggleControl
             label={__('Show Persons', 'rrze-faudir')}
             checked={showPosts}
@@ -262,8 +180,6 @@ export default function Edit({attributes, setAttributes}: EditProps) {
               setAttributes({showPosts: !showPosts})
             }
           />
-
-          { /* Person Selection */}
           {showPosts && (
             <PersonSelector
               isLoadingPosts={isLoadingPosts}
@@ -279,21 +195,9 @@ export default function Edit({attributes, setAttributes}: EditProps) {
             setAttributes={setAttributes}
           />
           {defaultOrgNr && !orgnr && (
-            <div
-              style={{
-                padding: '8px',
-                backgroundColor: '#f0f0f0',
-                borderLeft: '4px solid #007cba',
-                marginTop: '5px',
-                marginBottom: '15px',
-              }}
-            >
-							<span
-                className="dashicons dashicons-info"
-                style={{marginRight: '5px'}}
-              ></span>
+            <Notice isDismissible={false} status="info">
               {__('Default organization will be used if empty.', 'rrze-faudir')}
-            </div>
+            </Notice>
           )}
           <TextControl
             label={__('Role', 'rrze-faudir')}
@@ -312,21 +216,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
           (attributes.orgnr || defaultOrgNr)) ? (
           <CustomServerSideRender attributes={attributes}/>
         ) : (
-          <div
-            style={{
-              padding: '20px',
-              backgroundColor: '#f8f9fa',
-              textAlign: 'center',
-            }}
-          >
-            <p>
-              {attributes.role
-                ? defaultOrgNr
-                  ? __('Using default organization.', 'rrze-faudir')
-                  : __('Please configure a default organization in the plugin settings or add an organization ID to display results.', 'rrze-faudir')
-                : __('Please select persons or a category to display using the sidebar controls.', 'rrze-faudir')}
-            </p>
-          </div>
+          <CustomPlaceholder attributes={attributes} setAttributes={setAttributes} isOrg={isOrg} setIsOrg={setIsOrg}/>
         )}
       </div>
     </>

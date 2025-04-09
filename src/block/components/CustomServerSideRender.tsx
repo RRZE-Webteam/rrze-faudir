@@ -1,5 +1,5 @@
 import ServerSideRender from "@wordpress/server-side-render";
-import { EditProps } from "../edit";
+import { EditProps } from "../types";
 
 interface CustomServerSideRenderProps {
   attributes: EditProps['attributes'];

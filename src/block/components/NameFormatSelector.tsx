@@ -1,6 +1,6 @@
 import {__} from "@wordpress/i18n";
 import {TextControl} from "@wordpress/components";
-import { EditProps } from "../edit";
+import { EditProps } from "../types";
 
 interface NameFormatSelectorProps {
   attributes: EditProps['attributes'];
