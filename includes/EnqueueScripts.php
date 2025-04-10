@@ -9,6 +9,7 @@ class EnqueueScripts {
 
     public function __construct($pluginFile)  {
         self::$pluginFile = $pluginFile;
+        wp_register_style('rrze-faudir', RRZE_PLUGIN_URL . 'assets/css/rrze-faudir.css');
     }
     
     public function register()  {
@@ -17,8 +18,8 @@ class EnqueueScripts {
         add_action('enqueue_block_editor_assets', [self::class, 'enqueue_block_editor']);   
     }
 
-    public static function enqueue_frontend()   {               
-        wp_enqueue_style('rrze-faudir', RRZE_PLUGIN_URL . 'assets/css/rrze-faudir.css');
+    public static function enqueue_frontend()   {
+        wp_enqueue_style('rrze-faudir');
 
         wp_enqueue_script(
             'rrze-faudir',

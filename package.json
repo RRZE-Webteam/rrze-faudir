@@ -1,13 +1,14 @@
 {
     "name": "rrze-faudir",
-    "version": "2.2.12",
+    "version": "2.2.21",
     "description": "Plugin for displaying the FAUdir and institution directory on websites.",
     "main": "rrze-faudir.php",
     "textdomain": "rrze-faudir",
+    "private": true,
     "scripts": {
         "build": "gulp",
-        "build:block": "wp-scripts build faudir-block/src/index.js --webpack-copy-php",
-        "start": "wp-scripts start --webpack-copy-php  --cwd faudir-block",
+        "build:block": "wp-scripts build",
+        "start": "wp-scripts start",
         "format": "wp-scripts format --cwd faudir-block",
         "lint:css": "wp-scripts lint-style --cwd faudir-block",
         "lint:js": "wp-scripts lint-js --cwd faudir-block",
@@ -31,7 +32,6 @@
         "issues": "https://github.com/RRZE-Webteam/rrze-faudir/issues",
         "clone": "git+https://github.com/RRZE-Webteam/rrze-faudir.git"
     },
-    "type": "module",
     "source": {
         "js": "./src/js/",
         "sass": "./src/scss/"
@@ -44,6 +44,17 @@
     },
     "devDependencies": {
         "@wordpress/scripts": "^30.12.0",
+        "@types/node": "^22.14.0",
+        "@types/wordpress__block-editor": "^11.5.16",
+        "@types/wordpress__blocks": "^12.5.16",
+        "@typescript-eslint/parser": "^8.29.0",
+        "@typescript-eslint/eslint-plugin": "^8.18.0",
+        "@wordpress/server-side-render": "^5.9.0",
+        "eslint": "^9.16.0",
+        "eslint-plugin-react": "^7.37.2",
+        "eslint-plugin-tsdoc": "^0.4.0",
+        "ts-loader": "^9.5.2",
+        "typescript": "^5.8.3",
         "gulp": "^5.0.0",
         "gulp-concat": "^2.6.1",
         "gulp-sass": "^5.0.0",

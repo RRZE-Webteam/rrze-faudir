@@ -1,12 +1,19 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 2,
+  "apiVersion": 3,
   "name": "rrze-faudir/block",
   "title": "FAUdir",
   "category": "rrze",
   "icon": "businessperson",
   "description": "Display FAUdir information",
-  "keywords": "FAUdir, UnivIS, Person, Contact, Kontakt, FAU",
+  "keywords": [
+    "FAUdir",
+    "UnivIS",
+    "Person",
+    "Contact",
+    "Kontakt",
+    "FAU"
+  ],
   "supports": {
     "html": false,
     "anchor": true
@@ -63,9 +70,21 @@
     "format_displayname": {
       "type": "string",
       "default": ""
+    },
+    "initialSetup": {
+      "type": "boolean",
+      "default": true
+    },
+    "display": {
+      "type": "string",
+      "default": "person"
+    },
+    "orgid": {
+      "type": "string",
+      "default": ""
     }
   },
   "textdomain": "rrze-faudir",
   "editorScript": "file:./index.js",
-  "editorStyle": "file:./index.css"
+  "editorStyle": "rrze-faudir"
 }

@@ -4,7 +4,7 @@
 Plugin Name: RRZE FAUdir
 Plugin URI: https://github.com/RRZE-Webteam/rrze-faudir
 Description: Plugin for displaying the FAU person and institution directory on websites.
-Version: 2.2.12
+Version: 2.2.21
 Author: RRZE Webteam
 License: GNU General Public License v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -228,119 +228,6 @@ function custom_cpt_404_message() {
 }
 add_action('template_redirect',  __NAMESPACE__ . '\custom_cpt_404_message');
 
-// Register FAUdir Block
-function register_faudir_block() {   
-    register_block_type(plugin_dir_path(__FILE__) . '/faudir-block/build', [
-        'render_callback' =>  __NAMESPACE__ .'\\render_faudir_block',
-        'skip_inner_blocks' => true
-    ]);
-}
-add_action('init',  __NAMESPACE__ . '\register_faudir_block');
-
-// Render callback function for FAUdir block
-function render_faudir_block($attributes) {
-    try {
-     //  error_log('FAUDIR Block render started with attributes: ' . print_r($attributes, true));
-
-        if (!shortcode_exists('faudir')) {
-            throw new Exception('FAUDIR shortcode is not registered');
-        }
-
-        // Get default organization from options with proper checks
-        $options = get_option('rrze_faudir_options', []);
-        $default_org = isset($options['default_organization']) && is_array($options['default_organization']) 
-            ? $options['default_organization'] 
-            : [];
-        $defaultOrgIdentifier = isset($default_org['id']) ? $default_org['id'] : '';
-
-        // First check if we have function and orgnr
-        if (!empty($attributes['role'])) {
-            $shortcode_atts = [
-                'format' => $attributes['selectedFormat'] ?? 'compact',
-                'role' => $attributes['role'],
-                'orgnr' => !empty($attributes['orgnr']) ? $attributes['orgnr'] : $defaultOrgIdentifier
-            ];
-        } 
-        // Then check for category
-        else if (!empty($attributes['selectedCategory'])) {
-            $shortcode_atts = [
-                'format' => $attributes['selectedFormat'] ?? 'compact',
-                'category' => $attributes['selectedCategory']
-            ];
-            
-            // Only add identifiers if they're specifically selected for this category
-            if (!empty($attributes['selectedPersonIds'])) {
-                $shortcode_atts['identifier'] = implode(',', $attributes['selectedPersonIds']);
-            }
-        }
-        // Finally check for selectedPersonIds without category
-        else if (!empty($attributes['selectedPersonIds'])) {
-            $shortcode_atts = [
-                'format' => $attributes['selectedFormat'] ?? 'compact',
-                'identifier' => is_array($attributes['selectedPersonIds']) ? 
-                    implode(',', $attributes['selectedPersonIds']) : 
-                    $attributes['selectedPersonIds']
-            ];
-        }
-        
-        // Org without other parameters from above given
-        else if (!empty($attributes['orgnr'])) {
-            $shortcode_atts = [
-                'format' => $attributes['selectedFormat'] ?? 'compact',
-                'orgnr' =>  $attributes['orgnr']
-            ];
-        }
-        
-        else {
-            throw new Exception(__('Neither person IDs, function+orgnr, nor category were provided', 'rrze-faudir'));
-        }
-
-        // Add optional attributes
-        if (!empty($attributes['selectedFields'])) {
-            $shortcode_atts['show'] = implode(',', $attributes['selectedFields']);
-        }
-        
-        if (!empty($attributes['hideFields'])) {
-            $shortcode_atts['hide'] = implode(',', $attributes['hideFields']);
-        }
-
-        if (!empty($attributes['url'])) {
-            $shortcode_atts['url'] = $attributes['url'];
-        }
-        if (!empty($attributes['format_displayname'])) {
-            $shortcode_atts['format_displayname'] = $attributes['format_displayname'];
-        }
-
-        if (!empty($attributes['sort'])) {
-            $shortcode_atts['sort'] = $attributes['sort'];
-        }
-
-        // Build shortcode string
-        $shortcode = '[faudir';
-        foreach ($shortcode_atts as $key => $value) {
-            if (!empty($value)) {
-                $shortcode .= sprintf(' %s="%s"', esc_attr($key), esc_attr($value));
-            }
-        }
-        $shortcode .= ']';
-
-        // Execute shortcode
-        $output = do_shortcode($shortcode);
-
-        if (empty(trim($output))) {
-            throw new Exception('Shortcode returned empty content');
-        }
-
-        return $output;
-
-    } catch (Exception $e) {
-        return sprintf(
-            '<div class="faudir-error">%s</div>',
-            esc_html($e->getMessage())
-        );
-    }
-}
-
 // Add editor assets
 add_action('enqueue_block_editor_assets', function() {
     // Get the file paths    
@@ -371,38 +258,3 @@ add_action('enqueue_block_editor_assets', function() {
     
     wp_enqueue_script('rrze-faudir-block-script');
 });
-
-// Add this to your existing plugin file where other REST routes are registered
-add_action('rest_api_init', function () {
-    register_rest_route('wp/v2/settings', 'rrze_faudir_options', array(
-        'methods' => 'GET',
-        'callback' => function () {
-                $config = new Config;
-                $options = $config->getOptions();  
-                $roles = $config->get('person_roles');
-        //    $options = get_option('rrze_faudir_options', []);
-            return [
-                'default_output_fields' => isset($options['default_output_fields']) ? 
-                    $options['default_output_fields'] : [],
-                'business_card_title' => isset($options['business_card_title']) ? 
-                    $options['business_card_title'] :  __('More Information', 'rrze-faudir'),
-                'person_roles' => $roles,
-                'default_organization' => isset($options['default_organization']) ? 
-                    $options['default_organization'] :  null
-            ];
-        },
-        'permission_callback' => function () {
-            return current_user_can('edit_posts');
-        }
-    ));
-});
-add_filter( 'block_categories_all' , function( $categories ) {
-
-    // Adding a new category.
-	$categories[] = array(
-		'slug'  => 'custom-fau-category',
-		'title' => 'Fau'
-	);
-
-	return $categories;
-} );
