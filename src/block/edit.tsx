@@ -255,10 +255,12 @@ export default function Edit({attributes, setAttributes}: EditProps) {
           <ShowHideSelector attributes={attributes} setAttributes={setAttributes}/>
           <NameFormatSelector attributes={attributes} setAttributes={setAttributes}/>
         </PanelBody>
-        <PanelBody title={__('Sorting', 'rrze-faudir')} initialOpen={false}>
-          <SortSelector attributes={attributes} setAttributes={setAttributes}/>
-          <RoleSelector attributes={attributes} setAttributes={setAttributes}/>
-        </PanelBody>
+        {attributes.display !== "org" &&
+            <PanelBody title={__('Sorting', 'rrze-faudir')} initialOpen={false}>
+                <SortSelector attributes={attributes} setAttributes={setAttributes}/>
+                <RoleSelector attributes={attributes} setAttributes={setAttributes}/>
+            </PanelBody>
+        }
       </InspectorControls>
       <>
         {!initialSetup ? (
