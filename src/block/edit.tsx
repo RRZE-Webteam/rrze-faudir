@@ -26,6 +26,7 @@ import {
   DefaultOrganization
 } from "./types";
 import CustomPlaceholder from "./components/CustomPlaceholder";
+import OrganizationIdDetector from "./components/OrganizationIdDetector";
 
 export default function Edit({attributes, setAttributes}: EditProps) {
   const [categories, setCategories] = useState([]);
@@ -151,47 +152,33 @@ export default function Edit({attributes, setAttributes}: EditProps) {
   return (
     <div {...blockProps}>
       <InspectorControls>
-        <PanelBody title={__('Settings', 'rrze-faudir')}>
-          <ToggleControl
-            label={__('Show Category', 'rrze-faudir')}
-            checked={showCategory}
-            onChange={() =>
-              setAttributes({showCategory: !showCategory})
-            }
+        <PanelBody title={__('Display Persons', 'rrze-faudir')} initialOpen={attributes.display === 'person'}>
+          <PersonSelector
+            isLoadingPosts={isLoadingPosts}
+            posts={posts}
+            selectedPosts={selectedPosts}
+            togglePostSelection={togglePostSelection}
           />
-          {showCategory && (
-            <CategorySelector
-              categories={categories}
-              selectedCategory={selectedCategory}
-              setAttributes={setAttributes}
-            />
-          )}
-          <ToggleControl
-            label={__('Show Persons', 'rrze-faudir')}
-            checked={showPosts}
-            onChange={() =>
-              setAttributes({showPosts: !showPosts})
-            }
+          <CategorySelector
+            categories={categories}
+            selectedCategory={selectedCategory}
+            setAttributes={setAttributes}
           />
-          {showPosts && (
-            <PersonSelector
-              isLoadingPosts={isLoadingPosts}
-              posts={posts}
-              selectedPosts={selectedPosts}
-              togglePostSelection={togglePostSelection}
-            />
-          )}
-          <FormatSelector attributes={attributes} setAttributes={setAttributes}/>
-          <ShowHideSelector attributes={attributes} setAttributes={setAttributes}/>
           <OrganizationNumberDetector
             attributes={attributes}
             setAttributes={setAttributes}
           />
-          {defaultOrgNr && !orgnr && (
-            <Notice isDismissible={false} status="info">
-              {__('Default organization will be used if empty.', 'rrze-faudir')}
-            </Notice>
-          )}
+        </PanelBody>
+        <PanelBody title={__('Display FAUdir Folders', 'rrze-faudir')} initialOpen={attributes.display === 'org'}>
+          <OrganizationNumberDetector
+            attributes={attributes}
+            setAttributes={setAttributes}
+          />
+          <OrganizationIdDetector attributes={attributes} setAttributes={setAttributes}/>
+        </PanelBody>
+        <PanelBody title={__('Appearance', 'rrze-faudir')} initialOpen={true}>
+          <FormatSelector attributes={attributes} setAttributes={setAttributes}/>
+          <ShowHideSelector attributes={attributes} setAttributes={setAttributes}/>
           <TextControl
             label={__('Role', 'rrze-faudir')}
             value={role}
