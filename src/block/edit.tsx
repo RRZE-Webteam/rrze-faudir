@@ -6,6 +6,8 @@ import {
   ToolbarItem,
   ToolbarButton,
   TextControl,
+  __experimentalToggleGroupControlOption as ToggleGroupControlOption,
+  __experimentalToggleGroupControl as ToggleGroupControl,
 } from '@wordpress/components';
 import {useState, useEffect} from '@wordpress/element';
 import CustomServerSideRender from "./components/CustomServerSideRender";
@@ -30,6 +32,7 @@ import {
 import CustomPlaceholder from "./components/CustomPlaceholder";
 import OrganizationIdDetector from "./components/OrganizationIdDetector";
 import RoleSelector from "./components/RoleSelector";
+import SortSelector from "./components/SortSelector";
 
 export default function Edit({attributes, setAttributes}: EditProps) {
   const [categories, setCategories] = useState([]);
@@ -170,7 +173,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
                     <ToolbarButton
                       icon={!isAppearancePanelOpen ? styles : postAuthor}
                       label={
-                        attributes.initialSetup
+                        !isAppearancePanelOpen
                           ? __("Change the Appearance", "rrze-faudir")
                           : __("Change the Data", "rrze-faudir")
                       }
@@ -200,35 +203,61 @@ export default function Edit({attributes, setAttributes}: EditProps) {
         </ToolbarGroup>
       </BlockControls>
       <InspectorControls>
-        <PanelBody title={__('Display Persons', 'rrze-faudir')} initialOpen={attributes.display === 'person'}>
-          <PersonSelector
-            isLoadingPosts={isLoadingPosts}
-            posts={posts}
-            selectedPosts={selectedPosts}
-            togglePostSelection={togglePostSelection}
-          />
-          <CategorySelector
-            categories={categories}
-            selectedCategory={selectedCategory}
-            setAttributes={setAttributes}
-          />
-          <OrganizationNumberDetector
-            attributes={attributes}
-            setAttributes={setAttributes}
-          />
-        </PanelBody>
-        <PanelBody title={__('Display FAUdir Folders', 'rrze-faudir')} initialOpen={attributes.display === 'org'}>
-          <OrganizationNumberDetector
-            attributes={attributes}
-            setAttributes={setAttributes}
-          />
-          <OrganizationIdDetector attributes={attributes} setAttributes={setAttributes}/>
+        <PanelBody title={__('Data Selection', 'rrze-faudir')}>
+          <ToggleGroupControl
+            __next40pxDefaultSize
+            __nextHasNoMarginBottom
+            isBlock
+            label={__('What type of Contact do you want to display?', 'rrze-faudir')}
+            help={__('Do you want to output a Person entry or a FAUdir Institution/Folder?', 'rrze-faudir')}
+            onChange={(value: string) => value === 'person' ? setIsOrg(false) : setIsOrg(true)}
+            value={isOrg ? 'org' : 'person'}
+          >
+            <ToggleGroupControlOption
+              label={__('Persons', 'rrze-faudir')}
+              value={'person'}
+            />
+            <ToggleGroupControlOption
+              label={__('Organization or FAUdir-Folder', 'rrze-faudir')}
+              value={'org'}
+            />
+          </ToggleGroupControl>
+          {!isOrg ? (
+            <>
+              <PersonSelector
+                isLoadingPosts={isLoadingPosts}
+                posts={posts}
+                selectedPosts={selectedPosts}
+                togglePostSelection={togglePostSelection}
+              />
+              <CategorySelector
+                categories={categories}
+                selectedCategory={selectedCategory}
+                setAttributes={setAttributes}
+              />
+              <OrganizationNumberDetector
+                attributes={attributes}
+                setAttributes={setAttributes}
+              />
+            </>
+          ) : (
+            <>
+              <OrganizationNumberDetector
+                attributes={attributes}
+                setAttributes={setAttributes}
+              />
+              <OrganizationIdDetector attributes={attributes} setAttributes={setAttributes}/>
+            </>
+          )}
         </PanelBody>
         <PanelBody title={__('Appearance', 'rrze-faudir')} initialOpen={true}>
           <FormatSelector attributes={attributes} setAttributes={setAttributes}/>
           <ShowHideSelector attributes={attributes} setAttributes={setAttributes}/>
-          <RoleSelector attributes={attributes} setAttributes={setAttributes}/>
           <NameFormatSelector attributes={attributes} setAttributes={setAttributes}/>
+        </PanelBody>
+        <PanelBody title={__('Sorting', 'rrze-faudir')} initialOpen={false}>
+          <SortSelector attributes={attributes} setAttributes={setAttributes}/>
+          <RoleSelector attributes={attributes} setAttributes={setAttributes}/>
         </PanelBody>
       </InspectorControls>
       <>

@@ -120,8 +120,6 @@ export default function CustomPlaceholder({
                     <Heading level={2}>{__('Sort the contacts', 'rrze-faudir')}</Heading>
                   </Spacer>
                   <SortSelector attributes={attributes} setAttributes={setAttributes} />
-                  <RoleSelector attributes={attributes} setAttributes={setAttributes}/>
-                  <NameFormatSelector attributes={attributes} setAttributes={setAttributes} />
                 </Spacer>
 
               </>
@@ -170,6 +168,8 @@ export default function CustomPlaceholder({
                   <Heading level={2}>{__('Configure the appearance of your Contact', 'rrze-faudir')}</Heading>
                   <FormatSelector attributes={attributes} setAttributes={setAttributes}/>
                   <ShowHideSelector attributes={attributes} setAttributes={setAttributes}/>
+                  <NameFormatSelector attributes={attributes} setAttributes={setAttributes} />
+                  <Spacer paddingTop="1rem" />
                   <hr/>
                   <Spacer paddingTop="1rem" paddingBottom="1.5rem">
                     <Heading level={2}>{__('Preview', 'rrze-faudir')}</Heading>

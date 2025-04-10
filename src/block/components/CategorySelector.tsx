@@ -17,7 +17,6 @@ export default function CategorySelector({
       ? selectedCategory.split(",").map((token) => token.trim())
       : [];
   const suggestions = categories.map((category) => category.name);
-  console.log(selectedCategory);
   const onChangeTokenList = (newTokens: string[]) => {
     const validatedTokens = newTokens.filter((token) =>
       suggestions.includes(token)
