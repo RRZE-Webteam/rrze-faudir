@@ -12,6 +12,7 @@ import {PersonSelectorProps} from "./PersonSelector";
 import CategorySelector from "./CategorySelector";
 import CustomServerSideRender from "./CustomServerSideRender";
 import OrganizationNumberDetector from "./OrganizationNumberDetector";
+import OrganizationIdDetector from "./OrganizationIdDetector";
 
 interface CustomPlaceholderProps extends PersonSelectorProps {
   attributes: EditProps['attributes'];
@@ -92,6 +93,7 @@ export default function CustomPlaceholder({
                 label={__('Display via FAUOrg Number', 'rrze-faudir')}
                 helpText={__('To display an Institution as contact, insert your FAUOrg Number (Cost center number).', 'rrze-faudir')}
               />
+              <OrganizationIdDetector attributes={attributes} setAttributes={setAttributes} />
             </>
           )}
           <hr/>

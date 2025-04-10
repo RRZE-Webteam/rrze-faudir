@@ -15,6 +15,7 @@ export interface EditProps {
     format_displayname: string;
     initialSetup: boolean;
     display: "person" | "org";
+    orgid: string;
   };
   setAttributes: (attributes: Partial<EditProps["attributes"]>) => void;
   clientId: string;

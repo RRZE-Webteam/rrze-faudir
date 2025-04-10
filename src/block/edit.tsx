@@ -32,7 +32,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
   const [posts, setPosts] = useState([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
   const [defaultOrgNr, setDefaultOrgNr] = useState(null);
-  const [isOrg, setIsOrg] = useState(false);
+  const [isOrg, setIsOrg] = useState(attributes.display === 'org');
 
   const blockProps = useBlockProps();
   const {

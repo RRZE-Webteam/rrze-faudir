@@ -78,6 +78,10 @@
     "display": {
       "type": "string",
       "default": "person"
+    },
+    "orgid": {
+      "type": "string",
+      "default": ""
     }
   },
   "textdomain": "rrze-faudir",

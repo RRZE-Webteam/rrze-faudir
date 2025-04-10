@@ -45,7 +45,7 @@ export default function OrganizationNumberDetector({
 
   return (
     <>
-      <Heading level={4}>{__("Display Organization", "rrze-faudir")}</Heading>
+      <Heading level={3}>{__("Display Organization", "rrze-faudir")}</Heading>
       <TextControl
         label={label || __('FAUOrg Number', 'rrze-faudir')}
         value={localValue}

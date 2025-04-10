@@ -13,6 +13,8 @@ export default function CustomServerSideRender({attributes}: CustomServerSideRen
     setComponentKey((prevKey) => prevKey + 1);
   }, [attributes.orgnr, attributes.selectedCategory]);
 
+  console.log(attributes);
+
   return (
     <ServerSideRender
       key={componentKey}
@@ -20,6 +22,7 @@ export default function CustomServerSideRender({attributes}: CustomServerSideRen
       attributes={{
         role: attributes.role,
         orgnr: attributes.orgnr,
+        orgid: attributes.orgid,
         selectedFormat: attributes.selectedFormat,
         selectedFields: attributes.selectedFields,
         selectedCategory: attributes.selectedCategory,

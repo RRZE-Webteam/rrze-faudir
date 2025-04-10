@@ -70,6 +70,9 @@ class BlockRegistration
      */
     public static function render_faudir_block($attributes): string
     {
+        error_log('FAUDIR Block attributes: ' . print_r($attributes, true));
+
+
         try {
             error_log('FAUDIR Block render started with attributes: ' . print_r($attributes, true));
 
@@ -111,6 +114,12 @@ class BlockRegistration
                         $attributes['selectedPersonIds']
                 ];
             } // Org without other parameters from above given
+            else if (!empty($attributes['orgid'])) {
+                $shortcode_atts = [
+                    'format' => $attributes['selectedFormat'] ?? 'compact',
+                    'orgid' => $attributes['orgid']
+                ];
+            }
             else if (!empty($attributes['orgnr'])) {
                 $shortcode_atts = [
                     'format' => $attributes['selectedFormat'] ?? 'compact',
