@@ -29,6 +29,7 @@ import {
 } from "./types";
 import CustomPlaceholder from "./components/CustomPlaceholder";
 import OrganizationIdDetector from "./components/OrganizationIdDetector";
+import RoleSelector from "./components/RoleSelector";
 
 export default function Edit({attributes, setAttributes}: EditProps) {
   const [categories, setCategories] = useState([]);
@@ -226,12 +227,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
         <PanelBody title={__('Appearance', 'rrze-faudir')} initialOpen={true}>
           <FormatSelector attributes={attributes} setAttributes={setAttributes}/>
           <ShowHideSelector attributes={attributes} setAttributes={setAttributes}/>
-          <TextControl
-            label={__('Role', 'rrze-faudir')}
-            value={role}
-            onChange={(value) => setAttributes({role: value})}
-            type="text"
-          />
+          <RoleSelector attributes={attributes} setAttributes={setAttributes}/>
           <NameFormatSelector attributes={attributes} setAttributes={setAttributes}/>
         </PanelBody>
       </InspectorControls>

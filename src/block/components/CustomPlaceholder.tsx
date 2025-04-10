@@ -17,6 +17,9 @@ import OrganizationIdDetector from "./OrganizationIdDetector";
 import {useState} from "@wordpress/element";
 import FormatSelector from "./FormatSelector";
 import ShowHideSelector from "./ShowHideSelector";
+import SortSelector from "./SortSelector";
+import NameFormatSelector from "./NameFormatSelector";
+import RoleSelector from "./RoleSelector";
 
 interface CustomPlaceholderProps extends PersonSelectorProps {
   attributes: EditProps['attributes'];
@@ -113,6 +116,12 @@ export default function CustomPlaceholder({
                     attributes={attributes}
                     setAttributes={setAttributes}
                   />
+                  <Spacer paddingTop="1rem">
+                    <Heading level={2}>{__('Sort the contacts', 'rrze-faudir')}</Heading>
+                  </Spacer>
+                  <SortSelector attributes={attributes} setAttributes={setAttributes} />
+                  <RoleSelector attributes={attributes} setAttributes={setAttributes}/>
+                  <NameFormatSelector attributes={attributes} setAttributes={setAttributes} />
                 </Spacer>
 
               </>
