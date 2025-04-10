@@ -1,7 +1,8 @@
 import {availableFields, formatFields} from "../defaults";
 import {__} from "@wordpress/i18n";
-import {CheckboxControl} from "@wordpress/components";
+import {CheckboxControl, __experimentalHeading as Heading} from "@wordpress/components";
 import {EditProps} from "../types";
+import {useEffect} from "@wordpress/element";
 
 interface ShowHideSelectorProps {
   attributes: EditProps["attributes"];
@@ -10,6 +11,14 @@ interface ShowHideSelectorProps {
 
 export default function ShowHideSelector({attributes, setAttributes}: ShowHideSelectorProps) {
   const {selectedFormat, selectedFields} = attributes;
+
+  useEffect(() => {
+    if (attributes.display === "org" && selectedFormat !== "orgid") {
+      setAttributes({ selectedFormat: "orgid" });
+    } else if (attributes.display === "person" && attributes.selectedFormat === "orgid"){
+      setAttributes({ selectedFormat: "compact" });
+    }
+  }, [attributes.display, selectedFormat]);
 
   const toggleFieldSelection = (field: string) => {
     const isFieldSelected = selectedFields.includes(field);

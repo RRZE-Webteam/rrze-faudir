@@ -61,7 +61,6 @@ export default function Edit({attributes, setAttributes}: EditProps) {
         path: '/wp/v2/settings/rrze_faudir_options',
       })
         .then((settings: any) => {
-          console.log('DATA SETTINGS in component mount', settings);
           if (settings?.default_output_fields) {
             const mappedFields = settings.default_output_fields
               .map((field: string) => fieldMapping[field])

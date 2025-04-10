@@ -85,6 +85,18 @@ export const formatFields: FormatFieldsSet = {
     'titleOfNobility',
     'address',
   ],
+  orgid: [
+    'email',
+    'phone',
+    'organization',
+    'url',
+    'address',
+    'street',
+    'zip',
+    'city',
+    'faumap',
+    'content'
+  ],
   compact: Object.keys(availableFields),
   page: Object.keys(availableFields),
 };
@@ -96,6 +108,7 @@ export const requiredFields = {
   list: ['displayname', 'honorificPrefix', 'givenName', 'familyName'],
   compact: ['displayname', 'honorificPrefix', 'givenName', 'familyName'],
   page: ['displayname', 'honorificPrefix', 'givenName', 'familyName'],
+  orgid: ['displayname', 'honorificPrefix', 'givenName', 'familyName'],
 };
 
 export const fieldMapping: Record<string, string> = {

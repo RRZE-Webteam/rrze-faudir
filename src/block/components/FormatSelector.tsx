@@ -2,13 +2,15 @@ import {__} from "@wordpress/i18n";
 import {SelectControl} from "@wordpress/components";
 import {formatFields} from "../defaults";
 import apiFetch, {APIFetchOptions} from '@wordpress/api-fetch';
-import { EditProps, SettingsRESTApi } from "../types";
+import {EditProps, SettingsRESTApi} from "../types";
+
 interface FormatSelectorProps {
   attributes: EditProps["attributes"];
   setAttributes: EditProps["setAttributes"];
 }
-export default function FormatSelector({ attributes, setAttributes }: FormatSelectorProps) {
-  const { selectedFormat } = attributes;
+
+export default function FormatSelector({attributes, setAttributes}: FormatSelectorProps) {
+  const {selectedFormat} = attributes;
   const handleFormatChange = (value: string) => {
     setAttributes({selectedFormat: value});
 
@@ -40,32 +42,38 @@ export default function FormatSelector({ attributes, setAttributes }: FormatSele
   };
 
   return (
-    <SelectControl
-      label={__('Select Format', 'rrze-faudir')}
-      value={selectedFormat || 'list'}
-      options={[
-        {
-          value: 'list',
-          label: __('List', 'rrze-faudir'),
-        },
-        {
-          value: 'table',
-          label: __('Table', 'rrze-faudir'),
-        },
-        {
-          value: 'card',
-          label: __('Card', 'rrze-faudir'),
-        },
-        {
-          value: 'compact',
-          label: __('Compact', 'rrze-faudir'),
-        },
-        {
-          value: 'page',
-          label: __('Page', 'rrze-faudir'),
-        },
-      ]}
-      onChange={handleFormatChange}
-    />
+    <>
+      {
+        attributes.display !== 'org' && (
+          <SelectControl
+            label={__('Select Format', 'rrze-faudir')}
+            value={selectedFormat || 'list'}
+            options={[
+              {
+                value: 'list',
+                label: __('List', 'rrze-faudir'),
+              },
+              {
+                value: 'table',
+                label: __('Table', 'rrze-faudir'),
+              },
+              {
+                value: 'card',
+                label: __('Card', 'rrze-faudir'),
+              },
+              {
+                value: 'compact',
+                label: __('Compact', 'rrze-faudir'),
+              },
+              {
+                value: 'page',
+                label: __('Page', 'rrze-faudir'),
+              },
+            ]}
+            onChange={handleFormatChange}
+          />
+        )
+      }
+    </>
   );
 }
