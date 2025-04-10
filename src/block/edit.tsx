@@ -1,10 +1,11 @@
 import {__} from '@wordpress/i18n';
-import {InspectorControls, useBlockProps} from '@wordpress/block-editor';
+import {InspectorControls, BlockControls, useBlockProps} from '@wordpress/block-editor';
 import {
   PanelBody,
-  ToggleControl,
+  ToolbarGroup,
+  ToolbarItem,
+  ToolbarButton,
   TextControl,
-  Notice
 } from '@wordpress/components';
 import {useState, useEffect} from '@wordpress/element';
 import CustomServerSideRender from "./components/CustomServerSideRender";
@@ -16,6 +17,7 @@ import CategorySelector from "./components/CategorySelector";
 import FormatSelector from "./components/FormatSelector";
 import ShowHideSelector from "./components/ShowHideSelector";
 import NameFormatSelector from "./components/NameFormatSelector";
+import {edit, check, postAuthor, styles} from "@wordpress/icons";
 import {
   EditProps,
   WPCategory,
@@ -34,6 +36,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
   const [defaultOrgNr, setDefaultOrgNr] = useState(null);
   const [isOrg, setIsOrg] = useState(attributes.display === 'org');
+  const [isAppearancePanelOpen, setIsAppearancePanelOpen] = useState<boolean>(false);
 
   const blockProps = useBlockProps();
   const {
@@ -46,6 +49,12 @@ export default function Edit({attributes, setAttributes}: EditProps) {
     orgnr = '',
     initialSetup
   } = attributes;
+
+  const handleToolbarConfiguration = () => {
+    setAttributes({
+      initialSetup: !initialSetup,
+    });
+  }
 
   useEffect(() => {
     setAttributes({
@@ -151,6 +160,44 @@ export default function Edit({attributes, setAttributes}: EditProps) {
 
   return (
     <div {...blockProps}>
+      <BlockControls>
+        <ToolbarGroup>
+          {attributes.initialSetup &&
+              <ToolbarItem>
+                {() => (
+                  <>
+                    <ToolbarButton
+                      icon={!isAppearancePanelOpen ? styles : postAuthor}
+                      label={
+                        attributes.initialSetup
+                          ? __("Change the Appearance", "rrze-faudir")
+                          : __("Change the Data", "rrze-faudir")
+                      }
+                      onClick={() => {
+                        setIsAppearancePanelOpen(!isAppearancePanelOpen);
+                      }}
+                    />
+                  </>
+                )}
+              </ToolbarItem>
+          }
+          <ToolbarItem>
+            {() => (
+              <>
+                <ToolbarButton
+                  icon={!attributes.initialSetup ? edit : check}
+                  label={
+                    !attributes.initialSetup
+                      ? __("Configure your contact", "rrze-faudir")
+                      : __("Finish configuration", "rrze-faudir")
+                  }
+                  onClick={handleToolbarConfiguration}
+                />
+              </>
+            )}
+          </ToolbarItem>
+        </ToolbarGroup>
+      </BlockControls>
       <InspectorControls>
         <PanelBody title={__('Display Persons', 'rrze-faudir')} initialOpen={attributes.display === 'person'}>
           <PersonSelector
@@ -202,6 +249,8 @@ export default function Edit({attributes, setAttributes}: EditProps) {
             selectedPosts={selectedPosts}
             togglePostSelection={togglePostSelection}
             categories={categories}
+            isAppearancePanelOpen={isAppearancePanelOpen}
+            setIsAppearancePanelOpen={setIsAppearancePanelOpen}
           />
         )}
       </>

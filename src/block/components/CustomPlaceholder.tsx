@@ -25,6 +25,8 @@ interface CustomPlaceholderProps extends PersonSelectorProps {
   setIsOrg: (isOrg: boolean) => void;
   isLoadingPosts: boolean;
   categories: any[];
+  isAppearancePanelOpen: boolean;
+  setIsAppearancePanelOpen: (isAppearancePanelOpen: boolean) => void;
 }
 
 export default function CustomPlaceholder({
@@ -36,10 +38,12 @@ export default function CustomPlaceholder({
                                             posts,
                                             selectedPosts,
                                             togglePostSelection,
-                                            categories
+                                            categories,
+                                            isAppearancePanelOpen,
+                                            setIsAppearancePanelOpen
                                           }: CustomPlaceholderProps) {
   //useState
-  const [isAppearancePanelOpen, setIsAppearancePanelOpen] = useState<boolean>(false);
+
 
   const onClickChangeAppearance = () => {
     setIsAppearancePanelOpen(true);
@@ -148,37 +152,37 @@ export default function CustomPlaceholder({
           </div>
         ) : (
           <>
-          <div>
-            <Spacer
-              paddingBottom="1.5rem"
-              paddingTop="1rem"
-            >
-              <>
-                <Heading level={2}>{__('Configure the appearance of your Contact', 'rrze-faudir')}</Heading>
-                <FormatSelector attributes={attributes} setAttributes={setAttributes}/>
-                <ShowHideSelector attributes={attributes} setAttributes={setAttributes}/>
-                <hr/>
-                <Spacer paddingTop="1rem" paddingBottom="1.5rem">
-                  <Heading level={2}>{__('Preview', 'rrze-faudir')}</Heading>
-                  <CustomServerSideRender attributes={attributes}/>
-                </Spacer>
-                <Button
-                  variant="secondary"
-                  onClick={onClickChangeData}
-                >
-                  {__("Configure the Data Source", "rrze-faudir")}
-                </Button>
-                <Button
-                  variant="primary"
-                  onClick={onClickInitialSetupConfirm}
-                >
-                  {__("Finish initial setup", "rrze-faudir")}
-                </Button>
-              </>
-            </Spacer>
-          </div>
+            <div>
+              <Spacer
+                paddingBottom="1.5rem"
+                paddingTop="1rem"
+              >
+                <>
+                  <Heading level={2}>{__('Configure the appearance of your Contact', 'rrze-faudir')}</Heading>
+                  <FormatSelector attributes={attributes} setAttributes={setAttributes}/>
+                  <ShowHideSelector attributes={attributes} setAttributes={setAttributes}/>
+                  <hr/>
+                  <Spacer paddingTop="1rem" paddingBottom="1.5rem">
+                    <Heading level={2}>{__('Preview', 'rrze-faudir')}</Heading>
+                    <CustomServerSideRender attributes={attributes}/>
+                  </Spacer>
+                  <Button
+                    variant="secondary"
+                    onClick={onClickChangeData}
+                  >
+                    {__("Configure the Data Source", "rrze-faudir")}
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={onClickInitialSetupConfirm}
+                  >
+                    {__("Finish initial setup", "rrze-faudir")}
+                  </Button>
+                </>
+              </Spacer>
+            </div>
           </>
-          )}
-          </Placeholder>
-          </>);
-        }
+        )}
+      </Placeholder>
+    </>);
+}
