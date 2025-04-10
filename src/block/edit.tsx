@@ -47,6 +47,12 @@ export default function Edit({attributes, setAttributes}: EditProps) {
   } = attributes;
 
   useEffect(() => {
+    setAttributes({
+      display: isOrg ? 'org' : 'person',
+    })
+  }, [isOrg]);
+
+  useEffect(() => {
     if (
       !attributes.selectedFields ||
       attributes.selectedFields.length === 0

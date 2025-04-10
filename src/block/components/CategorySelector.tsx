@@ -1,5 +1,5 @@
 import {__} from "@wordpress/i18n";
-import {FormTokenField, __experimentalHeading as Heading} from "@wordpress/components";
+import {FormTokenField, __experimentalHeading as Heading, Notice} from "@wordpress/components";
 
 interface CategorySelectorProps {
   categories: any[];
@@ -8,10 +8,10 @@ interface CategorySelectorProps {
 }
 
 export default function CategorySelector({
- categories,
- selectedCategory,
- setAttributes,
-}: CategorySelectorProps) {
+                                           categories,
+                                           selectedCategory,
+                                           setAttributes,
+                                         }: CategorySelectorProps) {
   const selectedTokens =
     selectedCategory.trim().length > 0
       ? selectedCategory.split(",").map((token) => token.trim())
@@ -39,9 +39,15 @@ export default function CategorySelector({
         __next40pxDefaultSize
         label={__("Type to add categories", "rrze-faudir")}
         value={selectedTokens}
+        disabled={suggestions.length === 0}
         suggestions={suggestions}
         onChange={onChangeTokenList}
       />
+      {suggestions.length === 0 &&
+          <Notice isDismissible={false} status="info">
+            {__("There are currently no Categories available. Start adding your first FAUdir Categories via the WordPress Dashboard > Persons > Categories.", "rrze-faudir")}
+          </Notice>
+      }
     </>
   );
 }

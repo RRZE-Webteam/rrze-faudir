@@ -80,13 +80,23 @@ export default function CustomPlaceholder({
                 attributes={attributes}
                 setAttributes={setAttributes}
               />
-              <hr/>
-              <Heading level={2}>{__('Preview', 'rrze-faudir')}</Heading>
-              <CustomServerSideRender attributes={attributes}/>
+
             </>
           ) : (
-            <></>
+            <>
+              <Heading level={2}>{__('Select Organization or FAUdir-Folder to display', 'rrze-faudir')}</Heading>
+              <Spacer/>
+              <OrganizationNumberDetector
+                attributes={attributes}
+                setAttributes={setAttributes}
+                label={__('Display via FAUOrg Number', 'rrze-faudir')}
+                helpText={__('To display an Institution as contact, insert your FAUOrg Number (Cost center number).', 'rrze-faudir')}
+              />
+            </>
           )}
+          <hr/>
+          <Heading level={2}>{__('Preview', 'rrze-faudir')}</Heading>
+          <CustomServerSideRender attributes={attributes}/>
         </div>
       </Placeholder>
     </>);

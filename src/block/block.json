@@ -74,6 +74,10 @@
     "initialSetup": {
       "type": "boolean",
       "default": true
+    },
+    "display": {
+      "type": "string",
+      "default": "person"
     }
   },
   "textdomain": "rrze-faudir",

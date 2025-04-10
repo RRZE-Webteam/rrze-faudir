@@ -28,6 +28,7 @@ export default function CustomServerSideRender({attributes}: CustomServerSideRen
         url: attributes.url,
         sort: attributes.sort,
         format_displayname: attributes.format_displayname,
+        display: attributes.display,
       }}
     />
   );

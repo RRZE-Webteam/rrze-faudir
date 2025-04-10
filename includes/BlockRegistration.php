@@ -140,6 +140,10 @@ class BlockRegistration
                 $shortcode_atts['sort'] = $attributes['sort'];
             }
 
+            if (!empty($attributes['display'])) {
+                $shortcode_atts['display'] = $attributes['display'];
+            }
+
             // Build shortcode string
             $shortcode = '[faudir';
             foreach ($shortcode_atts as $key => $value) {

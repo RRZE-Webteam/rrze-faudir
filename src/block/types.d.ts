@@ -14,6 +14,7 @@ export interface EditProps {
     sort: string;
     format_displayname: string;
     initialSetup: boolean;
+    display: "person" | "org";
   };
   setAttributes: (attributes: Partial<EditProps["attributes"]>) => void;
   clientId: string;
