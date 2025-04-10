@@ -24,16 +24,16 @@ interface CustomPlaceholderProps extends PersonSelectorProps {
 }
 
 export default function CustomPlaceholder({
-  attributes,
-  setAttributes,
-  isOrg,
-  setIsOrg,
-  isLoadingPosts,
-  posts,
-  selectedPosts,
-  togglePostSelection,
-  categories
-}: CustomPlaceholderProps) {
+                                            attributes,
+                                            setAttributes,
+                                            isOrg,
+                                            setIsOrg,
+                                            isLoadingPosts,
+                                            posts,
+                                            selectedPosts,
+                                            togglePostSelection,
+                                            categories
+                                          }: CustomPlaceholderProps) {
 
   return (
     <>
@@ -42,63 +42,77 @@ export default function CustomPlaceholder({
         instructions={__('Get started by selecting your desired configuration.')}
       >
         <div>
-          <ToggleGroupControl
-            __next40pxDefaultSize
-            __nextHasNoMarginBottom
-            isBlock
-            label={__('What type of Contact do you want to display?', 'rrze-faudir')}
-            help={__('Do you want to output a Person entry or a FAUdir Institution/Folder?', 'rrze-faudir')}
-            onChange={(value: string) => value === 'person' ? setIsOrg(false) : setIsOrg(true)}
-            value={isOrg ? 'org' : 'person'}
+          <Spacer
+            paddingBottom="1.5rem"
+            paddingTop="1rem"
           >
-            <ToggleGroupControlOption
-              label={__('Persons', 'rrze-faudir')}
-              value={'person'}
-            />
-            <ToggleGroupControlOption
-              label={__('Organization or FAUdir-Folder', 'rrze-faudir')}
-              value={'org'}
-            />
-          </ToggleGroupControl>
+            <ToggleGroupControl
+              __next40pxDefaultSize
+              __nextHasNoMarginBottom
+              isBlock
+              label={__('What type of Contact do you want to display?', 'rrze-faudir')}
+              help={__('Do you want to output a Person entry or a FAUdir Institution/Folder?', 'rrze-faudir')}
+              onChange={(value: string) => value === 'person' ? setIsOrg(false) : setIsOrg(true)}
+              value={isOrg ? 'org' : 'person'}
+            >
+              <ToggleGroupControlOption
+                label={__('Persons', 'rrze-faudir')}
+                value={'person'}
+              />
+              <ToggleGroupControlOption
+                label={__('Organization or FAUdir-Folder', 'rrze-faudir')}
+                value={'org'}
+              />
+            </ToggleGroupControl>
+          </Spacer>
           <hr/>
           {!isOrg ? (
             <>
-              <Heading level={2}>{__('Select Contacts to display', 'rrze-faudir')}</Heading>
-              <Spacer/>
-              <PersonSelector
-                isLoadingPosts={isLoadingPosts}
-                posts={posts}
-                selectedPosts={selectedPosts}
-                togglePostSelection={togglePostSelection}
-              />
-              <CategorySelector
-                categories={categories}
-                selectedCategory={attributes.selectedCategory}
-                setAttributes={setAttributes}
-              />
-              <Spacer/>
-              <OrganizationNumberDetector
-                attributes={attributes}
-                setAttributes={setAttributes}
-              />
+              <Spacer paddingTop="1rem">
+                <Heading level={2}>{__('Select Contacts to display', 'rrze-faudir')}</Heading>
+              </Spacer>
+              <Spacer paddingTop="1.5rem" paddingBottom="1rem">
+                <PersonSelector
+                  isLoadingPosts={isLoadingPosts}
+                  posts={posts}
+                  selectedPosts={selectedPosts}
+                  togglePostSelection={togglePostSelection}
+                />
+                <CategorySelector
+                  categories={categories}
+                  selectedCategory={attributes.selectedCategory}
+                  setAttributes={setAttributes}
+                />
+              </Spacer>
+              <Spacer paddingBottom="1rem">
+                <OrganizationNumberDetector
+                  attributes={attributes}
+                  setAttributes={setAttributes}
+                />
+              </Spacer>
 
             </>
           ) : (
             <>
+              <Spacer paddingTop="1rem">
               <Heading level={2}>{__('Select Organization or FAUdir-Folder to display', 'rrze-faudir')}</Heading>
-              <Spacer/>
+              </Spacer>
+              <Spacer paddingTop="1.5rem" paddingBottom="1rem">
               <OrganizationNumberDetector
                 attributes={attributes}
                 setAttributes={setAttributes}
                 label={__('Display via FAUOrg Number', 'rrze-faudir')}
                 helpText={__('To display an Institution as contact, insert your FAUOrg Number (Cost center number).', 'rrze-faudir')}
               />
-              <OrganizationIdDetector attributes={attributes} setAttributes={setAttributes} />
+              <OrganizationIdDetector attributes={attributes} setAttributes={setAttributes}/>
+              </Spacer>
             </>
           )}
           <hr/>
-          <Heading level={2}>{__('Preview', 'rrze-faudir')}</Heading>
-          <CustomServerSideRender attributes={attributes}/>
+          <Spacer paddingTop="1rem" paddingBottom="1.5rem">
+            <Heading level={2}>{__('Preview', 'rrze-faudir')}</Heading>
+            <CustomServerSideRender attributes={attributes}/>
+          </Spacer>
         </div>
       </Placeholder>
     </>);

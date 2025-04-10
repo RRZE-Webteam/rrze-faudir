@@ -34,7 +34,7 @@ export default function CategorySelector({
 
   return (
     <>
-      <Heading level={4}>{__("Select Categories", "rrze-faudir")}</Heading>
+      <Heading level={3}>{__("Select Categories", "rrze-faudir")}</Heading>
       <FormTokenField
         __next40pxDefaultSize
         label={__("Type to add categories", "rrze-faudir")}

@@ -31,7 +31,7 @@ export default function PersonSelector({
 
   return (
     <>
-      <Heading level={4}>{__("Select Persons", "rrze-faudir")}</Heading>
+      <Heading level={3}>{__("Select Persons", "rrze-faudir")}</Heading>
       <FormTokenField
         __next40pxDefaultSize
         label={__("Type to add persons", "rrze-faudir")}
