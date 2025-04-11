@@ -132,13 +132,7 @@ function rrze_faudir_settings_init() {
         'rrze_faudir_settings',
         'rrze_faudir_api_section'
     );
-    add_settings_field(
-        'rrze_faudir_person_slug',
-        __('Person Slug', 'rrze-faudir'),
-        'rrze_faudir_person_slug_field',
-        'rrze_faudir_settings',
-        'rrze_faudir_api_section'
-    );
+   
 
     // Cache Settings Section
     add_settings_section(
@@ -195,6 +189,31 @@ function rrze_faudir_settings_init() {
         'rrze_faudir_settings_error',
         'rrze_faudir_error_section'
     );
+    
+    
+     // Misc Advanced Settings Section
+    add_settings_section(
+        'rrze_faudir_misc_section',
+        __('Misc Settings', 'rrze-faudir'),
+        'rrze_faudir_misc_section_callback',
+        'rrze_faudir_settings_advanced'
+    );
+
+     add_settings_field(
+        'rrze_faudir_person_slug',
+        __('Person Slug', 'rrze-faudir'),
+        'rrze_faudir_person_slug_render',
+        'rrze_faudir_settings_advanced',
+        'rrze_faudir_misc_section'
+    );
+     
+    add_settings_field(
+        'rrze_faudir_redirect_archivpage_uri',
+        __('Define archive page', 'rrze-faudir'),
+        'rrze_faudir_misc_section_message_render',
+        'rrze_faudir_settings_advanced',
+        'rrze_faudir_misc_section'
+    );
 
     
     
@@ -235,6 +254,9 @@ function rrze_faudir_profilpage_section_callback() {
     echo '<p>' . esc_html__('Configure the default output fields for the profile page of a single person.', 'rrze-faudir') . '</p>';
 }
 
+function rrze_faudir_misc_section_callback() {
+    echo '<p>' . esc_html__('Configure other advanced settings.', 'rrze-faudir') . '</p>';
+}
 
 
 
@@ -366,7 +388,23 @@ function rrze_faudir_fallback_link_faudir() {
 }
 
 
-function rrze_faudir_person_slug_field() {
+
+function rrze_faudir_misc_section_message_render() {
+     $options = get_option('rrze_faudir_options');
+    $value = isset($options['redirect_archivpage_uri']) ? esc_url($options['redirect_archivpage_uri']) : '';
+
+    echo '<input type="text" 
+                 name="rrze_faudir_options[redirect_archivpage_uri]" 
+                 value="' . esc_attr($value) . '" 
+                 class="regular-text" 
+                 placeholder="/">';
+    echo '<p class="description">' . esc_html__('Optional: Pfad oder URL zu einer benutzerdefinierten Archivseite, z. B. /personenliste oder https://example.com/liste.', 'rrze-faudir') . '</p>';
+
+    
+}
+
+
+function rrze_faudir_person_slug_render() {
     $options = get_option('rrze_faudir_options'); // Get all plugin options
     $default_slug = 'faudir'; // Default slug value
 
@@ -379,7 +417,7 @@ function rrze_faudir_person_slug_field() {
         update_option('rrze_faudir_options', $options);
     }
 
-    echo '<input type="text" id="rrze_faudir_person_slug" name="rrze_faudir_options[person_slug]" value="' . esc_attr($slug) . '" size="50">';
+    echo '<input type="text"  class="regular-text"  id="rrze_faudir_person_slug" name="rrze_faudir_options[person_slug]" value="' . esc_attr($slug) . '" size="10">';
     echo '<p class="description">' . esc_html__('Enter the slug for the person post type.', 'rrze-faudir') . '</p>';
 }
 
@@ -489,6 +527,10 @@ function rrze_faudir_settings_page() {
                 <?php do_settings_sections('rrze_faudir_settings_cache'); ?>
                 <hr>
                 <?php do_settings_sections('rrze_faudir_settings_error'); ?>                
+               <hr>
+                <?php do_settings_sections('rrze_faudir_settings_advanced'); ?>        
+                                
+                                
                 <?php submit_button(); ?>
                 
                 <hr>

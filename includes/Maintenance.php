@@ -48,8 +48,9 @@ class Maintenance {
         $this->migrate_scheduler_hook();
         
         // Definiere Templates
-        add_filter('template_include', [self::class, 'load_custom_person_template'], 99);
-        add_action('template_redirect', [self::class, 'custom_cpt_404_message']);
+        add_action('template_redirect', [$this, 'maybe_disable_canonical_redirect'], 1);
+        add_filter('template_include', [$this, 'load_custom_person_template'], 99);
+        add_action('template_redirect', [$this, 'custom_cpt_404_message']);
     }
 
 
@@ -489,7 +490,7 @@ class Maintenance {
      */
     public static function load_custom_person_template($template) {
         if (get_query_var('custom_person') || is_singular('custom_person')) {
-            $plugin_template = plugin_dir_path(__DIR__) . '/../templates/single-custom_person.php';
+            $plugin_template = plugin_dir_path(__DIR__) . '/templates/single-custom_person.php';
             if (file_exists($plugin_template)) {
                 return $plugin_template;
             }
@@ -499,23 +500,58 @@ class Maintenance {
 
     
     /*
-     * Definiere Fehlermeldungsseite bei Aufruf des SLugs mit Fehlern
+     * Definiere Fehlermeldungsseite bei Aufruf des Slugs mit Fehlern
      */
     public static function custom_cpt_404_message() {
         global $wp_query;
+       // Prüfe CPT-Einzelansicht, aber Post nicht gefunden → 404
+        if (isset($wp_query->query_vars['post_type']) &&
+            $wp_query->query_vars['post_type'] === 'custom_person' &&
+            empty($wp_query->post) ) {
+            
+            self::render_custom_404();
+            return;
+        }
 
-        // Prüfen, ob der CPT aufgerufen wurde, aber leer ist
-        if (isset($wp_query->query_vars['post_type']) && $wp_query->query_vars['post_type'] === 'custom_person') {
-            if (empty($wp_query->post)) {
-                self::render_custom_404();
-            }
-        } else {
-            $options = get_option('rrze_faudir_options');
-            $slug = isset($options['person_slug']) && !empty($options['person_slug']) ? sanitize_title($options['person_slug']) : 'faudir';
+        // Prüfe ob Archiv-Slug direkt aufgerufen wurde
+        $options = get_option('rrze_faudir_options');
+        $slug = !empty($options['person_slug']) ? sanitize_title($options['person_slug']) : 'faudir';
+        if (self::is_slug_request($slug)) {
 
-            if (self::is_slug_request($slug)) {
-                self::render_custom_404();
+            $redirect = trim($options['redirect_archivpage_uri'] ?? '');
+            if (!empty($redirect)) {
+                
+                // Wenn relativer Pfad → mit Home-URL verbinden
+                if (str_starts_with($redirect, '/')) {
+                    $redirect = home_url($redirect);
+                }
+
+                // Validierung und Weiterleitung
+                if (filter_var($redirect, FILTER_VALIDATE_URL)) {
+                    wp_redirect(esc_url_raw($redirect), 301);
+                    exit;
+                }
             }
+
+            // Fallback: 404 anzeigen
+            self::render_custom_404();
+
+        }
+        
+    }
+    public static function maybe_disable_canonical_redirect(): void {
+        $options = get_option('rrze_faudir_options');
+        $redirect = trim($options['redirect_archivpage_uri'] ?? '');
+
+        if (empty($redirect)) {
+            return;
+        }
+
+        $slug = !empty($options['person_slug']) ? sanitize_title($options['person_slug']) : 'faudir';
+
+        if (self::is_slug_request($slug)) {
+            // Nur in diesem Fall canonical-redirect unterbinden
+            remove_filter('template_redirect', 'redirect_canonical');
         }
     }
 
@@ -543,20 +579,27 @@ class Maintenance {
     }
     
     private static function is_slug_request(string $slug): bool {
-        // Hole die aktuelle URI relativ zur Startseite
-        $request_uri = $_SERVER['REQUEST_URI'] ?? '';
-        $request_path = trim(parse_url($request_uri, PHP_URL_PATH), '/');
-
-        // Hole den Pfad relativ zur Site-URL (Multisite-kompatibel)
-        $home_path = trim(parse_url(home_url(), PHP_URL_PATH) ?? '', '/');
-
-        // Entferne ggf. Sprach-/Blogpfade (z. B. /de, /blog)
-        if (!empty($home_path) && str_starts_with($request_path, $home_path)) {
-            $request_path = trim(substr($request_path, strlen($home_path)), '/');
+        if (! isset($_SERVER['REQUEST_URI'])) {
+            return false;
         }
 
-        // Vergleiche mit dem erwarteten Slug (ohne Schrägstriche)
-        return $request_path === trim($slug, '/');
+        // Ursprünglich angeforderte URI (relativ zur Domain)
+        $request_uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+
+        // WordPress-Installationspfad (Multisite-/Unterverzeichnis-Support)
+        $home_path = trim(parse_url(home_url(), PHP_URL_PATH) ?? '', '/');
+
+        // Entferne ggf. Sprach-/Blogpräfixe
+        if (!empty($home_path) && stripos($request_uri, $home_path) === 0) {
+            $request_uri = trim(substr($request_uri, strlen($home_path)), '/');
+        }
+
+        // Normalisierung: Slashes, Groß-/Kleinschreibung, /index.php entfernen
+        $normalized_uri = strtolower(preg_replace('#/index\.php$#', '', $request_uri));
+        $normalized_slug = strtolower(trim($slug, '/'));
+
+        return $normalized_uri === $normalized_slug;
+
     }
     
 }
