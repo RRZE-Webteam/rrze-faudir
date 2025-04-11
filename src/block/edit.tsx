@@ -204,7 +204,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
         </ToolbarGroup>
       </BlockControls>
       <InspectorControls>
-        <PanelBody title={__('Data Selection', 'rrze-faudir')}>
+        <PanelBody title={__('Data Selection', 'rrze-faudir')} initialOpen={!initialSetup}>
           <ToggleGroupControl
             __next40pxDefaultSize
             __nextHasNoMarginBottom
@@ -252,7 +252,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
             </>
           )}
         </PanelBody>
-        <PanelBody title={__('Appearance', 'rrze-faudir')} initialOpen={true}>
+        <PanelBody title={__('Appearance', 'rrze-faudir')} initialOpen={false}>
           <FormatSelector attributes={attributes} setAttributes={setAttributes}/>
           <ShowHideSelector attributes={attributes} setAttributes={setAttributes}/>
           <NameFormatSelector attributes={attributes} setAttributes={setAttributes}/>

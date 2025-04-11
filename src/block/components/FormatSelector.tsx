@@ -35,13 +35,6 @@ export default function FormatSelector({attributes, setAttributes}: FormatSelect
     const isOrg = attributes.display === 'org';
     const relevantTypeList = (isOrg ? types.org : types.person) ?? [];
     setTypeBasedOnDisplayValue(relevantTypeList);
-
-    // Falls das aktuelle Format nicht in der Liste enthalten ist, setzen wir einen Standardwert
-    if (!relevantTypeList.includes(selectedFormat)) {
-      setAttributes({
-        selectedFormat: isOrg ? 'compact' : 'list',
-      });
-    }
   }, [attributes.display, types, selectedFormat, setAttributes]);
 
 
