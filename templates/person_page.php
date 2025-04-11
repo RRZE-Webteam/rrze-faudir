@@ -202,8 +202,7 @@ if (!defined('ABSPATH')) {
                                     foreach ($workplaces as $w => $wdata) {
                                         if (!empty($wdata['consultationHours'])) {
                                             $hours .= $contact->getConsultationsHours($wdata, 'consultationHours', true, $lang, $showroomfloor, $showmap );
-                                        }
-                                        
+                                        }                                  
                                         $hours .= $contact->getConsultationbyAggreement($wdata);
                                         
                                     }

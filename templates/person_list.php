@@ -270,6 +270,7 @@ if (!defined('ABSPATH')) {
                                                 if (!empty($wdata['consultationHours'])) {
                                                     $hours .= $contact->getConsultationsHours($wdata, 'consultationHours', true, $lang, $showroomfloor, $showmap);
                                                 }
+                                                 $hours .= $contact->getConsultationbyAggreement($wdata);
                                             }
                                             $value = $hours;
                                         }      

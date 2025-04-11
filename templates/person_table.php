@@ -258,7 +258,7 @@ if (!defined('ABSPATH')) {
                                             foreach ($workplaces as $w => $wdata) {
                                                 if (!empty($wdata['officeHours'])) { 
                                                     $hours .= $contact->getConsultationsHours($wdata, 'officeHours', true, $lang, $showroomfloor, $showmap);
-                                                }
+                                                }                                     
                                             } 
                                             $value = $hours;
                                         }
@@ -278,6 +278,7 @@ if (!defined('ABSPATH')) {
                                                 if (!empty($wdata['consultationHours'])) {
                                                     $hours .= $contact->getConsultationsHours($wdata, 'consultationHours', true, $lang, $showroomfloor, $showmap);
                                                 }
+                                                $hours .= $contact->getConsultationbyAggreement($wdata);
                                             }
                                             $value = $hours;
                                         }      
