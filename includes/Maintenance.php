@@ -47,6 +47,9 @@ class Maintenance {
         // Check for old scheduler Namens
         $this->migrate_scheduler_hook();
         
+        // Definiere Templates
+        add_filter('template_include', [self::class, 'load_custom_person_template'], 99);
+        add_action('template_redirect', [self::class, 'custom_cpt_404_message']);
     }
 
 
@@ -481,5 +484,79 @@ class Maintenance {
     }
 
     
+    /*
+     * Setze Template für Slug fest
+     */
+    public static function load_custom_person_template($template) {
+        if (get_query_var('custom_person') || is_singular('custom_person')) {
+            $plugin_template = plugin_dir_path(__DIR__) . '/../templates/single-custom_person.php';
+            if (file_exists($plugin_template)) {
+                return $plugin_template;
+            }
+        }
+        return $template;
+    }
+
+    
+    /*
+     * Definiere Fehlermeldungsseite bei Aufruf des SLugs mit Fehlern
+     */
+    public static function custom_cpt_404_message() {
+        global $wp_query;
+
+        // Prüfen, ob der CPT aufgerufen wurde, aber leer ist
+        if (isset($wp_query->query_vars['post_type']) && $wp_query->query_vars['post_type'] === 'custom_person') {
+            if (empty($wp_query->post)) {
+                self::render_custom_404();
+            }
+        } else {
+            $options = get_option('rrze_faudir_options');
+            $slug = isset($options['person_slug']) && !empty($options['person_slug']) ? sanitize_title($options['person_slug']) : 'faudir';
+
+            if (self::is_slug_request($slug)) {
+                self::render_custom_404();
+            }
+        }
+    }
+
+    private static function render_custom_404(): void {
+        global $wp_query;
+        $wp_query->set_404();
+        status_header(404);
+
+        ob_start();
+        add_action('shutdown', function () {
+            $content = ob_get_clean();
+            $new_hero_content = '<div class="hero-container hero-content">'
+                . '<p class="presentationtitle">' . __('No contact entry could be found.', 'rrze-faudir') . '</p>'
+                . '</div>';
+            $updated_content = preg_replace(
+                '/<p class="presentationtitle">.*?<\/p>/s',
+                $new_hero_content,
+                $content
+            );
+            echo $updated_content;
+        }, 0);
+
+        include get_404_template();
+        exit;
+    }
+    
+    private static function is_slug_request(string $slug): bool {
+        // Hole die aktuelle URI relativ zur Startseite
+        $request_uri = $_SERVER['REQUEST_URI'] ?? '';
+        $request_path = trim(parse_url($request_uri, PHP_URL_PATH), '/');
+
+        // Hole den Pfad relativ zur Site-URL (Multisite-kompatibel)
+        $home_path = trim(parse_url(home_url(), PHP_URL_PATH) ?? '', '/');
+
+        // Entferne ggf. Sprach-/Blogpfade (z. B. /de, /blog)
+        if (!empty($home_path) && str_starts_with($request_path, $home_path)) {
+            $request_path = trim(substr($request_path, strlen($home_path)), '/');
+        }
+
+        // Vergleiche mit dem erwarteten Slug (ohne Schrägstriche)
+        return $request_path === trim($slug, '/');
+    }
     
 }
