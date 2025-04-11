@@ -82,6 +82,10 @@
     "orgid": {
       "type": "string",
       "default": ""
+    },
+    "identifier": {
+      "type": "string",
+      "default": ""
     }
   },
   "textdomain": "rrze-faudir",

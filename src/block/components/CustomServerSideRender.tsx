@@ -31,6 +31,7 @@ export default function CustomServerSideRender({attributes}: CustomServerSideRen
         sort: attributes.sort,
         format_displayname: attributes.format_displayname,
         display: attributes.display,
+        identifier: attributes.identifier,
       }}
     />
   );

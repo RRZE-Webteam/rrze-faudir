@@ -32,7 +32,7 @@ export default function CategorySelector({
   };
 
   return (
-    <>
+    <div>
       <Heading level={3}>{__("Select Categories", "rrze-faudir")}</Heading>
       <FormTokenField
         __next40pxDefaultSize
@@ -47,6 +47,6 @@ export default function CategorySelector({
             {__("There are currently no Categories available. Start adding your first FAUdir Categories via the WordPress Dashboard > Persons > Categories.", "rrze-faudir")}
           </Notice>
       }
-    </>
+    </div>
   );
 }

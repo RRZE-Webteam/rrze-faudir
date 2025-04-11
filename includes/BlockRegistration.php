@@ -119,11 +119,15 @@ class BlockRegistration
                     'format' => $attributes['selectedFormat'] ?? 'compact',
                     'orgid' => $attributes['orgid']
                 ];
-            }
-            else if (!empty($attributes['orgnr'])) {
+            } else if (!empty($attributes['orgnr'])) {
                 $shortcode_atts = [
                     'format' => $attributes['selectedFormat'] ?? 'compact',
                     'orgnr' => $attributes['orgnr']
+                ];
+            } else if (!empty($attributes['identifier'])) {
+                $shortcode_atts = [
+                    'format' => $attributes['selectedFormat'] ?? 'compact',
+                    'identifier' => $attributes['identifier']
                 ];
             } else {
                 throw new Exception(__('Neither person IDs, function+orgnr, nor category were provided', 'rrze-faudir'));
