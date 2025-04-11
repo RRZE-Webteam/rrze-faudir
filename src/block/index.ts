@@ -7,8 +7,10 @@ import { registerBlockType } from '@wordpress/blocks';
 import Edit from './edit';
 import save from './save';
 import metadata from './block.json';
+import deprecated from "./deprecated";
 
 registerBlockType( metadata.name as any, {
 	edit: Edit,
-	save
+	save,
+	deprecated,
 } as any );
