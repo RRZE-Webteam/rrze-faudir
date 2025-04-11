@@ -315,6 +315,43 @@ class Contact {
         return $res;
     }
     
+    
+    /*
+     * Get Consultation Infos by Aggreement
+     */
+    public function getConsultationbyAggreement(array $workplace): ?string {
+         if ((empty($workplace)) || (!isset($workplace['consultationHoursByAggreement']))) {
+            return '';
+        } 
+        $res = '';
+        if ($workplace['consultationHoursByAggreement'] == true) {
+           $aggreement = ''; 
+           if (!empty($workplace['consultationHoursContactType'])) {
+               switch($workplace['consultationHoursContactType']) {
+                   case 'mail':
+                       $aggreement .= __('By appointment', 'rrze-faudir').' '.__('via email', 'rrze-faudir');
+                       break;
+                   case 'phone':
+                       $aggreement .= __('By appointment', 'rrze-faudir').' '.__('via phone', 'rrze-faudir');
+                       break;
+                   default:
+                       $aggreement .= __('By appointment', 'rrze-faudir');
+               }
+
+               if (!empty($workplace['consultationHoursContactHint'])) {
+                   $aggreement .= ' <span class="ContactHint">'. esc_html($workplace['consultationHoursContactHint']).'</span>';
+               }
+           }
+        }
+        if (!empty($aggreement)) {
+            $res = '<p class="consultationHoursByAggreement">'.$aggreement.'</p>';
+        }
+        return $res;
+        
+    }
+    
+    
+    
     /*
      * Get ConsultationHours by Workplace and return in semantic HTML
      * with key = 'consultationHours' as parameter

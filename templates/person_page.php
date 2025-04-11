@@ -203,7 +203,14 @@ if (!defined('ABSPATH')) {
                                         if (!empty($wdata['consultationHours'])) {
                                             $hours .= $contact->getConsultationsHours($wdata, 'consultationHours', true, $lang, $showroomfloor, $showmap );
                                         }
+                                        
+                                        $hours .= $contact->getConsultationbyAggreement($wdata);
+                                        
                                     }
+                                    
+                                  
+                                    
+                                    
                                     if (!empty($hours)) {
                                             $cons .=  '<h2 class="consultation-title">'.__('Consultation Hours', 'rrze-faudir').'</h2>';
                                             $cons .= $hours;
@@ -221,6 +228,9 @@ if (!defined('ABSPATH')) {
                                             $cons .= $hours;
                                     }
                                 }
+                                
+                                
+                                
                                if (!empty($cons)) {   
                                    echo '<div class="profile-consultation">';
                                    echo $cons;
