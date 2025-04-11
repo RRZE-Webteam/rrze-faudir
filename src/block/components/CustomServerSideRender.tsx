@@ -1,6 +1,8 @@
 import ServerSideRender from "@wordpress/server-side-render";
-import { useEffect, useState } from "@wordpress/element";
-import { EditProps } from "../types";
+import {useEffect, useState} from "@wordpress/element";
+import {EditProps} from "../types";
+import LoadingPlaceholder from "./LoadingPlaceholder";
+import EmptyPlaceholder from "./EmptyPlaceholder";
 
 interface CustomServerSideRenderProps {
   attributes: EditProps['attributes'];
@@ -11,7 +13,6 @@ export default function CustomServerSideRender({attributes}: CustomServerSideRen
 
   useEffect(() => {
     setComponentKey((prevKey) => prevKey + 1);
-    console.log('attributes', attributes);
   }, [attributes.orgnr, attributes.selectedCategory, attributes.orgid, attributes.display]);
 
   return (
@@ -33,6 +34,8 @@ export default function CustomServerSideRender({attributes}: CustomServerSideRen
         display: attributes.display,
         identifier: attributes.identifier,
       }}
+      LoadingResponsePlaceholder={LoadingPlaceholder}
+      EmptyResponsePlaceholder={EmptyPlaceholder}
     />
   );
 }

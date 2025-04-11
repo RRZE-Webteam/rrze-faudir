@@ -4,6 +4,8 @@ declare module '@wordpress/server-side-render' {
     export interface ServerSideRenderProps {
         block?: string;
         attributes?: any;
+        LoadingResponsePlaceholder?: any;
+        EmptyResponsePlaceholder?: any;
     }
     
     // Changed to default export
