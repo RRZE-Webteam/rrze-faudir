@@ -205,6 +205,17 @@ class Config {
     }
     
  
+    public function insertOptions(): bool {
+        $options = get_option('rrze_faudir_options', []);
+        $found = false; 
+         foreach ($options as $key => $value) {
+             if (isset($this->config[$key]) && ($this->config[$key] !== $value)) {
+                 $this->config[$key] = $value;
+                 $found = true;
+             }
+         }
+         return $found;
+    }
     
 }
 

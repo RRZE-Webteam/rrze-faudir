@@ -22,7 +22,9 @@ class Maintenance {
     protected ?Config $config = null;
             
     public function __construct(Config $configdata) {
+        $configdata->insertOptions();
         $this->config = $configdata;
+        
     }
     
     public function register_hooks() {
@@ -313,18 +315,21 @@ class Maintenance {
 
 
     // Add this function to display the notice
-    public function rrze_faudir_display_import_notice() {
-        // Only show on the plugins page
-        $screen = get_current_screen();
-        if ($screen->id !== 'plugins') {
-            return;
+    public function rrze_faudir_display_import_notice($echothis = true, $onpluginpage = true) {
+        if (!isset($onpluginpage) || ($onpluginpage)) {
+            // Only show on the plugins page
+            $screen = get_current_screen();
+            if ($screen->id !== 'plugins') {
+                return;
+            }
         }
-
-        $imported_count = get_transient('rrze_faudir_imported_count');
-        $imported_list = get_transient('rrze_faudir_imported_list');
+        $res = '';
         
+        $imported_count = get_transient('rrze_faudir_imported_count');
+        $imported_list = get_transient('rrze_faudir_imported_list');      
         $not_imported_count = get_transient('rrze_faudir_not_imported_count');
         $not_imported_reasons = get_transient('rrze_faudir_not_imported_reasons');
+        
         if ($imported_count !== false || $not_imported_count !== false) {
             // Import success message
             $import_message = sprintf(
@@ -365,7 +370,9 @@ class Maintenance {
                   
                 }
                 $success .= '</div>';
-                echo $success;
+
+                $res .= $success;
+                
             }
 
             if ($not_imported_count > 0) {
@@ -382,13 +389,18 @@ class Maintenance {
                   
                 }
                 $errorout .= '</div>';
-                echo $errorout;
+                $res .=  $errorout;
             }
             delete_transient('rrze_faudir_imported_count');
             delete_transient('rrze_faudir_imported_list');
             delete_transient('rrze_faudir_not_imported_count');
             delete_transient('rrze_faudir_not_imported_reasons');
         }
+                
+        if (!isset($onpluginpage) || ($onpluginpage)) {        
+            echo $res;
+        }
+        return $res;
     }
 
 

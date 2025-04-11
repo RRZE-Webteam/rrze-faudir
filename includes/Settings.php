@@ -8,6 +8,7 @@ use RRZE\FAUdir\FaudirUtils;
 use RRZE\FAUdir\Config;
 use RRZE\FAUdir\API;
 use RRZE\FAUdir\Debug;
+use RRZE\FAUdir\Maintenance;
 
 // Add admin menu
 function rrze_faudir_add_admin_menu() {
@@ -132,7 +133,21 @@ function rrze_faudir_settings_init() {
         'rrze_faudir_settings',
         'rrze_faudir_api_section'
     );
-   
+    if (! function_exists('is_plugin_active')) {
+        include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+    }
+    if (is_plugin_active('fau-person/fau-person.php')) {
+        add_settings_field(
+            'rrze_faudir_import_fau_person',
+            __('Import', 'rrze-faudir'),
+            'rrze_faudir_import_fau_person_render',
+            'rrze_faudir_settings',
+            'rrze_faudir_api_section'
+        );
+    }
+    
+    
+    
 
     // Cache Settings Section
     add_settings_section(
@@ -209,7 +224,7 @@ function rrze_faudir_settings_init() {
      
     add_settings_field(
         'rrze_faudir_redirect_archivpage_uri',
-        __('Define archive page', 'rrze-faudir'),
+        __('Index page', 'rrze-faudir'),
         'rrze_faudir_misc_section_message_render',
         'rrze_faudir_settings_advanced',
         'rrze_faudir_misc_section'
@@ -314,6 +329,11 @@ function rrze_faudir_api_key_render() {
     }
 }
 
+function rrze_faudir_import_fau_person_render() {
+        echo '<button type="button" class="button button-secondary" id="import-fau-person-button">' . esc_html__('Import contact entries from FAU Person', 'rrze-faudir') . '</button>';
+        echo '<p class="description">' . esc_html__('Click the button to restart the import of contact entries from FAU Person. Notice, that this will only import contact entries, which refer to a public viewable person in FAUdir.', 'rrze-faudir') . '</p>'; 
+}
+
 function rrze_faudir_no_cache_logged_in_render() {
     $options = get_option('rrze_faudir_options');
     echo '<label><input type="checkbox" name="rrze_faudir_options[no_cache_logged_in]" value="1" ' .  checked( 1, $options['no_cache_logged_in'], false ) . '>';
@@ -393,12 +413,12 @@ function rrze_faudir_misc_section_message_render() {
      $options = get_option('rrze_faudir_options');
     $value = isset($options['redirect_archivpage_uri']) ? esc_url($options['redirect_archivpage_uri']) : '';
 
-    echo '<input type="text" 
+    echo '<label><input type="text" 
                  name="rrze_faudir_options[redirect_archivpage_uri]" 
                  value="' . esc_attr($value) . '" 
                  class="regular-text" 
                  placeholder="/">';
-    echo '<p class="description">' . esc_html__('Optional: Pfad oder URL zu einer benutzerdefinierten Archivseite, z. B. /personenliste oder https://example.com/liste.', 'rrze-faudir') . '</p>';
+    echo '<p class="description">' . esc_html__('Optional: Path to a local page, which is used as index for all contact entries.', 'rrze-faudir') . '</p></label>';
 
     
 }
@@ -761,6 +781,40 @@ function rrze_faudir_clear_cache() {
     wp_send_json_success(__('All cache cleared successfully.', 'rrze-faudir'));
 }
 add_action('wp_ajax_rrze_faudir_clear_cache', 'rrze_faudir_clear_cache');
+
+
+
+/*
+ * Import FAU Person Function
+ */
+function rrze_faudir_import_fau_person() {
+    $config = new Config;
+    $config->insertOptions();
+//    $options = get_option('rrze_faudir_options');
+//    $apiKey = isset($options['api_key']) ? esc_attr($options['api_key']) : '';
+//   $config->set('api_key', $apiKey);
+
+    $mnt = new Maintenance($config);
+
+    $mnt->migrate_person_data_on_activation();
+    $html = $mnt->rrze_faudir_display_import_notice(false, false);
+    if (!empty($html)) {
+        $html = preg_replace('#<(br|BR)\s*/?>#', "\n", $html);
+        $html = preg_replace('#</?(p|div|li|tr|h[1-6])[^>]*>#i', "\n", $html);
+
+        // Entferne alle übrigen HTML-Tags
+        $text = strip_tags($html);
+
+        // Optional: Mehrere Zeilenumbrüche reduzieren
+        $text = preg_replace("/[\r\n]+/", "\n", $text);
+
+        // Whitespace trimmen
+        $result = trim($text);
+    }
+    wp_send_json_success($result);
+}
+add_action('wp_ajax_rrze_faudir_import_fau_person', 'rrze_faudir_import_fau_person');
+
 
 
 /*

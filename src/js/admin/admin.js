@@ -78,6 +78,23 @@ jQuery(document).ready(function ($) {
         }
     });
 
+    // Clear cache button handler
+    $('#import-fau-person-button').on('click', function () {
+        if (confirm(rrzeFaudirAjax.confirm_import)) {
+            $.post(rrzeFaudirAjax.ajax_url, {
+                action: 'rrze_faudir_import_fau_person',
+                security: rrzeFaudirAjax.api_nonce
+            }, function (response) {
+                if (response.success) {
+                    alert(response.data);
+                } else {
+                    alert('No contact from FAU Person imported.');
+                }
+            });
+        }
+    });
+
+
     // Prevent form submission on Enter key
     $('#search-person-form input').on('keypress', function (e) {
         if (e.which === 13) { // Enter key
