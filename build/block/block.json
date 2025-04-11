@@ -90,5 +90,5 @@
   },
   "textdomain": "rrze-faudir",
   "editorScript": "file:./index.js",
-  "editorStyle": "rrze-faudir"
+  "editorStyle": "file:./index.css"
 }

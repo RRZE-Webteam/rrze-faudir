@@ -19,6 +19,7 @@ import FormatSelector from "./components/FormatSelector";
 import ShowHideSelector from "./components/ShowHideSelector";
 import NameFormatSelector from "./components/NameFormatSelector";
 import {edit, check, postAuthor, styles} from "@wordpress/icons";
+import '../scss/rrze-faudir.scss';
 import {
   EditProps,
   WPCategory,
