@@ -28,8 +28,7 @@ class REST
                 ];
             },
             'permission_callback' => function () {
-                //return current_user_can('edit_posts');
-                return true;
+                return current_user_can('edit_posts');
             }
         ));
     }

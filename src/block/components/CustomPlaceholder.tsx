@@ -104,7 +104,8 @@ export default function CustomPlaceholder({
                   </Spacer>
                   <div style={{minWidth: '100%'}}>
                     <Panel>
-                      <PanelBody title={__('Display Contacts from your WordPress Site', 'rrze-faudir')} initialOpen={true}>
+                      <PanelBody title={__('Select Contacts from your WordPress Site', 'rrze-faudir')}
+                                 initialOpen={true}>
                         <>
                           <Spacer
                             paddingTop="1rem"
@@ -124,7 +125,7 @@ export default function CustomPlaceholder({
                           </Spacer>
                         </>
                       </PanelBody>
-                      <PanelBody title={__('Display Contacts directly from FAUdir', 'rrze-faudir')} initialOpen={false}>
+                      <PanelBody title={__('Select Contacts directly from FAUdir', 'rrze-faudir')} initialOpen={false}>
                         <Spacer
                           paddingTop="1rem"
                           paddingBottom="1.5rem"
@@ -164,23 +165,27 @@ export default function CustomPlaceholder({
                   </Spacer>
                 </>
               )}
+              <Spacer paddingTop="1rem" paddingBottom="1.5rem">
+                <>
+                  <Button
+                    variant="secondary"
+                    onClick={onClickChangeAppearance}
+                  >
+                    {__("Change Appearance", "rrze-faudir")}
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={onClickInitialSetupConfirm}
+                  >
+                    {__("Finish initial setup", "rrze-faudir")}
+                  </Button>
+                </>
+              </Spacer>
               <hr/>
               <Spacer paddingTop="1rem" paddingBottom="1.5rem">
                 <Heading level={2}>{__('Preview', 'rrze-faudir')}</Heading>
                 <CustomServerSideRender attributes={attributes}/>
               </Spacer>
-              <Button
-                variant="secondary"
-                onClick={onClickChangeAppearance}
-              >
-                {__("Change Appearance", "rrze-faudir")}
-              </Button>
-              <Button
-                variant="primary"
-                onClick={onClickInitialSetupConfirm}
-              >
-                {__("Finish initial setup", "rrze-faudir")}
-              </Button>
             </div>
           ) :
           (
@@ -196,11 +201,6 @@ export default function CustomPlaceholder({
                     <ShowHideSelector attributes={attributes} setAttributes={setAttributes}/>
                     <NameFormatSelector attributes={attributes} setAttributes={setAttributes}/>
                     <Spacer paddingTop="1rem"/>
-                    <hr/>
-                    <Spacer paddingTop="1rem" paddingBottom="1.5rem">
-                      <Heading level={2}>{__('Preview', 'rrze-faudir')}</Heading>
-                      <CustomServerSideRender attributes={attributes}/>
-                    </Spacer>
                     <Button
                       variant="secondary"
                       onClick={onClickChangeData}
@@ -213,6 +213,11 @@ export default function CustomPlaceholder({
                     >
                       {__("Finish initial setup", "rrze-faudir")}
                     </Button>
+                    <hr/>
+                    <Spacer paddingTop="1rem" paddingBottom="1.5rem">
+                      <Heading level={2}>{__('Preview', 'rrze-faudir')}</Heading>
+                      <CustomServerSideRender attributes={attributes}/>
+                    </Spacer>
                   </>
                 </Spacer>
               </div>

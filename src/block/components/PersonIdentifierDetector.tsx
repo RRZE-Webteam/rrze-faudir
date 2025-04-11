@@ -41,7 +41,7 @@ export default function PersonIdentifierDetector({
     <>
       <Heading level={3}>{__("Direct Select via FAUdir", "rrze-faudir")}</Heading>
       <TextControl
-        label={label || __('Via FAUorg-ID or FAUdir-URL', 'rrze-faudir')}
+        label={label || __('Via Person Identifier or FAUdir-URL', 'rrze-faudir')}
         value={localValue}
         onChange={handlePersonIdentifierChange}
         type="text"
