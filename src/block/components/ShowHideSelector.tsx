@@ -1,128 +1,96 @@
-import {availableFields, formatFields} from "../defaults";
-import {__} from "@wordpress/i18n";
-import {CheckboxControl, __experimentalHeading as Heading} from "@wordpress/components";
-import {EditProps} from "../types";
-import {useEffect} from "@wordpress/element";
+import {useState, useEffect} from '@wordpress/element';
+import {CheckboxControl} from '@wordpress/components';
+import {__} from '@wordpress/i18n';
+import apiFetch from '@wordpress/api-fetch';
+import {EditProps} from '../types';
+import {SettingsRESTApi} from "../types";
 
 interface ShowHideSelectorProps {
-  attributes: EditProps["attributes"];
-  setAttributes: EditProps["setAttributes"];
+  attributes: EditProps['attributes'];
+  setAttributes: EditProps['setAttributes'];
 }
 
-export default function ShowHideSelector({attributes, setAttributes}: ShowHideSelectorProps) {
-  const {selectedFormat, selectedFields} = attributes;
+export default function ShowHideSelector({
+                                           attributes,
+                                           setAttributes,
+                                         }: ShowHideSelectorProps) {
+  const {selectedFormat} = attributes;
+
+  const [defaultFields, setDefaultFields] = useState<string[]>([]);
+  const [availableFields, setAvailableFields] = useState<string[]>([]);
+  const [hiddenFields, setHiddenFields] = useState<string[]>([]);
+  const [shownFields, setShownFields] = useState<string[]>([]);
+  const [translatableFields, setTranslatableFields] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    if (attributes.display === "org" && selectedFormat !== "orgid") {
-      setAttributes({ selectedFormat: "orgid" });
-    } else if (attributes.display === "person" && attributes.selectedFormat === "orgid"){
-      setAttributes({ selectedFormat: "compact" });
-    }
-  }, [attributes.display, selectedFormat]);
+    apiFetch({path: '/wp/v2/settings/rrze_faudir_options'})
+      .then((data: SettingsRESTApi) => {
+        // Pull the default option fields from wp-options
+        if (data?.default_output_fields) {
+          setDefaultFields(data.default_output_fields);
+        }
+        // Pull the available Fields per Format
+        if (data?.avaible_fields_byformat && selectedFormat) {
+          const fieldsForFormat = data.avaible_fields_byformat[selectedFormat] || [];
+          setAvailableFields(fieldsForFormat);
+        }
+        // Pull the translation for the labels
+        if (data?.available_fields) {
+          setTranslatableFields(data.available_fields);
+        }
+      })
+      .catch((error) => {
+        console.error('Fehler beim Laden der Felder:', error);
+      });
+  }, [selectedFormat, attributes.display]);
 
-  const toggleFieldSelection = (field: string) => {
-    const isFieldSelected = selectedFields.includes(field);
-    let updatedSelectedFields;
-    let updatedHideFields = attributes.hideFields || [];
+  useEffect(() => {
+    setAttributes({
+      hideFields: hiddenFields,
+      selectedFields: shownFields,
+    });
+  }, [hiddenFields, shownFields, selectedFormat, attributes.display]);
 
-    // Define name-related fields
-    const nameFields = [
-      'personalTitle',
-      'givenName',
-      'familyName',
-      'honorificSuffix',
-      'titleOfNobility',
-    ];
-
-    if (field === 'displayName') {
-      if (isFieldSelected) {
-        // If unchecking displayName, remove it and all name-related fields
-        updatedSelectedFields = selectedFields.filter(
-          (f) => !nameFields.includes(f) && f !== 'displayName'
-        );
-        updatedHideFields = [
-          ...updatedHideFields,
-          'displayName',
-          ...nameFields,
-        ];
+  const handleToggleField = (field: string) => {
+    if (defaultFields.includes(field)) {
+      if (hiddenFields.includes(field)) {
+        setHiddenFields(hiddenFields.filter((f) => f !== field));
       } else {
-        // If checking displayName, add it and all name-related fields
-        updatedSelectedFields = [
-          ...selectedFields.filter(
-            (f) => !nameFields.includes(f)
-          ),
-          'displayName',
-          ...nameFields,
-        ];
-        updatedHideFields = updatedHideFields.filter(
-          (f) => !nameFields.includes(f) && f !== 'displayName'
-        );
-      }
-    } else if (nameFields.includes(field)) {
-      if (isFieldSelected) {
-        // If unchecking a name field, remove it and displayName
-        updatedSelectedFields = selectedFields.filter(
-          (f) => f !== field && f !== 'displayName'
-        );
-        updatedHideFields = [...updatedHideFields, field];
-      } else {
-        // If checking a name field, add just that field
-        updatedSelectedFields = [
-          ...selectedFields.filter((f) => f !== 'displayName'),
-          field,
-        ];
-        updatedHideFields = updatedHideFields.filter(
-          (f) => f !== field
-        );
+        setHiddenFields([...hiddenFields, field]);
       }
     } else {
-      // Handle non-name fields as before
-      if (isFieldSelected) {
-        updatedSelectedFields = selectedFields.filter(
-          (f) => f !== field
-        );
-        updatedHideFields = [...updatedHideFields, field];
+      if (shownFields.includes(field)) {
+        setShownFields(shownFields.filter((f) => f !== field));
       } else {
-        updatedSelectedFields = [...selectedFields, field];
-        updatedHideFields = updatedHideFields.filter(
-          (f) => f !== field
-        );
+        setShownFields([...shownFields, field]);
       }
     }
+  };
 
-    setAttributes({
-      selectedFields: updatedSelectedFields,
-      hideFields: updatedHideFields,
-    });
+  const isChecked = (field: string) => {
+    // Standardfeld gilt als aktiv, solange es nicht in hiddenFields ist
+    if (defaultFields.includes(field)) {
+      return !hiddenFields.includes(field);
+    }
+    // Nicht-Standardfeld gilt als aktiv, wenn es in shownFields ist
+    return shownFields.includes(field);
+  };
+
+  const getFieldLabel = (field: string) => {
+    return translatableFields[field] || field;
   };
 
   return (
-    <>
-      {Object.keys(formatFields).map((format) => {
-        if (selectedFormat === format) {
-          return (
-            <div key={format}>
-              <h4>
-                {__('Select Fields', 'rrze-faudir')}
-              </h4>
-              {formatFields[format].map((field) => (
-                <div
-                  key={field}
-                  style={{marginBottom: '8px'}}
-                >
-                  <CheckboxControl
-                    label={String(availableFields[field])}
-                    checked={selectedFields.includes(field)}
-                    onChange={() => toggleFieldSelection(field)}
-                  />
-                </div>
-              ))}
-            </div>
-          );
-        }
-        return null;
-      })
-      }
-    </>
+    <div>
+      <h4>{__('Felder auswählen', 'rrze-faudir')}</h4>
+      {availableFields.map((field) => (
+        <CheckboxControl
+          key={field}
+          label={getFieldLabel(field)}
+          checked={isChecked(field)}
+          onChange={() => handleToggleField(field)}
+        />
+      ))}
+    </div>
   );
-};
+}
