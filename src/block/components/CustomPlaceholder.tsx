@@ -7,8 +7,7 @@ import {
   __experimentalHeading as Heading,
   Button,
   Panel,
-  PanelBody,
-  PanelRow
+  PanelBody
 } from '@wordpress/components';
 import {EditProps} from '../types';
 import PersonSelector from './PersonSelector';
@@ -17,7 +16,6 @@ import CategorySelector from "./CategorySelector";
 import CustomServerSideRender from "./CustomServerSideRender";
 import OrganizationNumberDetector from "./OrganizationNumberDetector";
 import OrganizationIdentifierDetector from "./OrganizationIdentifierDetector";
-import {useState} from "@wordpress/element";
 import FormatSelector from "./FormatSelector";
 import ShowHideSelector from "./ShowHideSelector";
 import SortSelector from "./SortSelector";
