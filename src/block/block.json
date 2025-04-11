@@ -33,7 +33,7 @@
     },
     "selectedFormat": {
       "type": "string",
-      "default": "kompakt"
+      "default": "compact"
     },
     "selectedFields": {
       "type": "array",

@@ -11,7 +11,8 @@ export default function CustomServerSideRender({attributes}: CustomServerSideRen
 
   useEffect(() => {
     setComponentKey((prevKey) => prevKey + 1);
-  }, [attributes.orgnr, attributes.selectedCategory, attributes.orgid, attributes.selectedFields, attributes.selectedFormat]);
+    console.log('attributes', attributes);
+  }, [attributes.orgnr, attributes.selectedCategory, attributes.orgid, attributes.display]);
 
   return (
     <ServerSideRender

@@ -103,7 +103,7 @@ export default function CustomPlaceholder({
                   <div style={{minWidth: '100%'}}>
                     <Panel>
                       <PanelBody title={__('Select Contacts from your WordPress Site', 'rrze-faudir')}
-                                 initialOpen={true}>
+                                 initialOpen={false}>
                         <>
                           <Spacer
                             paddingTop="1rem"
