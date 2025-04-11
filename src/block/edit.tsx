@@ -5,7 +5,6 @@ import {
   ToolbarGroup,
   ToolbarItem,
   ToolbarButton,
-  TextControl,
   __experimentalToggleGroupControlOption as ToggleGroupControlOption,
   __experimentalToggleGroupControl as ToggleGroupControl,
 } from '@wordpress/components';
@@ -30,9 +29,10 @@ import {
   DefaultOrganization
 } from "./types";
 import CustomPlaceholder from "./components/CustomPlaceholder";
-import OrganizationIdDetector from "./components/OrganizationIdDetector";
+import OrganizationIdentifierDetector from "./components/OrganizationIdentifierDetector";
 import RoleSelector from "./components/RoleSelector";
 import SortSelector from "./components/SortSelector";
+import PersonIdentifierDetector from "./components/PersonIdentifierDetector";
 
 export default function Edit({attributes, setAttributes}: EditProps) {
   const [categories, setCategories] = useState([]);
@@ -239,6 +239,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
                 attributes={attributes}
                 setAttributes={setAttributes}
               />
+              <PersonIdentifierDetector attributes={attributes} setAttributes={setAttributes} />
             </>
           ) : (
             <>
@@ -246,7 +247,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
                 attributes={attributes}
                 setAttributes={setAttributes}
               />
-              <OrganizationIdDetector attributes={attributes} setAttributes={setAttributes}/>
+              <OrganizationIdentifierDetector attributes={attributes} setAttributes={setAttributes}/>
             </>
           )}
         </PanelBody>
@@ -255,10 +256,12 @@ export default function Edit({attributes, setAttributes}: EditProps) {
           <ShowHideSelector attributes={attributes} setAttributes={setAttributes}/>
           <NameFormatSelector attributes={attributes} setAttributes={setAttributes}/>
         </PanelBody>
-        <PanelBody title={__('Sorting', 'rrze-faudir')} initialOpen={false}>
-          <SortSelector attributes={attributes} setAttributes={setAttributes}/>
-          <RoleSelector attributes={attributes} setAttributes={setAttributes}/>
-        </PanelBody>
+        {attributes.display !== "org" &&
+            <PanelBody title={__('Sorting', 'rrze-faudir')} initialOpen={false}>
+                <SortSelector attributes={attributes} setAttributes={setAttributes}/>
+                <RoleSelector attributes={attributes} setAttributes={setAttributes}/>
+            </PanelBody>
+        }
       </InspectorControls>
       <>
         {!initialSetup ? (

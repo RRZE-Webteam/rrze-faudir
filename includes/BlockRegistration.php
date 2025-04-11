@@ -34,6 +34,17 @@ class BlockRegistration
             'render_callback' => [$this, 'render_faudir_block'],
             'skip_inner_blocks' => true
         ]);
+        $scriptHandle = generate_block_asset_handle('rrze-faudir/block', 'editorScript');
+        wp_set_script_translations(
+            $scriptHandle,
+            'rrze-faudir',
+            plugin_dir_path(__DIR__) . 'languages'
+        );
+        load_plugin_textdomain(
+            'rrze-faudir',
+            false,
+            dirname(plugin_basename(__DIR__)) . '/languages'
+        );
     }
 
 
@@ -70,12 +81,7 @@ class BlockRegistration
      */
     public static function render_faudir_block($attributes): string
     {
-        error_log('FAUDIR Block attributes: ' . print_r($attributes, true));
-
-
         try {
-            error_log('FAUDIR Block render started with attributes: ' . print_r($attributes, true));
-
             if (!shortcode_exists('faudir')) {
                 throw new Exception('FAUDIR shortcode is not registered');
             }
@@ -119,11 +125,15 @@ class BlockRegistration
                     'format' => $attributes['selectedFormat'] ?? 'compact',
                     'orgid' => $attributes['orgid']
                 ];
-            }
-            else if (!empty($attributes['orgnr'])) {
+            } else if (!empty($attributes['orgnr'])) {
                 $shortcode_atts = [
                     'format' => $attributes['selectedFormat'] ?? 'compact',
                     'orgnr' => $attributes['orgnr']
+                ];
+            } else if (!empty($attributes['identifier'])) {
+                $shortcode_atts = [
+                    'format' => $attributes['selectedFormat'] ?? 'compact',
+                    'identifier' => $attributes['identifier']
                 ];
             } else {
                 throw new Exception(__('Neither person IDs, function+orgnr, nor category were provided', 'rrze-faudir'));
