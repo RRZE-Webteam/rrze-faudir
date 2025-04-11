@@ -34,6 +34,17 @@ class BlockRegistration
             'render_callback' => [$this, 'render_faudir_block'],
             'skip_inner_blocks' => true
         ]);
+        $scriptHandle = generate_block_asset_handle('rrze-faudir/block', 'editorScript');
+        wp_set_script_translations(
+            $scriptHandle,
+            'rrze-faudir',
+            plugin_dir_path(__DIR__) . 'languages'
+        );
+        load_plugin_textdomain(
+            'rrze-faudir',
+            false,
+            dirname(plugin_basename(__DIR__)) . '/languages'
+        );
     }
 
 

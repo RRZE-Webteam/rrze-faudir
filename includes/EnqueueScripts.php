@@ -15,7 +15,6 @@ class EnqueueScripts {
     public function register()  {
         add_action('wp_enqueue_scripts', [self::class, 'enqueue_frontend']);
         add_action('admin_enqueue_scripts', [self::class, 'enqueue_admin']);
-        add_action('enqueue_block_editor_assets', [self::class, 'enqueue_block_editor']);   
     }
 
     public static function enqueue_frontend()   {
@@ -69,33 +68,5 @@ class EnqueueScripts {
             'org_saved_text' => __('Organization has been saved as default.', 'rrze-faudir'),
             'error_saving_text' => __('Error saving organization.', 'rrze-faudir')
         ));
-    }
-
-    // Enqueue block editor specific scripts and styles for Gutenberg
-    public static function enqueue_block_editor()    {
-        // Enqueue block editor specific JavaScript for Gutenberg
-        wp_enqueue_script(
-            'rrze-faudir-block-js', // Handle for the block JS
-            RRZE_PLUGIN_URL . 'assets/js/rrze-faudir.js', // Path to the compiled block JS
-            [
-                'wp-blocks',
-                'wp-element',
-                'wp-editor',
-                'wp-components',
-                'wp-block-editor',
-                'wp-i18n',
-                'wp-data'
-            ], // Dependencies for block development
-            filemtime(plugin_dir_path(self::$pluginFile) . 'assets/js/rrze-faudir.js'), // Versioning
-            true // Enqueue in the footer
-        );
-
-        // Enqueue block editor specific styles
-        wp_enqueue_style(
-            'rrze-faudir-block-editor-css', // Handle for block CSS
-            RRZE_PLUGIN_URL. 'assets/css/rrze-faudir.css', // Path to the compiled block CSS
-            array(), // No dependencies
-            filemtime(plugin_dir_path(self::$pluginFile) . 'assets/css/rrze-faudir.css') // Versioning
-        );
     }
 }
