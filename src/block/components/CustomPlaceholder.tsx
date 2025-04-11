@@ -69,7 +69,7 @@ export default function CustomPlaceholder({
     <>
       <Placeholder
         label={__('Setup your FAUdir Block', 'rrze-faudir')}
-        instructions={__('Get started by selecting your desired configuration.')}
+        instructions={__('Get started by selecting your desired configuration.', 'rrze-faudir')}
       >
         {!isAppearancePanelOpen ? (
             <div style={{minWidth: "100%"}}>
