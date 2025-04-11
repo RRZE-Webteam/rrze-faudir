@@ -38,9 +38,19 @@ export interface WPCategory {
 
 export interface SettingsRESTApi {
   default_output_fields: string[];
-  business_card_title: string;
+  available_fields: Record<string, string>;
+  avaible_fields_byformat: {
+    [format: string]: string[];
+  };
   person_roles: PersonRoles[];
   default_organization: DefaultOrganization | null;
+  available_formats_by_display: {
+    person: string[];
+    org: string[];
+  };
+  format_names: {
+    [format: string]: string;
+  };
 }
 
 export interface PersonRoles {

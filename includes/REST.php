@@ -21,10 +21,13 @@ class REST
                 $options = $config->getOptions();
                 $roles = $config->get('person_roles');
                 return [
-                    'default_output_fields' => $options['default_output_fields'] ?? [],
-                    'business_card_title' => $options['business_card_title'] ?? __('More Information', 'rrze-faudir'),
+                    'default_output_fields' => get_option('rrze_faudir_options')['default_output_fields'] ?? [],
+                    'available_fields' => $options['avaible_fields'] ?? [],
+                    'avaible_fields_byformat' => $options['avaible_fields_byformat'] ?? [],
                     'person_roles' => $roles,
-                    'default_organization' => $options['default_organization'] ?? null
+                    'default_organization' => $options['default_organization'] ?? null,
+                    'available_formats_by_display' => $options['avaible_formats_by_display'] ?? [],
+                    'format_names' => $options['formatnames'] ?? [],
                 ];
             },
             'permission_callback' => function () {
