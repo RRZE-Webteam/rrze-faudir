@@ -49,7 +49,7 @@ export default function RoleSelector({attributes, setAttributes}: RoleSelectorPr
         options={options}
         onChange={onPersonRoleChange}
         label={__('Filter by Role', 'rrze-faudir')}
-        help={__('Select a category to filter the downloads by.', 'rrze-faudir')}
+        help={__('Select a category to filter the person entries by.', 'rrze-faudir')}
         allowReset={false}
         value={""}
       />

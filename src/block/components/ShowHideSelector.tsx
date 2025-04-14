@@ -14,12 +14,12 @@ export default function ShowHideSelector({
                                            attributes,
                                            setAttributes,
                                          }: ShowHideSelectorProps) {
-  const {selectedFormat} = attributes;
+  const {selectedFormat, hideFields, selectedFields} = attributes;
 
   const [defaultFields, setDefaultFields] = useState<string[]>([]);
   const [availableFields, setAvailableFields] = useState<string[]>([]);
-  const [hiddenFields, setHiddenFields] = useState<string[]>([]);
-  const [shownFields, setShownFields] = useState<string[]>([]);
+  const [hiddenFields, setHiddenFields] = useState<string[]>(hideFields || []);
+  const [shownFields, setShownFields] = useState<string[]>(selectedFields || []);
   const [translatableFields, setTranslatableFields] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -68,11 +68,9 @@ export default function ShowHideSelector({
   };
 
   const isChecked = (field: string) => {
-    // Standardfeld gilt als aktiv, solange es nicht in hiddenFields ist
     if (defaultFields.includes(field)) {
       return !hiddenFields.includes(field);
     }
-    // Nicht-Standardfeld gilt als aktiv, wenn es in shownFields ist
     return shownFields.includes(field);
   };
 
