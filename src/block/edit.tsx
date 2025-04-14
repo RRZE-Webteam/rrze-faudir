@@ -225,41 +225,50 @@ export default function Edit({attributes, setAttributes}: EditProps) {
           </ToggleGroupControl>
           {!isOrg ? (
             <>
+              <hr />
               <PersonSelector
                 isLoadingPosts={isLoadingPosts}
                 posts={posts}
                 selectedPosts={selectedPosts}
                 togglePostSelection={togglePostSelection}
               />
+              <hr />
               <CategorySelector
                 categories={categories}
                 selectedCategory={selectedCategory}
                 setAttributes={setAttributes}
               />
+              <hr />
               <OrganizationNumberDetector
                 attributes={attributes}
                 setAttributes={setAttributes}
               />
+              <hr />
               <PersonIdentifierDetector attributes={attributes} setAttributes={setAttributes} />
             </>
           ) : (
             <>
+              <hr />
               <OrganizationNumberDetector
                 attributes={attributes}
                 setAttributes={setAttributes}
               />
+              <hr />
               <OrganizationIdentifierDetector attributes={attributes} setAttributes={setAttributes}/>
             </>
           )}
         </PanelBody>
         <PanelBody title={__('Appearance', 'rrze-faudir')} initialOpen={false}>
           <FormatSelector attributes={attributes} setAttributes={setAttributes}/>
+          <hr />
           <ShowHideSelector attributes={attributes} setAttributes={setAttributes}/>
+          <hr />
           <NameFormatSelector attributes={attributes} setAttributes={setAttributes}/>
         </PanelBody>
         {attributes.display !== "org" &&
             <PanelBody title={__('Sorting', 'rrze-faudir')} initialOpen={false}>
                 <SortSelector attributes={attributes} setAttributes={setAttributes}/>
+                <hr />
                 <RoleSelector attributes={attributes} setAttributes={setAttributes}/>
             </PanelBody>
         }

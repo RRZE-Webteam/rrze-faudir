@@ -2,14 +2,14 @@
 # This file is distributed under the GNU General Public License v3.
 msgid ""
 msgstr ""
-"Project-Id-Version: RRZE FAUdir 2.2.22\n"
+"Project-Id-Version: RRZE FAUdir 2.3.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-faudir\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-04-14T08:23:27+00:00\n"
+"POT-Creation-Date: 2025-04-14T13:24:26+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: rrze-faudir\n"
@@ -1220,7 +1220,19 @@ msgid "Type to add persons"
 msgstr ""
 
 #: build/block/index.js:1
+msgid "Or choose by List."
+msgstr ""
+
+#: build/block/index.js:1
 msgid "There are currently no Contacts available. Start adding your first FAUdir Contacts via the WordPress Dashboard > Persons."
+msgstr ""
+
+#: build/block/index.js:1
+msgid "Alternatively, select persons from the checkboxes below:"
+msgstr ""
+
+#: build/block/index.js:1
+msgid "Close"
 msgstr ""
 
 #: build/block/index.js:1
@@ -1264,38 +1276,6 @@ msgid "Please enter either a FAUdir-URL (\"https://faudir.fau.de/public/org/…\
 msgstr ""
 
 #: build/block/index.js:1
-msgid "Sort by"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Title and Last Name"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Head of Department First"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Professors First"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Identifier Order"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Filter by Role"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Select a category to filter the downloads by."
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Currently selected role filters."
-msgstr ""
-
-#: build/block/index.js:1
 msgid "Direct Select via FAUdir"
 msgstr ""
 
@@ -1312,15 +1292,11 @@ msgid "Setup your FAUdir Block"
 msgstr ""
 
 #: build/block/index.js:1
-msgid "Get started by selecting your desired configuration."
-msgstr ""
-
-#: build/block/index.js:1
 msgid "Configure the appearance of your Contact"
 msgstr ""
 
 #: build/block/index.js:1
-msgid "Configure the Data Source"
+msgid "Back to Data selection"
 msgstr ""
 
 #: build/block/index.js:1
@@ -1332,7 +1308,11 @@ msgid "Preview"
 msgstr ""
 
 #: build/block/index.js:1
-msgid "What type of Contact do you want to display?"
+msgid "Which type of contact would you like to display?"
+msgstr ""
+
+#: build/block/index.js:1
+msgid "Contact type"
 msgstr ""
 
 #: build/block/index.js:1
@@ -1368,11 +1348,39 @@ msgid "Select Contacts directly from FAUdir"
 msgstr ""
 
 #: build/block/index.js:1
-msgid "Sorting options"
+msgid "Step 2: Change Appearance"
 msgstr ""
 
 #: build/block/index.js:1
-msgid "Change Appearance"
+msgid "Filter by Role"
+msgstr ""
+
+#: build/block/index.js:1
+msgid "Select a category to filter the person entries by."
+msgstr ""
+
+#: build/block/index.js:1
+msgid "Currently selected role filters."
+msgstr ""
+
+#: build/block/index.js:1
+msgid "Sort by"
+msgstr ""
+
+#: build/block/index.js:1
+msgid "Title and Last Name"
+msgstr ""
+
+#: build/block/index.js:1
+msgid "Head of Department First"
+msgstr ""
+
+#: build/block/index.js:1
+msgid "Professors First"
+msgstr ""
+
+#: build/block/index.js:1
+msgid "Identifier Order"
 msgstr ""
 
 #: build/block/index.js:1
@@ -1393,6 +1401,10 @@ msgstr ""
 
 #: build/block/index.js:1
 msgid "Data Selection"
+msgstr ""
+
+#: build/block/index.js:1
+msgid "What type of Contact do you want to display?"
 msgstr ""
 
 #: build/block/index.js:1

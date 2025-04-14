@@ -77,7 +77,7 @@
     },
     "display": {
       "type": "string",
-      "default": "person"
+      "default": ""
     },
     "orgid": {
       "type": "string",

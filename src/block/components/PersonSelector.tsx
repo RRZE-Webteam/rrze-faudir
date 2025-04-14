@@ -2,8 +2,13 @@ import {__} from "@wordpress/i18n";
 import {
   FormTokenField,
   __experimentalHeading as Heading,
-  Notice
+  __experimentalSpacer as Spacer,
+  Modal,
+  Notice,
+  Button,
+  CheckboxControl,
 } from "@wordpress/components";
+import {useState} from "@wordpress/element";
 
 export interface PersonSelectorProps {
   isLoadingPosts: boolean;
@@ -26,8 +31,8 @@ export default function PersonSelector({
     .filter((post) => selectedPosts.includes(post.id))
     .map((post) => post.title.rendered);
   const suggestions = posts.map((post) => post.title.rendered);
-
   const helpText = isLoadingPosts ? __("Loading available contacts...", "rrze-faudir") : __("Select Contacts for Display.", "rrze-faudir");
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <>
@@ -56,11 +61,46 @@ export default function PersonSelector({
           });
         }}
       />
+      <Spacer paddingTop="0.5rem" paddingBottom="1rem">
+        <Button
+          variant="tertiary"
+          onClick={() => setShowModal(true)}
+          disabled={isLoadingPosts || posts.length === 0}
+        >
+          {__("Or choose by List.", "rrze-faudir")}
+        </Button>
+      </Spacer>
       {posts.length === 0 &&
           <Notice isDismissible={false} status="info">
             {__("There are currently no Contacts available. Start adding your first FAUdir Contacts via the WordPress Dashboard > Persons.", "rrze-faudir")}
           </Notice>
       }
+      {showModal && (
+        <Modal
+          title={__("Select Persons", "rrze-faudir")}
+          onRequestClose={() => setShowModal(false)}
+        >
+          <p>{__("Alternatively, select persons from the checkboxes below:", "rrze-faudir")}</p>
+
+          {posts.map((post) => {
+            const checked = selectedPosts.includes(post.id);
+            return (
+              <CheckboxControl
+                key={post.id}
+                label={post.title.rendered}
+                checked={checked}
+                onChange={() => togglePostSelection(post.id)}
+              />
+            );
+          })}
+
+          <div style={{marginTop: "1em"}}>
+            <Button variant="secondary" onClick={() => setShowModal(false)}>
+              {__("Close", "rrze-faudir")}
+            </Button>
+          </div>
+        </Modal>
+      )}
     </>
   );
 

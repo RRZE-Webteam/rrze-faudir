@@ -67,7 +67,6 @@ export default function CustomPlaceholder({
     <>
       <Placeholder
         label={__('Setup your FAUdir Block', 'rrze-faudir')}
-        instructions={__('Get started by selecting your desired configuration.', 'rrze-faudir')}
       >
         {!isAppearancePanelOpen ? (
             <div style={{minWidth: "100%"}}>
@@ -75,11 +74,12 @@ export default function CustomPlaceholder({
                 paddingBottom="1.5rem"
                 paddingTop="1rem"
               >
+                  <Heading level={2}>{__('Which type of contact would you like to display?', 'rrze-faudir')}</Heading>
                 <ToggleGroupControl
                   __next40pxDefaultSize
                   __nextHasNoMarginBottom
                   isBlock
-                  label={__('What type of Contact do you want to display?', 'rrze-faudir')}
+                  label={__('Contact type', 'rrze-faudir')}
                   help={__('Do you want to output a Person entry or a FAUdir Institution/Folder?', 'rrze-faudir')}
                   onChange={(value: string) => value === 'person' ? setIsOrg(false) : setIsOrg(true)}
                   value={isOrg ? 'org' : 'person'}
@@ -135,15 +135,6 @@ export default function CustomPlaceholder({
                           <PersonIdentifierDetector attributes={attributes} setAttributes={setAttributes}/>
                         </Spacer>
                       </PanelBody>
-                      <PanelBody title={__("Sorting options", "rrze-faudir")} initialOpen={false}>
-                        <Spacer
-                          paddingTop="1rem"
-                          paddingBottom="1.5rem"
-                        >
-                          <SortSelector attributes={attributes} setAttributes={setAttributes}/>
-                          <RoleSelector attributes={attributes} setAttributes={setAttributes}/>
-                        </Spacer>
-                      </PanelBody>
                     </Panel>
                   </div>
                 </>
@@ -166,16 +157,16 @@ export default function CustomPlaceholder({
               <Spacer paddingTop="1rem" paddingBottom="1.5rem">
                 <>
                   <Button
-                    variant="secondary"
-                    onClick={onClickChangeAppearance}
-                  >
-                    {__("Change Appearance", "rrze-faudir")}
-                  </Button>
-                  <Button
-                    variant="primary"
+                    variant="tertiary"
                     onClick={onClickInitialSetupConfirm}
                   >
                     {__("Finish initial setup", "rrze-faudir")}
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={onClickChangeAppearance}
+                  >
+                    {__("Step 2: Change Appearance", "rrze-faudir")}
                   </Button>
                 </>
               </Spacer>
@@ -200,10 +191,10 @@ export default function CustomPlaceholder({
                     <NameFormatSelector attributes={attributes} setAttributes={setAttributes}/>
                     <Spacer paddingTop="1rem"/>
                     <Button
-                      variant="secondary"
+                      variant="tertiary"
                       onClick={onClickChangeData}
                     >
-                      {__("Configure the Data Source", "rrze-faudir")}
+                      {__("Back to Data selection", "rrze-faudir")}
                     </Button>
                     <Button
                       variant="primary"

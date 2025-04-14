@@ -19,10 +19,16 @@ interface AttributesV1 {
 }
 
 const migrateV2_2_11 = ( attributes: AttributesV1 ) => {
-  return {
+  const newAttributes = {
     ...attributes,
     initialSetup: false,
   };
+
+  if (newAttributes.selectedFormat === 'kompakt') {
+    newAttributes.selectedFormat = 'compact';
+  }
+
+  return newAttributes;
 };
 
 const deprecated: BlockDeprecation<AttributesV1>[] = [

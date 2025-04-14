@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rrze-faudir\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-faudir\n"
-"POT-Creation-Date: 2025-04-14T08:23:27+00:00\n"
-"PO-Revision-Date: 2025-04-14 10:25+0200\n"
+"POT-Creation-Date: 2025-04-14T13:24:26+00:00\n"
+"PO-Revision-Date: 2025-04-14 15:25+0200\n"
 "Last-Translator: Wolfgang Wiese <wolfgang.wiese@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -504,13 +504,13 @@ msgid ""
 "in their organization through the management of FAUdir. Alternatively, use "
 "the search for the settings under settings -> RRZE FAUdir -> API"
 msgstr ""
-"Geben Sie hier die interne \"API-Person-Identifier\" der Person ein, über "
-"der die Daten über FAU IdM abgerufen werden können. Die API-Person-"
-"Identifier können die Personen selbst im IdM-Portal in der Ansicht der "
-"Persönlichen Daten einsehen. Kontaktpersonen und Einrichtungsleitungen "
-"können diesen Wert über die Verwaltung von FAUdir für andere Pesonen ihrer "
-"Organisation abrufen. Alternativ nutzen Sie die Suche in den Einstellungen "
-"unter Einstellungen -> RRZE FAUdir -> API EInstellungen"
+"Gebe hier die interne \"API-Person-Identifier\" der Person ein, über der die "
+"Daten über FAU IdM abgerufen werden können. Die API-Person-Identifier können "
+"die Personen selbst im IdM-Portal in der Ansicht der Persönlichen Daten "
+"einsehen. Kontaktpersonen und Einrichtungsleitungen können diesen Wert über "
+"die Verwaltung von FAUdir für andere Pesonen ihrer Organisation abrufen. "
+"Alternativ kannst du die Suche in den Einstellungen unter Einstellungen -> "
+"RRZE FAUdir -> API EInstellungen nutzen"
 
 #: includes/custom-post-type/custom-post-type.php:243
 msgid ""
@@ -572,11 +572,11 @@ msgstr ""
 
 #: includes/EnqueueScripts.php:62
 msgid "Are you sure you want to clear the cache?"
-msgstr "Sind Sie sicher, dass Sie den Cache leeren möchten?"
+msgstr "Bist du sicher, dass du den Cache leeren möchten?"
 
 #: includes/EnqueueScripts.php:63
 msgid "Are you sure you want to import contacts from FAU person?"
-msgstr "Sind Sie sicher, dass Sie den Cache leeren möchten?"
+msgstr "Bist du sicher, dass du den Cache leeren möchten?"
 
 #: includes/EnqueueScripts.php:64 includes/Settings.php:922
 msgid "Edit"
@@ -811,7 +811,7 @@ msgstr ""
 
 #: includes/Settings.php:253
 msgid "Configure caching settings for the plugin."
-msgstr "Konfigurieren Sie die Caching-Einstellungen für das Plugin."
+msgstr "Konfiguriere die Caching-Einstellungen für das Plugin."
 
 #: includes/Settings.php:257
 msgid "Handle error messages for invalid contact entries."
@@ -853,7 +853,7 @@ msgstr "Unsichtbar"
 #: includes/Settings.php:316
 msgid "Select the fields to display in the profil page of a single person."
 msgstr ""
-"Wählen Sie die Felder aus, die auf einer Profilseite angezeigt werden sollen."
+"Wähle die Felder aus, die auf einer Profilseite angezeigt werden sollen."
 
 #: includes/Settings.php:323
 msgid "The API key is being used from the network installation."
@@ -861,7 +861,7 @@ msgstr "Der API-Schlüssel wird von der Netzwerkinstallation verwendet."
 
 #: includes/Settings.php:328
 msgid "Enter your API key here."
-msgstr "Geben Sie hier Ihren API-Schlüssel ein."
+msgstr "Gebe hier deinen API-Schlüssel ein."
 
 #: includes/Settings.php:333
 msgid "Import contact entries from FAU Person"
@@ -883,7 +883,7 @@ msgstr "Caching für eingeloggte Redakteure deaktivieren."
 
 #: includes/Settings.php:348
 msgid "Set the cache timeout in minutes (minimum 15 minutes)."
-msgstr "Legen Sie das Cache-Timeout in Minuten fest (mindestens 15 Minuten)."
+msgstr "Lege das Cache-Timeout in Minuten fest (mindestens 15 Minuten)."
 
 #: includes/Settings.php:355
 msgid ""
@@ -904,8 +904,7 @@ msgstr "Cache jetzt löschen"
 #: includes/Settings.php:367
 msgid "Click the button to clear all cached data."
 msgstr ""
-"Klicken Sie auf die Schaltfläche, um alle zwischengespeicherten Daten zu "
-"löschen."
+"Klicke auf die Schaltfläche, um alle zwischengespeicherten Daten zu löschen."
 
 #: includes/Settings.php:374
 msgid "Show error messages for incorrect contact entries."
@@ -945,7 +944,7 @@ msgstr ""
 
 #: includes/Settings.php:441
 msgid "Enter the slug for the person post type."
-msgstr "Geben Sie den Slug für den Personen-Posttyp ein."
+msgstr "Gebe den Slug für den Personen-Posttyp ein."
 
 #: includes/Settings.php:461
 msgid "Fieldname for Show/Hide-Attribut in Shortcodes"
@@ -958,12 +957,12 @@ msgstr "Verfügbare Formate"
 #: includes/Settings.php:491
 msgid "Select the fields to display by default in shortcodes and blocks."
 msgstr ""
-"Wählen Sie die Felder aus, die standardmäßig in Shortcodes und Blöcken "
-"angezeigt werden."
+"Wähle die Felder aus, die standardmäßig in Shortcodes und Blöcken angezeigt "
+"werden."
 
 #: includes/Settings.php:496
 msgid "Search for FAU organizations by name or identifier."
-msgstr "Suche Sie nach FAU-Organisationen nach Namen oder Kennung."
+msgstr "Suche nach FAU-Organisationen nach Namen oder Kennung."
 
 #: includes/Settings.php:504
 msgid "FAUdir Settings"
@@ -980,7 +979,7 @@ msgstr "Auf Standardeinstellungen zurücksetzen"
 #: includes/Settings.php:559
 msgid "Click the button below to reset all settings to their default values."
 msgstr ""
-"Klicken Sie auf die Schaltfläche unten, um alle Einstellungen auf die "
+"Klicke auf die Schaltfläche unten, um alle Einstellungen auf die "
 "Standardwerte zurückzusetzen."
 
 #: includes/Settings.php:561
@@ -992,8 +991,8 @@ msgid ""
 "Please enter at least one search term. If more than one parameter is "
 "entered, the search results must contain all values (AND search)."
 msgstr ""
-"Bitte geben Sie mindestens einen Suchbegriff ein. Bei mehreren Parametern "
-"müssen die Suchergebnisse alle Werte enthalten (UND-Suche)."
+"Bitte gebe mindestens einen Suchbegriff ein. Bei mehreren Parametern müssen "
+"die Suchergebnisse alle Werte enthalten (UND-Suche)."
 
 #: includes/Settings.php:587
 msgid "Search Options"
@@ -1001,7 +1000,7 @@ msgstr "Suchoptionen"
 
 #: includes/Settings.php:592
 msgid "Filter by default organization"
-msgstr "Filtern Sie nach Standardorganisation"
+msgstr "Filtere nach Standardorganisation"
 
 #: includes/Settings.php:599
 msgid "Search Terms"
@@ -1033,7 +1032,7 @@ msgstr "Organisationsnr"
 
 #: includes/Settings.php:655
 msgid "Are you sure you want to delete the default organization?"
-msgstr "Möchten Sie die Standardorganisation wirklich löschen?"
+msgstr "Möchtest du die Standardorganisation wirklich löschen?"
 
 #: includes/Settings.php:656
 msgid "Delete Default Organization"
@@ -1045,13 +1044,13 @@ msgstr "Suchbegriff"
 
 #: includes/Settings.php:676
 msgid "Enter organization name or identifier"
-msgstr "Geben Sie den Namen oder die Kennung der Organisation ein"
+msgstr "Gebe den Namen oder die Kennung der Organisation ein"
 
 #: includes/Settings.php:707
 msgid "Are you sure you want to reset all settings to their default values?"
 msgstr ""
-"Sind Sie sicher, dass Sie alle Einstellungen auf die Standardwerte "
-"zurücksetzen möchten?"
+"Bist du sicher, dass du alle Einstellungen auf die Standardwerte "
+"zurücksetzen möchtest?"
 
 #: includes/Settings.php:713 includes/Settings.php:768
 msgid "Settings have been reset to default values."
@@ -1066,8 +1065,8 @@ msgstr ""
 #: includes/Settings.php:728 includes/Settings.php:1076
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
-"Sie verfügen nicht über die erforderlichen Berechtigungen, um auf diese "
-"Seite zuzugreifen."
+"Du verfügst nicht über die erforderlichen Berechtigungen, um auf diese Seite "
+"zuzugreifen."
 
 #: includes/Settings.php:742
 msgid "Default organization has been deleted."
@@ -1084,12 +1083,12 @@ msgstr "Fehler: %s"
 #: includes/Settings.php:932
 msgid "No contacts found. Please verify the IdM-Kennung or names provided."
 msgstr ""
-"Keine Kontakte gefunden. Bitte überprüfen Sie die IdM-Kennung oder die "
+"Keine Kontakte gefunden. Bitte überprüfe die IdM-Kennung oder die "
 "angegebenen Namen."
 
 #: includes/Settings.php:965
 msgid "Please enter a search term"
-msgstr "Bitte geben Sie einen Suchbegriff ein"
+msgstr "Bitte gebe einen Suchbegriff ein"
 
 #: includes/Settings.php:1010
 msgid "Organization ID"
@@ -1110,7 +1109,7 @@ msgstr "Webauftritt"
 #: includes/Settings.php:1065
 msgid "No organizations found. Please try a different search term."
 msgstr ""
-"Es wurden keine Organisationen gefunden. Bitte versuchen Sie einen anderen "
+"Es wurden keine Organisationen gefunden. Bitte versuche einen anderen "
 "Suchbegriff."
 
 #: includes/Settings.php:1114
@@ -1233,7 +1232,7 @@ msgstr "Lade verfügbare Personen..."
 
 #: build/block/index.js:1
 msgid "Select Contacts for Display."
-msgstr "Wählen Sie Kontakte zur Anzeige."
+msgstr "Wähle Kontakte zur Anzeige."
 
 #: build/block/index.js:1
 msgid "Select Persons"
@@ -1244,12 +1243,25 @@ msgid "Type to add persons"
 msgstr "Tippen zum hinzufügen von Personen"
 
 #: build/block/index.js:1
+msgid "Or choose by List."
+msgstr "Aus Liste wählen"
+
+#: build/block/index.js:1
 msgid ""
 "There are currently no Contacts available. Start adding your first FAUdir "
 "Contacts via the WordPress Dashboard > Persons."
 msgstr ""
 "Derzeit sind keine Kontakte verfügbar. Füge deine ersten FAUdir-Kontakte "
 "über das WordPress-Dashboard > Personen hinzu."
+
+#: build/block/index.js:1
+msgid "Alternatively, select persons from the checkboxes below:"
+msgstr ""
+"Alternativ können Sie auch Personen aus der unten stehenden Liste auswählen:"
+
+#: build/block/index.js:1
+msgid "Close"
+msgstr "Schließen"
 
 #: build/block/index.js:1
 msgid "Select Categories"
@@ -1300,38 +1312,6 @@ msgstr ""
 "\") oder den Identifier ein."
 
 #: build/block/index.js:1
-msgid "Sort by"
-msgstr "Sortiere nach"
-
-#: build/block/index.js:1
-msgid "Title and Last Name"
-msgstr "Akademischer Titel und Nachname"
-
-#: build/block/index.js:1
-msgid "Head of Department First"
-msgstr "Leitung der Organisation zuerst"
-
-#: build/block/index.js:1
-msgid "Professors First"
-msgstr "Professoren als Erstes"
-
-#: build/block/index.js:1
-msgid "Identifier Order"
-msgstr "Reihenfolder nach ID"
-
-#: build/block/index.js:1
-msgid "Filter by Role"
-msgstr "Nach Benutzerrolle"
-
-#: build/block/index.js:1
-msgid "Select a category to filter the downloads by."
-msgstr "Wähle eine Kategorie aus, nach der du die Downloads filtern möchtest."
-
-#: build/block/index.js:1
-msgid "Currently selected role filters."
-msgstr "Aktuell ausgewählte Rollenfilter."
-
-#: build/block/index.js:1
 msgid "Direct Select via FAUdir"
 msgstr "Direktwahl über FAUdir"
 
@@ -1354,16 +1334,12 @@ msgid "Setup your FAUdir Block"
 msgstr "Einrichten des FAUdir Blocks"
 
 #: build/block/index.js:1
-msgid "Get started by selecting your desired configuration."
-msgstr "Wähle zunächst deine gewünschte Konfiguration aus."
-
-#: build/block/index.js:1
 msgid "Configure the appearance of your Contact"
 msgstr "Konfiguriere das Aussehen deines Kontakts"
 
 #: build/block/index.js:1
-msgid "Configure the Data Source"
-msgstr "Konfiguriere die Datenquelle"
+msgid "Back to Data selection"
+msgstr "Zurück zur Datenauswahl"
 
 #: build/block/index.js:1
 msgid "Finish initial setup"
@@ -1374,8 +1350,12 @@ msgid "Preview"
 msgstr "Vorschau"
 
 #: build/block/index.js:1
-msgid "What type of Contact do you want to display?"
+msgid "Which type of contact would you like to display?"
 msgstr "Welche Art von Kontakt möchtest du anzeigen?"
+
+#: build/block/index.js:1
+msgid "Contact type"
+msgstr "Kontaktart"
 
 #: build/block/index.js:1
 msgid "Do you want to output a Person entry or a FAUdir Institution/Folder?"
@@ -1389,7 +1369,7 @@ msgstr "Organisation oder FAUdir-Ordner"
 
 #: build/block/index.js:1
 msgid "Select Organization or FAUdir-Folder to display"
-msgstr "Wählen Sie eine Organisation oder einen FAUdir-Ordner für die Ausgabe"
+msgstr "Wähle eine Organisation oder einen FAUdir-Ordner für die Ausgabe"
 
 #: build/block/index.js:1
 msgid "Display via FAUOrg Number"
@@ -1405,7 +1385,7 @@ msgstr ""
 
 #: build/block/index.js:1
 msgid "Select Contacts to display"
-msgstr "Wählen Sie Kontakte zur Anzeige"
+msgstr "Wähle Kontakte zur Anzeige"
 
 #: build/block/index.js:1
 msgid "Select Contacts from your WordPress Site"
@@ -1416,12 +1396,40 @@ msgid "Select Contacts directly from FAUdir"
 msgstr "Kontakte direkt aus FAUdir auswählen"
 
 #: build/block/index.js:1
-msgid "Sorting options"
-msgstr "Sortieren"
+msgid "Step 2: Change Appearance"
+msgstr "Schritt 2: Erscheinungsbild ändern"
 
 #: build/block/index.js:1
-msgid "Change Appearance"
-msgstr "Erscheinungsbild ändern"
+msgid "Filter by Role"
+msgstr "Nach Benutzerrolle"
+
+#: build/block/index.js:1
+msgid "Select a category to filter the person entries by."
+msgstr "Wähle eine Kategorie aus, nach der du die Downloads filtern möchtest."
+
+#: build/block/index.js:1
+msgid "Currently selected role filters."
+msgstr "Aktuell ausgewählte Rollenfilter."
+
+#: build/block/index.js:1
+msgid "Sort by"
+msgstr "Sortiere nach"
+
+#: build/block/index.js:1
+msgid "Title and Last Name"
+msgstr "Akademischer Titel und Nachname"
+
+#: build/block/index.js:1
+msgid "Head of Department First"
+msgstr "Leitung der Organisation zuerst"
+
+#: build/block/index.js:1
+msgid "Professors First"
+msgstr "Professoren als Erstes"
+
+#: build/block/index.js:1
+msgid "Identifier Order"
+msgstr "Reihenfolder nach ID"
 
 #: build/block/index.js:1
 msgid "Change the Data"
@@ -1442,6 +1450,10 @@ msgstr "Konfiguriere deinen Kontakt"
 #: build/block/index.js:1
 msgid "Data Selection"
 msgstr "Datenauswahl"
+
+#: build/block/index.js:1
+msgid "What type of Contact do you want to display?"
+msgstr "Welche Art von Kontakt möchtest du anzeigen?"
 
 #: build/block/index.js:1
 msgid "Appearance"
@@ -1490,6 +1502,18 @@ msgstr "Kontakt"
 msgctxt "block keyword"
 msgid "FAU"
 msgstr "FAU"
+
+#~ msgid "Or you can select Persons via Checkboxes."
+#~ msgstr "Oder wähle aus einer Liste von allen verfügbaren Personen."
+
+#~ msgid "Get started by selecting your desired configuration."
+#~ msgstr "Wähle zunächst deine gewünschte Konfiguration aus."
+
+#~ msgid "Configure the Data Source"
+#~ msgstr "Konfiguriere die Datenquelle"
+
+#~ msgid "Sorting options"
+#~ msgstr "Sortieren"
 
 #~ msgid "More Information"
 #~ msgstr "Weitere Informationen"

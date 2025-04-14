@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rrze-faudir\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-faudir\n"
-"POT-Creation-Date: 2025-04-14T08:23:27+00:00\n"
-"PO-Revision-Date: 2025-04-14 10:27+0200\n"
+"POT-Creation-Date: 2025-04-14T13:24:26+00:00\n"
+"PO-Revision-Date: 2025-04-14 15:25+0200\n"
 "Last-Translator: Wolfgang Wiese <wolfgang.wiese@fau.de>\n"
 "Language-Team: Deutsch (Sie)\n"
 "Language: de\n"
@@ -617,7 +617,7 @@ msgstr ""
 #: includes/Maintenance.php:77
 msgid "After this you can restart importing old contact entries from there."
 msgstr ""
-"Danach kannst du das Importieren alter Kontakteinträge von dort aus wieder "
+"Danach können Sie das Importieren alter Kontakteinträge von dort aus wieder "
 "aufnehmen."
 
 #: includes/Maintenance.php:110 includes/Maintenance.php:280
@@ -1247,12 +1247,25 @@ msgid "Type to add persons"
 msgstr "Tippen zum hinzufügen von Personen"
 
 #: build/block/index.js:1
+msgid "Or choose by List."
+msgstr "Aus Liste wählen"
+
+#: build/block/index.js:1
 msgid ""
 "There are currently no Contacts available. Start adding your first FAUdir "
 "Contacts via the WordPress Dashboard > Persons."
 msgstr ""
 "Derzeit sind keine Kontakte verfügbar. Füge deine ersten FAUdir-Kontakte "
 "über das WordPress-Dashboard > Personen hinzu."
+
+#: build/block/index.js:1
+msgid "Alternatively, select persons from the checkboxes below:"
+msgstr ""
+"Alternativ können Sie auch Personen aus der unten stehenden Liste auswählen:"
+
+#: build/block/index.js:1
+msgid "Close"
+msgstr "Schließen"
 
 #: build/block/index.js:1
 msgid "Select Categories"
@@ -1303,38 +1316,6 @@ msgstr ""
 "\") oder den Identifier ein."
 
 #: build/block/index.js:1
-msgid "Sort by"
-msgstr "Sortiere nach"
-
-#: build/block/index.js:1
-msgid "Title and Last Name"
-msgstr "Akademischer Titel und Nachname"
-
-#: build/block/index.js:1
-msgid "Head of Department First"
-msgstr "Leitung der Organisation zuerst"
-
-#: build/block/index.js:1
-msgid "Professors First"
-msgstr "Professoren als Erstes"
-
-#: build/block/index.js:1
-msgid "Identifier Order"
-msgstr "Reihenfolder nach ID"
-
-#: build/block/index.js:1
-msgid "Filter by Role"
-msgstr "Nach Benutzerrolle"
-
-#: build/block/index.js:1
-msgid "Select a category to filter the downloads by."
-msgstr "Wähle eine Kategorie aus, nach der du die Downloads filtern möchtest."
-
-#: build/block/index.js:1
-msgid "Currently selected role filters."
-msgstr "Aktuell ausgewählte Rollenfilter."
-
-#: build/block/index.js:1
 msgid "Direct Select via FAUdir"
 msgstr "Direktwahl über FAUdir"
 
@@ -1357,16 +1338,12 @@ msgid "Setup your FAUdir Block"
 msgstr "Einrichten des FAUdir Blocks"
 
 #: build/block/index.js:1
-msgid "Get started by selecting your desired configuration."
-msgstr "Wähle zunächst deine gewünschte Konfiguration aus."
-
-#: build/block/index.js:1
 msgid "Configure the appearance of your Contact"
 msgstr "Konfiguriere das Aussehen deines Kontakts"
 
 #: build/block/index.js:1
-msgid "Configure the Data Source"
-msgstr "Konfiguriere die Datenquelle"
+msgid "Back to Data selection"
+msgstr "Zurück zur Datenauswahl"
 
 #: build/block/index.js:1
 msgid "Finish initial setup"
@@ -1377,13 +1354,17 @@ msgid "Preview"
 msgstr "Vorschau"
 
 #: build/block/index.js:1
-msgid "What type of Contact do you want to display?"
-msgstr "Welche Art von Kontakt möchtest du anzeigen?"
+msgid "Which type of contact would you like to display?"
+msgstr "Welche Art von Kontakt möchten Sie anzeigen?"
+
+#: build/block/index.js:1
+msgid "Contact type"
+msgstr "Kontaktart"
 
 #: build/block/index.js:1
 msgid "Do you want to output a Person entry or a FAUdir Institution/Folder?"
 msgstr ""
-"Willst du einen Personeneintrag oder einen FAUdir Institution/Ordner "
+"Wollen Sie einen Personeneintrag oder einen FAUdir Institution/Ordner "
 "ausgeben?"
 
 #: build/block/index.js:1
@@ -1419,12 +1400,42 @@ msgid "Select Contacts directly from FAUdir"
 msgstr "Kontakte direkt aus FAUdir auswählen"
 
 #: build/block/index.js:1
-msgid "Sorting options"
-msgstr "Sortieren"
+msgid "Step 2: Change Appearance"
+msgstr "Schritt 2: Erscheinungsbild ändern"
 
 #: build/block/index.js:1
-msgid "Change Appearance"
-msgstr "Erscheinungsbild ändern"
+msgid "Filter by Role"
+msgstr "Nach Benutzerrolle"
+
+#: build/block/index.js:1
+msgid "Select a category to filter the person entries by."
+msgstr ""
+"Wählen Sie eine Kategorie, nach der die Personeneinträge gefiltert werden "
+"sollen."
+
+#: build/block/index.js:1
+msgid "Currently selected role filters."
+msgstr "Aktuell ausgewählte Rollenfilter."
+
+#: build/block/index.js:1
+msgid "Sort by"
+msgstr "Sortiere nach"
+
+#: build/block/index.js:1
+msgid "Title and Last Name"
+msgstr "Akademischer Titel und Nachname"
+
+#: build/block/index.js:1
+msgid "Head of Department First"
+msgstr "Leitung der Organisation zuerst"
+
+#: build/block/index.js:1
+msgid "Professors First"
+msgstr "Professoren als Erstes"
+
+#: build/block/index.js:1
+msgid "Identifier Order"
+msgstr "Reihenfolder nach ID"
 
 #: build/block/index.js:1
 msgid "Change the Data"
@@ -1445,6 +1456,10 @@ msgstr "Konfiguriere deinen Kontakt"
 #: build/block/index.js:1
 msgid "Data Selection"
 msgstr "Datenauswahl"
+
+#: build/block/index.js:1
+msgid "What type of Contact do you want to display?"
+msgstr "Welche Art von Kontakt möchten Sie anzeigen?"
 
 #: build/block/index.js:1
 msgid "Appearance"
@@ -1493,6 +1508,18 @@ msgstr "Kontakt"
 msgctxt "block keyword"
 msgid "FAU"
 msgstr "FAU"
+
+#~ msgid "Or you can select Persons via Checkboxes."
+#~ msgstr "Oder wählen Sie aus einer Liste von allen verfügbaren Personen."
+
+#~ msgid "Get started by selecting your desired configuration."
+#~ msgstr "Wähle zunächst deine gewünschte Konfiguration aus."
+
+#~ msgid "Configure the Data Source"
+#~ msgstr "Konfiguriere die Datenquelle"
+
+#~ msgid "Sorting options"
+#~ msgstr "Sortieren"
 
 #~ msgid "More Information"
 #~ msgstr "Weitere Informationen"
