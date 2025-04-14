@@ -17,5 +17,9 @@
 // Settings for themes
 @use 'themes/themes';
 
-
-
+// Override PanelBodies for FAU-Einrichtungen
+.wp-block-rrze-faudir-block {
+  .editor-visual-editor .components-button {
+    padding: 1rem 4rem 1rem 1rem;
+  }
+}
