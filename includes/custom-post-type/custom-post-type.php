@@ -213,18 +213,21 @@ function render_person_additional_fields($post) {
     ];
 
     $fields = [
-        '_content_en' => __('Content (English)', 'rrze-faudir'),
-        '_teasertext_en' => __('Teaser Text (English)', 'rrze-faudir'),
+       
         '_teasertext_de' => __('Teaser Text (German)', 'rrze-faudir'),
+         '_content_en' => __('Content (English)', 'rrze-faudir'),
+        '_teasertext_en' => __('Teaser Text (English)', 'rrze-faudir'),
         'person_id' => __('API Person Identifier', 'rrze-faudir'),
         'person_name' => __('Name', 'rrze-faudir'),
+        
         'person_email' => __('Email', 'rrze-faudir'),
         'person_phone' => __('Telephone', 'rrze-faudir'),
         'person_givenName' => __('Given Name', 'rrze-faudir'),
+        'person_titleOfNobility' => __('Nobility Title', 'rrze-faudir'),
         'person_familyName' => __('Family Name', 'rrze-faudir'),
         'person_honorificPrefix' => __('Title', 'rrze-faudir'),
         'person_honorificSuffix' => __('Suffix', 'rrze-faudir'),
-        'person_titleOfNobility' => __('Nobility Title', 'rrze-faudir'),
+       
     ];
 
     // Render regular fields
@@ -242,10 +245,13 @@ function render_person_additional_fields($post) {
             echo '<h2>' . __('FAUdir', 'rrze-faudir').' ' .__('Data', 'rrze-faudir') . '</h2>';
             // Add a hidden input for person_id
             echo "<input type='hidden' id='hidden-person-id' value='" . esc_attr($value) . "' />";
-        } elseif (in_array($meta_key, ['_content_en', '_teasertext_en', '_teasertext_de'])) {
+        } elseif ($meta_key === '_content_en') {    
+            echo "<label for='" . esc_attr($meta_key) . "'>" . esc_html($label) . "</label>";           
+            wp_editor( $value, $meta_key );
+        } elseif (in_array($meta_key, ['_teasertext_en', '_teasertext_de'])) {
             // Handle textarea fields
             echo "<label for='" . esc_attr($meta_key) . "'>" . esc_html($label) . "</label>";
-            echo "<textarea name='" . esc_attr($meta_key) . "' id='" . esc_attr($meta_key) . "' style='width: 100%; height: 100px;' $readonly>" . esc_textarea($value) . "</textarea><br><br>";
+            echo '<textarea name="' . esc_attr($meta_key) . '" id="' . esc_attr($meta_key) . '"'. $readonly.'" style="display:block;" rows="5" cols="80">' . esc_textarea($value) .' </textarea><br><br>';
         } else {
             // Handle other input fields
             echo "<label for='" . esc_attr($meta_key) . "'>" . esc_html($label) . "</label>";
