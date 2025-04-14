@@ -8,11 +8,13 @@ import {SettingsRESTApi} from "../types";
 interface ShowHideSelectorProps {
   attributes: EditProps['attributes'];
   setAttributes: EditProps['setAttributes'];
+  setHasFormatDisplayName: (hasDisplayName: boolean) => void;
 }
 
 export default function ShowHideSelector({
                                            attributes,
                                            setAttributes,
+                                           setHasFormatDisplayName
                                          }: ShowHideSelectorProps) {
   const {selectedFormat, hideFields, selectedFields} = attributes;
 
@@ -25,6 +27,9 @@ export default function ShowHideSelector({
   useEffect(() => {
     apiFetch({path: '/wp/v2/settings/rrze_faudir_options'})
       .then((data: SettingsRESTApi) => {
+        const fieldsForFormat = data.avaible_fields_byformat[selectedFormat] || [];
+        setHasFormatDisplayName(fieldsForFormat.includes("format_displayname"));
+
         // Pull the default option fields from wp-options
         if (data?.default_output_fields) {
           setDefaultFields(data.default_output_fields);
@@ -78,10 +83,12 @@ export default function ShowHideSelector({
     return translatableFields[field] || field;
   };
 
+  const fieldsToDisplay = availableFields.filter((field) => field !== 'format_displayname');
+
   return (
     <div>
       <h4>{__('Felder auswählen', 'rrze-faudir')}</h4>
-      {availableFields.map((field) => (
+      {fieldsToDisplay.map((field) => (
         <CheckboxControl
           key={field}
           label={getFieldLabel(field)}

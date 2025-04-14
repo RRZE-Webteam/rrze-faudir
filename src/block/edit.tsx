@@ -42,6 +42,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
   const [defaultOrgNr, setDefaultOrgNr] = useState(null);
   const [isOrg, setIsOrg] = useState(attributes.display === 'org');
   const [isAppearancePanelOpen, setIsAppearancePanelOpen] = useState<boolean>(false);
+  const [hasFormatDisplayName, setHasFormatDisplayName] = useState<boolean>(false);
 
   const blockProps = useBlockProps();
   const {
@@ -261,9 +262,9 @@ export default function Edit({attributes, setAttributes}: EditProps) {
         <PanelBody title={__('Appearance', 'rrze-faudir')} initialOpen={false}>
           <FormatSelector attributes={attributes} setAttributes={setAttributes}/>
           <hr />
-          <ShowHideSelector attributes={attributes} setAttributes={setAttributes}/>
+          <ShowHideSelector attributes={attributes} setAttributes={setAttributes} setHasFormatDisplayName={setHasFormatDisplayName}/>
           <hr />
-          <NameFormatSelector attributes={attributes} setAttributes={setAttributes}/>
+          <NameFormatSelector attributes={attributes} setAttributes={setAttributes} hasFormatDisplayName={hasFormatDisplayName}/>
         </PanelBody>
         {attributes.display !== "org" &&
             <PanelBody title={__('Sorting', 'rrze-faudir')} initialOpen={false}>
@@ -289,6 +290,8 @@ export default function Edit({attributes, setAttributes}: EditProps) {
             categories={categories}
             isAppearancePanelOpen={isAppearancePanelOpen}
             setIsAppearancePanelOpen={setIsAppearancePanelOpen}
+            setHasFormatDisplayName={setHasFormatDisplayName}
+            hasFormatDisplayName={hasFormatDisplayName}
           />
         )}
       </>

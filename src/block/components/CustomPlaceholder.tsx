@@ -32,6 +32,8 @@ interface CustomPlaceholderProps extends PersonSelectorProps {
   categories: any[];
   isAppearancePanelOpen: boolean;
   setIsAppearancePanelOpen: (isAppearancePanelOpen: boolean) => void;
+  setHasFormatDisplayName: (hasFormatDisplayName: boolean) => void;
+  hasFormatDisplayName: boolean;
 }
 
 export default function CustomPlaceholder({
@@ -45,7 +47,9 @@ export default function CustomPlaceholder({
                                             togglePostSelection,
                                             categories,
                                             isAppearancePanelOpen,
-                                            setIsAppearancePanelOpen
+                                            setIsAppearancePanelOpen,
+                                            setHasFormatDisplayName,
+                                            hasFormatDisplayName,
                                           }: CustomPlaceholderProps) {
   //useState
 
@@ -187,8 +191,8 @@ export default function CustomPlaceholder({
                   <>
                     <Heading level={2}>{__('Configure the appearance of your Contact', 'rrze-faudir')}</Heading>
                     <FormatSelector attributes={attributes} setAttributes={setAttributes}/>
-                    <ShowHideSelector attributes={attributes} setAttributes={setAttributes}/>
-                    <NameFormatSelector attributes={attributes} setAttributes={setAttributes}/>
+                    <ShowHideSelector attributes={attributes} setAttributes={setAttributes} setHasFormatDisplayName={setHasFormatDisplayName}/>
+                    <NameFormatSelector attributes={attributes} setAttributes={setAttributes} hasFormatDisplayName={hasFormatDisplayName}/>
                     <Spacer paddingTop="1rem"/>
                     <Button
                       variant="tertiary"
