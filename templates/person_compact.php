@@ -275,7 +275,7 @@ if (!defined('ABSPATH')) {
                             $wval = $person->getContent($lang);
                             if (!empty($wval)) {
                                 $profilcontent .= '<div class="content">';
-                                $profilcontent .= wp_kses_post($wval);
+                                $profilcontent .= do_shortcode(shortcode_unautop($wval));
                                 $profilcontent .= '</div>';
                             }
                     }
