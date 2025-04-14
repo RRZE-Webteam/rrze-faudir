@@ -31,7 +31,6 @@ export default function PersonSelector({
     .filter((post) => selectedPosts.includes(post.id))
     .map((post) => post.title.rendered);
   const suggestions = posts.map((post) => post.title.rendered);
-  const helpText = isLoadingPosts ? __("Loading available contacts...", "rrze-faudir") : __("Select Contacts for Display.", "rrze-faudir");
   const [showModal, setShowModal] = useState(false);
 
   return (

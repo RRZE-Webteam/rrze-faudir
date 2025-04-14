@@ -26,7 +26,6 @@ import {
   WPCategory,
   CustomPersonParams,
   CustomPersonRESTApi,
-  SettingsRESTApi,
 } from "./types";
 import CustomPlaceholder from "./components/CustomPlaceholder";
 import OrganizationIdentifierDetector from "./components/OrganizationIdentifierDetector";
@@ -38,7 +37,6 @@ export default function Edit({attributes, setAttributes}: EditProps) {
   const [categories, setCategories] = useState([]);
   const [posts, setPosts] = useState([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
-  const [defaultOrgNr, setDefaultOrgNr] = useState(null);
   const [isOrg, setIsOrg] = useState(attributes.display === 'org');
   const [isAppearancePanelOpen, setIsAppearancePanelOpen] = useState<boolean>(false);
   const [hasFormatDisplayName, setHasFormatDisplayName] = useState<boolean>(false);
@@ -47,10 +45,6 @@ export default function Edit({attributes, setAttributes}: EditProps) {
   const {
     selectedCategory = '',
     selectedPosts = [],
-    showCategory = false,
-    showPosts = false,
-    selectedPersonIds = [],
-    role = '',
     orgnr = '',
     initialSetup
   } = attributes;
@@ -99,23 +93,6 @@ export default function Edit({attributes, setAttributes}: EditProps) {
       })
       .catch((error) => {
         console.error('Error fetching categories:', error);
-      });
-  }, []);
-
-  useEffect(() => {
-    apiFetch({
-      path: '/wp/v2/settings/rrze_faudir_options',
-    })
-      .then((settings: SettingsRESTApi) => {
-        if (settings?.default_organization?.orgnr) {
-          setDefaultOrgNr(settings.default_organization);
-        }
-      })
-      .catch((error) => {
-        console.error(
-          'Error fetching default organization number:',
-          error
-        );
       });
   }, []);
 
@@ -269,7 +246,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
             <PanelBody title={__('Sorting', 'rrze-faudir')} initialOpen={false}>
                 <SortSelector attributes={attributes} setAttributes={setAttributes}/>
                 <hr />
-                <RoleSelector attributes={attributes} setAttributes={setAttributes}/>
+                <RoleSelector setAttributes={setAttributes}/>
             </PanelBody>
         }
       </InspectorControls>

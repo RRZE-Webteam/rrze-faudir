@@ -1,15 +1,14 @@
 import {useState, useEffect} from '@wordpress/element';
-import {TextControl, ComboboxControl, __experimentalText as Text, FormTokenField} from '@wordpress/components';
+import {ComboboxControl, FormTokenField} from '@wordpress/components';
 import {__} from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import {EditProps} from '../types';
 
 interface RoleSelectorProps {
-  attributes: EditProps['attributes'];
   setAttributes: EditProps['setAttributes'];
 }
 
-export default function RoleSelector({attributes, setAttributes}: RoleSelectorProps) {
+export default function RoleSelector({ setAttributes }: RoleSelectorProps) {
   const [personRoles, setPersonRoles] = useState<Record<string, string>>({});
   const [tempRoles, setTempRoles] = useState<string[]>([]);
 

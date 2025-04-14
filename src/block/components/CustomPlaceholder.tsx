@@ -18,9 +18,7 @@ import OrganizationNumberDetector from "./OrganizationNumberDetector";
 import OrganizationIdentifierDetector from "./OrganizationIdentifierDetector";
 import FormatSelector from "./FormatSelector";
 import ShowHideSelector from "./ShowHideSelector";
-import SortSelector from "./SortSelector";
 import NameFormatSelector from "./NameFormatSelector";
-import RoleSelector from "./RoleSelector";
 import PersonIdentifierDetector from "./PersonIdentifierDetector";
 
 interface CustomPlaceholderProps extends PersonSelectorProps {

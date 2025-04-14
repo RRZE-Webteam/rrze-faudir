@@ -1,6 +1,6 @@
 import {__} from "@wordpress/i18n";
 import {SelectControl} from "@wordpress/components";
-import apiFetch, {APIFetchOptions} from '@wordpress/api-fetch';
+import apiFetch from '@wordpress/api-fetch';
 import {EditProps, SettingsRESTApi} from "../types";
 import {useEffect, useState} from "@wordpress/element";
 
