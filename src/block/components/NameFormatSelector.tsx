@@ -22,6 +22,7 @@ export default function NameFormatSelector({attributes, setAttributes, hasFormat
               value={format_displayname}
               onChange={handleFormatDisplayNameChange}
               type="text"
+              help={"Parameter: #givenName#" + ", " + "#displayname#" + ", " + "#familyName#" + ", " + "#honorificPrefix#" + ", " + "#honorificSuffix#" + ", " +  "#titleOfNobility#"}
           />
       }
     </>

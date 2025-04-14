@@ -20,14 +20,13 @@ import ShowHideSelector from "./components/ShowHideSelector";
 import NameFormatSelector from "./components/NameFormatSelector";
 import {edit, check, postAuthor, styles} from "@wordpress/icons";
 import '../scss/rrze-faudir.scss';
+import './editor.scss';
 import {
   EditProps,
   WPCategory,
   CustomPersonParams,
   CustomPersonRESTApi,
   SettingsRESTApi,
-  PersonRoles,
-  DefaultOrganization
 } from "./types";
 import CustomPlaceholder from "./components/CustomPlaceholder";
 import OrganizationIdentifierDetector from "./components/OrganizationIdentifierDetector";
