@@ -93,6 +93,17 @@ class BlockRegistration
                 : [];
             $defaultOrgIdentifier = isset($default_org['id']) ? $default_org['id'] : '';
 
+            if (
+                isset($attributes['display']) &&
+                'org' === $attributes['display'] &&
+                empty($attributes['orgid']) &&
+                empty($attributes['orgnr'])
+            ) {
+                throw new \Exception(
+                    __('You selected display="org", but neither a FAUorganization ID (orgid) nor a FAU Organization Number (orgnr) was provided.', 'rrze-faudir')
+                );
+            }
+
             // First check if we have function and orgnr
             if (!empty($attributes['role'])) {
                 $shortcode_atts = [
