@@ -6,9 +6,16 @@ use RRZE\FAUdir\API;
 use RRZE\FAUdir\Organization;
 use RRZE\FAUdir\Contact;
 
+
+/*
+ * TODO: Diese ganze Lib in eine Class umwandeln und redundante Teile (taxonomien aufräumen!)
+ */
+
+
 // Register the Custom Post Type
 function register_custom_person_post_type() {
     // Get the slug from the options; fallback to 'person' if not set.
+  //   error_log('register_custom_person_post_type called');
     $options = get_option('rrze_faudir_options');
     $slug = isset($options['person_slug']) && !empty($options['person_slug'])
         ? sanitize_title($options['person_slug'])
@@ -48,7 +55,9 @@ add_action('init', 'register_custom_person_post_type', 15);
 
 function register_custom_taxonomy() {
     // Register the taxonomy
+ //    error_log('register_custom_taxonomy called');
     if (!taxonomy_exists('custom_taxonomy')) {
+ //       error_log('do register_taxonomy');
         register_taxonomy(
             'custom_taxonomy', // Taxonomy slug
             'custom_person', // Custom Post Type to attach the taxonomy
@@ -83,9 +92,56 @@ function register_custom_taxonomy() {
 
             )
         );
-    }
+    } else {
+ //        error_log('register_custom_taxonomy: but nothing todo, cause exists');
+    } 
 }
 add_action('init', 'register_custom_taxonomy');
+
+
+
+/*
+ * Die folgenden Funktionen waren vorher in der rrze-faudir.php und scheinen obsolet
+ * TODO: AUfräumen. Zunächst aber hierhin kopiert 
+ */
+
+
+// Register the custom taxonomy before migration
+function register_custom_person_taxonomies() {
+  //      error_log('register_custom_person_taxonomies from Main called');
+    $labels = array(
+        'name'              => _x('Categories', 'taxonomy general name', 'rrze-faudir'),
+        'singular_name'     => _x('Category', 'taxonomy singular name', 'rrze-faudir'),
+        'search_items'      => __('Search Categories', 'rrze-faudir'),
+        'all_items'         => __('All Categories', 'rrze-faudir'),
+        'parent_item'       => __('Parent Category', 'rrze-faudir'),
+        'parent_item_colon' => __('Parent Category:', 'rrze-faudir'),
+        'edit_item'         => __('Edit Category', 'rrze-faudir'),
+        'update_item'       => __('Update Category', 'rrze-faudir'),
+        'add_new_item'      => __('Add New Category', 'rrze-faudir'),
+        'new_item_name'     => __('New Category Name', 'rrze-faudir'),
+        'menu_name'         => __('Categories', 'rrze-faudir'),
+    );
+if (!taxonomy_exists('custom_taxonomy')) {
+   //    error_log('register_custom_person_taxonomies ,  and taxonomy doent exists');
+} else {
+   //   error_log('register_custom_person_taxonomies , even if taxonomy exists.');
+}
+    register_taxonomy('custom_taxonomy', 'custom_person', array(
+        'hierarchical'      => true,
+        'labels'           => $labels,
+        'show_ui'          => true,
+        'show_admin_column' => true,
+        'query_var'        => true,
+        'rewrite'          => array('slug' => 'person-category'),
+        'show_in_rest'     => true,
+        'rest_base'        => 'custom_taxonomy',
+    ));
+}
+
+// Make sure to register the taxonomy on init as well
+add_action('init',  'register_custom_person_taxonomies');
+
 
 // Bug #119
 /* function add_taxonomy_meta_box() {
@@ -157,18 +213,21 @@ function render_person_additional_fields($post) {
     ];
 
     $fields = [
-        '_content_en' => __('Content (English)', 'rrze-faudir'),
-        '_teasertext_en' => __('Teaser Text (English)', 'rrze-faudir'),
+       
         '_teasertext_de' => __('Teaser Text (German)', 'rrze-faudir'),
+         '_content_en' => __('Content (English)', 'rrze-faudir'),
+        '_teasertext_en' => __('Teaser Text (English)', 'rrze-faudir'),
         'person_id' => __('API Person Identifier', 'rrze-faudir'),
         'person_name' => __('Name', 'rrze-faudir'),
+        
         'person_email' => __('Email', 'rrze-faudir'),
         'person_phone' => __('Telephone', 'rrze-faudir'),
         'person_givenName' => __('Given Name', 'rrze-faudir'),
+        'person_titleOfNobility' => __('Nobility Title', 'rrze-faudir'),
         'person_familyName' => __('Family Name', 'rrze-faudir'),
         'person_honorificPrefix' => __('Title', 'rrze-faudir'),
         'person_honorificSuffix' => __('Suffix', 'rrze-faudir'),
-        'person_titleOfNobility' => __('Nobility Title', 'rrze-faudir'),
+       
     ];
 
     // Render regular fields
@@ -186,10 +245,13 @@ function render_person_additional_fields($post) {
             echo '<h2>' . __('FAUdir', 'rrze-faudir').' ' .__('Data', 'rrze-faudir') . '</h2>';
             // Add a hidden input for person_id
             echo "<input type='hidden' id='hidden-person-id' value='" . esc_attr($value) . "' />";
-        } elseif (in_array($meta_key, ['_content_en', '_teasertext_en', '_teasertext_de'])) {
+        } elseif ($meta_key === '_content_en') {    
+            echo "<label for='" . esc_attr($meta_key) . "'>" . esc_html($label) . "</label>";           
+            wp_editor( $value, $meta_key );
+        } elseif (in_array($meta_key, ['_teasertext_en', '_teasertext_de'])) {
             // Handle textarea fields
             echo "<label for='" . esc_attr($meta_key) . "'>" . esc_html($label) . "</label>";
-            echo "<textarea name='" . esc_attr($meta_key) . "' id='" . esc_attr($meta_key) . "' style='width: 100%; height: 100px;' $readonly>" . esc_textarea($value) . "</textarea><br><br>";
+            echo '<textarea name="' . esc_attr($meta_key) . '" id="' . esc_attr($meta_key) . '"'. $readonly.'" style="display:block;" rows="5" cols="80">' . esc_textarea($value) .' </textarea><br><br>';
         } else {
             // Handle other input fields
             echo "<label for='" . esc_attr($meta_key) . "'>" . esc_html($label) . "</label>";

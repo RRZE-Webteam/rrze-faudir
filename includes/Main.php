@@ -5,6 +5,8 @@ namespace RRZE\FAUdir;
 defined('ABSPATH') || exit;
 
 use RRZE\FAUdir\Maintenance;
+use RRZE\FAUdir\BlockRegistration;
+use RRZE\FAUdir\REST;
 /**
  * Hauptklasse
  */
@@ -25,11 +27,12 @@ class Main {
     }
 
     public function onLoaded() {
-           
-        $shortcode = new Shortcode($this->config);
-        
+        new REST();
         $enqueues = new EnqueueScripts($this->pluginFile);
         $enqueues->register();
+
+        $shortcode = new Shortcode($this->config);
+        new BlockRegistration();
     
         // Rufe Maintenance Hooks auf
         $maintenance = new Maintenance($this->config);

@@ -1,0 +1,94 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "rrze-faudir/block",
+  "title": "FAUdir",
+  "category": "rrze",
+  "icon": "businessperson",
+  "description": "Display FAUdir information",
+  "keywords": [
+    "FAUdir",
+    "UnivIS",
+    "Person",
+    "Contact",
+    "Kontakt",
+    "FAU"
+  ],
+  "supports": {
+    "html": false,
+    "anchor": true
+  },
+  "attributes": {
+    "selectedCategory": {
+      "type": "string",
+      "default": ""
+    },
+    "selectedPosts": {
+      "type": "array",
+      "default": []
+    },
+    "selectedPersonIds": {
+      "type": "array",
+      "default": []
+    },
+    "selectedFormat": {
+      "type": "string",
+      "default": "compact"
+    },
+    "selectedFields": {
+      "type": "array",
+      "default": []
+    },
+    "role": {
+      "type": "string",
+      "default": ""
+    },
+    "orgnr": {
+      "type": "string",
+      "default": ""
+    },
+    "url": {
+      "type": "string",
+      "default": ""
+    },
+    "hideFields": {
+      "type": "array",
+      "default": []
+    },
+    "showCategory": {
+      "type": "boolean",
+      "default": false
+    },
+    "showPosts": {
+      "type": "boolean",
+      "default": false
+    },
+    "sort": {
+      "type": "string",
+      "default": "familyName"
+    },
+    "format_displayname": {
+      "type": "string",
+      "default": ""
+    },
+    "initialSetup": {
+      "type": "boolean",
+      "default": true
+    },
+    "display": {
+      "type": "string",
+      "default": ""
+    },
+    "orgid": {
+      "type": "string",
+      "default": ""
+    },
+    "identifier": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "textdomain": "rrze-faudir",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css"
+}

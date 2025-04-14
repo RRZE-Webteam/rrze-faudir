@@ -8,6 +8,7 @@ use RRZE\FAUdir\FaudirUtils;
 use RRZE\FAUdir\Config;
 use RRZE\FAUdir\API;
 use RRZE\FAUdir\Debug;
+use RRZE\FAUdir\Maintenance;
 
 // Add admin menu
 function rrze_faudir_add_admin_menu() {
@@ -132,13 +133,21 @@ function rrze_faudir_settings_init() {
         'rrze_faudir_settings',
         'rrze_faudir_api_section'
     );
-    add_settings_field(
-        'rrze_faudir_person_slug',
-        __('Person Slug', 'rrze-faudir'),
-        'rrze_faudir_person_slug_field',
-        'rrze_faudir_settings',
-        'rrze_faudir_api_section'
-    );
+    if (! function_exists('is_plugin_active')) {
+        include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+    }
+    if (is_plugin_active('fau-person/fau-person.php')) {
+        add_settings_field(
+            'rrze_faudir_import_fau_person',
+            __('Import', 'rrze-faudir'),
+            'rrze_faudir_import_fau_person_render',
+            'rrze_faudir_settings',
+            'rrze_faudir_api_section'
+        );
+    }
+    
+    
+    
 
     // Cache Settings Section
     add_settings_section(
@@ -195,6 +204,31 @@ function rrze_faudir_settings_init() {
         'rrze_faudir_settings_error',
         'rrze_faudir_error_section'
     );
+    
+    
+     // Misc Advanced Settings Section
+    add_settings_section(
+        'rrze_faudir_misc_section',
+        __('Misc Settings', 'rrze-faudir'),
+        'rrze_faudir_misc_section_callback',
+        'rrze_faudir_settings_advanced'
+    );
+
+     add_settings_field(
+        'rrze_faudir_person_slug',
+        __('Person Slug', 'rrze-faudir'),
+        'rrze_faudir_person_slug_render',
+        'rrze_faudir_settings_advanced',
+        'rrze_faudir_misc_section'
+    );
+     
+    add_settings_field(
+        'rrze_faudir_redirect_archivpage_uri',
+        __('Index page', 'rrze-faudir'),
+        'rrze_faudir_misc_section_message_render',
+        'rrze_faudir_settings_advanced',
+        'rrze_faudir_misc_section'
+    );
 
     
     
@@ -235,6 +269,9 @@ function rrze_faudir_profilpage_section_callback() {
     echo '<p>' . esc_html__('Configure the default output fields for the profile page of a single person.', 'rrze-faudir') . '</p>';
 }
 
+function rrze_faudir_misc_section_callback() {
+    echo '<p>' . esc_html__('Configure other advanced settings.', 'rrze-faudir') . '</p>';
+}
 
 
 
@@ -290,6 +327,11 @@ function rrze_faudir_api_key_render() {
         echo '<label><input type="text" name="rrze_faudir_options[api_key]" value="' .  esc_attr($apiKey) . '" size="50">';
         echo '<p class="description">' . esc_html__('Enter your API key here.', 'rrze-faudir') . '</p></label>';
     }
+}
+
+function rrze_faudir_import_fau_person_render() {
+        echo '<button type="button" class="button button-secondary" id="import-fau-person-button">' . esc_html__('Import contact entries from FAU Person', 'rrze-faudir') . '</button>';
+        echo '<p class="description">' . esc_html__('Click the button to restart the import of contact entries from FAU Person. Notice, that this will only import contact entries, which refer to a public viewable person in FAUdir.', 'rrze-faudir') . '</p>'; 
 }
 
 function rrze_faudir_no_cache_logged_in_render() {
@@ -366,7 +408,23 @@ function rrze_faudir_fallback_link_faudir() {
 }
 
 
-function rrze_faudir_person_slug_field() {
+
+function rrze_faudir_misc_section_message_render() {
+     $options = get_option('rrze_faudir_options');
+    $value = isset($options['redirect_archivpage_uri']) ? esc_url($options['redirect_archivpage_uri']) : '';
+
+    echo '<label><input type="text" 
+                 name="rrze_faudir_options[redirect_archivpage_uri]" 
+                 value="' . esc_attr($value) . '" 
+                 class="regular-text" 
+                 placeholder="/">';
+    echo '<p class="description">' . esc_html__('Optional: Path to a local page, which is used as index for all contact entries.', 'rrze-faudir') . '</p></label>';
+
+    
+}
+
+
+function rrze_faudir_person_slug_render() {
     $options = get_option('rrze_faudir_options'); // Get all plugin options
     $default_slug = 'faudir'; // Default slug value
 
@@ -379,7 +437,7 @@ function rrze_faudir_person_slug_field() {
         update_option('rrze_faudir_options', $options);
     }
 
-    echo '<input type="text" id="rrze_faudir_person_slug" name="rrze_faudir_options[person_slug]" value="' . esc_attr($slug) . '" size="50">';
+    echo '<input type="text"  class="regular-text"  id="rrze_faudir_person_slug" name="rrze_faudir_options[person_slug]" value="' . esc_attr($slug) . '" size="10">';
     echo '<p class="description">' . esc_html__('Enter the slug for the person post type.', 'rrze-faudir') . '</p>';
 }
 
@@ -489,6 +547,10 @@ function rrze_faudir_settings_page() {
                 <?php do_settings_sections('rrze_faudir_settings_cache'); ?>
                 <hr>
                 <?php do_settings_sections('rrze_faudir_settings_error'); ?>                
+               <hr>
+                <?php do_settings_sections('rrze_faudir_settings_advanced'); ?>        
+                                
+                                
                 <?php submit_button(); ?>
                 
                 <hr>
@@ -719,6 +781,40 @@ function rrze_faudir_clear_cache() {
     wp_send_json_success(__('All cache cleared successfully.', 'rrze-faudir'));
 }
 add_action('wp_ajax_rrze_faudir_clear_cache', 'rrze_faudir_clear_cache');
+
+
+
+/*
+ * Import FAU Person Function
+ */
+function rrze_faudir_import_fau_person() {
+    $config = new Config;
+    $config->insertOptions();
+//    $options = get_option('rrze_faudir_options');
+//    $apiKey = isset($options['api_key']) ? esc_attr($options['api_key']) : '';
+//   $config->set('api_key', $apiKey);
+
+    $mnt = new Maintenance($config);
+
+    $mnt->migrate_person_data_on_activation();
+    $html = $mnt->rrze_faudir_display_import_notice(false, false);
+    if (!empty($html)) {
+        $html = preg_replace('#<(br|BR)\s*/?>#', "\n", $html);
+        $html = preg_replace('#</?(p|div|li|tr|h[1-6])[^>]*>#i', "\n", $html);
+
+        // Entferne alle übrigen HTML-Tags
+        $text = strip_tags($html);
+
+        // Optional: Mehrere Zeilenumbrüche reduzieren
+        $text = preg_replace("/[\r\n]+/", "\n", $text);
+
+        // Whitespace trimmen
+        $result = trim($text);
+    }
+    wp_send_json_success($result);
+}
+add_action('wp_ajax_rrze_faudir_import_fau_person', 'rrze_faudir_import_fau_person');
+
 
 
 /*

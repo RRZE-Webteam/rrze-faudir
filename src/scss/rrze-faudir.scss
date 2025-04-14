@@ -3,9 +3,6 @@
 // Definition for Custom properties
 @use 'settings';
 
-// For Blocks
-// @use 'blocks/blocks';
-// General classes
 @use 'general-classes';
 
 // Settings-Page in Backend
@@ -18,13 +15,13 @@
 @use 'formats/formats';
 
 // Settings for themes
-@use 'themes/themes'
+@use 'themes/themes';
 
-
-// and to the end we add the codes, we dont know where they are used.
-// maybe they became obsolet in the development and need to removed.
-// @use 'unknown-use';
-
-
-
-
+// Override PanelBodies for FAU-Einrichtungen
+.editor-visual-editor {
+  .wp-block-rrze-faudir-block {
+    .components-button {
+      padding: 1rem 4rem 1rem 1rem;
+    }
+  }
+}

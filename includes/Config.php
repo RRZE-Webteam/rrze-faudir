@@ -22,12 +22,20 @@ class Config {
             'list'  => ['displayname', 'jobTitle', 'url', 'email', 'socialmedia', 'roompos', 'room', 'floor', 'address','faumap', 'link']
         ],
         'avaible_fields_byformat'   => [
-            'table' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],
-            'list'  => ['displayname', 'jobTitle', 'url', 'email', 'socialmedia', 'roompos', 'room', 'floor', 'zip', 'street', 'city', 'faumap', 'link', 'format_displayname'],
-            'compact' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],
-            'page' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'content', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'format_displayname'],
-            'card'  => ['image', 'displayname', 'jobTitle', 'organization', 'url', 'email', 'socialmedia', 'link', 'format_displayname'],
+            'table'         => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],
+            'list'          => ['displayname', 'jobTitle', 'url', 'email', 'socialmedia', 'roompos', 'room', 'floor', 'zip', 'street', 'city', 'faumap', 'link', 'format_displayname'],
+            'compact'       => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],
+            'page'          => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'content', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'format_displayname'],
+            'card'          => ['image', 'displayname', 'jobTitle', 'organization', 'url', 'email', 'socialmedia', 'link', 'format_displayname'],
+            'org-compact'   => ['phone', 'email', 'url', 'socialmedia', 'organization','address', 'faumap', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'content'],
         ],
+        'default_display'   => 'person',
+        'avaible_formats_by_display'   => [
+            'person'    => ['compact', 'table', 'list',  'page', 'card'],               
+            'org'       => ['compact'],
+             // in all cases: first entry is default for the given display
+        ],
+        
         'default_output_fields'     => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia'], // Default fields      
         'default_output_fields_endpoint' => [
             'image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor',  
@@ -53,7 +61,12 @@ class Config {
             "kurzauszug"    => 'teasertext',
             "raum"          => 'room',
             "position"      => 'jobTitle',
-        ]
+        ],
+        
+        'person_taxonomy'   => 'custom_taxonomy',
+            // TODO: CHange to a non generic name!
+        'person_post_type'  => 'custom_person'
+            // TODO: CHange to a non generic name!
     ];
     
 
@@ -192,6 +205,17 @@ class Config {
     }
     
  
+    public function insertOptions(): bool {
+        $options = get_option('rrze_faudir_options', []);
+        $found = false; 
+         foreach ($options as $key => $value) {
+             if (isset($this->config[$key]) && ($this->config[$key] !== $value)) {
+                 $this->config[$key] = $value;
+                 $found = true;
+             }
+         }
+         return $found;
+    }
     
 }
 

@@ -52,10 +52,12 @@ class API {
      */
     public function getPerson(string $personId): ?array {
         if (!$this->api_key) {
-            throw new \Exception("FAUdir\API (getPerson): API Key is required.");
+            error_log('RRZE FAUdir\API::getPerson: API Key missing.');
+            return null;
         }
         if (empty($personId)) {
-            throw new \InvalidArgumentException('FAUdir\API (getPerson): Required field personid missing.');
+            error_log('RRZE FAUdir\API::getPerson: Required field personid missing.');
+            return null;
         }
         $url = "{$this->baseUrl}/persons/{$personId}";
         
@@ -75,11 +77,13 @@ class API {
      * @return array|null on not found
      */
     public function getContact(string $contactId): ?array {
-        if (!$this->api_key) {
-            throw new \Exception("FAUdir\API (getContact): API Key is required.");
+        if (!$this->api_key) {       
+            error_log('RRZE FAUdir\API::getContact: API Key missing.');
+            return null;
         }
         if (empty($contactId)) {
-            throw new \InvalidArgumentException('FAUdir\API (getContact): Required field personid missing.');
+            error_log('RRZE FAUdir\API::getContact: Required field contactId missing.');
+            return null;
         }
         $url = "{$this->baseUrl}/contacts/{$contactId}";
         
@@ -106,10 +110,12 @@ class API {
      */
      public function getPersons($limit = 60, $offset = 0, $params = []): ?array {    
         if (!$this->api_key) {
-            throw new \Exception("FAUdir\API (getPersons): API Key is required.");
+             error_log('RRZE FAUdir\API::getPersons: API Key missing.');
+             return null;
         }
         if (empty($params)) {
-            throw new \InvalidArgumentException('FAUdir\API (getPersons): Required params missing.');
+            error_log("FAUdir\API (getPersons): Required params missing.");
+            return null;
         }
         $url = "{$this->baseUrl}/persons";
     
@@ -174,10 +180,12 @@ class API {
     */
     function getContacts($limit = 20, $offset = 0, $params = []) { 
         if (!$this->api_key) {
-            throw new \Exception("FAUdir\API (getContacts): API Key is required.");
+            error_log('RRZE FAUdir\API::getPersons: API Key missing.');
+            return null;
         }
         if (empty($params)) {
-            throw new \InvalidArgumentException('FAUdir\API (getContacts): Required params missing.');
+            error_log("FAUdir\API (getContacts): Required params missing.");
+            return null;
         }
         $url = "{$this->baseUrl}/contacts";
         $url .= '?limit=' . $limit . '&offset=' . $offset;
@@ -239,10 +247,12 @@ class API {
     */
     public function getOrgList($limit = 100, $offset = 0, $params = []): ?array {
         if (!$this->api_key) {
-            throw new \Exception("FAUdir\API (getOrgList): API Key is required.");
+            error_log('RRZE FAUdir\API::getOrgList: API Key missing.');
+            return null;
         }   
         if (empty($params)) {
-            throw new \InvalidArgumentException('FAUdir\API (getContacts): Required params missing.');
+            error_log('RRZE FAUdir\API::getOrgList: Required params missing.');
+            return null;
         }
         $url = "{$this->baseUrl}/organizations";
         $url .= '?limit=' . $limit . '&offset=' . $offset;
@@ -263,7 +273,7 @@ class API {
                 $url .= '&' . $param . '=' . urlencode($params[$param]);
             }
         }
-        // Handle givenName and familyName as special cases to be combined into the 'q' parameter
+        // Handle orgnr as special cases to be combined into the 'q' parameter
         if (!empty($params['orgnr'])) {
             $url .= '&q=' . urlencode('^' . $params['orgnr']);
         }
@@ -285,10 +295,12 @@ class API {
      */
     public function getOrgById(string $orgid): ?array {
         if (!$this->api_key) {
-            throw new \Exception("FAUdir\API (getOrgById): API Key is required.");
+            error_log('RRZE FAUdir\API::getOrgById: API Key missing.');
+            return null;
         }
         if (empty($orgid)) {
-            throw new \InvalidArgumentException('FAUdir\API (getOrgById): Required field orgid missing.');
+            error_log('RRZE FAUdir\API::getOrgById: Required field orgid missing.');
+            return null;
         }
         $url = "{$this->baseUrl}/organizations/{$orgid}";
         
@@ -319,7 +331,8 @@ class API {
      */
     private function makeRequest(string $url, string $method, ?array $data = null): ?array {
         if (!$this->api_key) {
-            throw new \Exception("FAUdir\API (makeRequest): API Key is required.");
+            error_log('RRZE FAUdir\API::makeRequest: API Key missing.');
+            return null;
         }
         if ($method === "GET" && $data) {
             // Daten als URL-Parameter kodieren und an die URL anhängen
