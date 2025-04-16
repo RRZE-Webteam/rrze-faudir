@@ -211,7 +211,8 @@ class Person {
         // Iteriere über die Kontakte
         foreach ($this->contacts as $contact) {
             $contactIdentifier = $contact['identifier'] ?? null;
-            if ($contactIdentifier) {                  
+            if ($contactIdentifier) {        
+                
                 $contactData = $api->getContacts(0, 0, ['identifier' => $contactIdentifier]);
                 
                 if (!empty($contactData['data'])) {

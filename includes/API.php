@@ -7,6 +7,14 @@ defined('ABSPATH') || exit;
 class API {
     private string $baseUrl = 'https://api.fau.de/pub/v1/opendir/';
     private string $api_key;
+    private string $transient_prefix = 'faudir_api_';
+    private int $transient_jitter_minutes = 5;
+    private array $transient_times = [
+        "persons"       => 120,
+        "contacts"      => 120,
+        "organizations" => 240,
+        "default"       => 150,
+    ];
     private Config $config;
 
     public function __construct(Config $config) {
@@ -180,14 +188,14 @@ class API {
     */
     function getContacts($limit = 20, $offset = 0, $params = []) { 
         if (!$this->api_key) {
-            error_log('RRZE FAUdir\API::getPersons: API Key missing.');
+            error_log('RRZE FAUdir\API::getContacts: API Key missing.');
             return null;
         }
         if (empty($params)) {
             error_log("FAUdir\API (getContacts): Required params missing.");
             return null;
         }
-        $url = "{$this->baseUrl}/contacts";
+        $url = "{$this->baseUrl}contacts";
         $url .= '?limit=' . $limit . '&offset=' . $offset;
         $param_uri = '';
         
@@ -339,7 +347,13 @@ class API {
             $queryString = http_build_query($data);
             $url .= '?' . $queryString;
         }
-       
+               
+        // Prüfe, ob gecachte Daten existieren
+        $cached = $this->get_cache_data($url);
+        if (!is_null($cached)) {
+            return $cached;
+        }
+        
         
         $response = wp_remote_get($url, array(
             'headers' => array(
@@ -361,9 +375,62 @@ class API {
         if (json_last_error() !== JSON_ERROR_NONE) {
             return array('error' => true, 'message' => 'Error decoding JSON data');
         }
-
+        
+        // Speichere im Cache
+        $this->set_cache_data($url, $data);
+        
         return $data;
         
         
     }
+ 
+    // Take a look for avaible transient data
+    private function get_cache_data(string $url): ?array {
+        $parsed_url = parse_url($url);
+        $path = $parsed_url['path'] ?? '';
+
+        // Entferne die baseURL aus dem Pfad
+        $relative_path = str_replace(parse_url($this->baseUrl, PHP_URL_PATH), '', $path);
+        $parts = explode('/', trim($relative_path, '/'));
+
+        $endpoint = $parts[0] ?? 'default';
+
+        // 2. Transient-Lifetime in Sekunden (Fallback: default)
+        $minutes = $this->transient_times[$endpoint] ?? $this->transient_times['default'];
+        $lifetime = $minutes * 60;
+
+        $transient_key = $this->transient_prefix . $endpoint . '_' . md5($url);
+
+        $cached = get_transient($transient_key);
+        if ($cached !== false) {
+            return $cached;
+        }
+
+        return null;    
+    }
+    
+    // Save data as transient
+    private function set_cache_data(string $url, array $data): void {
+        $parsed_url = parse_url($url);
+        $path = $parsed_url['path'] ?? '';
+
+        // Entferne die baseURL aus dem Pfad
+        $relative_path = str_replace(parse_url($this->baseUrl, PHP_URL_PATH), '', $path);
+        $parts = explode('/', trim($relative_path, '/'));
+        
+        // Der Endpoint ist das erste Element nach der Base-URL
+        $endpoint = $parts[0] ?? 'default';
+
+        // Bestimme Cache-Dauer mit optionalem Zufalls-Offset
+        $base_lifetime = $this->transient_times[$endpoint] ?? $this->transient_times['default'];
+        $random_offset = rand(0, $this->transient_jitter_minutes) * 60;
+        $lifetime = ($base_lifetime * 60) + $random_offset;
+
+        // Erzeuge Transient-Key und speichere die Daten
+        $transient_key = $this->transient_prefix . $endpoint . '_' . md5($url);
+        set_transient($transient_key, $data, $lifetime);
+    }
+
+
+
 }
