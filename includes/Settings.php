@@ -775,9 +775,20 @@ add_action('wp_ajax_rrze_faudir_reset_defaults', 'rrze_faudir_reset_defaults');
  */
 function rrze_faudir_clear_cache() {
     global $wpdb;
-    // Delete all transients related to the plugin's cache
-    $wpdb->query("DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '%_transient_rrze_faudir%'");
+    // Delete Transients:
+    $prefix = '_transient_faudir_';
+    $prefix_timeout = '_transient_timeout_faudir_';
 
+    $wpdb->query( $wpdb->prepare(
+        "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+        $prefix . '%'
+    ) );
+
+    $wpdb->query( $wpdb->prepare(
+        "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+        $prefix_timeout . '%'
+    ) );
+    
     wp_send_json_success(__('All cache cleared successfully.', 'rrze-faudir'));
 }
 add_action('wp_ajax_rrze_faudir_clear_cache', 'rrze_faudir_clear_cache');
@@ -790,9 +801,6 @@ add_action('wp_ajax_rrze_faudir_clear_cache', 'rrze_faudir_clear_cache');
 function rrze_faudir_import_fau_person() {
     $config = new Config;
     $config->insertOptions();
-//    $options = get_option('rrze_faudir_options');
-//    $apiKey = isset($options['api_key']) ? esc_attr($options['api_key']) : '';
-//   $config->set('api_key', $apiKey);
 
     $mnt = new Maintenance($config);
 
