@@ -55,7 +55,6 @@ class Maintenance {
         add_action('template_redirect', [$this, 'custom_cpt_404_message']);
     }
 
-
     public function migrate_person_data_on_activation() {
         register_custom_taxonomy();
 
@@ -69,9 +68,8 @@ class Maintenance {
         $imported_list = [];
         $not_imported_count = 0;
         $not_imported_reasons = [];
-        
-        if (empty($this->config->get('api_key'))) {
-            // No API Key, there notice this and then stop here.
+
+        if (empty($this->config->get('api_key')) && !API::isUsingNetworkKey()) {
            $not_imported_count = count($contact_posts);
            if ($not_imported_count > 0) {
                $not_imported_reasons[] = __('API Key missing. Please enter an API key in settings.', 'rrze-faudir'). ' '.__('After this you can restart importing old contact entries from there.', 'rrze-faudir');
@@ -82,10 +80,7 @@ class Maintenance {
             if (!empty($contact_posts)) {            
                 foreach ($contact_posts as $post) {
 
-                    // Get Univis ID from old post
                     $univisid = get_post_meta($post->ID, 'fau_person_univis_id', true);
-
-                    // Check if a custom_person with this UnivIS ID and identifier already exists
                     $existing_person = get_posts([
                         'post_type' => 'custom_person',
                         'meta_query' => [
@@ -131,7 +126,7 @@ class Maintenance {
                            } else if (!empty($email)) {
                                // search for contacts with the email
 
-                               $response = $api->getContacts(1, 0, ['lq' => 'workplaces.mails=' . $email]);          
+                               $response = $api->getContacts(1, 0, ['q' => $email]);
 
                                if (empty($response['data'])) {
                                    $queryParts[] = 'email=' . $email;
@@ -145,10 +140,12 @@ class Maintenance {
                                $queryParts[] = 'familyName=' . $familyName;
                            }
 
-
-                           $params = [
-                               'lq' => implode('&', $queryParts)
-                           ];
+                            $params = [
+                                'identifier' => $identifier,
+                                'email'      => $email,
+                                'givenName'  => $givenName,
+                                'familyName' => $familyName,
+                            ];
 
                            $response = $api->getPersons(1, 0, $params); 
 
