@@ -85,7 +85,7 @@ jQuery(document).ready(function ($) {
         }
 
         // Ziel-Div festlegen, in dem die Fortschrittsanzeige und die Antwort angezeigt werden
-        var $target = $('#tab-5');
+        var $target = $('#migration-progress');
 
         // Vorherigen Inhalt entfernen und eine Fortschrittsanzeige einfügen
         $target.empty().append(

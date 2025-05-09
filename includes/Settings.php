@@ -542,6 +542,7 @@ function rrze_faudir_settings_page() {
 
             <!-- Reset Settings Tab -->
             <div id="tab-5" class="tab-content" style="display:none;">
+                <div id="migration-progress" style="margin-top: 1rem;"></div>
                 <?php do_settings_sections('rrze_faudir_settings'); ?>
                 <hr>
                 <?php do_settings_sections('rrze_faudir_settings_cache'); ?>
