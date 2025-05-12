@@ -80,20 +80,53 @@ jQuery(document).ready(function ($) {
 
     // Clear cache button handler
     $('#import-fau-person-button').on('click', function () {
-        if (confirm(rrzeFaudirAjax.confirm_import)) {
-            $.post(rrzeFaudirAjax.ajax_url, {
-                action: 'rrze_faudir_import_fau_person',
-                security: rrzeFaudirAjax.api_nonce
-            }, function (response) {
-                if (response.success) {
-                    alert(response.data);
-                } else {
-                    alert('No contact from FAU Person imported.');
-                }
-            });
+        if (!confirm(rrzeFaudirAjax.confirm_import)) {
+            return; // Import abgebrochen
         }
-    });
 
+        // Ziel-Div festlegen, in dem die Fortschrittsanzeige und die Antwort angezeigt werden
+        var $target = $('#migration-progress');
+
+        // Vorherigen Inhalt entfernen und eine Fortschrittsanzeige einfügen
+        $target.empty().append(
+            '<div id="import-progress">' +
+            '<div class="progress-bar" style="width: 0%; height: 20px; background-color: #4CAF50;"></div>' +
+            '</div>' +
+            '<div id="import-response" style="margin-top: 10px;"></div>'
+        );
+
+        // Simuliere einen progressiven Fortschritt
+        var progressInterval = setInterval(function () {
+            var $progressBar = $('#import-progress .progress-bar');
+            // Hole die aktuelle Breite in Prozent
+            var currentWidth = parseInt($progressBar.css('width')) / $('#import-progress').width() * 100 || 0;
+            // Erhöhe die Breite bis maximal 90%
+            currentWidth = Math.min(currentWidth + 10, 90);
+            $progressBar.css('width', currentWidth + '%');
+        }, 500);
+
+        // AJAX-Aufruf für den Import
+        $.post(rrzeFaudirAjax.ajax_url, {
+            action: 'rrze_faudir_import_fau_person',
+            security: rrzeFaudirAjax.api_nonce
+        }, function (response) {
+            clearInterval(progressInterval);
+            // Setze die Fortschrittsanzeige auf 100%
+            $('#import-progress .progress-bar').css('width', '100%');
+
+            // Gib im Response-Div die Rückgabe aus
+            if (response.success) {
+                var formattedData = response.data.replace(/\n/g, '</li><li>');
+                $('#import-response').html('<ul style="max-width: 75ch;"><li>' + formattedData + '</li></ul>');
+            } else {
+                $('#import-response').html('<p>No contact from FAU Person imported.</p>');
+            }
+        }).fail(function () {
+            clearInterval(progressInterval);
+            $('#import-progress .progress-bar').css('width', '100%');
+            $('#import-response').html('<p>An error occurred during the import.</p>');
+        });
+    });
 
     // Prevent form submission on Enter key
     $('#search-person-form input').on('keypress', function (e) {

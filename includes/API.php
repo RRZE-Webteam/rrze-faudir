@@ -26,7 +26,7 @@ class API {
     }
     
    
-    private static function isUsingNetworkKey(): bool  {
+    public static function isUsingNetworkKey(): bool  {
         if (is_multisite()) {
             $settingsOptions = get_site_option('rrze_settings');
             if (!empty($settingsOptions->plugins->faudir_public_apiKey)) {
@@ -50,8 +50,6 @@ class API {
         return $this->baseUrl;
     }
     
-     
-    
     
     /**
      * Get a person
@@ -67,7 +65,7 @@ class API {
             error_log('RRZE FAUdir\API::getPerson: Required field personid missing.');
             return null;
         }
-        $url = "{$this->baseUrl}/persons/{$personId}";
+        $url = "{$this->baseUrl}persons/{$personId}";
         
         $response = $this->makeRequest($url, "GET");
 
@@ -93,7 +91,7 @@ class API {
             error_log('RRZE FAUdir\API::getContact: Required field contactId missing.');
             return null;
         }
-        $url = "{$this->baseUrl}/contacts/{$contactId}";
+        $url = "{$this->baseUrl}contacts/{$contactId}";
         
         $response = $this->makeRequest($url, "GET");
 
@@ -116,7 +114,7 @@ class API {
      * @param array $params - Additional query parameters
      * @return array - Array of persons 
      */
-     public function getPersons($limit = 60, $offset = 0, $params = []): ?array {    
+     public function getPersons($limit = 60, $offset = 0, $params = [], bool $retry = true): ?array {
         if (!$this->api_key) {
              error_log('RRZE FAUdir\API::getPersons: API Key missing.');
              return null;
@@ -125,7 +123,7 @@ class API {
             error_log("FAUdir\API (getPersons): Required params missing.");
             return null;
         }
-        $url = "{$this->baseUrl}/persons";
+        $url = "{$this->baseUrl}persons";
     
         $url .= '?limit=' . $limit . '&offset=' . $offset;
         $param_uri = '';
@@ -141,30 +139,48 @@ class API {
             'lf'
         ];
 
+         if (!isset($params['q'])) {
+             if (!empty($params['email'])) {
+                 $params['q'] = '^' . $params['email'];
+             } elseif (!empty($params['identifier'])) {
+                 $params['q'] = '^' . $params['identifier'];
+             } elseif (!empty($params['givenName']) || !empty($params['familyName'])) {
+                 $params['q'] = '^' . trim(($params['givenName'] ?? '')
+                         . ' ' . ($params['familyName'] ?? ''));
+             }
+         }
 
-        // Loop through the parameters and append them to the URL if they exist in $params
+         // Loop through the parameters and append them to the URL if they exist in $params
         foreach ($query_params as $param) {
             if (!empty($params[$param])) {
-                $param_uri .= '&' . $param . '=' . urlencode($params[$param]);
+                $param_uri .= '&' . $param . '=' . $this->encodeParam($param, $params[$param]);
             }
         }
 
-        // Handle givenName and familyName as special cases to be combined into the 'q' parameter
-        if (!empty($params['givenName'])) {
-            $param_uri .= '&q=' . urlencode('^' . $params['givenName']);
-        }
-        if (!empty($params['familyName'])) {
-            $param_uri .= '&q=' . urlencode('^' . $params['familyName']);
-        }
-        if (!empty($params['identifier'])) {
-            $param_uri .= '&q=' . urlencode('^' . $params['identifier']);
-        }
-        if (!empty($params['email'])) {
-            $param_uri .= '&q=' . urlencode('^' . $params['email']);
-        }
         if (!empty($param_uri)) {
             $url .= $param_uri;
-            $response = $this->makeRequest($url, "REST");
+            $response = $this->makeRequest($url, "GET");
+
+            if ($retry && (empty($response) || empty($response['data']))) {
+
+                // Mail & ID empty, retry with Name and First Name
+                if (!empty($params['givenName']) || !empty($params['familyName'])) {
+                    unset($params['q']);
+                    $params['q'] = '^' . trim(($params['givenName'] ?? '')
+                            . ' ' . ($params['familyName'] ?? ''));
+                    return $this->getPersons($limit, $offset, $params, false);
+                }
+
+                // Still no match, retry with workplace mail
+                if (!empty($params['email'])) {
+                    unset($params['q']);
+                    $params['q'] = $params['email'];
+                    return $this->getPersons($limit, $offset, $params, false);
+                }
+
+                // No match found
+                return $response;
+            }
 
             if (!$response) {
                 error_log("FAUdir\API (getPersons): No response from server on {$url}.");
@@ -186,7 +202,7 @@ class API {
     * @param array $params - Additional query parameters
     * @return array - Array of contacts
     */
-    function getContacts($limit = 20, $offset = 0, $params = []) { 
+    function getContacts($limit = 20, $offset = 0, $params = []) {
         if (!$this->api_key) {
             error_log('RRZE FAUdir\API::getContacts: API Key missing.');
             return null;
@@ -210,30 +226,27 @@ class API {
             'lf'
         ];
 
-        // Loop through the parameters and append them to the URL if they exist in $params
-        foreach ($query_params as $param) {
-            if (!empty($params[$param])) {
-                $param_uri .= '&' . $param . '=' . urlencode($params[$param]);
+        if (!isset($params['q'])) {
+            if (!empty($params['email'])) {
+                $params['q'] = '^' . $params['email'];
+            } elseif (!empty($params['identifier'])) {
+                $params['q'] = '^' . $params['identifier'];
+            } elseif (!empty($params['givenName']) || !empty($params['familyName'])) {
+                $params['q'] = '^' . trim(($params['givenName'] ?? '')
+                        . ' ' . ($params['familyName'] ?? ''));
             }
         }
 
-        // Handle givenName and familyName as special cases to be combined into the 'q' parameter
-        if (!empty($params['givenName'])) {
-            $param_uri .= '&q=' . urlencode('^' . $params['givenName']);
+        // Loop through the parameters and append them to the URL if they exist in $params
+        foreach ($query_params as $param) {
+            if (!empty($params[$param])) {
+                $param_uri .= '&' . $param . '=' . $this->encodeParam($param, $params[$param]);
+            }
         }
-        if (!empty($params['familyName'])) {
-            $param_uri .= '&q=' . urlencode('^' . $params['familyName']);
-        }
-        if (!empty($params['identifier'])) {
-            $param_uri .= '&q=' . urlencode('^' . $params['identifier']);
-        }
-        if (!empty($params['email'])) {
-            $param_uri .= '&q=' . urlencode('^' . $params['email']);
-        }
-        
+
         if (!empty($param_uri)) {
             $url .= $param_uri;
-            $response = $this->makeRequest($url, "REST");
+            $response = $this->makeRequest($url, "GET");
 
             if (!$response) {
                 error_log("FAUdir\API (getContacts): No response from server on {$url}.");
@@ -262,7 +275,7 @@ class API {
             error_log('RRZE FAUdir\API::getOrgList: Required params missing.');
             return null;
         }
-        $url = "{$this->baseUrl}/organizations";
+        $url = "{$this->baseUrl}organizations";
         $url .= '?limit=' . $limit . '&offset=' . $offset;
         
 
@@ -278,14 +291,14 @@ class API {
         // Loop through the parameters and append them to the URL if they exist in $params
         foreach ($query_params as $param) {
             if (!empty($params[$param])) {
-                $url .= '&' . $param . '=' . urlencode($params[$param]);
+                $url .= '&' . $param . '=' . $this->encodeParam($param, $params[$param]);
             }
         }
         // Handle orgnr as special cases to be combined into the 'q' parameter
         if (!empty($params['orgnr'])) {
             $url .= '&q=' . urlencode('^' . $params['orgnr']);
         }
-        $response = $this->makeRequest($url, "REST");
+        $response = $this->makeRequest($url, "GET");
 
         if (!$response) {
             error_log("FAUdir\API (getOrgList): No valid response from server on {$url}.");
@@ -310,7 +323,7 @@ class API {
             error_log('RRZE FAUdir\API::getOrgById: Required field orgid missing.');
             return null;
         }
-        $url = "{$this->baseUrl}/organizations/{$orgid}";
+        $url = "{$this->baseUrl}organizations/{$orgid}";
         
         
         // TODO: Add cache here, cause this requests will be repeated often 
@@ -326,8 +339,14 @@ class API {
         // Wandelt das Array in ein Profil-Objekt um
         return $response;
     }
-   
-    
+
+    /**
+     * Encodes a query parameter without affecting lq's = and & symbols
+     */
+    private function encodeParam(string $key, string $value): string
+    {
+        return urlencode($value);
+    }
    
     /**
      * Führt eine HTTP-Anfrage aus.
@@ -342,6 +361,7 @@ class API {
             error_log('RRZE FAUdir\API::makeRequest: API Key missing.');
             return null;
         }
+
         if ($method === "GET" && $data) {
             // Daten als URL-Parameter kodieren und an die URL anhängen
             $queryString = http_build_query($data);
@@ -378,7 +398,7 @@ class API {
         
         // Speichere im Cache
         $this->set_cache_data($url, $data);
-        
+
         return $data;
         
         
