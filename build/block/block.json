@@ -71,6 +71,10 @@
       "type": "string",
       "default": ""
     },
+    "identifier": {
+      "type": "string",
+      "default": ""
+    },
     "initialSetup": {
       "type": "boolean",
       "default": true
@@ -80,10 +84,6 @@
       "default": ""
     },
     "orgid": {
-      "type": "string",
-      "default": ""
-    },
-    "identifier": {
       "type": "string",
       "default": ""
     }

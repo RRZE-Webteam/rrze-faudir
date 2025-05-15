@@ -16,9 +16,8 @@ export default function PersonIdentifierDetector({
                                                  label,
                                                  helpText
                                                }: PersonIdentifierDetectorProps) {
-  const [localValue, setLocalValue] = useState<string>(attributes.orgid || "");
+  const [localValue, setLocalValue] = useState<string>(attributes.identifier || "");
   const [errorMessage, setErrorMessage] = useState<string>("");
-
   const handlePersonIdentifierChange = (value: string) => {
     const trimmedValue = value.trim();
 

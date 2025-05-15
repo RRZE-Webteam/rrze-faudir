@@ -16,12 +16,14 @@ interface AttributesV1 {
   showPosts: boolean;
   sort: string;
   format_displayname: string;
+  identifier: string;
 }
 
 const migrateV2_2_11 = ( attributes: AttributesV1 ) => {
   const newAttributes = {
     ...attributes,
     initialSetup: false,
+    identifier: attributes.identifier || ''
   };
 
   if (newAttributes.selectedFormat === 'kompakt') {
@@ -85,6 +87,10 @@ const deprecated: BlockDeprecation<AttributesV1>[] = [
       format_displayname: {
         type: 'string',
         default: '',
+      },
+      identifier: {
+        type: 'string',
+        default: ''
       },
     },
     save: () => null,
