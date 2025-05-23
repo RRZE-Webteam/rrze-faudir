@@ -6,9 +6,10 @@ import {EditProps} from '../types';
 
 interface RoleSelectorProps {
   setAttributes: EditProps['setAttributes'];
+  attributes: EditProps['attributes'];
 }
 
-export default function RoleSelector({ setAttributes }: RoleSelectorProps) {
+export default function RoleSelector({ attributes, setAttributes }: RoleSelectorProps) {
   const [personRoles, setPersonRoles] = useState<Record<string, string>>({});
   const [tempRoles, setTempRoles] = useState<string[]>([]);
 
@@ -24,9 +25,18 @@ export default function RoleSelector({ setAttributes }: RoleSelectorProps) {
       });
   }, []);
 
+  useEffect(() => {
+    if (attributes.role) {
+      setTempRoles(attributes.role.split(',').map((item) => item.trim()).filter(Boolean));
+    }
+  }, [attributes.role]);
+
   const onPersonRoleChange = (value: string) => {
-    setTempRoles([...tempRoles, value]);
-    //setAttributes({ role: value });
+    if (!tempRoles.includes(value)) {
+      const newRoles = [...tempRoles, value];
+      setTempRoles(newRoles);
+      setAttributes({ role: newRoles.join(',') });
+    }
   };
 
   const options = Object.entries(personRoles).map(([roleKey, roleLabel]) => ({
