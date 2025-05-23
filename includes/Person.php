@@ -686,7 +686,7 @@ class Person {
             $this->primary_contact = new Contact($this->contacts[$displayed_contacts]);
             return $this->primary_contact;
         } else {
-            $this->primary_contact = new Contact($this->contacts[0]);
+            $this->primary_contact = new Contact($this->contacts);
             return $this->primary_contact;
         }
                             
