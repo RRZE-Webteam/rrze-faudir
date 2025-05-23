@@ -20,6 +20,7 @@ import FormatSelector from "./FormatSelector";
 import ShowHideSelector from "./ShowHideSelector";
 import NameFormatSelector from "./NameFormatSelector";
 import PersonIdentifierDetector from "./PersonIdentifierDetector";
+import RoleSelector from "./RoleSelector";
 
 interface CustomPlaceholderProps extends PersonSelectorProps {
   attributes: EditProps['attributes'];
@@ -122,6 +123,8 @@ export default function CustomPlaceholder({
                               selectedCategory={attributes.selectedCategory}
                               setAttributes={setAttributes}
                             />
+                            <Heading level={3}>{__('Filter by FAUdir-Role', 'rrze-faudir')}</Heading>
+                            <RoleSelector setAttributes={setAttributes}/>
                           </Spacer>
                         </>
                       </PanelBody>

@@ -216,6 +216,8 @@ export default function Edit({attributes, setAttributes}: EditProps) {
                 setAttributes={setAttributes}
               />
               <hr />
+              <RoleSelector setAttributes={setAttributes}/>
+              <hr />
               <OrganizationNumberDetector
                 attributes={attributes}
                 setAttributes={setAttributes}

@@ -48,7 +48,7 @@ export default function RoleSelector({ setAttributes }: RoleSelectorProps) {
         options={options}
         onChange={onPersonRoleChange}
         label={__('Filter by Role', 'rrze-faudir')}
-        help={__('Select a category to filter the person entries by.', 'rrze-faudir')}
+        help={__('Filter contact entries by FAUdir job / FAUdir role.', 'rrze-faudir')}
         allowReset={false}
         value={""}
       />
