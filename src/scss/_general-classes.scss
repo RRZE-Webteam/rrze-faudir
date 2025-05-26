@@ -130,6 +130,10 @@
     a {
 	color: var(--faudir-color-links);
     }
+    .content p:empty {
+	display: none;
+    }
+    
 }
 
 

@@ -84,7 +84,9 @@ class Shortcode {
         $options = get_option('rrze_faudir_options');
         $no_cache_logged_in = isset($options['no_cache_logged_in']) && $options['no_cache_logged_in'];    
         if ($no_cache_logged_in && is_user_logged_in()) {
-            return self::fetch_and_render_fau_data($atts);
+            $output = self::fetch_and_render_fau_data($atts);
+            $output = do_shortcode(shortcode_unautop($output));
+            return $output;
         }
 
         $cache_key = 'faudir_shortcode_' . md5(serialize($atts));
@@ -92,16 +94,21 @@ class Shortcode {
 
         // Check if cached data exists
         $cached_data = get_transient($cache_key);
+        
+     
         if ($cached_data !== false) {
-            return $cached_data; 
+            return  do_shortcode(shortcode_unautop($cached_data));
         }
         
         // Fetch and render fresh data
         $output = self::fetch_and_render_fau_data($atts);
-
+       
         // Cache the rendered output using Transients API
+        // Dont execute shortcodes here and safe the raw code! Cause they have to be executed on 
+        // creating the website, due the fact that they might embed js oder css.
         set_transient($cache_key, $output, $cache_timeout);
-
+                
+        $output = do_shortcode(shortcode_unautop($output));
         return $output;
     }
 

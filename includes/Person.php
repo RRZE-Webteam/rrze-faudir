@@ -540,10 +540,15 @@ class Person {
         if ($postid !== 0) {
             if ($lang === 'de') {
                 $raw_content = get_post_field('post_content', $postid);
-                $content   = apply_filters('the_content', $raw_content);
+        //        $content   = apply_filters('the_content', $raw_content);
+                // dont execute shortcodes here, cause we need the rawdata in the cache
+                $content = $raw_content;
+                
             } else {
                 $raw_content = get_post_meta($postid, '_content_en', true);
-                $content   = apply_filters('the_content', $raw_content);
+      //          $content   = apply_filters('the_content', $raw_content);
+                 // dont execute shortcodes here, cause we need the rawdata in the cache
+                 $content = $raw_content;
             }
             return $content;
         }             

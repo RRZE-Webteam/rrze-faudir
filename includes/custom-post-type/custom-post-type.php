@@ -39,7 +39,7 @@ function register_custom_person_post_type() {
             'slug' => $slug, // Use dynamic slug
             'with_front' => false // Optional: Disable prefix (like /blog/)
         ),
-        'supports'           => array('title', 'editor', 'thumbnail', 'custom-fields'),
+        'supports'           => array('title', 'editor', 'thumbnail'),
         'taxonomies'         => array('custom_taxonomy'),
         'show_in_rest'       => true,
         'rest_base'          => 'custom_person',
@@ -420,9 +420,9 @@ function save_person_additional_fields($post_id) {
         }
     }
 
+    
     // List of fields to save from the form
     $fields = [
-        '_content_en',
         '_teasertext_en',
         '_teasertext_de',
         'person_id',
@@ -436,6 +436,7 @@ function save_person_additional_fields($post_id) {
         'person_titleOfNobility',
     ];
 
+    
     // Save each field
     foreach ($fields as $field) {
         if (isset($_POST[$field])) {
@@ -443,6 +444,23 @@ function save_person_additional_fields($post_id) {
         }
     }
 
+    
+    // save english content text  '_content_en' from wp_editor()
+    $allowed_html = wp_kses_allowed_html( 'post' );
+    unset ( $allowed_html['textarea'] );
+
+   array_walk_recursive(
+       $allowed_html,
+       function ( &$value ) {
+           if ( is_bool( $value ) ) {
+               $value = array();
+           }
+       }
+   );
+   // Run sanitization.
+   $value = wp_kses( $_POST['_content_en'], $allowed_html );
+   update_post_meta($post_id, '_content_en', $value);
+    
     // Save displayed_contacts
     
     update_post_meta($post_id, 'displayed_contacts', intval($_POST['displayed_contacts']));

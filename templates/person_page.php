@@ -279,7 +279,7 @@ if (!defined('ABSPATH')) {
                             $wval = $person->getContent($lang);
                             if (!empty($wval)) {
                                 $profilcontent .= '<div class="content">';
-                                $profilcontent .= do_shortcode(shortcode_unautop($wval));
+                                $profilcontent .= $wval;
                                 $profilcontent .= '</div>';
                             }
                     }
