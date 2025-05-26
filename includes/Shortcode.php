@@ -58,12 +58,18 @@ class Shortcode {
                 'role'                  => '',
                 'button-text'           => '',
                 'format_displayname'    => '',
-                'display'               => ''
+                'display'               => '',
+                'lang'                  => ''
             ),
             $atts
         );
         if (empty($atts['display'])) {
             $atts['display'] = self::$config->get('default_display');
+        }
+        if (empty($atts['lang'])) {
+            $atts['lang'] = $lang;
+        } else {
+            $lang = $atts['lang'];
         }
         
         if ((!empty($atts['function'])) && (empty( $atts['role']))) {
