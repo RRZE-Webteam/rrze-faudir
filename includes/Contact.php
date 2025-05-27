@@ -656,38 +656,46 @@ class Contact {
     /*
      * Build JobTitle by Functionlabel and Orgname
      */
-    public function getJobTitle(string $lang = "de"): ?string {
+    public function getJobTitle(string $lang = "de", ?string $template =  null): ?string {
         $label = $this->getFunctionLabel($lang);
         
         if (empty($label)) {
             return '';
         }
-        
 
         if (empty($this->organization) || !isset($this->organization['longDescription'])) {
             return $label;
         }
     
-        $jobtitle = $label;
         $orgname = '';
         if ((!empty($lang)) && (isset($this->organization['longDescription'][$lang]))) {
             $orgname = $this->organization['longDescription'][$lang];
         }
         
-         if (!empty($lang) && !empty($this->organization['longDescription'][$lang])) {
+        if (!empty($lang) && !empty($this->organization['longDescription'][$lang])) {
             $orgname = $this->organization['longDescription'][$lang];
         } elseif ($lang === "de" && !empty($this->organization['longDescription']['en'])) {
             $orgname = $this->organization['longDescription']['en'];
         } elseif ($lang === "en" && !empty($this->organization['longDescription']['de'])) {
             $orgname = $this->organization['longDescription']['de'];
         }
-        if (!empty($orgname)) {
-            $jobtitle .= ' '.$orgname;
+        
+        
+        
+        if (empty($template)) {
+            $template = "#functionlabel# #orgname#".PHP_EOL;
         }
+        // Platzhalter mit den entsprechenden Werten ersetzen
+        $replacements = [
+            '#orgname#' => $orgname ?? '',
+            '#functionlabel#' => $label ?? '',
+            '#alternatename#' =>  $this->organization['alternateName'] ?? ''
+        ]; 
+        $jobtitle = str_replace(array_keys($replacements), array_values($replacements), $template);     
         $this->jobTitle = $jobtitle;
         return $jobtitle;      
     }
-    
-    
+
     
 }
+

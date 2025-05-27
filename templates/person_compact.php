@@ -84,7 +84,11 @@ if (!defined('ABSPATH')) {
                             echo '<p class="organisation_name">'. $contact->getOrganizationName($lang).'</p>';
                         }
                         if (in_array('jobTitle', $show_fields) && !in_array('jobTitle', $hide_fields) && isset($available_fields['jobTitle'])) {
-                             echo '<p class="jobtitle">'. $contact->getJobTitle($lang).'</p>';
+                            $jobtitleformat = '#functionlabel#';
+                            if (!empty($opt['jobtitle_format'])) {
+                                $jobtitleformat = $opt['jobtitle_format'];
+                            }                           
+                            echo '<p class="jobtitle">'. $contact->getJobTitle($lang,$jobtitleformat).'</p>';
                         }
                         ?>
                 

@@ -91,7 +91,11 @@ if (!defined('ABSPATH')) {
 
                                     
                                 } elseif ($key_lower === 'jobtitle') {
-                                    $value = $contact->getJobTitle($lang);
+                                    $jobtitleformat = '#functionlabel#';
+                                    if (!empty($opt['jobtitle_format'])) {
+                                        $jobtitleformat = $opt['jobtitle_format'];
+                                    }                           
+                                    $value = $contact->getJobTitle($lang,$jobtitleformat);
                                 } elseif (($key_lower === 'socialmedia') || ($key_lower === 'socials')) { 
                                     $value= $contact->getSocialMedia('span');
                                 } elseif ($key_lower === 'room')  {

@@ -62,11 +62,12 @@ class Config {
             "raum"          => 'room',
             "position"      => 'jobTitle',
         ],
-        
+        'jobtitle_format'   => '#functionlabel#',
         'person_taxonomy'   => 'custom_taxonomy',
             // TODO: CHange to a non generic name!
         'person_post_type'  => 'custom_person'
             // TODO: CHange to a non generic name!
+        
     ];
     
 
