@@ -388,12 +388,14 @@ class API {
 
         $body = wp_remote_retrieve_body($response);
         if (empty($body)) {
-            return array('error' => true, 'message' => 'Empty content');
+            error_log('RRZE FAUdir\API::makeRequest: Empty content body from api.');
+            return null;
         }
 
         $data = json_decode($body, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            return array('error' => true, 'message' => 'Error decoding JSON data');
+            error_log('RRZE FAUdir\API::makeRequest: Error decoding JSON data');
+            return null;
         }
         
         // Speichere im Cache
