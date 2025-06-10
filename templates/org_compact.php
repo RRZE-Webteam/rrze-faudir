@@ -112,6 +112,18 @@ if (!defined('ABSPATH')) {
                                
                             }
                         }
+                        if (in_array('fax', $show_fields) && !in_array('fax', $hide_fields) && isset($available_fields['fax'])) {
+                            $phone = $org->getFax();              
+                            $wval = '';                                    
+                            if (!empty($phone)) {
+                                $formattedPhone = FaudirUtils::format_phone_number($phone);
+                                $cleanTel = preg_replace('/[^\+\d]/', '', $phone);
+                                $formattedValue = '<a itemprop="fax" href="tel:' . esc_attr($cleanTel) . '">' . esc_html($formattedPhone) . '</a>';
+                                $wval .= '<span class="value"><span class="screen-reader-text">'.__('Phone','rrze-faudir').': </span>'.$formattedValue.'</span>';
+                                $contactlist .= '<li class="fax">'.$wval.'</li>';
+                               
+                            }
+                        }
                         if (in_array('url', $show_fields) && !in_array('url', $hide_fields) && isset($available_fields['url'])) {
                             $url = $org->getURL();
                             $wval = '';         

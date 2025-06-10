@@ -40,6 +40,13 @@ if (!defined('ABSPATH')) {
     if (!empty($persons)) : ?>
          <ul class="format-list">
             <?php
+            $show_fields_lower = array_map('strtolower', $show_fields);
+            $hide_fields_lower = array_map('strtolower', $hide_fields);
+            
+            echo Debug::get_dump_debug($show_fields_lower);
+            echo "<h3>Hide</H3>";
+            echo Debug::get_dump_debug($hide_fields);
+            
             foreach ($persons as $persondata) { 
                     if (isset($persondata['error'])) {  
                         if ($opt['show_error_message']) {
@@ -72,13 +79,13 @@ if (!defined('ABSPATH')) {
                             $workplaces = $contact->getWorkplaces();                    
                         }
 
-                        $show_fields_lower = array_map('strtolower', $show_fields);
-                        $hide_fields_lower = array_map('strtolower', $hide_fields);
+                        
                         $output .= '<ul class="datalist">';
                         foreach ($ordered_keys as $key) {
+
                             $key_lower = strtolower($key);
                             if (in_array($key_lower, $show_fields_lower) && !in_array($key_lower, $hide_fields_lower)) {                       
-                                $value = '';
+                                $value =  '';
                                 if ($key_lower === 'displayname')  {
                                     if ($displayname) {
                                         if (!empty($final_url)) {
@@ -88,7 +95,7 @@ if (!defined('ABSPATH')) {
                                         if (!empty($final_url)) {
                                              $value .= '</a>';
                                         }
-                                    }     
+                                    } 
                                 } elseif ($key_lower === 'jobtitle') {
                                     $jobtitleformat = '#functionlabel#';
                                     if (!empty($opt['jobtitle_format'])) {
@@ -129,7 +136,20 @@ if (!defined('ABSPATH')) {
                                         
                                     }
                                     $value = $wval;      
-                                    
+                                } elseif ($key_lower === 'fax')  {     
+                                   if (!empty($workplaces)) {
+                                            $wval = '';
+                                            foreach ($workplaces as $w => $wdata) {
+                                                if (!empty($wdata['fax'])) {
+                                                    $formattedPhone = FaudirUtils::format_phone_number($wdata['fax']);
+                                                    $cleanTel = preg_replace('/[^\+\d]/', '', $wdata['fax']);
+                                                 
+                                                    $formattedValue = '<a itemprop="fax" href="tel:' . esc_attr($cleanTel) . '">' . esc_html($formattedPhone) . '</a>';
+                                                    $wval .= '<span class="value"><span class="screen-reader-text">'.__('Fax','rrze-faudir').': </span>'.$formattedValue.'</span>';
+                                                }
+                                            }
+                                            $value = $wval;      
+                                    }
                                 } elseif ($key_lower === 'organization')  {    
                                     $value = $contact->getOrganizationName($lang);
                                     
@@ -287,6 +307,7 @@ if (!defined('ABSPATH')) {
                                     $output .= $value;
                                     $output .= '</li>';
                                 }
+
                             }
                         }
                         $output .= '</ul>'; 

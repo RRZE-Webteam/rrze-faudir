@@ -311,6 +311,19 @@ class Organization {
         
         return $phone;
     }
+     /*
+     * Get Fax Number
+     */       
+    public function getFax(): ?string {       
+        $phone = '';
+        if (!empty($this->address)) {
+            if (!empty($this->address['fax'])) {
+                $phone = $this->address['fax'];
+            }
+        }
+        
+        return $phone;
+    }
      
      /*
      * Get E-Mail 

@@ -175,7 +175,21 @@ class Shortcode {
         $person = new Person();
         $person->setConfig(self::$config);
 
-        if (!empty($role)) {
+        
+        if (!empty($identifiers) || !empty($post_id)) {
+            // display a single person by identifier or post id
+            if (!empty($identifiers)) {
+                $persons = self::process_persons_by_identifiers($identifiers);
+            } elseif (!empty($post_id)) {                
+                $persons = self::fetchPersonsByPostId($post_id);
+            }
+            // Apply category filter if category is set
+            if (!empty($category)) {
+                $persons = self::filterPersonsByCategory($persons, $category);
+            }
+            // Apply organization and group filters if set
+            $persons = self::filterPersonsByOrganization($persons, $orgnr);
+        } elseif (!empty($role)) {
             // Display Persons by Role (FAUdir Function)
             
       //        Debug::log('Shortcode','error',"Look for function $role");
@@ -272,31 +286,14 @@ class Shortcode {
                     }
                 
             }
-            
-        } elseif (!empty($post_id) && empty($identifiers) && empty($category) && empty($orgnr)) {
-            // display a single person by custom post id - mostly on the slug
-           //  error_log("FAUdir\Shortcode (fetch_persons_by_post_id): Search By id=: {$post_id}");       
-            $persons = self::fetchPersonsByPostId($post_id);
-        } elseif (!empty($identifiers) || !empty($post_id)) {
-            // display a single person by identifier or post id
-            if (!empty($identifiers)) {
-                $persons = self::process_persons_by_identifiers($identifiers);
-            } elseif (!empty($post_id)) {                
-                $persons = self::fetchPersonsByPostId($post_id);
-            }
-            // Apply category filter if category is set
-            if (!empty($category)) {
-                $persons = self::filterPersonsByCategory($persons, $category);
-            }
-            // Apply organization and group filters if set
-            $persons = self::filterPersonsByOrganization($persons, $orgnr);
+
         } elseif (!empty($category)) {
             // get persons by category. 
             $person_identifiers = self::getPersonIdentifiersByCategory($category);
             if (!empty($person_identifiers)) {
                 $persons = self::process_persons_by_identifiers($person_identifiers);
             }
-        } elseif (!empty($orgnr) && empty($post_id) && empty($identifiers) && empty($category) && empty($role)) {
+        } elseif (!empty($orgnr))  {
             // get persons by orgnr
            // error_log("FAUdir\Shortcode (fetch_and_render_fau_data): By Orgnr: {$orgnr}");       
            $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . $orgnr]);

@@ -19,15 +19,15 @@ class Config {
         'fallback_link_faudir'      => true,
         'default_display_order'     => [
             'table' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'link'],
-            'list'  => ['displayname', 'jobTitle', 'url', 'email', 'socialmedia', 'roompos', 'room', 'floor', 'address','faumap', 'link']
+            'list'  => ['displayname', 'jobTitle', 'url', 'email', 'socialmedia', 'room', 'floor', 'address','faumap', 'link']
         ],
         'avaible_fields_byformat'   => [
-            'table'         => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],
-            'list'          => ['displayname', 'jobTitle', 'url', 'email', 'socialmedia', 'roompos', 'room', 'floor', 'zip', 'street', 'city', 'faumap', 'link', 'format_displayname'],
-            'compact'       => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],
-            'page'          => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'content', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'format_displayname'],
-            'card'          => ['image', 'displayname', 'jobTitle', 'organization', 'url', 'email', 'socialmedia', 'link', 'format_displayname'],
-            'org-compact'   => ['phone', 'email', 'url', 'socialmedia', 'organization','address', 'faumap', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'content'],
+            'table'         => ['image', 'displayname', 'jobTitle', 'phone', 'fax', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],
+            'list'          => ['displayname', 'jobTitle', 'phone', 'fax',  'url', 'email', 'socialmedia', 'organization', 'room', 'floor', 'zip', 'street', 'city', 'faumap', 'link', 'format_displayname'],
+            'compact'       => ['image', 'displayname', 'jobTitle', 'phone', 'fax', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],
+            'page'          => ['image', 'displayname', 'jobTitle', 'phone', 'fax', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'content', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'format_displayname'],
+            'card'          => ['image', 'displayname', 'jobTitle', 'phone', 'fax', 'organization', 'url', 'email', 'socialmedia', 'link', 'format_displayname'],
+            'org-compact'   => ['phone', 'fax', 'email', 'url', 'socialmedia', 'organization','address', 'faumap', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'content'],
         ],
         'default_display'   => 'person',
         'avaible_formats_by_display'   => [
@@ -76,12 +76,11 @@ class Config {
         $this->config['avaible_fields'] = [
             'image'             => __('Image', 'rrze-faudir'),
             'displayname'       => __('Display Name', 'rrze-faudir'),
-                // Einzelne Namensbestandteile werden später im Shortcode
-                // durch Änderung der Zusammensetzung von Displayname generiert
             'email'             => __('Email', 'rrze-faudir'),
             'phone'             => __('Phone', 'rrze-faudir'),
+            'fax'               => __('Fax', 'rrze-faudir'),
             'organization'      => __('Organization', 'rrze-faudir'),
-            'jobTitle'          => __('Job Title', 'rrze-faudir'),
+            'jobTitle'          => __('Jobtitle', 'rrze-faudir'),
             'url'               => __('URL', 'rrze-faudir'),
             'content'           => __('Content', 'rrze-faudir'),
             'teasertext'        => __('Teasertext', 'rrze-faudir'),

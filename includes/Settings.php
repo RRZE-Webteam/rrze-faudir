@@ -260,8 +260,8 @@ function rrze_faudir_profilpage_output_fields_render() {
 
         echo "<tr>";
         echo "<th>";
-        echo "<label for='" . esc_attr('rrze_faudir_2profilpage_output_fields' . $field) . "'>";
-        echo "<input type='checkbox' id='" . esc_attr('rrze_faudir_2profilpage_output_fields' . $field) . "' name='rrze_faudir_options[output_fields_endpoint][]' value='" . esc_attr($field) . "' " . checked($checked, true, false) . ">";
+        echo "<label for='" . esc_attr('rrze_faudir_profilpage_output_fields' . $field) . "'>";
+        echo "<input type='checkbox' id='" . esc_attr('rrze_faudir_profilpage_output_fields' . $field) . "' name='rrze_faudir_options[output_fields_endpoint][]' value='" . esc_attr($field) . "' " . checked($checked, true, false) . ">";
         echo esc_html($label) . "</label>";
         echo "</th>";
         echo "<td>";

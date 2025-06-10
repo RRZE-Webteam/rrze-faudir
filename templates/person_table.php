@@ -134,18 +134,31 @@ if (!defined('ABSPATH')) {
                                 } elseif ($key_lower === 'organization')  {    
                                     $value = $contact->getOrganizationName($lang);
                                     
-                                  
-                                } elseif ($key_lower === 'url')  {      
+                                } elseif ($key_lower === 'fax')  {     
                                    if (!empty($workplaces)) {
                                             $wval = '';
                                             foreach ($workplaces as $w => $wdata) {
-                                                if (!empty($wdata['url'])) {
-                                                    $displayValue = preg_replace('/^https?:\/\//i', '', $wdata['url']);     
-                                                    $formattedValue = '<a href="' . esc_url($wdata['url']) . '" itemprop="url">' . esc_html($displayValue) . '</a>';
-                                                    $wval .= '<span class="url"><span class="screen-reader-text">'.__('URL','rrze-faudir').': </span>'.$formattedValue.'</span>';
+                                                if (!empty($wdata['fax'])) {
+                                                    $formattedPhone = FaudirUtils::format_phone_number($wdata['fax']);
+                                                    $cleanTel = preg_replace('/[^\+\d]/', '', $wdata['fax']);
+                                                 
+                                                    $formattedValue = '<a itemprop="fax" href="tel:' . esc_attr($cleanTel) . '">' . esc_html($formattedPhone) . '</a>';
+                                                    $wval .= '<span class="value"><span class="screen-reader-text">'.__('Fax','rrze-faudir').': </span>'.$formattedValue.'</span>';
                                                 }
                                             }
                                             $value = $wval;      
+                                    }  
+                                } elseif ($key_lower === 'url')  {      
+                                   if (!empty($workplaces)) {
+                                        $wval = '';
+                                        foreach ($workplaces as $w => $wdata) {
+                                            if (!empty($wdata['url'])) {
+                                                $displayValue = preg_replace('/^https?:\/\//i', '', $wdata['url']);     
+                                                $formattedValue = '<a href="' . esc_url($wdata['url']) . '" itemprop="url">' . esc_html($displayValue) . '</a>';
+                                                $wval .= '<span class="url"><span class="screen-reader-text">'.__('URL','rrze-faudir').': </span>'.$formattedValue.'</span>';
+                                            }
+                                        }
+                                        $value = $wval;      
                                     }
                                 } elseif ($key_lower === 'image')  {      
                                     $value = $person->getImage();

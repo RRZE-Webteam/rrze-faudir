@@ -151,6 +151,23 @@ if (!defined('ABSPATH')) {
                                 $contactlist .= '<li class="phone listcontent">'.$wval.'</li>';
                             }
                         }
+                        if (in_array('fax', $show_fields) && !in_array('fax', $hide_fields) && isset($available_fields['fax'])) { 
+                           if (!empty($workplaces)) {
+                                $wval = '';
+                                foreach ($workplaces as $w => $wdata) {
+                                    if (!empty($wdata['fax'])) {
+                                        $formattedPhone = FaudirUtils::format_phone_number($wdata['fax']);
+                                        $cleanTel = preg_replace('/[^\+\d]/', '', $wdata['fax']);
+
+                                        $formattedValue = '<a itemprop="fax" href="tel:' . esc_attr($cleanTel) . '">' . esc_html($formattedPhone) . '</a>';
+                                        $wval .= '<span class="value"><span class="screen-reader-text">'.__('Fax','rrze-faudir').': </span>'.$formattedValue.'</span>';
+                                    }
+                                }
+                                if (!empty($wval)) {
+                                     $contactlist .= '<li class="fax listcontent">'.$wval.'</li>';
+                                } 
+                            }
+                        }
                         if (in_array('url', $show_fields) && !in_array('url', $hide_fields) && isset($available_fields['url'])) {
                             if (!empty($workplaces)) {
                                 $wval = '';

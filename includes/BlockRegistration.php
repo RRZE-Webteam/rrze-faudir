@@ -79,8 +79,7 @@ class BlockRegistration
      * @param $attributes
      * @return string The Shortcode Output | An error message if no shortcode is present.
      */
-    public static function render_faudir_block($attributes): string
-    {
+    public static function render_faudir_block($attributes): string {
         try {
             if (!shortcode_exists('faudir')) {
                 throw new Exception('FAUDIR shortcode is not registered');

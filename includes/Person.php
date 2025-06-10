@@ -20,6 +20,7 @@ class Person {
     public ?string $pronoun;
     public ?string $email;
     public ?string $telephone;
+    public ?string $fax;
     public ?array $contacts;
     private array $rawdata;
     protected ?Config $config = null;
@@ -35,7 +36,7 @@ class Person {
         $this->titleOfNobility = $data['titleOfNobility'] ?? '';       
         $this->pronoun = $data['pronoun'] ?? '';
         $this->email = $data['email'] ?? '';
-        $this->telephone = $data['telephone'] ?? '';         
+        $this->telephone = $data['telephone'] ?? '';     
         $this->contacts = $data['contacts'] ?? null;
         $this->postid = $data['postid'] ?? 0;
         $this->primary_contact = null;
@@ -65,20 +66,20 @@ class Person {
     public function populateFromData(array $data, bool $clear = true): void { 
         if ($clear) {
             // Setze alle bekannten Felder auf ihre Standardwerte zurück.
-            $this->identifier          = '';
-            $this->givenName           = '';
-            $this->familyName          = '';
-            $this->honorificPrefix       = '';
+            $this->identifier           = '';
+            $this->givenName            = '';
+            $this->familyName           = '';
+            $this->honorificPrefix      = '';
             $this->honorificSuffix      = '';
-            $this->titleOfNobility     = '';
-            $this->pronoun             = '';
-            $this->email               = '';
-            $this->telephone           = '';
-            $this->postid              = 0;
-            $this->contacts            = null;
-            $this->primary_contact     = null;
+            $this->titleOfNobility      = '';
+            $this->pronoun              = '';
+            $this->email                = '';
+            $this->telephone            = '';
+            $this->postid               = 0;
+            $this->contacts             = null;
+            $this->primary_contact      = null;
             // Leere rawdata zurücksetzen
-            $this->rawdata = [];
+            $this->rawdata              = [];
         }
         
         // Aktualisiere die einzelnen Eigenschaften, falls Werte vorhanden sind
@@ -317,6 +318,40 @@ class Person {
         }
         return [];
     }
+    
+    /*
+     * Get Fax Numbers for person
+     * - if $person->fax is set, use this.
+     * - if its empty use the phones address from active primary contact
+     * Cause a person can use more as one phone number, we result with an array
+     */ 
+    public function getFax(): ?array {
+        $resphone = [];
+       
+        $workplaces = $this->getWorkplaces();
+        if (empty($workplaces)) {
+            return [];
+        }
+        
+        
+        $gatherphones = [];     
+        foreach ($workplaces as $num => $wdata) {
+            if (isset($wdata['fax'])) {
+                foreach ($wdata['fax'] as $i => $val) {
+                    if (preg_match('/^\+?[0-9\s\-\(\)]{7,20}$/', $val)) {
+                        $gatherphones[] = $val;
+                    }
+                 
+                }
+            }
+        }
+        if (!empty($gatherphones)) {
+            // Entferne etwaige Dupletten und returne dann die neu indizierte Liste
+            return array_values(array_unique($gatherphones));
+        }
+        return [];
+    }
+    
     /*
      * Get Email address for person
      * - if $person->email is set, use this.
