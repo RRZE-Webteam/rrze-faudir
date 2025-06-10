@@ -34,13 +34,14 @@
 		    }
 		}
 	      
-	       li.faudir-image::after {
-		   content: "";
-	       }
+		li.faudir-image::after {
+		    content: "";
+		}
 	       
-	       
-	       li.faudir-email {
-		   display: inline-flex;
+		li.faudir-floor,
+		li.faudir-room,
+		li.faudir-phone,
+		li.faudir-email {
 		   padding: 0;
 		   span.value::after {
 			content: "/";
@@ -49,6 +50,8 @@
 		    }
 		    span.value:last-child::after {
 			content: "";
+			margin-left: 0;
+			margin-right: 0;
 		    }
 		
 		
@@ -59,8 +62,19 @@
 	   }
 
        }
-
-	
+       .value.icon {
+	   --faudir-icon-size: 1rem;
+	    display: inline-flex;
+	    vertical-align: bottom;
+	    --_icon-margin-right: 0.1rem;
+       }
+       .icon .texticon,
+	.icon.icon-list {
+	    --_icon-border-width: 0;
+	    --_icon-margin-right: 0;
+	    --faudir-icon-margin-right: 0;
+	    --faudir-icon-margin-left: 0;
+	}
     }
     
     

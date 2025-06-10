@@ -109,7 +109,8 @@ if (!defined('ABSPATH')) {
                                             $room = '';
                                             foreach ($workplaces as $w => $wdata) {
                                                 if (!empty($wdata['room'])) {
-                                                    $room .= '<span class="value">'.__('Room','rrze-faudir').': '.esc_html($wdata['room']).'</span>';
+                                                    $formattedValue = '<span class="texticon room">' . esc_html($wdata['room']) . '</span>';
+                                                    $room .= '<span class="value icon"><span class="screen-reader-text">'.__('Room','rrze-faudir').': </span>'.$formattedValue.'</span>';
                                                 }
                                             }
                                             $value = $room;      
@@ -120,7 +121,7 @@ if (!defined('ABSPATH')) {
                                         foreach ($mailadresses as $mail) {
                                             if (filter_var($mail, FILTER_VALIDATE_EMAIL)) {
                                                 $formattedValue = '<a itemprop="email" href="mailto:' . esc_attr($mail) . '">' . esc_html($mail) . '</a>';
-                                                $wval .= '<span class="value"><span class="screen-reader-text">'.__('Email','rrze-faudir').': </span>'.$formattedValue.'</span>';
+                                                $wval .= '<span class="value icon"><span class="screen-reader-text">'.__('Email','rrze-faudir').': </span>'.$formattedValue.'</span>';
                                             }                 
                                         }
 
@@ -132,8 +133,7 @@ if (!defined('ABSPATH')) {
                                         $formattedPhone = FaudirUtils::format_phone_number($phone);
                                         $cleanTel = preg_replace('/[^\+\d]/', '', $phone);
                                         $formattedValue = '<a itemprop="telephone" href="tel:' . esc_attr($cleanTel) . '">' . esc_html($formattedPhone) . '</a>';
-                                        $wval .= '<span class="value"><span class="screen-reader-text">'.__('Phone','rrze-faudir').': </span>'.$formattedValue.'</span>';
-                                        
+                                        $wval .= '<span class="value icon"><span class="screen-reader-text">'.__('Phone','rrze-faudir').': </span>'.$formattedValue.'</span>';
                                     }
                                     $value = $wval;      
                                 } elseif ($key_lower === 'fax')  {     
@@ -145,7 +145,7 @@ if (!defined('ABSPATH')) {
                                                     $cleanTel = preg_replace('/[^\+\d]/', '', $wdata['fax']);
                                                  
                                                     $formattedValue = '<a itemprop="fax" href="tel:' . esc_attr($cleanTel) . '">' . esc_html($formattedPhone) . '</a>';
-                                                    $wval .= '<span class="value"><span class="screen-reader-text">'.__('Fax','rrze-faudir').': </span>'.$formattedValue.'</span>';
+                                                    $wval .= '<span class="value icon"><span class="screen-reader-text">'.__('Fax','rrze-faudir').': </span>'.$formattedValue.'</span>';
                                                 }
                                             }
                                             $value = $wval;      
@@ -161,7 +161,7 @@ if (!defined('ABSPATH')) {
                                                 if (!empty($wdata['url'])) {
                                                     $displayValue = preg_replace('/^https?:\/\//i', '', $wdata['url']);     
                                                     $formattedValue = '<a href="' . esc_url($wdata['url']) . '" itemprop="url">' . esc_html($displayValue) . '</a>';
-                                                    $wval .= '<span class="value"><span class="screen-reader-text">'.__('URL','rrze-faudir').': </span>'.$formattedValue.'</span>';
+                                                    $wval .= '<span class="value icon"><span class="screen-reader-text">'.__('URL','rrze-faudir').': </span>'.$formattedValue.'</span>';
                                                 }
                                             }
                                             $value = $wval;      
@@ -202,7 +202,8 @@ if (!defined('ABSPATH')) {
                                             $wval = '';
                                             foreach ($workplaces as $w => $wdata) {
                                                 if (!empty($wdata['floor'])) {
-                                                    $wval .= '<span class="value">'.__('Floor','rrze-faudir').': '.esc_html($wdata['floor']).'</span>';
+                                                    $formattedValue = '<span class="texticon floor">' . esc_html($wdata['floor']) . '</span>';
+                                                    $wval .= '<span class="value icon"><span class="screen-reader-text">'.__('Floor','rrze-faudir').': </span>'.$formattedValue.'</span>';
                                                 }
                                             }
                                             $value = $wval;      
@@ -232,7 +233,8 @@ if (!defined('ABSPATH')) {
                                             $wval = '';
                                             foreach ($workplaces as $w => $wdata) {
                                                 if (!empty($wdata['street'])) {
-                                                    $wval .= '<span class="street"><span class="screen-reader-text">'.__('Street','rrze-faudir').': </span>'.esc_html($wdata['street']).'</span>';
+                                                    $formattedValue = '<span class="street">' . esc_html($wdata['street']) . '</span>';
+                                                    $wval .= '<span class="value"><span class="screen-reader-text">'.__('Street','rrze-faudir').': </span>'.$formattedValue.'</span>';
                                                 }
                                             }
                                             $value = $wval;      
@@ -242,7 +244,8 @@ if (!defined('ABSPATH')) {
                                             $wval = '';
                                             foreach ($workplaces as $w => $wdata) {
                                                 if (!empty($wdata['zip'])) {
-                                                    $wval .= '<span class="value"><span class="screen-reader-text">'.__('Postal Code','rrze-faudir').': </span>'.esc_html($wdata['zip']).'</span>';
+                                                    $formattedValue = '<span class="zip">' . esc_html($wdata['zip']) . '</span>';
+                                                    $wval .= '<span class="value"><span class="screen-reader-text">'.__('Postal Code','rrze-faudir').': </span>'.$formattedValue.'</span>';
                                                 }
                                             }
                                             $value = $wval;      
@@ -252,7 +255,8 @@ if (!defined('ABSPATH')) {
                                             $wval = '';
                                             foreach ($workplaces as $w => $wdata) {
                                                 if (!empty($wdata['city'])) {
-                                                    $wval .= '<span class="value"><span class="screen-reader-text">'.__('City','rrze-faudir').': </span>'.esc_html($wdata['city']).'</span>';
+                                                    $formattedValue = '<span class="city">' . esc_html($wdata['city']) . '</span>';
+                                                    $wval .= '<span class="value"><span class="screen-reader-text">'.__('City','rrze-faudir').': </span>'.$formattedValue.'</span>';
                                                 }
                                             }
                                             $value = $wval;      
