@@ -65,9 +65,14 @@ class Config {
         'jobtitle_format'   => '#functionlabel#',
         'person_taxonomy'   => 'custom_taxonomy',
             // TODO: CHange to a non generic name!
-        'person_post_type'  => 'custom_person'
+        'person_post_type'  => 'custom_person',
             // TODO: CHange to a non generic name!
-        
+        'default_address_contains' => [
+            'organization', 'street', 'zip', 'city', 'faumap', 'room', 'floor'
+        ],
+        'hide_on_address_display' => [
+            'street', 'zip', 'city', 'faumap', 'room', 'floor'
+        ]
     ];
     
 
