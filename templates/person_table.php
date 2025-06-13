@@ -55,7 +55,7 @@ if (!defined('ABSPATH')) {
                         if (!empty($format_displayname)) {
                             $formatstring = $format_displayname;
                         }
-                        $displayname = $person->getDisplayName(true, false,$formatstring,$show_fields,$hide_fields);
+                        $displayname = $person->getDisplayName(true, false,$formatstring);
                         $mailadresses= $person->getEMail();
                         $phonenumbers = $person->getPhone();   
                         if (!empty($url)) {
@@ -71,11 +71,10 @@ if (!defined('ABSPATH')) {
                                                
                          
                         $show_fields_lower = array_map('strtolower', $show_fields);
-                        $hide_fields_lower = array_map('strtolower', $hide_fields);
 
                         foreach ($ordered_keys as $key) {
                             $key_lower = strtolower($key);
-                            if (in_array($key_lower, $show_fields_lower) && !in_array($key_lower, $hide_fields_lower)) {
+                            if (in_array($key_lower, $show_fields_lower)) {
                                 
                                 $value = '';
                                 if ($key_lower === 'displayname')  {
@@ -98,7 +97,7 @@ if (!defined('ABSPATH')) {
                                     $value = $contact->getJobTitle($lang,$jobtitleformat);
                                 } elseif (($key_lower === 'socialmedia') || ($key_lower === 'socials')) { 
                                     $value= $contact->getSocialMedia('span');
-                                } elseif ($key_lower === 'room')  {
+                                } elseif (($key_lower === 'room')  && (!in_array('address', $show_fields) )) {
        
                                     if (!empty($workplaces)) {
                                             $room = '';
@@ -172,7 +171,7 @@ if (!defined('ABSPATH')) {
                                     if (!empty($wval)) {
                                         $value = wp_kses_post($wval);
                                     }
-                                } elseif ($key_lower === 'floor')  {      
+                                } elseif (($key_lower === 'floor') && (!in_array('address', $show_fields) )) {
                                      if (!empty($workplaces)) {
                                             $wval = '';
                                             foreach ($workplaces as $w => $wdata) {
@@ -188,17 +187,15 @@ if (!defined('ABSPATH')) {
                                     if (!empty($workplaces)) {
                                             $wval = '';
                                             $showmap = false;
-                                            if (in_array('faumap', $show_fields) && !in_array('faumap', $hide_fields)) {
-                                                $showmap = true;
+                                            if ((in_array('room', $show_fields)) || (in_array('floor', $show_fields))) {
+                                                $roomfloor = true;
+                                            } else {
+                                                $roomfloor = false;
                                             }
-                                            $showroomfloor = false;
-                                            if ((in_array('room', $show_fields) && !in_array('room', $hide_fields))
-                                            || (in_array('floor', $show_fields) && !in_array('floor', $hide_fields))) {
-                                                $showroomfloor = true;
-                                            }
+                                
                                         
                                             foreach ($workplaces as $w => $wdata) {                                        
-                                                $wval .= $contact->getAddressByWorkplace($wdata, false, $lang, $showroomfloor, $showmap);
+                                                $wval .= $contact->getAddressByWorkplace($wdata, false, $lang, $roomfloor);
                                             }
                                             $value = $wval;      
                                     }

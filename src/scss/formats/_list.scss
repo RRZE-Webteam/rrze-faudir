@@ -21,8 +21,10 @@
 	
 	.text-list {
 	    ul {
-
-	       li.faudir-image {
+		li {
+		     padding: 0;
+		}
+		li.faudir-image {
 		    float: right;
 		    figure {
 			margin: 0;
@@ -38,11 +40,11 @@
 		    content: "";
 		}
 	       
+		li.faudir-faumap,
 		li.faudir-floor,
 		li.faudir-room,
 		li.faudir-phone,
 		li.faudir-email {
-		   padding: 0;
 		   span.value::after {
 			content: "/";
 			margin-left: 0.2rem;
@@ -56,16 +58,67 @@
 		
 		
 		}
-	   
+		.faudir-address {
+		    .workplace-address {
+			display: inline;
+			margin: 0;
+			user-select: all;
+			
+			.roomfloor,
+			.street,
+			.zipcity, 
+			.postbox, 
+			.addressCountry {
+			    display: inline; 
+			}
+			
+			.street::after,
+			.postbox::after {
+			    content: " ";
+			}
+			.roomfloor::after,
+			.street::after,
+			.addressCountry::after {
+			    content: ", ";
+			}
+			
+			.inaddress.roomfloor::before {
+			     content: ", ";
+			}
+			.inaddress.roomfloor::after {
+			    content: "";
+			}
+			
+			address {
+			    display: inline;
+			    padding: 0;
+			}
+			
+		    }
+		    .workplace-address::after {
+			content: "/";
+			margin-left: 0.2rem;
+			margin-right: 0.1rem;
+		    }
+		    .workplace-address:last-child::after {
+			content: "";
+			margin-left: 0;
+			margin-right: 0;
+		    }
+		}
+		li::after {
+		    margin-right: 0.1rem;
+		}
+		
 
 
 	   }
-
+	   
        }
        .value.icon {
 	   --faudir-icon-size: 1rem;
 	    display: inline-flex;
-	    vertical-align: bottom;
+	    vertical-align: middle;
 	    --_icon-margin-right: 0.1rem;
        }
        .icon .texticon,

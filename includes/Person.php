@@ -401,7 +401,7 @@ class Person {
     /*
      * Create and get Displayname in semantic HTML
      */
-    public function getDisplayName(bool $html = true, bool $hard_sanitize = false, string $format = '', array $show = [], array $hide = []): string {
+    public function getDisplayName(bool $html = true, bool $hard_sanitize = false, string $format = ''): string {
         if (empty($this->givenName) && empty($this->familyName)) {
             return '';
         }
@@ -413,7 +413,7 @@ class Person {
             $nameHtml .= '<span class="displayname" itemprop="name">';
 
             // "personalTitle"
-            if ((!empty($this->honorificPrefix)) && (!in_array('honorificPrefix', $hide))) {
+            if (!empty($this->honorificPrefix)) {
                 if ($hard_sanitize) {
                     $long_version = self::getAcademicTitleLongVersion($this->honorificPrefix);
                     if (!empty($long_version)) {
@@ -429,30 +429,34 @@ class Person {
             }
 
             // "givenName"
-            if ((!empty($this->givenName))  && (!in_array('givenName', $hide))) { 
+            
+            if ((!empty($this->givenName)) && (!empty($this->familyName)))  {  
+                $nameHtml .= '<span class="namepart">';
+            }
+            if (!empty($this->givenName)) { 
                 $nameHtml .= '<span itemprop="givenName">' . esc_html($this->givenName) . '</span> ';
                 $nameText .= esc_html($this->givenName) . ' ';
             }
 
-
-
             // "familyName"
-            if ((!empty($this->familyName))  && (!in_array('familyName', $hide))) { 
+            if (!empty($this->familyName))  { 
                 $nameHtml .= '<span itemprop="familyName">';        
                 // "titleOfNobility" is part of the familyName
-                if ((!empty($this->titleOfNobility))  && (!in_array('titleOfNobility', $hide))) { 
+                if (!empty($this->titleOfNobility))  { 
                     $nameHtml .= esc_html($this->titleOfNobility) . ' ';
                     $nameText .= esc_html($this->titleOfNobility) . ' ';
                 }
 
-                $nameHtml .= esc_html($this->familyName) . '</span> ';
-                $nameText .= esc_html($this->familyName) . ' ';
+                $nameHtml .= esc_html($this->familyName) . '</span>';
+                $nameText .= esc_html($this->familyName) . '';
             }
-
+            if ((!empty($this->givenName)) && (!empty($this->familyName)))  {  
+                $nameHtml .= '</span>';
+            }
             // "personalTitleSuffix"
-            if ((!empty($this->honorificSuffix))  && (!in_array('honorificSuffix', $hide))) { 
-                $nameHtml .= '(<span itemprop="honorificSuffix">' . esc_html($this->honorificSuffix) . '</span>)';
-                $nameText .= '(' . esc_html($this->honorificSuffix) . ')';
+            if (!empty($this->honorificSuffix)) { 
+                $nameHtml .= ' (<span itemprop="honorificSuffix">' . esc_html($this->honorificSuffix) . '</span>)';
+                $nameText .= ' (' . esc_html($this->honorificSuffix) . ')';
             }
 
             $nameHtml .= '</span>';
@@ -525,8 +529,12 @@ class Person {
      * Get Post Id for a person
      */
      public function getPostId(): int {
+        $config = new Config();
+        $post_type = $config->get('person_post_type'); 
+         
+         
         $contact_posts = get_posts([
-            'post_type' => 'custom_person',
+            'post_type' => $post_type,
             'meta_key' => 'person_id',
             'meta_value' => $this->identifier,
             'posts_per_page' => 1, // Only fetch one post matching the person ID

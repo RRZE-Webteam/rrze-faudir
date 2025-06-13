@@ -57,7 +57,10 @@ class Maintenance {
 
     public function migrate_person_data_on_activation() {
         register_custom_taxonomy();
-
+        $config = new Config();
+        $post_type = $config->get('person_post_type');
+        $taxonomy = $config->get('person_taxonomy');
+        
         $contact_posts = get_posts([
             'post_type' => 'person',
             'posts_per_page' => -1,
@@ -82,7 +85,7 @@ class Maintenance {
 
                     $univisid = get_post_meta($post->ID, 'fau_person_univis_id', true);
                     $existing_person = get_posts([
-                        'post_type' => 'custom_person',
+                        'post_type' => $post_type,
                         'meta_query' => [
                             [
                                 'key' => 'fau_person_faudir_synced',
@@ -195,7 +198,7 @@ class Maintenance {
 
                                    // Create a new 'custom_person' post
                                    $new_post_id = wp_insert_post([
-                                       'post_type' => 'custom_person',
+                                       'post_type' => $post_type,
                                        'post_title' => $post->post_title,
                                        'post_content' => $post->post_content,
                                        'post_status' => 'publish',
@@ -227,7 +230,7 @@ class Maintenance {
                                    if (!empty($old_categories) && !is_wp_error($old_categories)) {
                                        foreach ($old_categories as $old_category) {
                                            // Check if a term with the same slug exists in the new taxonomy
-                                           $existing_term = term_exists($old_category->name, 'custom_taxonomy');
+                                           $existing_term = term_exists($old_category->name, $taxonomy);
 
                                            // log the existing term, which can be null, the term id, an array or 0                                
                                            // error_log('[RRZE-FAUDIR] Existing term: ' . print_r($existing_term, true));
@@ -235,7 +238,7 @@ class Maintenance {
                                                // Create new term in custom_taxonomy
                                                $new_term = wp_insert_term(
                                                    $old_category->name,    // the term name
-                                                   'custom_taxonomy',      // the taxonomy
+                                                   $taxonomy,      // the taxonomy
                                                    array(
                                                        'description' => $old_category->description,
                                                        'slug' => $old_category->slug
@@ -243,11 +246,11 @@ class Maintenance {
                                                );
 
                                                if (!is_wp_error($new_term)) {
-                                                   $term = get_term($new_term['term_id'], 'custom_taxonomy');
+                                                   $term = get_term($new_term['term_id'], $taxonomy);
                                                }
                                            } else {
                                                $term_id = is_array($existing_term) ? $existing_term['term_id'] : $existing_term;
-                                               $term = get_term($term_id, 'custom_taxonomy');
+                                               $term = get_term($term_id, $taxonomy);
                                            }
 
                                            // If we have a valid term, set it for the new post
@@ -255,7 +258,7 @@ class Maintenance {
                                                wp_set_object_terms(
                                                    $new_post_id,           // post ID
                                                    $term->name,            // use the term name instead of ID
-                                                   'custom_taxonomy',      // taxonomy
+                                                   $taxonomy,        // taxonomy
                                                    true                    // append
                                                );
                                            }
@@ -461,6 +464,8 @@ class Maintenance {
         if (get_transient('check_person_availability_running')) {
             return;
         }
+        $config = new Config();
+        $post_type = $config->get('person_post_type');
         
         
      //   error_log('RRZE FAUdir\Maintenance::check_api_person_availability: Start Cron job check_person_availability.');
@@ -469,7 +474,7 @@ class Maintenance {
         
         
         $args = [
-            'post_type'      => 'custom_person',
+            'post_type'      => $post_type,
             'post_status'    => 'publish',
             'posts_per_page' => 1000,
         ];
@@ -507,7 +512,9 @@ class Maintenance {
      * Setze Template für Slug fest
      */
     public static function load_custom_person_template($template) {
-        if (get_query_var('custom_person') || is_singular('custom_person')) {
+        $config = new Config();
+        $post_type = $config->get('person_post_type');
+        if (get_query_var($post_type) || is_singular($post_type)) {
             $plugin_template = plugin_dir_path(__DIR__) . '/templates/single-custom_person.php';
             if (file_exists($plugin_template)) {
                 return $plugin_template;
@@ -522,10 +529,12 @@ class Maintenance {
      */
     public static function custom_cpt_404_message() {
         global $wp_query;
+        $config = new Config();
+        $post_type = $config->get('person_post_type');
        // Prüfe CPT-Einzelansicht, aber Post nicht gefunden → 404
-        if (isset($wp_query->query_vars['post_type']) &&
-            $wp_query->query_vars['post_type'] === 'custom_person' &&
-            empty($wp_query->post) ) {
+        if (isset($wp_query->query_vars['post_type']) 
+                && $wp_query->query_vars['post_type'] === $post_type 
+                && empty($wp_query->post) ) {
             
             self::render_custom_404();
             return;

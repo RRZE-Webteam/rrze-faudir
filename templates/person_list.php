@@ -30,10 +30,6 @@ if (!defined('ABSPATH')) {
         array_diff(array_keys($available_fields), $reihenfolge)
     );
 
-//    echo "<h2>Personendata</h2>";
-//     foreach ($persons as $persondata) { 
-//          echo  Debug::get_html_var_dump($persondata);
-//     }
          
     $lang = FAUdirUtils::getLang();
    
@@ -41,11 +37,7 @@ if (!defined('ABSPATH')) {
          <ul class="format-list">
             <?php
             $show_fields_lower = array_map('strtolower', $show_fields);
-            $hide_fields_lower = array_map('strtolower', $hide_fields);
             
-            echo Debug::get_dump_debug($show_fields_lower);
-            echo "<h3>Hide</H3>";
-            echo Debug::get_dump_debug($hide_fields);
             
             foreach ($persons as $persondata) { 
                     if (isset($persondata['error'])) {  
@@ -65,7 +57,7 @@ if (!defined('ABSPATH')) {
                         if (!empty($format_displayname)) {
                             $formatstring = $format_displayname;
                         }
-                        $displayname = $person->getDisplayName(true, false,$formatstring,$show_fields,$hide_fields);
+                        $displayname = $person->getDisplayName(true, false,$formatstring);
                         $mailadresses= $person->getEMail();
                         $phonenumbers = $person->getPhone();                        
                         if (!empty($url)) {
@@ -79,12 +71,12 @@ if (!defined('ABSPATH')) {
                             $workplaces = $contact->getWorkplaces();                    
                         }
 
-                        
+                         
                         $output .= '<ul class="datalist">';
                         foreach ($ordered_keys as $key) {
 
                             $key_lower = strtolower($key);
-                            if (in_array($key_lower, $show_fields_lower) && !in_array($key_lower, $hide_fields_lower)) {                       
+                            if (in_array($key_lower, $show_fields_lower)) {                       
                                 $value =  '';
                                 if ($key_lower === 'displayname')  {
                                     if ($displayname) {
@@ -104,7 +96,7 @@ if (!defined('ABSPATH')) {
                                     $value = $contact->getJobTitle($lang,$jobtitleformat);
                                 } elseif (($key_lower === 'socialmedia') || ($key_lower === 'socials')) { 
                                     $value= $contact->getSocialMedia('span');
-                                } elseif ($key_lower === 'room')  {
+                                } elseif (($key_lower === 'room') && (!in_array('address', $show_fields) )) {
                                     if (!empty($workplaces)) {
                                             $room = '';
                                             foreach ($workplaces as $w => $wdata) {
@@ -197,7 +189,7 @@ if (!defined('ABSPATH')) {
                                     if (!empty($wval)) {
                                         $value = '<div class="value">'.wp_kses_post($wval).'</div>';
                                     }
-                                } elseif ($key_lower === 'floor')  {      
+                                } elseif (($key_lower === 'floor') && (!in_array('address', $show_fields) )) {
                                      if (!empty($workplaces)) {
                                             $wval = '';
                                             foreach ($workplaces as $w => $wdata) {
@@ -208,22 +200,30 @@ if (!defined('ABSPATH')) {
                                             }
                                             $value = $wval;      
                                     }
+                                } elseif ($key_lower === 'faumap')  {     
+                                        if (!empty($workplaces)) {
+                                            $faumap = '';
+                                            foreach ($workplaces as $w => $wdata) {
+                                                if (!empty($wdata['faumap'])) {
+                                                    if (preg_match('/^https?:\/\/karte\.fau\.de/i', $wdata['faumap'])) {
+                                                        $formattedValue = '<a class="texticon faumap" href="' . esc_url($wdata['faumap']) . '" itemprop="url">' . __('FAU Map', 'rrze-faudir') . '</a>';
+                                                        $faumap .= '<span class="value icon"><span class="screen-reader-text">'.__('Map','rrze-faudir').': </span>'.$formattedValue.'</span>';
+                                                    }
+                                                }
+                                            }
+                                            $value = $faumap;
+                                        }
                                 } elseif ($key_lower === 'address')  {     
                                     if (!empty($workplaces)) {
-                                        $showmap = false;
-                                        if (in_array('faumap', $show_fields) && !in_array('faumap', $hide_fields)) {
-                                            $showmap = true;
-                                        }
-                                        $showroomfloor = false;
-                                        if ((in_array('room', $show_fields) && !in_array('room', $hide_fields))
-                                        && (in_array('floor', $show_fields) && !in_array('floor', $hide_fields))) {
-                                            $showroomfloor = true;
-                                        }
-                                        
-                                        
+                                            if ((in_array('room', $show_fields)) || (in_array('floor', $show_fields))) {
+                                                $roomfloor = true;
+                                            } else {
+                                                $roomfloor = false;
+                                            }
+                                
                                             $wval = '';
                                             foreach ($workplaces as $w => $wdata) {                                               
-                                                $wval .= $contact->getAddressByWorkplace($wdata, false, $lang, $showroomfloor, $showmap);
+                                                $wval .= $contact->getAddressByWorkplace($wdata, false, $lang, $roomfloor);
                                             }
                                             $value = $wval;      
                                     }
@@ -265,19 +265,10 @@ if (!defined('ABSPATH')) {
                                 } elseif ($key_lower === 'officehours')  {  
                                     if (!empty($workplaces)) {
                                             $hours = '';
-                                            $showmap = false;
-                                            if (in_array('faumap', $show_fields) && !in_array('faumap', $hide_fields)) {
-                                                $showmap = true;
-                                            }
-                                            $showroomfloor = false;
-                                            if ((in_array('room', $show_fields) && !in_array('room', $hide_fields))
-                                            && (in_array('floor', $show_fields) && !in_array('floor', $hide_fields))) {
-                                                $showroomfloor = true;
-                                            }
-                                            
+                                           
                                             foreach ($workplaces as $w => $wdata) {
                                                 if (!empty($wdata['officeHours'])) { 
-                                                    $hours .= $contact->getConsultationsHours($wdata, 'officeHours', true, $lang, $showroomfloor, $showmap);
+                                                    $hours .= $contact->getConsultationsHours($wdata, 'officeHours', true, $lang);
                                                 }
                                             } 
                                             $value = $hours;
@@ -285,20 +276,12 @@ if (!defined('ABSPATH')) {
                                 } elseif ($key_lower === 'consultationhours')  {             
                                         if (!empty($workplaces)) {
                                             $hours = '';
-                                            $showmap = false;
-                                            if (in_array('faumap', $show_fields) && !in_array('faumap', $hide_fields)) {
-                                                $showmap = true;
-                                            }
-                                            $showroomfloor = false;
-                                            if ((in_array('room', $show_fields) && !in_array('room', $hide_fields))
-                                            || (in_array('floor', $show_fields) && !in_array('floor', $hide_fields))) {
-                                                $showroomfloor = true;
-                                            }
+                                            
                                             foreach ($workplaces as $w => $wdata) {
                                                 if (!empty($wdata['consultationHours'])) {
-                                                    $hours .= $contact->getConsultationsHours($wdata, 'consultationHours', true, $lang, $showroomfloor, $showmap);
+                                                    $hours .= $contact->getConsultationsHours($wdata, 'consultationHours', true, $lang);
                                                 }
-                                                 $hours .= $contact->getConsultationbyAggreement($wdata);
+                                                $hours .= $contact->getConsultationbyAggreement($wdata);
                                             }
                                             $value = $hours;
                                         }      

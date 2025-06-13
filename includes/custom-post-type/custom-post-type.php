@@ -50,19 +50,17 @@ function register_custom_person_post_type() {
     	'menu_icon'         => 'dashicons-id'
     );
 
-    register_post_type($post_type, $args); // Keep 'custom_person' as the post type key
+    register_post_type($post_type, $args); 
 }
 add_action('init', 'register_custom_person_post_type', 15);
 
 
 function register_custom_taxonomy() {
     // Register the taxonomy
- //    error_log('register_custom_taxonomy called');
     $config = new Config();
     $post_type = $config->get('person_post_type');
     $taxonomy = $config->get('person_taxonomy');
     if (!taxonomy_exists('custom_taxonomy')) {
- //       error_log('do register_taxonomy');
         register_taxonomy(
             $taxonomy, // Taxonomy slug
             $post_type, // Custom Post Type to attach the taxonomy
@@ -111,12 +109,11 @@ add_action('init', 'register_custom_taxonomy');
  */
 
 
-// Register the custom taxonomy before migration
+// Register the custom taxonomy of former FAU Person before migration
 function register_custom_person_taxonomies() {
     $config = new Config();
     $post_type = $config->get('person_post_type');
     $taxonomy = $config->get('person_taxonomy');
-  //      error_log('register_custom_person_taxonomies from Main called');
     $labels = array(
         'name'              => _x('Categories', 'taxonomy general name', 'rrze-faudir'),
         'singular_name'     => _x('Category', 'taxonomy singular name', 'rrze-faudir'),
@@ -680,10 +677,14 @@ function add_taxonomy_to_person_rest($response, $post, $request) {
     $config = new Config();
     $post_type = $config->get('person_post_type');   
     $taxonomy = $config->get('person_taxonomy');
-    
+
     if ($post->post_type === $post_type) {
         // Get custom taxonomy terms
         $terms = wp_get_object_terms($post->ID, $taxonomy);
+        if (is_wp_error( $terms ) ) {
+            error_log(' ERROR ON wp_get_object_terms: taxonomy = '.$taxonomy.' posttype = '.$post_type. ' ERROR: '.$terms->get_error_message() );
+            return;
+        }
         $term_ids = array_map(function ($term) {
             return $term->term_id;
         }, $terms);

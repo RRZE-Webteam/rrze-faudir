@@ -3,6 +3,7 @@
 
 namespace RRZE\FAUdir;
 
+use RRZE\FAUdir\Config;
 
 class EnqueueScripts {
     protected static $pluginFile;
@@ -44,10 +45,12 @@ class EnqueueScripts {
     public static function enqueue_admin($hook)  {
         // Check for both settings page and post edit screen
         global $post;
+        $config = new Config();
+        $post_type = $config->get('person_post_type');
         if ($hook !== 'settings_page_rrze-faudir'
             && ($hook !== 'post.php' && $hook !== 'post-new.php'
                 || !isset($post)
-                || $post->post_type !== 'custom_person')) {
+                || $post->post_type !== $post_type)) {
             return;
         }
         // Enqueue CSS for the admin page

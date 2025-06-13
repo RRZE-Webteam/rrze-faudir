@@ -16,9 +16,9 @@ class Shortcode {
 
     protected static $config;
     
-    public function __construct(Config $configdata) {
-        self::$config = $configdata;
-        
+    public function __construct() {
+        self::$config = new Config();
+         
         // Haupt-Shortcode registrieren
         add_shortcode('faudir', [$this, 'fetch_fau_data']);
         // Alias-Shortcodes registrieren
@@ -28,6 +28,7 @@ class Shortcode {
     // Shortcode function
     public static function fetch_fau_data($atts) {
         // Only return early if it's a pure admin page, not the block editor
+        
         if (
             is_admin() &&
             !(defined('REST_REQUEST') && REST_REQUEST) && // Allow REST requests (block editor)
@@ -36,8 +37,6 @@ class Shortcode {
         ) {
             return '';
         }
-        // Get the default output fields using the utility function
-        $default_show_fields = FaudirUtils::getDefaultOutputFields();
         $lang = FaudirUtils::getLang();
 
         
@@ -47,7 +46,7 @@ class Shortcode {
                 'category'              => '',
                 'identifier'            => '',
                 'id'                    => '',
-                'format'                => 'compact',
+                'format'                => '',
                 'url'                   => '',
                 'show'                  => '',
                 'hide'                  => '',
@@ -58,14 +57,12 @@ class Shortcode {
                 'role'                  => '',
                 'button-text'           => '',
                 'format_displayname'    => '',
-                'display'               => '',
+                'display'               => 'person',
                 'lang'                  => ''
             ),
             $atts
         );
-        if (empty($atts['display'])) {
-            $atts['display'] = self::$config->get('default_display');
-        }
+
         if (empty($atts['lang'])) {
             $atts['lang'] = $lang;
         } else {
@@ -75,11 +72,15 @@ class Shortcode {
         if ((!empty($atts['function'])) && (empty( $atts['role']))) {
             $atts['role'] = $atts['function'];
         }
-        // Convert explicitly set 'show' values to an array and merge with default fields
-        $explicit_show_fields = array_filter(array_map('trim', explode(',', $atts['show'])));
-        $merged_show_fields = array_unique(array_merge($default_show_fields, $explicit_show_fields));
-        $atts['show'] = implode(', ', $merged_show_fields);
-
+        
+        
+        $atts['display'] = self::validateDisplay($atts['display']);
+        $atts['format'] = self::validateFormat($atts['format'], $atts['display']);
+        $show = self::resolve_visible_fields_with_format($atts);
+        $atts['show'] = implode(', ', $show);
+        unset($atts['hide']);
+        
+        
         // If user is logged in and no-cache option is enabled, always fetch fresh data
         $options = get_option('rrze_faudir_options');
         $no_cache_logged_in = isset($options['no_cache_logged_in']) && $options['no_cache_logged_in'];    
@@ -112,6 +113,64 @@ class Shortcode {
         return $output;
     }
 
+    /*
+     * Create Array for those fields we want to show 
+     */
+   public static function resolve_visible_fields_with_format(array $atts): array {
+        $options = get_option('rrze_faudir_options');
+        $default_show_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : [];
+
+        
+        $format = $atts['format'];
+
+        // Alias-Mapping
+        $aliases = self::$config->get('args_person_to_faudir');
+
+        // Helper-Funktion zum Umwandeln alter Feldnamen in aktuelle
+        $normalize_fields = function (array $fields) use ($aliases) {
+            return array_filter(array_map(function ($field) use ($aliases) {
+                $field = trim($field);
+                return $aliases[$field] ?? $field;
+            }, $fields));
+        };
+
+        // Felder extrahieren und normalisieren
+        $show_fields = isset($atts['show']) ? explode(',', $atts['show']) : [];
+        $hide_fields = isset($atts['hide']) ? explode(',', $atts['hide']) : [];
+        $show_fields = $normalize_fields($show_fields);
+        $hide_fields = $normalize_fields($hide_fields);
+        $default_show_fields = $normalize_fields($default_show_fields);
+
+        
+        // Sichtbare Felder berechnen
+        $fields = array_merge(
+            array_diff($default_show_fields, $hide_fields),
+            $show_fields
+        );
+
+        // Doppelte entfernen und nur gültige Felder nach Format zurückgeben
+        $fields = array_unique($fields);
+       
+        $available = self::$config->getAvaibleFieldlistByFormat($atts['format'], $atts['display']);
+        
+        $resolved_fields = array_values(array_intersect(
+            $available,
+            $fields
+        ));
+
+        // Entferne abhängige Felder laut hide_on_parameter
+        $hide_on_parameter = self::$config->get('hide_on_parameter');
+        foreach ($hide_on_parameter as $trigger => $dependent_fields) {
+            if (in_array($trigger, $resolved_fields, true)) {
+                $resolved_fields = array_diff($resolved_fields, $dependent_fields);
+            }
+        }
+
+        return $resolved_fields;
+
+    }
+
+    
     
     /*
      * Create Output for Shortcode 
@@ -119,27 +178,13 @@ class Shortcode {
     public static function fetch_and_render_fau_data($atts) {
         // Convert 'show' and 'hide' attributes into arrays
         $show_fields = array_map('trim', explode(',', $atts['show']));
-        $hide_fields = array_map('trim', explode(',', $atts['hide']));
-        
-        // Map etwaige alte show/hide Args aus fau-person auf neue Parameternamen
-        $mapping = self::$config->get('args_person_to_faudir') ?? [];
-        $show_fields = array_map(function ($field) use ($mapping) {
-            return $mapping[$field] ?? $field;
-        }, array_map('trim', explode(',', $atts['show'] ?? '')));
+       
 
-        // $hide_fields mit Mapping umsetzen
-        $hide_fields = array_map(function ($field) use ($mapping) {
-            return $mapping[$field] ?? $field;
-        }, array_map('trim', explode(',', $atts['hide'] ?? '')));
-
-         // Remove duplicates and ensure arrays are unique
-        $show_fields = array_unique($show_fields);
-        $hide_fields = array_unique($hide_fields);
 
         if ($atts['display'] == 'org') {
-            return self::createOrgOutput($atts, $show_fields, $hide_fields);
+            return self::createOrgOutput($atts, $show_fields);
         } else {
-            return self::createPersonOutput($atts, $show_fields, $hide_fields);
+            return self::createPersonOutput($atts, $show_fields);
         }
     }
 
@@ -147,7 +192,7 @@ class Shortcode {
     /*
      * Create Output for Person Display
      */
-    public static function createPersonOutput(array $atts, array $show_fields, array $hide_fields): string {     
+    public static function createPersonOutput(array $atts, array $show_fields): string {     
         // Extract the attributes from the shortcode
         $identifiers = empty($atts['identifier']) ? [] : explode(',', $atts['identifier']);
             // FAUdir Identifier von einer oder mehreren Personen
@@ -395,11 +440,9 @@ class Shortcode {
 
         // check and sanitize for format for displayname
         $format_displayname = wp_strip_all_tags($format_displayname);
-        $format = self::validateFormat($atts['format'], $display);
-        $templatefile = $display.'_'.$format;
+        $templatefile = $display.'_'.$atts['format'];
         return $template->render($templatefile, [
             'show_fields'   => $show_fields,
-            'hide_fields'   => $hide_fields,
             'format_displayname' => $format_displayname,
             'persons'       => $persons,
             'url'           => $url,
@@ -411,7 +454,7 @@ class Shortcode {
     /*
      * Create Output for Org Display
      */
-    public static function createOrgOutput(array $atts, array $show_fields, array $hide_fields): string {     
+    public static function createOrgOutput(array $atts, array $show_fields): string {     
         $orgnr      = $atts['orgnr'];
             // Org Nr der Einrichtung, die anzuzeigen ist
         $orgid      = $atts['orgid'];
@@ -446,11 +489,9 @@ class Shortcode {
         $template = new Template($template_dir);
 
         // check and sanitize for format for displayname
-        $format = self::validateFormat($atts['format'], $display);
-        $templatefile = $display.'_'.$format;
+        $templatefile = $display.'_'.$atts['format'];
         return $template->render($templatefile, [
             'show_fields'   => $show_fields,
-            'hide_fields'   => $hide_fields,
             'orgdata'       => $orgdata,
             'url'           => $url,
         ]);
@@ -483,18 +524,26 @@ class Shortcode {
     
     
     /*
+     * Check the given display for validity and return it if its avaible, otherwise 
+     * the default format
+     */
+    public static function validateDisplay(string $display = ''): string {        
+        $allformats =   self::$config->get('avaible_formats_by_display');
+        $display = sanitize_key($display);
+        if ((empty($display))  ||  (!isset($allformats[$display]))) {
+            $display = self::$config->get('default_display');
+        }
+        
+        return $display;
+    }
+    
+    /*
      * Check the given format for validity and return it if its avaible, otherwise 
      * the default format
      */
     public static function validateFormat(string $format = '', string $display = ''): string {
         $allformats =   self::$config->get('avaible_formats_by_display');
-        if ((empty($display))  ||  (!isset($allformats[$display]))) {
-            $display = self::$config->get('default_display');
-        }
-
-        if (empty($format)) {
-            return  $allformats[$display][0];
-        }
+        $format = sanitize_key($format);
    
         // first fix for typo or old names:     
         if ($format === 'kompakt') {
@@ -502,7 +551,9 @@ class Shortcode {
         } elseif ($format === 'liste') {
             $format = 'list';
         }
-        
+        if (empty($display)) {
+            $display = self::$config->get('default_display');
+        }
 
         // Now check if its valid, otherwise return the default.
          // Wenn ein Format übergeben wurde, prüfen ob es gültig ist
@@ -511,11 +562,11 @@ class Shortcode {
         }
 
         // Fallback
-        return $allformats[$display][0];
+        return self::$config->get('default_format');
     }
     
    /*
-    * Hole personeneinträge aus dem CPT, die zu einer definierten Kategorie gehören
+    * Hole Personeneinträge aus dem CPT, die zu einer definierten Kategorie gehören
     */ 
     public static function getPersonIdentifiersByCategory(string $category): array {
         if (empty($category)) {
@@ -720,7 +771,7 @@ class Shortcode {
 
 
     public function register_aliases(): void {
-        include_once ABSPATH . 'wp-admin/includes/plugin.php';
+  //      include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
         if (!is_plugin_active('fau-person/fau-person.php')) {
             add_shortcode('kontakt', [$this, 'kontakt_to_faudir']);
@@ -748,6 +799,5 @@ class Shortcode {
         }
         return trim($atts_string);
     }
-
 
 }

@@ -7,6 +7,7 @@ defined('ABSPATH') || exit;
 
 class Config {
     private array $config = [
+        'version'                   => 2,
         'api_key'                   => '',
         'api-baseurl'               => 'https://api.fau.de/pub/v1/opendir/',
         'faudir-url'                => 'https://faudir.fau.de/',
@@ -22,13 +23,14 @@ class Config {
             'list'  => ['displayname', 'jobTitle', 'url', 'email', 'socialmedia', 'room', 'floor', 'address','faumap', 'link']
         ],
         'avaible_fields_byformat'   => [
-            'table'         => ['image', 'displayname', 'jobTitle', 'phone', 'fax', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],
-            'list'          => ['displayname', 'jobTitle', 'phone', 'fax',  'url', 'email', 'socialmedia', 'organization', 'room', 'floor', 'zip', 'street', 'city', 'faumap', 'link', 'format_displayname'],
-            'compact'       => ['image', 'displayname', 'jobTitle', 'phone', 'fax', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],
+            'table'         => ['image', 'displayname','honorificPrefix','honorificSuffix', 'givenName',  'titleOfNobility', 'familyName', 'jobTitle', 'phone', 'fax', 'email', 'url', 'socialmedia', 'organization', 'address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],
+            'list'          => ['displayname', 'honorificPrefix','honorificSuffix', 'givenName', 'titleOfNobility', 'familyName', 'jobTitle', 'phone', 'fax',  'url', 'email', 'socialmedia', 'organization','address', 'room', 'floor', 'zip', 'street', 'city', 'faumap', 'link', 'format_displayname'],
+            'compact'       => ['image', 'displayname', 'honorificPrefix','honorificSuffix', 'givenName', 'titleOfNobility', 'familyName', 'jobTitle', 'phone', 'fax', 'email', 'url', 'socialmedia', 'organization', 'address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],
             'page'          => ['image', 'displayname', 'jobTitle', 'phone', 'fax', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'content', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'format_displayname'],
-            'card'          => ['image', 'displayname', 'jobTitle', 'phone', 'fax', 'organization', 'url', 'email', 'socialmedia', 'link', 'format_displayname'],
+            'card'          => ['image', 'displayname','honorificPrefix','honorificSuffix', 'givenName',  'titleOfNobility', 'familyName', 'jobTitle', 'phone', 'fax', 'organization', 'url', 'email', 'socialmedia', 'link', 'format_displayname'],
             'org-compact'   => ['phone', 'fax', 'email', 'url', 'socialmedia', 'organization','address', 'faumap', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'content'],
         ],
+        'default_format'    => 'compact',
         'default_display'   => 'person',
         'avaible_formats_by_display'   => [
             'person'    => ['compact', 'table', 'list',  'page', 'card'],               
@@ -38,8 +40,8 @@ class Config {
         
         'default_output_fields'     => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia'], // Default fields      
         'default_output_fields_endpoint' => [
-            'image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor',  
-            'teasertext', 'content', 'zip', 'street', 'city', 'officehours', 'consultationhours'
+            'image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization', 'address', 'room', 'floor',  
+            'teasertext', 'content', 'officehours', 'consultationhours'
         ],        
         'args_person_to_faudir' => [
             "titel"         => 'honorificPrefix',
@@ -48,7 +50,7 @@ class Config {
             "workLocation"  => 'city',
             "organisation"  => 'organization',
             "worksFor"      => 'organization',
-            "abteilung"      => 'organization',
+            "abteilung"     => 'organization',
             "telefon"       => 'phone',
             "mail"          => 'email',
             "webseite"      => 'url',
@@ -67,20 +69,42 @@ class Config {
             // TODO: CHange to a non generic name!
         'person_post_type'  => 'custom_person',
             // TODO: CHange to a non generic name!
-        'default_address_contains' => [
-            'organization', 'street', 'zip', 'city', 'faumap', 'room', 'floor'
+
+        'hide_on_parameter' => [
+            'address' => [
+                 // If the show-params contains address the following fields will be hidden
+                'street', 'zip', 'city'
+            ],
+            'displayname'   => [
+                 // If the show-params contains displayname the following fields will be hidden
+                'honorificPrefix','honorificSuffix', 'givenName', 'titleOfNobility', 'familyName'
+            ]
         ],
-        'hide_on_address_display' => [
-            'street', 'zip', 'city', 'faumap', 'room', 'floor'
+       
+        'overwriteable_as_option' => [
+            'show_error_message',
+            'cache_timeout',
+            'no_cache_logged_in',
+            'transient_time_for_org_id',
+            'fallback_link_faudir',
+            'jobtitle_format'
         ]
+
     ];
     
-
+  
     public function __construct() {
         $this->config['business_card_title'] = __('Call up business card', 'rrze-faudir');         
         $this->config['avaible_fields'] = [
             'image'             => __('Image', 'rrze-faudir'),
             'displayname'       => __('Display Name', 'rrze-faudir'),
+            
+            
+            'honorificPrefix'   => __('Academic Title', 'rrze-faudir'),
+            'honorificSuffix'   => __('Academic Suffix', 'rrze-faudir'),
+            'givenName'         => __('First Name', 'rrze-faudir'),
+            'titleOfNobility'   => __('Title of Nobility', 'rrze-faudir'),
+            'familyName'        => __('Family Name', 'rrze-faudir'),
             'email'             => __('Email', 'rrze-faudir'),
             'phone'             => __('Phone', 'rrze-faudir'),
             'fax'               => __('Fax', 'rrze-faudir'),
@@ -136,7 +160,7 @@ class Config {
             'card'      => __( 'Card', 'rrze-faudir' ),
             'compact'   => __( 'Compact', 'rrze-faudir' ),
             'page'      => __( 'Page', 'rrze-faudir' ),
-            
+            'org-compact'   => __( 'Compact', 'rrze-faudir' ).' '.__( 'with display="org"', 'rrze-faudir' ),
         ];
 
     }
@@ -174,9 +198,29 @@ class Config {
     }
     
     /*
+     * Get Array of those options with config content, that are overwiteable
+     * We use these values as default values for the first init
+     */
+    public function getOverwiteableOptions(): array {
+        $overoptions = $this->config['overwriteable_as_option'];
+        $res = [];
+        foreach ($overoptions as $key) {
+            $res[$key] = $this->config[$key];
+        }
+        return $res;
+    }
+
+    
+    
+    /*
      * Get allowed fields for format
      */
-    public function getFieldsByFormat(string $format = ''): array { 
+    public function getFieldsByFormat(string $format = '', ?string $display = ''): array {      
+        if ((!empty($display)) && ($display === 'org')) {
+            $format = 'org-'.$format;
+        }
+        
+        
         if ((empty($format)) || (!isset($this->config['avaible_fields_byformat'][$format]))) {
             return $this->config['avaible_fields'];
         }
@@ -195,6 +239,19 @@ class Config {
     }
     public function getAvaibleFieldlist(): array {
         return $this->config['avaible_fields_byformat'];
+    }
+    
+    
+    public function getAvaibleFieldlistByFormat(string $format = '', ?string $display = ''): array {       
+        if (empty($format)) {
+            $format = $this->config['default_format'];
+        }
+        if ((!empty($display)) && ($display === 'org')) {
+            $format = 'org-'.$format;
+        }
+        
+        return $this->config['avaible_fields_byformat'][$format];
+  
     }
     
     

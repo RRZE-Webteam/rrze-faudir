@@ -26,14 +26,12 @@ add_action('admin_menu', 'rrze_faudir_add_admin_menu');
 function rrze_faudir_settings_init() {
     // Load the default settings
     $config = new Config;
-    $default_settings = $config->getAll();
-    
+    $default_settings = $config->getOverwiteableOptions();  
     $options = get_option('rrze_faudir_options', []);
-
-    // Merge the default settings with the saved options
     $settings = wp_parse_args($options, $default_settings);
     update_option('rrze_faudir_options', $settings);
 
+    
     register_setting(
         'rrze_faudir_settings', 
         'rrze_faudir_options',
@@ -120,9 +118,7 @@ function rrze_faudir_settings_init() {
         __('API Key', 'rrze-faudir'),
         'rrze_faudir_api_key_render', 'rrze_faudir_settings','rrze_faudir_api_section'
     );
-    if (! function_exists('is_plugin_active')) {
-        include_once(ABSPATH . 'wp-admin/includes/plugin.php');
-    }
+
     if (is_plugin_active('fau-person/fau-person.php')) {
         add_settings_field(
             'rrze_faudir_import_fau_person',
@@ -334,6 +330,10 @@ function rrze_faudir_clear_cache_render() {
 
 function rrze_faudir_error_message_render() {
     $options = get_option('rrze_faudir_options');
+    if (!isset( $options['show_error_message'])) {
+        $config = new Config;
+        $options['show_error_message'] = $config->get('show_error_message');
+    }
     echo '<label><input type="checkbox" name="rrze_faudir_options[show_error_message]" value="1" ' . checked( 1, $options['show_error_message'], false ) . '>';
     echo '<span>' . esc_html__('Show error messages for incorrect contact entries.', 'rrze-faudir') . '</span></label>';
    
@@ -461,7 +461,11 @@ function rrze_faudir_default_output_fields_render() {
                  if (!empty($canuse)) {
                     $canuse .= ', ';
                 }
-                $canuse .= $formatnames[$fl].' (<code>'.$fl.'</code>)';
+                if ($fl === 'org-compact') {
+                    $canuse .= $formatnames[$fl].' (<code>compact</code>)';
+                } else {
+                    $canuse .= $formatnames[$fl].' (<code>'.$fl.'</code>)';
+                }
             }
         }
         if (!empty($canuse)) {
@@ -839,6 +843,7 @@ function rrze_faudir_search_person_ajax() {
         $queryParts[] = 'familyName[ireg]=' . $familyName;
     }
     $config = new Config();
+    $post_type = $config->get('person_post_type'); 
     $api = new API($config);
     
     if (!empty($email)) {
@@ -900,7 +905,7 @@ function rrze_faudir_search_person_ajax() {
                 }
                 // Check if a post already exists with this identifier
                 $existing_post = get_posts(array(
-                    'post_type' => 'custom_person',
+                    'post_type' => $post_type,
                     'meta_key' => 'person_id',
                     'meta_value' => $identifier,
                     'posts_per_page' => 1
