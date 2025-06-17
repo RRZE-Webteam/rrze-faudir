@@ -12,11 +12,14 @@ class EnqueueScripts {
         self::$pluginFile = $pluginFile;
     }
     
-    public function register():void  {
-        add_action('wp_enqueue_scripts', [self::class, 'enqueue_frontend']);
+    public function register():void  {       
+        wp_register_style('rrze-faudir', RRZE_PLUGIN_URL . 'assets/css/rrze-faudir.css');       
         add_action('admin_enqueue_scripts', [self::class, 'enqueue_admin']);
     }
+    
+    
 
+/*
     public static function enqueue_frontend():void {
         wp_register_style('rrze-faudir', RRZE_PLUGIN_URL . 'assets/css/rrze-faudir.css');
         wp_enqueue_style('rrze-faudir');
@@ -39,7 +42,7 @@ class EnqueueScripts {
             'api_key' => $api_key // Pass API key to JavaScript
         ));
     }
-
+*/
 
     // Enqueue admin scripts and styles for specific admin pages
     public static function enqueue_admin($hook)  {
@@ -53,8 +56,11 @@ class EnqueueScripts {
                 || $post->post_type !== $post_type)) {
             return;
         }
+        
+        
         // Enqueue CSS for the admin page
-        wp_enqueue_style('rrze-faudir', RRZE_PLUGIN_URL . 'assets/css/rrze-faudir.css');
+        wp_enqueue_style('rrze-faudir');
+       
         // Enqueue the admin.js script
         wp_enqueue_script('rrze-faudir-admin-js', RRZE_PLUGIN_URL . 'assets/js/rrze-faudir-admin.js', ['jquery'], null, true);
         // Localize the script with relevant data

@@ -80,7 +80,11 @@ class Shortcode {
         $atts['show'] = implode(', ', $show);
         unset($atts['hide']);
         
-        
+        // Enqueue CSS for output
+        wp_enqueue_style('rrze-faudir');
+          
+          
+          
         // If user is logged in and no-cache option is enabled, always fetch fresh data
         $options = get_option('rrze_faudir_options');
         $no_cache_logged_in = isset($options['no_cache_logged_in']) && $options['no_cache_logged_in'];    
