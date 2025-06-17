@@ -36,9 +36,7 @@ get_header();
                         } elseif (isset($opt['default_output_fields_endpoint']) && (!empty($opt['default_output_fields_endpoint']))) {
                             $showfields = $opt['default_output_fields_endpoint'];
                         }
- 
-                        $show = '';
-                        
+                       
                         
                         $atts['display'] = 'person';
                         $atts['format'] = 'page';

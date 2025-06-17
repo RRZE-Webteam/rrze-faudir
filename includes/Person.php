@@ -697,12 +697,14 @@ class Person {
         if (empty($this->contacts)) {
             return false;
         }
+
         
         if (!empty($this->primary_contact)) {
-            // we already calculated this, therfor we return this
+            // we already calculated this, therfor we return this            
             return $this->primary_contact;
         }
-        
+         
+          
         // Wenn es nur einen einzigen Contacteintrag gibt, dann returne diesen        
         if ((count($this->contacts)==1) && (!empty($this->contacts[0]))) {
             $this->primary_contact = new Contact($this->contacts[0]);
@@ -715,7 +717,6 @@ class Person {
         } else {
             $postid = $this->postid;
         }
-        
         if (($postid === 0) && (!empty($this->contacts[0]))) {
             // No custum post entry, therfor i take the first entry
             $this->primary_contact = new Contact($this->contacts[0]);
@@ -725,14 +726,15 @@ class Person {
         $displayed_contacts = get_post_meta($postid, 'displayed_contacts', true);
         
         // downwardcompatbility
-        if (is_array($displayed_contacts)) {
+        if ((is_array($displayed_contacts)) || (empty($displayed_contacts))) {
             $displayed_contacts = 0;
         }
+        
     
         if (isset($this->contacts[$displayed_contacts])) {
             $this->primary_contact = new Contact($this->contacts[$displayed_contacts]);
             return $this->primary_contact;
-        } else {
+        } else {              
             $this->primary_contact = new Contact($this->contacts);
             return $this->primary_contact;
         }

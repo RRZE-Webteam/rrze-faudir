@@ -66,11 +66,14 @@ if (!defined('ABSPATH')) {
                             $final_url = $person->getTargetURL($opt['fallback_link_faudir']);
                         }
                         $contact = $person->getPrimaryContact();
+                    //    $output .= Debug::get_html_var_dump($contact);
                         $workplaces = [];
                         if (!empty($contact)) { 
-                            $workplaces = $contact->getWorkplaces();                    
+                            $workplaces = $contact->getWorkplaces($workplaces);                    
                         }
-
+                        
+             //           $output .= Debug::get_html_var_dump($workplaces);
+                        
                          
                         $output .= '<ul class="datalist">';
                         foreach ($ordered_keys as $key) {
