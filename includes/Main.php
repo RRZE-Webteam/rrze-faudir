@@ -33,7 +33,7 @@ class Main {
         new REST();
         
         // Enqueue Scripts
-        $enqueues = new EnqueueScripts($this->pluginFile);
+        $enqueues = new EnqueueScripts();
         $enqueues->register();
         
         // Register Shortcodes Actions

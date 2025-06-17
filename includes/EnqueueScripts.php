@@ -6,10 +6,9 @@ namespace RRZE\FAUdir;
 use RRZE\FAUdir\Config;
 
 class EnqueueScripts {
-    protected static $pluginFile;
 
-    public function __construct($pluginFile)  {
-        self::$pluginFile = $pluginFile;
+    public function __construct()  {
+        // Nothing todo (yet)
     }
     
     public function register():void  {       
@@ -20,6 +19,10 @@ class EnqueueScripts {
     
 
 /*
+ * TODO: Prüfen ob man das Frontend.JS irgendwo braucht. Ich sehe keinen Grund.
+ * Erstmal daher auskommentiert.
+ * Issue #278 
+
     public static function enqueue_frontend():void {
         wp_register_style('rrze-faudir', RRZE_PLUGIN_URL . 'assets/css/rrze-faudir.css');
         wp_enqueue_style('rrze-faudir');
@@ -58,7 +61,7 @@ class EnqueueScripts {
         }
         
         
-        // Enqueue CSS for the admin page
+        // Enqueue Frontend CSS for the admin page
         wp_enqueue_style('rrze-faudir');
        
         // Enqueue the admin.js script
