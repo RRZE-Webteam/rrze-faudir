@@ -64,7 +64,7 @@ spl_autoload_register(function ($class) {
 add_action('plugins_loaded', __NAMESPACE__ . '\\loaded');
 
 /**
- * Hauptinitialisierung des Plugins (wird bei init aufgerufen)
+ * Hauptinitialisierung des Plugins (wird nach plugins_loaded aufgerufen)
  */
 function loaded(): void {
     // Übersetzungen laden

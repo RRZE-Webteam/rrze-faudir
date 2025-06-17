@@ -30,11 +30,7 @@ function register_custom_person_post_type() {
             'menu_name'          => __('Persons', 'rrze-faudir'),
             'add_new_item'       => __('Add New Person', 'rrze-faudir'),
             'edit_item'          => __('Edit Person', 'rrze-faudir'),
-            'view_item'          => __('View Person', 'rrze-faudir'),
-            'all_items'          => __('All Persons', 'rrze-faudir'),
-            'search_items'       => __('Search Persons', 'rrze-faudir'),
-            'not_found'          => __('No persons found.', 'rrze-faudir'),
-        ),
+        ), 
         'public'             => true,
         'has_archive'        => false,
         'rewrite'            => array(
@@ -65,19 +61,6 @@ function register_custom_taxonomy() {
             $taxonomy, // Taxonomy slug
             $post_type, // Custom Post Type to attach the taxonomy
             array(
-                'labels' => array(
-                    'name'              => __('Categories', 'text-domain'),
-                    'singular_name'     => __('Category', 'text-domain'),
-                    'search_items'      => __('Search Categories', 'text-domain'),
-                    'all_items'         => __('All Categories', 'text-domain'),
-                    'parent_item'       => __('Parent Category', 'text-domain'),
-                    'parent_item_colon' => __('Parent Category', 'text-domain'),
-                    'edit_item'         => __('Edit Category', 'text-domain'),
-                    'update_item'       => __('Update Category', 'text-domain'),
-                    'add_new_item'      => __('Add New Category', 'text-domain'),
-                    'new_item_name'     => __('New Category Name', 'text-domain'),
-                    'menu_name'         => __('Categories', 'text-domain'),
-                ),
                 'hierarchical'      => true, // Set true for a category-like taxonomy, false for tags.
                 'public'            => true,
                 'show_ui'           => true,
@@ -99,7 +82,7 @@ function register_custom_taxonomy() {
  //        error_log('register_custom_taxonomy: but nothing todo, cause exists');
     } 
 }
-add_action('init', 'register_custom_taxonomy');
+add_action('init', 'register_custom_taxonomy', 15);
 
 
 
@@ -114,23 +97,9 @@ function register_custom_person_taxonomies() {
     $config = new Config();
     $post_type = $config->get('person_post_type');
     $taxonomy = $config->get('person_taxonomy');
-    $labels = array(
-        'name'              => _x('Categories', 'taxonomy general name', 'rrze-faudir'),
-        'singular_name'     => _x('Category', 'taxonomy singular name', 'rrze-faudir'),
-        'search_items'      => __('Search Categories', 'rrze-faudir'),
-        'all_items'         => __('All Categories', 'rrze-faudir'),
-        'parent_item'       => __('Parent Category', 'rrze-faudir'),
-        'parent_item_colon' => __('Parent Category:', 'rrze-faudir'),
-        'edit_item'         => __('Edit Category', 'rrze-faudir'),
-        'update_item'       => __('Update Category', 'rrze-faudir'),
-        'add_new_item'      => __('Add New Category', 'rrze-faudir'),
-        'new_item_name'     => __('New Category Name', 'rrze-faudir'),
-        'menu_name'         => __('Categories', 'rrze-faudir'),
-    );
 
     register_taxonomy($taxonomy, $post_type, array(
         'hierarchical'      => true,
-        'labels'           => $labels,
         'show_ui'          => true,
         'show_admin_column' => true,
         'query_var'        => true,
@@ -141,7 +110,7 @@ function register_custom_person_taxonomies() {
 }
 
 // Make sure to register the taxonomy on init as well
-add_action('init',  'register_custom_person_taxonomies');
+add_action('init',  'register_custom_person_taxonomies', 15);
 
 
 // Bug #119
@@ -203,6 +172,8 @@ function check_classic_editor_and_add_shortcode_button() {
     }
 }
 add_action('admin_head', 'check_classic_editor_and_add_shortcode_button');
+
+
 // Render Meta Box Fields
 function render_person_additional_fields($post) {
     wp_nonce_field('save_person_additional_fields', 'person_additional_fields_nonce');
@@ -669,7 +640,7 @@ function register_person_meta() {
         }
     ));
 }
-add_action('init', 'register_person_meta');
+add_action('init', 'register_person_meta', 15);
 
 // Make sure categories are visible in REST API
 // Update the REST API response to include custom taxonomy

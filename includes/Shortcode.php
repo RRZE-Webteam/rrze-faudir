@@ -22,7 +22,7 @@ class Shortcode {
         // Haupt-Shortcode registrieren
         add_shortcode('faudir', [$this, 'fetch_fau_data']);
         // Alias-Shortcodes registrieren
-        add_action('init', [$this, 'register_aliases']);
+        add_action('init', [$this, 'register_aliases'], 15);
     }
   
     // Shortcode function
@@ -84,6 +84,7 @@ class Shortcode {
         // If user is logged in and no-cache option is enabled, always fetch fresh data
         $options = get_option('rrze_faudir_options');
         $no_cache_logged_in = isset($options['no_cache_logged_in']) && $options['no_cache_logged_in'];    
+       
         if ($no_cache_logged_in && is_user_logged_in()) {
             $output = self::fetch_and_render_fau_data($atts);
             $output = do_shortcode(shortcode_unautop($output));
@@ -605,7 +606,7 @@ class Shortcode {
     /*
      * Filter Personen nach ihrer Org
      */
-    public static function filterPersonsByOrganization(array $persons, string $orgnr): array {
+    public static function filterPersonsByOrganization(array $persons, ?string $orgnr): array {
         if (empty($orgnr)) {
             return $persons;
         }

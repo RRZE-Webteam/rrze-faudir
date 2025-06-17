@@ -1,8 +1,7 @@
 <?php
 // Template file for RRZE FAUDIR
-use RRZE\FAUdir\Debug;
 use RRZE\FAUdir\Config;
-
+use RRZE\FAUdir\Shortcode;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
@@ -40,16 +39,16 @@ get_header();
  
                         $show = '';
                         
-                        if (isset($showfields)) {
-                            $show = implode(', ', $showfields);
-                            if (!empty($show)) {
-                                $show = ' show="'.$show.'"';
-                            }
-                            
-                        }
-
-                    
-                    echo do_shortcode('[faudir identifier="' . esc_attr($person_id) . '"'.$show.' url="#" format="page"]');
+                        
+                        $atts['display'] = 'person';
+                        $atts['format'] = 'page';
+                        $atts['identifier'] = $person_id;
+                        $atts['show'] = implode(', ', $showfields);
+                        $output = Shortcode::fetch_fau_data($atts);
+                        $content = apply_filters('the_content', $output);
+                        echo $content; 
+                        
+                     
                     ?>
                 </div>
             </div>
