@@ -260,11 +260,15 @@ class Shortcode {
                     $queryParts = [];
                     $queryParts[] = 'contacts.organization.identifier[eq]=' . $identifier;
 
+                    
                     $params = [
                         'lq' => implode('&', $queryParts)
                     ];
 
-                    $result = $api->getPersons(60, 0, $params);                  
+                    $result = $api->getPersons(100, 0, $params);      
+                    // Rolle(n) in ein Array aufsplitten und bereinigen
+                    $roles = array_map('trim', explode(',', $role));
+                    
                     foreach ($result['data'] as $key => &$persondata) {
                         // Enrich person data with full contact information
                         
@@ -272,22 +276,22 @@ class Shortcode {
                         $person->reloadContacts();
                         $persondata = $person->toArray();
 
-                        // Filter contacts based on function
+                        
                         foreach ($persondata['contacts'] as $contactKey => $contact) {
-                            if ($contact['function'] !== $role                                     
-                                    && $contact['functionLabel']['de'] !== $role 
-                                    && $contact['functionLabel']['en'] !== $role
-                                    || $contact['organization']['identifier'] !== $identifier) {
-//                                Debug::log("unset person by search in $orgnr: ".$persondata['identifier']." ".$persondata['familyName']." (".$contact['organization']['identifier']."/".$identifier  );
+                            $functionMatches = in_array($contact['function'], $roles, true)
+                                || in_array($contact['functionLabel']['de'], $roles, true)
+                                || in_array($contact['functionLabel']['en'], $roles, true);
 
+                            if (!$functionMatches || $contact['organization']['identifier'] !== $identifier) {
                                 unset($persondata['contacts'][$contactKey]);
                             }
                         }
 
-                        // Remove person if no matching contacts remain
                         if (count($persondata['contacts']) === 0) {
                             unset($result['data'][$key]);
                         }
+
+                         
                     }
 
                     if (!empty($result['data'])) {
@@ -308,6 +312,7 @@ class Shortcode {
                             'lq' => implode('&', $queryParts)
                         ];
                         $result = $api->getPersons(60, 0, $params);  
+                        $roles = array_map('trim', explode(',', $role));
                         
                         // Process each person and filter contacts
                         foreach ($result['data'] as $key => &$persondata) {
@@ -317,10 +322,11 @@ class Shortcode {
                             $persondata = $person->toArray();
                             
                             foreach ($persondata['contacts'] as $contactKey => $contact) {
-                                if ($contact['function'] !== $role 
-                                        && $contact['functionLabel']['de'] !== $role 
-                                        && $contact['functionLabel']['en'] !== $role 
-                                        || !in_array($contact['organization']['identifier'], $ids)) {
+                                $functionMatches = in_array($contact['function'], $roles, true)
+                                    || in_array($contact['functionLabel']['de'], $roles, true)
+                                    || in_array($contact['functionLabel']['en'], $roles, true);
+
+                                if (!$functionMatches || $contact['organization']['identifier'] !== $identifier) {
                                     unset($persondata['contacts'][$contactKey]);
                                 }
                             }

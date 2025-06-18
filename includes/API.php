@@ -114,7 +114,7 @@ class API {
      * @param array $params - Additional query parameters
      * @return array - Array of persons 
      */
-     public function getPersons($limit = 60, $offset = 0, $params = [], bool $retry = true): ?array {
+     public function getPersons($limit = 100, $offset = 0, $params = [], bool $retry = true): ?array {
         if (!$this->api_key) {
              error_log('RRZE FAUdir\API::getPersons: API Key missing.');
              return null;

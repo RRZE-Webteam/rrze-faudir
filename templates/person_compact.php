@@ -56,8 +56,10 @@ if (!defined('ABSPATH')) {
                 
                
                 if (!empty($contact)) { 
-                    $workplaces = $contact->getWorkplaces();                    
+                    $workplaces = $contact->getWorkplaces();       
+                                       
                 }
+
                 $aria_id = $person->getRandomId("section-title-");
                 ?>
 
