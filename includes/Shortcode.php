@@ -321,12 +321,13 @@ class Shortcode {
                             $person->reloadContacts();
                             $persondata = $person->toArray();
                             
+                            
                             foreach ($persondata['contacts'] as $contactKey => $contact) {
                                 $functionMatches = in_array($contact['function'], $roles, true)
                                     || in_array($contact['functionLabel']['de'], $roles, true)
                                     || in_array($contact['functionLabel']['en'], $roles, true);
 
-                                if (!$functionMatches || $contact['organization']['identifier'] !== $identifier) {
+                                if (!$functionMatches || $contact['organization']['identifier'] !== $ids) {
                                     unset($persondata['contacts'][$contactKey]);
                                 }
                             }
@@ -334,6 +335,9 @@ class Shortcode {
                             if (count($persondata['contacts']) === 0) {
                                 unset($result['data'][$key]);
                             }
+                            
+
+                            
                         }
 
                         if (!empty($result['data'])) {

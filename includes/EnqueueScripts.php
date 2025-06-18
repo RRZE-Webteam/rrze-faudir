@@ -12,11 +12,13 @@ class EnqueueScripts {
     }
     
     public function register():void  {       
-        wp_register_style('rrze-faudir', RRZE_PLUGIN_URL . 'assets/css/rrze-faudir.css');       
+        add_action('wp_enqueue_scripts', [self::class, 'register_frontend_styles']);
         add_action('admin_enqueue_scripts', [self::class, 'enqueue_admin']);
     }
     
-    
+    public static function register_frontend_styles(): void {
+        wp_register_style('rrze-faudir', RRZE_PLUGIN_URL . 'assets/css/rrze-faudir.css');
+    }
 
 /*
  * TODO: Prüfen ob man das Frontend.JS irgendwo braucht. Ich sehe keinen Grund.
