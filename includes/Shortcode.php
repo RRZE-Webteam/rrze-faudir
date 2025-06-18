@@ -546,26 +546,29 @@ class Shortcode {
      * Check the given format for validity and return it if its avaible, otherwise 
      * the default format
      */
-    public static function validateFormat(string $format = '', string $display = ''): string {
+    public static function validateFormat(string $format = '', ?string $display = ''): string {
         $allformats =   self::$config->get('avaible_formats_by_display');
         $format = sanitize_key($format);
    
+        
+         
         // first fix for typo or old names:     
-        if ($format === 'kompakt') {
+        if ($format == 'kompakt') {
             $format = 'compact';
-        } elseif ($format === 'liste') {
+        } elseif ($format == 'liste') {
             $format = 'list';
         }
         if (empty($display)) {
             $display = self::$config->get('default_display');
         }
 
+        
         // Now check if its valid, otherwise return the default.
          // Wenn ein Format übergeben wurde, prüfen ob es gültig ist
         if (!empty($format) && in_array($format, $allformats[$display], true)) {
+                       
             return $format;
         }
-
         // Fallback
         return self::$config->get('default_format');
     }
@@ -581,29 +584,43 @@ class Shortcode {
         $taxonomy = self::$config->get('person_taxonomy') ?? 'custom_taxonomy';
         $post_type = self::$config->get('person_post_type') ?? 'custom_person';
 
-        $args = [
-            'post_type'      => $post_type,
-            'tax_query'      => [
-                [
-                    'taxonomy' => $taxonomy,
-                    'field'    => 'slug',
-                    'terms'    => $category,
-                ],
-            ],
-            'posts_per_page' => -1,
-        ];
-
-        $person_posts = get_posts($args);
+        $categories = array_map('trim', explode(',', $category));
         $person_identifiers = [];
 
-        foreach ($person_posts as $person_post) {
-            $person_id = get_post_meta($person_post->ID, 'person_id', true);
-            if (!empty($person_id)) {
-                $person_identifiers[] = $person_id;
+        foreach ($categories as $cat_term) {
+            // Versuche den Begriff über Slug oder Name zu finden
+            $term = get_term_by('slug', $cat_term, $taxonomy);
+            if (!$term) {
+                $term = get_term_by('name', $cat_term, $taxonomy);
+            }
+
+            if ($term && !is_wp_error($term)) {
+                $args = [
+                    'post_type'      => $post_type,
+                    'tax_query'      => [
+                        [
+                            'taxonomy' => $taxonomy,
+                            'field'    => 'term_id',
+                            'terms'    => $term->term_id,
+                        ],
+                    ],
+                    'posts_per_page' => -1,
+                    'fields'         => 'ids',
+                ];
+
+                $posts = get_posts($args);
+
+                foreach ($posts as $post_id) {
+                    $person_id = get_post_meta($post_id, 'person_id', true);
+                    if (!empty($person_id)) {
+                        $person_identifiers[] = $person_id;
+                    }
+                }
             }
         }
 
-        return $person_identifiers;
+        // Entferne doppelte Einträge
+        return array_values(array_unique($person_identifiers));
     }
 
 
