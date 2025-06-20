@@ -267,12 +267,11 @@ if (!defined('ABSPATH')) {
                                     if (!empty($workplaces)) {
                                             $hours = '';
                                             $showmap = false;
-                                            if (in_array('faumap', $show_fields) && !in_array('faumap', $hide_fields)) {
+                                            if (in_array('faumap', $show_fields)) {
                                                 $showmap = true;
                                             }
                                             $showroomfloor = false;
-                                            if ((in_array('room', $show_fields) && !in_array('room', $hide_fields))
-                                            && (in_array('floor', $show_fields) && !in_array('floor', $hide_fields))) {
+                                            if ((in_array('room', $show_fields) )   && (in_array('floor', $show_fields) )) {
                                                 $showroomfloor = true;
                                             }
                                             foreach ($workplaces as $w => $wdata) {
@@ -286,12 +285,11 @@ if (!defined('ABSPATH')) {
                                         if (!empty($workplaces)) {
                                             $hours = '';
                                             $showmap = false;
-                                            if (in_array('faumap', $show_fields) && !in_array('faumap', $hide_fields)) {
+                                            if (in_array('faumap', $show_fields)) {
                                                 $showmap = true;
                                             }
                                             $showroomfloor = false;
-                                            if ((in_array('room', $show_fields) && !in_array('room', $hide_fields))
-                                            && (in_array('floor', $show_fields) && !in_array('floor', $hide_fields))) {
+                                            if ((in_array('room', $show_fields) )  && (in_array('floor', $show_fields) )) {
                                                 $showroomfloor = true;
                                             }
                                             foreach ($workplaces as $w => $wdata) {
