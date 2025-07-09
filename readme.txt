@@ -1,9 +1,9 @@
 === Plugin Name ===
 Plugin Name: rrze-faudir
 Plugin URI: https://github.com/RRZE-Webteam/rrze-faudir
-Version: 2.4.2
+Version: 2.4.1
 Requires at least: 6.7
-Tested up to: 6.7.2
+Tested up to: 6.8.1
 Requires PHP: 8.2
 GitHub Issue URL: https://github.com/RRZE-Webteam/rrze-faudir/issues
 Author: RRZE-Webteam <webmaster@fau.de> (https://www.rrze.fau.de)
