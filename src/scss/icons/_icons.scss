@@ -36,9 +36,8 @@
 	   background: currentColor;
 	   mask-size: var(--_icon-mask-size, var(--faudir-icon-mask-size, 100%));
 	   mask-repeat: no-repeat;
-	   mask-position: center center;
+	   mask-position: calc(50% - var(--_icon-border-width, 0));
 	   
-	//   display: inline-block;
 	   width: var(--_icon-size, var(--faudir-icon-size));
 	   height: var(--_icon-size, var(--faudir-icon-size));
 	   content: "";
@@ -130,7 +129,7 @@
 		background: currentColor;
 		mask-size: var(--_icon-mask-size, var(--faudir-icon-mask-size, 100%));
 		mask-repeat: no-repeat;
-		mask-position: center center;
+		mask-position: calc(50% - var(--_icon-border-width, 0));
 
 		display: inline-block;
 		width: var(--_icon-size, var(--faudir-icon-size));

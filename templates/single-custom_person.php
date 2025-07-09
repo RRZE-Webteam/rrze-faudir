@@ -20,7 +20,7 @@ get_header();
         $person_id = get_post_meta(get_the_ID(), 'person_id', true);
         ?>
 
-        <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+        <article id="post-<?php the_ID(); ?>" <?php post_class(['post']); ?>>
             <div id="content">
                 <div class="content-container">
                     <?php 

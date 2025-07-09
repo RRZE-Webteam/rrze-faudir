@@ -21,7 +21,7 @@ jQuery(document).ready(function ($) {
                 }
             },
             error: function (xhr, status, error) {
-     //           console.error('AJAX request failed:', status, error);
+                console.error('AJAX request failed:', status, error);
                 $('#contacts-list').html('<p>An error occurred during the request.</p>');
             }
         });

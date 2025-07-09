@@ -343,9 +343,8 @@ class API {
     /**
      * Encodes a query parameter without affecting lq's = and & symbols
      */
-    private function encodeParam(string $key, string $value): string
-    {
-        return urlencode($value);
+    private function encodeParam(string $key, string $value): string {
+        return rawurlencode($value);
     }
    
     /**
