@@ -1,6 +1,6 @@
 {
     "name": "rrze-faudir",
-    "version": "2.3.14-5",
+    "version": "2.4.2",
     "description": "Plugin for displaying the FAUdir and institution directory on websites.",
     "main": "rrze-faudir.php",
     "textdomain": "rrze-faudir",
@@ -43,23 +43,23 @@
         "adminjs": "rrze-faudir-admin.js"
     },
     "devDependencies": {
-        "@wordpress/scripts": "^30.12.0",
         "@types/node": "^22.14.0",
         "@types/wordpress__block-editor": "^11.5.16",
         "@types/wordpress__blocks": "^12.5.16",
-        "@typescript-eslint/parser": "^8.29.0",
         "@typescript-eslint/eslint-plugin": "^8.18.0",
+        "@typescript-eslint/parser": "^8.29.0",
+        "@wordpress/scripts": "^30.12.0",
         "@wordpress/server-side-render": "^5.9.0",
         "eslint": "^9.16.0",
         "eslint-plugin-react": "^7.37.2",
         "eslint-plugin-tsdoc": "^0.4.0",
-        "ts-loader": "^9.5.2",
-        "typescript": "^5.8.3",
         "gulp": "^5.0.0",
         "gulp-concat": "^2.6.1",
         "gulp-sass": "^5.0.0",
         "gulp-wp-pot": "^2.5.0",
-        "sass": "^1.77.8"
+        "sass": "^1.77.8",
+        "ts-loader": "^9.5.2",
+        "typescript": "^5.8.3"
     },
     "dependencies": {
         "child_process": "^1.0.2",

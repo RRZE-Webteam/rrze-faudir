@@ -66,6 +66,8 @@
 	    --_icon-color-hover: var(--_icon_background-color);		
 	    --_icon-background-color-hover: var(--color-Text, currentColor);
 	    
+	    
+	   
 	     ul {
 		margin: 0;
 		display: inline;
@@ -101,7 +103,13 @@
 	     }
 	}
 	
+	
+	
+	
+	
      }
+     
+     
      ul.icon {
 	 margin-left: 0;
 	 padding-left: 0;
@@ -141,7 +149,15 @@
 		mask-image: var(--faudir-icon-right);
 	  }
       }
-
+      .text-list ul li {
+	.icon.icon-list {
+	    span.texticon::before,
+	    a::before {
+		mask-position: center center;
+	    }
+	}
+     }
+     
      .fau-elemental & .icon-list  {
 	  --_icon-border-color: none;
 	  --_icon-border-style: none;
