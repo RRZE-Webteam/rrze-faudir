@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rrze-faudir\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-faudir\n"
-"POT-Creation-Date: 2025-04-14T13:24:26+00:00\n"
-"PO-Revision-Date: 2025-04-14 15:25+0200\n"
+"POT-Creation-Date: 2025-05-23T10:57:15+00:00\n"
+"PO-Revision-Date: 2025-05-23 13:04+0200\n"
 "Last-Translator: Wolfgang Wiese <wolfgang.wiese@fau.de>\n"
 "Language-Team: Deutsch (Sie)\n"
 "Language: de\n"
@@ -62,33 +62,33 @@ msgstr "Weder Personen-IDs, Funktion+OrgNr, noch Kategorie wurden angegeben"
 msgid "Call up business card"
 msgstr "Visitenkarte aufrufen"
 
-#: includes/Config.php:76 build/block/index.js:1
+#: includes/Config.php:76 build/block/index.js:219
 msgid "Image"
 msgstr "Bild"
 
-#: includes/Config.php:77 build/block/index.js:1
+#: includes/Config.php:77 build/block/index.js:219
 msgid "Display Name"
 msgstr "Kompletter Name"
 
 #: includes/Config.php:80 includes/custom-post-type/custom-post-type.php:223
-#: includes/Organization.php:177 includes/Settings.php:619
-#: includes/Settings.php:1041 templates/org_compact.php:94
+#: includes/Organization.php:177 includes/Settings.php:620
+#: includes/Settings.php:1050 templates/org_compact.php:94
 #: templates/person_card.php:94 templates/person_compact.php:183
 #: templates/person_list.php:112 templates/person_page.php:129
-#: templates/person_table.php:113 build/block/index.js:1
+#: templates/person_table.php:113 build/block/index.js:219
 msgid "Email"
 msgstr "E-Mail"
 
 #: includes/Config.php:81 includes/Organization.php:174
-#: includes/Settings.php:1038 templates/org_compact.php:110
+#: includes/Settings.php:1047 templates/org_compact.php:110
 #: templates/person_card.php:108 templates/person_compact.php:197
 #: templates/person_list.php:124 templates/person_page.php:143
-#: templates/person_table.php:125 build/block/index.js:1
+#: templates/person_table.php:125 build/block/index.js:219
 msgid "Phone"
 msgstr "Telefon"
 
 #: includes/Config.php:82 includes/custom-post-type/custom-post-type.php:298
-#: includes/Settings.php:906 build/block/index.js:1
+#: includes/Settings.php:915 build/block/index.js:219
 msgid "Organization"
 msgstr "Organisation"
 
@@ -101,72 +101,72 @@ msgstr "Tätigkeit"
 #: templates/person_card.php:122 templates/person_card.php:139
 #: templates/person_compact.php:211 templates/person_list.php:140
 #: templates/person_page.php:157 templates/person_table.php:141
-#: build/block/index.js:1
+#: build/block/index.js:219
 msgid "URL"
 msgstr "URL"
 
-#: includes/Config.php:85 build/block/index.js:1
+#: includes/Config.php:85 build/block/index.js:219
 msgid "Content"
 msgstr "Biographie"
 
-#: includes/Config.php:86 build/block/index.js:1
+#: includes/Config.php:86 build/block/index.js:219
 msgid "Teasertext"
 msgstr "Teaser-Text"
 
-#: includes/Config.php:87 includes/Contact.php:550 build/block/index.js:1
+#: includes/Config.php:87 includes/Contact.php:550 build/block/index.js:219
 msgid "Social Media and Websites"
 msgstr "Social Media und Webportale"
 
 #: includes/Config.php:88 includes/Contact.php:247 includes/Contact.php:464
 #: templates/person_list.php:101 templates/person_table.php:102
-#: build/block/index.js:1
+#: build/block/index.js:219
 msgid "Room"
 msgstr "Zimmer"
 
 #: includes/Config.php:89 includes/Contact.php:250 includes/Contact.php:467
 #: templates/person_list.php:181 templates/person_table.php:159
-#: build/block/index.js:1
+#: build/block/index.js:219
 msgid "Floor"
 msgstr "Geschoss"
 
-#: includes/Config.php:90 includes/Settings.php:1029
+#: includes/Config.php:90 includes/Settings.php:1038
 #: templates/org_compact.php:78 templates/person_compact.php:120
-#: templates/person_page.php:114 build/block/index.js:1
+#: templates/person_page.php:114 build/block/index.js:219
 msgid "Address"
 msgstr "Adresse"
 
 #: includes/Config.php:91 includes/Contact.php:253
 #: includes/Organization.php:183 templates/person_list.php:211
-#: templates/person_table.php:187 build/block/index.js:1
+#: templates/person_table.php:187 build/block/index.js:219
 msgid "Street"
 msgstr "Straße"
 
 #: includes/Config.php:92 includes/Contact.php:256
-#: includes/Organization.php:186 build/block/index.js:1
+#: includes/Organization.php:186 build/block/index.js:219
 msgid "ZIP Code"
 msgstr "PLZ"
 
 #: includes/Config.php:93 includes/Contact.php:259
 #: includes/Organization.php:189 templates/person_list.php:231
-#: templates/person_table.php:207 build/block/index.js:1
+#: templates/person_table.php:207 build/block/index.js:219
 msgid "City"
 msgstr "Stadt"
 
 #: includes/Config.php:94 includes/Contact.php:262 includes/Contact.php:471
 #: includes/Organization.php:192 includes/Organization.php:250
-#: templates/person_table.php:218 build/block/index.js:1
+#: templates/person_table.php:218 build/block/index.js:219
 msgid "FAU Map"
 msgstr "FAU Karte"
 
 #: includes/Config.php:95 includes/Contact.php:280 includes/Contact.php:369
 #: templates/person_compact.php:162 templates/person_page.php:226
-#: build/block/index.js:1
+#: build/block/index.js:219
 msgid "Office Hours"
 msgstr "Bürozeiten"
 
 #: includes/Config.php:96 includes/Contact.php:286 includes/Contact.php:371
 #: templates/person_compact.php:150 templates/person_page.php:214
-#: build/block/index.js:1
+#: build/block/index.js:219
 msgid "Consultation Hours"
 msgstr "Sprechstunden"
 
@@ -368,7 +368,8 @@ msgid "No social media available"
 msgstr "Kein Social Media verfügbar"
 
 #: includes/custom-post-type/custom-post-type.php:26
-#: includes/custom-post-type/custom-post-type.php:28 build/block/index.js:1
+#: includes/custom-post-type/custom-post-type.php:28 build/block/index.js:89
+#: build/block/index.js:239
 msgid "Persons"
 msgstr "Personen"
 
@@ -470,7 +471,7 @@ msgstr "Teaser-Text (Englisch)"
 msgid "API Person Identifier"
 msgstr "API-Personenkennung"
 
-#: includes/custom-post-type/custom-post-type.php:221 includes/Settings.php:650
+#: includes/custom-post-type/custom-post-type.php:221 includes/Settings.php:651
 msgid "Name"
 msgstr "Name"
 
@@ -478,7 +479,7 @@ msgstr "Name"
 msgid "Telephone"
 msgstr "Telefon"
 
-#: includes/custom-post-type/custom-post-type.php:225 includes/Settings.php:609
+#: includes/custom-post-type/custom-post-type.php:225 includes/Settings.php:610
 msgid "Given Name"
 msgstr "Vorname"
 
@@ -486,7 +487,7 @@ msgstr "Vorname"
 msgid "Nobility Title"
 msgstr "Adelstitel"
 
-#: includes/custom-post-type/custom-post-type.php:227 includes/Settings.php:614
+#: includes/custom-post-type/custom-post-type.php:227 includes/Settings.php:615
 msgid "Family Name"
 msgstr "Nachname"
 
@@ -581,7 +582,7 @@ msgstr "Sind Sie sicher, dass Sie den Cache leeren möchten?"
 msgid "Are you sure you want to import contacts from FAU person?"
 msgstr "Sind Sie sicher, dass Sie den Cache leeren möchten?"
 
-#: includes/EnqueueScripts.php:64 includes/Settings.php:922
+#: includes/EnqueueScripts.php:64 includes/Settings.php:931
 msgid "Edit"
 msgstr "Bearbeiten"
 
@@ -597,7 +598,7 @@ msgstr "Sparen…"
 msgid "Saved"
 msgstr "Gespeichert"
 
-#: includes/EnqueueScripts.php:68 includes/Settings.php:1057
+#: includes/EnqueueScripts.php:68 includes/Settings.php:1066
 msgid "Save as Default Organization"
 msgstr "Als Standardorganisation speichern"
 
@@ -609,38 +610,38 @@ msgstr "Organisation wurde als Standard gespeichert."
 msgid "Error saving organization."
 msgstr "Fehler beim Speichern der Organisation."
 
-#: includes/Maintenance.php:77 includes/Maintenance.php:79
+#: includes/Maintenance.php:75 includes/Maintenance.php:77
 msgid "API Key missing. Please enter an API key in settings."
 msgstr ""
 "API-Schlüssel fehlt. Bitte gib einen API-Schlüssel in den Einstellungen ein."
 
-#: includes/Maintenance.php:77
+#: includes/Maintenance.php:75
 msgid "After this you can restart importing old contact entries from there."
 msgstr ""
 "Danach können Sie das Importieren alter Kontakteinträge von dort aus wieder "
 "aufnehmen."
 
-#: includes/Maintenance.php:110 includes/Maintenance.php:280
-#: includes/Maintenance.php:290 includes/Maintenance.php:301
+#: includes/Maintenance.php:105 includes/Maintenance.php:277
+#: includes/Maintenance.php:287 includes/Maintenance.php:298
 msgid "Person with UnivIS ID"
 msgstr "Person mit UnivIS Id"
 
-#: includes/Maintenance.php:110
+#: includes/Maintenance.php:105
 msgid "cannot be found on UnivIS. Account either removed or UnivIS Id wrong"
 msgstr ""
 "konnte nicht im UnivIS gefunden werden. Der Account wurde entweder entfernt "
 "oder die UnivIS Id ist falsch."
 
-#: includes/Maintenance.php:271
+#: includes/Maintenance.php:268
 msgid "Person successfully importet"
 msgstr "Person erfolgreich importiert"
 
-#: includes/Maintenance.php:277 includes/Maintenance.php:287
-#: includes/Maintenance.php:298
+#: includes/Maintenance.php:274 includes/Maintenance.php:284
+#: includes/Maintenance.php:295
 msgid "Missing UnivIS ID for person"
 msgstr "Die UnivIS Id der Person konnte nicht gefunden werden"
 
-#: includes/Maintenance.php:280
+#: includes/Maintenance.php:277
 msgid ""
 "could not be importet. Possible Reasons: Either E-Mail-Adress from UnivIS "
 "wasnt found in public FAUdir entry or person name is not unique in FAUdir"
@@ -651,29 +652,31 @@ msgstr ""
 "konte mit der E-Mailadresse im FAUdir nicht eindeutig einer Person "
 "zugeordnet werden"
 
-#: includes/Maintenance.php:290
+#: includes/Maintenance.php:287
 msgid "already exists or cannot be found on FAUdir"
 msgstr "existiert bereits oder konnte nicht in FAUdir gefunden werden"
 
-#: includes/Maintenance.php:301
+#: includes/Maintenance.php:298
 msgid "already exists"
 msgstr "existiert bereits"
 
 #. translators: %d: number of imported persons
-#: includes/Maintenance.php:337
+#: includes/Maintenance.php:334
+#, php-format
 msgid "%d person was successfully imported from the old plugin."
 msgid_plural "%d persons were successfully imported from the old plugin."
 msgstr[0] "%d Person wurde erfolgreich aus dem alten Plugin importiert."
 msgstr[1] "%d Personen wurden erfolgreich aus dem alten Plugin importiert."
 
 #. translators: %d: number of not imported persons
-#: includes/Maintenance.php:349
+#: includes/Maintenance.php:346
+#, php-format
 msgid "%d person was not able to be imported from the old plugin."
 msgid_plural "%d persons were not able to be imported from the old plugin."
 msgstr[0] "%d Person konnte nicht aus dem alten Plugin importiert werden."
 msgstr[1] "%d Personen konnten nicht aus dem alten Plugin importiert werden."
 
-#: includes/Maintenance.php:588 templates/person_card.php:173
+#: includes/Maintenance.php:585 templates/person_card.php:173
 #: templates/person_compact.php:296 templates/person_list.php:292
 #: templates/person_list.php:298 templates/person_page.php:300
 #: templates/person_table.php:294
@@ -684,31 +687,31 @@ msgstr "Es konnte kein Kontakteintrag gefunden werden."
 msgid "No address available"
 msgstr "Keine Adresse verfügbar"
 
-#: includes/Person.php:715
+#: includes/Person.php:716
 msgid "Doctor"
 msgstr "Doktor"
 
-#: includes/Person.php:716
+#: includes/Person.php:717
 msgid "Professor"
 msgstr "Professor"
 
-#: includes/Person.php:717
+#: includes/Person.php:718
 msgid "Professor Doctor"
 msgstr "Professor Doktor"
 
-#: includes/Person.php:718
+#: includes/Person.php:719
 msgid "Professor (Emeritus)"
 msgstr "Professor (Emeritus)"
 
-#: includes/Person.php:719
+#: includes/Person.php:720
 msgid "Professor Doctor (Emeritus)"
 msgstr "Professor Doktor (Emeritus)"
 
-#: includes/Person.php:720
+#: includes/Person.php:721
 msgid "Private lecturer"
 msgstr "PD"
 
-#: includes/Person.php:721
+#: includes/Person.php:722
 msgid "Private lecturer doctor"
 msgstr "PD Doktor"
 
@@ -716,11 +719,11 @@ msgstr "PD Doktor"
 msgid "RRZE FAUdir Settings"
 msgstr "RRZE FAUdir Einstellungen"
 
-#: includes/Settings.php:48 includes/Settings.php:511 includes/Settings.php:570
+#: includes/Settings.php:48 includes/Settings.php:511 includes/Settings.php:571
 msgid "Search Contacts"
 msgstr "Kontakte suchen"
 
-#: includes/Settings.php:57 includes/Settings.php:514 includes/Settings.php:663
+#: includes/Settings.php:57 includes/Settings.php:514 includes/Settings.php:664
 msgid "Search Organizations"
 msgstr "Suchorganisationen"
 
@@ -976,21 +979,21 @@ msgstr "RRZE-FAUdir Einstellungen"
 msgid "Advanced Settings"
 msgstr "Erweiterte Einstellungen"
 
-#: includes/Settings.php:558
+#: includes/Settings.php:559
 msgid "Reset to Default Settings"
 msgstr "Auf Standardeinstellungen zurücksetzen"
 
-#: includes/Settings.php:559
+#: includes/Settings.php:560
 msgid "Click the button below to reset all settings to their default values."
 msgstr ""
 "Klicken Sie auf die Schaltfläche unten, um alle Einstellungen auf die "
 "Standardwerte zurückzusetzen."
 
-#: includes/Settings.php:561
+#: includes/Settings.php:562
 msgid "Reset to Default Values"
 msgstr "Auf Standardwerte zurücksetzen"
 
-#: includes/Settings.php:582
+#: includes/Settings.php:583
 msgid ""
 "Please enter at least one search term. If more than one parameter is "
 "entered, the search results must contain all values (AND search)."
@@ -998,31 +1001,31 @@ msgstr ""
 "Bitte geben Sie mindestens einen Suchbegriff ein. Bei mehreren Parametern "
 "müssen die Suchergebnisse alle Werte enthalten (UND-Suche)."
 
-#: includes/Settings.php:587
+#: includes/Settings.php:588
 msgid "Search Options"
 msgstr "Suchoptionen"
 
-#: includes/Settings.php:592
+#: includes/Settings.php:593
 msgid "Filter by default organization"
 msgstr "Filtern Sie nach Standardorganisation"
 
-#: includes/Settings.php:599
+#: includes/Settings.php:600
 msgid "Search Terms"
 msgstr "Suchbegriffe"
 
-#: includes/Settings.php:604
+#: includes/Settings.php:605
 msgid "API-Person-Identifier"
 msgstr "API-Personenkennung"
 
-#: includes/Settings.php:628 includes/Settings.php:681
+#: includes/Settings.php:629 includes/Settings.php:682
 msgid "Search"
 msgstr "Suchen"
 
-#: includes/Settings.php:648
+#: includes/Settings.php:649
 msgid "Current Default Organization"
 msgstr "Aktuelle Standardorganisation"
 
-#: includes/Settings.php:649
+#: includes/Settings.php:650
 msgid ""
 "This is the organization that will be used by default in shortcodes and "
 "blocks."
@@ -1030,93 +1033,94 @@ msgstr ""
 "Dies ist die Organisation, die standardmäßig in Shortcodes und Blöcken "
 "verwendet wird."
 
-#: includes/Settings.php:651 includes/Settings.php:1012
+#: includes/Settings.php:652 includes/Settings.php:1021
 msgid "Organization Number"
 msgstr "Organisationsnr"
 
-#: includes/Settings.php:655
+#: includes/Settings.php:656
 msgid "Are you sure you want to delete the default organization?"
 msgstr "Möchten Sie die Standardorganisation wirklich löschen?"
 
-#: includes/Settings.php:656
+#: includes/Settings.php:657
 msgid "Delete Default Organization"
 msgstr "Standardorganisation löschen"
 
-#: includes/Settings.php:672
+#: includes/Settings.php:673
 msgid "Search Term"
 msgstr "Suchbegriff"
 
-#: includes/Settings.php:676
+#: includes/Settings.php:677
 msgid "Enter organization name or identifier"
 msgstr "Geben Sie den Namen oder die Kennung der Organisation ein"
 
-#: includes/Settings.php:707
+#: includes/Settings.php:708
 msgid "Are you sure you want to reset all settings to their default values?"
 msgstr ""
 "Sind Sie sicher, dass Sie alle Einstellungen auf die Standardwerte "
 "zurücksetzen möchten?"
 
-#: includes/Settings.php:713 includes/Settings.php:768
+#: includes/Settings.php:714 includes/Settings.php:769
 msgid "Settings have been reset to default values."
 msgstr "Einstellungen wurden auf die Standardwerte zurückgesetzt."
 
-#: includes/Settings.php:716
+#: includes/Settings.php:717
 msgid "Failed to reset settings. Please try again."
 msgstr ""
 "Einstellungen konnten nicht zurückgesetzt werden. Bitte versuchen Sie es "
 "erneut."
 
-#: includes/Settings.php:728 includes/Settings.php:1076
+#: includes/Settings.php:729 includes/Settings.php:1085
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 "Sie verfügen nicht über die erforderlichen Berechtigungen, um auf diese "
 "Seite zuzugreifen."
 
-#: includes/Settings.php:742
+#: includes/Settings.php:743
 msgid "Default organization has been deleted."
 msgstr "Die Standardorganisation wurde gelöscht."
 
-#: includes/Settings.php:781
+#: includes/Settings.php:793
 msgid "All cache cleared successfully."
 msgstr "Der gesamte Cache wurde erfolgreich gelöscht."
 
-#: includes/Settings.php:886 includes/Settings.php:984
+#: includes/Settings.php:895 includes/Settings.php:993
+#, php-format
 msgid "Error: %s"
 msgstr "Fehler: %s"
 
-#: includes/Settings.php:932
+#: includes/Settings.php:941
 msgid "No contacts found. Please verify the IdM-Kennung or names provided."
 msgstr ""
 "Keine Kontakte gefunden. Bitte überprüfen Sie die IdM-Kennung oder die "
 "angegebenen Namen."
 
-#: includes/Settings.php:965
+#: includes/Settings.php:974
 msgid "Please enter a search term"
 msgstr "Bitte geben Sie einen Suchbegriff ein"
 
-#: includes/Settings.php:1010
+#: includes/Settings.php:1019
 msgid "Organization ID"
 msgstr "Organisations-ID"
 
-#: includes/Settings.php:1017
+#: includes/Settings.php:1026
 msgid "Parent Organization"
 msgstr "Übergeordnete Organisation"
 
-#: includes/Settings.php:1023
+#: includes/Settings.php:1032
 msgid "Type"
 msgstr "Typ"
 
-#: includes/Settings.php:1044
+#: includes/Settings.php:1053
 msgid "Website"
 msgstr "Webauftritt"
 
-#: includes/Settings.php:1065
+#: includes/Settings.php:1074
 msgid "No organizations found. Please try a different search term."
 msgstr ""
 "Es wurden keine Organisationen gefunden. Bitte versuchen Sie einen anderen "
 "Suchbegriff."
 
-#: includes/Settings.php:1114
+#: includes/Settings.php:1123
 msgid "Default organization has been saved."
 msgstr "Die Standardorganisation wurde gespeichert."
 
@@ -1133,11 +1137,13 @@ msgid "Error on creating output"
 msgstr "Fehler beim Erstellen der Ausgabe"
 
 #: includes/Shortcode.php:678
+#, php-format
 msgid "Person with ID %s does not exist"
 msgstr "Person mit ID %s existiert nicht"
 
 #. translators: 1: Current PHP version 2: Required PHP version
 #: rrze-faudir.php:78
+#, php-format
 msgid ""
 "Your PHP version (%1$s) is outdated. Please upgrade to PHP %2$s or higher."
 msgstr ""
@@ -1146,6 +1152,7 @@ msgstr ""
 
 #. translators: 1: Current WordPress version 2: Required WordPress version
 #: rrze-faudir.php:85
+#, php-format
 msgid ""
 "Your WordPress version (%1$s) is outdated. Please upgrade to WordPress %2$s "
 "or higher."
@@ -1170,112 +1177,15 @@ msgstr "Profilseite"
 msgid "Postal Code"
 msgstr "Postleitzahl"
 
-#: build/block/index.js:1
-msgid "FAUdir Preview…"
-msgstr "FAUdir Vorschau.."
-
-#: build/block/index.js:1
-msgid "The Preview is loading…"
-msgstr "Die Vorschau wird geladen.."
-
-#: build/block/index.js:1
-msgid ""
-"Your current configuration does not return a contact. Try adjusting your "
-"filter settings."
-msgstr ""
-"Deine aktuelle Konfiguration liefert keinen Kontakt. Versuche, deine "
-"Filtereinstellungen anzupassen."
-
-#: build/block/index.js:1
-msgid "Academic Title"
-msgstr "Akademischer Titel"
-
-#: build/block/index.js:1
-msgid "First Name"
-msgstr "Vorname"
-
-#: build/block/index.js:1
-msgid "Last Name"
-msgstr "Nachname"
-
-#: build/block/index.js:1
-msgid "Academic Suffix"
-msgstr "Namenszusatz"
-
-#: build/block/index.js:1
-msgid "Title of Nobility"
-msgstr "Adelstitel"
-
-#: build/block/index.js:1
-msgid "Jobtitle"
-msgstr "Stellenbezeichnung"
-
-#: build/block/index.js:1
-msgid "Display Organization"
-msgstr "Organisation ausgeben"
-
-#: build/block/index.js:1
-msgid "FAUOrg Number"
-msgstr "FAUOrg Nummer"
-
-#: build/block/index.js:1
-msgid "Your FAUOrg-Number needs to be exactly 10 digits."
-msgstr "Deine FAUOrg-Nummer muss genau 10 Ziffern haben."
-
-#: build/block/index.js:1
-msgid ""
-"To display all Persons from within your Organization, insert your FAUOrg "
-"Number (Cost center number)."
-msgstr ""
-"Um alle Personen aus deiner Organisation anzuzeigen, gib deine FAUOrg-Nummer "
-"(Kostenstellennummer) ein."
-
-#: build/block/index.js:1
-msgid "Loading available contacts..."
-msgstr "Lade verfügbare Personen..."
-
-#: build/block/index.js:1
-msgid "Select Contacts for Display."
-msgstr "Wählen Sie Kontakte zur Anzeige."
-
-#: build/block/index.js:1
-msgid "Select Persons"
-msgstr "Wähle Personen"
-
-#: build/block/index.js:1
-msgid "Type to add persons"
-msgstr "Tippen zum hinzufügen von Personen"
-
-#: build/block/index.js:1
-msgid "Or choose by List."
-msgstr "Aus Liste wählen"
-
-#: build/block/index.js:1
-msgid ""
-"There are currently no Contacts available. Start adding your first FAUdir "
-"Contacts via the WordPress Dashboard > Persons."
-msgstr ""
-"Derzeit sind keine Kontakte verfügbar. Füge deine ersten FAUdir-Kontakte "
-"über das WordPress-Dashboard > Personen hinzu."
-
-#: build/block/index.js:1
-msgid "Alternatively, select persons from the checkboxes below:"
-msgstr ""
-"Alternativ können Sie auch Personen aus der unten stehenden Liste auswählen:"
-
-#: build/block/index.js:1
-msgid "Close"
-msgstr "Schließen"
-
-#: build/block/index.js:1
+#: build/block/index.js:79
 msgid "Select Categories"
 msgstr "Kategorien auswählen"
 
-#: build/block/index.js:1
+#: build/block/index.js:79
 msgid "Type to add categories"
 msgstr "Tippen zum hinzufügen von Kategorien"
 
-#: build/block/index.js:1
+#: build/block/index.js:79
 msgid ""
 "There are currently no Categories available. Start adding your first FAUdir "
 "Categories via the WordPress Dashboard > Persons > Categories."
@@ -1283,103 +1193,53 @@ msgstr ""
 "Derzeit sind keine Kategorien verfügbar. Füge deine ersten FAUdir-Kategorien "
 "über das WordPress-Dashboard > Personen > Kategorien hinzu."
 
-#: build/block/index.js:1
-msgid "Select Format"
-msgstr "Wähle Format"
-
-#: build/block/index.js:1
-msgid "Felder auswählen"
-msgstr "Felder auswählen"
-
-#: build/block/index.js:1
-msgid "Change display format"
-msgstr "Namensformat anpassen"
-
-#: build/block/index.js:1
-msgid "Display Faudir Folder"
-msgstr "FAUdir-Ordner ausgeben"
-
-#: build/block/index.js:1
-msgid "Via FAUorg-ID or FAUdir-URL"
-msgstr "Über FAUorg-ID oder FAUdir-URL"
-
-#: build/block/index.js:1
-msgid "Please enter a valid FAUdir-URL or the identifier."
-msgstr "Bitte gib eine gültige FAUdir-URL oder den Identifier ein."
-
-#: build/block/index.js:1
-msgid ""
-"Please enter either a FAUdir-URL (\"https://faudir.fau.de/public/org/…\"), "
-"or the Identifier."
-msgstr ""
-"Bitte gib entweder eine FAUdir-URL (\"https://faudir.fau.de/public/org/..."
-"\") oder den Identifier ein."
-
-#: build/block/index.js:1
-msgid "Direct Select via FAUdir"
-msgstr "Direktwahl über FAUdir"
-
-#: build/block/index.js:1
-msgid "Via Person Identifier or FAUdir-URL"
-msgstr "Über Personen-Identifier oder FAUdir-URL"
-
-#: build/block/index.js:1
-msgid ""
-"Please enter either a FAUdir-URL (\"https://faudir.fau.de/public/person/…"
-"\"), or the Person-Identifier. This will display your contact, even if the "
-"contact is not created via Dashboard > Persons."
-msgstr ""
-"Bitte gib entweder eine FAUdir-URL (\"https://faudir.fau.de/public/person/..."
-"\") oder den Person-Identifier ein. So wird dein Kontakt angezeigt, auch "
-"wenn er nicht über Dashboard > Personen erstellt wurde."
-
-#: build/block/index.js:1
+#: build/block/index.js:89
 msgid "Setup your FAUdir Block"
 msgstr "Einrichten des FAUdir Blocks"
 
-#: build/block/index.js:1
-msgid "Configure the appearance of your Contact"
-msgstr "Konfiguriere das Aussehen deines Kontakts"
-
-#: build/block/index.js:1
-msgid "Back to Data selection"
-msgstr "Zurück zur Datenauswahl"
-
-#: build/block/index.js:1
-msgid "Finish initial setup"
-msgstr "Ersteinrichtung beenden"
-
-#: build/block/index.js:1
-msgid "Preview"
-msgstr "Vorschau"
-
-#: build/block/index.js:1
+#: build/block/index.js:89
 msgid "Which type of contact would you like to display?"
 msgstr "Welche Art von Kontakt möchten Sie anzeigen?"
 
-#: build/block/index.js:1
+#: build/block/index.js:89
 msgid "Contact type"
 msgstr "Kontaktart"
 
-#: build/block/index.js:1
+#: build/block/index.js:89 build/block/index.js:239
 msgid "Do you want to output a Person entry or a FAUdir Institution/Folder?"
 msgstr ""
 "Wollen Sie einen Personeneintrag oder einen FAUdir Institution/Ordner "
 "ausgeben?"
 
-#: build/block/index.js:1
+#: build/block/index.js:89 build/block/index.js:239
 msgid "Organization or FAUdir-Folder"
 msgstr "Organisation oder FAUdir-Ordner"
 
-#: build/block/index.js:1
+#: build/block/index.js:89
+msgid "Select Contacts to display"
+msgstr "Wählen Sie Kontakte zur Anzeige"
+
+#: build/block/index.js:89
+msgid "Select Contacts from your WordPress Site"
+msgstr "Kontakte von deiner WordPress-Website auswählen"
+
+#: build/block/index.js:89
+msgid "Filter by FAUdir-Role"
+msgstr "Nach Tätigkeit / Rolle filtern"
+
+#: build/block/index.js:89
+msgid "Select Contacts directly from FAUdir"
+msgstr "Kontakte direkt aus FAUdir auswählen"
+
+#: build/block/index.js:89
 msgid "Select Organization or FAUdir-Folder to display"
 msgstr "Wählen Sie eine Organisation oder einen FAUdir-Ordner für die Ausgabe"
 
-#: build/block/index.js:1
+#: build/block/index.js:89
 msgid "Display via FAUOrg Number"
 msgstr "Anzeige über FAUOrg Nummer"
 
-#: build/block/index.js:1
+#: build/block/index.js:89
 msgid ""
 "To display an Institution as contact, insert your FAUOrg Number (Cost center "
 "number)."
@@ -1387,85 +1247,217 @@ msgstr ""
 "Um eine Institution als Kontakt anzuzeigen, gib deine FAUOrg-Nummer "
 "(Kostenstellennummer) ein."
 
-#: build/block/index.js:1
-msgid "Select Contacts to display"
-msgstr "Wählen Sie Kontakte zur Anzeige"
+#: build/block/index.js:89
+msgid "Finish initial setup"
+msgstr "Ersteinrichtung beenden"
 
-#: build/block/index.js:1
-msgid "Select Contacts from your WordPress Site"
-msgstr "Kontakte von deiner WordPress-Website auswählen"
-
-#: build/block/index.js:1
-msgid "Select Contacts directly from FAUdir"
-msgstr "Kontakte direkt aus FAUdir auswählen"
-
-#: build/block/index.js:1
+#: build/block/index.js:89
 msgid "Step 2: Change Appearance"
 msgstr "Schritt 2: Erscheinungsbild ändern"
 
-#: build/block/index.js:1
+#: build/block/index.js:89
+msgid "Preview"
+msgstr "Vorschau"
+
+#: build/block/index.js:89
+msgid "Configure the appearance of your Contact"
+msgstr "Konfiguriere das Aussehen deines Kontakts"
+
+#: build/block/index.js:89
+msgid "Back to Data selection"
+msgstr "Zurück zur Datenauswahl"
+
+#: build/block/index.js:109 build/block/index.js:129
+msgid "FAUdir Preview…"
+msgstr "FAUdir Vorschau.."
+
+#: build/block/index.js:109
+msgid ""
+"Your current configuration does not return a contact. Try adjusting your "
+"filter settings."
+msgstr ""
+"Deine aktuelle Konfiguration liefert keinen Kontakt. Versuche, deine "
+"Filtereinstellungen anzupassen."
+
+#: build/block/index.js:119
+msgid "Select Format"
+msgstr "Wähle Format"
+
+#: build/block/index.js:129
+msgid "The Preview is loading…"
+msgstr "Die Vorschau wird geladen.."
+
+#: build/block/index.js:139
+msgid "Change display format"
+msgstr "Namensformat anpassen"
+
+#: build/block/index.js:149 build/block/index.js:169
+msgid "Please enter a valid FAUdir-URL or the identifier."
+msgstr "Bitte gib eine gültige FAUdir-URL oder den Identifier ein."
+
+#: build/block/index.js:149
+msgid "Display Faudir Folder"
+msgstr "FAUdir-Ordner ausgeben"
+
+#: build/block/index.js:149
+msgid "Via FAUorg-ID or FAUdir-URL"
+msgstr "Über FAUorg-ID oder FAUdir-URL"
+
+#: build/block/index.js:149
+msgid ""
+"Please enter either a FAUdir-URL (\"https://faudir.fau.de/public/org/…\"), "
+"or the Identifier."
+msgstr ""
+"Bitte gib entweder eine FAUdir-URL (\"https://faudir.fau.de/public/org/..."
+"\") oder den Identifier ein."
+
+#: build/block/index.js:159
+msgid "Your FAUOrg-Number needs to be exactly 10 digits."
+msgstr "Deine FAUOrg-Nummer muss genau 10 Ziffern haben."
+
+#: build/block/index.js:159
+msgid "Display Organization"
+msgstr "Organisation ausgeben"
+
+#: build/block/index.js:159
+msgid "FAUOrg Number"
+msgstr "FAUOrg Nummer"
+
+#: build/block/index.js:159
+msgid ""
+"To display all Persons from within your Organization, insert your FAUOrg "
+"Number (Cost center number)."
+msgstr ""
+"Um alle Personen aus deiner Organisation anzuzeigen, gib deine FAUOrg-Nummer "
+"(Kostenstellennummer) ein."
+
+#: build/block/index.js:169
+msgid "Direct Select via FAUdir"
+msgstr "Direktwahl über FAUdir"
+
+#: build/block/index.js:169
+msgid "Via Person Identifier or FAUdir-URL"
+msgstr "Über Personen-Identifier oder FAUdir-URL"
+
+#: build/block/index.js:179
+msgid "Select Persons"
+msgstr "Wähle Personen"
+
+#: build/block/index.js:179
+msgid "Type to add persons"
+msgstr "Tippen zum hinzufügen von Personen"
+
+#: build/block/index.js:179
+msgid "Or choose by List."
+msgstr "Aus Liste wählen"
+
+#: build/block/index.js:179
+msgid ""
+"There are currently no Contacts available. Start adding your first FAUdir "
+"Contacts via the WordPress Dashboard > Persons."
+msgstr ""
+"Derzeit sind keine Kontakte verfügbar. Füge deine ersten FAUdir-Kontakte "
+"über das WordPress-Dashboard > Personen hinzu."
+
+#: build/block/index.js:179
+msgid "Alternatively, select persons from the checkboxes below:"
+msgstr ""
+"Alternativ können Sie auch Personen aus der unten stehenden Liste auswählen:"
+
+#: build/block/index.js:179
+msgid "Close"
+msgstr "Schließen"
+
+#: build/block/index.js:189
 msgid "Filter by Role"
 msgstr "Nach Benutzerrolle"
 
-#: build/block/index.js:1
-msgid "Select a category to filter the person entries by."
+#: build/block/index.js:189
+msgid "Filter contact entries by FAUdir job / FAUdir role."
 msgstr ""
-"Wählen Sie eine Kategorie, nach der die Personeneinträge gefiltert werden "
-"sollen."
+"Filtert Kontakteinträge nach der in FAUdir hinterlegten Tätigkeit / Rolle."
 
-#: build/block/index.js:1
+#: build/block/index.js:189
 msgid "Currently selected role filters."
 msgstr "Aktuell ausgewählte Rollenfilter."
 
-#: build/block/index.js:1
+#: build/block/index.js:199
+msgid "Felder auswählen"
+msgstr "Felder auswählen"
+
+#: build/block/index.js:209
 msgid "Sort by"
 msgstr "Sortiere nach"
 
-#: build/block/index.js:1
+#: build/block/index.js:209 build/block/index.js:219
+msgid "Last Name"
+msgstr "Nachname"
+
+#: build/block/index.js:209
 msgid "Title and Last Name"
 msgstr "Akademischer Titel und Nachname"
 
-#: build/block/index.js:1
+#: build/block/index.js:209
 msgid "Head of Department First"
 msgstr "Leitung der Organisation zuerst"
 
-#: build/block/index.js:1
+#: build/block/index.js:209
 msgid "Professors First"
 msgstr "Professoren als Erstes"
 
-#: build/block/index.js:1
+#: build/block/index.js:209
 msgid "Identifier Order"
 msgstr "Reihenfolder nach ID"
 
-#: build/block/index.js:1
-msgid "Change the Data"
-msgstr "Die Daten ändern"
+#: build/block/index.js:219
+msgid "Academic Title"
+msgstr "Akademischer Titel"
 
-#: build/block/index.js:1
+#: build/block/index.js:219
+msgid "First Name"
+msgstr "Vorname"
+
+#: build/block/index.js:219
+msgid "Academic Suffix"
+msgstr "Namenszusatz"
+
+#: build/block/index.js:219
+msgid "Title of Nobility"
+msgstr "Adelstitel"
+
+#: build/block/index.js:219
+msgid "Jobtitle"
+msgstr "Stellenbezeichnung"
+
+#: build/block/index.js:239
 msgid "Change the Appearance"
 msgstr "Das Erscheinungsbild ändern"
 
-#: build/block/index.js:1
-msgid "Finish configuration"
-msgstr "Konfiguration beenden"
+#: build/block/index.js:239
+msgid "Change the Data"
+msgstr "Die Daten ändern"
 
-#: build/block/index.js:1
+#: build/block/index.js:239
 msgid "Configure your contact"
 msgstr "Konfiguriere deinen Kontakt"
 
-#: build/block/index.js:1
+#: build/block/index.js:239
+msgid "Finish configuration"
+msgstr "Konfiguration beenden"
+
+#: build/block/index.js:239
 msgid "Data Selection"
 msgstr "Datenauswahl"
 
-#: build/block/index.js:1
+#: build/block/index.js:239
 msgid "What type of Contact do you want to display?"
 msgstr "Welche Art von Kontakt möchten Sie anzeigen?"
 
-#: build/block/index.js:1
+#: build/block/index.js:239
 msgid "Appearance"
 msgstr "Darstellungsoptionen"
 
-#: build/block/index.js:1
+#: build/block/index.js:239
 msgid "Sorting"
 msgstr "Sortierung"
 
@@ -1508,6 +1500,26 @@ msgstr "Kontakt"
 msgctxt "block keyword"
 msgid "FAU"
 msgstr "FAU"
+
+#~ msgid "Loading available contacts..."
+#~ msgstr "Lade verfügbare Personen..."
+
+#~ msgid "Select Contacts for Display."
+#~ msgstr "Wählen Sie Kontakte zur Anzeige."
+
+#~ msgid ""
+#~ "Please enter either a FAUdir-URL (\"https://faudir.fau.de/public/person/…"
+#~ "\"), or the Person-Identifier. This will display your contact, even if "
+#~ "the contact is not created via Dashboard > Persons."
+#~ msgstr ""
+#~ "Bitte gib entweder eine FAUdir-URL (\"https://faudir.fau.de/public/"
+#~ "person/...\") oder den Person-Identifier ein. So wird dein Kontakt "
+#~ "angezeigt, auch wenn er nicht über Dashboard > Personen erstellt wurde."
+
+#~ msgid "Select a category to filter the person entries by."
+#~ msgstr ""
+#~ "Wählen Sie eine Kategorie, nach der die Personeneinträge gefiltert werden "
+#~ "sollen."
 
 #~ msgid "Or you can select Persons via Checkboxes."
 #~ msgstr "Oder wählen Sie aus einer Liste von allen verfügbaren Personen."

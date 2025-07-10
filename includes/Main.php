@@ -7,6 +7,7 @@ defined('ABSPATH') || exit;
 use RRZE\FAUdir\Maintenance;
 use RRZE\FAUdir\BlockRegistration;
 use RRZE\FAUdir\REST;
+use RRZE\FAUdir\Config;
 /**
  * Hauptklasse
  */
@@ -27,11 +28,18 @@ class Main {
     }
 
     public function onLoaded() {
+        
+        // Register REST API
         new REST();
-        $enqueues = new EnqueueScripts($this->pluginFile);
+        
+        // Enqueue Scripts
+        $enqueues = new EnqueueScripts();
         $enqueues->register();
-
-        $shortcode = new Shortcode($this->config);
+        
+        // Register Shortcodes Actions
+        new Shortcode();
+        
+        // Block Registration
         new BlockRegistration();
     
         // Rufe Maintenance Hooks auf

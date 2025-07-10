@@ -216,6 +216,8 @@ export default function Edit({attributes, setAttributes}: EditProps) {
                 setAttributes={setAttributes}
               />
               <hr />
+              <RoleSelector attributes={attributes} setAttributes={setAttributes}/>
+              <hr />
               <OrganizationNumberDetector
                 attributes={attributes}
                 setAttributes={setAttributes}
@@ -246,7 +248,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
             <PanelBody title={__('Sorting', 'rrze-faudir')} initialOpen={false}>
                 <SortSelector attributes={attributes} setAttributes={setAttributes}/>
                 <hr />
-                <RoleSelector setAttributes={setAttributes}/>
+                <RoleSelector attributes={attributes} setAttributes={setAttributes}/>
             </PanelBody>
         }
       </InspectorControls>

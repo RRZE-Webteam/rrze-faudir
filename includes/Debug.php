@@ -14,9 +14,11 @@ class Debug {
    
    // Gets an Variable, that can be an string, array or object and modifies its output in a more readable form 
    public static function get_html_var_dump($input) {
-
+       if (!empty($input)) {
          $out = self::get_dump_debug($input);
-        
+       } else {
+           $out = "Empty Array";
+       }
         /*
         $out = Debug::get_var_dump($input);
         $patterns_replacements = array( 
@@ -83,7 +85,9 @@ class Debug {
      * Better Dump.
      */
     public static function get_dump_debug($input, $collapse = false, $console = false, $htmlbreak = true) {
-        
+        if (empty($input)) {
+            return "- No Data - ";
+        }
         
         $recursive = function($data, $level=0) use (&$recursive, $collapse, $console, $htmlbreak) {
             global $argv;

@@ -24,10 +24,7 @@
 	    padding: 0;
 	    
 	    li {
-		display: inline-flex;
-		padding: 0 0.2rem;
-		align-items: center;
-		gap: 0;
+		display: inline;
 	    }
 	    li::after {
 		content: ", ";
@@ -124,12 +121,31 @@
     h1, h2, h3, h4, h5 {
 	margin: 1rem 0 0.5rem 0;
     }
+    p.organisation_name,
     p.jobtitle {
 	font-weight: bold;
     }
     a {
 	color: var(--faudir-color-links);
     }
+    .content p:empty {
+	display: none;
+    }
+    
+    .namepart {
+	white-space: nowrap;
+    }
+    
+    .hoursAvailable {
+	.dayname {
+	    width: 11ch;
+	    display: inline-block;
+	  }
+    }
+    table th address, table td address {
+	  font-size: var(--font-size-sm, 0.875rem);
+    }
+    
 }
 
 

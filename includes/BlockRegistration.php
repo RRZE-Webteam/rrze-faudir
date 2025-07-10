@@ -12,7 +12,7 @@ class BlockRegistration
 {
     public function __construct()
     {
-        add_action('init', [$this, 'rrze_faudir_block_init']);
+        add_action('init', [$this, 'rrze_faudir_block_init'], 15);
         add_filter('block_categories_all', [$this, 'register_rrze_block_category'], 10, 2);
     }
 
@@ -79,8 +79,7 @@ class BlockRegistration
      * @param $attributes
      * @return string The Shortcode Output | An error message if no shortcode is present.
      */
-    public static function render_faudir_block($attributes): string
-    {
+    public static function render_faudir_block($attributes): string {
         try {
             if (!shortcode_exists('faudir')) {
                 throw new Exception('FAUDIR shortcode is not registered');

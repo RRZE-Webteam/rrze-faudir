@@ -21,6 +21,17 @@
 	justify-content: center;
 	
 	margin: var(--faudir-format-margins);
+	
+	.icon.icon-list ul li a,
+	.listcontent {
+	     --faudir-icon-margin-right:  0.2rem;
+	}
+	.listcontent span.value::after {
+	    content: "";
+	    margin-left: 0.2rem;
+	    margin-right: 0.2rem;
+	}
+	
     }
 
 

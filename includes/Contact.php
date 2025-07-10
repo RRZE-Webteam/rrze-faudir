@@ -357,7 +357,7 @@ class Contact {
      * with key = 'consultationHours' as parameter
      *   key = 'officeHours' will use this array instead
      */    
-    public function getConsultationsHours(array $workplace, string $key = 'consultationHours', bool $withaddress = true, string $lang = 'de', bool $roomfloor = false, bool $showmap = false): string {
+    public function getConsultationsHours(array $workplace, string $key = 'consultationHours', ?bool $withaddress = true, ?string $lang = 'de', ?bool $roomfloor = false, ?bool $showmap = false): string {
         if ((empty($workplace)) || (empty($workplace[$key]))) {
             return '';
         } 
@@ -386,9 +386,9 @@ class Contact {
             $output .= '<span class="weekday" itemprop="dayOfWeek" content="https://schema.org/';
             $output .= esc_attr(self::getWeekdaySpec($consultationHours['weekday']));
             $output .= '">';
-            $output .= esc_html(self::getWeekday($consultationHours['weekday'])).': ';
-            $output .= '<span itemprop="opens">'.esc_html($consultationHours['from']).'</span> - ';
-            $output .= '<span itemprop="close">'.esc_html($consultationHours['to']).'</span>';
+            $output .= '<span class="dayname">'.esc_html(self::getWeekday($consultationHours['weekday'])).': </span>';
+            $output .= '<span class="daytime"><span itemprop="opens">'.esc_html($consultationHours['from']).'</span> - ';
+            $output .= '<span itemprop="close">'.esc_html($consultationHours['to']).'</span></span>';
             $output .= '</span>';             
             if (!empty($consultationHours['comment'])) {
                 $output .= '<p class="comment" itemprop="description">'.esc_html($consultationHours['comment']).'</p>';
@@ -406,11 +406,7 @@ class Contact {
             $output .= '</ul>';
         }
         
-        if ($withaddress) {
-            
-            if (!empty($workplace['room'])) {
-                $output .= '';
-            } 
+        if ($withaddress) {          
             $addressdata = $this->getAddressByWorkplace($workplace, false, $lang, $roomfloor, $showmap);
             $output .= $addressdata;
         }
@@ -450,29 +446,29 @@ class Contact {
     /*
      * Generate Address Output for a Workplace
      */
-    public function getAddressByWorkplace(array $workplace, bool $orgname = true, string $lang = "de", bool $roomfloor = false, bool $showmap = false): ?string {
-        $address = $result = '';
+    public function getAddressByWorkplace(array $workplace, bool $orgname = true, string $lang = "de", ?bool $roomfloor = false, ?bool $showmap = false): ?string {
+        $address = $result = $roomfloorpart = '';
 
         if ($orgname) {
             $address .= $this->getOrganizationName($lang);  
         }
         if (($roomfloor) || ($showmap)) {
             
-            if ((!empty($workplace['room'])) ||  (!empty($workplace['floor'])) || (!empty($workplace['faumap']))) {
                 $room = $floor = $map = '';        
                 if (($roomfloor) && (!empty($workplace['room']))) {
-                     $room = '<span class="room">'.__('Room', 'rrze-faudir').': <span class="room" itemprop="roomNumber">'.$workplace['room'].'</span></span>';           
+                     $room = '<span class="texticon room"><span class="screen-reader-text">'.__('Room','rrze-faudir').': </span><span itemprop="floorLevel">'.esc_html($workplace['room']).'</span></span>';
                 }
                 if (($roomfloor) && (!empty($workplace['floor']))) {
-                    $floor = '<span class="floor">'.__('Floor', 'rrze-faudir').': <span class="floor" itemprop="floorLevel">'.$workplace['floor'].'</span></span>';
+                    $floor = '<span class="texticon floor"><span class="screen-reader-text">'.__('Floor','rrze-faudir').': </span><span itemprop="floorLevel">'.esc_html($workplace['floor']).'</span></span>';
                 }
                 if (($showmap) && (!empty($workplace['faumap']))) {
                     if (preg_match('/^https?:\/\/karte\.fau\.de/i', $workplace['faumap'])) {  
                         $formattedValue = '<a href="' . esc_url($workplace['faumap']) . '" itemprop="hasMap" content="' . esc_url($workplace['faumap']) . '">' .__('FAU Map','rrze-faudir'). '</a>';
-                        $map = '<span class="faumap">'.__('Map','rrze-faudir').': '.$formattedValue.'</span>';
+                        $map = '<span class="texticon faumap"><span class="screen-reader-text">'.__('Map','rrze-faudir').': </span>'.$formattedValue.'</span>';
                     }
                 }
                 
+
                 $adressparts = '';
                 
                 if (!empty($room)) {
@@ -492,12 +488,12 @@ class Contact {
                 }
 
                 if (!empty($adressparts)) {
-                    $address .= '<span class="roomfloor" itemprop="containedInPlace" itemscope itemtype="https://schema.org/Room">';
-                    $address .= $adressparts;
-                    $address .= '</span>'; 
+                    $roomfloorpart .= '<span class="inaddress icon roomfloor" itemprop="containedInPlace" itemscope itemtype="https://schema.org/Room">';
+                    $roomfloorpart .= $adressparts;
+                    $roomfloorpart .= '</span>'; 
                 }
               
-            }
+         
 
            
         }
@@ -531,7 +527,12 @@ class Contact {
         
         
         if (!empty($address)) {
-            $address = '<span class="texticon" itemprop="address" itemscope="" itemtype="https://schema.org/PostalAddress">'.$address.'</span>';                  
+            $address = '<address class="texticon" itemprop="address" itemscope="" itemtype="https://schema.org/PostalAddress">'.$address;             
+            $address .= '</address>';   
+            if (!empty($roomfloorpart)) {
+                $address .= $roomfloorpart;
+            }
+           
             $result = '<div class="workplace-address">' . $address . '</div>';
         }
         return $result;
@@ -656,38 +657,46 @@ class Contact {
     /*
      * Build JobTitle by Functionlabel and Orgname
      */
-    public function getJobTitle(string $lang = "de"): ?string {
+    public function getJobTitle(string $lang = "de", ?string $template =  null): ?string {
         $label = $this->getFunctionLabel($lang);
         
         if (empty($label)) {
             return '';
         }
-        
 
         if (empty($this->organization) || !isset($this->organization['longDescription'])) {
             return $label;
         }
     
-        $jobtitle = $label;
         $orgname = '';
         if ((!empty($lang)) && (isset($this->organization['longDescription'][$lang]))) {
             $orgname = $this->organization['longDescription'][$lang];
         }
         
-         if (!empty($lang) && !empty($this->organization['longDescription'][$lang])) {
+        if (!empty($lang) && !empty($this->organization['longDescription'][$lang])) {
             $orgname = $this->organization['longDescription'][$lang];
         } elseif ($lang === "de" && !empty($this->organization['longDescription']['en'])) {
             $orgname = $this->organization['longDescription']['en'];
         } elseif ($lang === "en" && !empty($this->organization['longDescription']['de'])) {
             $orgname = $this->organization['longDescription']['de'];
         }
-        if (!empty($orgname)) {
-            $jobtitle .= ' '.$orgname;
+        
+        
+        
+        if (empty($template)) {
+            $template = "#functionlabel# #orgname#".PHP_EOL;
         }
+        // Platzhalter mit den entsprechenden Werten ersetzen
+        $replacements = [
+            '#orgname#' => $orgname ?? '',
+            '#functionlabel#' => $label ?? '',
+            '#alternatename#' =>  $this->organization['alternateName'] ?? ''
+        ]; 
+        $jobtitle = str_replace(array_keys($replacements), array_values($replacements), $template);     
         $this->jobTitle = $jobtitle;
         return $jobtitle;      
     }
-    
-    
+
     
 }
+

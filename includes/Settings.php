@@ -26,14 +26,12 @@ add_action('admin_menu', 'rrze_faudir_add_admin_menu');
 function rrze_faudir_settings_init() {
     // Load the default settings
     $config = new Config;
-    $default_settings = $config->getAll();
-    
+    $default_settings = $config->getOverwiteableOptions();  
     $options = get_option('rrze_faudir_options', []);
-
-    // Merge the default settings with the saved options
     $settings = wp_parse_args($options, $default_settings);
     update_option('rrze_faudir_options', $settings);
 
+    
     register_setting(
         'rrze_faudir_settings', 
         'rrze_faudir_options',
@@ -46,8 +44,7 @@ function rrze_faudir_settings_init() {
     add_settings_section(
         'rrze_faudir_contacts_search_section',
         __('Search Contacts', 'rrze-faudir'),
-        'rrze_faudir_contacts_search_section_callback',
-        'rrze_faudir_settings_contacts_search'
+        'rrze_faudir_contacts_search_section_callback', 'rrze_faudir_settings_contacts_search'
     );
     
     
@@ -55,49 +52,43 @@ function rrze_faudir_settings_init() {
     add_settings_section(
         'rrze_faudir_org_search_section',
         __('Search Organizations', 'rrze-faudir'),
-        'rrze_faudir_org_search_section_callback',
-        'rrze_faudir_settings_org_search'
+        'rrze_faudir_org_search_section_callback', 'rrze_faudir_settings_org_search'
     );
     
-    
-    
-   
+
 
     // Shortcode Settings Section
     add_settings_section(
         'rrze_faudir_shortcode_section',
         __('Default Output Fields', 'rrze-faudir'),
-        'rrze_faudir_shortcode_section_callback',
-        'rrze_faudir_settings_shortcode'
+        'rrze_faudir_shortcode_section_callback', 'rrze_faudir_settings_shortcode'
     );
     add_settings_field(
         'rrze_faudir_default_output_fields',
         __('Output fields for formats', 'rrze-faudir'),
-        'rrze_faudir_default_output_fields_render',
-        'rrze_faudir_settings_shortcode',
-        'rrze_faudir_shortcode_section'
+        'rrze_faudir_default_output_fields_render', 'rrze_faudir_settings_shortcode',  'rrze_faudir_shortcode_section'
     );
 
     add_settings_field(
         'rrze_faudir_business_card_title',
         __('Kompakt Card Button Title', 'rrze-faudir'),
-        'rrze_faudir_business_card_title_render',
-        'rrze_faudir_settings_shortcode',
-        'rrze_faudir_shortcode_section'
+        'rrze_faudir_business_card_title_render',  'rrze_faudir_settings_shortcode', 'rrze_faudir_shortcode_section'
     );
+ //   add_settings_field(
+ //       'rrze_faudir_hard_sanitize',
+ //       __('Hard Sanitize', 'rrze-faudir'),
+ //       'rrze_faudir_hard_sanitize_render',  'rrze_faudir_settings_shortcode',  'rrze_faudir_shortcode_section'
+ //   );
     add_settings_field(
-        'rrze_faudir_hard_sanitize',
-        __('Hard Sanitize', 'rrze-faudir'),
-        'rrze_faudir_hard_sanitize_render',
-        'rrze_faudir_settings_shortcode',
-        'rrze_faudir_shortcode_section'
-    );
-    add_settings_field(
-        'rrze_faudir_hard_sanitize',
-        __('Fallback FAUdir link', 'rrze-faudir'),
         'rrze_faudir_fallback_link_faudir',
-        'rrze_faudir_settings_shortcode',
-        'rrze_faudir_shortcode_section'
+        __('Fallback FAUdir link', 'rrze-faudir'),
+        'rrze_faudir_fallback_link_faudir_render', 'rrze_faudir_settings_shortcode', 'rrze_faudir_shortcode_section'
+    );
+    
+    add_settings_field(
+        'rrze_faudir_jobtitle_format',
+        __('Format', 'rrze-faudir').' '.__('Jobtitle', 'rrze-faudir'),
+        'rrze_faudir_jobtitle_format_render', 'rrze_faudir_settings_shortcode', 'rrze_faudir_shortcode_section'
     );
     
     
@@ -106,15 +97,12 @@ function rrze_faudir_settings_init() {
     add_settings_section(
         'rrze_faudir_profilpage_section',
         __('Profilpage', 'rrze-faudir'),
-        'rrze_faudir_profilpage_section_callback',
-        'rrze_faudir_settings_profilpage'
+        'rrze_faudir_profilpage_section_callback', 'rrze_faudir_settings_profilpage'
     );
     add_settings_field(
         'rrze_faudir_profilpage_output_fields',
         __('Data fields that are shown on the profil page', 'rrze-faudir'),
-        'rrze_faudir_profilpage_output_fields_render',
-        'rrze_faudir_settings_profilpage',
-        'rrze_faudir_profilpage_section'
+        'rrze_faudir_profilpage_output_fields_render', 'rrze_faudir_settings_profilpage', 'rrze_faudir_profilpage_section'
     );
     
     
@@ -122,27 +110,20 @@ function rrze_faudir_settings_init() {
     add_settings_section(
         'rrze_faudir_api_section',
         __('API Settings', 'rrze-faudir'),
-        'rrze_faudir_api_section_callback',
-        'rrze_faudir_settings'
+        'rrze_faudir_api_section_callback', 'rrze_faudir_settings'
     );
 
     add_settings_field(
         'rrze_faudir_api_key',
         __('API Key', 'rrze-faudir'),
-        'rrze_faudir_api_key_render',
-        'rrze_faudir_settings',
-        'rrze_faudir_api_section'
+        'rrze_faudir_api_key_render', 'rrze_faudir_settings','rrze_faudir_api_section'
     );
-    if (! function_exists('is_plugin_active')) {
-        include_once(ABSPATH . 'wp-admin/includes/plugin.php');
-    }
+
     if (is_plugin_active('fau-person/fau-person.php')) {
         add_settings_field(
             'rrze_faudir_import_fau_person',
             __('Import', 'rrze-faudir'),
-            'rrze_faudir_import_fau_person_render',
-            'rrze_faudir_settings',
-            'rrze_faudir_api_section'
+            'rrze_faudir_import_fau_person_render', 'rrze_faudir_settings', 'rrze_faudir_api_section'
         );
     }
     
@@ -153,39 +134,29 @@ function rrze_faudir_settings_init() {
     add_settings_section(
         'rrze_faudir_cache_section',
         __('Cache Settings', 'rrze-faudir'),
-        'rrze_faudir_cache_section_callback',
-        'rrze_faudir_settings_cache'
+        'rrze_faudir_cache_section_callback',  'rrze_faudir_settings_cache'
     );
 
-    add_settings_field(
-        'rrze_faudir_no_cache_logged_in',
+    add_settings_field('rrze_faudir_no_cache_logged_in',
         __('No Caching for Logged-in Editors', 'rrze-faudir'),
-        'rrze_faudir_no_cache_logged_in_render',
-        'rrze_faudir_settings_cache',
-        'rrze_faudir_cache_section'
+        'rrze_faudir_no_cache_logged_in_render', 'rrze_faudir_settings_cache','rrze_faudir_cache_section'
     );
 
 
     add_settings_field(
         'rrze_faudir_cache_timeout',
         __('Cache Timeout (in minutes)', 'rrze-faudir'),
-        'rrze_faudir_cache_timeout_render',
-        'rrze_faudir_settings_cache',
-        'rrze_faudir_cache_section'
+        'rrze_faudir_cache_timeout_render', 'rrze_faudir_settings_cache', 'rrze_faudir_cache_section'
     );
     add_settings_field(
         'rrze_faudir_transient_time_for_org_id',
         __('Transient Time for Organization ID (in days)', 'rrze-faudir'),
-        'rrze_faudir_transient_time_for_org_id_render',
-        'rrze_faudir_settings_cache',
-        'rrze_faudir_cache_section'
+        'rrze_faudir_transient_time_for_org_id_render', 'rrze_faudir_settings_cache','rrze_faudir_cache_section'
     );
     add_settings_field(
         'rrze_faudir_clear_cache',
         __('Clear All Cache', 'rrze-faudir'),
-        'rrze_faudir_clear_cache_render',
-        'rrze_faudir_settings_cache',
-        'rrze_faudir_cache_section'
+        'rrze_faudir_clear_cache_render', 'rrze_faudir_settings_cache','rrze_faudir_cache_section'
     );
 
 
@@ -193,16 +164,13 @@ function rrze_faudir_settings_init() {
     add_settings_section(
         'rrze_faudir_error_section',
         __('Error Handling', 'rrze-faudir'),
-        'rrze_faudir_error_section_callback',
-        'rrze_faudir_settings_error'
+        'rrze_faudir_error_section_callback', 'rrze_faudir_settings_error'
     );
 
     add_settings_field(
         'rrze_faudir_error_message',
         __('Show Error Message for Invalid Contacts', 'rrze-faudir'),
-        'rrze_faudir_error_message_render',
-        'rrze_faudir_settings_error',
-        'rrze_faudir_error_section'
+        'rrze_faudir_error_message_render', 'rrze_faudir_settings_error', 'rrze_faudir_error_section'
     );
     
     
@@ -210,30 +178,22 @@ function rrze_faudir_settings_init() {
     add_settings_section(
         'rrze_faudir_misc_section',
         __('Misc Settings', 'rrze-faudir'),
-        'rrze_faudir_misc_section_callback',
-        'rrze_faudir_settings_advanced'
+        'rrze_faudir_misc_section_callback', 'rrze_faudir_settings_advanced'
     );
 
      add_settings_field(
         'rrze_faudir_person_slug',
         __('Person Slug', 'rrze-faudir'),
-        'rrze_faudir_person_slug_render',
-        'rrze_faudir_settings_advanced',
-        'rrze_faudir_misc_section'
+        'rrze_faudir_person_slug_render','rrze_faudir_settings_advanced', 'rrze_faudir_misc_section'
     );
      
     add_settings_field(
         'rrze_faudir_redirect_archivpage_uri',
         __('Index page', 'rrze-faudir'),
-        'rrze_faudir_misc_section_message_render',
-        'rrze_faudir_settings_advanced',
-        'rrze_faudir_misc_section'
+        'rrze_faudir_misc_section_message_render','rrze_faudir_settings_advanced', 'rrze_faudir_misc_section'
     );
 
-    
-    
-    
-    
+
 
     // Note: The search form will be handled in the settings page itself, no need for a settings field here.
 
@@ -296,8 +256,8 @@ function rrze_faudir_profilpage_output_fields_render() {
 
         echo "<tr>";
         echo "<th>";
-        echo "<label for='" . esc_attr('rrze_faudir_2profilpage_output_fields' . $field) . "'>";
-        echo "<input type='checkbox' id='" . esc_attr('rrze_faudir_2profilpage_output_fields' . $field) . "' name='rrze_faudir_options[output_fields_endpoint][]' value='" . esc_attr($field) . "' " . checked($checked, true, false) . ">";
+        echo "<label for='" . esc_attr('rrze_faudir_profilpage_output_fields' . $field) . "'>";
+        echo "<input type='checkbox' id='" . esc_attr('rrze_faudir_profilpage_output_fields' . $field) . "' name='rrze_faudir_options[output_fields_endpoint][]' value='" . esc_attr($field) . "' " . checked($checked, true, false) . ">";
         echo esc_html($label) . "</label>";
         echo "</th>";
         echo "<td>";
@@ -370,6 +330,10 @@ function rrze_faudir_clear_cache_render() {
 
 function rrze_faudir_error_message_render() {
     $options = get_option('rrze_faudir_options');
+    if (!isset( $options['show_error_message'])) {
+        $config = new Config;
+        $options['show_error_message'] = $config->get('show_error_message');
+    }
     echo '<label><input type="checkbox" name="rrze_faudir_options[show_error_message]" value="1" ' . checked( 1, $options['show_error_message'], false ) . '>';
     echo '<span>' . esc_html__('Show error messages for incorrect contact entries.', 'rrze-faudir') . '</span></label>';
    
@@ -401,12 +365,31 @@ function rrze_faudir_hard_sanitize_render() {
     echo '<span>' . esc_html__('Hard Sanitize abbreviations.', 'rrze-faudir') .' <em>('.__('Only the essential academic titles are permitted. Labels for the respective disciplines are removed.', 'rrze-faudir') . ')</em></span></label>';
 }
 
-function rrze_faudir_fallback_link_faudir() {
+function rrze_faudir_fallback_link_faudir_render() {
     $options = get_option('rrze_faudir_options');
     echo '<label><input type="checkbox" name="rrze_faudir_options[fallback_link_faudir]" value="1" ' . checked( 1, $options['fallback_link_faudir'], false ) . '>';
     echo '<span>' . esc_html__('On using profil links, fallback to the public faudir portal, if no local custom post is avaible.', 'rrze-faudir') .'</span></label>';
 }
 
+function rrze_faudir_jobtitle_format_render() {
+    $options = get_option('rrze_faudir_options');
+    
+    $config = new Config;
+    $default_format = $config->get('jobtitle_format');
+    
+    $value = isset($options['jobtitle_format']) && !empty($options['jobtitle_format'])
+        ? sanitize_text_field($options['jobtitle_format'])
+        : $default_format;
+
+    // Save the default value if it's not set
+    if (!isset($options['jobtitle_format']) || empty($options['jobtitle_format'])) {
+        $options['jobtitle_format'] = $default_format;
+        update_option('rrze_faudir_options', $options);
+    }
+    
+    echo '<input type="text" name="rrze_faudir_options[jobtitle_format]" value="' . esc_attr($value) . '" size="50">';
+    echo '<p class="description">' . esc_html__('Define the format of jobtitles.', 'rrze-faudir').'<br>'.esc_html__('You might use the variables #orgname# (Name of the defined organisation), #functionlabel# (function label by FAUdir) and #alternatename# (short or alternative name for the organization) here and other strings, but no HTML or special chars.', 'rrze-faudir') .'</p>';
+}
 
 
 function rrze_faudir_misc_section_message_render() {
@@ -478,7 +461,11 @@ function rrze_faudir_default_output_fields_render() {
                  if (!empty($canuse)) {
                     $canuse .= ', ';
                 }
-                $canuse .= $formatnames[$fl].' (<code>'.$fl.'</code>)';
+                if ($fl === 'org-compact') {
+                    $canuse .= $formatnames[$fl].' (<code>compact</code>)';
+                } else {
+                    $canuse .= $formatnames[$fl].' (<code>'.$fl.'</code>)';
+                }
             }
         }
         if (!empty($canuse)) {
@@ -856,6 +843,7 @@ function rrze_faudir_search_person_ajax() {
         $queryParts[] = 'familyName[ireg]=' . $familyName;
     }
     $config = new Config();
+    $post_type = $config->get('person_post_type'); 
     $api = new API($config);
     
     if (!empty($email)) {
@@ -917,7 +905,7 @@ function rrze_faudir_search_person_ajax() {
                 }
                 // Check if a post already exists with this identifier
                 $existing_post = get_posts(array(
-                    'post_type' => 'custom_person',
+                    'post_type' => $post_type,
                     'meta_key' => 'person_id',
                     'meta_value' => $identifier,
                     'posts_per_page' => 1

@@ -16,6 +16,8 @@ use RRZE\FAUdir\Contact;
 function register_custom_person_post_type() {
     // Get the slug from the options; fallback to 'person' if not set.
   //   error_log('register_custom_person_post_type called');
+    $config = new Config();
+    $post_type = $config->get('person_post_type');
     $options = get_option('rrze_faudir_options');
     $slug = isset($options['person_slug']) && !empty($options['person_slug'])
         ? sanitize_title($options['person_slug'])
@@ -28,53 +30,37 @@ function register_custom_person_post_type() {
             'menu_name'          => __('Persons', 'rrze-faudir'),
             'add_new_item'       => __('Add New Person', 'rrze-faudir'),
             'edit_item'          => __('Edit Person', 'rrze-faudir'),
-            'view_item'          => __('View Person', 'rrze-faudir'),
-            'all_items'          => __('All Persons', 'rrze-faudir'),
-            'search_items'       => __('Search Persons', 'rrze-faudir'),
-            'not_found'          => __('No persons found.', 'rrze-faudir'),
-        ),
+        ), 
         'public'             => true,
         'has_archive'        => false,
         'rewrite'            => array(
             'slug' => $slug, // Use dynamic slug
             'with_front' => false // Optional: Disable prefix (like /blog/)
         ),
-        'supports'           => array('title', 'editor', 'thumbnail', 'custom-fields'),
+        'supports'           => array('title', 'editor', 'thumbnail'),
         'taxonomies'         => array('custom_taxonomy'),
         'show_in_rest'       => true,
-        'rest_base'          => 'custom_person',
+        'rest_base'          => $post_type,
         'menu_position'      => 5,
         'capability_type'    => 'post',
     	'menu_icon'         => 'dashicons-id'
     );
 
-    register_post_type('custom_person', $args); // Keep 'custom_person' as the post type key
+    register_post_type($post_type, $args); 
 }
 add_action('init', 'register_custom_person_post_type', 15);
 
 
 function register_custom_taxonomy() {
     // Register the taxonomy
- //    error_log('register_custom_taxonomy called');
+    $config = new Config();
+    $post_type = $config->get('person_post_type');
+    $taxonomy = $config->get('person_taxonomy');
     if (!taxonomy_exists('custom_taxonomy')) {
- //       error_log('do register_taxonomy');
         register_taxonomy(
-            'custom_taxonomy', // Taxonomy slug
-            'custom_person', // Custom Post Type to attach the taxonomy
+            $taxonomy, // Taxonomy slug
+            $post_type, // Custom Post Type to attach the taxonomy
             array(
-                'labels' => array(
-                    'name'              => __('Categories', 'text-domain'),
-                    'singular_name'     => __('Category', 'text-domain'),
-                    'search_items'      => __('Search Categories', 'text-domain'),
-                    'all_items'         => __('All Categories', 'text-domain'),
-                    'parent_item'       => __('Parent Category', 'text-domain'),
-                    'parent_item_colon' => __('Parent Category', 'text-domain'),
-                    'edit_item'         => __('Edit Category', 'text-domain'),
-                    'update_item'       => __('Update Category', 'text-domain'),
-                    'add_new_item'      => __('Add New Category', 'text-domain'),
-                    'new_item_name'     => __('New Category Name', 'text-domain'),
-                    'menu_name'         => __('Categories', 'text-domain'),
-                ),
                 'hierarchical'      => true, // Set true for a category-like taxonomy, false for tags.
                 'public'            => true,
                 'show_ui'           => true,
@@ -85,9 +71,9 @@ function register_custom_taxonomy() {
                 'meta_box_cb'       => null, // Use default meta box
                 'show_admin_column' => true, // Show taxonomy in the admin list table.
                 'query_var'         => true,
-                'rewrite'           => array('slug' => 'custom-taxonomy'),
+                'rewrite'           => array('slug' => $taxonomy),
                 'show_in_rest'      => true,
-                'rest_base'         => 'custom_taxonomy',
+                'rest_base'         => $taxonomy,
                 'rest_controller_class' => 'WP_REST_Terms_Controller',
 
             )
@@ -96,7 +82,7 @@ function register_custom_taxonomy() {
  //        error_log('register_custom_taxonomy: but nothing todo, cause exists');
     } 
 }
-add_action('init', 'register_custom_taxonomy');
+add_action('init', 'register_custom_taxonomy', 15);
 
 
 
@@ -106,41 +92,25 @@ add_action('init', 'register_custom_taxonomy');
  */
 
 
-// Register the custom taxonomy before migration
+// Register the custom taxonomy of former FAU Person before migration
 function register_custom_person_taxonomies() {
-  //      error_log('register_custom_person_taxonomies from Main called');
-    $labels = array(
-        'name'              => _x('Categories', 'taxonomy general name', 'rrze-faudir'),
-        'singular_name'     => _x('Category', 'taxonomy singular name', 'rrze-faudir'),
-        'search_items'      => __('Search Categories', 'rrze-faudir'),
-        'all_items'         => __('All Categories', 'rrze-faudir'),
-        'parent_item'       => __('Parent Category', 'rrze-faudir'),
-        'parent_item_colon' => __('Parent Category:', 'rrze-faudir'),
-        'edit_item'         => __('Edit Category', 'rrze-faudir'),
-        'update_item'       => __('Update Category', 'rrze-faudir'),
-        'add_new_item'      => __('Add New Category', 'rrze-faudir'),
-        'new_item_name'     => __('New Category Name', 'rrze-faudir'),
-        'menu_name'         => __('Categories', 'rrze-faudir'),
-    );
-if (!taxonomy_exists('custom_taxonomy')) {
-   //    error_log('register_custom_person_taxonomies ,  and taxonomy doent exists');
-} else {
-   //   error_log('register_custom_person_taxonomies , even if taxonomy exists.');
-}
-    register_taxonomy('custom_taxonomy', 'custom_person', array(
+    $config = new Config();
+    $post_type = $config->get('person_post_type');
+    $taxonomy = $config->get('person_taxonomy');
+
+    register_taxonomy($taxonomy, $post_type, array(
         'hierarchical'      => true,
-        'labels'           => $labels,
         'show_ui'          => true,
         'show_admin_column' => true,
         'query_var'        => true,
         'rewrite'          => array('slug' => 'person-category'),
         'show_in_rest'     => true,
-        'rest_base'        => 'custom_taxonomy',
+        'rest_base'        => $taxonomy,
     ));
 }
 
 // Make sure to register the taxonomy on init as well
-add_action('init',  'register_custom_person_taxonomies');
+add_action('init',  'register_custom_person_taxonomies', 15);
 
 
 // Bug #119
@@ -161,20 +131,25 @@ add_action('init',  'register_custom_person_taxonomies');
 
 // Add Meta Boxes
 function add_custom_person_meta_boxes() {
+    $config = new Config();
+    $post_type = $config->get('person_post_type');
     add_meta_box(
         'person_additional_fields',
         __('Additional Fields', 'rrze-faudir'),
         'render_person_additional_fields',
-        'custom_person',
+        $post_type,
         'normal',
         'high'
     );
 }
 add_action('add_meta_boxes', 'add_custom_person_meta_boxes');
+
 function check_classic_editor_and_add_shortcode_button() {
     global $post;
-
-    // Ensure we are in the admin area and on a post edit screen
+    $config = new Config();
+    $post_type = $config->get('person_post_type');
+    
+// Ensure we are in the admin area and on a post edit screen
     if (!is_admin() || !isset($post)) {
         return;
     }
@@ -184,7 +159,7 @@ function check_classic_editor_and_add_shortcode_button() {
     $is_classic_editor_active = is_plugin_active('classic-editor/classic-editor.php');
 
     // Target a specific custom post type
-    if ($is_classic_editor_active && $post->post_type === 'custom_person') {
+    if ($is_classic_editor_active && $post->post_type === $post_type) {
 
         // Add the button between the title and content editor
         add_action('edit_form_after_title', function () use ($post) {
@@ -197,9 +172,17 @@ function check_classic_editor_and_add_shortcode_button() {
     }
 }
 add_action('admin_head', 'check_classic_editor_and_add_shortcode_button');
+
+
 // Render Meta Box Fields
 function render_person_additional_fields($post) {
     wp_nonce_field('save_person_additional_fields', 'person_additional_fields_nonce');
+    $config = new Config();
+    $post_type = $config->get('person_post_type');
+    
+    if ( $post->post_type !== $post_type ) {
+        return;
+    }
 
     $api_fields = [
         'person_name',
@@ -420,9 +403,9 @@ function save_person_additional_fields($post_id) {
         }
     }
 
+    
     // List of fields to save from the form
     $fields = [
-        '_content_en',
         '_teasertext_en',
         '_teasertext_de',
         'person_id',
@@ -436,6 +419,7 @@ function save_person_additional_fields($post_id) {
         'person_titleOfNobility',
     ];
 
+    
     // Save each field
     foreach ($fields as $field) {
         if (isset($_POST[$field])) {
@@ -443,6 +427,23 @@ function save_person_additional_fields($post_id) {
         }
     }
 
+    
+    // save english content text  '_content_en' from wp_editor()
+    $allowed_html = wp_kses_allowed_html( 'post' );
+    unset ( $allowed_html['textarea'] );
+
+   array_walk_recursive(
+       $allowed_html,
+       function ( &$value ) {
+           if ( is_bool( $value ) ) {
+               $value = array();
+           }
+       }
+   );
+   // Run sanitization.
+   $value = wp_kses( $_POST['_content_en'], $allowed_html );
+   update_post_meta($post_id, '_content_en', $value);
+    
     // Save displayed_contacts
     
     update_post_meta($post_id, 'displayed_contacts', intval($_POST['displayed_contacts']));
@@ -514,6 +515,8 @@ add_action('wp_ajax_fetch_person_attributes', 'fetch_person_attributes');
 function rrze_faudir_create_custom_person() {
     // error_log('rrze_faudir_create_custom_person called');
     check_ajax_referer('rrze_faudir_api_nonce', 'security');
+    $config = new Config();
+    $post_type = $config->get('person_post_type');
 
     $person_name = isset($_POST['person_name']) ? sanitize_text_field($_POST['person_name']) : '';
     $person_id = isset($_POST['person_id']) ? sanitize_text_field($_POST['person_id']) : '';
@@ -526,7 +529,7 @@ function rrze_faudir_create_custom_person() {
 
     $post_id = wp_insert_post(array(
         'post_title'    => $person_name,
-        'post_type'     => 'custom_person',
+        'post_type'     => $post_type,
         'post_status'   => 'publish'
     ));
 
@@ -538,7 +541,6 @@ function rrze_faudir_create_custom_person() {
     // Set the person_id meta field
     update_post_meta($post_id, 'person_id', $person_id);
     
-    $config = new Config();    
     $api = new API($config);
     // Fetch additional person attributes
     $params = ['identifier' => $person_id];
@@ -626,7 +628,10 @@ add_action('wp_ajax_rrze_faudir_create_custom_person', 'rrze_faudir_create_custo
 
 // Add this function to register the meta field for REST API
 function register_person_meta() {
-    register_post_meta('custom_person', 'person_id', array(
+    $config = new Config();
+    $post_type = $config->get('person_post_type');
+    
+    register_post_meta($post_type, 'person_id', array(
         'show_in_rest' => true,
         'single' => true,
         'type' => 'string',
@@ -635,14 +640,22 @@ function register_person_meta() {
         }
     ));
 }
-add_action('init', 'register_person_meta');
+add_action('init', 'register_person_meta', 15);
+
 // Make sure categories are visible in REST API
 // Update the REST API response to include custom taxonomy
-function add_taxonomy_to_person_rest($response, $post, $request)
-{
-    if ($post->post_type === 'custom_person') {
+function add_taxonomy_to_person_rest($response, $post, $request) {
+    $config = new Config();
+    $post_type = $config->get('person_post_type');   
+    $taxonomy = $config->get('person_taxonomy');
+
+    if ($post->post_type === $post_type) {
         // Get custom taxonomy terms
-        $terms = wp_get_object_terms($post->ID, 'custom_taxonomy');
+        $terms = wp_get_object_terms($post->ID, $taxonomy);
+        if (is_wp_error( $terms ) ) {
+            error_log(' ERROR ON wp_get_object_terms: taxonomy = '.$taxonomy.' posttype = '.$post_type. ' ERROR: '.$terms->get_error_message() );
+            return;
+        }
         $term_ids = array_map(function ($term) {
             return $term->term_id;
         }, $terms);

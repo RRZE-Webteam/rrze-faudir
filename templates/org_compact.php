@@ -61,11 +61,10 @@ if (!defined('ABSPATH')) {
                         <?php
                         $address = '';
 
-                        if (in_array('address', $show_fields) && !in_array('address', $hide_fields) && isset($available_fields['address'])) {
-            
+                        if (in_array('address', $show_fields) ) {
                                 
                                 $showmap = false;
-                                if (in_array('faumap', $show_fields) && !in_array('faumap', $hide_fields)) {
+                                if (in_array('faumap', $show_fields) ) {
                                     $showmap = true;
                                 }
 
@@ -84,7 +83,7 @@ if (!defined('ABSPATH')) {
             
                         
                         $contactlist = '';
-                        if (in_array('email', $show_fields) && !in_array('email', $hide_fields) && isset($available_fields['email'])) {
+                        if (in_array('email', $show_fields)) {
                             $mail = $org->getEMail();
                             if (!empty($mail)) {
                                 $wval = '';
@@ -100,7 +99,7 @@ if (!defined('ABSPATH')) {
                             }
                         }
                         
-                        if (in_array('phone', $show_fields) && !in_array('phone', $hide_fields) && isset($available_fields['phone'])) {
+                        if (in_array('phone', $show_fields) ) {
                             $phone = $org->getPhone();              
                             $wval = '';                                    
                             if (!empty($phone)) {
@@ -112,7 +111,19 @@ if (!defined('ABSPATH')) {
                                
                             }
                         }
-                        if (in_array('url', $show_fields) && !in_array('url', $hide_fields) && isset($available_fields['url'])) {
+                        if (in_array('fax', $show_fields) ) {
+                            $phone = $org->getFax();              
+                            $wval = '';                                    
+                            if (!empty($phone)) {
+                                $formattedPhone = FaudirUtils::format_phone_number($phone);
+                                $cleanTel = preg_replace('/[^\+\d]/', '', $phone);
+                                $formattedValue = '<a itemprop="fax" href="tel:' . esc_attr($cleanTel) . '">' . esc_html($formattedPhone) . '</a>';
+                                $wval .= '<span class="value"><span class="screen-reader-text">'.__('Phone','rrze-faudir').': </span>'.$formattedValue.'</span>';
+                                $contactlist .= '<li class="fax">'.$wval.'</li>';
+                               
+                            }
+                        }
+                        if (in_array('url', $show_fields) ) {
                             $url = $org->getURL();
                             $wval = '';         
                        
@@ -139,7 +150,7 @@ if (!defined('ABSPATH')) {
                         }
                         
                        $profilcontent = '';
-                       if (in_array('content', $show_fields) && !in_array('content', $hide_fields) && isset($available_fields['content'])) {                          
+                       if (in_array('content', $show_fields)) {                          
                             $wval = $org->getContentText($lang);
                             if (!empty($wval)) {
                                 $profilcontent .= '<div class="content">';

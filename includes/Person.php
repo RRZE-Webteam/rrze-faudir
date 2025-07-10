@@ -20,6 +20,7 @@ class Person {
     public ?string $pronoun;
     public ?string $email;
     public ?string $telephone;
+    public ?string $fax;
     public ?array $contacts;
     private array $rawdata;
     protected ?Config $config = null;
@@ -35,7 +36,7 @@ class Person {
         $this->titleOfNobility = $data['titleOfNobility'] ?? '';       
         $this->pronoun = $data['pronoun'] ?? '';
         $this->email = $data['email'] ?? '';
-        $this->telephone = $data['telephone'] ?? '';         
+        $this->telephone = $data['telephone'] ?? '';     
         $this->contacts = $data['contacts'] ?? null;
         $this->postid = $data['postid'] ?? 0;
         $this->primary_contact = null;
@@ -65,20 +66,20 @@ class Person {
     public function populateFromData(array $data, bool $clear = true): void { 
         if ($clear) {
             // Setze alle bekannten Felder auf ihre Standardwerte zurück.
-            $this->identifier          = '';
-            $this->givenName           = '';
-            $this->familyName          = '';
-            $this->honorificPrefix       = '';
+            $this->identifier           = '';
+            $this->givenName            = '';
+            $this->familyName           = '';
+            $this->honorificPrefix      = '';
             $this->honorificSuffix      = '';
-            $this->titleOfNobility     = '';
-            $this->pronoun             = '';
-            $this->email               = '';
-            $this->telephone           = '';
-            $this->postid              = 0;
-            $this->contacts            = null;
-            $this->primary_contact     = null;
+            $this->titleOfNobility      = '';
+            $this->pronoun              = '';
+            $this->email                = '';
+            $this->telephone            = '';
+            $this->postid               = 0;
+            $this->contacts             = null;
+            $this->primary_contact      = null;
             // Leere rawdata zurücksetzen
-            $this->rawdata = [];
+            $this->rawdata              = [];
         }
         
         // Aktualisiere die einzelnen Eigenschaften, falls Werte vorhanden sind
@@ -317,6 +318,40 @@ class Person {
         }
         return [];
     }
+    
+    /*
+     * Get Fax Numbers for person
+     * - if $person->fax is set, use this.
+     * - if its empty use the phones address from active primary contact
+     * Cause a person can use more as one phone number, we result with an array
+     */ 
+    public function getFax(): ?array {
+        $resphone = [];
+       
+        $workplaces = $this->getWorkplaces();
+        if (empty($workplaces)) {
+            return [];
+        }
+        
+        
+        $gatherphones = [];     
+        foreach ($workplaces as $num => $wdata) {
+            if (isset($wdata['fax'])) {
+                foreach ($wdata['fax'] as $i => $val) {
+                    if (preg_match('/^\+?[0-9\s\-\(\)]{7,20}$/', $val)) {
+                        $gatherphones[] = $val;
+                    }
+                 
+                }
+            }
+        }
+        if (!empty($gatherphones)) {
+            // Entferne etwaige Dupletten und returne dann die neu indizierte Liste
+            return array_values(array_unique($gatherphones));
+        }
+        return [];
+    }
+    
     /*
      * Get Email address for person
      * - if $person->email is set, use this.
@@ -366,7 +401,7 @@ class Person {
     /*
      * Create and get Displayname in semantic HTML
      */
-    public function getDisplayName(bool $html = true, bool $hard_sanitize = false, string $format = '', array $show = [], array $hide = []): string {
+    public function getDisplayName(bool $html = true, bool $hard_sanitize = false, string $format = ''): string {
         if (empty($this->givenName) && empty($this->familyName)) {
             return '';
         }
@@ -378,7 +413,7 @@ class Person {
             $nameHtml .= '<span class="displayname" itemprop="name">';
 
             // "personalTitle"
-            if ((!empty($this->honorificPrefix)) && (!in_array('honorificPrefix', $hide))) {
+            if (!empty($this->honorificPrefix)) {
                 if ($hard_sanitize) {
                     $long_version = self::getAcademicTitleLongVersion($this->honorificPrefix);
                     if (!empty($long_version)) {
@@ -394,30 +429,34 @@ class Person {
             }
 
             // "givenName"
-            if ((!empty($this->givenName))  && (!in_array('givenName', $hide))) { 
+            
+            if ((!empty($this->givenName)) && (!empty($this->familyName)))  {  
+                $nameHtml .= '<span class="namepart">';
+            }
+            if (!empty($this->givenName)) { 
                 $nameHtml .= '<span itemprop="givenName">' . esc_html($this->givenName) . '</span> ';
                 $nameText .= esc_html($this->givenName) . ' ';
             }
 
-
-
             // "familyName"
-            if ((!empty($this->familyName))  && (!in_array('familyName', $hide))) { 
+            if (!empty($this->familyName))  { 
                 $nameHtml .= '<span itemprop="familyName">';        
                 // "titleOfNobility" is part of the familyName
-                if ((!empty($this->titleOfNobility))  && (!in_array('titleOfNobility', $hide))) { 
+                if (!empty($this->titleOfNobility))  { 
                     $nameHtml .= esc_html($this->titleOfNobility) . ' ';
                     $nameText .= esc_html($this->titleOfNobility) . ' ';
                 }
 
-                $nameHtml .= esc_html($this->familyName) . '</span> ';
-                $nameText .= esc_html($this->familyName) . ' ';
+                $nameHtml .= esc_html($this->familyName) . '</span>';
+                $nameText .= esc_html($this->familyName) . '';
             }
-
+            if ((!empty($this->givenName)) && (!empty($this->familyName)))  {  
+                $nameHtml .= '</span>';
+            }
             // "personalTitleSuffix"
-            if ((!empty($this->honorificSuffix))  && (!in_array('honorificSuffix', $hide))) { 
-                $nameHtml .= '(<span itemprop="honorificSuffix">' . esc_html($this->honorificSuffix) . '</span>)';
-                $nameText .= '(' . esc_html($this->honorificSuffix) . ')';
+            if (!empty($this->honorificSuffix)) { 
+                $nameHtml .= ' (<span itemprop="honorificSuffix">' . esc_html($this->honorificSuffix) . '</span>)';
+                $nameText .= ' (' . esc_html($this->honorificSuffix) . ')';
             }
 
             $nameHtml .= '</span>';
@@ -490,8 +529,12 @@ class Person {
      * Get Post Id for a person
      */
      public function getPostId(): int {
+        $config = new Config();
+        $post_type = $config->get('person_post_type'); 
+         
+         
         $contact_posts = get_posts([
-            'post_type' => 'custom_person',
+            'post_type' => $post_type,
             'meta_key' => 'person_id',
             'meta_value' => $this->identifier,
             'posts_per_page' => 1, // Only fetch one post matching the person ID
@@ -540,10 +583,14 @@ class Person {
         if ($postid !== 0) {
             if ($lang === 'de') {
                 $raw_content = get_post_field('post_content', $postid);
-                $content   = apply_filters('the_content', $raw_content);
+                // dont execute shortcodes here, cause we need the rawdata in the cache
+                $content = $raw_content;
+                
             } else {
                 $raw_content = get_post_meta($postid, '_content_en', true);
-                $content   = apply_filters('the_content', $raw_content);
+      //          $content   = apply_filters('the_content', $raw_content);
+                 // dont execute shortcodes here, cause we need the rawdata in the cache
+                 $content = $raw_content;
             }
             return $content;
         }             
@@ -650,14 +697,15 @@ class Person {
         if (empty($this->contacts)) {
             return false;
         }
-        
+    
         if (!empty($this->primary_contact)) {
-            // we already calculated this, therfor we return this
+            // we already calculated this, therfor we return this            
             return $this->primary_contact;
         }
-        
+         
+          
         // Wenn es nur einen einzigen Contacteintrag gibt, dann returne diesen        
-        if ((count($this->contacts)==1) && (!empty($this->contacts[0]))) {
+        if ((count($this->contacts)==1) && (!empty($this->contacts[0]))) {         
             $this->primary_contact = new Contact($this->contacts[0]);
             return $this->primary_contact;
         }
@@ -668,7 +716,7 @@ class Person {
         } else {
             $postid = $this->postid;
         }
-        
+
         if (($postid === 0) && (!empty($this->contacts[0]))) {
             // No custum post entry, therfor i take the first entry
             $this->primary_contact = new Contact($this->contacts[0]);
@@ -678,15 +726,17 @@ class Person {
         $displayed_contacts = get_post_meta($postid, 'displayed_contacts', true);
         
         // downwardcompatbility
-        if (is_array($displayed_contacts)) {
+        if ((is_array($displayed_contacts)) || (empty($displayed_contacts))) {
             $displayed_contacts = 0;
         }
+        
     
         if (isset($this->contacts[$displayed_contacts])) {
             $this->primary_contact = new Contact($this->contacts[$displayed_contacts]);
             return $this->primary_contact;
-        } else {
-            $this->primary_contact = new Contact($this->contacts[0]);
+        } else {              
+                          
+            $this->primary_contact = new Contact($this->contacts);
             return $this->primary_contact;
         }
                             

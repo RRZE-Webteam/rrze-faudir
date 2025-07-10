@@ -1,8 +1,7 @@
 <?php
 // Template file for RRZE FAUDIR
-use RRZE\FAUdir\Debug;
 use RRZE\FAUdir\Config;
-
+use RRZE\FAUdir\Shortcode;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
@@ -21,7 +20,7 @@ get_header();
         $person_id = get_post_meta(get_the_ID(), 'person_id', true);
         ?>
 
-        <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+        <article id="post-<?php the_ID(); ?>" <?php post_class(['post']); ?>>
             <div id="content">
                 <div class="content-container">
                     <?php 
@@ -37,19 +36,17 @@ get_header();
                         } elseif (isset($opt['default_output_fields_endpoint']) && (!empty($opt['default_output_fields_endpoint']))) {
                             $showfields = $opt['default_output_fields_endpoint'];
                         }
- 
-                        $show = '';
+                       
                         
-                        if (isset($showfields)) {
-                            $show = implode(', ', $showfields);
-                            if (!empty($show)) {
-                                $show = ' show="'.$show.'"';
-                            }
-                            
-                        }
-
-                    
-                    echo do_shortcode('[faudir identifier="' . esc_attr($person_id) . '"'.$show.' url="#" format="page"]');
+                        $atts['display'] = 'person';
+                        $atts['format'] = 'page';
+                        $atts['identifier'] = $person_id;
+                        $atts['show'] = implode(', ', $showfields);
+                        $output = Shortcode::fetch_fau_data($atts);
+                        $content = apply_filters('the_content', $output);
+                        echo $content; 
+                        
+                     
                     ?>
                 </div>
             </div>

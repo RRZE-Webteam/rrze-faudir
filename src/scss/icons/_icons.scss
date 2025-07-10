@@ -15,6 +15,7 @@
 	   text-decoration: none;
 	   display: inline-flex;
 	   align-items: center;
+	   vertical-align: middle;
 	   gap: 0 0.1rem;
 	   
 	   background-color: var(--_icon_background-color, inherit);
@@ -35,9 +36,8 @@
 	   background: currentColor;
 	   mask-size: var(--_icon-mask-size, var(--faudir-icon-mask-size, 100%));
 	   mask-repeat: no-repeat;
-	   mask-position: center center;
+	   mask-position: calc(50% - var(--_icon-border-width, 0));
 	   
-	   display: inline-block;
 	   width: var(--_icon-size, var(--faudir-icon-size));
 	   height: var(--_icon-size, var(--faudir-icon-size));
 	   content: "";
@@ -60,12 +60,14 @@
 	    --_icon-border-radius: 50%;
 	    --_icon_background-color: white;
 	    --_icon-mask-size: 1rem;
-	    --_outer_icon-size: 1.8rem;
+	    --_outer_icon-size: 1.6rem;
 	    --_icon-size:  clamp(var(--faudir-min-iconwidth, 24px), var(--_outer_icon-size, var(--faudir-icon-size, 1.5rem)), 42px);
 	    --_icon-border-color-hover: var(--_icon_background-color);
 	    --_icon-color-hover: var(--_icon_background-color);		
 	    --_icon-background-color-hover: var(--color-Text, currentColor);
 	    
+	    
+	   
 	     ul {
 		margin: 0;
 		display: inline;
@@ -76,12 +78,12 @@
 		    padding: 0;
 
 		    a {
-			vertical-align: bottom;
-		       width: var(--_icon-size);
-		       height: var(--_icon-size);
-		       overflow: hidden;
-		       margin-right: var(--faudir-icon-margin-right, 5px);
-		       margin-left: var(--faudir-icon-margin-right, 5px);
+			vertical-align: middle;
+			width: var(--_icon-size);
+			height: var(--_icon-size);
+			overflow: hidden;
+			margin-right: var(--faudir-icon-margin-right, 5px);
+			margin-left: var(--faudir-icon-margin-right, 5px);
 		    }
 		    a:hover, 
 		    a:focus {
@@ -101,7 +103,13 @@
 	     }
 	}
 	
+	
+	
+	
+	
      }
+     
+     
      ul.icon {
 	 margin-left: 0;
 	 padding-left: 0;
@@ -129,7 +137,7 @@
 		background: currentColor;
 		mask-size: var(--_icon-mask-size, var(--faudir-icon-mask-size, 100%));
 		mask-repeat: no-repeat;
-		mask-position: center center;
+		mask-position: calc(50% - var(--_icon-border-width, 0));
 
 		display: inline-block;
 		width: var(--_icon-size, var(--faudir-icon-size));
@@ -141,7 +149,15 @@
 		mask-image: var(--faudir-icon-right);
 	  }
       }
-
+      .text-list ul li {
+	.icon.icon-list {
+	    span.texticon::before,
+	    a::before {
+		mask-position: center center;
+	    }
+	}
+     }
+     
      .fau-elemental & .icon-list  {
 	  --_icon-border-color: none;
 	  --_icon-border-style: none;
