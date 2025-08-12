@@ -7,11 +7,11 @@ defined('ABSPATH') || exit;
 
 class Config {
     private array $config = [
-        'version'                   => 2,
+        'version'                   => 3,
         'api_key'                   => '',
         'api-baseurl'               => 'https://api.fau.de/pub/v1/opendir/',
         'faudir-url'                => 'https://faudir.fau.de/',
-        'no_cache_logged_in'        => false,
+        'no_cache_logged_in'        => true,
         'cache_timeout'             => 120, // Minimum 15 minutes
         'transient_time_for_org_id' => 1, // Minimum 1 day
         'show_error_message'        => false,
@@ -66,9 +66,9 @@ class Config {
         ],
         'jobtitle_format'   => '#functionlabel#',
         'person_taxonomy'   => 'custom_taxonomy',
-            // TODO: CHange to a non generic name!
+            // TODO: Change to a non generic name!
         'person_post_type'  => 'custom_person',
-            // TODO: CHange to a non generic name!
+            // TODO: Change to a non generic name!
 
         'hide_on_parameter' => [
             'address' => [
