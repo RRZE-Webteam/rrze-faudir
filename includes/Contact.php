@@ -547,10 +547,7 @@ class Contact {
         if (empty($data)) {
             return '';
         }
-        if (empty($arialabel)) {
-            $arialabel = __('Social Media and Websites', 'rrze-faudir');
-        }
-        
+
         
         $htmlsurround = self::sanitize_htmlsurround($htmlsurround);
         

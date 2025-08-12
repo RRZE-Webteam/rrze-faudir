@@ -61,16 +61,14 @@ if (!defined('ABSPATH')) {
                         <?php
                         $address = '';
 
-                        if (in_array('address', $show_fields) ) {
-                                
+                        if (in_array('address', $show_fields) ) {                               
                                 $showmap = false;
                                 if (in_array('faumap', $show_fields) ) {
                                     $showmap = true;
                                 }
 
                                 $address .= $org->getAddressOutput(false, $lang, $showmap);
-                           
-                           
+                                                  
                         }
                         if (!empty($address)) {
                             echo '<div class="profile-address">';

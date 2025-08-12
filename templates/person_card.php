@@ -178,6 +178,7 @@ if (!defined('ABSPATH')) {
                             $some = $contact->getSocialMedia('span');
                             if (!empty($some)) {
                                 echo '<div class="profile-socialmedia">';
+                                echo '<h2 class="screen-reader-text">'.__('Social Media and Websites', 'rrze-faudir').'</h2>';
                                 echo $some;
                                 echo '</div>';
                             }
