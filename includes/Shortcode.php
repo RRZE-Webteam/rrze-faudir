@@ -62,7 +62,7 @@ class Shortcode {
             ),
             $atts
         );
-  error_log("FAUdir\Shortcode (fetch_fau_data): identifier: ".$atts['identifier'].", id: ".$atts['id'].", show= ".$atts['show']." , hide: ".$atts['hide']);       
+  error_log("FAUdir\Shortcode (fetch_fau_data): identifier: ".$atts['identifier'].", id: ".$atts['id'].", orgnr: ".$atts['orgnr'].",  show= ".$atts['show']." , hide: ".$atts['hide']);       
   
         if (empty($atts['lang'])) {
             $atts['lang'] = $lang;
@@ -210,6 +210,8 @@ class Shortcode {
             // optionale URL der Person überschreiben
         $orgnr      = $atts['orgnr'];
             // ORGnr der Einrichtung, falls Personen danach angezeigt werden sollen
+        $faudir_orgid   = $atts['orgid'];
+            // FAUdir Orgid oder Folderid, falls danach Personen angezeigt werden sollen
         $post_id    = $atts['id'];
             // Personen Post ID falls diese angezeigt werden soll
         $display    = $atts['display'];
@@ -232,6 +234,36 @@ class Shortcode {
         $person->setConfig(self::$config);
 
         
+        if (!empty($role)) {
+            // wir wollen Personen einer Rolle anzeigen.
+            // Hierzu brauchen wir aber immer entweder 
+            // eine OrgNr,
+            // oder eine FAUdir OrgId
+            
+            // Wenn beide leer sind, schaue nach ob wir eine Default Orgnr haben
+            // und befülle daamit die orgnr
+            
+            
+            if ((empty($orgnr)) && (empty($faudir_orgid))) {
+                // beide leer, also müssen wir mindestens nach dem Fallbach von 
+                // fauorgnr schauen. und wenn dieser vorhanden ist, dann 
+                // den Wert damit befüllen.
+                
+                $options = get_option('rrze_faudir_options', []);
+                $default_org = $options['default_organization'] ?? null;
+
+                if (!empty($default_org['orgnr'])) {
+                    $orgnr = $default_org['orgnr'];
+                } else {
+                    // Wir haben keinen Fallback, also können wir auch keine
+                    // Rolle darstellen
+                    $role = '';
+                }
+                
+            }
+        }
+        
+        
         if (!empty($identifiers) || !empty($post_id)) {
             // display a single person by identifier or post id
             if (!empty($identifiers)) {
@@ -245,113 +277,6 @@ class Shortcode {
             }
             // Apply organization and group filters if set
             $persons = self::filterPersonsByOrganization($persons, $orgnr);
-        } elseif (!empty($role)) {
-            // Display Persons by Role (FAUdir Function)
-            
-      //        Debug::log('Shortcode','error',"Look for function $role");
-            if (Organization::isOrgnr($orgnr)) {
-                // Case 1: Explicit orgnr is provided in shortcode - exact match for both org and function
-                
-                $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . $orgnr]);
-          
-                // TODO wir brauchen für den Fall der gekürzten OrgNr eine neue Schleife mit
-                //         $orgdata = $api->getOrgList(20, 0, ['lq' => 'disambiguatingDescription[reg]=^' . $orgnr]);
-                // Danach müssen wir aber über alle Orgs gehen un dnicht wie nachfolgend nur die erste nehmen!
-                
-                if (!empty($orgdata['data'])) {
-                    $org = $orgdata['data'][0];
-                        // Hier nimmt er nur den ersten!!
-                    
-                    $identifier = $org['identifier'];
-                    $queryParts = [];
-                    $queryParts[] = 'contacts.organization.identifier[eq]=' . $identifier;
-
-                    
-                    $params = [
-                        'lq' => implode('&', $queryParts)
-                    ];
-
-                    $result = $api->getPersons(100, 0, $params);      
-                    // Rolle(n) in ein Array aufsplitten und bereinigen
-                    $roles = array_map('trim', explode(',', $role));
-                    
-                    foreach ($result['data'] as $key => &$persondata) {
-                        // Enrich person data with full contact information
-                        
-                        $person->populateFromData($persondata);
-                        $person->reloadContacts();
-                        $persondata = $person->toArray();
-
-                        
-                        foreach ($persondata['contacts'] as $contactKey => $contact) {
-                            $functionMatches = in_array($contact['function'], $roles, true)
-                                || in_array($contact['functionLabel']['de'], $roles, true)
-                                || in_array($contact['functionLabel']['en'], $roles, true);
-
-                            if (!$functionMatches || $contact['organization']['identifier'] !== $identifier) {
-                                unset($persondata['contacts'][$contactKey]);
-                            }
-                        }
-
-                        if (count($persondata['contacts']) === 0) {
-                            unset($result['data'][$key]);
-                        }
-
-                         
-                    }
-
-                    if (!empty($result['data'])) {
-                        $persons = array_values($result['data']);
-                    }
-                }
-            } else {
-                // Case 2: Only function is specified - use default org prefix
-                    $options = get_option('rrze_faudir_options', []);
-                    $default_org = $options['default_organization'] ?? null;
-
-                    if (!empty($default_org['orgnr'])) {
-                        $ids = $default_org['ids'];
-                        $queryParts[] = 'contacts.organization.identifier[reg]=^(' . implode('|', $ids) . ')$';
-
-                        // Format the query according to the specified pattern
-                        $params = [
-                            'lq' => implode('&', $queryParts)
-                        ];
-                        $result = $api->getPersons(60, 0, $params);  
-                        $roles = array_map('trim', explode(',', $role));
-                        
-                        // Process each person and filter contacts
-                        foreach ($result['data'] as $key => &$persondata) {
-                            
-                            $person->populateFromData($persondata);
-                            $person->reloadContacts();
-                            $persondata = $person->toArray();
-                            
-                            
-                            foreach ($persondata['contacts'] as $contactKey => $contact) {
-                                $functionMatches = in_array($contact['function'], $roles, true)
-                                    || in_array($contact['functionLabel']['de'], $roles, true)
-                                    || in_array($contact['functionLabel']['en'], $roles, true);
-
-                                if (!$functionMatches || $contact['organization']['identifier'] !== $ids) {
-                                    unset($persondata['contacts'][$contactKey]);
-                                }
-                            }
-
-                            if (count($persondata['contacts']) === 0) {
-                                unset($result['data'][$key]);
-                            }
-                            
-
-                            
-                        }
-
-                        if (!empty($result['data'])) {
-                            $persons = array_values($result['data']);
-                        }
-                    }
-                
-            }
 
         } elseif (!empty($category)) {
             // get persons by category. 
@@ -361,15 +286,9 @@ class Shortcode {
             }
         } elseif (!empty($orgnr))  {
             // get persons by orgnr
-           // error_log("FAUdir\Shortcode (fetch_and_render_fau_data): By Orgnr: {$orgnr}");       
-           $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . $orgnr]);
-           
-            if (!empty($orgdata['data'])) {
-                $orgid = $orgdata['data'][0]['identifier'];
-                $lq = 'contacts.organization.identifier[eq]=' . $orgid;
-                $persons = self::fetch_and_process_persons($lq);
-            }
+           $persons = self::getPersonsByOrgNr($orgnr, $role); 
             
+
         } else {
             error_log('Invalid combination of attributes.');
             return '';
@@ -639,7 +558,146 @@ class Shortcode {
         return array_values(array_unique($person_identifiers));
     }
 
+    
+    /**
+     * Liefert Personen zu einer Organisations-Nr (10-stellig exakt oder 6-stellig als Prefix).
+     *  Input: 
+     *    $orgnr (string|int) – entweder volle 10 Ziffern (exakt) oder die ersten 6 Ziffern (Prefix).
+     *    $role (string|null): kommaseparierte Rollen (z. B. "Professor, Postdoc") – optional.
+     * Rückgabe: array – Ergebnis von self::fetch_and_process_persons($lq) oder [] bei keiner passenden Org.
+     */
+    public static function getPersonsByOrgNr(string|int $orgnr, ?string $role = null): array {
+        // Nur Ziffern verwenden
+        $orgnrDigits = preg_replace('/\D+/', '', (string) $orgnr);
 
+        // Such-Param für Org-Liste bestimmen
+        if (preg_match('/^\d{10}$/', $orgnrDigits)) {
+            // Exakte 10-stellige Nummer
+            $orgParams = ['lq' => 'disambiguatingDescription[eq]=' . $orgnrDigits];
+        } elseif (preg_match('/^\d{6}$/', $orgnrDigits)) {
+            // 6-stelliger Prefix
+            $orgParams = ['lq' => 'disambiguatingDescription[reg]=^' . $orgnrDigits];
+        } else {
+            // Weder 6 noch 10 Ziffern → kein valider Suchbegriff
+            return [];
+        }
+        
+error_log("FAUdir\Shortcode (getPersonsByOrgNr): Parameter: {$orgParams}");       
+        // API-Instanz
+        $config = (isset(self::$config) && self::$config instanceof Config)
+            ? self::$config
+            : new Config();
+        $api = new API($config);
+
+        // Organisation(en) abrufen
+        $orgdata = $api->getOrgList(0, 0, $orgParams);
+        if (empty($orgdata['data'])) {
+            return [];
+        }
+
+        // Alle passenden Org-IDs einsammeln (Mehrtreffer möglich)
+        $orgIds = array_values(array_unique(array_filter(array_map(
+            static fn($o) => $o['identifier'] ?? null,
+            $orgdata['data']
+        ))));
+
+        if (empty($orgIds)) {
+            return [];
+        }
+
+        // LQ für Personen bauen
+        if (count($orgIds) === 1) {
+            // Eine Organisation → exakte Abfrage
+            $lq = 'contacts.organization.identifier[eq]=' . $orgIds[0];
+            
+            
+            error_log("FAUdir\Shortcode (getPersonsByOrgNr): Eine Org: {$lq}");       
+
+            
+        } else {
+            // Mehrere Organisationen → Regex-OR, exakt geankert
+            // (IDs sind i.d.R. numerisch; preg_quote aus Prinzip)
+
+            $safeIds = array_map(static fn($id) => preg_quote((string) $id, '/'), $orgIds);
+            $lq = 'contacts.organization.identifier[reg]=^(' . implode('|', $safeIds) . ')$';
+            
+             error_log("FAUdir\Shortcode (getPersonsByOrgNr): mehrere Org: {$lq}");     
+            
+        }
+
+        // Personen abrufen & (wie gehabt) verarbeiten
+        $persons = self::fetch_and_process_persons($lq);
+
+
+        if (empty($persons)) {
+            return [];
+        }
+
+        // Optional: Rollen-Filter anwenden
+        if (is_string($role) && trim($role) !== '') {
+
+            error_log("FAUdir\Shortcode (getPersonsByOrgNr): Filter nach Role: $role ");
+
+            $roles = array_values(array_filter(array_map('trim', explode(',', $role)), 'strlen'));
+            if (!empty($roles)) {
+                $filtered = [];
+
+                $personObj = new Person();
+
+                foreach ($persons as $p) {
+                    $personData = $p;
+
+                    // Optionales Enrichment
+                    if ($personObj) {
+                        $personObj->populateFromData($personData);
+                        $personObj->reloadContacts();
+                        $personData = $personObj->toArray();                    
+                    }
+                    $name = $personObj->getDisplayName();
+                    error_log("FAUdir\Shortcode (getPersonsByOrgNr): Looking for $name ");
+                        
+                        
+                    // Kontakte rollen- & org-basiert filtern
+                    if (!isset($personData['contacts']) || !is_array($personData['contacts'])) {
+        //                 error_log("FAUdir\Shortcode (getPersonsByOrgNr): Continue cause of no contacts for $name ");
+                        continue;
+                    }
+
+                    $kept = [];
+                    foreach ($personData['contacts'] as $contact) {
+
+               
+                        
+                        // Rollenvergleich gegen 'function' sowie 'functionLabel' (de/en)
+                        $fn        = $contact['function']               ?? null;
+                        $fnDe      = $contact['functionLabel']['de']    ?? null;
+                        $fnEn      = $contact['functionLabel']['en']    ?? null;
+
+                        $functionMatches =
+                            ($fn   !== null && in_array($fn, $roles, true)) ||
+                            ($fnDe !== null && in_array($fnDe, $roles, true)) ||
+                            ($fnEn !== null && in_array($fnEn, $roles, true));
+
+                        if ($functionMatches) {
+                            $kept[] = $contact;
+                        }
+                    }
+
+                    if (!empty($kept)) {
+                        $personData['contacts'] = array_values($kept);
+                        $filtered[] = $personData;
+                    }
+                }
+
+                $persons = array_values($filtered);
+            }
+        }
+
+        return $persons;
+    }
+
+    
+    
     /*
      * Filter Personen nach ihrer Org
      */
@@ -865,4 +923,5 @@ class Shortcode {
         return trim($atts_string);
     }
 
+    
 }

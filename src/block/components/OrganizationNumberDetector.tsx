@@ -34,12 +34,12 @@ export default function OrganizationNumberDetector({
     if (sanitizedValue.length === 0) {
       setAttributes({orgnr: ""});
       setErrorMessage("");
-    } else if (sanitizedValue.length === 10) {
+    } else if ((sanitizedValue.length >= 6) && (sanitizedValue.length <= 10)) { 
       setAttributes({orgnr: sanitizedValue});
       setErrorMessage("");
     } else {
       setAttributes({orgnr: ""});
-      setErrorMessage(__("Your FAUOrg-Number needs to be exactly 10 digits.", "rrze-faudir"));
+      setErrorMessage(__("Your FAUOrg-Number needs to at least 6 and up to 10 digits.", "rrze-faudir"));
     }
   };
 
