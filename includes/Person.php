@@ -574,24 +574,15 @@ class Person {
     /*
      * Get Content from custom post
      */
-    public function getContent(string $lang = 'de'): string {
+    public function getContent(): string {
          if (empty($this->postid)) {
             $postid = $this->getPostId();
         } else {
             $postid = $this->postid;
         }
         if ($postid !== 0) {
-            if ($lang === 'de') {
-                $raw_content = get_post_field('post_content', $postid);
-                // dont execute shortcodes here, cause we need the rawdata in the cache
-                $content = $raw_content;
-                
-            } else {
-                $raw_content = get_post_meta($postid, '_content_en', true);
-      //          $content   = apply_filters('the_content', $raw_content);
-                 // dont execute shortcodes here, cause we need the rawdata in the cache
-                 $content = $raw_content;
-            }
+            $content = get_post_field('post_content', $postid);
+
             return $content;
         }             
         return '';  
@@ -602,19 +593,18 @@ class Person {
     /*
      * Get teasertext
      */       
-    public function getTeasertext(string $lang = 'de'): string {       
+    public function getTeasertext(): string {       
         if (empty($this->postid)) {
             $postid = $this->getPostId();
         } else {
             $postid = $this->postid;
         }
         if ($postid !== 0) {
-            if ($lang === 'de') {
-                $teaser_text_key = '_teasertext_de';
-            } else {
-                $teaser_text_key = '_teasertext_en';
-            }
-            return get_post_meta($postid, $teaser_text_key, true);
+            
+             $current_post  = get_post($postid);
+             $excerpt       = isset($current_post->post_excerpt) ? $current_post->post_excerpt : '';
+
+            return $excerpt;
         }
                        
         return '';                       

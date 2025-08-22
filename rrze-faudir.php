@@ -4,7 +4,7 @@
 Plugin Name: RRZE FAUdir
 Plugin URI: https://github.com/RRZE-Webteam/rrze-faudir
 Description: Plugin for displaying the FAU person and institution directory on websites.
-Version: 2.4.2-0
+Version: 2.4.2-3
 Author: RRZE Webteam
 License: GNU General Public License v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -25,6 +25,8 @@ define('RRZE_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('RRZE_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 use RRZE\FAUdir\Main;
+use RRZE\FAUdir\CPT;
+
 
 
 // Check if the function exists before using it
@@ -74,16 +76,14 @@ function loaded(): void {
         return;
     }
 
-    // CPT und Einstellungen laden
-    require_once plugin_dir_path(__FILE__) . 'includes/custom-post-type/custom-post-type.php';
-    require_once plugin_dir_path(__FILE__) . 'includes/Settings.php';
+    // CPT laden
+    $cpt = new CPT();
+  
 
     $main = new Main(RRZE_PLUGIN_FILE);
     $main->onLoaded();
 
-    // AJAX-Hooks
-    add_action('wp_ajax_rrze_faudir_search_contacts', __NAMESPACE__ . '\\rrze_faudir_search_contacts');
-    add_action('wp_ajax_nopriv_rrze_faudir_search_contacts', __NAMESPACE__ . '\\rrze_faudir_search_contacts');
+  
 }
 
 
@@ -114,32 +114,3 @@ function rrze_faudir_system_requirements(): bool {
 
     return true;
 }
-
-/**
- * AJAX-Handler für Kontakt-Suche
- */
-function rrze_faudir_search_contacts(): void {
-    check_ajax_referer('rrze_faudir_api_nonce', 'security');
-
-    $identifier = sanitize_text_field(wp_unslash($_POST['identifier'] ?? ''));
-
-    global $wpdb;
-    $contacts = $wpdb->get_results($wpdb->prepare("
-        SELECT * FROM {$wpdb->prefix}contacts WHERE identifier LIKE %s",
-        '%' . $wpdb->esc_like($identifier) . '%'
-    ));
-
-    if (!empty($contacts)) {
-        $formatted_contacts = array_map(function ($contact) {
-            return [
-                'name'            => $contact->name,
-                'identifier'      => $contact->identifier,
-                'additional_info' => $contact->additional_info
-            ];
-        }, $contacts);
-        wp_send_json_success($formatted_contacts);
-    } else {
-        wp_send_json_error(__('No contacts found with the provided identifier.', 'rrze-faudir'));
-    }
-}
-

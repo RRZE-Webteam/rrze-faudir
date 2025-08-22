@@ -8,8 +8,7 @@ use Exception;
 /**
  * Handles Block Registration, Localization and Rendering of the FAUdir Block.
  */
-class BlockRegistration
-{
+class BlockRegistration {
     public function __construct()
     {
         add_action('init', [$this, 'rrze_faudir_block_init'], 15);
@@ -19,8 +18,7 @@ class BlockRegistration
     /**
      * Register the FAUdir Block and initialize the l10n.
      */
-    public function rrze_faudir_block_init(): void
-    {
+    public function rrze_faudir_block_init(): void {
         $this->rrze_register_blocks();
         //$this->rrze_register_translations();
     }
@@ -28,8 +26,7 @@ class BlockRegistration
     /**
      * Register the FAUdir block for the BlockEditor
      */
-    public function rrze_register_blocks(): void
-    {
+    public function rrze_register_blocks(): void {
         register_block_type(plugin_dir_path(__DIR__) . 'build/block', [
             'render_callback' => [$this, 'render_faudir_block'],
             'skip_inner_blocks' => true
@@ -55,8 +52,7 @@ class BlockRegistration
      * @param WP_Post $post Current post object.
      * @return array Modified block categories.
      */
-    public static function register_rrze_block_category($categories, $post)
-    {
+    public static function register_rrze_block_category($categories, $post) {
         // Check if there is already a RRZE category present
         foreach ($categories as $category) {
             if (isset($category['slug']) && $category['slug'] === 'rrze') {
@@ -93,10 +89,8 @@ class BlockRegistration
             $defaultOrgIdentifier = isset($default_org['id']) ? $default_org['id'] : '';
 
             if (
-                isset($attributes['display']) &&
-                'org' === $attributes['display'] &&
-                empty($attributes['orgid']) &&
-                empty($attributes['orgnr'])
+                isset($attributes['display']) && 'org' === $attributes['display'] &&
+                empty($attributes['orgid']) && empty($attributes['orgnr'])
             ) {
                 throw new \Exception(
                     __('You selected display="org", but neither a FAUorganization ID (orgid) nor a FAU Organization Number (orgnr) was provided.', 'rrze-faudir')
@@ -146,6 +140,7 @@ class BlockRegistration
                     'identifier' => $attributes['identifier']
                 ];
             } else {
+                error_log("FAUdir\BlockRegistration (render_faudir_block): Neither person IDs, function+orgnr, nor category were provided  ". print_r($attributes, true));
                 throw new Exception(__('Neither person IDs, function+orgnr, nor category were provided', 'rrze-faudir'));
             }
 

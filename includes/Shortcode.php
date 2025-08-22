@@ -62,7 +62,8 @@ class Shortcode {
             ),
             $atts
         );
-
+  error_log("FAUdir\Shortcode (fetch_fau_data): identifier: ".$atts['identifier'].", id: ".$atts['id'].", show= ".$atts['show']." , hide: ".$atts['hide']);       
+  
         if (empty($atts['lang'])) {
             $atts['lang'] = $lang;
         } else {
@@ -217,6 +218,11 @@ class Shortcode {
             // optionale Formataenderung für die Darstellung des Namens
 
     
+        
+         error_log("FAUdir\Shortcode (createPersonOutput): identifier: $identifiers, id: $post_id, display= $display");       
+         
+         
+         
         $api = new API(self::$config);
         
         

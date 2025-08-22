@@ -277,7 +277,7 @@ if (!defined('ABSPATH')) {
                     $profilcontent = '';
                     if (in_array('teasertext', $show_fields) ) {    
                         
-                            $wval = $person->getTeasertext($lang);
+                            $wval = $person->getTeasertext();
                             if (!empty($wval)) {
                                 $profilcontent .= '<div class="teasertext">';
                                 $profilcontent .= wp_kses_post($wval);
@@ -286,7 +286,7 @@ if (!defined('ABSPATH')) {
                     }
                     
                     if (in_array('content', $show_fields)) {                          
-                            $wval = $person->getContent($lang);
+                            $wval = $person->getContent();
                             if (!empty($wval)) {
                                 $profilcontent .= '<div class="content">';
                                 $profilcontent .= $wval;

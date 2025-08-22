@@ -129,15 +129,7 @@ class API {
         $param_uri = '';
         
          // Define allowed query parameters and map them to their corresponding keys
-        $query_params = [
-            'q',
-            'sort',
-            'attrs',
-            'lq',
-            'rq',
-            'view',
-            'lf'
-        ];
+        $query_params = ['q','sort', 'attrs', 'lq', 'rq', 'view','lf'];
 
          if (!isset($params['q'])) {
              if (!empty($params['email'])) {

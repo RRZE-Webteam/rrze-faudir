@@ -4,6 +4,7 @@ namespace RRZE\FAUdir;
 
 defined('ABSPATH') || exit;
 
+use RRZE\FAUdir\Settings;
 use RRZE\FAUdir\Maintenance;
 use RRZE\FAUdir\BlockRegistration;
 use RRZE\FAUdir\REST;
@@ -28,6 +29,11 @@ class Main {
     }
 
     public function onLoaded() {
+        
+        
+        // Einstellungen laden
+        $settings = new Settings();
+        $settings->register_hooks();
         
         // Register REST API
         new REST();

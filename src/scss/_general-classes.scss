@@ -118,7 +118,9 @@
     h5 {
 	font-size: var(--faudir-h5-font-size, 0.76rem);
     }
-    h1, h2, h3, h4, h5 {
+    
+    .contact-title,
+    .address-title {
 	margin: 1rem 0 0.5rem 0;
     }
     p.organisation_name,
