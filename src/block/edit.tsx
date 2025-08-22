@@ -32,10 +32,11 @@ import OrganizationIdentifierDetector from "./components/OrganizationIdentifierD
 import RoleSelector from "./components/RoleSelector";
 import SortSelector from "./components/SortSelector";
 import PersonIdentifierDetector from "./components/PersonIdentifierDetector";
+import {fetchAllPages} from './helper';
 
 export default function Edit({attributes, setAttributes}: EditProps) {
-  const [categories, setCategories] = useState([]);
-  const [posts, setPosts] = useState([]);
+  const [categories, setCategories] = useState<WPCategory[]>([]);
+  const [posts, setPosts] = useState<CustomPersonRESTApi[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
   const [isOrg, setIsOrg] = useState(attributes.display === 'org');
   const [isAppearancePanelOpen, setIsAppearancePanelOpen] = useState<boolean>(false);
@@ -87,40 +88,54 @@ export default function Edit({attributes, setAttributes}: EditProps) {
   }, []);
 
   useEffect(() => {
-    apiFetch({path: '/wp/v2/custom_taxonomy?per_page=100'})
-      .then((data: WPCategory[]) => {
-        setCategories(data);
-      })
-      .catch((error) => {
-        console.error('Error fetching categories:', error);
-      });
+    const ac = new AbortController();
+
+    (async () => {
+      try {
+        const cats = await fetchAllPages<WPCategory>(
+          '/wp/v2/custom_taxonomy',
+          {},
+          ac.signal
+        );
+        if (!ac.signal.aborted) setCategories(cats);
+      } catch (error) {
+        if (!ac.signal.aborted) console.error('Error fetching categories:', error);
+      }
+    })();
+
+    return () => ac.abort();
   }, []);
 
   useEffect(() => {
+    const ac = new AbortController();
     setIsLoadingPosts(true);
-    const params: CustomPersonParams = {
-      per_page: 100,
-      _fields: 'id,title,meta',
-      orderby: 'title',
-      order: 'asc',
-    };
 
-    if (selectedCategory) {
-      params.custom_taxonomy = selectedCategory;
-    }
+    (async () => {
+      try {
+        const query: CustomPersonParams = {
+          _fields: 'id,title,meta',
+          orderby: 'title',
+          order: 'asc',
+        };
+        // if (selectedCategory) {
+        //   query.custom_taxonomy = selectedCategory;
+        // }
 
-    apiFetch({
-      path: '/wp/v2/custom_person?per_page=100',
-      params: params,
-    } as APIFetchOptions)
-      .then((data: CustomPersonRESTApi[]) => {
-        setPosts(data);
-        setIsLoadingPosts(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching posts:', error);
-        setIsLoadingPosts(false);
-      });
+        const allPeople = await fetchAllPages<CustomPersonRESTApi>(
+          '/wp/v2/custom_person',
+          query,
+          ac.signal
+        );
+
+        if (!ac.signal.aborted) setPosts(allPeople);
+      } catch (error) {
+        if (!ac.signal.aborted) console.error('Error fetching posts:', error);
+      } finally {
+        if (!ac.signal.aborted) setIsLoadingPosts(false);
+      }
+    })();
+
+    return () => ac.abort();
   }, [selectedCategory, orgnr]);
 
   const togglePostSelection = (postId: number) => {
@@ -202,52 +217,54 @@ export default function Edit({attributes, setAttributes}: EditProps) {
           </ToggleGroupControl>
           {!isOrg ? (
             <>
-              <hr />
+              <hr/>
               <PersonSelector
                 isLoadingPosts={isLoadingPosts}
                 posts={posts}
                 selectedPosts={selectedPosts}
                 togglePostSelection={togglePostSelection}
               />
-              <hr />
+              <hr/>
               <CategorySelector
                 categories={categories}
                 selectedCategory={selectedCategory}
                 setAttributes={setAttributes}
               />
-              <hr />
+              <hr/>
               <RoleSelector attributes={attributes} setAttributes={setAttributes}/>
-              <hr />
+              <hr/>
               <OrganizationNumberDetector
                 attributes={attributes}
                 setAttributes={setAttributes}
               />
-              <hr />
-              <PersonIdentifierDetector attributes={attributes} setAttributes={setAttributes} />
+              <hr/>
+              <PersonIdentifierDetector attributes={attributes} setAttributes={setAttributes}/>
             </>
           ) : (
             <>
-              <hr />
+              <hr/>
               <OrganizationNumberDetector
                 attributes={attributes}
                 setAttributes={setAttributes}
               />
-              <hr />
+              <hr/>
               <OrganizationIdentifierDetector attributes={attributes} setAttributes={setAttributes}/>
             </>
           )}
         </PanelBody>
         <PanelBody title={__('Appearance', 'rrze-faudir')} initialOpen={false}>
           <FormatSelector attributes={attributes} setAttributes={setAttributes}/>
-          <hr />
-          <ShowHideSelector attributes={attributes} setAttributes={setAttributes} setHasFormatDisplayName={setHasFormatDisplayName}/>
-          <hr />
-          <NameFormatSelector attributes={attributes} setAttributes={setAttributes} hasFormatDisplayName={hasFormatDisplayName}/>
+          <hr/>
+          <ShowHideSelector attributes={attributes} setAttributes={setAttributes}
+                            setHasFormatDisplayName={setHasFormatDisplayName}/>
+          <hr/>
+          <NameFormatSelector attributes={attributes} setAttributes={setAttributes}
+                              hasFormatDisplayName={hasFormatDisplayName}/>
         </PanelBody>
         {attributes.display !== "org" &&
             <PanelBody title={__('Sorting', 'rrze-faudir')} initialOpen={false}>
                 <SortSelector attributes={attributes} setAttributes={setAttributes}/>
-                <hr />
+                <hr/>
                 <RoleSelector attributes={attributes} setAttributes={setAttributes}/>
             </PanelBody>
         }

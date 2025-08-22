@@ -62,7 +62,7 @@ export interface DefaultOrganization {
 }
 
 export interface CustomPersonParams {
-  per_page: number;
+  per_page?: number;
   _fields: string;
   orderby: string;
   order: string;
