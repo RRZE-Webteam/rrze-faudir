@@ -31,21 +31,44 @@ export async function fetchAllPages<T>(
   signal?: AbortSignal,
   perPage = 100,
 ): Promise<T[]> {
-  let page = 1;
-  const all: T[] = [];
+  const firstPath = addQueryArgs(path, { ...query, per_page: perPage, page: 1 });
 
-  while (true) {
-    const finalPath = addQueryArgs(path, { ...query, per_page: perPage, page });
+  const res = await apiFetch({
+    path: firstPath,
+    parse: false,
+    signal,
+  }) as unknown as Response;
 
-    const data = await apiFetch({
-      path: finalPath,
-      signal,
-    }) as unknown as T[];
+  if (signal?.aborted) return [];
 
-    all.push(...data);
+  const header = res.headers.get('X-WP-TotalPages');
+  const totalPages = header ? Math.max(1, Number(header)) : 1;
 
-    if (!Array.isArray(data) || data.length < perPage) break;
-    page += 1;
+  const firstPage = await res.json() as T[];
+  const all: T[] = Array.isArray(firstPage) ? [...firstPage] : [];
+
+  for (let page = 2; page <= totalPages; page += 1) {
+    if (signal?.aborted) break;
+
+    const pagePath = addQueryArgs(path, { ...query, per_page: perPage, page });
+
+    try {
+      const data = await apiFetch({
+        path: pagePath,
+        signal,
+      }) as unknown as T[];
+
+      if (Array.isArray(data) && data.length) {
+        all.push(...data);
+      }
+    } catch (e: any) {
+      const status = e?.status ?? e?.data?.status;
+      const code = e?.code ?? e?.data?.code;
+      if (status === 400 || code === 'invalid_page_number') {
+        break;
+      }
+      throw e;
+    }
   }
 
   return all;

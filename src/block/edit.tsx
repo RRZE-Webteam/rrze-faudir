@@ -117,9 +117,9 @@ export default function Edit({attributes, setAttributes}: EditProps) {
           orderby: 'title',
           order: 'asc',
         };
-        if (selectedCategory) {
-          query.custom_taxonomy = selectedCategory;
-        }
+        // if (selectedCategory) {
+        //   query.custom_taxonomy = selectedCategory;
+        // }
 
         const allPeople = await fetchAllPages<CustomPersonRESTApi>(
           '/wp/v2/custom_person',
