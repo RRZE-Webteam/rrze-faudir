@@ -16,7 +16,7 @@ use RRZE\FAUdir\Contact;
  * - 'excerpt' in supports
  * - Entfernt alte Metas '_teasertext_de', '_teasertext_en', '_content_en'
  * - Migration: _teasertext_de/_teasertext_en -> excerpt abhängig von Site-Language (mit Fallbacks)
- * - Nur noch 'person_id' als persistente Meta; alle API-Felder werden nicht gespeichert,
+ * - Nur noch 'person_id' für die FAUdir Identifier als persistente Meta; alle API-Felder werden nicht gespeichert,
  *   sondern bei der Anzeige live geladen und read-only dargestellt.
  * - Contacts werden für die Anzeige live geladen (read-only). 'displayed_contacts' bleibt als Meta.
  */
@@ -308,7 +308,7 @@ class CPT {
         // Permissions
         if (!current_user_can('edit_post', $post_id)) return;
 
-        // Nur person_id speichern
+        // Nur FAUdir Identifier in person_id speichern
         if (isset($_POST['person_id'])) {
             update_post_meta($post_id, 'person_id', sanitize_text_field(wp_unslash($_POST['person_id'])));
         }
@@ -481,15 +481,32 @@ class CPT {
         $taxonomy  = $this->config->get('person_taxonomy');
 
         if ($post->post_type === $post_type) {
-            $terms = wp_get_object_terms($post->ID, $taxonomy);
-            if (!is_wp_error($terms)) {
-                $term_ids = array_map(function ($term) { return $term->term_id; }, $terms);
-                $response->data['custom_taxonomy'] = $term_ids;
-            }
+                // Get custom taxonomy terms
+                $terms = wp_get_object_terms($post->ID, $taxonomy);
+                if (is_wp_error( $terms ) ) {
+                    error_log(' ERROR ON wp_get_object_terms: taxonomy = '.$taxonomy.' posttype = '.$post_type. ' ERROR: '.$terms->get_error_message() );
+                    return;
+                }
+                $term_ids = array_map(function ($term) {
+                    return $term->term_id;
+                }, $terms);
 
-            // Keine API-Metas (wie person_name) mehr anhängen; nur person_id bleibt separat via register_post_meta verfügbar.
-        }
-        return $response;
+                // Add taxonomy terms to response
+                $response->data['custom_taxonomy'] = $term_ids;
+
+                // Add other meta data
+                $person_id = get_post_meta($post->ID, 'person_id', true);
+                $person_name = get_post_meta($post->ID, 'person_name', true);
+
+                $response->data['meta'] = array_merge(
+                    $response->data['meta'] ?? [],
+                    [
+                        'person_id' => $person_id,
+                        'person_name' => $person_name
+                    ]
+                );
+            }
+            return $response;
     }
 }
 

@@ -211,7 +211,7 @@ class Shortcode {
         $orgnr      = $atts['orgnr'];
             // ORGnr der Einrichtung, falls Personen danach angezeigt werden sollen
         $post_id    = $atts['id'];
-            // Personen POst ID falls diese angezeigt werden soll
+            // Personen Post ID falls diese angezeigt werden soll
         $display    = $atts['display'];
             // Art der anzuzeigendenden Daten.  Default: Person. Alternativ: Org
         $format_displayname = $atts['format_displayname'];
@@ -219,7 +219,7 @@ class Shortcode {
 
     
         
-         error_log("FAUdir\Shortcode (createPersonOutput): identifier: $identifiers, id: $post_id, display= $display");       
+         error_log("FAUdir\Shortcode (createPersonOutput): identifier: ".print_r($identifiers, true).", role: $role, orgnr: $orgnr, id: $post_id, display= $display");       
          
          
          
@@ -714,42 +714,69 @@ class Shortcode {
 
     
     /*
-     * Abruf der Personendaten anhand der Post-ID
+     * Abruf der Personendaten anhand einer Post-ID oder einer kommaseparierten Liste von Post-IDs.
+     * Optionaler Input: $post_ids (int|string) – z.B. 123 oder "123, 456,789".
+     * Rückgabe: array – Ergebnis von self::process_persons_by_identifiers($person_identifiers).
      */
-    public static function fetchPersonsByPostId(int $post_id): array {
+    public static function fetchPersonsByPostId(int|string $post_ids): array {
         $person_identifiers = [];
         $post_type = self::$config->get('person_post_type') ?? 'custom_person';
-        
-        $args = [
-            'post_type'      => $post_type,
-            'meta_query'     => [
-                [
-                    'key'     => 'old_person_post_id',
-                    'value'   => intval($post_id),
-                    'compare' => '=',
-                ],
-            ],
-            'posts_per_page' => 1,
-        ];
 
-        $person_posts = get_posts($args);
-        if (!empty($person_posts)) {
-            foreach ($person_posts as $person_post) {
-                $person_id = get_post_meta($person_post->ID, 'person_id', true);
-                if (!empty($person_id)) {
-                    $person_identifiers[] = $person_id;
-                }
-            }
+        // Eingabe normalisieren: einzelne ID → Array; CSV-String → Array
+        if (is_string($post_ids)) {
+            $ids = preg_split('/\s*,\s*/', $post_ids, -1, PREG_SPLIT_NO_EMPTY);
+            $ids = array_map('absint', $ids);
         } else {
-            // 3. Fallback: Prüfe ob $post_id existiert und ein person_id-Feld besitzt
+            $ids = [absint($post_ids)];
+        }
+
+        // Pro Post-ID wie bisher verfahren
+        foreach ($ids as $post_id) {
+            if ($post_id <= 0) {
+                continue;
+            }
+
             $post = get_post($post_id);
-            if ($post) {
-                $fallback_person_id = get_post_meta($post_id, 'person_id', true);
-                if (!empty($fallback_person_id)) {
-                    $person_identifiers[] = $fallback_person_id;
+
+            if ($post && ($post_type === $post->post_type)) {
+                // Direkter Treffer im Ziel-CPT
+                $faudir_id = get_post_meta($post_id, 'person_id', true);
+                if (!empty($faudir_id)) {
+                     error_log("FAUdir\Shortcode (fetchPersonsByPostId): Found FAUdir Id:  ". $faudir_id." in Post for ".$post_id." (".$post->post_title.")");
+                    $person_identifiers[] = $faudir_id;
+                }
+            } else {
+                // Prüfe auf alte IDs (Migration): Mapping finden
+                $args = [
+                    'post_type'      => $post_type,
+                    'meta_query'     => [
+                        [
+                            'key'     => 'old_person_post_id',
+                            'value'   => $post_id,
+                            'compare' => '=',
+                        ],
+                    ],
+                    'posts_per_page' => 1,
+                    'fields'         => 'ids',
+                ];
+
+                $person_posts = get_posts($args);
+
+                if (!empty($person_posts)) {
+                    foreach ($person_posts as $person_post_id) {
+                        $faudir_id = get_post_meta($person_post_id, 'person_id', true);
+                        if (!empty($faudir_id)) {
+                            error_log("FAUdir\Shortcode (fetchPersonsByPostId): Found FAUdir Id:  ". $faudir_id." in Post for ".$post_id);
+                            $person_identifiers[] = $faudir_id;
+                        }
+                    }
                 }
             }
         }
+
+        // Duplikate entfernen
+        $person_identifiers = array_values(array_unique(array_filter($person_identifiers)));
+
         return self::process_persons_by_identifiers($person_identifiers);
     }
 

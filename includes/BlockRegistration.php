@@ -115,7 +115,16 @@ class BlockRegistration {
                 if (!empty($attributes['selectedPersonIds'])) {
                     $shortcode_atts['identifier'] = implode(',', $attributes['selectedPersonIds']);
                 }
-            } // Finally check for selectedPersonIds without category
+             } // Ccheck for selectedPosts (CPT Ids der lokalen Personen) without category
+            else if (!empty($attributes['selectedPosts'])) {
+                $shortcode_atts = [
+                    'format' => $attributes['selectedFormat'] ?? 'compact',
+                    'id' => is_array($attributes['selectedPosts']) ?
+                        implode(',', $attributes['selectedPosts']) :
+                        $attributes['selectedPosts']
+                ];
+                
+            } // Finally check for selectedPersonIds without category          
             else if (!empty($attributes['selectedPersonIds'])) {
                 $shortcode_atts = [
                     'format' => $attributes['selectedFormat'] ?? 'compact',
