@@ -286,7 +286,7 @@ class Shortcode {
             }
         } elseif (!empty($orgnr))  {
             // get persons by orgnr
-           $persons = self::getPersonsByOrgNr($orgnr, $role); 
+           $persons = self::getPersonsByOrgNrs($orgnr, $role); 
             
 
         } else {
@@ -296,7 +296,7 @@ class Shortcode {
 
      
         // Sorting logic based on the specified sorting options
-        $sort_option = $atts['sort'] ?? 'familyName'; // Default sorting by last name
+        $sort_option = $atts['sort'] ?? 'head_first'; // Default sorting by last name
         $collator = collator_create('de_DE'); // German locale for sorting
 
         // Sort the persons array
@@ -560,6 +560,84 @@ class Shortcode {
 
     
     /**
+    * Holt Personen zu mehreren Organisations-Nummern (Komma-getrennt) und führt die Ergebnisse zusammen.
+    * Eingabe:
+    *   - $orgnrs (string|array|int): z. B. "123456, 1234567890" oder [123456, 1234567890] oder 1234567890.
+    *   - $role (string|null): optional, kommaseparierte Rollenbezeichnungen zur Filterung (z. B. "Professor,Postdoc").
+    * Rückgabe:
+    *   - array: zusammengeführte Personenliste (kontakt-merge bei Mehrtreffern).
+    */
+   public static function getPersonsByOrgNrs(string|array|int $orgnrs, ?string $role = null): array {
+       // Eingabe normalisieren → Array von Strings (ohne Leerzeichen, ohne leere Einträge)
+       if (is_int($orgnrs)) {
+           $orgList = [(string) $orgnrs];
+       } elseif (is_string($orgnrs)) {
+           $orgList = array_values(array_filter(array_map('trim', explode(',', $orgnrs)), 'strlen'));
+       } else { // array
+           $orgList = array_values(array_filter(array_map(
+               fn($v) => is_string($v) ? trim($v) : (string) $v,
+               $orgnrs
+           ), 'strlen'));
+       }
+
+       if (empty($orgList)) {
+           return [];
+       }
+
+       // Personen nach Identifier sammeln (für Duplikat-Check & Merge)
+       $byId = [];
+
+       foreach ($orgList as $oneOrgNr) {
+           $list = self::getPersonsByOrgNr($oneOrgNr, $role);
+           if (empty($list) || !is_array($list)) {
+               continue;
+           }
+
+           foreach ($list as $person) {
+               $pid = $person['identifier'] ?? null;
+               if (!$pid) {
+                   continue;
+               }
+
+               if (!isset($byId[$pid])) {
+                   // Erstes Auftauchen dieser Person
+                   $byId[$pid] = $person;
+                   continue;
+               }
+
+               // Person existiert schon → Kontakte zusammenführen (einfaches De-Duping)
+               if (isset($person['contacts']) && is_array($person['contacts'])) {
+                   if (!isset($byId[$pid]['contacts']) || !is_array($byId[$pid]['contacts'])) {
+                       $byId[$pid]['contacts'] = [];
+                   }
+
+                   // Index bestehender Kontakte aufbauen (nach Org-ID + Funktion)
+                   $existingKeys = [];
+                   foreach ($byId[$pid]['contacts'] as $c) {
+                       $key = (string)($c['organization']['identifier'] ?? '');
+                       $fn  = $c['function'] ?? ($c['functionLabel']['de'] ?? ($c['functionLabel']['en'] ?? ''));
+                       $existingKeys[$key . '|' . (string)$fn] = true;
+                   }
+
+                   // Neue Kontakte hinzufügen, falls noch nicht vorhanden
+                   foreach ($person['contacts'] as $c) {
+                       $key = (string)($c['organization']['identifier'] ?? '');
+                       $fn  = $c['function'] ?? ($c['functionLabel']['de'] ?? ($c['functionLabel']['en'] ?? ''));
+                       $idx = $key . '|' . (string)$fn;
+                       if (!isset($existingKeys[$idx])) {
+                           $byId[$pid]['contacts'][] = $c;
+                           $existingKeys[$idx] = true;
+                       }
+                   }
+               }
+           }
+       }
+
+       return array_values($byId);
+   }
+
+
+    /**
      * Liefert Personen zu einer Organisations-Nr (10-stellig exakt oder 6-stellig als Prefix).
      *  Input: 
      *    $orgnr (string|int) – entweder volle 10 Ziffern (exakt) oder die ersten 6 Ziffern (Prefix).
@@ -655,19 +733,14 @@ error_log("FAUdir\Shortcode (getPersonsByOrgNr): Parameter: {$orgParams}");
                     }
                     $name = $personObj->getDisplayName();
                     error_log("FAUdir\Shortcode (getPersonsByOrgNr): Looking for $name ");
-                        
-                        
+                                                
                     // Kontakte rollen- & org-basiert filtern
                     if (!isset($personData['contacts']) || !is_array($personData['contacts'])) {
-        //                 error_log("FAUdir\Shortcode (getPersonsByOrgNr): Continue cause of no contacts for $name ");
                         continue;
                     }
 
                     $kept = [];
-                    foreach ($personData['contacts'] as $contact) {
-
-               
-                        
+                    foreach ($personData['contacts'] as $contact) {      
                         // Rollenvergleich gegen 'function' sowie 'functionLabel' (de/en)
                         $fn        = $contact['function']               ?? null;
                         $fnDe      = $contact['functionLabel']['de']    ?? null;
