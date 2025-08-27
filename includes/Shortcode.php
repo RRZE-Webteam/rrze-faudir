@@ -62,7 +62,7 @@ class Shortcode {
             ),
             $atts
         );
-  error_log("FAUdir\Shortcode (fetch_fau_data): identifier: ".$atts['identifier'].", id: ".$atts['id'].", orgnr: ".$atts['orgnr'].",  show= ".$atts['show']." , hide: ".$atts['hide']);       
+        //  error_log("FAUdir\Shortcode (fetch_fau_data): identifier: ".$atts['identifier'].", id: ".$atts['id'].", orgnr: ".$atts['orgnr'].",  show= ".$atts['show']." , hide: ".$atts['hide']);       
   
         if (empty($atts['lang'])) {
             $atts['lang'] = $lang;
@@ -221,7 +221,7 @@ class Shortcode {
 
     
         
-         error_log("FAUdir\Shortcode (createPersonOutput): identifier: ".print_r($identifiers, true).", role: $role, orgnr: $orgnr, id: $post_id, display= $display");       
+ //        error_log("FAUdir\Shortcode (createPersonOutput): identifier: ".print_r($identifiers, true).", role: $role, orgnr: $orgnr, id: $post_id, display= $display");       
          
          
          

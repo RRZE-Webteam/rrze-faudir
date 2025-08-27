@@ -151,7 +151,7 @@ class API {
 
         if (!empty($param_uri)) {
             $url .= $param_uri;
-            error_log("FAUdir\API (getPersons): URL= ".$url);
+    //        error_log("FAUdir\API (getPersons): URL= ".$url);
             $response = $this->makeRequest($url, "GET");
 
             if ($retry && (empty($response) || empty($response['data']))) {
