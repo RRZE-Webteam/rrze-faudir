@@ -694,6 +694,43 @@ class Contact {
         return $jobtitle;      
     }
 
-    
+
+    /*
+    * Prüft, ob der Kontakt eine der übergebenen Rollen besitzt.
+    * Optional: Wenn $organizationIdentifier übergeben ist, muss die Org-ID
+    *           dieses Kontakts exakt übereinstimmen.
+    *
+    * @param string      $role                   Kommaseparierte Rollen (z. B. "Professor, Postdoc")
+    * @param string|null $organizationIdentifier Erwartete Org-ID dieses Kontakts (optional)
+    * @return bool       true, wenn (optional Org passt und) eine Rollen-Übereinstimmung besteht
+    */
+   public function isRole(string $role, ?string $organizationIdentifier = null): bool {
+       // Rollen normalisieren
+       $roles = array_values(array_filter(array_map('trim', explode(',', $role)), 'strlen'));
+       if (empty($roles)) {
+           return false;
+       }
+
+       // Optional: Organisation abgleichen
+       if ($organizationIdentifier !== null) {
+           $contactOrgId = $this->organization['identifier'] ?? null;
+           if (!$contactOrgId || (string) $contactOrgId !== (string) $organizationIdentifier) {
+               return false;
+           }
+       }
+
+       // Rollenfelder prüfen (exakte Matches)
+       $fn   = $this->function ?? null;
+       $fnDe = $this->functionLabel['de'] ?? null;
+       $fnEn = $this->functionLabel['en'] ?? null;
+
+       $matches =
+           ($fn   !== null && in_array($fn, $roles, true)) ||
+           ($fnDe !== null && in_array($fnDe, $roles, true)) ||
+           ($fnEn !== null && in_array($fnEn, $roles, true));
+
+       return $matches;
+   }
+
 }
 
