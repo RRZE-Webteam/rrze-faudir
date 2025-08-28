@@ -66,7 +66,7 @@ if (!defined('ABSPATH')) {
                             $final_url = $person->getTargetURL($opt['fallback_link_faudir']);
                         }
                         $contact = $person->getPrimaryContact();
-                    //    $output .= Debug::get_html_var_dump($contact);
+                       
                         $workplaces = [];
                         if (!empty($contact)) { 
                             $workplaces = $contact->getWorkplaces($workplaces);                    
@@ -74,6 +74,7 @@ if (!defined('ABSPATH')) {
                         
              //           $output .= Debug::get_html_var_dump($workplaces);
                         
+                         $output .= Debug::get_html_var_dump($show_fields_lower);
                          
                         $output .= '<ul class="datalist">';
                         foreach ($ordered_keys as $key) {
@@ -91,6 +92,17 @@ if (!defined('ABSPATH')) {
                                              $value .= '</a>';
                                         }
                                     } 
+                                } elseif ($key_lower === 'familyname') {    
+                                    if (!empty($person->titleOfNobility))  { 
+                                        $value = $person->titleOfNobility.' ';
+                                    }
+                                    $value .= $person->familyName;
+                                } elseif ($key_lower === 'givenname') {    
+                                    $value = $person->givenName;    
+                                } elseif ($key_lower === 'honorificprefix') {    
+                                    $value = $person->honorificPrefix;         
+                                } elseif ($key_lower === 'honorificsuffix') {    
+                                    $value = $person->honorificSuffix;                                          
                                 } elseif ($key_lower === 'jobtitle') {
                                     $jobtitleformat = '#functionlabel#';
                                     if (!empty($opt['jobtitle_format'])) {

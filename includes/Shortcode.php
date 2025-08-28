@@ -57,12 +57,13 @@ class Shortcode {
                 'role'                  => '',
                 'button-text'           => '',
                 'format_displayname'    => '',
+                'blockeditor'           => 'false',
                 'display'               => 'person',
                 'lang'                  => ''
             ),
             $atts
         );
-          error_log("FAUdir\Shortcode (fetch_fau_data): identifier: ".$atts['identifier'].", id: ".$atts['id'].", orgnr: ".$atts['orgnr'].", orgid: ".$atts['orgid'].", role =".$atts['role'].", show= ".$atts['show']." , hide: ".$atts['hide']);       
+          error_log("FAUdir\Shortcode (fetch_fau_data): identifier: ".$atts['identifier'].", id: ".$atts['id'].", orgnr: ".$atts['orgnr'].", orgid: ".$atts['orgid'].", role =".$atts['role'].", show= ".$atts['show']." , hide: ".$atts['hide'].", blockeditor = ".$atts['blockeditor']);       
   
         if (empty($atts['lang'])) {
             $atts['lang'] = $lang;
@@ -126,6 +127,11 @@ class Shortcode {
         $options = get_option('rrze_faudir_options');
         $default_show_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : [];
 
+        if (isset($atts['blockeditor']) && ($atts['blockeditor'] === 'true')) {
+            $show_fields = isset($atts['show']) ? explode(',', $atts['show']) : [];
+            return $show_fields;
+        }
+        
         
         $format = $atts['format'];
 
@@ -186,7 +192,10 @@ class Shortcode {
         $show_fields = array_map('trim', explode(',', $atts['show']));
        
 
+         error_log("FAUdir\Shortcode (fetch_and_render_fau_data): show = ". $atts['show']. ';  display = '.$atts['display']. '; blockeditor = '.$atts['blockeditor']);       
 
+         
+         
         if ($atts['display'] == 'org') {
             return self::createOrgOutput($atts, $show_fields);
         } else {

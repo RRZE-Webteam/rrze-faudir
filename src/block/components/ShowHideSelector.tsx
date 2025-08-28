@@ -16,11 +16,11 @@ export default function ShowHideSelector({
                                            setAttributes,
                                            setHasFormatDisplayName
                                          }: ShowHideSelectorProps) {
-  const {selectedFormat, hideFields, selectedFields} = attributes;
+  const {selectedFormat, selectedFields} = attributes;
 
   const [defaultFields, setDefaultFields] = useState<string[]>([]);
   const [availableFields, setAvailableFields] = useState<string[]>([]);
-  const [hiddenFields, setHiddenFields] = useState<string[]>(hideFields || []);
+  // const [hiddenFields, setHiddenFields] = useState<string[]>(hideFields || []);
   const [shownFields, setShownFields] = useState<string[]>(selectedFields || []);
   const [translatableFields, setTranslatableFields] = useState<Record<string, string>>({});
 
@@ -31,17 +31,17 @@ export default function ShowHideSelector({
         setHasFormatDisplayName(fieldsForFormat.includes("format_displayname"));
 
         // Pull the default option fields from wp-options
-        if (data?.default_output_fields) {
-          setDefaultFields(data.default_output_fields);
-        }
+ //       if (data?.default_output_fields) {
+ //         setDefaultFields(data.default_output_fields);
+ //       }
         // Pull the available Fields per Format
         if (data?.avaible_fields_byformat && selectedFormat) {
-          const fieldsForFormat = data.avaible_fields_byformat[selectedFormat] || [];
-          setAvailableFields(fieldsForFormat);
+	    const fieldsForFormat = data.avaible_fields_byformat[selectedFormat] || [];
+	    setAvailableFields(fieldsForFormat);
         }
         // Pull the translation for the labels
         if (data?.available_fields) {
-          setTranslatableFields(data.available_fields);
+	    setTranslatableFields(data.available_fields);
         }
       })
       .catch((error) => {
@@ -51,31 +51,31 @@ export default function ShowHideSelector({
 
   useEffect(() => {
     setAttributes({
-      hideFields: hiddenFields,
+ //     hideFields: hiddenFields,
       selectedFields: shownFields,
     });
-  }, [hiddenFields, shownFields, selectedFormat, attributes.display]);
+  }, [shownFields, selectedFormat, attributes.display]);
 
   const handleToggleField = (field: string) => {
-    if (defaultFields.includes(field)) {
-      if (hiddenFields.includes(field)) {
-        setHiddenFields(hiddenFields.filter((f) => f !== field));
-      } else {
-        setHiddenFields([...hiddenFields, field]);
-      }
-    } else {
+ //   if (defaultFields.includes(field)) {
+ //     if (hiddenFields.includes(field)) {
+ //       setHiddenFields(hiddenFields.filter((f) => f !== field));
+//      } else {
+//        setHiddenFields([...hiddenFields, field]);
+//      }
+ //   } else {
       if (shownFields.includes(field)) {
-        setShownFields(shownFields.filter((f) => f !== field));
+	    setShownFields(shownFields.filter((f) => f !== field));
       } else {
-        setShownFields([...shownFields, field]);
+	    setShownFields([...shownFields, field]);
       }
-    }
+ //   }
   };
 
   const isChecked = (field: string) => {
-    if (defaultFields.includes(field)) {
-      return !hiddenFields.includes(field);
-    }
+ //   if (defaultFields.includes(field)) {
+ //     return !hiddenFields.includes(field);
+//    }
     return shownFields.includes(field);
   };
 

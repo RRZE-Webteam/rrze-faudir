@@ -20,7 +20,7 @@ class Config {
         'fallback_link_faudir'      => true,
         'default_display_order'     => [
             'table' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'link'],
-            'list'  => ['displayname', 'jobTitle', 'url', 'email', 'socialmedia', 'room', 'floor', 'address','faumap', 'link']
+            'list'  => ['displayname', 'familyName', 'givenName', 'jobTitle', 'url', 'email', 'socialmedia', 'room', 'floor', 'address','faumap', 'link']
         ],
         'avaible_fields_byformat'   => [
             'table'         => ['image', 'displayname','honorificPrefix','honorificSuffix', 'givenName',  'titleOfNobility', 'familyName', 'jobTitle', 'phone', 'fax', 'email', 'url', 'socialmedia', 'organization', 'address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],

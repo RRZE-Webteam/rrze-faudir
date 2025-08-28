@@ -87,10 +87,8 @@ class BlockRegistration {
                 : [];
             $defaultOrgIdentifier = isset($default_org['id']) ? $default_org['id'] : '';
 
-            if (
-                isset($attributes['display']) && 'org' === $attributes['display'] &&
-                empty($attributes['orgid']) && empty($attributes['orgnr'])
-            ) {
+            if (isset($attributes['display']) && 'org' === $attributes['display'] &&
+                empty($attributes['orgid']) && empty($attributes['orgnr'])) {
                 throw new \Exception(
                     __('You selected display="org", but neither a FAUorganization ID (orgid) nor a FAU Organization Number (orgnr) was provided.', 'rrze-faudir')
                 );
@@ -158,9 +156,9 @@ class BlockRegistration {
                 $shortcode_atts['show'] = implode(',', $attributes['selectedFields']);
             }
 
-            if (!empty($attributes['hideFields'])) {
-                $shortcode_atts['hide'] = implode(',', $attributes['hideFields']);
-            }
+        //    if (!empty($attributes['hideFields'])) {
+        //        $shortcode_atts['hide'] = implode(',', $attributes['hideFields']);
+        //    }
 
             if (!empty($attributes['url'])) {
                 $shortcode_atts['url'] = $attributes['url'];
@@ -184,8 +182,12 @@ class BlockRegistration {
                     $shortcode .= sprintf(' %s="%s"', esc_attr($key), esc_attr($value));
                 }
             }
+            $shortcode .= ' blockeditor="true"';
             $shortcode .= ']';
 
+           error_log("FAUdir\BlockRegistration (render_faudir_block): Create Shortcode: ".$shortcode);       
+
+            
             // Execute shortcode
             $output = do_shortcode($shortcode);
 
