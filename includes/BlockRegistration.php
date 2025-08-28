@@ -77,7 +77,7 @@ class BlockRegistration {
     public static function render_faudir_block($attributes): string {
         try {
             if (!shortcode_exists('faudir')) {
-                throw new Exception('FAUDIR shortcode is not registered');
+                throw new Exception('FAUdir shortcode is not registered');
             }
 
             // Get default organization from options with proper checks
@@ -156,9 +156,6 @@ class BlockRegistration {
                 $shortcode_atts['show'] = implode(',', $attributes['selectedFields']);
             }
 
-        //    if (!empty($attributes['hideFields'])) {
-        //        $shortcode_atts['hide'] = implode(',', $attributes['hideFields']);
-        //    }
 
             if (!empty($attributes['url'])) {
                 $shortcode_atts['url'] = $attributes['url'];
@@ -185,7 +182,7 @@ class BlockRegistration {
             $shortcode .= ' blockeditor="true"';
             $shortcode .= ']';
 
-           error_log("FAUdir\BlockRegistration (render_faudir_block): Create Shortcode: ".$shortcode);       
+      //     error_log("FAUdir\BlockRegistration (render_faudir_block): Create Shortcode: ".$shortcode);       
 
             
             // Execute shortcode

@@ -192,7 +192,7 @@ class Shortcode {
         $show_fields = array_map('trim', explode(',', $atts['show']));
        
 
-         error_log("FAUdir\Shortcode (fetch_and_render_fau_data): show = ". $atts['show']. ';  display = '.$atts['display']. '; blockeditor = '.$atts['blockeditor']);       
+    //     error_log("FAUdir\Shortcode (fetch_and_render_fau_data): show = ". $atts['show']. ';  display = '.$atts['display']. '; blockeditor = '.$atts['blockeditor']);       
 
          
          
@@ -230,7 +230,7 @@ class Shortcode {
 
     
         
-         error_log("FAUdir\Shortcode (createPersonOutput): identifier: ".print_r($identifiers, true).", role: $role, orgnr: $orgnr, orgid: $faudir_orgid, id: $post_id, display= $display");       
+    //     error_log("FAUdir\Shortcode (createPersonOutput): identifier: ".print_r($identifiers, true).", role: $role, orgnr: $orgnr, orgid: $faudir_orgid, id: $post_id, display= $display");       
          
          
          
