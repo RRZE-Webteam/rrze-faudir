@@ -9,8 +9,7 @@ use Exception;
  * Handles Block Registration, Localization and Rendering of the FAUdir Block.
  */
 class BlockRegistration {
-    public function __construct()
-    {
+    public function __construct() {
         add_action('init', [$this, 'rrze_faudir_block_init'], 15);
         add_filter('block_categories_all', [$this, 'register_rrze_block_category'], 10, 2);
     }
@@ -102,7 +101,8 @@ class BlockRegistration {
                 $shortcode_atts = [
                     'format' => $attributes['selectedFormat'] ?? 'compact',
                     'role' => $attributes['role'],
-                    'orgnr' => !empty($attributes['orgnr']) ? $attributes['orgnr'] : $defaultOrgIdentifier
+                    'orgnr' => !empty($attributes['orgnr']) ? $attributes['orgnr'] : '',
+                    'orgid' => !empty($attributes['orgid']) ? $attributes['orgid'] : '',
                 ];
             } // Then check for category
             else if (!empty($attributes['selectedCategory'])) {
@@ -149,7 +149,7 @@ class BlockRegistration {
                     'identifier' => $attributes['identifier']
                 ];
             } else {
-                error_log("FAUdir\BlockRegistration (render_faudir_block): Neither person IDs, function+orgnr, nor category were provided  ". print_r($attributes, true));
+     //           error_log("FAUdir\BlockRegistration (render_faudir_block): Neither person IDs, function+orgnr, nor category were provided  ". print_r($attributes, true));
                 throw new Exception(__('Neither person IDs, function+orgnr, nor category were provided', 'rrze-faudir'));
             }
 

@@ -15,6 +15,8 @@ class API {
         "organizations" => 240,
         "default"       => 150,
     ];
+    private int $default_limit = 100;
+    
     private Config $config;
 
     public function __construct(Config $config) {
@@ -124,7 +126,9 @@ class API {
             return null;
         }
         $url = "{$this->baseUrl}persons";
-    
+        if ($limit==0) {
+            $limit = $this->default_limit;
+        }
         $url .= '?limit=' . $limit . '&offset=' . $offset;
         $param_uri = '';
         
@@ -151,7 +155,7 @@ class API {
 
         if (!empty($param_uri)) {
             $url .= $param_uri;
-    //        error_log("FAUdir\API (getPersons): URL= ".$url);
+            error_log("FAUdir\API (getPersons): URL= ".$url);
             $response = $this->makeRequest($url, "GET");
 
             if ($retry && (empty($response) || empty($response['data']))) {
@@ -205,6 +209,9 @@ class API {
             return null;
         }
         $url = "{$this->baseUrl}contacts";
+        if ($limit==0) {
+            $limit = $this->default_limit;
+        }
         $url .= '?limit=' . $limit . '&offset=' . $offset;
         $param_uri = '';
         
@@ -269,6 +276,9 @@ class API {
             return null;
         }
         $url = "{$this->baseUrl}organizations";
+        if ($limit==0) {
+            $limit = $this->default_limit;
+        }
         $url .= '?limit=' . $limit . '&offset=' . $offset;
         
 

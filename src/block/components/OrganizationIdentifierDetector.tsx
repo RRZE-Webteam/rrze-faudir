@@ -28,7 +28,7 @@ export default function OrganizationIdentifierDetector({
 
     if (!extractedId) {
       setAttributes({ orgid: "" });
-      setErrorMessage(__("Please enter a valid FAUdir-URL or the identifier.", "rrze-faudir"));
+      setErrorMessage(__("Please enter a valid FAUdir-URL or the FAUdir-identifier.", "rrze-faudir"));
     } else {
       setAttributes({ orgid: extractedId });
       setErrorMessage("");
@@ -39,9 +39,9 @@ export default function OrganizationIdentifierDetector({
 
   return (
     <>
-      <Heading level={3}>{__("Display Faudir Folder", "rrze-faudir")}</Heading>
+      <Heading level={3}>{__("Select organization by FAUdir Identifier", "rrze-faudir")}</Heading>
       <TextControl
-        label={label || __('Via FAUorg-ID or FAUdir-URL', 'rrze-faudir')}
+        label={label || __('Via FAUdir-ID or FAUdir-URL', 'rrze-faudir')}
         value={localValue}
         onChange={handleOrgIdChange}
         type="text"
@@ -49,7 +49,7 @@ export default function OrganizationIdentifierDetector({
           errorMessage
             ? errorMessage
             : helpText || __(
-            'Please enter either a FAUdir-URL ("https://faudir.fau.de/public/org/…"), or the Identifier.',
+            'Please enter either the complete FAUdir-URL ("https://faudir.fau.de/public/org/…"), or the FAUdir-Identifier (the last part of the URL after "org/".',
             'rrze-faudir'
           )
         }

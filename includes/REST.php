@@ -41,13 +41,11 @@ class REST {
     public function get_settings_payload(): array {
         $config  = new Config();
         $options = $config->getOptions();
-        $roles   = $config->get('person_roles');
 
         return [
             'default_output_fields'       => get_option('rrze_faudir_options')['default_output_fields'] ?? [],
             'available_fields'            => $options['avaible_fields'] ?? [],
             'avaible_fields_byformat'     => $options['avaible_fields_byformat'] ?? [],
-            'person_roles'                => $roles,
             'default_organization'        => $options['default_organization'] ?? null,
             'available_formats_by_display'=> $options['avaible_formats_by_display'] ?? [],
             'format_names'                => $options['formatnames'] ?? [],
@@ -87,7 +85,7 @@ class REST {
 
             wp_send_json_success($formatted);
         } else {
-             error_log("FAUdir\REST (search_contacts): nothing found");
+            error_log("FAUdir\REST (search_contacts): nothing found");
             wp_send_json_error(__('No contacts found with the provided identifier.', 'rrze-faudir'));
         }
     }

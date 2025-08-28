@@ -62,7 +62,7 @@ class Shortcode {
             ),
             $atts
         );
-        //  error_log("FAUdir\Shortcode (fetch_fau_data): identifier: ".$atts['identifier'].", id: ".$atts['id'].", orgnr: ".$atts['orgnr'].",  show= ".$atts['show']." , hide: ".$atts['hide']);       
+          error_log("FAUdir\Shortcode (fetch_fau_data): identifier: ".$atts['identifier'].", id: ".$atts['id'].", orgnr: ".$atts['orgnr'].", orgid: ".$atts['orgid'].", role =".$atts['role'].", show= ".$atts['show']." , hide: ".$atts['hide']);       
   
         if (empty($atts['lang'])) {
             $atts['lang'] = $lang;
@@ -221,7 +221,7 @@ class Shortcode {
 
     
         
- //        error_log("FAUdir\Shortcode (createPersonOutput): identifier: ".print_r($identifiers, true).", role: $role, orgnr: $orgnr, id: $post_id, display= $display");       
+         error_log("FAUdir\Shortcode (createPersonOutput): identifier: ".print_r($identifiers, true).", role: $role, orgnr: $orgnr, orgid: $faudir_orgid, id: $post_id, display= $display");       
          
          
          
@@ -254,6 +254,7 @@ class Shortcode {
 
                 if (!empty($default_org['orgnr'])) {
                     $orgnr = $default_org['orgnr'];
+                     error_log("FAUdir\Shortcode (createPersonOutput): Setze Default Orgnr. $orgnr");
                 } else {
                     // Wir haben keinen Fallback, also können wir auch keine
                     // Rolle darstellen
@@ -287,7 +288,9 @@ class Shortcode {
         } elseif (!empty($orgnr))  {
             // get persons by orgnr
            $persons = self::getPersonsByOrgNrs($orgnr, $role); 
-            
+         } elseif (!empty($faudir_orgid))  {
+            // get persons by FAUdir Orgid
+           $persons = self::getPersonsByFAUdirOrgId($faudir_orgid, $role);     
 
         } else {
             error_log('Invalid combination of attributes.');
@@ -296,7 +299,7 @@ class Shortcode {
 
      
         // Sorting logic based on the specified sorting options
-        $sort_option = $atts['sort'] ?? 'head_first'; // Default sorting by last name
+        $sort_option = $atts['sort'] ?? 'title_familyName'; // Default sorting by last name
         $collator = collator_create('de_DE'); // German locale for sorting
 
         // Sort the persons array
@@ -692,7 +695,7 @@ class Shortcode {
 
        // Personen abrufen
        $params = ['lq' => $lq];
-       $data   = $api->getPersons(100, 0, $params);
+       $data   = $api->getPersons(0, 0, $params);
 
        $person  = new Person();
        $person->setConfig($config);
@@ -750,6 +753,98 @@ class Shortcode {
        return $persons ?: [];
    }
 
+    /**
+     * Liefert Personen über einen FAUdir-Organisations-Identifier (oder passende URL).
+     * Optional:
+     *   - $role (string|null): kommaseparierte Rollen (z. B. "Professor, Postdoc").
+     *
+     * Verhalten:
+     *   - Akzeptiert als $faudir_orgid entweder einen alphanumerischen Identifier
+     *     ODER eine URL: https://faudir.fau.de/public/org/<Identifier>[/]
+     *   - Baut LQ direkt als: contacts.organization.identifier[eq]=<identifier>
+     *   - Ohne $role: Person wird mit allen Kontakten übernommen.
+     *   - Mit $role: Pro Person werden nur die Kontakte übernommen, die:
+     *       * zur angegebenen Organisation gehören (Identifier exakt gleich) UND
+     *       * eine der Rollen matchen (function / functionLabel.de / functionLabel.en).
+     *
+     * @param string   $faudir_orgid  FAUdir-Org-Identifier ODER vollständige URL dazu
+     * @param string|null  $role          Optional: kommaseparierte Rollen
+     * @return array                      Liste passender Personen (jeweils als Array); [] wenn keine Treffer
+     */
+    public static function getPersonsByFAUdirOrgId(string $faudir_orgid, ?string $role = null): array {
+        // Identifier aus URL extrahieren, falls nötig
+        $id = trim((string) $faudir_orgid);
+
+        if (preg_match('#^https?://faudir\.fau\.de/public/org/([A-Za-z0-9]+)(?:/)?$#i', $id, $m)) {
+            $id = $m[1];
+        }
+
+        // Nur alphanumerische Identifier zulassen
+        if (!preg_match('/^[A-Za-z0-9]+$/', $id)) {
+            return [];
+        }
+
+        // API-Setup
+        $config = (isset(self::$config) && self::$config instanceof Config) ? self::$config : new Config();
+        $api    = new API($config);
+
+        // LQ direkt mit exakter Org-ID
+        $lq     = 'contacts.organization.identifier[eq]=' . $id;
+        $params = ['lq' => $lq];
+
+        $data = $api->getPersons(0, 0, $params);
+
+        $person = new Person();
+        $person->setConfig($config);
+
+        $persons        = [];
+        $hasRoleFilter  = (is_string($role) && trim($role) !== '');
+
+        if (!empty($data['data'])) {
+            foreach ($data['data'] as $persondata) {
+                $person->populateFromData($persondata);
+                $person->reloadContacts(); // füllt $person->contacts
+
+                // Kein Rollenfilter → Person komplett übernehmen
+                if (!$hasRoleFilter) {
+                    $persons[] = $person->toArray();
+                    continue;
+                }
+
+                // Mit Rollenfilter: nur Kontakte aus dieser Org + passender Rolle übernehmen
+                $matchedContacts = [];
+                if (!empty($person->contacts) && is_array($person->contacts)) {
+                    foreach ($person->contacts as $contactData) {
+                        if (!is_array($contactData)) {
+                            continue;
+                        }
+
+                        $contactOrgId = $contactData['organization']['identifier'] ?? null;
+                        if (!$contactOrgId || (string) $contactOrgId !== $id) {
+                            // Dieser Kontakt gehört nicht zu der gesuchten Organisation
+                            continue;
+                        }
+
+                        $contact = new Contact($contactData);
+                        $contact->setConfig($config);
+
+                        // isRole prüft NUR diesen Kontakt; exakte Org-ID mitgeben
+                        if ($contact->isRole($role, $id)) {
+                            $matchedContacts[] = $contact->toArray();
+                        }
+                    }
+                }
+
+                if (!empty($matchedContacts)) {
+                    $personArr = $person->toArray();
+                    $personArr['contacts'] = $matchedContacts; // nur die passenden Kontakte
+                    $persons[] = $personArr;
+                }
+            }
+        }
+
+        return $persons ?: [];
+    }
 
     
     

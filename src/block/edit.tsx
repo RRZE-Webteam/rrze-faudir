@@ -237,6 +237,8 @@ export default function Edit({attributes, setAttributes}: EditProps) {
                 attributes={attributes}
                 setAttributes={setAttributes}
               />
+	      <hr/>
+              <OrganizationIdentifierDetector attributes={attributes} setAttributes={setAttributes}/>
               <hr/>
               <PersonIdentifierDetector attributes={attributes} setAttributes={setAttributes}/>
             </>
