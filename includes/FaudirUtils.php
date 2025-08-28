@@ -94,7 +94,7 @@ class FaudirUtils {
         }
 
         // Standardisiere das Format mit Leerzeichen zwischen Gruppen
-        $phone = preg_replace('/(\+?\d{1,3})\s*(\d{3,4})\s*(\d{3,4})\s*(\d{0,4})/', '$1 $2 $3 $4', $phone);
+        $phone = preg_replace('/(\+?\d{1,3})\s*(\d{3,4})\s*(\d{2,4})\s*(\d{0,5})/', '$1 $2 $3 $4', $phone);
 
         return trim($phone); // Entfernt überflüssige Leerzeichen am Ende
     }
