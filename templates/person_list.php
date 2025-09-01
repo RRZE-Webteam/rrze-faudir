@@ -74,7 +74,7 @@ if (!defined('ABSPATH')) {
                         
              //           $output .= Debug::get_html_var_dump($workplaces);
                         
-                         $output .= Debug::get_html_var_dump($show_fields_lower);
+             //            $output .= Debug::get_html_var_dump($show_fields_lower);
                          
                         $output .= '<ul class="datalist">';
                         foreach ($ordered_keys as $key) {

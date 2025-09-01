@@ -60,11 +60,11 @@ class API {
      */
     public function getPerson(string $personId): ?array {
         if (!$this->api_key) {
-            error_log('RRZE FAUdir\API::getPerson: API Key missing.');
+            do_action( 'rrze.log.error', "FAUdir\API (getPerson): API Key missing.");
             return null;
         }
         if (empty($personId)) {
-            error_log('RRZE FAUdir\API::getPerson: Required field personid missing.');
+            do_action( 'rrze.log.error', "FAUdir\API (getPerson): Required field personid missing.");
             return null;
         }
         $url = "{$this->baseUrl}persons/{$personId}";
@@ -72,7 +72,7 @@ class API {
         $response = $this->makeRequest($url, "GET");
 
         if (!$response) {
-            error_log("FAUdir\API (getPerson): No response from server on {$url}.");
+            do_action( 'rrze.log.error', "FAUdir\API (getPerson):  No response from server on {$url}.");
             return null;
         }
         return $response;
@@ -86,11 +86,11 @@ class API {
      */
     public function getContact(string $contactId): ?array {
         if (!$this->api_key) {       
-            error_log('RRZE FAUdir\API::getContact: API Key missing.');
+            do_action( 'rrze.log.error', "FAUdir\API (getContact): API Key missing.");
             return null;
         }
         if (empty($contactId)) {
-            error_log('RRZE FAUdir\API::getContact: Required field contactId missing.');
+            do_action( 'rrze.log.error', "FAUdir\API (getContact): Required field contactId missing.");
             return null;
         }
         $url = "{$this->baseUrl}contacts/{$contactId}";
@@ -98,7 +98,7 @@ class API {
         $response = $this->makeRequest($url, "GET");
 
         if (!$response) {
-            error_log("FAUdir\API (getContact): No response from server on {$url}.");
+            do_action( 'rrze.log.error', "FAUdir\API (getContact): No response from server on {$url}.");
             return null;
         }
 
@@ -118,11 +118,11 @@ class API {
      */
      public function getPersons($limit = 100, $offset = 0, $params = [], bool $retry = true): ?array {
         if (!$this->api_key) {
-             error_log('RRZE FAUdir\API::getPersons: API Key missing.');
-             return null;
+            do_action( 'rrze.log.error', "FAUdir\API (getPersons): API Key missing.");           
+            return null;
         }
         if (empty($params)) {
-            error_log("FAUdir\API (getPersons): Required params missing.");
+            do_action( 'rrze.log.error', "FAUdir\API (getPersons): Required params missing.");         
             return null;
         }
         $url = "{$this->baseUrl}persons";
@@ -155,7 +155,9 @@ class API {
 
         if (!empty($param_uri)) {
             $url .= $param_uri;
-            error_log("FAUdir\API (getPersons): URL= ".$url);
+            
+            do_action( 'rrze.log.info',"FAUdir\API (getPersons): URL= ".$url);
+            
             $response = $this->makeRequest($url, "GET");
 
             if ($retry && (empty($response) || empty($response['data']))) {
@@ -180,12 +182,12 @@ class API {
             }
 
             if (!$response) {
-                error_log("FAUdir\API (getPersons): No response from server on {$url}.");
+                do_action( 'rrze.log.error',"FAUdir\API (getPersons): No response from server on {$url}.");
                 return null;
             }
             return $response;
         }
-        error_log("FAUdir\API (getPersons): No params to query for.");
+        do_action( 'rrze.log.error',"FAUdir\API (getPersons): No params to query for.");
         return [];
 
     }   
@@ -201,11 +203,11 @@ class API {
     */
     function getContacts($limit = 20, $offset = 0, $params = []) {
         if (!$this->api_key) {
-            error_log('RRZE FAUdir\API::getContacts: API Key missing.');
+            do_action( 'rrze.log.error',"FAUdir\API (getContacts): API Key missing.");
             return null;
         }
         if (empty($params)) {
-            error_log("FAUdir\API (getContacts): Required params missing.");
+            do_action( 'rrze.log.error', "FAUdir\API (getContacts): Required params missing.");
             return null;
         }
         $url = "{$this->baseUrl}contacts";
@@ -249,13 +251,13 @@ class API {
             $response = $this->makeRequest($url, "GET");
 
             if (!$response) {
-                error_log("FAUdir\API (getContacts): No response from server on {$url}.");
+                do_action( 'rrze.log.error', "FAUdir\API (getContacts): No response from server on {$url}.");
                 return null;
             }
 
             return $response;
         }
-        error_log("FAUdir\API (getContacts): No params to query for.");
+        do_action( 'rrze.log.error', "FAUdir\API (getContacts): No params to query for.");
         return [];
     }
     
@@ -268,11 +270,11 @@ class API {
     */
     public function getOrgList($limit = 100, $offset = 0, $params = []): ?array {
         if (!$this->api_key) {
-            error_log('RRZE FAUdir\API::getOrgList: API Key missing.');
+            do_action( 'rrze.log.error', "FAUdir\API (getOrgList): API Key missing.");
             return null;
         }   
         if (empty($params)) {
-            error_log('RRZE FAUdir\API::getOrgList: Required params missing.');
+            do_action( 'rrze.log.error', "FAUdir\API (getOrgList): Required params missing.");
             return null;
         }
         $url = "{$this->baseUrl}organizations";
@@ -304,7 +306,7 @@ class API {
         $response = $this->makeRequest($url, "GET");
 
         if (!$response) {
-            error_log("FAUdir\API (getOrgList): No valid response from server on {$url}.");
+            do_action( 'rrze.log.error', "FAUdir\API (getOrgList): No valid response from server on {$url}.");
             return null;
         }
         return $response;
@@ -319,11 +321,11 @@ class API {
      */
     public function getOrgById(string $orgid): ?array {
         if (!$this->api_key) {
-            error_log('RRZE FAUdir\API::getOrgById: API Key missing.');
+            do_action( 'rrze.log.error', "FAUdir\API (getOrgById):API Key missing.");
             return null;
         }
         if (empty($orgid)) {
-            error_log('RRZE FAUdir\API::getOrgById: Required field orgid missing.');
+            do_action( 'rrze.log.error', "FAUdir\API (getOrgById): Required field orgid missing.");
             return null;
         }
         $url = "{$this->baseUrl}organizations/{$orgid}";
@@ -335,11 +337,10 @@ class API {
         $response = $this->makeRequest($url, "GET");
 
         if (!$response) {
-            error_log("FAUdir\API (getOrgById): No response from server on {$url}.");
+            do_action( 'rrze.log.error', "FAUdir\API (getOrgById): No response from server on {$url}.");
             return null;
         }
-
-        // Wandelt das Array in ein Profil-Objekt um
+        
         return $response;
     }
 
@@ -360,7 +361,7 @@ class API {
      */
     private function makeRequest(string $url, string $method, ?array $data = null): ?array {
         if (!$this->api_key) {
-            error_log('RRZE FAUdir\API::makeRequest: API Key missing.');
+            do_action( 'rrze.log.error', "FAUdir\API (makeRequest): API Key missing.");
             return null;
         }
 
@@ -390,13 +391,13 @@ class API {
 
         $body = wp_remote_retrieve_body($response);
         if (empty($body)) {
-            error_log('RRZE FAUdir\API::makeRequest: Empty content body from api.');
+            do_action( 'rrze.log.error', "FAUdir\API (makeRequest): Empty content body from api.");
             return null;
         }
 
         $data = json_decode($body, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            error_log('RRZE FAUdir\API::makeRequest: Error decoding JSON data');
+            do_action( 'rrze.log.error', "FAUdir\API (makeRequest): Error decoding JSON data.");
             return null;
         }
         

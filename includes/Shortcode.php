@@ -63,8 +63,9 @@ class Shortcode {
             ),
             $atts
         );
-          error_log("FAUdir\Shortcode (fetch_fau_data): identifier: ".$atts['identifier'].", id: ".$atts['id'].", orgnr: ".$atts['orgnr'].", orgid: ".$atts['orgid'].", role =".$atts['role'].", show= ".$atts['show']." , hide: ".$atts['hide'].", blockeditor = ".$atts['blockeditor']);       
-  
+          
+   //     do_action( 'rrze.log.notice','FAUdir\Shortcode (fetch_fau_data)', $atts);
+          
         if (empty($atts['lang'])) {
             $atts['lang'] = $lang;
         } else {
@@ -191,9 +192,6 @@ class Shortcode {
         // Convert 'show' and 'hide' attributes into arrays
         $show_fields = array_map('trim', explode(',', $atts['show']));
        
-
-    //     error_log("FAUdir\Shortcode (fetch_and_render_fau_data): show = ". $atts['show']. ';  display = '.$atts['display']. '; blockeditor = '.$atts['blockeditor']);       
-
          
          
         if ($atts['display'] == 'org') {
@@ -229,9 +227,7 @@ class Shortcode {
             // optionale Formataenderung für die Darstellung des Namens
 
     
-        
-    //     error_log("FAUdir\Shortcode (createPersonOutput): identifier: ".print_r($identifiers, true).", role: $role, orgnr: $orgnr, orgid: $faudir_orgid, id: $post_id, display= $display");       
-         
+                 
          
          
         $api = new API(self::$config);
@@ -262,8 +258,8 @@ class Shortcode {
                 $default_org = $options['default_organization'] ?? null;
 
                 if (!empty($default_org['orgnr'])) {
-                    $orgnr = $default_org['orgnr'];
-                     error_log("FAUdir\Shortcode (createPersonOutput): Setze Default Orgnr. $orgnr");
+                    $orgnr = $default_org['orgnr'];                    
+                     do_action( 'rrze.log.notice',"FAUdir\Shortcode (createPersonOutput): Setze Default Orgnr. $orgnr");
                 } else {
                     // Wir haben keinen Fallback, also können wir auch keine
                     // Rolle darstellen
@@ -302,7 +298,7 @@ class Shortcode {
            $persons = self::getPersonsByFAUdirOrgId($faudir_orgid, $role);     
 
         } else {
-            error_log('Invalid combination of attributes.');
+            do_action( 'rrze.log.error',"FAUdir\Shortcode (createPersonOutput): Invalid combination of attributes.", $atts);
             return '';
         }
 
@@ -460,7 +456,8 @@ class Shortcode {
         if (empty($error)) {
             $error = __('Error on creating output', 'rrze-faudir');
         }
-        error_log('FAUdir/Shortcode ('.$errorloginfo.'): '. $error);
+        do_action( 'rrze.log.error',"FAUdir\Shortcode (createErrorOut): $errorloginfo", $error);
+        
         $out = '<div class="faudir">';  
         $config = new Config;
         $opt = $config->getOptions(); 
@@ -983,7 +980,8 @@ class Shortcode {
                     foreach ($person_posts as $person_post_id) {
                         $faudir_id = get_post_meta($person_post_id, 'person_id', true);
                         if (!empty($faudir_id)) {
-                            error_log("FAUdir\Shortcode (fetchPersonsByPostId): Found FAUdir Id:  ". $faudir_id." in Post for ".$post_id);
+       //                     do_action( 'rrze.log.info',"FAUdir\Shortcode (fetchPersonsByPostId): Found FAUdir Id:  ". $faudir_id." in Post for ".$post_id);
+                                                       
                             $person_identifiers[] = $faudir_id;
                         }
                     }
@@ -1041,7 +1039,6 @@ class Shortcode {
         $persons = [];
         if (!empty($data['data'])) {
             foreach ($data['data'] as $persondata) {
-          //      error_log("FAUdir\Shortcode (fetch_and_process_persons): Populate Persondata.");
                 $person->populateFromData($persondata);
                 $person->reloadContacts();
                 $persons[] = $person->toArray();  
