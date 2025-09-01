@@ -215,7 +215,6 @@ class Contact {
         }
         
         $this->populateFromData($data);
-      //  error_log("FAUdir\Contact (getContactbyAPI): Got contact data by {$identifier}.");
         return true;
     }
     

@@ -484,7 +484,7 @@ class CPT {
                 // Get custom taxonomy terms
                 $terms = wp_get_object_terms($post->ID, $taxonomy);
                 if (is_wp_error( $terms ) ) {
-                    error_log(' ERROR ON wp_get_object_terms: taxonomy = '.$taxonomy.' posttype = '.$post_type. ' ERROR: '.$terms->get_error_message() );
+                    do_action( 'rrze.log.error', 'FAUdir\CPT (add_taxonomy_to_person_rest): ERROR ON wp_get_object_terms: taxonomy = '.$taxonomy.' posttype = '.$post_type, $terms->get_error_message());           
                     return;
                 }
                 $term_ids = array_map(function ($term) {

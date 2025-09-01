@@ -61,10 +61,8 @@ class REST {
         check_ajax_referer('rrze_faudir_api_nonce', 'security');
 
         $identifier = sanitize_text_field(wp_unslash($_POST['identifier'] ?? ''));
+        do_action( 'rrze.log.notice', 'FAUdir\REST (search_contacts): Doing search with identifier: '. $identifier);           
 
-          error_log("FAUdir\REST (search_contacts): Doing search with identifier: ". $identifier);
-          
-          
         global $wpdb;
         $table = $wpdb->prefix . 'contacts';
         $like  = '%' . $wpdb->esc_like($identifier) . '%';
@@ -73,8 +71,8 @@ class REST {
             $wpdb->prepare("SELECT * FROM {$table} WHERE identifier LIKE %s", $like)
         );
 
-        if (!empty($contacts)) {
-             error_log("FAUdir\REST (search_contacts): Found contacts");
+        if (!empty($contacts)) {        
+          //  do_action( 'rrze.log.notice', 'FAUdir\REST (search_contacts): Found contacts');         
             $formatted = array_map(function ($contact) {
                 return [
                     'name'            => $contact->name,
@@ -85,7 +83,7 @@ class REST {
 
             wp_send_json_success($formatted);
         } else {
-            error_log("FAUdir\REST (search_contacts): nothing found");
+            do_action( 'rrze.log.notice', 'FAUdir\REST (search_contacts): Nothingg found');         
             wp_send_json_error(__('No contacts found with the provided identifier.', 'rrze-faudir'));
         }
     }

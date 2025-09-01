@@ -186,7 +186,6 @@ class Person {
         }
         
         $this->populateFromData($personData);
-       //  error_log("FAUdir\Person (getPersonbyAPI): Got person data by {$identifier}.");
         return true;
     }
     
@@ -199,7 +198,6 @@ class Person {
         
         // Falls keine Kontakte gesetzt sind, nichts tun
         if (empty($this->contacts) || !is_array($this->contacts)) {
-      //      error_log("FAUdir\Person (reloadContacts): No Contact data for Person.");
             return false;
         }
         if (empty($this->config)) {
@@ -256,7 +254,6 @@ class Person {
                 }
             }
         }
-        // error_log("FAUdir\Person (reloadContacts): Populated Person with all avaible contactdata.");
         $this->contacts = $personContacts;
         return true;
     }

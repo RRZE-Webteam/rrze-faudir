@@ -147,7 +147,6 @@ class BlockRegistration {
                     'identifier' => $attributes['identifier']
                 ];
             } else {
-     //           error_log("FAUdir\BlockRegistration (render_faudir_block): Neither person IDs, function+orgnr, nor category were provided  ". print_r($attributes, true));
                 throw new Exception(__('Neither person IDs, function+orgnr, nor category were provided', 'rrze-faudir'));
             }
 
@@ -181,8 +180,7 @@ class BlockRegistration {
             }
             $shortcode .= ' blockeditor="true"';
             $shortcode .= ']';
-
-      //     error_log("FAUdir\BlockRegistration (render_faudir_block): Create Shortcode: ".$shortcode);       
+            do_action( 'rrze.log.notice', "FAUdir\BlockRegistration (render_faudir_block): Creating Shortcode: ".$shortcode, $attributes);   
 
             
             // Execute shortcode

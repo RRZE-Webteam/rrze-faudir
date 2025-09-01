@@ -956,7 +956,6 @@ class Shortcode {
                 // Direkter Treffer im Ziel-CPT
                 $faudir_id = get_post_meta($post_id, 'person_id', true);
                 if (!empty($faudir_id)) {
-             //        error_log("FAUdir\Shortcode (fetchPersonsByPostId): Found FAUdir Id:  ". $faudir_id." in Post for ".$post_id." (".$post->post_title.")");
                     $person_identifiers[] = $faudir_id;
                 }
             } else {
