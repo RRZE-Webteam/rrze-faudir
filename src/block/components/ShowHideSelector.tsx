@@ -10,6 +10,17 @@ interface ShowHideSelectorProps {
   setHasFormatDisplayName: (hasDisplayName: boolean) => void;
 }
 
+
+// Helper: baut den effektiven Format-Key
+const normalizeFormatKey = (fmt: string, display?: string) => {
+  if (!fmt) return '';
+  if (display === 'org') {
+    return fmt.startsWith('org-') ? fmt : `org-${fmt}`;
+  }
+  // Sicherstellen, dass im "person"-Modus kein org- dran bleibt
+  return fmt.replace(/^org-/, '');
+};
+
 // flacher Array-Vergleich
 const arraysEqual = (a: string[], b: string[]) =>
   a.length === b.length && a.every((v, i) => v === b[i]);
@@ -28,11 +39,13 @@ export default function ShowHideSelector({
   // Felder + Labels laden
   useEffect(() => {
     let mounted = true;
+    const formatKey = normalizeFormatKey(selectedFormat || '', attributes.display);
+   
     apiFetch({ path: '/wp/v2/settings/rrze_faudir_options' })
       .then((data: SettingsRESTApi) => {
         if (!mounted) return;
 
-        const fieldsForFormat = data?.avaible_fields_byformat?.[selectedFormat] || [];
+        const fieldsForFormat = data?.avaible_fields_byformat?.[formatKey] || [];
         setAvailableFields(fieldsForFormat);
         setHasFormatDisplayName(fieldsForFormat.includes('format_displayname'));
 
