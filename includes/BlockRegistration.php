@@ -80,6 +80,8 @@ class BlockRegistration {
                 throw new Exception('FAUdir shortcode is not registered');
             }
 
+             do_action( 'rrze.log.notice', "FAUdir\BlockRegistration (render_faudir_block): Attributes vor jeder Verarbeitung ", $attributes);   
+            
             // Get default organization from options with proper checks
             $options = get_option('rrze_faudir_options', []);
             $default_org = isset($options['default_organization']) && is_array($options['default_organization'])

@@ -27,7 +27,6 @@ export default function CustomServerSideRender({attributes}: CustomServerSideRen
         selectedFields: attributes.selectedFields,
         selectedCategory: attributes.selectedCategory,
         selectedPersonIds: attributes.selectedPersonIds,
-        hideFields: attributes.hideFields,
         url: attributes.url,
         sort: attributes.sort,
         format_displayname: attributes.format_displayname,

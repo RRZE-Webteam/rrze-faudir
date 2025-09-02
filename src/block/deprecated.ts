@@ -11,7 +11,6 @@ interface AttributesV1 {
   role: string;
   orgnr: string;
   url: string;
-  hideFields: string[];
   showCategory: boolean;
   showPosts: boolean;
   sort: string;
@@ -67,10 +66,6 @@ const deprecated: BlockDeprecation<AttributesV1>[] = [
       url: {
         type: 'string',
         default: '',
-      },
-      hideFields: {
-        type: 'array',
-        default: [],
       },
       showCategory: {
         type: 'boolean',

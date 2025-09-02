@@ -62,6 +62,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
     })
   }, [isOrg]);
 
+
   useEffect(() => {
     if (
       !attributes.selectedFields ||
@@ -72,13 +73,9 @@ export default function Edit({attributes, setAttributes}: EditProps) {
       })
         .then((settings: any) => {
           if (settings?.default_output_fields) {
-            const mappedFields = settings.default_output_fields
-              .map((field: string) => fieldMapping[field])
-              .filter((field: string) => field !== undefined); // Remove any unmapped fields
-
-            setAttributes({
-              selectedFields: mappedFields,
-            });
+            if (Array.isArray(settings?.default_output_fields)) {
+		setAttributes({ selectedFields: settings.default_output_fields });
+	      }
           }
         })
         .catch((error) => {

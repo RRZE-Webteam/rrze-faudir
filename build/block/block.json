@@ -51,10 +51,6 @@
       "type": "string",
       "default": ""
     },
-    "hideFields": {
-      "type": "array",
-      "default": []
-    },
     "showCategory": {
       "type": "boolean",
       "default": false

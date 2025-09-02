@@ -1,9 +1,8 @@
-import {useState, useEffect} from '@wordpress/element';
-import {CheckboxControl} from '@wordpress/components';
-import {__} from '@wordpress/i18n';
+import { useState, useEffect } from '@wordpress/element';
+import { CheckboxControl } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
-import {EditProps} from '../types';
-import {SettingsRESTApi} from "../types";
+import { EditProps, SettingsRESTApi } from '../types';
 
 interface ShowHideSelectorProps {
   attributes: EditProps['attributes'];
@@ -11,83 +10,76 @@ interface ShowHideSelectorProps {
   setHasFormatDisplayName: (hasDisplayName: boolean) => void;
 }
 
-export default function ShowHideSelector({
-                                           attributes,
-                                           setAttributes,
-                                           setHasFormatDisplayName
-                                         }: ShowHideSelectorProps) {
-  const {selectedFormat, selectedFields} = attributes;
+// flacher Array-Vergleich
+const arraysEqual = (a: string[], b: string[]) =>
+  a.length === b.length && a.every((v, i) => v === b[i]);
 
-  const [defaultFields, setDefaultFields] = useState<string[]>([]);
+export default function ShowHideSelector({
+  attributes,
+  setAttributes,
+  setHasFormatDisplayName
+}: ShowHideSelectorProps) {
+  const { selectedFormat, selectedFields = [], display } = attributes;
+
   const [availableFields, setAvailableFields] = useState<string[]>([]);
-  // const [hiddenFields, setHiddenFields] = useState<string[]>(hideFields || []);
-  const [shownFields, setShownFields] = useState<string[]>(selectedFields || []);
+  const [shownFields, setShownFields] = useState<string[]>(selectedFields);
   const [translatableFields, setTranslatableFields] = useState<Record<string, string>>({});
 
+  // Felder + Labels laden
   useEffect(() => {
-    apiFetch({path: '/wp/v2/settings/rrze_faudir_options'})
+    let mounted = true;
+    apiFetch({ path: '/wp/v2/settings/rrze_faudir_options' })
       .then((data: SettingsRESTApi) => {
-        const fieldsForFormat = data.avaible_fields_byformat[selectedFormat] || [];
-        setHasFormatDisplayName(fieldsForFormat.includes("format_displayname"));
+        if (!mounted) return;
 
-        // Pull the default option fields from wp-options
- //       if (data?.default_output_fields) {
- //         setDefaultFields(data.default_output_fields);
- //       }
-        // Pull the available Fields per Format
-        if (data?.avaible_fields_byformat && selectedFormat) {
-	    const fieldsForFormat = data.avaible_fields_byformat[selectedFormat] || [];
-	    setAvailableFields(fieldsForFormat);
-        }
-        // Pull the translation for the labels
+        const fieldsForFormat = data?.avaible_fields_byformat?.[selectedFormat] || [];
+        setAvailableFields(fieldsForFormat);
+        setHasFormatDisplayName(fieldsForFormat.includes('format_displayname'));
+
         if (data?.available_fields) {
-	    setTranslatableFields(data.available_fields);
+          setTranslatableFields(data.available_fields);
         }
       })
-      .catch((error) => {
-        console.error('Fehler beim Laden der Felder:', error);
-      });
-  }, [selectedFormat, attributes.display]);
+      .catch((err) => console.error('Fehler beim Laden der Felder:', err));
+    return () => { mounted = false; };
+  }, [selectedFormat, display, setHasFormatDisplayName]);
 
+  // WICHTIG: Sync shownFields, sobald entweder selectedFields ODER availableFields sich ändern
   useEffect(() => {
-    setAttributes({
- //     hideFields: hiddenFields,
-      selectedFields: shownFields,
-    });
-  }, [shownFields, selectedFormat, attributes.display]);
+    const src = Array.isArray(attributes.selectedFields) ? attributes.selectedFields : [];
+    // Wenn availableFields noch leer, nimm src (zeigt initiale Auswahl an);
+    // sonst: Intersection, damit nur erlaubte Felder markiert sind.
+    const next = availableFields.length ? src.filter(f => availableFields.includes(f)) : src;
+
+    if (!arraysEqual(next, shownFields)) {
+      setShownFields(next);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [attributes.selectedFields, availableFields]);
+
+  // shownFields zurück in die Block-Attribute schreiben (eine Quelle der Wahrheit)
+  useEffect(() => {
+    const current = Array.isArray(attributes.selectedFields) ? attributes.selectedFields : [];
+    if (!arraysEqual(shownFields, current)) {
+      setAttributes({ selectedFields: shownFields });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shownFields]);
 
   const handleToggleField = (field: string) => {
- //   if (defaultFields.includes(field)) {
- //     if (hiddenFields.includes(field)) {
- //       setHiddenFields(hiddenFields.filter((f) => f !== field));
-//      } else {
-//        setHiddenFields([...hiddenFields, field]);
-//      }
- //   } else {
-      if (shownFields.includes(field)) {
-	    setShownFields(shownFields.filter((f) => f !== field));
-      } else {
-	    setShownFields([...shownFields, field]);
-      }
- //   }
+    if (!availableFields.includes(field)) return;
+    setShownFields(prev =>
+      prev.includes(field) ? prev.filter(f => f !== field) : [...prev, field]
+    );
   };
 
-  const isChecked = (field: string) => {
- //   if (defaultFields.includes(field)) {
- //     return !hiddenFields.includes(field);
-//    }
-    return shownFields.includes(field);
-  };
-
-  const getFieldLabel = (field: string) => {
-    return translatableFields[field] || field;
-  };
-
-  const fieldsToDisplay = availableFields.filter((field) => field !== 'format_displayname');
+  const isChecked = (field: string) => shownFields.includes(field);
+  const getFieldLabel = (field: string) => translatableFields[field] || field;
+  const fieldsToDisplay = availableFields.filter(f => f !== 'format_displayname');
 
   return (
     <div>
-      <h4>{__('Felder auswählen', 'rrze-faudir')}</h4>
+      <h4>{__('Select fields', 'rrze-faudir')}</h4>
       {fieldsToDisplay.map((field) => (
         <CheckboxControl
           key={field}

@@ -8,7 +8,6 @@ export interface EditProps {
     role: string;
     orgnr: string;
     url: string;
-    hideFields: string[];
     showCategory: boolean;
     showPosts: boolean;
     sort: string;
