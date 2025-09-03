@@ -303,82 +303,14 @@ class Shortcode {
         }
 
      
+       
+        
         // Sorting logic based on the specified sorting options
         $sort_option = $atts['sort'] ?? 'title_familyName'; // Default sorting by last name
-        $collator = collator_create('de_DE'); // German locale for sorting
-
-        // Sort the persons array
-        usort($persons, function ($a, $b) use ($sort_option, $collator, $identifiers) {
-            switch ($sort_option) {
-                case 'title_familyName':
-                    $academic_titles = ['Prof. Dr.', 'Dr.', 'Prof.', ''];
-                    $a_title = $a['honorificPrefix'] ?? '';
-                    $b_title = $b['honorificPrefix'] ?? '';
-                    $a_title_pos = array_search($a_title, $academic_titles) !== false ? array_search($a_title, $academic_titles) : count($academic_titles);
-                    $b_title_pos = array_search($b_title, $academic_titles) !== false ? array_search($b_title, $academic_titles) : count($academic_titles);
-                    if ($a_title_pos !== $b_title_pos) {
-                        return $a_title_pos - $b_title_pos;
-                    }
-                    return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');
-
-                case 'head_first':
-                    // Sort by 'head' in functionLabel
-                    $a_is_head = false;
-                    $b_is_head = false;
-
-                    foreach ($a['contacts'] as $contact) {
-                        if (isset($contact['function']) && (($contact['function'] === 'leader') || ($contact['function'] === 'deputy'))) {
-                            $a_is_head = true;
-                            break;
-                        }
-                    }
-
-                    foreach ($b['contacts'] as $contact) {
-                        if (isset($contact['function']) && $contact['function'] === 'professor') {
-                            $b_is_head = true;
-                            break;
-                        }
-                    }
-
-                    return $a_is_head === $b_is_head ? collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '') : ($a_is_head ? -1 : 1);
-
-                case 'prof_first':
-                    // Sort by 'professor' in functionLabel
-                    $a_is_professor = false;
-                    $b_is_professor = false;
-
-                    foreach ($a['contacts'] as $contact) {
-                        if (isset($contact['function']) && $contact['function'] === 'professor') {
-                            $a_is_professor = true;
-                            break;
-                        }
-                    }
-
-                    foreach ($b['contacts'] as $contact) {
-                        if (isset($contact['function']) && $contact['function'] === 'professor') {
-                            $b_is_professor = true;
-                            break;
-                        }
-                    }
-
-                    return $a_is_professor === $b_is_professor ? collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '') : ($a_is_professor ? -1 : 1);
-
-                case 'identifier_order':
-                    if (!empty($identifiers)) {
-                        $a_index = array_search($a['identifier'] ?? '', $identifiers);
-                        $b_index = array_search($b['identifier'] ?? '', $identifiers);
-                        if ($a_index === false) $a_index = PHP_INT_MAX;
-                        if ($b_index === false) $b_index = PHP_INT_MAX;
-
-                        return $a_index - $b_index;
-                    }
-                    return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');
-
-                default:
-                    return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');
-            }
-        });
-
+        $persons = self::sortPersons($persons, $sort_option);
+         
+         
+       
         // Load the template and pass the sorted data
         $template_dir = RRZE_PLUGIN_PATH . 'templates/';
         $template = new Template($template_dir);
@@ -1082,5 +1014,140 @@ class Shortcode {
         return trim($atts_string);
     }
 
-    
+    /**
+    * Sortiert ein Personen-Array nach einer oder mehreren (komma-separierten) Optionen.
+    *
+    * Unterstützte Kriterien (case-insensitive):
+    * - head_first       → Personen mit function 'leader' oder 'deputy' zuerst (danach familyName)
+    * - prof_first       → Personen mit honorificPrefix, das 'prof' oder 'dr' enthält (danach familyName)
+    * - title_familyName → Reihenfolge nach akademischen Titeln (Prof. Dr. < Dr. < Prof. < none), dann familyName
+    * - familyName       → Alphabetisch nach Nachname
+    * - identifier_order → Reihenfolge gemäß $identifiers (nur als Tie-Breaker sinnvoll)
+    *
+    * Beispiel: "head_first, prof_first, familyName"
+    *
+    * @param array  $persons
+    * @param string $sortOption     Komma-separierte Sortierkriterien.
+    * @param array  $identifiers    Optionale Reihenfolge für 'identifier_order'.
+    * @return array
+    */
+   public static function sortPersons(array $persons, string $sortOption = 'title_familyName', array $identifiers = []): array {
+       // Collator für DE (Fallback: strcmp)
+       $collator = function_exists('collator_create') ? collator_create('de_DE') : null;
+       $cmp = static function (string $a, string $b) use ($collator): int {
+           return ($collator instanceof \Collator) ? collator_compare($collator, $a, $b) : strcmp($a, $b);
+       };
+
+       // Sortierschlüssel parsen (Priorität links → rechts)
+       $order = array_values(array_filter(array_map(
+           static fn($t) => strtolower(trim($t)),
+           explode(',', $sortOption ?? '')
+       ), 'strlen'));
+       if (empty($order)) {
+           $order = ['title_familyName'];
+       }
+
+       // Map für identifier_order (damit wir nicht ständig array_search machen)
+       $idIndex = [];
+       if (!empty($identifiers)) {
+           foreach ($identifiers as $i => $id) {
+               $idIndex[(string)$id] = $i;
+           }
+       }
+
+       // Hilfs-Checks
+       $isHead = static function (array $p): bool {
+           if (empty($p['contacts']) || !is_array($p['contacts'])) return false;
+           foreach ($p['contacts'] as $c) {
+               $f = $c['function'] ?? '';
+               if ($f === 'leader' || $f === 'deputy') {
+                   return true;
+               }
+           }
+           return false;
+       };
+       $hasProfTitle = static function (array $p): bool {
+           $title = strtolower((string)($p['honorificPrefix'] ?? ''));
+           // großzügig: enthält 'prof' oder 'dr'
+           return (str_contains($title, 'prof') || str_contains($title, 'dr'));
+       };
+       $titleRank = static function (array $p): int {
+           // Feinere Reihenfolge für title_familyName
+           // (kleiner = "weiter vorn")
+           $order = ['prof. dr.' => 0, 'prof dr' => 0, 'professor doktor' => 0,
+                     'dr.' => 1, 'dr' => 1,
+                     'prof.' => 2, 'prof' => 2];
+           $title = strtolower((string)($p['honorificPrefix'] ?? ''));
+           foreach ($order as $needle => $rank) {
+               if (str_contains($title, $needle)) {
+                   return $rank;
+               }
+           }
+           return 3; // kein Titel
+       };
+
+       usort($persons, function ($a, $b) use ($order, $cmp, $idIndex) {
+           $familyA = (string)($a['familyName'] ?? '');
+           $familyB = (string)($b['familyName'] ?? '');
+
+           foreach ($order as $key) {
+               switch ($key) {
+                   case 'head_first': {
+                       $aHead = ($a['_cache_head'] ?? null); if ($aHead === null) $aHead = $a['_cache_head'] = (static function($p){ if (empty($p['contacts'])) return false; foreach ($p['contacts'] as $c){ $f=$c['function']??''; if ($f==='leader'||$f==='deputy') return true; } return false; })($a);
+                       $bHead = ($b['_cache_head'] ?? null); if ($bHead === null) $bHead = $b['_cache_head'] = (static function($p){ if (empty($p['contacts'])) return false; foreach ($p['contacts'] as $c){ $f=$c['function']??''; if ($f==='leader'||$f==='deputy') return true; } return false; })($b);
+                       if ($aHead !== $bHead) return $aHead ? -1 : 1;
+                       // innerhalb der Gruppe: familyName
+                       $c = $cmp($familyA, $familyB);
+                       if ($c !== 0) return $c;
+                       break;
+                   }
+
+                   case 'prof_first': {
+                       $aProf = ($a['_cache_prof'] ?? null); if ($aProf === null) { $t=strtolower((string)($a['honorificPrefix']??'')); $aProf = $a['_cache_prof'] = (str_contains($t,'prof') || str_contains($t,'dr')); }
+                       $bProf = ($b['_cache_prof'] ?? null); if ($bProf === null) { $t=strtolower((string)($b['honorificPrefix']??'')); $bProf = $b['_cache_prof'] = (str_contains($t,'prof') || str_contains($t,'dr')); }
+                       if ($aProf !== $bProf) return $aProf ? -1 : 1;
+                       // innerhalb der Gruppe: familyName
+                       $c = $cmp($familyA, $familyB);
+                       if ($c !== 0) return $c;
+                       break;
+                   }
+
+                   case 'title_familyname': // robust gegen Schreibweise
+                   case 'title_family_name': {
+                       $rankA = ($a['_cache_title_rank'] ?? null); if ($rankA === null) { $rankA = $a['_cache_title_rank'] = (static function($p){ $order=['prof. dr.'=>0,'prof dr'=>0,'professor doktor'=>0,'dr.'=>1,'dr'=>1,'prof.'=>2,'prof'=>2]; $t=strtolower((string)($p['honorificPrefix']??'')); foreach($order as $needle=>$rk){ if (str_contains($t,$needle)) return $rk; } return 3; })($a); }
+                       $rankB = ($b['_cache_title_rank'] ?? null); if ($rankB === null) { $rankB = $b['_cache_title_rank'] = (static function($p){ $order=['prof. dr.'=>0,'prof dr'=>0,'professor doktor'=>0,'dr.'=>1,'dr'=>1,'prof.'=>2,'prof'=>2]; $t=strtolower((string)($p['honorificPrefix']??'')); foreach($order as $needle=>$rk){ if (str_contains($t,$needle)) return $rk; } return 3; })($b); }
+                       if ($rankA !== $rankB) return $rankA <=> $rankB;
+                       $c = $cmp($familyA, $familyB);
+                       if ($c !== 0) return $c;
+                       break;
+                   }
+
+                   case 'identifier_order': {
+                       if (!empty($idIndex)) {
+                           $ia = $idIndex[(string)($a['identifier'] ?? '')] ?? PHP_INT_MAX;
+                           $ib = $idIndex[(string)($b['identifier'] ?? '')] ?? PHP_INT_MAX;
+                           if ($ia !== $ib) return $ia <=> $ib;
+                       }
+                       // wenn keine Liste vorhanden → nichts zu tun (spart Sprung)
+                       break;
+                   }
+
+                   case 'familyname':
+                   case 'family_name':
+                   case 'family': // tolerant
+                   default: {
+                       $c = $cmp($familyA, $familyB);
+                       if ($c !== 0) return $c;
+                       break;
+                   }
+               }
+           }
+
+           // Letzter Fallback, falls alles gleich:
+           return $cmp($familyA, $familyB);
+       });
+
+       return $persons;
+   }
+
 }
