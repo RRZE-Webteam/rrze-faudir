@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 <div class="faudir">
 <?php
     $config = new Config;
-    $available_fields = $config->getFieldsByFormat('org-compact');
+   // $available_fields = $config->getFieldsByFormat('org-compact');
     $opt = $config->getOptions();        
     $lang = FAUdirUtils::getLang();
 
@@ -21,9 +21,6 @@ if (!defined('ABSPATH')) {
     $dbopt = get_option('rrze_faudir_options', []);
      
      
-    //echo "DB OPTIONS:<br>";
-    //echo Debug::get_html_var_dump($dbopt);
-    //echo "<hr>";
     
     if (!empty($orgdata)) { ?>
     <div class="format-org-compact">
@@ -32,6 +29,11 @@ if (!defined('ABSPATH')) {
                 $org = new Organization($orgdata);                
                 $displayname = $org->getName();
                 
+                
+       //         echo "<p>Showfields:<br> <b>";
+       //        echo Debug::get_html_var_dump($show_fields);
+       //         echo "</b></p>";
+           //     echo Debug::get_html_var_dump($org);
                          
                 if (!empty($url)) {
                     $final_url = $url;
@@ -59,15 +61,20 @@ if (!defined('ABSPATH')) {
                      </header>
                      <div class="profile-details">   
                         <?php
+                        
+                        if (in_array('alternateName', $show_fields) ) {                               
+                            $alternateName = $org->getalternateName();
+                            if (!empty($alternateName)) {
+                                echo '<p itemprop="alternateName">'.$alternateName.'</p>';
+                            }    
+                                                  
+                        }
+                        
+                        
                         $address = '';
 
                         if (in_array('address', $show_fields) ) {                               
-                                $showmap = false;
-                                if (in_array('faumap', $show_fields) ) {
-                                    $showmap = true;
-                                }
-
-                                $address .= $org->getAddressOutput(false, $lang, $showmap);
+                                $address = $org->getAddressOutput(false, $lang, false);
                                                   
                         }
                         if (!empty($address)) {
@@ -77,8 +84,19 @@ if (!defined('ABSPATH')) {
                             echo '</div>';
                         }
                         
-
-            
+                        $postal = '';
+                        if (in_array('postalAddress', $show_fields) ) {                               
+                                $postal = $org->getPostalAddressOutput(false, $lang);
+                                                  
+                        }
+                        if (!empty($postal)) {
+                            echo '<div class="profile-address">';
+                            echo '<h2 class="address-title screen-reader-text">'.__('Postal Address', 'rrze-faudir').'</h2>';
+                            echo $postal;
+                            echo '</div>';
+                        }
+                        
+                        
                         
                         $contactlist = '';
                         if (in_array('email', $show_fields)) {
@@ -135,6 +153,24 @@ if (!defined('ABSPATH')) {
                                 }
                             }   
                         }
+                        if (in_array('faumap', $show_fields) ){          
+                             $map = $org->getFAUMap();
+                             if (!empty($map)) {
+                                if (preg_match('/^https?:\/\/karte\.fau\.de/i', $map)) {
+                                    $formattedValue = '<a class="texticon faumap" href="' . esc_url($map) . '" itemprop="url">' . __('FAU Map', 'rrze-faudir') . '</a>';
+                                    $faumap = '<span class="value icon"><span class="screen-reader-text">'.__('Map','rrze-faudir').': </span>'.$formattedValue.'</span>';
+                                    
+                                    
+                                     if (!empty($faumap)) {
+                                        $contactlist .= '<li class="faumap url">'.$faumap.'</li>';
+                                    }
+                                    
+                                }
+                             }
+                            
+                            
+                        }
+                        
                         
                         
                         
@@ -147,12 +183,48 @@ if (!defined('ABSPATH')) {
                             echo '</div>';
                         }
                         
+                        if (in_array('socialmedia', $show_fields) ) {
+                            $some = $org->getSocialMedia('span');
+                            if (!empty($some)) {
+                                echo '<div class="profile-socialmedia">';
+                                echo '<h2 class="screen-reader-text">'.__('Social Media and Websites', 'rrze-faudir').'</h2>';
+                                echo $some;
+                                echo '</div>';
+                            }
+                        }
+                         if (in_array('officehours', $show_fields) || (in_array('consultationhours', $show_fields) )) {
+                                $hours = $cons =  '';
+                                if (in_array('consultationhours', $show_fields)) {
+                                   
+                                    $hours .= $org->getConsultationsHours( 'consultationHours', false, $lang, true );                                   
+                                    if (!empty($hours)) {
+                                            $cons .=  '<h2 class="consultation-title">'.__('Consultation Hours', 'rrze-faudir').'</h2>';
+                                            $cons .= $hours;
+                                    }
+                                }
+                                $hours = '';
+                                if (in_array('officehours', $show_fields)) {
+                                    $label = __('Opening hours', 'rrze-faudir');     
+                                    $hours .= $org->getConsultationsHours('officeHours', false, $lang, true, $label);
+               
+                                    if (!empty($hours)) {
+                                            $cons .=  '<h2 class="consultation-title">'. $label.'</h2>';
+                                            $cons .= $hours;
+                                    }
+                                }
+                               if (!empty($cons)) {   
+                                   echo '<div class="profile-consultation">';
+                                   echo $cons;
+                                   echo '</div>';
+                               }
+                        }
+                        
                        $profilcontent = '';
-                       if (in_array('content', $show_fields)) {                          
+                       if (in_array('text', $show_fields)) {                          
                             $wval = $org->getContentText($lang);
                             if (!empty($wval)) {
-                                $profilcontent .= '<div class="content">';
-                                $profilcontent .= wp_kses_post($wval);
+                                $profilcontent .= '<div class="text">';
+                                $profilcontent .= $wval;
                                 $profilcontent .= '</div>';
                             }
                         }

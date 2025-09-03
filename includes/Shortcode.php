@@ -415,8 +415,14 @@ class Shortcode {
         $org = new Organization();
         
         if (Organization::isOrgnr($orgnr)) {   
-            $org->getOrgbyOrgnr($orgnr);
-            $orgdata = $org->toArray();
+            $id = $org->getIdentifierbyOrgnr($orgnr);
+            $orgid = Organization::sanitizeOrgIdentifier($id);
+            if (Organization::isOrgIdentifier($orgid)) {
+                $org->getOrgbyAPI($orgid);
+                $orgdata = $org->toArray();
+            } else {
+                return self::createErrorOut(__('Bad value for parameter orgid', 'rrze-faudir'), 'createOrgOutput');
+            }
         } elseif (!empty($orgid)) {
             $orgid = Organization::sanitizeOrgIdentifier($orgid);
             

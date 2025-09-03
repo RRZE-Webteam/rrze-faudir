@@ -7,7 +7,7 @@ defined('ABSPATH') || exit;
 
 class Config {
     private array $config = [
-        'version'                   => 3,
+        'version'                   => 4,
         'api_key'                   => '',
         'api-baseurl'               => 'https://api.fau.de/pub/v1/opendir/',
         'faudir-url'                => 'https://faudir.fau.de/',
@@ -28,7 +28,7 @@ class Config {
             'compact'       => ['image', 'displayname', 'honorificPrefix','honorificSuffix', 'givenName', 'titleOfNobility', 'familyName', 'jobTitle', 'phone', 'fax', 'email', 'url', 'socialmedia', 'organization', 'address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],
             'page'          => ['image', 'displayname', 'jobTitle', 'phone', 'fax', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'content', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'format_displayname'],
             'card'          => ['image', 'displayname','honorificPrefix','honorificSuffix', 'givenName',  'titleOfNobility', 'familyName', 'jobTitle', 'phone', 'fax', 'organization', 'url', 'email', 'socialmedia', 'link', 'format_displayname'],
-            'org-compact'   => ['phone', 'fax', 'email', 'url', 'socialmedia', 'organization','address', 'faumap', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'content'],
+            'org-compact'   => [ 'name', 'alternateName', 'phone', 'fax', 'email', 'url', 'socialmedia','address', 'postalAddress', 'faumap', 'officehours', 'consultationhours', 'text'],
         ],
         'default_format'    => 'compact',
         'default_display'   => 'person',
@@ -39,6 +39,7 @@ class Config {
         ],
         
         'default_output_fields'     => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia'], // Default fields      
+        'default_org_output_fields' => ['name', 'phone', 'fax', 'email', 'url', 'socialmedia', 'address', 'faumap', 'officehours', 'consultationhours', 'longDescription'],
         'default_output_fields_endpoint' => [
             'image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization', 'address', 'room', 'floor',  
             'teasertext', 'content', 'officehours', 'consultationhours'
@@ -126,6 +127,34 @@ class Config {
             'link'              => __('Link to Profil', 'rrze-faudir')
         ];
         
+        
+        $this->config['avaible_fields_org'] = [
+            'name'              => __('Name', 'rrze-faudir'),
+            'alternateName'     => __('Alternate Name', 'rrze-faudir'),
+            'disambiguatingDescription'     => __('Disambiguating Description', 'rrze-faudir'),
+            'longDescription'   => __('Description', 'rrze-faudir'),
+            
+            // as part of address array:
+            'email'             => __('Email', 'rrze-faudir'),
+            'phone'             => __('Phone', 'rrze-faudir'),
+            'fax'               => __('Fax', 'rrze-faudir'),
+            'faumap'            => __('FAU Map', 'rrze-faudir'),
+            'url'               => __('URL', 'rrze-faudir'),
+            
+            // in content:
+            'text'              => __('Text', 'rrze-faudir'),         
+            'socialmedia'       => __('Social Media and Websites', 'rrze-faudir'),
+
+            'address'           => __('Address', 'rrze-faudir'),
+            'postalAddress'           => __('Postal Address', 'rrze-faudir'),
+            'internalAddress'           => __('Internal Address', 'rrze-faudir'),
+          
+            'officehours'       => __('Office Hours', 'rrze-faudir'),
+            'consultationhours' => __('Consultation Hours', 'rrze-faudir'),
+
+        ];
+        
+        
         $this->config['person_roles'] = [
             'administrative_employee'   => __('Administrative Employee', 'rrze-faudir'),
             'adjunct_professor'         => __('Adjunct professors', 'rrze-faudir'),
@@ -160,7 +189,7 @@ class Config {
             'card'      => __( 'Card', 'rrze-faudir' ),
             'compact'   => __( 'Compact', 'rrze-faudir' ),
             'page'      => __( 'Page', 'rrze-faudir' ),
-            'org-compact'   => __( 'Compact', 'rrze-faudir' ).' '.__( 'with display="org"', 'rrze-faudir' ),
+            'org-compact'   => __( 'Compact', 'rrze-faudir' ),
         ];
 
     }

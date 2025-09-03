@@ -86,7 +86,7 @@ class Settings {
 
         add_settings_section(
             'rrze_faudir_shortcode_section',
-            __('Default Output Fields', 'rrze-faudir'),
+            __('Default output fields for persons', 'rrze-faudir'),
             [$this, 'shortcode_section_cb'],
             'rrze_faudir_settings_shortcode'
         );
@@ -133,6 +133,21 @@ class Settings {
             'rrze_faudir_profilpage_section'
         );
 
+         add_settings_section(
+            'rrze_faudir_shortcode_org_section',
+            __('Default output fields for organisations and folders', 'rrze-faudir'),
+            [$this, 'shortcode_section_cb'],
+            'rrze_faudir_settings_org_shortcode'
+        );
+        add_settings_field(
+            'rrze_faudir_default_org_output_fields',
+            __('Output fields for formats', 'rrze-faudir'),
+            [$this, 'default_output_org_fields_render'],
+            'rrze_faudir_settings_org_shortcode',
+            'rrze_faudir_shortcode_org_section'
+        );
+        
+        
         add_settings_section(
             'rrze_faudir_api_section',
             __('API Settings', 'rrze-faudir'),
@@ -523,8 +538,9 @@ class Settings {
         echo '<p class="description">' . esc_html__('Enter the slug for the person post type.', 'rrze-faudir') . '</p>';
     }
 
-    /**
-     * Render: Default-Ausgabefelder (Checkbox-Liste + Format-Verfügbarkeit).
+   
+        /**
+     * Render: Default-Ausgabefelder für Personen (ohne "org-" Felder).
      * Optionale Eingaben: keine.
      * Rückgabe: void (echo).
      */
@@ -533,18 +549,32 @@ class Settings {
         $default_fields = $options['default_output_fields'] ?? [];
 
         $config           = new Config();
-        $available_fields = $config->get('avaible_fields');
-        $formatnames      = $config->get('formatnames');
-        $fieldlist        = $config->getAvaibleFieldlist();
+        $available_fields = (array) $config->get('avaible_fields');     // alle Labels
+        $formatnames      = (array) $config->get('formatnames');        // Anzeigename je Format
+        $fieldlist        = (array) $config->getAvaibleFieldlist();     // Liste Felder je Format
 
+        // Nur Personen-Felder (kein "org-*" Präfix)
+        $person_fields = array_filter(
+            $available_fields,
+            static fn($label, $key) => strpos((string) $key, 'org-') !== 0,
+            ARRAY_FILTER_USE_BOTH
+        );
+
+        // Falls leer: alle Personen-Felder als Default anzeigen
         if (empty($default_fields)) {
-            $default_fields = array_keys((array) $available_fields);
+            $default_fields = array_keys($person_fields);
+        } else {
+            // Sicherheit: Aus Default-Liste evtl. enthaltene org-Felder entfernen (Anzeige)
+            $default_fields = array_values(array_filter(
+                (array) $default_fields,
+                static fn($f) => strpos((string) $f, 'org-') !== 0
+            ));
         }
 
         echo '<table class="faudir-attributs">';
         echo '<tr><th>' . esc_html__('Output data', 'rrze-faudir') . '</th><th>' . esc_html__('Fieldname for Show/Hide-Attribut in Shortcodes', 'rrze-faudir') . '</th><th>' . esc_html__('Avaible in formats', 'rrze-faudir') . '</th></tr>';
 
-        foreach ((array) $available_fields as $field => $label) {
+        foreach ($person_fields as $field => $label) {
             $checked = in_array($field, $default_fields, true);
 
             echo '<tr>';
@@ -554,15 +584,15 @@ class Settings {
 
             echo '<td><code>' . esc_html($field) . '</code></td><td>';
 
+            // Nur Personen-Formate (kein Format-Key, der mit "org-" beginnt)
             $canuse = '';
-            foreach ((array) $fieldlist as $fl => $entries) {
+            foreach ($fieldlist as $fl => $entries) {
+                if (strpos((string) $fl, 'org-') === 0) {
+                    continue; // org-Formate hier nicht listen
+                }
                 if (!empty($entries) && in_array($field, (array) $entries, true)) {
                     if (!empty($canuse)) { $canuse .= ', '; }
-                    if ($fl === 'org-compact') {
-                        $canuse .= $formatnames[$fl] . ' (<code>compact</code>)';
-                    } else {
-                        $canuse .= $formatnames[$fl] . ' (<code>' . $fl . '</code>)';
-                    }
+                    $canuse .= ($formatnames[$fl] ?? $fl) . ' (<code>' . esc_html($fl) . '</code>)';
                 }
             }
             if (!empty($canuse)) {
@@ -573,6 +603,103 @@ class Settings {
         echo '</table>';
         echo '<p class="description">' . esc_html__('Select the fields to display by default in shortcodes and blocks.', 'rrze-faudir') . '</p>';
     }
+
+    /**
+    * Render: Default-Ausgabefelder für Organisationen/Folder (nur Felder, die in org-* Formaten vorkommen).
+    * Optionale Eingaben: keine.
+    * Rückgabe: void (echo).
+    */
+   public function default_output_org_fields_render(): void {
+       $options = get_option('rrze_faudir_options');
+
+       $config           = new Config();
+       $available_fields = (array) $config->get('avaible_fields_org');   // fieldKey => Label
+       $formatnames      = (array) $config->get('formatnames');      // formatKey => Menschlicher Name
+       $fieldlist        = (array) $config->getAvaibleFieldlist();   // formatKey => [fieldKey, ...]
+
+       // 1) Nur org-* Formate herausfiltern
+       $org_format_keys = array_values(array_filter(
+           array_keys($fieldlist),
+           static fn($k) => is_string($k) && strpos($k, 'org-') === 0 && is_array($fieldlist[$k])
+       ));
+
+       // 2) Vereinigung aller Felder, die in einem org-* Format vorkommen
+       $org_field_keys_map = [];
+       foreach ($org_format_keys as $fmt) {
+           foreach ((array) $fieldlist[$fmt] as $f) {
+               $org_field_keys_map[$f] = true;
+           }
+       }
+       $org_field_keys = array_keys($org_field_keys_map);
+
+       // Falls es (noch) keine org-Felder gibt, sauber abbrechen
+       if (empty($org_field_keys)) {
+           echo '<p class="description">' .
+                esc_html__('No organization/folder fields available for selection.', 'rrze-faudir') .
+                '</p>';
+           return;
+       }
+
+       // 3) Feldliste (Key => Label) für die Tabelle aufbauen
+       $org_fields = [];
+       foreach ($org_field_keys as $key) {
+           $org_fields[$key] = $available_fields[$key] ?? $key;
+       }
+
+       // 4) Defaults ermitteln
+       //    a) Bevorzugt: rrze_faudir_options[default_org_output_fields]
+       //    b) Fallback:  rrze_faudir_options[default_output_fields] gefiltert auf org-Felder
+       //    c) Falls leer: alle org-Felder
+       $org_default_fields = $options['default_org_output_fields'] ?? null;
+       if ($org_default_fields === null) {
+           $fallback_defaults = (array) ($options['default_output_fields'] ?? []);
+           $org_default_fields = array_values(array_intersect($fallback_defaults, $org_field_keys));
+       }
+       if (empty($org_default_fields)) {
+           $org_default_fields = $org_field_keys;
+       }
+
+       echo '<table class="faudir-attributs">';
+       echo '<tr>'
+           . '<th>' . esc_html__('Output data (organizations/folders)', 'rrze-faudir') . '</th>'
+           . '<th>' . esc_html__('Fieldname for Show/Hide-Attribut in Shortcodes', 'rrze-faudir') . '</th>'
+           . '<th>' . esc_html__('Avaible in formats', 'rrze-faudir') . '</th>'
+           . '</tr>';
+
+       foreach ($org_fields as $field => $label) {
+           $checked = in_array($field, $org_default_fields, true);
+
+           echo '<tr>';
+           echo '<th><label for="' . esc_attr('rrze_faudir_default_org_output_fields_' . $field) . '">';
+           echo '<input type="checkbox" id="' . esc_attr('rrze_faudir_default_org_output_fields_' . $field) . '" '
+              . 'name="rrze_faudir_options[default_org_output_fields][]" '
+              . 'value="' . esc_attr($field) . '" ' . checked($checked, true, false) . '>';
+           echo esc_html($label) . '</label></th>';
+
+           echo '<td><code>' . esc_html($field) . '</code></td>';
+
+           // 5) Nur org-* Formate auflisten, in denen dieses Feld vorkommt
+           $canuse_parts = [];
+           foreach ($org_format_keys as $fmt) {
+               $entries = (array) $fieldlist[$fmt];
+               if (in_array($field, $entries, true)) {
+                   $alias     = ($fmt === 'org-compact') ? 'compact' : $fmt;
+                   $labelName = $formatnames[$fmt] ?? $alias;
+                   $canuse_parts[] = esc_html($labelName) . ' (<code>' . esc_html($alias) . '</code>)';
+               }
+           }
+           echo '<td>' . implode(', ', $canuse_parts) . '</td>';
+
+           echo '</tr>';
+       }
+
+       echo '</table>';
+       echo '<p class="description">'
+          . esc_html__('Select the organization/folder fields to display by default in shortcodes and blocks.', 'rrze-faudir')
+          . '</p>';
+   }
+
+    
 
     /**
      * Rendert die komplette Settings-Seite (Tabs + Inhalte).
@@ -589,7 +716,8 @@ class Settings {
                 <a href="#tab-2" class="nav-tab"><?php echo esc_html__('Search Organizations', 'rrze-faudir'); ?></a>
                 <a href="#tab-3" class="nav-tab"><?php echo esc_html__('Default Output Fields', 'rrze-faudir'); ?></a>
                 <a href="#tab-4" class="nav-tab"><?php echo esc_html__('Profilpage', 'rrze-faudir'); ?></a>
-                <a href="#tab-5" class="nav-tab"><?php echo esc_html__('Advanced Settings', 'rrze-faudir'); ?></a>
+                <a href="#tab-5" class="nav-tab"><?php echo esc_html__('Default Org/Folder Fields', 'rrze-faudir'); ?></a>
+                <a href="#tab-6" class="nav-tab"><?php echo esc_html__('Advanced Settings', 'rrze-faudir'); ?></a>
             </h2>
 
             <form action="options.php" method="post">
@@ -604,8 +732,13 @@ class Settings {
                     <?php do_settings_sections('rrze_faudir_settings_profilpage'); ?>
                     <?php submit_button(); ?>
                 </div>
+                
+                 <div id="tab-5" class="tab-content" style="display:none;">
+                    <?php do_settings_sections('rrze_faudir_settings_org_shortcode'); ?>
+                    <?php submit_button(); ?>
+                </div>
 
-                <div id="tab-5" class="tab-content" style="display:none;">
+                <div id="tab-6" class="tab-content" style="display:none;">
                     <div id="migration-progress" style="margin-top: 1rem;"></div>
                     <?php do_settings_sections('rrze_faudir_settings'); ?>
                     <hr>

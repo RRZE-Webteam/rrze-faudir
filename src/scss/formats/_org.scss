@@ -1,0 +1,26 @@
+/*----------------------------------------------------------------------------*/
+/* _org 
+/* Created on : 03.09.2025, 09:33:27
+/*----------------------------------------------------------------------------*/
+
+.faudir {
+    .format-org-compact {
+	.profile-address, .profile-consultation, .profile-contact, .profile-socialmedia {
+	    padding: var(--faudir-profile-padding);
+	    
+	    h2 {
+		    margin-top: 1rem;
+		}
+
+	    
+	}
+		
+
+	.profile-content {
+		.text {
+		    margin: 1rem 0;
+		}
+	    }
+    }
+}
+

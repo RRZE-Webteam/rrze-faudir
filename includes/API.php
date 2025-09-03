@@ -303,6 +303,8 @@ class API {
         if (!empty($params['orgnr'])) {
             $url .= '&q=' . urlencode('^' . $params['orgnr']);
         }
+        do_action( 'rrze.log.info', "FAUdir\API (getOrgList): Requesting {$url}.");
+        
         $response = $this->makeRequest($url, "GET");
 
         if (!$response) {
@@ -321,7 +323,7 @@ class API {
      */
     public function getOrgById(string $orgid): ?array {
         if (!$this->api_key) {
-            do_action( 'rrze.log.error', "FAUdir\API (getOrgById):API Key missing.");
+            do_action( 'rrze.log.error', "FAUdir\API (getOrgById): API Key missing.");
             return null;
         }
         if (empty($orgid)) {
