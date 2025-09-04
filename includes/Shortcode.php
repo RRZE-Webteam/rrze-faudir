@@ -63,8 +63,7 @@ class Shortcode {
             ),
             $atts
         );
-          
-   //     do_action( 'rrze.log.notice','FAUdir\Shortcode (fetch_fau_data)', $atts);
+       
           
         if (empty($atts['lang'])) {
             $atts['lang'] = $lang;
@@ -82,6 +81,8 @@ class Shortcode {
         $show = self::resolve_visible_fields_with_format($atts);
         $atts['show'] = implode(', ', $show);
         unset($atts['hide']);
+        
+        do_action( 'rrze.log.notice','FAUdir\Shortcode (fetch_fau_data). Modified Args: ', $atts);
         
         // Enqueue CSS for output
         wp_enqueue_style('rrze-faudir');

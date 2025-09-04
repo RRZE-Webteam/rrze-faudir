@@ -33,13 +33,14 @@ class FaudirUtils {
 
     
     
-    public static function getLang() {
+    public static function getLang($full = false) {
         $locale = get_locale();          
+        if ($full === true) {
+            return $locale;
+        }
         $lang = substr($locale, 0, 2);      
-        //   return $lang;
-        // currently we only support english and german
-        // otherwise we have to update the additional content fields
-        return ($lang === 'de') ? 'de' : 'en'; 
+
+        return $lang; 
     }
 
     
