@@ -195,6 +195,114 @@ class Config {
     }
     
 
+
+    /**
+     * Gibt die konfigurierten akademischen Titel inkl. Label, Sortierung und Aliases zurück.
+     * Optionale Eingaben: keine.
+     * Rückgabe: array [ '<kanonischer Key>' => ['label'=>string,'sortorder'=>int,'aliases'=>string[]] ].
+     */
+    public function getAcademicPrefixes(): array {
+        return [
+            // --- Basisvarianten ---
+            'Prof. Dr.' => [
+                'label'     => __('Professor Doctor', 'rrze-faudir'),
+                'sortorder' => 10,
+                'aliases'   => [
+                    'prof dr', 'professor dr', 'professor doktor', 'prof. dr', 'prof.dr.',
+                    'prof. dr.', 'professor doktorin', // tolerant
+                ],
+            ],
+            'Prof. Dr. em.' => [
+                'label'     => __('Professor Doctor (Emeritus)', 'rrze-faudir'),
+                'sortorder' => 11,
+                'aliases'   => [
+                    'prof dr em', 'professor dr em', 'prof. dr. em', 'professor emeritus dr',
+                    'professorin emerita dr',
+                ],
+            ],
+            'Prof.' => [
+                'label'     => __('Professor', 'rrze-faudir'),
+                'sortorder' => 20,
+                'aliases'   => ['prof', 'professor', 'professorin', 'prof.'],
+            ],
+            'Prof. em.' => [
+                'label'     => __('Professor (Emeritus)', 'rrze-faudir'),
+                'sortorder' => 21,
+                'aliases'   => ['prof em', 'prof. em', 'professor emeritus', 'professorin emerita'],
+            ],
+            'Dr.' => [
+                'label'     => __('Doctor', 'rrze-faudir'),
+                'sortorder' => 30,
+                'aliases'   => ['dr', 'doktor', 'doktorin', 'dr.'],
+            ],
+            'PD Dr.' => [
+                'label'     => __('Doctor Private lecturer', 'rrze-faudir'),
+                'sortorder' => 25,
+                'aliases'   => [
+                    'dr pd', 'priv.-doz. dr', 'priv dozent dr', 'privatdozent dr', 'privatdozentin dr',
+                    'privdoz dr', 'priv dozentin dr',
+                ],
+            ],
+            'PD' => [
+                'label'     => __('Private lecturer', 'rrze-faudir'),
+                'sortorder' => 26,
+                'aliases'   => ['pd', 'priv.-doz.', 'priv dozent', 'privatdozent', 'privatdozentin', 'privdoz'],
+            ],
+
+            // --- "mult."-Varianten (immer VOR Basis einsortieren) ---
+            'Prof. mult. Dr.' => [
+                'label'     => __('Professor Doctor (multiple)', 'rrze-faudir'),
+                'sortorder' => 9,
+                'aliases'   => ['prof mult dr', 'prof. mult. dr.', 'professor mult dr'],
+            ],
+            'Prof. mult.' => [
+                'label'     => __('Professor (multiple)', 'rrze-faudir'),
+                'sortorder' => 19,
+                'aliases'   => ['prof mult', 'prof. mult.', 'professor mult'],
+            ],
+            'Dr. mult.' => [
+                'label'     => __('Doctor (multiple)', 'rrze-faudir'),
+                'sortorder' => 29,
+                'aliases'   => ['dr mult', 'dr. mult.', 'doktor mult'],
+            ],
+            // Optional: Kombi mit emeritiertem Status
+            'Prof. mult. Dr. em.' => [
+                'label'     => __('Professor Doctor (Emeritus, multiple)', 'rrze-faudir'),
+                'sortorder' => 8,
+                'aliases'   => ['prof mult dr em', 'prof. mult. dr. em.'],
+            ],
+        ];
+    }
+
+    /**
+     * Liefert die Liste von Zusätzen, die in akademischen Titeln ignoriert/entfernt werden sollen.
+     * Optionale Eingaben: keine.
+     * Rückgabe: array<string>.
+     */
+    public function getAcademicIgnoreTokens(): array {
+        // Liste der Tokens und Strings, die oftmals in den akademischen Titeln vorkommen, 
+        // jedoch kein offizieller Teil davon sind. In Fall von MA sind diese sogar falsch, da sie in den Namenszusatz gehören und kein Titel sind
+        
+        $tokens = [
+            'univ',
+            'univ.',   // mit Punkt-Variante
+            'dipl.',
+            'dipl',
+            'ing.',
+            'm.a.',
+            'msc.',
+            'm.sc.'
+          
+        ];
+
+        /**
+         * Filter erlaubt Anpassungen durch Themes/Plugins:
+         * add_filter('faudir_academic_ignore_tokens', function(array $tokens){ ...; return $tokens; });
+         */
+        return apply_filters('faudir_academic_ignore_tokens', $tokens);
+    }
+
+    
     /**
      * Abrufen eines Konfigurationswertes
      *

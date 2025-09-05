@@ -395,97 +395,115 @@ class Person {
     
     
     
-    /*
-     * Create and get Displayname in semantic HTML
-     */
-    public function getDisplayName(bool $html = true, bool $hard_sanitize = false, string $format = ''): string {
-        if (empty($this->givenName) && empty($this->familyName)) {
-            return '';
-        }
-        $nameText = '';
-        $nameHtml  = '';
+    /**
+    * Erzeugt den Anzeigenamen (optional semantisches HTML).
+    * Optionale Eingaben:
+    *  - $html (bool): HTML mit Microdata ausgeben (Default: true).
+    *  - $normalize (bool): Akademischen Titel normalisieren (Default: false).
+    *  - $format (string): Optionales Format mit Platzhaltern
+    *    (#givenName#, #familyName#, #honorificPrefix#, #honorificSuffix#, #titleOfNobility#, #displayname#).
+    * Rückgabe: string – formatierter Name (HTML oder Plaintext).
+    */
+   public function getDisplayName(bool $html = true, bool $normalize = false, string $format = ''): string {
+       if (empty($this->givenName) && empty($this->familyName)) {
+           return '';
+       }
+$normalize = true;
+       $nameText = '';
+       $nameHtml = '';
 
-        if (empty($format)) {
-            // Wrapper für HTML-Ausgabe
-            $nameHtml .= '<span class="displayname" itemprop="name">';
+       if (empty($format)) {
+           // Wrapper für HTML-Ausgabe
+           $nameHtml .= '<span class="displayname" itemprop="name">';
 
-            // "personalTitle"
-            if (!empty($this->honorificPrefix)) {
-                if ($hard_sanitize) {
-                    $long_version = self::getAcademicTitleLongVersion($this->honorificPrefix);
-                    if (!empty($long_version)) {
-                        $nameHtml .= '<abbr title="' . esc_attr($long_version) . '" itemprop="honorificPrefix">' 
-                                    . esc_html($this->honorificPrefix) . '</abbr> ';
-                    } else {
-                        $nameHtml .= '<span itemprop="honorificPrefix">' . esc_html($this->honorificPrefix) . '</span> ';
-                    }
-                } else {
-                    $nameHtml .= '<span itemprop="honorificPrefix">' . esc_html($this->honorificPrefix) . '</span> ';
-                }
-                $nameText .= esc_html($this->honorificPrefix) . ' ';
-            }
+           // "honorificPrefix" (akademischer Titel)
+           if (!empty($this->honorificPrefix)) {
+               $displayPrefix = $this->honorificPrefix;
+               $abbrTitleLong = '';
 
-            // "givenName"
-            
-            if ((!empty($this->givenName)) && (!empty($this->familyName)))  {  
-                $nameHtml .= '<span class="namepart">';
-            }
-            if (!empty($this->givenName)) { 
-                $nameHtml .= '<span itemprop="givenName">' . esc_html($this->givenName) . '</span> ';
-                $nameText .= esc_html($this->givenName) . ' ';
-            }
+               if ($normalize) {
+                   // Normalisieren → sichtbarer Titel + Langlabel direkt aus normalizeAcademicTitle()
+                   $norm          = \RRZE\FAUdir\FaudirUtils::normalizeAcademicTitle($this->honorificPrefix);
+                   $displayPrefix = $norm['visible_title_no_discipline'] ?? $this->honorificPrefix;
+                   $abbrTitleLong = $norm['label'] ?? ''; // <-- hier statt getAcademicTitleLongVersion(...)
+               } else {
+                   // Falls bekannt: Langlabel (für title-Attribut) klassisch aus Config-Mapping
+                   $abbrTitleLong = self::getAcademicTitleLongVersion($this->honorificPrefix);
+               }
 
-            // "familyName"
-            if (!empty($this->familyName))  { 
-                $nameHtml .= '<span itemprop="familyName">';        
-                // "titleOfNobility" is part of the familyName
-                if (!empty($this->titleOfNobility))  { 
-                    $nameHtml .= esc_html($this->titleOfNobility) . ' ';
-                    $nameText .= esc_html($this->titleOfNobility) . ' ';
-                }
+               if (!empty($abbrTitleLong)) {
+                   $nameHtml .= '<abbr title="' . esc_attr($abbrTitleLong) . '" itemprop="honorificPrefix">' . esc_html($displayPrefix) . '</abbr> ';
+               } else {
+                   $nameHtml .= '<span itemprop="honorificPrefix">' . esc_html($displayPrefix) . '</span> ';
+               }
+               $nameText .= esc_html($displayPrefix) . ' ';
+           }
 
-                $nameHtml .= esc_html($this->familyName) . '</span>';
-                $nameText .= esc_html($this->familyName) . '';
-            }
-            if ((!empty($this->givenName)) && (!empty($this->familyName)))  {  
-                $nameHtml .= '</span>';
-            }
-            // "personalTitleSuffix"
-            if (!empty($this->honorificSuffix)) { 
-                $nameHtml .= ' (<span itemprop="honorificSuffix">' . esc_html($this->honorificSuffix) . '</span>)';
-                $nameText .= ' (' . esc_html($this->honorificSuffix) . ')';
-            }
+           // "givenName" + "familyName"
+           if (!empty($this->givenName) && !empty($this->familyName)) {
+               $nameHtml .= '<span class="namepart">';
+           }
 
-            $nameHtml .= '</span>';
+           if (!empty($this->givenName)) {
+               $nameHtml .= '<span itemprop="givenName">' . esc_html($this->givenName) . '</span> ';
+               $nameText .= esc_html($this->givenName) . ' ';
+           }
 
-            return $html ? $nameHtml : $nameText;
-        }
-        
-        // format string is given. In this case display the name parts in the form that is displayed in the format
-        // add nor semantic nor commas or other signs
+           if (!empty($this->familyName)) {
+               $nameHtml .= '<span itemprop="familyName">';
+               // "titleOfNobility" als Teil des familyName
+               if (!empty($this->titleOfNobility)) {
+                   $nameHtml .= esc_html($this->titleOfNobility) . ' ';
+                   $nameText .= esc_html($this->titleOfNobility) . ' ';
+               }
+               $nameHtml .= esc_html($this->familyName) . '</span>';
+               $nameText .= esc_html($this->familyName);
+           }
 
-        
-        
-        $nameHtml = '';
-        if ($html) {
-            $nameHtml = '<span class="displayname" itemprop="name">';
-        }
-        
-        // Platzhalter mit den entsprechenden Werten ersetzen
-        $replacements = [
-            '#givenName#' => $this->givenName ?? '',
-            '#displayname#' => $this->getDisplayName(false,false) ?? '',
-            '#familyName#' => $this->familyName ?? '',
-            '#honorificPrefix#' => $this->honorificPrefix ?? '',
-            '#honorificSuffix#' => $this->honorificSuffix ?? '',
-            '#titleOfNobility#' => $this->titleOfNobility ?? ''
-        ]; 
-        $nameHtml .= str_replace(array_keys($replacements), array_values($replacements), $format);
-        if ($html) {
-            $nameHtml .= '</span>';
-        }
-        return $nameHtml;
-    }  
+           if (!empty($this->givenName) && !empty($this->familyName)) {
+               $nameHtml .= '</span>';
+           }
+
+           // "honorificSuffix"
+           if (!empty($this->honorificSuffix)) {
+               $nameHtml .= ' (<span itemprop="honorificSuffix">' . esc_html($this->honorificSuffix) . '</span>)';
+               $nameText .= ' (' . esc_html($this->honorificSuffix) . ')';
+           }
+
+           $nameHtml .= '</span>';
+           return $html ? $nameHtml : $nameText;
+       }
+
+       // Format-String ist übergeben → nur Platzhalter ersetzen (ohne zusätzliche Semantik)
+       $nameHtml = '';
+       if ($html) {
+           $nameHtml = '<span class="displayname" itemprop="name">';
+       }
+
+       // Optional auch im Formatfall den normalisierten sichtbaren Titel verwenden
+       $formattedPrefix = $this->honorificPrefix;
+       if ($normalize && !empty($this->honorificPrefix)) {
+           $norm            = \RRZE\FAUdir\FaudirUtils::normalizeAcademicTitle($this->honorificPrefix);
+           $formattedPrefix = $norm['visible_title'] ?? $this->honorificPrefix;
+       }
+
+       $replacements = [
+           '#givenName#'       => $this->givenName ?? '',
+           '#displayname#'     => $this->getDisplayName(false, false) ?? '',
+           '#familyName#'      => $this->familyName ?? '',
+           '#honorificPrefix#' => $formattedPrefix ?? '',
+           '#honorificSuffix#' => $this->honorificSuffix ?? '',
+           '#titleOfNobility#' => $this->titleOfNobility ?? '',
+       ];
+
+       $nameHtml .= str_replace(array_keys($replacements), array_values($replacements), $format);
+
+       if ($html) {
+           $nameHtml .= '</span>';
+       }
+       return $nameHtml;
+   }
+
     
     
     /*
@@ -769,20 +787,24 @@ class Person {
         return str_replace(array_keys($replacements), array_values($replacements), $template);
     }
     
-    
-    private static function getAcademicTitleLongVersion(string $prefix): string  {
-        $prefixes = array(
-            'Dr.' => __('Doctor', 'rrze-faudir'),
-            'Prof.' => __('Professor', 'rrze-faudir'),
-            'Prof. Dr.' => __('Professor Doctor', 'rrze-faudir'),
-            'Prof. em.' => __('Professor (Emeritus)', 'rrze-faudir'),
-            'Prof. Dr. em.' => __('Professor Doctor (Emeritus)', 'rrze-faudir'),
-            'PD' => __('Private lecturer', 'rrze-faudir'),
-            'PD Dr.' => __('Private lecturer doctor', 'rrze-faudir')
-        );
+    /**
+    * Liefert die Langform (lokalisierte Bezeichnung) eines akademischen Titels
+    * anhand der in der Config gepflegten Präfix-Tabelle.
+    * Optionale Eingaben: keine.
+    * Rückgabe: string (übersetzte Langbezeichnung) oder '' wenn unbekannt.
+    */
+   private static function getAcademicTitleLongVersion(string $prefix): string {
+       // Normalisieren/zuordnen (nutzt intern die Config-Mapping-Tabelle + Aliase)
+       $norm = \RRZE\FAUdir\FaudirUtils::normalizeAcademicTitle($prefix);
 
-        return isset($prefixes[$prefix]) ? $prefixes[$prefix] : '';
-    }
+       // Wenn in der Config gefunden, die dort gepflegte Langbezeichnung zurückgeben
+       if (!empty($norm['label'])) {
+           return (string) $norm['label'];
+       }
+
+       return '';
+   }
+
     
     /*
      * Get a random identifier; Used for aria-labelledby if more entries 

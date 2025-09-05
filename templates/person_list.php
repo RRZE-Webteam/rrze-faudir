@@ -57,7 +57,7 @@ if (!defined('ABSPATH')) {
                         if (!empty($format_displayname)) {
                             $formatstring = $format_displayname;
                         }
-                        $displayname = $person->getDisplayName(true, false,$formatstring);
+                        $displayname = $person->getDisplayName(true, true, $formatstring);
                         $mailadresses= $person->getEMail();
                         $phonenumbers = $person->getPhone();                        
                         if (!empty($url)) {
