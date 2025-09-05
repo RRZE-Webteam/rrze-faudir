@@ -102,195 +102,164 @@ class FaudirUtils {
 
     
 
-    /**
-     * Normalisiert einen akademischen Titel aus honorificPrefix.
-     * - Entfernt "Noise"-Tokens (inkl. Fällen wie "Dr.-univ.")
-     * - Erfasst APL ("apl.") → wird vorne angezeigt (nicht sortierrelevant)
-     * - Erfasst "habil" und "h.c." → werden hinter dem Titel angezeigt (nicht sortierrelevant)
-     * - Erfasst Disziplin-Abkürzungen nach "Dr." (z. B. "med.", "phil.", "nat.") → nur Anzeige, nicht Sortierung
-     * - Ermittelt Mapping-Key, Label und Sortorder aus Config::getAcademicPrefixes()
-     * Rückgabe:
-     *   [
-     *     'key'                      => string,
-     *     'label'                    => string,
-     *     'sortorder'                => int,
-     *     'visible_title'            => string, // inkl. APL/habil/h.c. und Disziplinen
-     *     'visible_title_no_discipline' => string, // wie oben, aber ohne Disziplinen
-     *   ]
-     */
-    public static function normalizeAcademicTitle(?string $honorificPrefix): array {
-        $result = [
-            'key'                          => '',
-            'label'                        => '',
-            'sortorder'                    => PHP_INT_MAX,
-            'visible_title'                => '',
-            'visible_title_no_discipline'  => '',
-        ];
+  /**
+    * Normalisiert/klassifiziert einen akademischen Titel-String (honorificPrefix).
+    * Optionale Eingaben: keine.
+    * Rückgabe: array{
+    *   key: string,                // kanonischer Titel-Key aus Config (z. B. 'Prof. Dr.')
+    *   label: string,              // langer Label-Text aus Config
+    *   sortorder: int,             // Sortierwert aus Config
+    *   visible-title: string,      // sichtbare Titel-Variante inkl. 'apl' vorn, Disziplinen, sowie 'habil'/'h.c.' hinten
+    *   visible_title_no_discipline: string // wie visible-title, aber OHNE Disziplinen und OHNE 'apl' vorn
+    * }
+    */
+   public static function normalizeAcademicTitle(string $honorificPrefix): array {
+       $orig = trim($honorificPrefix);
 
-        $raw = trim((string) $honorificPrefix);
-        if ($raw === '') {
-            return $result;
-        }
-
+       // Frühexit – kein Titel
+       if ($orig === '') {
+           return [
+               'key'                       => '',
+               'label'                     => '',
+               'sortorder'                 => PHP_INT_MAX,
+               'visible-title'             => '',
+               'visible_title_no_discipline' => '',
+           ];
+       }
         // Config-Daten holen
         $cfg          = new Config();
-        $prefixMap    = $cfg->getAcademicPrefixes();      // ['Prof. Dr.' => ['label'=>..., 'sortorder'=>..., 'aliases'=>['prof dr', ...]], ...]
-        $ignoreTokens = $cfg->getAcademicIgnoreTokens();   // z. B. ['univ','univ.']
+        $prefixMap   = $cfg->getAcademicPrefixes();            // ['Prof. Dr.' => ['label'=>..., 'sortorder'=>..., 'aliases'=>[...]], ...]
+        $ignore      = $cfg->getAcademicIgnoreTokens();   // ['univ','univ.'] etc.
 
-        // Aliases → Key-Lookup bauen (alles kleingeschrieben, ohne überflüssige Leerzeichen)
-        $aliasToKey = [];
-        foreach ($prefixMap as $key => $meta) {
-            if (!empty($meta['aliases']) && is_array($meta['aliases'])) {
-                foreach ($meta['aliases'] as $alias) {
-                    $aliasNorm = trim(strtolower(preg_replace('/\s+/', ' ', $alias)));
-                    $aliasToKey[$aliasNorm] = $key;
-                }
-            }
-            // den Key selbst auch als Alias zulassen
-            $selfKeyNorm = trim(strtolower(preg_replace('/\s+/', ' ', preg_replace('/\./', '', $key))));
-            $aliasToKey[$selfKeyNorm] = $key;
-        }
+       $s = ' ' . $orig . ' ';
+       // Vereinheitliche Leerzeichen
+       $s = preg_replace('/\s+/', ' ', $s);
 
-        // Flags für Zusatzkennzeichen
-        $hasApl   = (bool) preg_match('/\bapl\.?\b/i', $raw);
-        $hasHabil = (bool) preg_match('/(?:^|[\s\-])habil\.?(?=$|[\s\-])/i', $raw);
-        $hasHC    = (bool) preg_match('/(?:^|[\s\-])h\.?c\.?(?=$|[\s\-])/i', $raw);
+       // Entferne ignorierte Tokens (auch mit optionalem Bindestrich und optionalem Punkt), z. B. "univ", "univ."
+       if (!empty($ignore)) {
+           $ignorePattern = implode('|', array_map(
+               static fn($t) => preg_quote($t, '/'),
+               $ignore
+           ));
+           // Vorkommen als eigenständiges Wort ODER direkt nach Dr./Prof. mit Bindestrich: "Dr.-univ." etc.
+           $s = preg_replace('/(?<=\b|\.|-)\s*(?:' . $ignorePattern . ')\b\.?/iu', '', $s);
+           $s = preg_replace('/\s+/', ' ', $s);
+       }
 
-        // Disziplinen nach "Dr." einsammeln (z. B. "med.", "phil.", "nat.", ggf. mehrere)
-        // Behalte sie für die Anzeige, entferne sie für die Normalisierung.
-        $disciplines = [];
-        if (preg_match_all('/Dr\.?\s*(?:-)?\s*((?:[a-z]{2,}\.\s*)+)/i', $raw, $discMatches)) {
-            foreach ($discMatches[1] as $grp) {
-                preg_match_all('/[a-z]{2,}\./i', $grp, $tok);
-                foreach ($tok[0] as $abbr) {
-                    $disciplines[] = trim($abbr);
-                }
-            }
-        }
+       // Flags für apl, habil, h.c.
+       $hasApl   = false;  // vorn stehend
+       $hasHabil = false;  // hinten
+       $hasHC    = false;  // hinten
 
-        // Arbeitsstring erstellen: entferne apl/habil/h.c. und Disziplinen (nur für Matching)
-        $work = $raw;
-        $work = preg_replace('/\bapl\.?\b/i', ' ', $work);
-        $work = preg_replace('/(?:^|[\s\-])habil\.?(?=$|[\s\-])/i', ' ', $work);
-        $work = preg_replace('/(?:^|[\s\-])h\.?c\.?(?=$|[\s\-])/i', ' ', $work);
-        // Dr. + Disziplinen → zu reinem "Dr."
-        $work = preg_replace('/Dr\.?\s*(?:-)?\s*(?:[a-z]{2,}\.\s*)+/i', 'Dr.', $work);
+       // apl (am Wortanfang, optional Punkt), auch vorangestellt mit Leerzeichen/Komma
+       if (preg_match('/^\s*apl\.?\s+/iu', $s)) {
+           $hasApl = true;
+           $s = preg_replace('/^\s*apl\.?\s+/iu', ' ', $s);
+       }
 
-        // IGNORE-Tokens entfernen:
-        //   1) Stand-alone:  (^|space|-) token (. optional) ($|space|-)
-        //   2) Spezieller Fall "Dr.-token" / "Prof.-token" → auf "Dr." / "Prof." zurückführen
-        if (!empty($ignoreTokens)) {
-            foreach ($ignoreTokens as $tok) {
-                $tokCore  = rtrim((string) $tok, '.');
-                if ($tokCore === '') { continue; }
-                $tokRegex = preg_quote($tokCore, '/');
+       // Disziplinen nach Dr./Titel: Sequenzen wie "med.", "phil.", "nat." (mehrere möglich)
+       // Wir sammeln sie, aber verwenden sie nur für visible-title (nicht für *_no_discipline).
+       $disciplines = [];
+       $s = preg_replace_callback('/\b([a-z]{2,}\.)\b/iu', function($m) use (&$disciplines) {
+           $disciplines[] = $m[1];
+           return ' ';
+       }, $s);
+       $s = preg_replace('/\s+/', ' ', $s);
 
-                // Speziell gebundene Form: Dr.-univ / Prof.-univ.
-                $work = preg_replace('/\b(Dr\.?|Prof\.?)\s*-\s*' . $tokRegex . '\.?/i', '$1', $work);
+       // „habil“ und „h.c.“ (varianten inkl. Bindestrich nach Dr./Prof.)
+       if (preg_match('/(?:^|\s|\.|-)(habil)\b\.?/iu', $s)) {
+           $hasHabil = true;
+           $s = preg_replace('/(?:^|\s|\.|-)(habil)\b\.?/iu', ' ', $s);
+           $s = preg_replace('/\s+/', ' ', $s);
+       }
+       if (preg_match('/(?:^|\s|\.|-)(h\.c\.)\b/iu', $s)) {
+           $hasHC = true;
+           $s = preg_replace('/(?:^|\s|\.|-)(h\.c\.)\b/iu', ' ', $s);
+           $s = preg_replace('/\s+/', ' ', $s);
+       }
 
-                // Allgemeine Formen mit Leer- oder Bindestrichgrenzen
-                $work = preg_replace('/(?:^|[\s\-])' . $tokRegex . '\.?(?=$|[\s\-])/i', ' ', $work);
-            }
-        }
+       // Mehrfache Dr./Prof. erkennen → „mult.“-Variante
+       $drCount   = preg_match_all('/\bdr\.?\b/iu',  $s);
+       $profCount = preg_match_all('/\bprof\.?\b/iu', $s);
 
-        // Mehrfachräume trimmen
-        $work = trim(preg_replace('/\s+/', ' ', $work));
+       // Kerntitel extrahieren (nur Dr/Prof Kombinationen berücksichtigen)
+       // Normalisieren: "prof dr", "prof. dr.", "dr.", "prof." → in feste Key-Form bringen
+       $core = strtolower(trim($s));
 
-        // Vorkommen zählen (für mult.-Erkennung)
-        $profCount = preg_match_all('/\bProf\.?\b/i', $work);
-        $drCount   = preg_match_all('/\bDr\.?\b/i', $work);
-        $pdCount   = preg_match_all('/\bPD\b/i', $work);
+       // Versuche Alias-Mapping aus Config
+       $finalKey = '';
+       $label    = '';
+       $order    = PHP_INT_MAX;
 
-        // Emeritus?
-        $hasEm = (bool) preg_match('/\bem\.?\b/i', $raw);
+       // 1) Direkter Treffer auf Keys
+       foreach ($prefixMap as $key => $meta) {
+           if (strcasecmp($core, strtolower($key)) === 0) {
+               $finalKey = $key;
+               $label    = $meta['label']     ?? '';
+               $order    = (int)($meta['sortorder'] ?? PHP_INT_MAX);
+               break;
+           }
+       }
 
-        // Normalisierte Alias-Zeichenfolge bilden (für Lookup im Alias-Map)
-        // Reihenfolge: PD vor Dr vor Prof, plus Em, plus Mult
-        $aliasBits = [];
-        if ($pdCount > 0) { $aliasBits[] = 'pd'; }
-        if ($drCount > 0) { $aliasBits[] = 'dr'; }
-        if ($profCount > 0) { $aliasBits[] = 'prof'; }
-        if ($hasEm && $profCount > 0) { $aliasBits[] = 'em'; }
+       // 2) Prüfe Aliasse, wenn kein direkter Key
+       if ($finalKey === '') {
+           foreach ($prefixMap as $key => $meta) {
+               $aliases = array_map('strval', (array)($meta['aliases'] ?? []));
+               foreach ($aliases as $alias) {
+                   if (strcasecmp($core, strtolower($alias)) === 0) {
+                       $finalKey = $key;
+                       $label    = $meta['label']     ?? '';
+                       $order    = (int)($meta['sortorder'] ?? PHP_INT_MAX);
+                       break 2;
+                   }
+               }
+           }
+       }
 
-        // Mult.-Kennzeichen (wenn mehrfach)
-        $hasMult = ($profCount > 1) || ($drCount > 1);
-        if ($hasMult) {
-            $aliasBits[] = 'mult';
-        }
+       // 3) Heuristik falls immer noch nichts gefunden (z. B. freie Reihenfolge)
+       if ($finalKey === '') {
+           // Dr+Prof
+           if ($profCount > 0 && $drCount > 0) {
+               $finalKey = ($profCount > 1 || $drCount > 1) ? 'Prof. Dr. mult.' : 'Prof. Dr.';
+           } elseif ($profCount > 0) {
+               $finalKey = ($profCount > 1) ? 'Prof. mult.' : 'Prof.';
+           } elseif ($drCount > 0) {
+               $finalKey = ($drCount > 1) ? 'Dr. mult.' : 'Dr.';
+           } else {
+               $finalKey = ''; // kein bekannter Titel
+           }
 
-        $aliasNorm = trim(strtolower(implode(' ', $aliasBits)));
-        // Auch Variante ohne "mult" probieren (falls nicht in Config gepflegt)
-        $aliasNormNoMult = trim(strtolower(implode(' ', array_filter($aliasBits, static fn($b) => $b !== 'mult'))));
+           if ($finalKey !== '' && isset($prefixMap[$finalKey])) {
+               $label = $prefixMap[$finalKey]['label'] ?? '';
+               $order = (int)($prefixMap[$finalKey]['sortorder'] ?? PHP_INT_MAX);
+           }
+       }
 
-        // Versuche 1: exakter Alias
-        $key = $aliasToKey[$aliasNorm] ?? '';
-        // Versuche 2: ohne mult
-        if ($key === '' && $aliasNormNoMult !== '') {
-            $key = $aliasToKey[$aliasNormNoMult] ?? '';
-        }
-        // Versuche 3: Fallback-Kaskade
-        if ($key === '') {
-            $fallbacks = [];
-            // sortierte Fallbacks: prof dr em, prof dr, prof em, prof, pd dr, dr, pd
-            if ($profCount > 0 && $drCount > 0 && $hasEm) $fallbacks[] = 'prof dr em';
-            if ($profCount > 0 && $drCount > 0)          $fallbacks[] = 'prof dr';
-            if ($profCount > 0 && $hasEm)                $fallbacks[] = 'prof em';
-            if ($profCount > 0)                          $fallbacks[] = 'prof';
-            if ($pdCount > 0 && $drCount > 0)            $fallbacks[] = 'pd dr';
-            if ($drCount > 0)                            $fallbacks[] = 'dr';
-            if ($pdCount > 0)                            $fallbacks[] = 'pd';
+       // --- Sichtbare Varianten bauen ---
+       // mit Disziplinen & ggf. apl vorn
+       $visible = trim($finalKey);
+       if ($hasHabil) { $visible .= ($visible ? ' ' : '') . 'habil'; }
+       if ($hasHC)    { $visible .= ($visible ? ' ' : '') . 'h.c.';  }
+       if (!empty($disciplines)) {
+           $visible .= ($visible ? ' ' : '') . implode(' ', $disciplines);
+       }
+       if ($hasApl) {
+           $visible = 'apl ' . $visible;
+       }
 
-            foreach ($fallbacks as $fb) {
-                $k = $aliasToKey[$fb] ?? '';
-                if ($k !== '') { $key = $k; break; }
-            }
-        }
+       // ohne Disziplinen und EXPLIZIT OHNE apl vorn (nur Titel + evtl. „habil“/„h.c.“)
+       $visibleNoDisc = trim($finalKey);
+       if ($hasHabil) { $visibleNoDisc .= ($visibleNoDisc ? ' ' : '') . 'habil'; }
+       if ($hasHC)    { $visibleNoDisc .= ($visibleNoDisc ? ' ' : '') . 'h.c.';  }
+       // KEIN apl-Präfix hier!
 
-        // Wenn trotzdem kein Key erkannt wurde → fertig ohne Titel
-        if ($key === '' || !isset($prefixMap[$key])) {
-            // Sichtbare Titel trotzdem aus Rohdaten (bereinigt) zusammensetzen:
-            $visibleBase = trim($work);
-            // APL vorn
-            $prefixFront = $hasApl ? 'apl. ' : '';
-            // hinten: habil/h.c. + Disziplinen
-            $suffixTail = [];
-            if ($hasHabil) $suffixTail[] = 'habil.';
-            if ($hasHC)    $suffixTail[] = 'h.c.';
-            $visibleNoDisc = trim($prefixFront . $visibleBase . (empty($suffixTail) ? '' : ' ' . implode(' ', $suffixTail)));
-            $visibleFull   = $visibleNoDisc;
-            if (!empty($disciplines)) {
-                $visibleFull .= ' ' . implode(' ', $disciplines);
-            }
-            $result['visible_title']               = $visibleFull;
-            $result['visible_title_no_discipline'] = $visibleNoDisc;
-            return $result;
-        }
+       return [
+           'key'                         => $finalKey,
+           'label'                       => $label,
+           'sortorder'                   => $order,
+           'visible-title'               => trim($visible),
+           'visible_title_no_discipline' => trim($visibleNoDisc),
+       ];
+   }
 
-        // Label & Sortorder aus Config
-        $label     = (string) ($prefixMap[$key]['label'] ?? $key);
-        $sortorder = (int)    ($prefixMap[$key]['sortorder'] ?? PHP_INT_MAX);
-
-        // Sichtbare Titel zusammenbauen
-        $visibleBase = $key; // wir verwenden den "kanonischen" Key für die Anzeige-Basis
-        $prefixFront = $hasApl ? 'apl. ' : '';
-
-        $suffixTail = [];
-        if ($hasHabil) $suffixTail[] = 'habil.';
-        if ($hasHC)    $suffixTail[] = 'h.c.';
-
-        $visibleNoDisc = trim($prefixFront . $visibleBase . (empty($suffixTail) ? '' : ' ' . implode(' ', $suffixTail)));
-        $visibleFull   = $visibleNoDisc;
-        if (!empty($disciplines)) {
-            $visibleFull .= ' ' . implode(' ', $disciplines);
-        }
-
-        $result['key']                          = $key;
-        $result['label']                        = $label;
-        $result['sortorder']                    = $sortorder;
-        $result['visible_title']                = $visibleFull;
-        $result['visible_title_no_discipline']  = $visibleNoDisc;
-
-        return $result;
-    }
-    
 }

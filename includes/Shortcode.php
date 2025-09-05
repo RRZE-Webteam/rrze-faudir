@@ -1015,190 +1015,230 @@ class Shortcode {
         return trim($atts_string);
     }
 
-    /**
-     * Sortiert ein Personen-Array anhand einer (mehrteiligen) Sort-Option.
-     * Optionale Eingaben:
-     *   - $sortOption: String, kommasepariert oder mit Leerzeichen getrennt
-     *                  (unterstützt: familyName, givenName, email, honorificPrefix, role,
-     *                   sowie Aliase: head_first→role, prof_first→honorificPrefix,
-     *                   title→honorificPrefix, identifier_order).
-     *   - $identifiers: Reihenfolge-Liste für 'identifier_order' (optional).
-     * Rückgabe: sortiertes Personen-Array (array).
-     */
-    public static function sortPersons(array $persons, string $sortOption = 'familyName', array $identifiers = []): array {
-        // Collator für DE; Fallback, falls intl fehlt.
-        $collator = function_exists('collator_create') ? collator_create('de_DE') : null;
-        $cmpStr = static function (string $a, string $b) use ($collator): int {
-            if ($collator instanceof \Collator) {
-                return collator_compare($collator, $a, $b);
-            }
-            return strcasecmp($a, $b);
-        };
+   /**
+    * Sortiert ein Personen-Array gruppiert/lexikographisch nach mehreren Kriterien.
+    * Optionale Eingaben: $sortOption (komma/leerzeichen-separiert, inkl. Legacy "title_familyName"),
+    * $identifiers (für identifier_order), $order (pro Kriterium asc|desc).
+    * Rückgabe: sortiertes Personen-Array (stabil).
+    */
+   public static function sortPersons(array $persons, string $sortOption = 'familyName', array $identifiers = [], string $order = 'asc'): array {
+       // 1) Nichts zu tun bei 0/1 Element
+       if (count($persons) < 2) {
+           return $persons;
+       }
 
-        // Mapping der Legacy-Optionen → neue Schlüssel
-        $aliasMap = [
-            'head_first'       => 'role',
-            'prof_first'       => 'honorificPrefix',
-            'title'            => 'honorificPrefix',
-            'identifier_order' => 'identifier_order',
-        ];
+       // 2) Kriterien parsen (inkl. Abwärtskompatibilität)
+       $rawTokens = preg_split('/[,\s]+/', trim($sortOption), -1, PREG_SPLIT_NO_EMPTY) ?: ['familyName'];
+       $criteria  = [];
+       $seen      = [];
 
-        // Sortkriterien parsen (Komma ODER Leerzeichen trennen, Reihenfolge beibehalten)
-        $rawTokens = preg_split('/[,\s]+/u', trim($sortOption)) ?: [];
-        $criteria  = [];
-        foreach ($rawTokens as $tok) {
-            if ($tok === '') { continue; }
-            $t = strtolower($tok);
+       foreach ($rawTokens as $tokenRaw) {
+           $t = strtolower($tokenRaw);
 
-            // Legacy → neu
-            if (isset($aliasMap[$t])) {
-                $criteria[] = $aliasMap[$t];
-                continue;
-            }
+           // Legacy-Mehrfachkriterium: "title_familyName" -> honorificprefix, familyname
+           if ($t === 'title_familyname') {
+               foreach (['honorificprefix', 'familyname'] as $tt) {
+                   if (!isset($seen[$tt])) {
+                       $seen[$tt] = true;
+                       $criteria[] = $tt;
+                   }
+               }
+               continue;
+           }
 
-            // Normalisieren von familyname/givenname
-            if ($t === 'familyname') { $criteria[] = 'familyName'; continue; }
-            if ($t === 'givenname')  { $criteria[] = 'givenName';  continue; }
+           // Einfache Aliase (Abwärtskompatibilität)
+           $t = match ($t) {
+               'title', 'prof_first' => 'honorificprefix',
+               'head_first'          => 'role',
+               'surname'             => 'familyname',
+               'firstname'           => 'givenname',
+               'identifier'          => 'identifier_order',
+               default               => $t,
+           };
 
-            // Erlaubte neuen Keys
-            if (in_array($t, ['familyname','givenname','email','honorificprefix','role'], true)) {
-                // Auf exakte Schlüssel heben
-                $criteria[] = match ($t) {
-                    'familyname'      => 'familyName',
-                    'givenname'       => 'givenName',
-                    'email'           => 'email',
-                    'honorificprefix' => 'honorificPrefix',
-                    'role'            => 'role',
-                };
-                continue;
-            }
+           if (!isset($seen[$t])) {
+               $seen[$t] = true;
+               $criteria[] = $t;
+           }
+       }
 
-            // Bereits korrekt geschrieben?
-            if (in_array($tok, ['familyName','givenName','email','honorificPrefix','role','identifier_order'], true)) {
-                $criteria[] = $tok;
-            }
-        }
-        if (empty($criteria)) {
-            $criteria = ['familyName'];
-        }
+       // 3) Falls identifier_order verlangt ist → nur danach sortieren
+       if (in_array('identifier_order', $criteria, true)) {
+           foreach ($persons as $i => &$p) { $p['__idx'] = $i; }
+           unset($p);
 
-        // Helfer: hat Person 'leader' oder 'deputy' in irgendeinem Contact?
-        $hasHeadRole = static function (array $person): bool {
-            if (empty($person['contacts']) || !is_array($person['contacts'])) {
-                return false;
-            }
-            foreach ($person['contacts'] as $c) {
-                $fn = strtolower((string)($c['function'] ?? ''));
-                if ($fn === 'leader' || $fn === 'deputy') {
-                    return true;
-                }
-            }
-            return false;
-        };
+           $index = array_flip($identifiers);
+           usort($persons, function($a, $b) use ($index) {
+               $pa = $index[$a['identifier'] ?? ''] ?? PHP_INT_MAX;
+               $pb = $index[$b['identifier'] ?? ''] ?? PHP_INT_MAX;
+               if ($pa !== $pb) return $pa <=> $pb;
+               return ($a['__idx'] ?? 0) <=> ($b['__idx'] ?? 0);
+           });
+           foreach ($persons as &$p) { unset($p['__idx']); }
+           unset($p);
+           return $persons;
+       }
 
-        // Helfer: Sortwert für honorificPrefix via Konfiguration (FaudirUtils)
-        $titleRank = static function (array $person): int {
-            $hp = (string) ($person['honorificPrefix'] ?? '');
-            $norm = FaudirUtils::normalizeAcademicTitle($hp);
-            // Kleinere sortorder = "höher" einsortiert (also weiter vorne)
-            return (int) ($norm['sortorder'] ?? PHP_INT_MAX);
-        };
+       // 4) Orders parsen (pro Kriterium), fehlende = 'asc'
+       $rawOrders = preg_split('/[,\s]+/', trim($order), -1, PREG_SPLIT_NO_EMPTY) ?: ['asc'];
+       $orders    = [];
+       $oi = 0;
+       foreach ($criteria as $_) {
+           $dir = strtolower($rawOrders[$oi] ?? 'asc');
+           $orders[] = ($dir === 'desc') ? 'desc' : 'asc';
+           if ($oi < count($rawOrders) - 1) { $oi++; }
+       }
 
-        // Für identifier_order: Map bauen → O(1) Nachschlagen
-        $idPos = [];
-        if (!empty($identifiers)) {
-            foreach ($identifiers as $idx => $id) {
-                $idPos[(string)$id] = (int)$idx;
-            }
-        }
+       // 5) Stabilitätsindex vormerken
+       foreach ($persons as $i => &$p) { $p['__idx'] = $i; }
+       unset($p);
 
-        // Kopie sortieren (nicht in-place)
-        $sorted = $persons;
-        usort($sorted, function (array $a, array $b) use ($criteria, $cmpStr, $hasHeadRole, $titleRank, $idPos): int {
-            foreach ($criteria as $key) {
-                switch ($key) {
-                    case 'identifier_order': {
-                        // Unbekannte IDs ans Ende
-                        $aIdx = $idPos[(string)($a['identifier'] ?? '')] ?? PHP_INT_MAX;
-                        $bIdx = $idPos[(string)($b['identifier'] ?? '')] ?? PHP_INT_MAX;
-                        if ($aIdx !== $bIdx) {
-                            return $aIdx <=> $bIdx;
-                        }
-                        break;
-                    }
+       // 6) Gruppierte Rekursion anwenden
+       $sorted = self::sortByCriteriaBuckets($persons, $criteria, $orders, $identifiers);
 
-                    case 'role': {
-                        // leader/deputy zuerst; innerhalb der Gruppen späteren Kriterien folgen
-                        $aHead = $hasHeadRole($a);
-                        $bHead = $hasHeadRole($b);
-                        if ($aHead !== $bHead) {
-                            return $aHead ? -1 : 1;
-                        }
-                        break;
-                    }
+       // 7) Aufräumen
+       foreach ($sorted as &$p) { unset($p['__idx']); }
+       unset($p);
 
-                    case 'honorificPrefix': {
-                        // Nach akademischem Titel (Konfig-sortorder) sortieren; tie-breaker FamilyName
-                        $ra = $titleRank($a);
-                        $rb = $titleRank($b);
-                        if ($ra !== $rb) {
-                            return $ra <=> $rb;
-                        }
-                        // Tie-Breaker innerhalb gleicher Rangstufe
-                        $fnA = (string)($a['familyName'] ?? '');
-                        $fnB = (string)($b['familyName'] ?? '');
-                        $c = $cmpStr($fnA, $fnB);
-                        if ($c !== 0) {
-                            return $c;
-                        }
-                        break;
-                    }
+       return $sorted;
+   }
 
-                    case 'familyName': {
-                        $valA = (string)($a['familyName'] ?? '');
-                        $valB = (string)($b['familyName'] ?? '');
-                        $c = $cmpStr($valA, $valB);
-                        if ($c !== 0) {
-                            return $c;
-                        }
-                        break;
-                    }
 
-                    case 'givenName': {
-                        $valA = (string)($a['givenName'] ?? '');
-                        $valB = (string)($b['givenName'] ?? '');
-                        $c = $cmpStr($valA, $valB);
-                        if ($c !== 0) {
-                            return $c;
-                        }
-                        break;
-                    }
+   /**
+    * Gruppiert nach erstem Kriterium und sortiert rekursiv mit verbleibenden Kriterien.
+    * Optionale Eingaben: keine (intern verwendet).
+    * Rückgabe: array (stabil sortiert).
+    */
+   private static function sortByCriteriaBuckets(array $persons, array $criteria, array $orders, array $identifiers): array {
+       if (empty($criteria) || count($persons) < 2) {
+           // Letzte Feinsortierung nur zur deterministischen Stabilität (FamilyName, GivenName, Fallback: Ursprungsindex)
+           $coll = collator_create('de_DE');
+           usort($persons, function($a, $b) use ($coll) {
+               $c = collator_compare($coll, (string)($a['familyName'] ?? ''), (string)($b['familyName'] ?? ''));
+               if ($c !== 0) return $c;
+               $c = collator_compare($coll, (string)($a['givenName'] ?? ''), (string)($b['givenName'] ?? ''));
+               if ($c !== 0) return $c;
+               return ($a['__idx'] ?? 0) <=> ($b['__idx'] ?? 0);
+           });
+           return $persons;
+       }
 
-                    case 'email': {
-                        // Falls Person-E-Mail fehlt, leeren String nutzen
-                        $valA = (string)($a['email'] ?? '');
-                        $valB = (string)($b['email'] ?? '');
-                        $c = $cmpStr($valA, $valB);
-                        if ($c !== 0) {
-                            return $c;
-                        }
-                        break;
-                    }
-                }
-            }
+       $first    = array_shift($criteria);
+       $dir      = array_shift($orders) ?: 'asc';
 
-            // Letzter Fallback: FamilyName, dann GivenName, dann Identifier
-            $c = $cmpStr((string)($a['familyName'] ?? ''), (string)($b['familyName'] ?? ''));
-            if ($c !== 0) { return $c; }
+       [$buckets, $orderKeys] = self::partitionByCriterion($persons, $first, $dir, $identifiers);
 
-            $c = $cmpStr((string)($a['givenName'] ?? ''), (string)($b['givenName'] ?? ''));
-            if ($c !== 0) { return $c; }
+       $out = [];
+       foreach ($orderKeys as $k) {
+           $chunk = $buckets[$k] ?? [];
+           if (empty($chunk)) { continue; }
+           $chunk = self::sortByCriteriaBuckets($chunk, $criteria, $orders, $identifiers);
+           $out   = array_merge($out, $chunk);
+       }
+       return $out;
+   }
 
-            return $cmpStr((string)($a['identifier'] ?? ''), (string)($b['identifier'] ?? ''));
-        });
+   /**
+    * Bildet Buckets + deren Reihenfolge für EIN Kriterium (inkl. ASC/DESC).
+    * Unterstützte Kriterien: honorificprefix, role, familyname, givenname, email, identifier_order.
+    * Rückgabe: [ array $buckets, array $orderedKeys ]
+    */
+   private static function partitionByCriterion(array $persons, string $criterion, string $direction, array $identifiers): array {
+       $buckets = [];
+       $order   = [];
 
-        return $sorted;
-    }
+       switch ($criterion) {
+           case 'honorificprefix': {
+               // Bucket pro sortorder (Titel) bzw. „no_title“
+               $keySet = [];
+               foreach ($persons as $p) {
+                   $norm = \RRZE\FAUdir\FaudirUtils::normalizeAcademicTitle((string)($p['honorificPrefix'] ?? ''));
+                   if (!empty($norm['key'])) {
+                       // z.B. t:0001 … (fixe Breite für sortierbare Strings)
+                       $k = 't:' . str_pad((string)($norm['sortorder'] ?? 9999), 4, '0', STR_PAD_LEFT);
+                   } else {
+                       $k = 'z:no_title';
+                   }
+                   $buckets[$k][] = $p;
+                   $keySet[$k] = true;
+               }
+               $order = array_keys($keySet);
+               sort($order, SORT_STRING);                // Titel aufsteigend nach sortorder
+               if ($direction === 'desc') { $order = array_reverse($order); }
+               break;
+           }
+
+           case 'role': {
+               // Heads (leader/deputy) vor anderen
+               foreach ($persons as $p) {
+                   $isHead = self::hasHeadRole($p['contacts'] ?? []);
+                   $k = $isHead ? 'a:head' : 'b:other';
+                   $buckets[$k][] = $p;
+               }
+               $order = ['a:head', 'b:other'];
+               if ($direction === 'desc') { $order = array_reverse($order); }
+               break;
+           }
+
+           case 'identifier_order': {
+               // (Normalerweise bereits oben exklusiv behandelt – hier fallback)
+               $index = array_flip($identifiers);
+               foreach ($persons as $p) {
+                   $pos = $index[$p['identifier'] ?? ''] ?? PHP_INT_MAX;
+                   $k = 'i:' . str_pad((string)$pos, 12, '0', STR_PAD_LEFT);
+                   $buckets[$k][] = $p;
+               }
+               $order = array_keys($buckets);
+               sort($order, SORT_STRING);
+               if ($direction === 'desc') { $order = array_reverse($order); }
+               break;
+           }
+
+           case 'familyname':
+           case 'givenname':
+           case 'email': {
+               // Gleichheits-Buckets nach Feldwert (case-insensitive)
+               $field = $criterion; // wie benannt gespeichert
+               foreach ($persons as $p) {
+                   $val = (string)($p[$field] ?? '');
+                   $key = 'v:' . mb_strtolower($val, 'UTF-8');
+                   $buckets[$key][] = $p;
+               }
+               // Reihenfolge der Buckets nach sichtbarem Wert sortieren
+               $coll = collator_create('de_DE');
+               $order = array_keys($buckets);
+               usort($order, function($ka, $kb) use ($buckets, $coll, $field) {
+                   $va = (string)($buckets[$ka][0][$field] ?? '');
+                   $vb = (string)($buckets[$kb][0][$field] ?? '');
+                   return collator_compare($coll, $va, $vb);
+               });
+               if ($direction === 'desc') { $order = array_reverse($order); }
+               break;
+           }
+
+           default: {
+               // Unbekannt → ein Bucket (keine Gruppierung)
+               $buckets['all'] = $persons;
+               $order = ['all'];
+               break;
+           }
+       }
+
+       return [$buckets, $order];
+   }
+
+   /**
+    * Prüft, ob in den Kontakten eine Head-Rolle vorkommt (leader/deputy).
+    * Optionale Eingaben: keine.
+    * Rückgabe: bool
+    */
+   private static function hasHeadRole(array $contacts): bool {
+       foreach ($contacts as $c) {
+           $fn = strtolower((string)($c['function'] ?? ''));
+           if ($fn === 'leader' || $fn === 'deputy' || $fn === 'professor') { return true; }
+       }
+       return false;
+   }
 
 
 }
