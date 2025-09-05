@@ -166,6 +166,9 @@ class BlockRegistration {
             if (!empty($attributes['sort'])) {
                 $shortcode_atts['sort'] = $attributes['sort'];
             }
+             if (!empty($attributes['order'])) {
+                $shortcode_atts['order'] = $attributes['order'];
+            }
 
             if (!empty($attributes['display'])) {
                 $shortcode_atts['display'] = $attributes['display'];

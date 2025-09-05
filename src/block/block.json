@@ -63,6 +63,10 @@
       "type": "string",
       "default": "familyName"
     },
+    "order": {
+      "type": "string",
+      "default": "asc"
+    },
     "format_displayname": {
       "type": "string",
       "default": ""

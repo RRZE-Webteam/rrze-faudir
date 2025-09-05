@@ -11,6 +11,7 @@ export interface EditProps {
     showCategory: boolean;
     showPosts: boolean;
     sort: string;
+    order: string;
     format_displayname: string;
     initialSetup: boolean;
     display: "person" | "org";

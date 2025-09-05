@@ -53,6 +53,7 @@ class Shortcode {
                 'orgnr'                 => '',
                 'orgid'                 => '',
                 'sort'                  => '',
+                'order'                 => 'asc',
                 'function'              => '',
                 'role'                  => '',
                 'button-text'           => '',
@@ -81,6 +82,9 @@ class Shortcode {
         $show = self::resolve_visible_fields_with_format($atts);
         $atts['show'] = implode(', ', $show);
         unset($atts['hide']);
+        
+
+
         
         do_action( 'rrze.log.notice','FAUdir\Shortcode (fetch_fau_data). Modified Args: ', $atts);
         
@@ -228,7 +232,10 @@ class Shortcode {
             // optionale Formataenderung für die Darstellung des Namens
 
     
-                 
+        $sanitizedOrder = FaudirUtils::sanitizeOrderString($atts['order']);
+        // optional: auf Sort-Keys strecken
+        $atts['order']     = FaudirUtils::expandOrderStringForSort($sanitizedOrder, $atts['sort']);
+
          
          
         $api = new API(self::$config);
@@ -308,7 +315,8 @@ class Shortcode {
         
         // Sorting logic based on the specified sorting options
         $sort_option = $atts['sort'] ?? 'title_familyName'; // Default sorting by last name
-        $persons = self::sortPersons($persons, $sort_option,  $identifiers);
+        $order_option = $atts['order'] ?? ''; 
+        $persons = self::sortPersons($persons, $sort_option, $identifiers, $order_option);
          
          
        
@@ -1026,6 +1034,7 @@ class Shortcode {
        if (count($persons) < 2) {
            return $persons;
        }
+        do_action( 'rrze.log.info',"FAUdir\Shortcode (sortPersons): Sortoption $sortOption, order: $order");
 
        // 2) Kriterien parsen (inkl. Abwärtskompatibilität)
        $rawTokens = preg_split('/[,\s]+/', trim($sortOption), -1, PREG_SPLIT_NO_EMPTY) ?: ['familyName'];
@@ -1195,10 +1204,15 @@ class Shortcode {
            }
 
            case 'familyname':
-           case 'givenname':
-           case 'email': {
+           case 'givenname': {
+                $fieldMap = [
+                    'familyname' => 'familyName',
+                    'givenname'  => 'givenName'
+                ];
+                $field = $fieldMap[$criterion] ?? $criterion;
+            
                // Gleichheits-Buckets nach Feldwert (case-insensitive)
-               $field = $criterion; // wie benannt gespeichert
+          //     $field = $criterion; // wie benannt gespeichert
                foreach ($persons as $p) {
                    $val = (string)($p[$field] ?? '');
                    $key = 'v:' . mb_strtolower($val, 'UTF-8');
@@ -1215,7 +1229,38 @@ class Shortcode {
                if ($direction === 'desc') { $order = array_reverse($order); }
                break;
            }
+           case 'email': {
+                // Bucket pro (kanonisierter) E-Mail. Leere E-Mails als eigener Bucket.
+                $keyValue = []; // Map: Bucket-Key -> echter sortierbarer E-Mail-String (lowercased)
+                foreach ($persons as $p) {
+                    // <-- Falls getSortableEmail() woanders liegt, ggf. voll qualifizieren:
+                    // $email = \RRZE\FAUdir\Shortcode::getSortableEmail($p);
+                    $email = (string) self::getSortableEmail($p);
+                    $email = mb_strtolower(trim($email), 'UTF-8');
 
+                    // Leere E-Mails in separaten Bucket, der bei ASC ans Ende soll
+                    $bucketKey = ($email === '') ? 'e:__no_email__' : 'e:' . $email;
+
+                    $buckets[$bucketKey][] = $p;
+                    $keyValue[$bucketKey] = $email; // für die Sortierung der Buckets
+                }
+
+                // Bucket-Reihenfolge nach E-Mail sortieren ('' zuletzt bei ASC)
+                $order = array_keys($buckets);
+                usort($order, function($ka, $kb) use ($keyValue) {
+                    $ea = $keyValue[$ka] ?? '';
+                    $eb = $keyValue[$kb] ?? '';
+                    if ($ea === '' && $eb !== '') return 1;   // '' nach hinten
+                    if ($ea !== '' && $eb === '') return -1;  // echte Mails nach vorne
+                    return strcmp($ea, $eb);                  // lexikografisch
+                });
+
+                if ($direction === 'desc') {
+                    // Bei DESC einfach umdrehen: '' landet dann vorn
+                    $order = array_reverse($order);
+                }
+                break;
+            }
            default: {
                // Unbekannt → ein Bucket (keine Gruppierung)
                $buckets['all'] = $persons;
@@ -1239,6 +1284,57 @@ class Shortcode {
        }
        return false;
    }
+
+   
+   /**
+    * Liefert eine kanonische E-Mail für die Sortierung.
+    * Optionale Eingabe: keine (Person kann E-Mail auch in Contacts/Workplaces haben).
+    * Rückgabe: string (lowercased; '' falls nichts gefunden).
+    */
+   private static function getSortableEmail(array $person): string {
+       $candidates = [];
+
+       // 1) Top-Level
+       if (!empty($person['email']) && is_string($person['email'])) {
+           $candidates[] = $person['email'];
+       }
+       if (!empty($person['mails']) && is_array($person['mails'])) {
+           $candidates = array_merge($candidates, $person['mails']);
+       }
+
+       // 2) Contacts + Workplaces
+       if (!empty($person['contacts']) && is_array($person['contacts'])) {
+           foreach ($person['contacts'] as $c) {
+               if (!empty($c['mails']) && is_array($c['mails'])) {
+                   $candidates = array_merge($candidates, $c['mails']);
+               }
+               if (!empty($c['workplaces']) && is_array($c['workplaces'])) {
+                   foreach ($c['workplaces'] as $wp) {
+                       if (!empty($wp['mails']) && is_array($wp['mails'])) {
+                           $candidates = array_merge($candidates, $wp['mails']);
+                       }
+                   }
+               }
+           }
+       }
+
+       // filtern & normalisieren
+       $candidates = array_values(array_filter(array_map('strval', $candidates), static function($e) {
+           $e = trim($e);
+           // grobe E-Mail-Heuristik – reicht für Sortierung
+           return $e !== '' && strpos($e, '@') !== false;
+       }));
+
+       if (empty($candidates)) {
+           return '';
+       }
+
+       // lowercased lexikografische Sortierung und den "kleinsten" Wert nehmen
+       $norm = array_map(static fn($e) => strtolower(trim($e)), $candidates);
+       sort($norm, SORT_STRING);
+       return $norm[0];
+   }
+
 
 
 }

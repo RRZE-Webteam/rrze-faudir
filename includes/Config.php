@@ -16,7 +16,6 @@ class Config {
         'transient_time_for_org_id' => 1, // Minimum 1 day
         'show_error_message'        => false,
         'business_card_title'       => '',
-        'hard_sanitize'             => false,
         'fallback_link_faudir'      => true,
         'default_display_order'     => [
             'table' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'link'],

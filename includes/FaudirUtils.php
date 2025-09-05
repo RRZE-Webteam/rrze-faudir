@@ -261,5 +261,75 @@ class FaudirUtils {
            'visible_title_no_discipline' => trim($visibleNoDisc),
        ];
    }
+   /**
+    * Sanitizer für das Shortcode-Attribut "order".
+    * - Eingabe: "asc", "desc" oder kommasepariert (z.B. "asc, desc, ASC")
+    * - Filtert ungültige Tokens, normalisiert auf Kleinbuchstaben
+    * - Rückgabe: kommaseparierter String (mind. "asc")
+    * Optionale Eingaben: $orderRaw (string|array|null)
+    * Rückgabe: string
+    */
+   public static function sanitizeOrderString(mixed $orderRaw): string {
+       // In String umwandeln (Array → kommasepariert)
+       $raw = is_array($orderRaw) ? implode(',', array_map('strval', $orderRaw)) : (string) $orderRaw;
+
+       // Tokens herausziehen
+       $parts = preg_split('/\s*,\s*/', sanitize_text_field($raw), -1, PREG_SPLIT_NO_EMPTY);
+
+       // Nur erlaubte Werte behalten
+       $allowed = ['asc' => true, 'desc' => true];
+       $clean   = [];
+
+       foreach ($parts ?: [] as $p) {
+           $p = strtolower(trim($p));
+           if (isset($allowed[$p])) {
+               $clean[] = $p;
+           }
+       }
+
+       // Fallback
+       if (empty($clean)) {
+           $clean[] = 'asc';
+       }
+
+       // Als String zurückgeben (mit Komma+Leerzeichen für Lesbarkeit)
+       return implode(', ', $clean);
+   }
+
+   /**
+    * Streckt einen (bereits sanierten) Order-String auf die Länge der Sort-Keys.
+    * Beispiel:
+    *   sort="title, familyName", order="asc"       → "asc, asc"
+    *   sort="title, familyName, email", "asc,desc" → "asc, desc, desc"
+    * Optionale Eingaben: keine (außer Parametern)
+    * Rückgabe: string (kommasepariert)
+    */
+   public static function expandOrderStringForSort(string $orderStr, string $sortStr): string {
+       // Sort-Keys zerlegen
+       $sortKeys = preg_split('/\s*,\s*/', (string) $sortStr, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+
+       // Order-String sanitizen und zerlegen
+       $sanitizedOrder = self::sanitizeOrderString($orderStr);
+       $orders = preg_split('/\s*,\s*/', $sanitizedOrder, -1, PREG_SPLIT_NO_EMPTY);
+
+       if (empty($sortKeys)) {
+           // Keine Sort-Keys → gebe den (sanierten) Order-String zurück
+           return $sanitizedOrder;
+       }
+
+       // Auf Länge der Sort-Keys strecken
+       $out   = [];
+       $last  = 'asc';
+       foreach ($sortKeys as $i => $_) {
+           $val = $orders[$i] ?? (end($orders) ?: 'asc');
+           $val = ($val === 'desc') ? 'desc' : 'asc';
+           $out[] = $val;
+           $last  = $val;
+       }
+
+       return implode(', ', $out);
+   }
+
+   
 
 }

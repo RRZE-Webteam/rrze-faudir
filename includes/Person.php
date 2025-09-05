@@ -408,7 +408,6 @@ class Person {
        if (empty($this->givenName) && empty($this->familyName)) {
            return '';
        }
-$normalize = true;
        $nameText = '';
        $nameHtml = '';
 
