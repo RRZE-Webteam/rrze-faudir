@@ -14,7 +14,8 @@ if (!defined('ABSPATH')) {
 <?php
     $config = new Config;
     $available_fields = $config->getFieldsByFormat('page');
-    $opt = $config->getOptions();        
+    $opt = $config->getOptions();       
+    $normalize_titles = $opt['default_normalize_honorificPrefix'];
     $lang = FAUdirUtils::getLang();
 
 
@@ -37,7 +38,7 @@ if (!defined('ABSPATH')) {
                 if (!empty($format_displayname)) {
                     $formatstring = $format_displayname;
                 }
-                $displayname = $person->getDisplayName(true, false,$formatstring);
+                $displayname = $person->getDisplayName(true, $normalize_titles,$formatstring);
                 $mailadresses= $person->getEMail();
                 $phonenumbers = $person->getPhone();                        
                 if (!empty($url) && ($url !== '#')) {

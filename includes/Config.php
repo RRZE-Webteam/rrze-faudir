@@ -7,7 +7,7 @@ defined('ABSPATH') || exit;
 
 class Config {
     private array $config = [
-        'version'                   => 4,
+        'version'                   => 5,
         'api_key'                   => '',
         'api-baseurl'               => 'https://api.fau.de/pub/v1/opendir/',
         'faudir-url'                => 'https://faudir.fau.de/',
@@ -17,6 +17,7 @@ class Config {
         'show_error_message'        => false,
         'business_card_title'       => '',
         'fallback_link_faudir'      => true,
+        'default_normalize_honorificPrefix' => false,
         'default_display_order'     => [
             'table' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'link'],
             'list'  => ['displayname', 'familyName', 'givenName', 'jobTitle', 'url', 'email', 'socialmedia', 'room', 'floor', 'address','faumap', 'link']
@@ -87,7 +88,8 @@ class Config {
             'no_cache_logged_in',
             'transient_time_for_org_id',
             'fallback_link_faudir',
-            'jobtitle_format'
+            'jobtitle_format',
+            'default_normalize_honorificPrefix'
         ]
 
     ];

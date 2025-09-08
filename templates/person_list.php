@@ -15,10 +15,11 @@ if (!defined('ABSPATH')) {
     
     $config = new Config;    
     $available_fields = $config->getFieldsByFormat('list');
-    $opt = $config->getOptions();        
-
+    $opt = $config->getOptions(); 
     
+    $normalize_titles = $opt['default_normalize_honorificPrefix'];
     $displayorder = $config->get('default_display_order');
+        
     if (!empty($displayorder)) {
         $reihenfolge = $displayorder['list'];
     } else {
@@ -57,7 +58,7 @@ if (!defined('ABSPATH')) {
                         if (!empty($format_displayname)) {
                             $formatstring = $format_displayname;
                         }
-                        $displayname = $person->getDisplayName(true, true, $formatstring);
+                        $displayname = $person->getDisplayName(true, $normalize_titles, $formatstring);
                         $mailadresses= $person->getEMail();
                         $phonenumbers = $person->getPhone();                        
                         if (!empty($url)) {

@@ -123,7 +123,7 @@ class Settings {
         add_settings_field(
             'rrze_faudir_profilpage_output_fields',
             __('Data fields that are shown on the profil page', 'rrze-faudir'),
-            [$this, 'profilpage_output_fields_render'],
+            [$this, 'render_profilpage_output_fields'],
             'rrze_faudir_settings_profilpage',
             'rrze_faudir_profilpage_section'
         );
@@ -219,7 +219,7 @@ class Settings {
         add_settings_field(
             'rrze_faudir_person_slug',
             __('Person Slug', 'rrze-faudir'),
-            [$this, 'person_slug_render'],
+            [$this, 'render_person_slug'],
             'rrze_faudir_settings_uri',
             'rrze_faudir_misc_section'
         );
@@ -230,6 +230,15 @@ class Settings {
             'rrze_faudir_settings_uri',
             'rrze_faudir_misc_section'
         );
+        
+        add_settings_field(
+            'rrze_faudir_default_normalize_honorificPrefix',
+            __('Normalize Honorific Prefix', 'rrze-faudir'),
+            [$this, 'render_normalize_honorific_prefix'],
+            'rrze_faudir_settings_uri',     
+            'rrze_faudir_misc_section'     
+        );
+        
          /* --- Fehlerbehandlung --- */
         add_settings_section(
             'rrze_faudir_error_section',
@@ -244,6 +253,7 @@ class Settings {
             'rrze_faudir_settings_error',
             'rrze_faudir_error_section'
         );
+        
         
     }
 
@@ -525,7 +535,7 @@ class Settings {
     /* -----------------------------
      * Feld-Renderer (aus deinem Code)
      * ----------------------------- */
-    public function profilpage_output_fields_render(): void {
+    public function render_profilpage_output_fields(): void {
         $config = new Config();
         $opt    = $config->getOptions();
         $available_fields = $config->get('avaible_fields');
@@ -679,7 +689,7 @@ class Settings {
         echo '<p class="description">' . esc_html__('Optional: Path to a local page, which is used as index for all contact entries.', 'rrze-faudir') . '</p></label>';
     }
 
-    public function person_slug_render(): void {
+    public function render_person_slug(): void {
         $options      = get_option('rrze_faudir_options', []);
         $default_slug = 'faudir';
         $slug         = !empty($options['person_slug']) ? sanitize_text_field($options['person_slug']) : $default_slug;
@@ -691,6 +701,22 @@ class Settings {
 
         echo '<input type="text" class="regular-text" id="rrze_faudir_person_slug" name="rrze_faudir_options[person_slug]" value="' . esc_attr($slug) . '" size="10">';
         echo '<p class="description">' . esc_html__('Enter the slug for the person post type.', 'rrze-faudir') . '</p>';
+    }
+
+    public function render_normalize_honorific_prefix(): void {
+        $options = get_option('rrze_faudir_options');
+        if (!isset($options['default_normalize_honorificPrefix'])) {
+            $config = new Config();
+            $options['default_normalize_honorificPrefix'] = (int) $config->get('default_normalize_honorificPrefix');
+        }
+        $checked = !empty($options['default_normalize_honorificPrefix']);
+        
+        
+        echo '<label>';
+        echo '<input type="hidden" name="rrze_faudir_options[default_normalize_honorificPrefix]" value="0">';   
+        echo '<input type="checkbox" name="rrze_faudir_options[default_normalize_honorificPrefix]" value="1" ' . checked(1, $checked, false) . ' />';
+        echo ' <span>' . esc_html__('Use official short form of the academic degree', 'rrze-faudir') . '</span>';
+        echo '</label>';
     }
 
     /* -----------------------------
@@ -1111,7 +1137,11 @@ class Settings {
 
     public function sanitize_options(array $new_options): array {
         // Bisherige Optionen laden und sicherstellen, dass es ein Array ist
-        $existing = get_option('rrze_faudir_options', []);
+        // $existing = get_option('rrze_faudir_options', []);
+        $config = new \RRZE\FAUdir\Config();
+        $existing = $config->getOptions();
+        
+        
         if (!is_array($existing)) {
             $existing = [];
         }
@@ -1143,11 +1173,19 @@ class Settings {
         }
 
         // --- Checkboxen (nur wenn im POST enthalten) ---
-        foreach (['no_cache_logged_in', 'fallback_link_faudir', 'show_error_message'] as $cb) {
+        $checkboxes = [
+            'no_cache_logged_in',
+            'fallback_link_faudir',
+            'show_error_message',
+            'default_normalize_honorificPrefix',
+        ];
+
+        foreach ($checkboxes as $cb) {
             if (array_key_exists($cb, $new_options)) {
                 $merged[$cb] = !empty($new_options[$cb]) ? 1 : 0;
             }
         }
+
 
         // --- Arrays von Feldlisten ---
         if (array_key_exists('default_output_fields', $new_options)) {

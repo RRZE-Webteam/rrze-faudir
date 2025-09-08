@@ -17,7 +17,8 @@ if (!defined('ABSPATH')) {
     $fieldsbyformat = $config->get('avaible_fields_byformat');
     $available_fields = $config->getFieldsByFormat('table');
     $opt = $config->getOptions();        
-     
+    $normalize_titles = $opt['default_normalize_honorificPrefix'];
+
    
     $displayorder = $config->get('default_display_order');
     if (!empty($displayorder)) {
@@ -55,7 +56,7 @@ if (!defined('ABSPATH')) {
                         if (!empty($format_displayname)) {
                             $formatstring = $format_displayname;
                         }
-                        $displayname = $person->getDisplayName(true, false,$formatstring);
+                        $displayname = $person->getDisplayName(true, $normalize_titles,$formatstring);
                         $mailadresses= $person->getEMail();
                         $phonenumbers = $person->getPhone();   
                         if (!empty($url)) {
