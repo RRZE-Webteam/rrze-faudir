@@ -554,27 +554,17 @@ class Person {
             'meta_value' => $this->identifier,
             'posts_per_page' => 1, // Only fetch one post matching the person ID
         ]);
-
-        
+         
         if (!empty($contact_posts)) {        
             $postid = $contact_posts[0]->ID;      
-            
+         
             if (class_exists('\RRZE\Multilang\Helper')) {
                 // check for multilang plugin
-                $locale = get_post_meta($contact_posts[0]->ID, '_rrze_multilang_single_locale', true);
-                $lang = FAUdirUtils::getLang(true);
-                if (isset($locale) && ($locale !== $lang)) {
-            //        do_action( 'rrze.log.info',"FAUdir\Person (getPostId): Translation for Post hat locale: $locale , locale ist = ".$lang." - Suche vorhandene Übersetzungen");
-                    
-                    $translations = \RRZE\Multilang\Helper::getPostTranslations($contact_posts[0]->ID);
-                    if ($translations) {
-                          if (isset($translations[$lang])) {
-                              $newpost = $translations[$lang];
-                              $postid = $newpost->ID;    
-            //                  do_action( 'rrze.log.info',"FAUdir\Person (getPostId): PostId für $lang wird auf $postid gesetzt ");
-                          }
-                    }
-                }
+                $lookforid = \RRZE\Multilang\Helper::getPostIdTranslation($contact_posts[0]->ID);
+             //    do_action( 'rrze.log.info',"FAUdir\Person (getPostId): Looking for post id $postid with Multilang Helper, target: $lookforid");
+                 if ($lookforid) {
+                     $postid = $lookforid;
+                 }
             }
             
             $this->postid = $postid;
