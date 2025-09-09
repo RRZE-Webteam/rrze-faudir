@@ -425,11 +425,12 @@ class API {
         // 2. Transient-Lifetime in Sekunden (Fallback: default)
         $minutes = $this->transient_times[$endpoint] ?? $this->transient_times['default'];
         $lifetime = $minutes * 60;
-
+        
         $transient_key = $this->transient_prefix . $endpoint . '_' . md5($url);
 
         $cached = get_transient($transient_key);
         if ($cached !== false) {
+       //     do_action( 'rrze.log.info', "FAUdir\API (get_cache_data): Return transient data (transient key: $transient_key.");
             return $cached;
         }
 
@@ -452,10 +453,11 @@ class API {
         $base_lifetime = $this->transient_times[$endpoint] ?? $this->transient_times['default'];
         $random_offset = rand(0, $this->transient_jitter_minutes) * 60;
         $lifetime = ($base_lifetime * 60) + $random_offset;
-
+        
         // Erzeuge Transient-Key und speichere die Daten
         $transient_key = $this->transient_prefix . $endpoint . '_' . md5($url);
         set_transient($transient_key, $data, $lifetime);
+       //  do_action( 'rrze.log.info', "FAUdir\API (set_cache_data): Set Transient key {$transient_key}.");
     }
 
 

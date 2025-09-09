@@ -35,7 +35,7 @@ class Settings {
         add_options_page(
             __('RRZE FAUdir Settings', 'rrze-faudir'),
             __('RRZE FAUdir', 'rrze-faudir'),
-            'manage_options',
+            'edit_posts', // Auch Redakteure dürfen rein, da sie in einem der Tabs neue Kontakte anlegen
             'rrze-faudir',
             [$this, 'settings_page']
         );
@@ -52,19 +52,32 @@ class Settings {
         $settings         = wp_parse_args($options, $default_settings);
         update_option('rrze_faudir_options', $settings);
 
-        register_setting('rrze_faudir_settings', 'rrze_faudir_options', [
+        // Gleiche Option unter zwei Gruppen registrieren
+        register_setting('rrze_faudir_general', 'rrze_faudir_options', [
+            'sanitize_callback' => [$this, 'sanitize_options'],
+        ]);
+        register_setting('rrze_faudir_admin', 'rrze_faudir_options', [
             'sanitize_callback' => [$this, 'sanitize_options'],
         ]);
 
-        // Alle Sections & Fields sauber in einer Methode registrieren
+        // Capabilities für Submit auf options.php:
+        add_filter('option_page_capability_rrze_faudir_general', [$this, 'cap_general']);
+        add_filter('option_page_capability_rrze_faudir_admin',   [$this, 'cap_admin']);
+
+        // Sections & Fields wie gehabt
         $this->register_sections_and_fields();
     }
+    
+    // Capability-Callbacks
+    public function cap_general(): string { return 'edit_posts'; }     // Redakteure & höher
+    public function cap_admin(): string   { return 'manage_options'; } // nur Admins
+    
 
     private function register_sections_and_fields(): void {
         /* --- Suche: Personen --- */
         add_settings_section(
             'rrze_faudir_contacts_search_section',
-            __('Search Contacts', 'rrze-faudir'),
+            __('Search and create persons', 'rrze-faudir'),
             [$this, 'contacts_search_section_cb'],
             'rrze_faudir_settings_contacts_search'
         );
@@ -265,7 +278,7 @@ class Settings {
             'general' => [
                 'label' => __('General', 'rrze-faudir'),
                 'type'  => 'form',
-                'group' => 'rrze_faudir_settings',
+                'group' => 'rrze_faudir_general',
                 'pages' => [
                     'rrze_faudir_settings_uri',   
                     'rrze_faudir_settings_error', 
@@ -273,7 +286,7 @@ class Settings {
                 'after' => [$this, 'render_orgs_search_tab'],
             ],
             'contacts' => [
-                'label'  => __('Search Contacts', 'rrze-faudir'),
+                'label'  => __('Search and create persons', 'rrze-faudir'),
                 'type'   => 'custom',
                 'render' => [$this, 'render_contacts_tab'],
             ],
@@ -281,25 +294,25 @@ class Settings {
             'output' => [
                 'label' => __('Default Output Fields (Persons)', 'rrze-faudir'),
                 'type'  => 'form',
-                'group' => 'rrze_faudir_settings',
+                'group' => 'rrze_faudir_general',
                 'pages' => ['rrze_faudir_settings_shortcode'],
             ],
             'profile' => [
                 'label' => __('Profile Page', 'rrze-faudir'),
                 'type'  => 'form',
-                'group' => 'rrze_faudir_settings',
+                'group' => 'rrze_faudir_general',
                 'pages' => ['rrze_faudir_settings_profilpage'],
             ],
             'org_output' => [
                 'label' => __('Default Output Fields (Organizations/Folders)', 'rrze-faudir'),
                 'type'  => 'form',
-                'group' => 'rrze_faudir_settings',
+                'group' => 'rrze_faudir_general',
                 'pages' => ['rrze_faudir_settings_org_shortcode'],
             ],
             'advanced' => [
                 'label' => __('Advanced Settings', 'rrze-faudir'),
                 'type'  => 'form',
-                'group' => 'rrze_faudir_settings',
+                'group' => 'rrze_faudir_admin',
                 'pages' => [
                     'rrze_faudir_settings_api',
                     'rrze_faudir_settings_cache'
@@ -314,6 +327,12 @@ class Settings {
      * ----------------------------- */
     public function settings_page(): void {
         $tabs   = $this->get_tabs();
+        
+        // Wenn kein Admin: Advanced aus der Liste entfernen
+        if ( ! current_user_can('manage_options') ) {
+            unset($tabs['advanced']);
+        }
+        
         $active = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : array_key_first($tabs);
         if (!isset($tabs[$active])) {
             $active = array_key_first($tabs);
@@ -367,9 +386,8 @@ class Settings {
      * ----------------------------- */
     public function render_contacts_tab(): void {
         ?>
-        <h2><?php echo esc_html__('Search Contacts', 'rrze-faudir'); ?></h2>
 
-        <form id="search-person-form" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+<form id="search-person-form" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
             <input type="hidden" name="action" value="rrze_faudir_search_person">
             <?php wp_nonce_field('rrze_faudir_search_person', 'rrze_faudir_search_nonce'); ?>
 
@@ -378,6 +396,10 @@ class Settings {
                     <td colspan="2">
                         <p class="description">
                             <?php echo esc_html__('Please enter at least one search term. If more than one parameter is entered, the search results must contain all values (AND search).', 'rrze-faudir'); ?>
+                            <?php echo esc_html__('Please note that only people whose FAUdir entries are public can be found.', 'rrze-faudir'); ?>
+                            <br>
+                            <?php echo esc_html__('After a successful search, a person can be taken over for further processing.', 'rrze-faudir'); ?>
+                            
                         </p>
                     </td>
                 </tr>
@@ -860,7 +882,7 @@ class Settings {
      * Admin-Post/AJAX Handler
      * ----------------------------- */
     public function delete_default_organization(): void {
-        if (!current_user_can('manage_options')) {
+        if (!current_user_can('edit_posts')) {
             wp_die(__('You do not have sufficient permissions to access this page.', 'rrze-faudir'));
         }
         check_admin_referer('delete_default_organization');
@@ -873,7 +895,7 @@ class Settings {
  //           add_settings_error('rrze_faudir_messages', 'default_org_deleted', __('Default organization has been deleted.', 'rrze-faudir'), 'updated');
         }
 
-        wp_redirect(add_query_arg(['page' => 'rrze-faudir', 'tab' => 'orgs', 'settings-updated' => 'true'], admin_url('options-general.php')));
+        wp_safe_redirect( add_query_arg(['page' => 'rrze-faudir', 'tab' => 'general', 'settings-updated' => 'true'], admin_url('options-general.php')) );
         exit;
     }
 
@@ -1103,7 +1125,7 @@ class Settings {
     }
 
     public function save_default_organization(): void {
-        if (!current_user_can('manage_options')) {
+        if (!current_user_can('edit_posts')) {
             wp_die(__('You do not have sufficient permissions to access this page.', 'rrze-faudir'));
         }
         check_admin_referer('save_default_organization');
@@ -1128,10 +1150,9 @@ class Settings {
             ];
             update_option('rrze_faudir_options', $options);
 
-    //        add_settings_error('rrze_faudir_messages', 'default_org_saved', __('Default organization has been saved.', 'rrze-faudir'), 'updated');
         }
 
-        wp_redirect(add_query_arg(['page' => 'rrze-faudir', 'tab' => 'orgs', 'settings-updated' => 'true'], admin_url('options-general.php')));
+        wp_safe_redirect( add_query_arg(['page' => 'rrze-faudir', 'tab' => 'general', 'settings-updated' => 'true'], admin_url('options-general.php')) );
         exit;
     }
 

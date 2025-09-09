@@ -12,17 +12,13 @@ use RRZE\FAUdir\Contact;
 
 /**
  * Class CPT
- * - OOP-Refactor der bisherigen custom-post-type.php
- * - 'excerpt' in supports
- * - Entfernt alte Metas '_teasertext_de', '_teasertext_en', '_content_en'
- * - Migration: _teasertext_de/_teasertext_en -> excerpt abhängig von Site-Language (mit Fallbacks)
- * - Nur noch 'person_id' für die FAUdir Identifier als persistente Meta; alle API-Felder werden nicht gespeichert,
- *   sondern bei der Anzeige live geladen und read-only dargestellt.
- * - Contacts werden für die Anzeige live geladen (read-only). 'displayed_contacts' bleibt als Meta.
  */
+
 class CPT {
-    /** @var Config */
     protected $config;
+    protected string $settings_page_slug = 'rrze-faudir';
+    protected string $person_search_tab  = 'contacts'; 
+
 
     public function __construct() {
         $this->config = new Config();
@@ -51,6 +47,13 @@ class CPT {
         // REST Antwort anreichern (nur Taxonomy, keine API-Felder)
         $post_type = $this->config->get('person_post_type');
         add_filter("rest_prepare_{$post_type}", [$this, 'add_taxonomy_to_person_rest'], 10, 3);
+        
+        // Umleitung bei "Add New" (post-new.php für diesen CPT)
+        add_action('load-post-new.php', [$this, 'redirect_add_new_to_search']);
+
+        // "Add New" Untermenü ersetzen
+        add_action('admin_menu', [$this, 'replace_add_new_submenu'], 99);
+        
     }
 
     /* === CPT === */
@@ -66,7 +69,7 @@ class CPT {
                 'name'          => __('Persons', 'rrze-faudir'),
                 'singular_name' => __('Person', 'rrze-faudir'),
                 'menu_name'     => __('Persons', 'rrze-faudir'),
-                'add_new_item'  => __('Add New Person', 'rrze-faudir'),
+                'add_new_item'  => __('Add New Person (via FAUdir search)', 'rrze-faudir'),
                 'edit_item'     => __('Edit Person', 'rrze-faudir'),
             ],
             'public'          => true,
@@ -508,5 +511,74 @@ class CPT {
             }
             return $response;
     }
+    /** Erzeugt die Ziel-URL der Personensuche in den Settings */
+    protected function get_person_search_url(): string {
+        $tab = apply_filters('faudir_person_search_tab', $this->person_search_tab);
+        $page = apply_filters('faudir_settings_page_slug', $this->settings_page_slug);
+
+        return add_query_arg(
+            ['page' => $page, 'tab' => $tab],
+            admin_url('options-general.php')
+        );
+    }
+    
+    public function redirect_add_new_to_search(): void {
+        if (!function_exists('get_current_screen')) {
+            return;
+        }
+        $screen    = get_current_screen();
+        $post_type = $this->config->get('person_post_type');
+
+        // Wir sind auf post-new.php (neuer Beitrag) UND es ist unser CPT?
+        // Absicherung sowohl über Screen als auch über GET-Parameter.
+        
+        $is_our_cpt = false;
+        if ($screen && ($screen->post_type ?? '') === $post_type) {
+            $is_our_cpt = true;
+        } elseif (isset($_GET['post_type']) && sanitize_key($_GET['post_type']) === $post_type) {
+            $is_our_cpt = true;
+        }
+        if ($is_our_cpt) {
+            wp_safe_redirect($this->get_person_search_url());
+            exit;
+        }
+    }
+    
+    /*
+     *  „Add New“-Untermenü ersetzen
+     */
+    public function replace_add_new_submenu(): void {
+        $post_type = $this->config->get('person_post_type');
+        $parent_slug = 'edit.php?post_type=' . $post_type;
+
+        // Standard-"Add New" entfernen
+        remove_submenu_page($parent_slug, 'post-new.php?post_type=' . $post_type);
+
+       // Eigenen Eintrag hinzufügen
+        // Capability: 'edit_posts' = für Redakteure sichtbar; 'manage_options' nur für Admins
+        $hook = add_submenu_page(
+            $parent,
+            __('Add New Person', 'rrze-faudir'),
+            __('Add New', 'rrze-faudir'),
+            'edit_posts',
+            'faudir-add-new-person',
+            [$this, 'render_add_new_redirect_stub'] // Fallback-Stub, falls Redirect nicht greift
+        );
+
+        // WICHTIG: Früh umleiten, bevor irgendwas ausgegeben wird
+        if ($hook) {
+            add_action("load-$hook", function () {
+                wp_safe_redirect($this->get_person_search_url());
+                exit;
+            });
+        }
+    }
+    /*
+     *  Fallback, falls aus irgendeinem Grund load-$hook nicht feuert
+     */
+    public function render_add_new_redirect_stub(): void {
+        echo '<div class="wrap"><p>' . esc_html__('Redirecting to FAUdir search.', 'rrze-faudir') . '</p></div>';
+    }
+
 }
 
