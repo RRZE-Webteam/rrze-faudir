@@ -9,6 +9,7 @@ use RRZE\FAUdir\Maintenance;
 use RRZE\FAUdir\BlockRegistration;
 use RRZE\FAUdir\REST;
 use RRZE\FAUdir\Config;
+use RRZE\FAUdir\Filters;
 /**
  * Hauptklasse
  */
@@ -52,7 +53,9 @@ class Main {
         $maintenance = new Maintenance($this->config);
         $maintenance->register_hooks();
         
-    
+        // Aktiviere die Filter für externe Plugins
+        Filters::register();
+        
     }
 
 

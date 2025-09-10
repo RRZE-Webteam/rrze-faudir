@@ -251,7 +251,14 @@ class Settings {
             'rrze_faudir_settings_uri',     
             'rrze_faudir_misc_section'     
         );
-        
+        add_settings_field(
+            'rrze_faudir_redirect_to_canonicals',
+            __('Canonical URLs', 'rrze-faudir'),
+            [$this, 'render_redirect_to_canonicals'],
+            'rrze_faudir_settings_uri',
+            'rrze_faudir_misc_section'
+        );
+
          /* --- Fehlerbehandlung --- */
         add_settings_section(
             'rrze_faudir_error_section',
@@ -741,6 +748,28 @@ class Settings {
         echo '</label>';
     }
 
+    
+    public function render_redirect_to_canonicals(): void {
+        // aktuelle Optionen laden
+        $options = get_option('rrze_faudir_options');
+
+        // Fallback auf Config-Default, wenn (noch) nicht gesetzt
+        if (!isset($options['redirect_to_canonicals'])) {
+            $config = new Config();
+            $options['redirect_to_canonicals'] = (int) $config->get('default_redirect_to_canonicals');
+        }
+
+        $checked = !empty($options['redirect_to_canonicals']);
+
+        echo '<label>';
+        // Hidden-Fallback, damit "Abwählen" sicher 0 postet
+        echo '<input type="hidden" name="rrze_faudir_options[redirect_to_canonicals]" value="0">';
+        echo '<input type="checkbox" name="rrze_faudir_options[redirect_to_canonicals]" value="1" ' . checked(true, $checked, false) . '>';
+        echo ' <span>' . esc_html__('Use Canonical URL as target for personal links, if set in the person data', 'rrze-faudir') . '</span>';
+        echo '</label>';
+    }
+
+    
     /* -----------------------------
      * Default-Ausgabefelder (Persons) – gefiltert (keine org-*)
      * ----------------------------- */
@@ -1199,6 +1228,7 @@ class Settings {
             'fallback_link_faudir',
             'show_error_message',
             'default_normalize_honorificPrefix',
+            'redirect_to_canonicals',
         ];
 
         foreach ($checkboxes as $cb) {

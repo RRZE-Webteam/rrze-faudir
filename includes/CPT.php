@@ -18,6 +18,7 @@ class CPT {
     protected $config;
     protected string $settings_page_slug = 'rrze-faudir';
     protected string $person_search_tab  = 'contacts'; 
+    protected string $canonical_meta_key = 'canonical_url';
 
 
     public function __construct() {
@@ -54,6 +55,15 @@ class CPT {
         // "Add New" Untermenü ersetzen
         add_action('admin_menu', [$this, 'replace_add_new_submenu'], 99);
         
+        
+        // Canonical URL verwalten, wenn vorhanden
+        add_filter('get_canonical_url', [$this, 'maybe_override_canonical'], 10, 2);
+        
+        // Set Canonical URL for misc. SEO Plugins 
+        add_filter('wpseo_canonical',                     [$this, 'maybe_override_canonical_for_seo']);
+        add_filter('rank_math/frontend/canonical',        [$this, 'maybe_override_canonical_for_seo']);
+        add_filter('the_seo_framework_rel_canonical',     [$this, 'maybe_override_canonical_for_seo']);
+
     }
 
     /* === CPT === */
@@ -174,22 +184,45 @@ class CPT {
         $post_type = $this->config->get('person_post_type');
         if ($post->post_type !== $post_type) return;
 
-        // ---- Nur person_id ist editierbar/speicherbar ----
-        $person_id_value = get_post_meta($post->ID, 'person_id', true);
+     
+     
+        // ---- Canonical URL (editierbar) ----
+        $canonical_url = get_post_meta($post->ID, $this->canonical_meta_key, true);
 
-        echo "<label for='person_id'>" . esc_html__('API Person Identifier', 'rrze-faudir') . "</label>";
+        echo "<label for='canonical_url'>" . esc_html__('Canonical URL', 'rrze-faudir') . "</label>";
+        
         echo "<p class='description'>" . esc_html__(
-            'Enter the internal "API Person Identification" of the person who can retrieve the data via FAU IdM here. The API person identifiers can view the persons themselves in the IdM portal in the view of the Personal Data. Contact persons and facility lines can access this value for other persons in their organization through the management of FAUdir. Alternatively, use the search for the settings under settings -> RRZE FAUdir -> API',
+            'The canonical URL is the designated, most representative URL for a page like this person info, when that content is available at multiple URLs, a situation known as duplicate content. By specifying the canonical URL, search engines like Google know which page is added to its index, preventing confusion, consolidation of link equity, and improving search result presentation.',
             'rrze-faudir'
         ) . "</p>";
-        echo "<input type='text' name='person_id' id='person_id' value='" . esc_attr($person_id_value) . "' style='width: 100%;' /><br><br>";
-        echo '<p><strong>' . esc_html__(
-            'The following data comes from the FAU IdM portal. A change of data is only possible by the persons or the appointed contact persons in the IdM portal.',
-            'rrze-faudir'
-        ) . '</strong></p>';
-        echo '<hr>';
-        echo '<h2>' . esc_html__('FAUdir', 'rrze-faudir') . ' ' . esc_html__('Data (Read-only)', 'rrze-faudir') . '</h2>';
+        echo "<input type='url' name='canonical_url' id='canonical_url' placeholder='https://www.fau.de/team/' value='" . esc_attr($canonical_url) . "' style='width: 100%;' /><br><br>";
+        $opt = $this->config->getOptions();        
+        $usecanonical = $opt['redirect_to_canonicals'];
+        
+        if ($usecanonical) {
+            echo '<p class="description"><span class="dashicons dashicons-warning" aria-hidden="true"></span> ';
+            echo esc_html__('Please note that this URL will be used when creating links to the person.', 'rrze-faudir');
+            echo '</p>';
+        }
 
+ 
+        
+        echo '<hr>';
+        echo '<p><strong>' . esc_html__('FAUdir', 'rrze-faudir') . ' ' . esc_html__('Data', 'rrze-faudir') .' ' . esc_html__('(Read-only)', 'rrze-faudir'). '</strong></p>';      
+        echo '<p>' . esc_html__(
+            'The following data comes from the FAUdir portal. A change of data is only possible by the persons or the appointed contact persons in the FAUdir portal.',
+            'rrze-faudir'
+        ) . '</p>';
+        
+           // ----  person_id ist nur sichtbar, aber nicht mehr bearbeitbar (ab 2.4) ----
+        $person_id_value = get_post_meta($post->ID, 'person_id', true);
+
+        echo "<label for='person_id'>" . esc_html__('FAUdir Identifier', 'rrze-faudir') . "</label>";
+        echo "<p class='description'>" . esc_html__('Internal "API Person Identification" as used by FAUdir.','rrze-faudir') . "</p>";
+        echo "<input type='text' id='person_id' value='" . esc_attr($person_id_value) . "' style='width: 100%;' readonly /><br><br>";
+      
+        
+        
         // ---- Live-Daten aus API für Read-only Darstellung ----
         $person_api = null;
         $contacts_api = [];
@@ -302,23 +335,33 @@ class CPT {
 
     /* === Save + Migration === */
     public function save_meta($post_id) {
-        // Nonce
         if (!isset($_POST['person_additional_fields_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['person_additional_fields_nonce'])), 'save_person_additional_fields')) {
             return;
         }
-        // Autosave
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
-        // Permissions
         if (!current_user_can('edit_post', $post_id)) return;
 
-        // Nur FAUdir Identifier in person_id speichern
-        if (isset($_POST['person_id'])) {
-            update_post_meta($post_id, 'person_id', sanitize_text_field(wp_unslash($_POST['person_id'])));
-        }
+
+        // Deaktiviert, da die Änderung nicht mehr möglich sein soll. 
+        // Die FAUdir Id wird beim Anlegen mittels Ajax erstellt und bleibt fest.
+        
+    //    if (isset($_POST['person_id'])) {
+    //        update_post_meta($post_id, 'person_id', sanitize_text_field(wp_unslash($_POST['person_id'])));
+    //    }
 
         // 'displayed_contacts' (UI-Wahl) weiterhin speichern
         if (isset($_POST['displayed_contacts'])) {
             update_post_meta($post_id, 'displayed_contacts', intval($_POST['displayed_contacts']));
+        }
+        // Canonical URL speichern (nur http/https, sonst leer)
+        if (isset($_POST['canonical_url'])) {
+            $raw = wp_unslash((string) $_POST['canonical_url']);
+            $value = $this->sanitize_canonical_url($raw);
+            if ($value !== '') {
+                update_post_meta($post_id, $this->canonical_meta_key, $value);
+            } else {
+                delete_post_meta($post_id, $this->canonical_meta_key);
+            }
         }
 
         /**
@@ -470,11 +513,23 @@ class CPT {
     /* === REST === */
     public function register_person_meta_for_rest() {
         $post_type = $this->config->get('person_post_type');
+        // person_id
         register_post_meta($post_type, 'person_id', [
             'show_in_rest'  => true,
             'single'        => true,
             'type'          => 'string',
             'auth_callback' => function () { return current_user_can('edit_posts'); }
+        ]);
+        // canonical_url
+        register_post_meta($post_type, $this->canonical_meta_key, [
+            'show_in_rest'       => true,
+            'single'             => true,
+            'type'               => 'string',
+            'auth_callback'      => function () { return current_user_can('edit_posts'); },
+            'sanitize_callback'  => function($value) {
+                // Delegiert an unsere Klassenmethode:
+                return $this->sanitize_canonical_url($value);
+            },
         ]);
         // Keine weiteren API-Felder registrieren.
     }
@@ -557,7 +612,7 @@ class CPT {
        // Eigenen Eintrag hinzufügen
         // Capability: 'edit_posts' = für Redakteure sichtbar; 'manage_options' nur für Admins
         $hook = add_submenu_page(
-            $parent,
+            $parent_slug,
             __('Add New Person', 'rrze-faudir'),
             __('Add New', 'rrze-faudir'),
             'edit_posts',
@@ -578,6 +633,67 @@ class CPT {
      */
     public function render_add_new_redirect_stub(): void {
         echo '<div class="wrap"><p>' . esc_html__('Redirecting to FAUdir search.', 'rrze-faudir') . '</p></div>';
+    }
+    
+    /**
+     * Validiert die Canonical URL (nur http/https) und gibt eine bereinigte URL zurück – oder '' bei Ungültigkeit.
+     */
+    private function sanitize_canonical_url($value): string {
+        $value = trim((string) $value);
+        if ($value === '') {
+            return '';
+        }
+
+        // Grundbereinigung
+        $url = esc_url_raw($value);
+
+        // Nur vollständige http/https-URLs akzeptieren
+        if (function_exists('wp_http_validate_url')) {
+            $valid = wp_http_validate_url($url);
+            if (!$valid) {
+                return '';
+            }
+            // Sicherheitshalber Schema prüfen
+            $scheme = parse_url($valid, PHP_URL_SCHEME);
+            return (in_array($scheme, ['http','https'], true)) ? $valid : '';
+        }
+
+        // Fallback ohne wp_http_validate_url:
+        if (filter_var($url, FILTER_VALIDATE_URL)) {
+            $scheme = parse_url($url, PHP_URL_SCHEME);
+            return (in_array($scheme, ['http','https'], true)) ? $url : '';
+        }
+
+        return '';
+    }
+    
+    /* 
+     * Set new canoncial URL for WordPress Header
+     */
+    public function maybe_override_canonical($canonical, $post = null) {
+        $post_type = $this->config->get('person_post_type');
+        if (!is_singular($post_type)) {
+            return $canonical;
+        }
+
+        $post_id = ($post instanceof \WP_Post) ? $post->ID : get_queried_object_id();
+        if (!$post_id) {
+            return $canonical;
+        }
+
+        $custom = get_post_meta($post_id, 'canonical_url', true);
+        if ($custom && filter_var($custom, FILTER_VALIDATE_URL)) {
+            return esc_url_raw($custom);
+        }
+
+        return $canonical;
+    }
+    
+    /*
+     * Overwrite Canonical for misc. SEO plugins
+     */
+    public function maybe_override_canonical_for_seo($canonical) {
+        return $this->maybe_override_canonical($canonical, get_post());
     }
 
 }

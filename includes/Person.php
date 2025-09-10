@@ -27,6 +27,7 @@ class Person {
     private ?int $postid;
     private ?Contact $primary_contact;
     
+    
     public function __construct(array $data = []) {
         $this->identifier = $data['identifier'] ?? '';
         $this->givenName = $data['givenName'] ?? '';
@@ -586,6 +587,26 @@ class Person {
         $cpt_url = '';
         if ($postid !== 0) {
             $cpt_url  =  get_permalink($postid); 
+             
+             
+             // if there is a canonical and the setting wants to use it,
+             // then we set the target to it.
+            $canonical = '';
+            $custom = get_post_meta($postid, 'canonical_url', true);
+            if ($custom && filter_var($custom, FILTER_VALIDATE_URL)) {
+                $canonical = esc_url_raw($custom);
+            }
+            
+            if (empty($this->config)) {
+                $this->setConfig();
+            }
+            $opt = $this->config->getOptions();        
+            $usecanonical = $opt['redirect_to_canonicals'];
+                  
+            if ($usecanonical && (!empty($canonical))) {
+                $cpt_url = $canonical;
+            }
+           
         }
         if ((empty($cpt_url)) && ($fallbackfaudir)) {
             if (empty($this->config)) {

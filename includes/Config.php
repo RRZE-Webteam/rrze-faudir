@@ -7,7 +7,7 @@ defined('ABSPATH') || exit;
 
 class Config {
     private array $config = [
-        'version'                   => 5,
+        'version'                   => 6,  // please count this up any time we change the config array
         'api_key'                   => '',
         'api-baseurl'               => 'https://api.fau.de/pub/v1/opendir/',
         'faudir-url'                => 'https://faudir.fau.de/',
@@ -18,6 +18,7 @@ class Config {
         'business_card_title'       => '',
         'fallback_link_faudir'      => true,
         'default_normalize_honorificPrefix' => false,
+        'default_redirect_to_canonicals'    => false,
         'default_display_order'     => [
             'table' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'link'],
             'list'  => ['displayname', 'familyName', 'givenName', 'jobTitle', 'url', 'email', 'socialmedia', 'room', 'floor', 'address','faumap', 'link']
