@@ -86,7 +86,7 @@ class Shortcode {
 
 
         
-        do_action( 'rrze.log.notice','FAUdir\Shortcode (fetch_fau_data). Modified Args: ', $atts);
+     //   do_action( 'rrze.log.notice','FAUdir\Shortcode (fetch_fau_data). Modified Args: ', $atts);
         
         // Enqueue CSS for output
         wp_enqueue_style('rrze-faudir');
@@ -1034,7 +1034,7 @@ class Shortcode {
        if (count($persons) < 2) {
            return $persons;
        }
-        do_action( 'rrze.log.info',"FAUdir\Shortcode (sortPersons): Sortoption $sortOption, order: $order");
+     //   do_action( 'rrze.log.info',"FAUdir\Shortcode (sortPersons): Sortoption $sortOption, order: $order");
 
        // 2) Kriterien parsen (inkl. Abwärtskompatibilität)
        $rawTokens = preg_split('/[,\s]+/', trim($sortOption), -1, PREG_SPLIT_NO_EMPTY) ?: ['familyName'];
