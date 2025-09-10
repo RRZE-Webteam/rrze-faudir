@@ -18,7 +18,7 @@
     --faudir-figure-listssize: 150px;
     --faudir-figure-tablesize: 150px;
     --faudir-figure-border-radius: var(--border-radius, 0);
-    
+    --faudir-figure-textsignature-background: #ddd;
     --faudir-border-color: var(--color-ContentBorders, #e9edf2);
     
     --faudir-h1-font-size: var(--font-size-xl, 1.25rem);
@@ -26,6 +26,8 @@
     --faudir-h3-font-size: var(--font-size-tiny,  0.938rem);
     --faudir-h4-font-size: var(--font-size-sm,  0.875rem);
     --faudir-h5-font-size: var(--font-size-xs,  0.76rem);
+    
+    --faudir-figcaption-font-size: var(--font-size-tiny,  0.938rem);
     
     --faudir-format-margins: 1rem auto;
     

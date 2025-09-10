@@ -8,10 +8,10 @@ class Filters {
      * Registriert alle öffentlichen Filter.
      */
     public static function register(): void {
-        // Ziel-URL zu einer Person (Identifier rein, URL raus)
+        // Ziel-URL zu einer Person
         add_filter('rrze_faudir_get_target_url', [__CLASS__, 'filter_get_target_url'], 10, 2);
 
-        // Personen-Daten als Array (Identifier rein, Array raus)
+        // Personen-Daten als Array
         add_filter('rrze_faudir_get_person_array', [__CLASS__, 'filter_get_person_array'], 10, 2);
     }
 
@@ -91,8 +91,6 @@ class Filters {
 
     /**
      * Filter: Gibt Personendaten als Array zurück.
-     * Bevorzugt Person-Klasse (getPersonbyAPI + toArray),
-     * ergänzt um 'display_name' und 'target_url'.
      */
     public static function filter_get_person_array(array $data, string $identifier): array {
         $identifier = trim($identifier);
@@ -103,39 +101,51 @@ class Filters {
         try {
             $config = new Config();
 
-            // Instanz-Variante
-            if (class_exists('\RRZE\FAUdir\Person')) {
-                $person = new \RRZE\FAUdir\Person([]);
-                if (method_exists($person, 'setConfig')) {
-                    $person->setConfig($config);
-                }
-                if (method_exists($person, 'getPersonbyAPI')) {
-                    $ok = $person->getPersonbyAPI($identifier);
-                    if ($ok !== false && method_exists($person, 'toArray')) {
-                        $arr = (array) $person->toArray();
-                        return self::enrich_person_array($arr, $person, $config, $identifier);
-                    }
-                }
-
-                // Statische Variante als Fallback
-                if (is_callable(['\RRZE\FAUdir\Person', 'getPersonbyAPI'])) {
-                    $p = \RRZE\FAUdir\Person::getPersonbyAPI($identifier);
-                    if (is_object($p) && method_exists($p, 'toArray')) {
-                        $arr = (array) $p->toArray();
-                        return self::enrich_person_array($arr, $p, $config, $identifier);
-                    }
-                    if (is_array($p)) {
-                        return self::enrich_person_array($p, null, $config, $identifier);
-                    }
-                }
-            }
-
-            // Reine API-Daten
+            // Person via API holen
             $api = new API($config);
             $res = $api->getPersons(1, 0, ['identifier' => $identifier]);
-            if (is_array($res) && !empty($res['data'][0]) && is_array($res['data'][0])) {
-                return self::enrich_person_array($res['data'][0], null, $config, $identifier);
+
+            if (!is_array($res) || empty($res['data'][0]) || !class_exists('\RRZE\FAUdir\Person')) {
+                return $data;
             }
+
+            $personArr = $res['data'][0];
+            $person    = new \RRZE\FAUdir\Person($personArr);
+            $person->setConfig($config);
+            
+
+            // Basisdaten
+            $out = method_exists($person, 'toArray') ? (array) $person->toArray() : (array) $personArr;
+
+            // Zusätzliche Werte
+            $out['display_name'] = method_exists($person, 'getDisplayName')
+                ? (string) $person->getDisplayName(true, false)
+                : '';
+
+            $out['target_url'] = method_exists($person, 'getTargetURL')
+                ? (string) $person->getTargetURL()
+                : '';
+            
+            $out['image_html'] = method_exists($person, 'getImage')
+                ? (string) $person->getImage()
+                : '';
+            
+            $image_id = 0;
+            if (method_exists($person, 'getPostId')) {
+                $post_id = (int) $person->getPostId();
+                if ($post_id > 0) {
+                    $thumb_id = get_post_thumbnail_id($post_id);
+                    if (!empty($thumb_id)) {
+                        $image_id = (int) $thumb_id;
+                    }
+                }
+            }
+            if ($image_id > 0) {
+                $out['image_id'] = $image_id;
+            }
+
+            return $out;
+            
         } catch (\Throwable $e) {
             do_action('rrze.log.error', 'FAUdir Filters (filter_get_person_array) error: ' . $e->getMessage());
         }
@@ -143,33 +153,10 @@ class Filters {
         return [];
     }
 
-    /**
-     * Ergänzt das Personen-Array um display_name und target_url.
-     */
-    private static function enrich_person_array(array $arr, $personOrNull, Config $config, string $identifier): array {
-        // display_name
-        if (is_object($personOrNull) && method_exists($personOrNull, 'getDisplayName')) {
-            $arr['display_name'] = (string) $personOrNull->getDisplayName(true, false);
-        } else {
-            $prefix = isset($arr['honorificPrefix']) ? trim((string) $arr['honorificPrefix']) : '';
-            $gn     = isset($arr['givenName']) ? trim((string) $arr['givenName']) : '';
-            $fn     = isset($arr['familyName']) ? trim((string) $arr['familyName']) : '';
-            $arr['display_name'] = trim(($prefix ? $prefix . ' ' : '') . $gn . ' ' . $fn);
-        }
-
-        // target_url
-        if (is_object($personOrNull) && method_exists($personOrNull, 'getTargetURL')) {
-            $arr['target_url'] = (string) $personOrNull->getTargetURL();
-        } else {
-            $arr['target_url'] = self::get_target_url($identifier);
-        }
-
-        return $arr;
-    }
+    
     
      /**
      * Öffentliche Helper-API für Entwickler: Ziel-URL abrufen.
-     * apply_filters-Kürzel, falls jemand lieber Funktion als Filter nutzt.
      */
     public static function get_target_url(string $identifier): string {
         return (string) apply_filters('rrze_faudir_get_target_url', '', $identifier);

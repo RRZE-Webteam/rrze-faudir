@@ -657,76 +657,117 @@ class Person {
         return '';                       
     }
     
-    /*
-     * Get Image as HTML or Replacement
-     */
-    public function getImage(string $css_classes = '', string $figcaption = '', bool $signature = true): string {
-         if (empty($this->postid)) {
-            $postid = $this->getPostId();
-        } else {
-            $postid = $this->postid;
-        }
-        if ($postid !== 0) {
-            $thumb_id = get_post_thumbnail_id( $postid );
-             // Erhalte den Bildpfad, die Breite und Höhe des Bildes in der Größe "full" (oder einer anderen gewünschten Größe)
-             $img_src = wp_get_attachment_image_src( $thumb_id, 'full' );
-             if ($img_src ) {
-                $src    = $img_src[0];
-                $width  = $img_src[1];
-                $height = $img_src[2];
+   /*
+    * Get Image as HTML or Replacement
+    */
+   public function getImage(string $css_classes = '', bool $figcaption = true, bool $signature = true, bool $displaycopyright = true): string {
+       $postid = !empty($this->postid) ? $this->postid : $this->getPostId();
 
-                // Hole srcset und sizes, sofern verfügbar
-                $srcset = wp_get_attachment_image_srcset( $thumb_id, 'full' );
-                $sizes  = wp_get_attachment_image_sizes( $thumb_id, 'full' );
-                $alt = $this->getSignature();
-                
-                $html  = '<figure itemprop="image" itemscope itemtype="http://schema.org/ImageObject"';
-                if (!empty($css_classes)) {
-                    $html  .= ' class="' . esc_attr( $css_classes ) . '"';
-                }
+       if ($postid !== 0) {
+           $thumb_id = get_post_thumbnail_id($postid);
+           $img_src  = $thumb_id ? wp_get_attachment_image_src($thumb_id, 'full') : false;
+
+           if ($img_src) {
+               $src    = $img_src[0];
+               $width  = $img_src[1];
+               $height = $img_src[2];
+
+               // srcset / sizes
+               $srcset = wp_get_attachment_image_srcset($thumb_id, 'full');
+               $sizes  = wp_get_attachment_image_sizes($thumb_id, 'full');
+
+               // ALT-Text: zuerst echtes Anhangs-ALT, sonst Signatur
+               $alt = (string) get_post_meta($thumb_id, '_wp_attachment_image_alt', true);
+               if ($alt === '') {
+                   $alt = (string) $this->getSignature();
+               }
+
+               // Caption-Quelle: 1) Meta 'caption' (falls es bei dir existiert), 2) Attachment-Caption
+               $captionText = '';
+               if ($figcaption) {
+                   $captionMeta = get_post_meta($thumb_id, 'caption', true);
+                   if (is_string($captionMeta) && $captionMeta !== '') {
+                       $captionText = $captionMeta;
+                   } else {
+                       $captionText = (string) wp_get_attachment_caption($thumb_id);
+                   }
+               }
+
+               // EXIF/Meta → Copyright oder Credit
+               $meta = wp_get_attachment_metadata($thumb_id);
+               $copyrightText = '';
+               if (is_array($meta) && !empty($meta['image_meta'])) {
+                   $imeta = (array) $meta['image_meta'];
+                   if (!empty($imeta['copyright'])) {
+                       $copyrightText = trim((string) $imeta['copyright']);
+                   } elseif (!empty($imeta['credit'])) {
+                       $copyrightText = trim((string) $imeta['credit']);
+                   }
+               }
+
+               // HTML zusammenbauen
+               $html  = '<figure itemprop="image" itemscope itemtype="http://schema.org/ImageObject"';
+               if (!empty($css_classes)) {
+                   $html .= ' class="' . esc_attr($css_classes) . '"';
+               }
                 $html .= '>';
-                $html .= '<img src="' . esc_url( $src ) . '" ';
-                if (!empty($alt)) {
-                    $html .= 'alt="' . esc_attr( $alt ) . '" ';
+
+                $html .= '<img src="' . esc_url($src) . '" ';
+                if ($alt !== '') {
+                    $html .= 'alt="' . esc_attr($alt) . '" ';
                 }
-                $html .= 'width="' . esc_attr( $width ) . '" ';
-                $html .= 'height="' . esc_attr( $height ) . '" ';
-                if ( $srcset ) {
-                    $html .= 'srcset="' . esc_attr( $srcset ) . '" ';
+                $html .= 'width="' . esc_attr($width) . '" ';
+                $html .= 'height="' . esc_attr($height) . '" ';
+                if ($srcset) {
+                    $html .= 'srcset="' . esc_attr($srcset) . '" ';
                 }
-                if ( $sizes ) {
-                    $html .= 'sizes="' . esc_attr( $sizes ) . '" ';
+                if ($sizes) {
+                    $html .= 'sizes="' . esc_attr($sizes) . '" ';
                 }
                 $html .= 'itemprop="contentUrl">';
-                $html .= '<meta itemprop="width" content="' . esc_attr( $width ) . '">';
-                $html .= '<meta itemprop="height" content="' . esc_attr( $height ) . '">';
-                if (!empty($figcaption)) {
-                    $html .= '<figcaption itemprop="caption">'.esc_html($figcaption).'</figcaption>';
-                }
-                $html .= '</figure>';
 
-                return $html;
-            }
-        }
-        
-        if ($signature) {
-            // No image returned, therefor create the text variant and return this
-            $alt = $this->getSignature();
-            $html  = '<figure ';
-            if (!empty($css_classes)) {
-               $css_classes .= ' signature';
-            } else {
-               $css_classes = 'signature';
-            }
-            $html  .= ' class="' . esc_attr( $css_classes ) . '"';
-            $html .= '>';
-            $html .= '<span class="text">'.$alt.'</span>';    
-            $html .= '</figure>';
-            return $html;
-        }
-        return '';
-        
-    }
+                $html .= '<meta itemprop="width" content="' . esc_attr($width) . '">';
+                $html .= '<meta itemprop="height" content="' . esc_attr($height) . '">';
+                // Wenn Copyright NICHT sichtbar ausgegeben werden soll ODER keine figcaption erlaubt ist:
+                if ($copyrightText !== '' && (!$displaycopyright || !$figcaption)) {
+                // Unsichtbare Meta-Info im Figure-Kontext (schema.org)
+                    $html .= '<meta itemprop="copyrightNotice" content="' . esc_attr($copyrightText) . '">';
+                }
+            
+            
+               // Figcaption nur wenn gewünscht + Inhalt vorhanden
+                if ($figcaption && ($captionText !== '' || ($displaycopyright && $copyrightText !== ''))) {
+                    $html .= '<figcaption>';
+                    if ($captionText !== '') {
+                        $html .= '<p itemprop="caption">' . esc_html($captionText) . '</p>';
+                    }
+                    // Sichtbare Copyright-Info nur wenn gewünscht
+                    if ($displaycopyright && $copyrightText !== '') {
+                        $html .= '<p class="image-copyright" itemprop="copyrightNotice">' . esc_html($copyrightText) . '</p>';
+                    }
+                    $html .= '</figcaption>';
+                }
+
+               $html .= '</figure>';
+
+               return $html;
+           }
+       }
+
+       // Fallback: Text-Signatur (ohne Bild)
+       if ($signature) {
+           $alt  = $this->getSignature();
+           $html = '<figure';
+           $css_classes = trim($css_classes . ' signature');
+           $html .= ' class="' . esc_attr($css_classes) . '">';
+           $html .= '<span class="text">' . esc_html($alt) . '</span>';
+           $html .= '</figure>';
+           return $html;
+       }
+
+       return '';
+   }
+
     
     
     public function getPrimaryContact(): ?Contact {       
