@@ -681,6 +681,7 @@ class Person {
                if ($alt === '') {
                    $alt = (string) $this->getSignature();
                }
+   
 
                // Caption-Quelle: 1) Meta 'caption' (falls es bei dir existiert), 2) Attachment-Caption
                $captionText = '';
@@ -692,7 +693,8 @@ class Person {
                        $captionText = (string) wp_get_attachment_caption($thumb_id);
                    }
                }
-
+ 
+ 
                // EXIF/Meta → Copyright oder Credit
                $meta = wp_get_attachment_metadata($thumb_id);
                $copyrightText = '';
@@ -704,7 +706,10 @@ class Person {
                        $copyrightText = trim((string) $imeta['credit']);
                    }
                }
-
+               if ($copyrightText !== '') {
+                    Filters::pushCopyright($copyrightText, $thumb_id);
+               }
+                
                // HTML zusammenbauen
                $html  = '<figure itemprop="image" itemscope itemtype="http://schema.org/ImageObject"';
                if (!empty($css_classes)) {
@@ -733,8 +738,8 @@ class Person {
                 // Unsichtbare Meta-Info im Figure-Kontext (schema.org)
                     $html .= '<meta itemprop="copyrightNotice" content="' . esc_attr($copyrightText) . '">';
                 }
-            
-            
+                
+
                // Figcaption nur wenn gewünscht + Inhalt vorhanden
                 if ($figcaption && ($captionText !== '' || ($displaycopyright && $copyrightText !== ''))) {
                     $html .= '<figcaption>';
@@ -871,5 +876,6 @@ class Person {
         
         return $res;
     }
-  
+    
+    
 }

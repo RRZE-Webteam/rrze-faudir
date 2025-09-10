@@ -81,3 +81,10 @@ To get data from the plugin to use in other plugins or themes, the following fil
     // or, if wrapper is avaible:
     $person = function_exists('faudir_get_person_array') ? faudir_get_person_array($identifier) : [];
     ```
+
+* Abhängig vom Theme werden die Filter 
+        
+    * `fau_elemental_copyright_info` (beim Theme FAU Elemental )
+    * `fau_copyright_info` (bei allen anderen FAU-Themes)
+  
+  gesetzt. Diese enthalten bei der Ausgabe von Personenbildern mit Copyright-Text den jeweiligen text und die Bild-ID
