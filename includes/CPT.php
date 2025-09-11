@@ -32,8 +32,6 @@ class CPT {
         // Meta Box
         add_action('add_meta_boxes', [$this, 'add_meta_boxes']);
 
-        // Classic Editor Shortcode-Button
-        add_action('admin_head', [$this, 'maybe_add_shortcode_button']);
 
         // Save Hook inkl. Migration (nur person_id + displayed_contacts)
         add_action('save_post', [$this, 'save_meta']);
@@ -159,24 +157,7 @@ class CPT {
         );
     }
 
-    public function maybe_add_shortcode_button() {
-        global $post;
-        if (!is_admin() || !isset($post)) return;
-
-        $post_type = $this->config->get('person_post_type');
-
-        include_once(ABSPATH . 'wp-admin/includes/plugin.php');
-        $is_classic_editor_active = function_exists('is_plugin_active') && is_plugin_active('classic-editor/classic-editor.php');
-
-        if ($is_classic_editor_active && $post->post_type === $post_type) {
-            add_action('edit_form_after_title', function () {
-                echo '<div class="generate-shortcode">
-                        <input type="text" id="generated-shortcode" readonly value="[faudir identifier=\"person_id\"]">
-                        <button type="button" id="copy-shortcode" class="button button-primary">' . esc_html__('Copy shortcode to Clipboard', 'rrze-faudir') . '</button>
-                      </div>';
-            });
-        }
-    }
+ 
 
     public function render_person_additional_fields($post) {
         wp_nonce_field('save_person_additional_fields', 'person_additional_fields_nonce');
