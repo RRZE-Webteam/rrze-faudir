@@ -140,7 +140,7 @@ class Organization {
             do_action('rrze.log.error', "FAUdir\Organization (getOrgbyAPI): No Orgdata with identifier {$identifier}");
             return false;
         }
-        do_action('rrze.log.info', "FAUdir\Organization (getOrgbyAPI): Get Orgdata with identifier {$identifier}", $data);
+       // do_action('rrze.log.info', "FAUdir\Organization (getOrgbyAPI): Get Orgdata with identifier {$identifier}", $data);
         $this->fromArray($data);
         return true;
     }

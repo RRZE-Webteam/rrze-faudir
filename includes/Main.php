@@ -10,6 +10,8 @@ use RRZE\FAUdir\BlockRegistration;
 use RRZE\FAUdir\REST;
 use RRZE\FAUdir\Config;
 use RRZE\FAUdir\Filters;
+use RRZE\FAUdir\Embeds;
+
 /**
  * Hauptklasse
  */
@@ -55,6 +57,9 @@ class Main {
         
         // Aktiviere die Filter für externe Plugins
         Filters::register();
+     
+        // Embed Funktionalität aktivieren
+        Embeds::register();
         
     }
 
