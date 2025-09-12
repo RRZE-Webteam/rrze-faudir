@@ -27,6 +27,13 @@ if (!defined('ABSPATH')) {
     
     if (!empty($persons)) { ?>
     <div class="format-compact">
+        
+        <style>
+            .faudir p {
+                font-color: red;
+            }
+            
+        </style>
     <?php foreach ($persons as $persondata) {
         if (isset($persondata['error'])) {  
             if ($opt['show_error_message']) {
