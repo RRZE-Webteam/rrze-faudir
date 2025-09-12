@@ -156,7 +156,7 @@ class API {
         if (!empty($param_uri)) {
             $url .= $param_uri;
             
-            do_action( 'rrze.log.info',"FAUdir\API (getPersons): URL= ".$url);
+        //    do_action( 'rrze.log.info',"FAUdir\API (getPersons): URL= ".$url);
             
             $response = $this->makeRequest($url, "GET");
 
@@ -303,7 +303,7 @@ class API {
         if (!empty($params['orgnr'])) {
             $url .= '&q=' . urlencode('^' . $params['orgnr']);
         }
-        do_action( 'rrze.log.info', "FAUdir\API (getOrgList): Requesting {$url}.");
+     //   do_action( 'rrze.log.info', "FAUdir\API (getOrgList): Requesting {$url}.");
         
         $response = $this->makeRequest($url, "GET");
 

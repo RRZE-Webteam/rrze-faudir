@@ -205,7 +205,6 @@ class Person {
             $this->setConfig();
         }
         
-        // Erstelle eine API-Instanz unter Verwendung der Konfiguration der Instanz
         $api = new API($this->config);
         
         // Iteriere über die Kontakte
@@ -221,7 +220,7 @@ class Person {
 
                     if (($organizationId) && ($loadorg)) {
                         // Wozu brauchen wir die Orgdaten eigentlich?
-                        // Addresse kommt doch aus dem Workplaces...
+                        // Adresse kommt doch aus dem Workplaces...
                         
                         $organizationData = $api->getOrgById($organizationId);
                         
@@ -774,32 +773,104 @@ class Person {
    }
 
     
+   /*
+    * Liefert den Contacteintrag zurück, der auf einen Role-FUnktionsstring matcht
+    */
+    public function getContactByRole(string $role = '', bool $fallback = true, bool $partial = true): ?Contact {
+        if (empty($this->contacts) || $role === '') {
+            return null;
+        }
+
+        // Wenn es nur einen einzigen Contacteintrag gibt → ggf. Fallback auf diesen
+        if (count($this->contacts) === 1 && !empty($this->contacts[0]) && $fallback) {
+            return new Contact($this->contacts[0]);
+        }
+
+       // Komma-separierte Rollen in Reihenfolge der Eingabe auswerten
+        $needles = preg_split('/\s*,\s*/u', (string) $role, -1, PREG_SPLIT_NO_EMPTY);
+        $needles = array_values(array_filter(array_map(fn($r) => $this->normalizeRoleString($r), (array) $needles)));
+
+        if (empty($needles)) {
+            return null;
+        }
+
+        // In der Reihenfolge der Needles suchen (erste Übereinstimmung gewinnt)
+        foreach ($needles as $needle) {
+            foreach ((array) $this->contacts as $contactData) {
+                if (empty($contactData) || !is_array($contactData)) {
+                    continue;
+                }
+                $contact = new Contact($contactData);
+                foreach ($contact->getAllFunctionLabels() as $labelString) {
+                    $hay   = $this->normalizeRoleString($labelString);
+                    $match = $partial ? (strpos($hay, $needle) !== false) : ($hay === $needle);
+                    if ($match) {
+                        return $contact;
+                    }
+                }
+            }
+        }
+
+        // kein Treffer
+        return null;
+    }
+
+    /**
+     * Hilfsfunktion: trim + (mb_)strtolower + Tags entfernen
+     */
+    private function normalizeRoleString(string $s): string {
+        $s = trim(wp_strip_all_tags($s));
+        if ($s === '') {
+            return '';
+        }
+        return function_exists('mb_strtolower') ? mb_strtolower($s, 'UTF-8') : strtolower($s);
+    }
+
     
-    public function getPrimaryContact(): ?Contact {       
+    /*
+     * Lieder den Contact-Eintrag zurück, der entweder im Backend definiert
+     *  wurde als Primärer, den spezifischnen zu eine Role oder als Fallback
+     * den erst möglichen  
+     */
+    public function getPrimaryContact(string $role = ''): ?Contact {       
         // Wenn es keinen Contact-Array gibt, dann gibt es kein Contact
         if (empty($this->contacts)) {
             return false;
         }
-    
-        if (!empty($this->primary_contact)) {
-            // we already calculated this, therfor we return this            
-            return $this->primary_contact;
-        }
-         
-          
+
         // Wenn es nur einen einzigen Contacteintrag gibt, dann returne diesen        
         if ((count($this->contacts)==1) && (!empty($this->contacts[0]))) {         
             $this->primary_contact = new Contact($this->contacts[0]);
             return $this->primary_contact;
         }
         
-        // get primary contact
+        if (!empty($role)) {
+            // wenn wir eine spezifische Role/Funktionslabel übergeben bekommen haben, dann
+            // schauen wir zunächst ob diese matcht nehmen daher nicht den
+            // vordefinierten Contact.
+            $rolecontact = $this->getContactByRole($role); 
+            if ($rolecontact) {
+                $this->primary_contact = $rolecontact;
+                return $this->primary_contact;
+            }
+           
+        }
+        if (!empty($this->primary_contact)) {
+            // we already calculated this, therfor we return this            
+            return $this->primary_contact;
+        }
+         
+        
+        // look for existing local cpt
         if (empty($this->postid)) {
             $postid = $this->getPostId();
         } else {
             $postid = $this->postid;
         }
 
+       
+        
+        
         if (($postid === 0) && (!empty($this->contacts[0]))) {
             // No custum post entry, therfor i take the first entry
             $this->primary_contact = new Contact($this->contacts[0]);

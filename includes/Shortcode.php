@@ -237,7 +237,6 @@ class Shortcode {
         $atts['order']     = FaudirUtils::expandOrderStringForSort($sanitizedOrder, $atts['sort']);
 
          
-         
         $api = new API(self::$config);
         
         
@@ -250,14 +249,19 @@ class Shortcode {
         if (!empty($role)) {
             // wir wollen Personen einer Rolle anzeigen.
             // Hierzu brauchen wir aber immer entweder 
-            // eine OrgNr,
-            // oder eine FAUdir OrgId
+            // eine OrgNr oder eine FAUdir OrgId
+            // oder eine Identifier/PostId
             
             // Wenn beide leer sind, schaue nach ob wir eine Default Orgnr haben
             // und befülle daamit die orgnr
             
-            
-            if ((empty($orgnr)) && (empty($faudir_orgid))) {
+            if (!empty($identifiers) || !empty($post_id)) {
+                // wir haben bereits Peoosnen und wollen diese aber nach den Rollen filtern,
+                // benötigen also daher keine vorherige SUche nach Orgs.
+                // do_action( 'rrze.log.info',"FAUdir\Shortcode (createPersonOutput): id  oder post id {$post_id} gesetzt: ", $identifiers);
+                // Tu hier (erstmal nichts)
+                
+            } elseif ((empty($orgnr)) && (empty($faudir_orgid))) {
                 // beide leer, also müssen wir mindestens nach dem Fallbach von 
                 // fauorgnr schauen. und wenn dieser vorhanden ist, dann 
                 // den Wert damit befüllen.
@@ -267,7 +271,6 @@ class Shortcode {
 
                 if (!empty($default_org['orgnr'])) {
                     $orgnr = $default_org['orgnr'];                    
-                     do_action( 'rrze.log.notice',"FAUdir\Shortcode (createPersonOutput): Setze Default Orgnr. $orgnr");
                 } else {
                     // Wir haben keinen Fallback, also können wir auch keine
                     // Rolle darstellen
@@ -291,7 +294,6 @@ class Shortcode {
             }
             // Apply organization and group filters if set
             $persons = self::filterPersonsByOrganization($persons, $orgnr);
-
         } elseif (!empty($category)) {
             // get persons by category. 
             $person_identifiers = self::getPersonIdentifiersByCategory($category);
@@ -324,8 +326,6 @@ class Shortcode {
         $template_dir = RRZE_PLUGIN_PATH . 'templates/';
         $template = new Template($template_dir);
 
-        // Check if button text is set and not empty before passing it to the template
-        $button_text = isset($atts['button-text']) && $atts['button-text'] !== '' ? $atts['button-text'] : '';
 
         // check and sanitize for format for displayname
         $format_displayname = wp_strip_all_tags($format_displayname);
@@ -335,7 +335,7 @@ class Shortcode {
             'format_displayname' => $format_displayname,
             'persons'       => $persons,
             'url'           => $url,
-            'button_text'   => $button_text,
+            'role'          => $role
         ]);
     }
     

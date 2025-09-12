@@ -64,7 +64,7 @@ if (!defined('ABSPATH')) {
                         } else {
                             $final_url = $person->getTargetURL($opt['fallback_link_faudir']);
                         }
-                        $contact = $person->getPrimaryContact();
+                        $contact = $person->getPrimaryContact($role);
                         $workplaces = [];
                         if (!empty($contact)) { 
                             $workplaces = $contact->getWorkplaces();                    

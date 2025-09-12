@@ -93,63 +93,51 @@ class BlockRegistration {
                     __('You selected display="org", but neither a FAUorganization ID (orgid) nor a FAU Organization Number (orgnr) was provided.', 'rrze-faudir')
                 );
             }
-
+            
+            $shortcode_atts = [];
+            
+            if ($attributes['selectedFormat']) {
+                $shortcode_atts['format'] =  $attributes['selectedFormat'];
+            } else {
+                $shortcode_atts['format'] =  'compact';
+            }
             // First check if we have function and orgnr
             if (!empty($attributes['role'])) {
-                $shortcode_atts = [
-                    'format' => $attributes['selectedFormat'] ?? 'compact',
-                    'role' => $attributes['role'],
-                    'orgnr' => !empty($attributes['orgnr']) ? $attributes['orgnr'] : '',
-                    'orgid' => !empty($attributes['orgid']) ? $attributes['orgid'] : '',
-                ];
-            } // Then check for category
-            else if (!empty($attributes['selectedCategory'])) {
-                $shortcode_atts = [
-                    'format' => $attributes['selectedFormat'] ?? 'compact',
-                    'category' => $attributes['selectedCategory']
-                ];
-
-                // Only add identifiers if they're specifically selected for this category
-                if (!empty($attributes['selectedPersonIds'])) {
-                    $shortcode_atts['identifier'] = implode(',', $attributes['selectedPersonIds']);
-                }
-             } // Ccheck for selectedPosts (CPT Ids der lokalen Personen) without category
-            else if (!empty($attributes['selectedPosts'])) {
-                $shortcode_atts = [
-                    'format' => $attributes['selectedFormat'] ?? 'compact',
-                    'id' => is_array($attributes['selectedPosts']) ?
-                        implode(',', $attributes['selectedPosts']) :
-                        $attributes['selectedPosts']
-                ];
-                
-            } // Finally check for selectedPersonIds without category          
-            else if (!empty($attributes['selectedPersonIds'])) {
-                $shortcode_atts = [
-                    'format' => $attributes['selectedFormat'] ?? 'compact',
-                    'identifier' => is_array($attributes['selectedPersonIds']) ?
-                        implode(',', $attributes['selectedPersonIds']) :
-                        $attributes['selectedPersonIds']
-                ];
-            } // Org without other parameters from above given
-            else if (!empty($attributes['orgid'])) {
-                $shortcode_atts = [
-                    'format' => $attributes['selectedFormat'] ?? 'compact',
-                    'orgid' => $attributes['orgid']
-                ];
-            } else if (!empty($attributes['orgnr'])) {
-                $shortcode_atts = [
-                    'format' => $attributes['selectedFormat'] ?? 'compact',
-                    'orgnr' => $attributes['orgnr']
-                ];
-            } else if (!empty($attributes['identifier'])) {
-                $shortcode_atts = [
-                    'format' => $attributes['selectedFormat'] ?? 'compact',
-                    'identifier' => $attributes['identifier']
-                ];
-            } else {
-                throw new Exception(__('Neither person IDs, function+orgnr, nor category were provided', 'rrze-faudir'));
+                $shortcode_atts['role'] =  $attributes['role'];
+            }    
+            if (!empty($attributes['orgid'])) {
+               $shortcode_atts['orgid'] =  $attributes['orgid'];
             }
+            if (!empty($attributes['orgnr'])) {
+               $shortcode_atts['orgnr'] =  $attributes['orgnr'];
+            }
+            
 
+
+            if (!empty($attributes['selectedPosts'])) {
+                if (is_array($attributes['selectedPosts'])) {
+                    $shortcode_atts['id'] = implode(',', $attributes['selectedPosts']);
+                } else {
+                    $shortcode_atts['id'] = $attributes['selectedPosts'];
+                }
+            }  
+
+
+            
+            if (!empty($attributes['identifier'])) {
+                $shortcode_atts['identifier'] = $attributes['identifier'];  
+            } elseif (!empty($attributes['selectedPersonIds'])) {
+                if (is_array($attributes['selectedPersonIds'])) {
+                    $shortcode_atts['identifier'] = implode(',', $attributes['selectedPersonIds']);
+                } else {
+                    $shortcode_atts['identifier'] = $attributes['selectedPersonIds'];
+                }
+            }
+            
+            if (!empty($attributes['selectedCategory'])) {
+                $shortcode_atts['category'] =   $attributes['selectedCategory'];
+            } 
+            
             // Add optional attributes
             if (!empty($attributes['selectedFields'])) {
                 $shortcode_atts['show'] = implode(',', $attributes['selectedFields']);
@@ -162,11 +150,10 @@ class BlockRegistration {
             if (!empty($attributes['format_displayname'])) {
                 $shortcode_atts['format_displayname'] = $attributes['format_displayname'];
             }
-
             if (!empty($attributes['sort'])) {
                 $shortcode_atts['sort'] = $attributes['sort'];
             }
-             if (!empty($attributes['order'])) {
+            if (!empty($attributes['order'])) {
                 $shortcode_atts['order'] = $attributes['order'];
             }
 
@@ -183,7 +170,7 @@ class BlockRegistration {
             }
             $shortcode .= ' blockeditor="true"';
             $shortcode .= ']';
-            do_action( 'rrze.log.notice', "FAUdir\BlockRegistration (render_faudir_block): Creating Shortcode: ".$shortcode, $attributes);   
+          //  do_action( 'rrze.log.notice', "FAUdir\BlockRegistration (render_faudir_block): Creating Shortcode: ".$shortcode, $attributes);   
 
             
             // Execute shortcode

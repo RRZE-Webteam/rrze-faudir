@@ -567,17 +567,42 @@ class Contact {
         }
     }
     
+     /*
+     * Get all FunctionLabels
+     */
+    public function getAllFunctionLabels(): array {
+        $out = [];
+
+        if (!empty($this->function) && is_string($this->function)) {
+            $out[] = $this->function;
+        }
+        if (!empty($this->functionLabel['de'])) {
+            $out[] = (string) $this->functionLabel['de'];
+        }
+        if (!empty($this->functionLabel['en'])) {
+            $out[] = (string) $this->functionLabel['en'];
+        }
+
+        // trimmen, Leere raus, Duplikate entfernen
+        $out = array_map(static fn($s) => trim((string) $s), $out);
+        $out = array_values(array_unique(array_filter($out, static fn($s) => $s !== '')));
+
+        return $out;
+    }
+
+    
+    
     
     /*
      * Build JobTitle by Functionlabel and Orgname
      */
-    public function getJobTitle(string $lang = "de", ?string $template =  null): ?string {
-        $label = $this->getFunctionLabel($lang);
-        
+    public function getJobTitle(string $lang = "de", ?string $template = ''): ?string {   
+        $label = $this->getFunctionLabel($lang);   
         if (empty($label)) {
             return '';
         }
 
+ 
         if (empty($this->organization) || !isset($this->organization['longDescription'])) {
             return $label;
         }
@@ -608,6 +633,7 @@ class Contact {
         ]; 
         $jobtitle = str_replace(array_keys($replacements), array_values($replacements), $template);     
         $this->jobTitle = $jobtitle;
+        
         return $jobtitle;      
     }
 

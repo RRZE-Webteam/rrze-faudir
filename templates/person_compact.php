@@ -26,15 +26,8 @@ if (!defined('ABSPATH')) {
     //echo "<hr>";
     
     if (!empty($persons)) { ?>
-    <div class="format-compact">
-        
-        <style>
-            .faudir p {
-                font-color: red;
-            }
-            
-        </style>
-    <?php foreach ($persons as $persondata) {
+         <div class="format-compact">
+        <?php foreach ($persons as $persondata) {
         if (isset($persondata['error'])) {  
             if ($opt['show_error_message']) {
             ?>
@@ -58,7 +51,9 @@ if (!defined('ABSPATH')) {
                 } else {
                     $final_url = $person->getTargetURL($opt['fallback_link_faudir']);
                 }
-                $contact = $person->getPrimaryContact();
+ 
+                
+                $contact = $person->getPrimaryContact($role);
                 $workplaces = [];
                 
                
@@ -97,7 +92,9 @@ if (!defined('ABSPATH')) {
                             if (!empty($opt['jobtitle_format'])) {
                                 $jobtitleformat = $opt['jobtitle_format'];
                             }                           
-                            echo '<p class="jobtitle">'. $contact->getJobTitle($lang,$jobtitleformat).'</p>';
+                            if ($contact) {
+                                echo '<p class="jobtitle">'. $contact->getJobTitle($lang,$jobtitleformat).'</p>';
+                            }
                         }
                         ?>
                 
