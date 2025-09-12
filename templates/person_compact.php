@@ -114,9 +114,28 @@ if (!defined('ABSPATH')) {
                                 
                                 
                                 $wval = '';
+                                $seen      = [];
                                 foreach ($workplaces as $w => $wdata) {
-                                    $wval .= $contact->getAddressByWorkplace($wdata, false, $lang, $roomfloor);
+                                    $html = (string) $contact->getAddressByWorkplace($wdata, false, $lang, $roomfloor);
+                                    if ($html === '') {
+                                        continue;
+                                    }
+                                    // Kanonische Signatur: HTML → Text, Entities decodieren, trimmen, Whitespaces normalisieren, lowercasing
+                                   $key = strtolower(
+                                       preg_replace('/\s+/u', ' ',
+                                           trim( wp_strip_all_tags( html_entity_decode( $html ) ) )
+                                       )
+                                   );
+
+                                   if ($key === '') {
+                                       continue;
+                                   }
+                                   if (!isset($seen[$key])) {
+                                       $seen[$key] = true;
+                                       $wval .= $html; 
+                                   }
                                 }
+
                                 $address .= $wval;      
                             }
                            
