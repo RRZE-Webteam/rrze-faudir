@@ -10,8 +10,8 @@ Plugin zur Darstellung des Personen- und Einrichtungsverzeichnis der FAU in Webs
 
 ## Contributors
 
-* Mondula, https://mondula.com/
-* RRZE-Webteam, http://www.rrze.fau.de
+* RRZE-Webteam, http://www.rrze.fau.de (Version 2.2 and later)
+* Mondula, https://mondula.com/ (Version 1 - Version 2.1)
 
 ## Copyright
 

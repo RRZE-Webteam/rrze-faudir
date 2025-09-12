@@ -149,6 +149,14 @@
 	  font-size: var(--font-size-sm, 0.875rem);
     }
     
+    
+    .faudir-error {
+	color: var(--faudir-color-error-text);
+	background: var(--faudir-color-error-background);
+	border: 1px solid var(--faudir-color-error-border);
+	margin: 1rem;
+	padding: 1rem;
+    }
 }
 
 
