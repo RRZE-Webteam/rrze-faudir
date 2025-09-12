@@ -100,28 +100,28 @@ class Settings {
         add_settings_field(
             'rrze_faudir_default_output_fields',
             __('Output fields for formats', 'rrze-faudir'),
-            [$this, 'default_output_fields_render'],
+            [$this, 'render_default_output_fields'],
             'rrze_faudir_settings_shortcode',
             'rrze_faudir_shortcode_section'
         );
         add_settings_field(
             'rrze_faudir_business_card_title',
             __('Kompakt Card Button Title', 'rrze-faudir'),
-            [$this, 'business_card_title_render'],
+            [$this, 'render_business_card_title'],
             'rrze_faudir_settings_shortcode',
             'rrze_faudir_shortcode_section'
         );
         add_settings_field(
             'rrze_faudir_fallback_link_faudir',
             __('Fallback FAUdir link', 'rrze-faudir'),
-            [$this, 'fallback_link_faudir_render'],
+            [$this, 'render_fallback_link_faudir'],
             'rrze_faudir_settings_shortcode',
             'rrze_faudir_shortcode_section'
         );
         add_settings_field(
             'rrze_faudir_jobtitle_format',
             __('Format', 'rrze-faudir') . ' ' . __('Jobtitle', 'rrze-faudir'),
-            [$this, 'jobtitle_format_render'],
+            [$this, 'render_jobtitle_format'],
             'rrze_faudir_settings_shortcode',
             'rrze_faudir_shortcode_section'
         );
@@ -151,7 +151,7 @@ class Settings {
         add_settings_field(
             'rrze_faudir_default_org_output_fields',
             __('Output fields for formats', 'rrze-faudir'),
-            [$this, 'default_output_org_fields_render'],
+            [$this, 'render_default_output_org_fields'],
             'rrze_faudir_settings_org_shortcode',
             'rrze_faudir_shortcode_org_section'
         );
@@ -168,7 +168,7 @@ class Settings {
         add_settings_field(
             'rrze_faudir_api_key',
             __('API Key', 'rrze-faudir'),
-            [$this, 'api_key_render'],
+            [$this, 'render_api_key'],
             'rrze_faudir_settings_api',
             'rrze_faudir_api_section'
         );
@@ -177,7 +177,7 @@ class Settings {
             add_settings_field(
                 'rrze_faudir_import_fau_person',
                 __('Import', 'rrze-faudir'),
-                [$this, 'import_fau_person_render'],
+                [$this, 'render_import_fau_person'],
                 'rrze_faudir_settings_api',
                 'rrze_faudir_api_section'
             );
@@ -194,28 +194,28 @@ class Settings {
         add_settings_field(
             'rrze_faudir_no_cache_logged_in',
             __('No Caching for Logged-in Editors', 'rrze-faudir'),
-            [$this, 'no_cache_logged_in_render'],
+            [$this, 'render_no_cache_logged_in'],
             'rrze_faudir_settings_cache',
             'rrze_faudir_cache_section'
         );
         add_settings_field(
             'rrze_faudir_cache_timeout',
             __('Cache Timeout (in minutes)', 'rrze-faudir'),
-            [$this, 'cache_timeout_render'],
+            [$this, 'render_cache_timeout'],
             'rrze_faudir_settings_cache',
             'rrze_faudir_cache_section'
         );
         add_settings_field(
             'rrze_faudir_transient_time_for_org_id',
             __('Transient Time for Organization ID (in days)', 'rrze-faudir'),
-            [$this, 'transient_time_for_org_id_render'],
+            [$this, 'render_transient_time_for_org_id'],
             'rrze_faudir_settings_cache',
             'rrze_faudir_cache_section'
         );
         add_settings_field(
             'rrze_faudir_clear_cache',
             __('Clear All Cache', 'rrze-faudir'),
-            [$this, 'clear_cache_render'],
+            [$this, 'render_clear_cache'],
             'rrze_faudir_settings_cache',
             'rrze_faudir_cache_section'
         );
@@ -239,7 +239,7 @@ class Settings {
         add_settings_field(
             'rrze_faudir_redirect_archivpage_uri',
             __('Index page', 'rrze-faudir'),
-            [$this, 'misc_section_message_render'],
+            [$this, 'render_misc_section_message'],
             'rrze_faudir_settings_uri',
             'rrze_faudir_misc_section'
         );
@@ -269,7 +269,7 @@ class Settings {
         add_settings_field(
             'rrze_faudir_error_message',
             __('Show Error Message for Invalid Contacts', 'rrze-faudir'),
-            [$this, 'error_message_render'],
+            [$this, 'render_error_message'],
             'rrze_faudir_settings_error',
             'rrze_faudir_error_section'
         );
@@ -590,7 +590,7 @@ class Settings {
         echo '<p class="description">' . esc_html__('Select the fields to display in the profil page of a single person.', 'rrze-faudir') . '</p>';
     }
 
-    public function api_key_render(): void {
+    public function render_api_key(): void {
         if (FaudirUtils::isUsingNetworkKey()) {
             echo '<p>' . esc_html__('The API key is being used from the network installation.', 'rrze-faudir') . '</p>';
             return;
@@ -601,12 +601,12 @@ class Settings {
         echo '<p class="description">' . esc_html__('Enter your API key here.', 'rrze-faudir') . '</p></label>';
     }
 
-    public function import_fau_person_render(): void {
+    public function render_import_fau_person(): void {
         echo '<button type="button" class="button button-secondary" id="import-fau-person-button">' . esc_html__('Import contact entries from FAU Person', 'rrze-faudir') . '</button>';
         echo '<p class="description">' . esc_html__('Click the button to restart the import of contact entries from FAU Person. Notice, that this will only import contact entries, which refer to a public viewable person in FAUdir.', 'rrze-faudir') . '</p>';
     }
 
-    public function no_cache_logged_in_render(): void {
+    public function render_no_cache_logged_in(): void {
         $options = get_option('rrze_faudir_options');
         $checked = !empty($options['no_cache_logged_in']);
 
@@ -619,33 +619,33 @@ class Settings {
     }
 
 
-    public function cache_timeout_render(): void {
+    public function render_cache_timeout(): void {
         $options = get_option('rrze_faudir_options');
         $value   = isset($options['cache_timeout']) ? max((int)$options['cache_timeout'], 15) : 15;
         echo '<label><input type="number" name="rrze_faudir_options[cache_timeout]" value="' . esc_attr($value) . '" min="15">';
         echo '<p class="description">' . esc_html__('Set the cache timeout in minutes (minimum 15 minutes).', 'rrze-faudir') . '</p></label>';
     }
 
-    public function transient_time_for_org_id_render(): void {
+    public function render_transient_time_for_org_id(): void {
         $options = get_option('rrze_faudir_options');
         $value   = isset($options['transient_time_for_org_id']) ? max((int)$options['transient_time_for_org_id'], 1) : 1;
         echo '<input type="number" name="rrze_faudir_options[transient_time_for_org_id]" value="' . esc_attr($value) . '" min="1">';
         echo '<p class="description">' . esc_html__('Set the transient time in days for intermediate stored organization identifiers (minimum 1 day).', 'rrze-faudir') . '</p>';
     }
 
-    public function cache_org_timeout_render(): void {
+    public function render_cache_org_timeout(): void {
         $options = get_option('rrze_faudir_options');
         $value   = isset($options['cache_org_timeout']) ? (int)$options['cache_org_timeout'] : 1;
         echo '<label><input type="number" name="rrze_faudir_options[cache_org_timeout]" value="' . esc_attr($value) . '" min="1">';
         echo '<p class="description">' . esc_html__('Set the cache timeout in days for organization identifiers.', 'rrze-faudir') . '</p></label>';
     }
 
-    public function clear_cache_render(): void {
+    public function render_clear_cache(): void {
         echo '<button type="button" class="button button-secondary" id="clear-cache-button">' . esc_html__('Clear Cache Now', 'rrze-faudir') . '</button>';
         echo '<p class="description">' . esc_html__('Click the button to clear all cached data.', 'rrze-faudir') . '</p>';
     }
 
-    public function error_message_render(): void {
+    public function render_error_message(): void {
         $options = get_option('rrze_faudir_options');
         if (!isset($options['show_error_message'])) {
             $config = new Config();
@@ -661,7 +661,7 @@ class Settings {
     }
 
 
-    public function business_card_title_render(): void {
+    public function render_business_card_title(): void {
         $options = get_option('rrze_faudir_options');
         $config  = new Config();
         $default_title = $config->get('business_card_title');
@@ -679,7 +679,7 @@ class Settings {
         echo '<p class="description">' . esc_html__('Link title for optional links pointing to the users detail page.', 'rrze-faudir') . '</p>';
     }
 
-   public function fallback_link_faudir_render(): void {
+   public function render_fallback_link_faudir(): void {
         $options = get_option('rrze_faudir_options');
         $checked = !empty($options['fallback_link_faudir']);
 
@@ -691,7 +691,7 @@ class Settings {
     }
 
 
-    public function jobtitle_format_render(): void {
+    public function render_jobtitle_format(): void {
         $options = get_option('rrze_faudir_options');
         $config  = new Config();
         $default_format = $config->get('jobtitle_format');
@@ -710,7 +710,7 @@ class Settings {
             esc_html__('You might use the variables #orgname# (Name of the defined organisation), #functionlabel# (function label by FAUdir) and #alternatename# (short or alternative name for the organization) here and other strings, but no HTML or special chars.', 'rrze-faudir') . '</p>';
     }
 
-    public function misc_section_message_render(): void {
+    public function render_misc_section_message(): void {
         $options = get_option('rrze_faudir_options');
         $value   = isset($options['redirect_archivpage_uri']) ? esc_url($options['redirect_archivpage_uri']) : '';
 
@@ -773,7 +773,7 @@ class Settings {
     /* -----------------------------
      * Default-Ausgabefelder (Persons) – gefiltert (keine org-*)
      * ----------------------------- */
-    public function default_output_fields_render(): void {
+    public function render_default_output_fields(): void {
         $options        = get_option('rrze_faudir_options');
         $default_fields = $options['default_output_fields'] ?? [];
 
@@ -826,7 +826,7 @@ class Settings {
     /* -----------------------------
      * Default-Ausgabefelder (Orgs/Folders) – nur Felder, die in org-* Formaten vorkommen
      * ----------------------------- */
-    public function default_output_org_fields_render(): void {
+    public function render_default_output_org_fields(): void {
         $options = get_option('rrze_faudir_options');
 
         $config           = new Config();
