@@ -177,7 +177,7 @@ class BlockRegistration {
             $output = do_shortcode($shortcode);
 
             if (empty(trim($output))) {
-                throw new Exception('Shortcode returned empty content');
+                throw new Exception(esc_html__('No output avaible', 'rrze-faudir'));
             }
 
             return $output;

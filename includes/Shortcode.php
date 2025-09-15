@@ -308,7 +308,7 @@ class Shortcode {
            $persons = self::getPersonsByFAUdirOrgId($faudir_orgid, $role);     
 
         } else {
-            do_action( 'rrze.log.error',"FAUdir\Shortcode (createPersonOutput): Invalid combination of attributes.", $atts);
+      //      do_action( 'rrze.log.error',"FAUdir\Shortcode (createPersonOutput): Invalid combination of attributes.", $atts);
             return '';
         }
 

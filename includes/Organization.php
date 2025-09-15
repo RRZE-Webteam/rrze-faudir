@@ -171,7 +171,7 @@ class Organization {
         } elseif (isset($data['data'][0]['identifier'])) {
             $identifier = $data['data'][0]['identifier'];     
         }
-        do_action('rrze.log.info', "FAUdir\Organization (getOrgbyOrgnr): Get org Identifier with number {$orgnr}: $identifier");
+   //     do_action('rrze.log.info', "FAUdir\Organization (getOrgbyOrgnr): Get org Identifier with number {$orgnr}: $identifier");
         
         return $identifier;
     }

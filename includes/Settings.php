@@ -253,7 +253,7 @@ class Settings {
         );
         add_settings_field(
             'rrze_faudir_redirect_to_canonicals',
-            __('Canonical URLs', 'rrze-faudir'),
+            __('Canonical URL', 'rrze-faudir'),
             [$this, 'render_redirect_to_canonicals'],
             'rrze_faudir_settings_uri',
             'rrze_faudir_misc_section'

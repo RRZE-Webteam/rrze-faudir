@@ -77,7 +77,7 @@ class CPT {
                 'name'          => __('Persons', 'rrze-faudir'),
                 'singular_name' => __('Person', 'rrze-faudir'),
                 'menu_name'     => __('Persons', 'rrze-faudir'),
-                'add_new_item'  => __('Add New Person (via FAUdir search)', 'rrze-faudir'),
+                'add_new_item'  => __('Add New Person', 'rrze-faudir').' ('.__('via FAUdir search', 'rrze-faudir').')',
                 'edit_item'     => __('Edit Person', 'rrze-faudir'),
             ],
             'public'          => true,
@@ -189,7 +189,7 @@ class CPT {
  
         
         echo '<hr>';
-        echo '<p><strong>' . esc_html__('FAUdir', 'rrze-faudir') . ' ' . esc_html__('Data', 'rrze-faudir') .' ' . esc_html__('(Read-only)', 'rrze-faudir'). '</strong></p>';      
+        echo '<p><strong>' . esc_html__('FAUdir', 'rrze-faudir') . ' ' . esc_html__('Data', 'rrze-faudir') .' (' . esc_html__('Read-only', 'rrze-faudir'). ')</strong></p>';      
         echo '<p>' . esc_html__(
             'The following data comes from the FAUdir portal. A change of data is only possible by the persons or the appointed contact persons in the FAUdir portal.',
             'rrze-faudir'
@@ -259,7 +259,7 @@ class CPT {
 
         // Kontakte-Bereich (read-only, live)
         echo '<div class="contacts-wrapper">';
-        echo '<h3>' . esc_html__('FAUdir', 'rrze-faudir') . ' ' . esc_html__('Contacts (Read-only)', 'rrze-faudir') . '</h3>';
+        echo '<h3>' . esc_html__('FAUdir', 'rrze-faudir') . ' ' . esc_html__('Contacts', 'rrze-faudir') .' ('. esc_html__('Read-only', 'rrze-faudir') . ')</h3>';
 
         // Auswahl der anzuzeigenden Kontaktkarte (persistente UI-Einstellung)
         $displayed_contacts = intval(get_post_meta($post->ID, 'displayed_contacts', true));
