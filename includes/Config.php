@@ -97,7 +97,7 @@ class Config {
     
   
     public function __construct() {
-        $this->config['business_card_title'] = __('Call up business card', 'rrze-faudir');         
+        $this->config['business_card_title'] = __('To the profile', 'rrze-faudir');         
         $this->config['avaible_fields'] = [
             'image'             => __('Image', 'rrze-faudir'),
             'displayname'       => __('Display Name', 'rrze-faudir'),
@@ -148,8 +148,8 @@ class Config {
             'socialmedia'       => __('Social Media and Websites', 'rrze-faudir'),
 
             'address'           => __('Address', 'rrze-faudir'),
-            'postalAddress'           => __('Postal Address', 'rrze-faudir'),
-            'internalAddress'           => __('Internal Address', 'rrze-faudir'),
+            'postalAddress'     => __('Postal Address', 'rrze-faudir'),
+            'internalAddress'   => __('Internal Address', 'rrze-faudir'),
           
             'officehours'       => __('Office Hours', 'rrze-faudir'),
             'consultationhours' => __('Consultation Hours', 'rrze-faudir'),
