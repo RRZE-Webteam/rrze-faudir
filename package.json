@@ -12,7 +12,9 @@
         "format": "wp-scripts format --cwd faudir-block",
         "lint:css": "wp-scripts lint-style --cwd faudir-block",
         "lint:js": "wp-scripts lint-js --cwd faudir-block",
-        "packages-update": "wp-scripts packages-update"
+        "packages-update": "wp-scripts packages-update",
+        "create-pot-for-blockeditor-l10n": "wp i18n make-pot . languages/rrze-faudir.pot --slug=rrze-faudir --domain=rrze-faudir --exclude=node_modules,src",
+        "create-json-for-l10n": "wp i18n make-json languages/ --no-purge"
     },
     "compatibility": {
         "wprequires": "6.7",
