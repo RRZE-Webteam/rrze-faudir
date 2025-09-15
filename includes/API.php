@@ -393,7 +393,7 @@ class API {
 
         $body = wp_remote_retrieve_body($response);
         if (empty($body)) {
-            do_action( 'rrze.log.error', "FAUdir\API (makeRequest): Empty content body from api.");
+    //        do_action( 'rrze.log.error', "FAUdir\API (makeRequest): Empty content body from api.");
             return null;
         }
 

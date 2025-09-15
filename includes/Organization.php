@@ -194,7 +194,7 @@ class Organization {
             do_action('rrze.log.error', "FAUdir\Organization (getOrgbyOrgnr): No Orgdata with number {$orgnr}");
             return false;
         }
-        do_action('rrze.log.info', "FAUdir\Organization (getOrgbyOrgnr): Get Orgdata with number {$orgnr}", $data);
+  //      do_action('rrze.log.info', "FAUdir\Organization (getOrgbyOrgnr): Get Orgdata with number {$orgnr}", $data);
         if (isset($data['data'][0])) {
             $this->fromArray($data['data'][0]);
         } elseif (!isset($data['data']) && !empty($data)) {

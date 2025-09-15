@@ -50,8 +50,8 @@ if (!defined('ABSPATH')) {
                         <?php }
                     } else { 
                      if (!empty($persondata)) { 
-                        $output = '';          
-                        $output .= '<li class="text-list" itemscope itemtype="https://schema.org/Person">';
+                        $output_escaped = '';          
+                        $output_escaped .= '<li class="text-list" itemscope itemtype="https://schema.org/Person">';
          
                         $person = new Person($persondata);
                         $formatstring = '';
@@ -77,7 +77,7 @@ if (!defined('ABSPATH')) {
                         
              //            $output .= Debug::get_html_var_dump($show_fields_lower);
                          
-                        $output .= '<ul class="datalist">';
+                        $output_escaped .= '<ul class="datalist">';
                         foreach ($ordered_keys as $key) {
 
                             $key_lower = strtolower($key);
@@ -325,16 +325,16 @@ if (!defined('ABSPATH')) {
                                 }
                                 
                                 if (!empty($value)) {
-                                    $output .= '<li class="faudir-'.esc_attr($key_lower).'">';
-                                    $output .= $value;
-                                    $output .= '</li>';
+                                    $output_escaped .= '<li class="faudir-'.esc_attr($key_lower).'">';
+                                    $output_escaped .= $value;
+                                    $output_escaped .= '</li>';
                                 }
 
                             }
                         }
-                        $output .= '</ul>'; 
-                        $output .= '</li>'; 
-                        echo $output;
+                        $output_escaped .= '</ul>'; 
+                        $output_escaped .= '</li>'; 
+                        echo $output_escaped;
                     } else { ?>
                         <div class="faudir-error"><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?> </div>
                 <?php }

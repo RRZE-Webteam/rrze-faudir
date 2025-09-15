@@ -962,6 +962,7 @@ class Shortcode {
                 } else {
                     $persons[] = [
                         'error' => true,
+                        /* translators: 1: FAUdir Identifier Key  */
                         'message' => sprintf(__('Person with ID %s does not exist', 'rrze-faudir'), $identifier)
                     ];
                 }

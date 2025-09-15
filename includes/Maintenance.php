@@ -250,7 +250,7 @@ class Maintenance {
                 return;
             }
         }
-        $res = '';
+        $res_escaped = '';
 
         $imported_count      = get_transient('rrze_faudir_imported_count');
         $imported_list       = get_transient('rrze_faudir_imported_list');
@@ -259,11 +259,13 @@ class Maintenance {
 
         if ($imported_count !== false || $not_imported_count !== false) {
             $import_message = sprintf(
+                  /* translators: 1: Number of person, 2: Number of persons. */
                 _n('%d person was successfully imported from the old plugin.', '%d persons were successfully imported from the old plugin.', $imported_count, 'rrze-faudir'),
                 $imported_count
             );
 
             $not_imported_message = sprintf(
+                /* translators: 1: Number of person, 2: Number of persons. */     
                 _n('%d person was not able to be imported from the old plugin.', '%d persons were not able to be imported from the old plugin.', $not_imported_count, 'rrze-faudir'),
                 $not_imported_count
             );
@@ -279,7 +281,7 @@ class Maintenance {
                     $success .= '</ul>';
                 }
                 $success .= '</div>';
-                $res .= $success;
+                $res_escaped .= $success;
             }
 
             if ($not_imported_count > 0) {
@@ -293,7 +295,7 @@ class Maintenance {
                     $errorout .= '</ul>';
                 }
                 $errorout .= '</div>';
-                $res .= $errorout;
+                $res_escaped .= $errorout;
             }
 
             delete_transient('rrze_faudir_imported_count');
@@ -303,9 +305,9 @@ class Maintenance {
         }
 
         if (!isset($onpluginpage) || ($onpluginpage)) {
-            echo $res;
+            echo $res_escaped;
         }
-        return $res;
+        return $res_escaped;
     }
 
     public function rrze_faudir_flush_rewrite_on_slug_change($old_value, $value, $option) {
@@ -450,12 +452,12 @@ class Maintenance {
             $new_hero_content = '<div class="hero-container hero-content">'
                 . '<p class="presentationtitle">' . __('No contact entry could be found.', 'rrze-faudir') . '</p>'
                 . '</div>';
-            $updated_content = preg_replace(
+            $updated_content_escaped = preg_replace(
                 '/<p class="presentationtitle">.*?<\/p>/s',
                 $new_hero_content,
                 $content
             );
-            echo $updated_content;
+            echo $updated_content_escaped;
         }, 0);
 
         include get_404_template();

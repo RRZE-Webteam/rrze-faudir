@@ -583,7 +583,7 @@ class Settings {
             echo '<th><label for="' . esc_attr('rrze_faudir_profilpage_output_fields' . $field) . '">';
             echo '<input type="checkbox" id="' . esc_attr('rrze_faudir_profilpage_output_fields' . $field) . '" name="rrze_faudir_options[output_fields_endpoint][]" value="' . esc_attr($field) . '" ' . checked($checked, true, false) . '>';
             echo esc_html($label) . '</label></th>';
-            echo '<td>' . (in_array($field, $opt['default_output_fields_endpoint'] ?? [], true) ? __('Visible', 'rrze-faudir') : __('Invisible', 'rrze-faudir')) . '</td>';
+            echo '<td>' . (in_array($field, $opt['default_output_fields_endpoint'] ?? [], true) ? esc_html__('Visible', 'rrze-faudir') : esc_html__('Invisible', 'rrze-faudir')) . '</td>';
             echo '</tr>';
         }
         echo '</table>';
@@ -596,8 +596,8 @@ class Settings {
             return;
         }
         $options = get_option('rrze_faudir_options');
-        $apiKey  = isset($options['api_key']) ? esc_attr($options['api_key']) : '';
-        echo '<label><input type="text" name="rrze_faudir_options[api_key]" value="' . $apiKey . '" size="50">';
+        $apiKey  = isset($options['api_key']) ? $options['api_key'] : '';
+        echo '<label><input type="text" name="rrze_faudir_options[api_key]" value="' . esc_attr($apiKey) . '" size="50">';
         echo '<p class="description">' . esc_html__('Enter your API key here.', 'rrze-faudir') . '</p></label>';
     }
 
@@ -808,15 +808,15 @@ class Settings {
             echo esc_html($label) . '</label></th>';
             echo '<td><code>' . esc_html($field) . '</code></td><td>';
 
-            $canuse = '';
+            $canuse_escaped = '';
             foreach ($fieldlist as $fl => $entries) {
                 if (strpos((string) $fl, 'org-') === 0) { continue; }
                 if (!empty($entries) && in_array($field, (array) $entries, true)) {
-                    if (!empty($canuse)) { $canuse .= ', '; }
-                    $canuse .= ($formatnames[$fl] ?? $fl) . ' (<code>' . esc_html($fl) . '</code>)';
+                    if (!empty($canuse_escaped)) { $canuse_escaped .= ', '; }
+                    $canuse_escaped .= ($formatnames[$fl] ?? $fl) . ' (<code>' . esc_html($fl) . '</code>)';
                 }
             }
-            if (!empty($canuse)) { echo $canuse; }
+            if (!empty($canuse_escaped)) { echo $canuse_escaped; }
             echo '</td></tr>';
         }
         echo '</table>';
@@ -887,16 +887,16 @@ class Settings {
 
             echo '<td><code>' . esc_html($field) . '</code></td>';
 
-            $canuse_parts = [];
+            $canuse_parts_escaped = [];
             foreach ($org_format_keys as $fmt) {
                 $entries = (array) $fieldlist[$fmt];
                 if (in_array($field, $entries, true)) {
                     $alias     = ($fmt === 'org-compact') ? 'compact' : $fmt;
                     $labelName = $formatnames[$fmt] ?? $alias;
-                    $canuse_parts[] = esc_html($labelName) . ' (<code>org-' . esc_html($alias) . '</code>)';
+                    $canuse_parts_escaped[] = esc_html($labelName) . ' (<code>org-' . esc_html($alias) . '</code>)';
                 }
             }
-            echo '<td>' . implode(', ', $canuse_parts) . '</td>';
+            echo '<td>' . implode(', ', $canuse_parts_escaped) . '</td>';
 
             echo '</tr>';
         }
@@ -912,7 +912,7 @@ class Settings {
      * ----------------------------- */
     public function delete_default_organization(): void {
         if (!current_user_can('edit_posts')) {
-            wp_die(__('You do not have sufficient permissions to access this page.', 'rrze-faudir'));
+            wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'rrze-faudir'));
         }
         check_admin_referer('delete_default_organization');
 
@@ -1016,6 +1016,7 @@ class Settings {
         }
 
         if (is_string($response)) {
+            /* translators: 1: String for Error Message. */
             wp_send_json_error(sprintf(__('Error: %s', 'rrze-faudir'), $response));
             return;
         }
@@ -1089,6 +1090,7 @@ class Settings {
         $response = $api->getOrgList(20, 0, $params);
 
         if (is_string($response)) {
+            /* translators: 1: Error message */
             wp_send_json_error(sprintf(__('Error: %s', 'rrze-faudir'), $response));
             return;
         }
@@ -1155,7 +1157,7 @@ class Settings {
 
     public function save_default_organization(): void {
         if (!current_user_can('edit_posts')) {
-            wp_die(__('You do not have sufficient permissions to access this page.', 'rrze-faudir'));
+            wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'rrze-faudir'));
         }
         check_admin_referer('save_default_organization');
 

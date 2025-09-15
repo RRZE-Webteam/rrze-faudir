@@ -44,19 +44,19 @@ if (!defined('ABSPATH')) {
                 $aria_id = $org->getRandomId("section-title-");
                 ?>
 
-                <section class="format-org-compact-container" aria-labelledby="<?php echo $aria_id;?>" itemscope itemtype="https://schema.org/Organization">
+                <section class="format-org-compact-container" aria-labelledby="<?php echo esc_attr($aria_id);?>" itemscope itemtype="https://schema.org/Organization">
                     <header class="profile-header">
                        <?php 
 
-                        $value = '';
+                        $value_escaped = '';
                         if (!empty($final_url)) {
-                            $value .= '<a itemprop="url" href="'.esc_url($final_url).'">';     
+                            $value_escaped .= '<a itemprop="url" href="'.esc_url($final_url).'">';     
                         }
-                        $value .= $displayname;
+                        $value_escaped .= $displayname;
                         if (!empty($final_url)) {
-                            $value .= '</a>';
+                            $value_escaped .= '</a>';
                         }                        
-                        echo '<h1 id="'.$aria_id.'">'.$value.'</h1>';
+                        echo '<h1 id="'.esc_attr($aria_id).'">'.$value_escaped.'</h1>';
                         ?>
                      </header>
                      <div class="profile-details">   
@@ -71,34 +71,32 @@ if (!defined('ABSPATH')) {
                         }
                         
                         
-                        $address = '';
-
+                        $address_escaped = '';
                         if (in_array('address', $show_fields) ) {                               
-                                $address = $org->getAddressOutput(false, $lang, false);
-                                                  
+                                $address_escaped = $org->getAddressOutput(false, $lang, false);                                                  
                         }
-                        if (!empty($address)) {
+                        if (!empty($address_escaped)) {
                             echo '<div class="profile-address">';
                             echo '<h2 class="address-title screen-reader-text">'.__('Address', 'rrze-faudir').'</h2>';
-                            echo $address;
+                            echo $address_escaped;
                             echo '</div>';
                         }
                         
-                        $postal = '';
+                        $postal_escaped = '';
                         if (in_array('postalAddress', $show_fields) ) {                               
-                                $postal = $org->getPostalAddressOutput(false, $lang);
+                                $postal_escaped = $org->getPostalAddressOutput(false, $lang);
                                                   
                         }
-                        if (!empty($postal)) {
+                        if (!empty($postal_escaped)) {
                             echo '<div class="profile-address">';
                             echo '<h2 class="address-title screen-reader-text">'.__('Postal Address', 'rrze-faudir').'</h2>';
-                            echo $postal;
+                            echo $postal_escaped;
                             echo '</div>';
                         }
                         
                         
                         
-                        $contactlist = '';
+                        $contactlist_escaped = '';
                         if (in_array('email', $show_fields)) {
                             $mail = $org->getEMail();
                             if (!empty($mail)) {
@@ -110,7 +108,7 @@ if (!defined('ABSPATH')) {
                                 }                 
 
                                 if (!empty($wval)) {
-                                    $contactlist .=  '<li class="email">'.$wval.'</li>';
+                                    $contactlist_escaped .=  '<li class="email">'.$wval.'</li>';
                                 }
                             }
                         }
@@ -123,7 +121,7 @@ if (!defined('ABSPATH')) {
                                 $cleanTel = preg_replace('/[^\+\d]/', '', $phone);
                                 $formattedValue = '<a itemprop="telephone" href="tel:' . esc_attr($cleanTel) . '">' . esc_html($formattedPhone) . '</a>';
                                 $wval .= '<span class="value"><span class="screen-reader-text">'.__('Phone','rrze-faudir').': </span>'.$formattedValue.'</span>';
-                                $contactlist .= '<li class="phone">'.$wval.'</li>';
+                                $contactlist_escaped .= '<li class="phone">'.$wval.'</li>';
                                
                             }
                         }
@@ -135,7 +133,7 @@ if (!defined('ABSPATH')) {
                                 $cleanTel = preg_replace('/[^\+\d]/', '', $phone);
                                 $formattedValue = '<a itemprop="fax" href="tel:' . esc_attr($cleanTel) . '">' . esc_html($formattedPhone) . '</a>';
                                 $wval .= '<span class="value"><span class="screen-reader-text">'.__('Phone','rrze-faudir').': </span>'.$formattedValue.'</span>';
-                                $contactlist .= '<li class="fax">'.$wval.'</li>';
+                                $contactlist_escaped .= '<li class="fax">'.$wval.'</li>';
                                
                             }
                         }
@@ -149,7 +147,7 @@ if (!defined('ABSPATH')) {
                                 $wval .= '<span class="value"><span class="screen-reader-text">'.__('URL','rrze-faudir').': </span>'.$formattedValue.'</span>';
                            
                                 if (!empty($wval)) {
-                                    $contactlist .= '<li class="url">'.$wval.'</li>';
+                                    $contactlist_escaped .= '<li class="url">'.$wval.'</li>';
                                 }
                             }   
                         }
@@ -162,7 +160,7 @@ if (!defined('ABSPATH')) {
                                     
                                     
                                      if (!empty($faumap)) {
-                                        $contactlist .= '<li class="faumap url">'.$faumap.'</li>';
+                                        $contactlist_escaped .= '<li class="faumap url">'.$faumap.'</li>';
                                     }
                                     
                                 }
@@ -174,32 +172,32 @@ if (!defined('ABSPATH')) {
                         
                         
                         
-                        if (!empty($contactlist)) {                       
+                        if (!empty($contactlist_escaped)) {                       
                             echo '<div class="profile-contact">';
                             echo '<h2 class="contact-title screen-reader-text">'.__('Contact', 'rrze-faudir').'</h2>';
                             echo '<ul class="icon">';
-                            echo $contactlist;
+                            echo $contactlist_escaped;
                             echo '</ul>';
                             echo '</div>';
                         }
                         
                         if (in_array('socialmedia', $show_fields) ) {
-                            $some = $org->getSocialMedia('span');
-                            if (!empty($some)) {
+                            $some_escaped = $org->getSocialMedia('span');
+                            if (!empty($some_escaped)) {
                                 echo '<div class="profile-socialmedia">';
                                 echo '<h2 class="screen-reader-text">'.__('Social Media and Websites', 'rrze-faudir').'</h2>';
-                                echo $some;
+                                echo $some_escaped;
                                 echo '</div>';
                             }
                         }
                          if (in_array('officehours', $show_fields) || (in_array('consultationhours', $show_fields) )) {
-                                $hours = $cons =  '';
+                                $hours = $cons_escaped =  '';
                                 if (in_array('consultationhours', $show_fields)) {
                                    
                                     $hours .= $org->getConsultationsHours( 'consultationHours', false, $lang, true );                                   
                                     if (!empty($hours)) {
-                                            $cons .=  '<h2 class="consultation-title">'.__('Consultation Hours', 'rrze-faudir').'</h2>';
-                                            $cons .= $hours;
+                                            $cons_escaped .=  '<h2 class="consultation-title">'.__('Consultation Hours', 'rrze-faudir').'</h2>';
+                                            $cons_escaped .= $hours;
                                     }
                                 }
                                 $hours = '';
@@ -208,30 +206,30 @@ if (!defined('ABSPATH')) {
                                     $hours .= $org->getConsultationsHours('officeHours', false, $lang, true, $label);
                
                                     if (!empty($hours)) {
-                                            $cons .=  '<h2 class="consultation-title">'. $label.'</h2>';
-                                            $cons .= $hours;
+                                            $cons_escaped .=  '<h2 class="consultation-title">'. $label.'</h2>';
+                                            $cons_escaped .= $hours;
                                     }
                                 }
-                               if (!empty($cons)) {   
+                               if (!empty($cons_escaped)) {   
                                    echo '<div class="profile-consultation">';
-                                   echo $cons;
+                                   echo $cons_escaped;
                                    echo '</div>';
                                }
                         }
                         
-                       $profilcontent = '';
+                       $profilcontent_escaped = '';
                        if (in_array('text', $show_fields)) {                          
                             $wval = $org->getContentText($lang);
                             if (!empty($wval)) {
-                                $profilcontent .= '<div class="text">';
-                                $profilcontent .= $wval;
-                                $profilcontent .= '</div>';
+                                $profilcontent_escaped .= '<div class="text">';
+                                $profilcontent_escaped .= $wval;
+                                $profilcontent_escaped .= '</div>';
                             }
                         }
 
-                        if (!empty($profilcontent)) {
+                        if (!empty($profilcontent_escaped)) {
                             echo '<div class="profile-content">';             
-                            echo $profilcontent;
+                            echo $profilcontent_escaped;
                             echo '</div>';
                         }
                   

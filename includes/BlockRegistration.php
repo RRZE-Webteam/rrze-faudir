@@ -61,7 +61,7 @@ class BlockRegistration {
 
         $custom_category = [
             'slug' => 'fau',
-            'title' => __('FAU', 'rrze-bluesky'),
+            'title' => __('FAU', 'rrze-faudir'),
         ];
 
         $categories[] = $custom_category;
