@@ -16,7 +16,7 @@
     },
     "compatibility": {
         "wprequires": "6.7",
-        "wptestedup": "6.8.1",
+        "wptestedup": "6.8.2",
         "phprequires": "8.2"
     },
     "author": {
