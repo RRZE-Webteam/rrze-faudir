@@ -93,7 +93,7 @@ class Settings {
         /* --- Shortcodes: Personen-Ausgabe --- */
         add_settings_section(
             'rrze_faudir_shortcode_section',
-            __('Default output fields for persons', 'rrze-faudir'),
+            __('Default output fields', 'rrze-faudir'). ' '.__('Persons', 'rrze-faudir'),
             [$this, 'shortcode_section_cb'],
             'rrze_faudir_settings_shortcode'
         );
@@ -129,7 +129,7 @@ class Settings {
         /* --- Profilseite --- */
         add_settings_section(
             'rrze_faudir_profilpage_section',
-            __('Profilpage', 'rrze-faudir'),
+            __('Default output fields', 'rrze-faudir'). ' '.__('Profilpages', 'rrze-faudir'),
             [$this, 'profilpage_section_cb'],
             'rrze_faudir_settings_profilpage'
         );
@@ -144,7 +144,7 @@ class Settings {
         /* --- Shortcodes: ORG/Folders-Ausgabe --- */
         add_settings_section(
             'rrze_faudir_shortcode_org_section',
-            __('Default output fields for organisations and folders', 'rrze-faudir'),
+            __('Default output fields', 'rrze-faudir'). ' '.__('Organizations and folders', 'rrze-faudir'),
             [$this, 'shortcode_section_cb'],
             'rrze_faudir_settings_org_shortcode'
         );
@@ -299,19 +299,19 @@ class Settings {
             ],
            
             'output' => [
-                'label' => __('Default Output Fields (Persons)', 'rrze-faudir'),
+                'label' => __('Default output fields', 'rrze-faudir'). ' ('.__('Persons', 'rrze-faudir').')',
                 'type'  => 'form',
                 'group' => 'rrze_faudir_general',
                 'pages' => ['rrze_faudir_settings_shortcode'],
             ],
             'profile' => [
-                'label' => __('Profile Page', 'rrze-faudir'),
+                'label' =>  __('Default output fields', 'rrze-faudir'). ' ('.__('Profilpages', 'rrze-faudir').')',
                 'type'  => 'form',
                 'group' => 'rrze_faudir_general',
                 'pages' => ['rrze_faudir_settings_profilpage'],
             ],
             'org_output' => [
-                'label' => __('Default Output Fields (Organizations/Folders)', 'rrze-faudir'),
+                'label' =>  __('Default output fields', 'rrze-faudir'). ' ('.__('Organizations and folders', 'rrze-faudir').')',
                 'type'  => 'form',
                 'group' => 'rrze_faudir_general',
                 'pages' => ['rrze_faudir_settings_org_shortcode'],

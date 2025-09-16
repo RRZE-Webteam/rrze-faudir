@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: rrze-faudir\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-faudir\n"
 "POT-Creation-Date: 2025-09-15T13:58:14+00:00\n"
-"PO-Revision-Date: 2025-09-15 15:19+0000\n"
+"PO-Revision-Date: 2025-09-16 10:08+0000\n"
 "Last-Translator: Wolfgang Wiese <wolfgang.wiese@fau.de>\n"
 "Language-Team: Deutsch (Sie)\n"
 "Language: de_DE_formal\n"
@@ -404,21 +404,11 @@ msgstr "Ausgabedaten, die auf Profilseiten gezeigt werden"
 msgid "Data Selection"
 msgstr "Datenauswahl"
 
+#: includes/Settings.php:96 includes/Settings.php:132 includes/Settings.php:147
+#: includes/Settings.php:302 includes/Settings.php:308
 #: includes/Settings.php:314
-msgid "Default Output Fields (Organizations/Folders)"
-msgstr "Standardausgabefelder (Organisationen/Ordner)"
-
-#: includes/Settings.php:302
-msgid "Default Output Fields (Persons)"
-msgstr "Standardausgabefelder (Personen)"
-
-#: includes/Settings.php:147
-msgid "Default output fields for organisations and folders"
-msgstr "Standardausgabefelder für Organisationen und Ordner."
-
-#: includes/Settings.php:96
-msgid "Default output fields for persons"
-msgstr "Standardausgabefelder für Personen"
+msgid "Default output fields"
+msgstr "Standardausgabefelder"
 
 #: includes/Settings.php:577
 msgid "Default value"
@@ -927,6 +917,10 @@ msgstr "Organisation oder FAUdir-Ordner"
 msgid "Organizations"
 msgstr "Organisationen"
 
+#: includes/Settings.php:147 includes/Settings.php:314
+msgid "Organizations and folders"
+msgstr "Einrichtungen und Ordner"
+
 #: includes/Settings.php:577 includes/Settings.php:801
 msgid "Output data"
 msgstr "Ausgabedaten"
@@ -974,7 +968,8 @@ msgstr "Person mit ID %s existiert nicht"
 msgid "Person with UnivIS ID"
 msgstr "Person mit UnivIS Id"
 
-#: includes/CPT.php:77 includes/CPT.php:79 src/block/edit.tsx:207
+#: includes/CPT.php:77 includes/CPT.php:79 includes/Settings.php:96
+#: includes/Settings.php:302 src/block/edit.tsx:207
 #: src/block/components/CustomPlaceholder.tsx:90
 msgid "Persons"
 msgstr "Personen"
@@ -1093,12 +1088,9 @@ msgstr "Prof. Dr. mult."
 msgid "Professors"
 msgstr "Professoren"
 
-#: includes/Settings.php:308
-msgid "Profile Page"
-msgstr "Profilseite"
-
-#: includes/Settings.php:132
-msgid "Profilpage"
+#: includes/Settings.php:132 includes/Settings.php:308
+#| msgid "Profilpage"
+msgid "Profilpages"
 msgstr "Profilseite"
 
 #: includes/CPT.php:192 includes/CPT.php:262

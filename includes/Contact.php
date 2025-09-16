@@ -491,7 +491,7 @@ class Contact {
                 $output .= '<li><span class="title">'.ucfirst(esc_html($name)).': </span>'.$formattedValue.'</li>';                        
             }
         }
-        
+        $output .= '</ul>';
         $output .= '</'.$htmlsurround.'>';
         return $output;
         
