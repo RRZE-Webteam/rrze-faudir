@@ -15,10 +15,11 @@ if (!defined('ABSPATH')) {
     
     $config = new Config;    
     $available_fields = $config->getFieldsByFormat('list');
-    $opt = $config->getOptions();        
-
+    $opt = $config->getOptions(); 
     
+    $normalize_titles = $opt['default_normalize_honorificPrefix'];
     $displayorder = $config->get('default_display_order');
+        
     if (!empty($displayorder)) {
         $reihenfolge = $displayorder['list'];
     } else {
@@ -49,15 +50,15 @@ if (!defined('ABSPATH')) {
                         <?php }
                     } else { 
                      if (!empty($persondata)) { 
-                        $output = '';          
-                        $output .= '<li class="text-list" itemscope itemtype="https://schema.org/Person">';
+                        $output_escaped = '';          
+                        $output_escaped .= '<li class="text-list" itemscope itemtype="https://schema.org/Person">';
          
                         $person = new Person($persondata);
                         $formatstring = '';
                         if (!empty($format_displayname)) {
                             $formatstring = $format_displayname;
                         }
-                        $displayname = $person->getDisplayName(true, false,$formatstring);
+                        $displayname = $person->getDisplayName(true, $normalize_titles, $formatstring);
                         $mailadresses= $person->getEMail();
                         $phonenumbers = $person->getPhone();                        
                         if (!empty($url)) {
@@ -65,8 +66,8 @@ if (!defined('ABSPATH')) {
                         } else {
                             $final_url = $person->getTargetURL($opt['fallback_link_faudir']);
                         }
-                        $contact = $person->getPrimaryContact();
-                    //    $output .= Debug::get_html_var_dump($contact);
+                        $contact = $person->getPrimaryContact($role);
+                       
                         $workplaces = [];
                         if (!empty($contact)) { 
                             $workplaces = $contact->getWorkplaces($workplaces);                    
@@ -74,8 +75,9 @@ if (!defined('ABSPATH')) {
                         
              //           $output .= Debug::get_html_var_dump($workplaces);
                         
+             //            $output .= Debug::get_html_var_dump($show_fields_lower);
                          
-                        $output .= '<ul class="datalist">';
+                        $output_escaped .= '<ul class="datalist">';
                         foreach ($ordered_keys as $key) {
 
                             $key_lower = strtolower($key);
@@ -91,6 +93,17 @@ if (!defined('ABSPATH')) {
                                              $value .= '</a>';
                                         }
                                     } 
+                                } elseif ($key_lower === 'familyname') {    
+                                    if (!empty($person->titleOfNobility))  { 
+                                        $value = $person->titleOfNobility.' ';
+                                    }
+                                    $value .= $person->familyName;
+                                } elseif ($key_lower === 'givenname') {    
+                                    $value = $person->givenName;    
+                                } elseif ($key_lower === 'honorificprefix') {    
+                                    $value = $person->honorificPrefix;         
+                                } elseif ($key_lower === 'honorificsuffix') {    
+                                    $value = $person->honorificSuffix;                                          
                                 } elseif ($key_lower === 'jobtitle') {
                                     $jobtitleformat = '#functionlabel#';
                                     if (!empty($opt['jobtitle_format'])) {
@@ -225,9 +238,28 @@ if (!defined('ABSPATH')) {
                                             }
                                 
                                             $wval = '';
-                                            foreach ($workplaces as $w => $wdata) {                                               
-                                                $wval .= $contact->getAddressByWorkplace($wdata, false, $lang, $roomfloor);
+                                            $seen      = [];
+                                            foreach ($workplaces as $w => $wdata) {
+                                                $html = (string) $contact->getAddressByWorkplace($wdata, false, $lang, $roomfloor);
+                                                if ($html === '') {
+                                                    continue;
+                                                }
+                                                // Kanonische Signatur: HTML → Text, Entities decodieren, trimmen, Whitespaces normalisieren, lowercasing
+                                               $key = strtolower(
+                                                   preg_replace('/\s+/u', ' ',
+                                                       trim( wp_strip_all_tags( html_entity_decode( $html ) ) )
+                                                   )
+                                               );
+
+                                               if ($key === '') {
+                                                   continue;
+                                               }
+                                               if (!isset($seen[$key])) {
+                                                   $seen[$key] = true;
+                                                   $wval .= $html; 
+                                               }
                                             }
+
                                             $value = $wval;      
                                     }
                                  
@@ -293,16 +325,16 @@ if (!defined('ABSPATH')) {
                                 }
                                 
                                 if (!empty($value)) {
-                                    $output .= '<li class="faudir-'.esc_attr($key_lower).'">';
-                                    $output .= $value;
-                                    $output .= '</li>';
+                                    $output_escaped .= '<li class="faudir-'.esc_attr($key_lower).'">';
+                                    $output_escaped .= $value;
+                                    $output_escaped .= '</li>';
                                 }
 
                             }
                         }
-                        $output .= '</ul>'; 
-                        $output .= '</li>'; 
-                        echo $output;
+                        $output_escaped .= '</ul>'; 
+                        $output_escaped .= '</li>'; 
+                        echo $output_escaped;
                     } else { ?>
                         <div class="faudir-error"><?php echo esc_html__('No contact entry could be found.', 'rrze-faudir'); ?> </div>
                 <?php }

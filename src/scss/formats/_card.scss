@@ -41,29 +41,40 @@
 	height: auto;
 	
 	.profile-image-section {
-		background-color: #ccc; /* Falls kein Bild vorhanden ist */
 		display: flex;
-		align-items: center;
 		justify-content: center;
 		text-align: center;
-		border-radius: var(--faudir-figure-border-radius);
-		overflow: hidden;
-		width: var(--faudir-profile-image-width);
-		height: var(--faudir-profile-image-height);
-		
-		aspect-ratio: 1;
-		object-fit: cover;
 		margin: 0 auto;
 		
 		img {
 		    width: var(--faudir-profile-image-width);
 		    height: var(--faudir-profile-image-height);
+		    border-radius: var(--faudir-figure-border-radius);
+		    aspect-ratio: 1;
+		    overflow: hidden;
 		    object-fit: cover;
-		    display: block;
 		}
 		figure {
 		    margin: 0;
 		}
+		figure.signature {		    
+		    .text {
+			background-color: var(--faudir-figure-textsignature-background);
+			width: var(--faudir-profile-image-width);
+			height: var(--faudir-profile-image-height);
+			border-radius: var(--faudir-figure-border-radius);
+			aspect-ratio: 1;
+			display: block;
+			align-content: center;
+		    }
+		}
+		figcaption {
+		    p {
+			font-size: var(--faudir-figcaption-font-size);
+			padding: 0;
+		    }
+		}
+		
 	}
 	.profile-header, .profile-details {
 	    text-align: center;

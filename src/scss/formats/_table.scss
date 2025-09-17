@@ -29,6 +29,21 @@
 		    width: var(--faudir-figure-tablesize,150px);
 		    text-align: center;
 		    align-content: center;
+		    
+		    
+		    .text {
+			background-color: var(--faudir-figure-textsignature-background);
+			height: var(--faudir-figure-tablesize,150px);
+			width: var(--faudir-figure-tablesize,150px);
+			align-content: center;
+			display: block;
+		    }
+		}
+		figcaption {
+		    p {
+			font-size: var(--faudir-figcaption-font-size);
+			padding: 0;
+		    }
 		}
 		
 	    }

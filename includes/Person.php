@@ -27,6 +27,7 @@ class Person {
     private ?int $postid;
     private ?Contact $primary_contact;
     
+    
     public function __construct(array $data = []) {
         $this->identifier = $data['identifier'] ?? '';
         $this->givenName = $data['givenName'] ?? '';
@@ -186,7 +187,6 @@ class Person {
         }
         
         $this->populateFromData($personData);
-       //  error_log("FAUdir\Person (getPersonbyAPI): Got person data by {$identifier}.");
         return true;
     }
     
@@ -199,14 +199,12 @@ class Person {
         
         // Falls keine Kontakte gesetzt sind, nichts tun
         if (empty($this->contacts) || !is_array($this->contacts)) {
-      //      error_log("FAUdir\Person (reloadContacts): No Contact data for Person.");
             return false;
         }
         if (empty($this->config)) {
             $this->setConfig();
         }
         
-        // Erstelle eine API-Instanz unter Verwendung der Konfiguration der Instanz
         $api = new API($this->config);
         
         // Iteriere über die Kontakte
@@ -222,7 +220,7 @@ class Person {
 
                     if (($organizationId) && ($loadorg)) {
                         // Wozu brauchen wir die Orgdaten eigentlich?
-                        // Addresse kommt doch aus dem Workplaces...
+                        // Adresse kommt doch aus dem Workplaces...
                         
                         $organizationData = $api->getOrgById($organizationId);
                         
@@ -256,7 +254,6 @@ class Person {
                 }
             }
         }
-        // error_log("FAUdir\Person (reloadContacts): Populated Person with all avaible contactdata.");
         $this->contacts = $personContacts;
         return true;
     }
@@ -398,97 +395,114 @@ class Person {
     
     
     
-    /*
-     * Create and get Displayname in semantic HTML
-     */
-    public function getDisplayName(bool $html = true, bool $hard_sanitize = false, string $format = ''): string {
-        if (empty($this->givenName) && empty($this->familyName)) {
-            return '';
-        }
-        $nameText = '';
-        $nameHtml  = '';
+    /**
+    * Erzeugt den Anzeigenamen (optional semantisches HTML).
+    * Optionale Eingaben:
+    *  - $html (bool): HTML mit Microdata ausgeben (Default: true).
+    *  - $normalize (bool): Akademischen Titel normalisieren (Default: false).
+    *  - $format (string): Optionales Format mit Platzhaltern
+    *    (#givenName#, #familyName#, #honorificPrefix#, #honorificSuffix#, #titleOfNobility#, #displayname#).
+    * Rückgabe: string – formatierter Name (HTML oder Plaintext).
+    */
+   public function getDisplayName(bool $html = true, bool $normalize = false, string $format = ''): string {
+       if (empty($this->givenName) && empty($this->familyName)) {
+           return '';
+       }
+       $nameText = '';
+       $nameHtml = '';
 
-        if (empty($format)) {
-            // Wrapper für HTML-Ausgabe
-            $nameHtml .= '<span class="displayname" itemprop="name">';
+       if (empty($format)) {
+           // Wrapper für HTML-Ausgabe
+           $nameHtml .= '<span class="displayname" itemprop="name">';
 
-            // "personalTitle"
-            if (!empty($this->honorificPrefix)) {
-                if ($hard_sanitize) {
-                    $long_version = self::getAcademicTitleLongVersion($this->honorificPrefix);
-                    if (!empty($long_version)) {
-                        $nameHtml .= '<abbr title="' . esc_attr($long_version) . '" itemprop="honorificPrefix">' 
-                                    . esc_html($this->honorificPrefix) . '</abbr> ';
-                    } else {
-                        $nameHtml .= '<span itemprop="honorificPrefix">' . esc_html($this->honorificPrefix) . '</span> ';
-                    }
-                } else {
-                    $nameHtml .= '<span itemprop="honorificPrefix">' . esc_html($this->honorificPrefix) . '</span> ';
-                }
-                $nameText .= esc_html($this->honorificPrefix) . ' ';
-            }
+           // "honorificPrefix" (akademischer Titel)
+           if (!empty($this->honorificPrefix)) {
+               $displayPrefix = $this->honorificPrefix;
+               $abbrTitleLong = '';
 
-            // "givenName"
-            
-            if ((!empty($this->givenName)) && (!empty($this->familyName)))  {  
-                $nameHtml .= '<span class="namepart">';
-            }
-            if (!empty($this->givenName)) { 
-                $nameHtml .= '<span itemprop="givenName">' . esc_html($this->givenName) . '</span> ';
-                $nameText .= esc_html($this->givenName) . ' ';
-            }
+               if ($normalize) {
+                   // Normalisieren → sichtbarer Titel + Langlabel direkt aus normalizeAcademicTitle()
+                   $norm          = \RRZE\FAUdir\FaudirUtils::normalizeAcademicTitle($this->honorificPrefix);
+                   $displayPrefix = $norm['visible_title_no_discipline'] ?? $this->honorificPrefix;
+                   $abbrTitleLong = $norm['label'] ?? ''; // <-- hier statt getAcademicTitleLongVersion(...)
+               } else {
+                   // Falls bekannt: Langlabel (für title-Attribut) klassisch aus Config-Mapping
+                   $abbrTitleLong = self::getAcademicTitleLongVersion($this->honorificPrefix);
+               }
 
-            // "familyName"
-            if (!empty($this->familyName))  { 
-                $nameHtml .= '<span itemprop="familyName">';        
-                // "titleOfNobility" is part of the familyName
-                if (!empty($this->titleOfNobility))  { 
-                    $nameHtml .= esc_html($this->titleOfNobility) . ' ';
-                    $nameText .= esc_html($this->titleOfNobility) . ' ';
-                }
+               if (!empty($abbrTitleLong)) {
+                   $nameHtml .= '<abbr title="' . esc_attr($abbrTitleLong) . '" itemprop="honorificPrefix">' . esc_html($displayPrefix) . '</abbr> ';
+               } else {
+                   $nameHtml .= '<span itemprop="honorificPrefix">' . esc_html($displayPrefix) . '</span> ';
+               }
+               $nameText .= esc_html($displayPrefix) . ' ';
+           }
 
-                $nameHtml .= esc_html($this->familyName) . '</span>';
-                $nameText .= esc_html($this->familyName) . '';
-            }
-            if ((!empty($this->givenName)) && (!empty($this->familyName)))  {  
-                $nameHtml .= '</span>';
-            }
-            // "personalTitleSuffix"
-            if (!empty($this->honorificSuffix)) { 
-                $nameHtml .= ' (<span itemprop="honorificSuffix">' . esc_html($this->honorificSuffix) . '</span>)';
-                $nameText .= ' (' . esc_html($this->honorificSuffix) . ')';
-            }
+           // "givenName" + "familyName"
+           if (!empty($this->givenName) && !empty($this->familyName)) {
+               $nameHtml .= '<span class="namepart">';
+           }
 
-            $nameHtml .= '</span>';
+           if (!empty($this->givenName)) {
+               $nameHtml .= '<span itemprop="givenName">' . esc_html($this->givenName) . '</span> ';
+               $nameText .= esc_html($this->givenName) . ' ';
+           }
 
-            return $html ? $nameHtml : $nameText;
-        }
-        
-        // format string is given. In this case display the name parts in the form that is displayed in the format
-        // add nor semantic nor commas or other signs
+           if (!empty($this->familyName)) {
+               $nameHtml .= '<span itemprop="familyName">';
+               // "titleOfNobility" als Teil des familyName
+               if (!empty($this->titleOfNobility)) {
+                   $nameHtml .= esc_html($this->titleOfNobility) . ' ';
+                   $nameText .= esc_html($this->titleOfNobility) . ' ';
+               }
+               $nameHtml .= esc_html($this->familyName) . '</span>';
+               $nameText .= esc_html($this->familyName);
+           }
 
-        
-        
-        $nameHtml = '';
-        if ($html) {
-            $nameHtml = '<span class="displayname" itemprop="name">';
-        }
-        
-        // Platzhalter mit den entsprechenden Werten ersetzen
-        $replacements = [
-            '#givenName#' => $this->givenName ?? '',
-            '#displayname#' => $this->getDisplayName(false,false) ?? '',
-            '#familyName#' => $this->familyName ?? '',
-            '#honorificPrefix#' => $this->honorificPrefix ?? '',
-            '#honorificSuffix#' => $this->honorificSuffix ?? '',
-            '#titleOfNobility#' => $this->titleOfNobility ?? ''
-        ]; 
-        $nameHtml .= str_replace(array_keys($replacements), array_values($replacements), $format);
-        if ($html) {
-            $nameHtml .= '</span>';
-        }
-        return $nameHtml;
-    }  
+           if (!empty($this->givenName) && !empty($this->familyName)) {
+               $nameHtml .= '</span>';
+           }
+
+           // "honorificSuffix"
+           if (!empty($this->honorificSuffix)) {
+               $nameHtml .= ' (<span itemprop="honorificSuffix">' . esc_html($this->honorificSuffix) . '</span>)';
+               $nameText .= ' (' . esc_html($this->honorificSuffix) . ')';
+           }
+
+           $nameHtml .= '</span>';
+           return $html ? $nameHtml : $nameText;
+       }
+
+       // Format-String ist übergeben → nur Platzhalter ersetzen (ohne zusätzliche Semantik)
+       $nameHtml = '';
+       if ($html) {
+           $nameHtml = '<span class="displayname" itemprop="name">';
+       }
+
+       // Optional auch im Formatfall den normalisierten sichtbaren Titel verwenden
+       $formattedPrefix = $this->honorificPrefix;
+       if ($normalize && !empty($this->honorificPrefix)) {
+           $norm            = \RRZE\FAUdir\FaudirUtils::normalizeAcademicTitle($this->honorificPrefix);
+           $formattedPrefix = $norm['visible_title'] ?? $this->honorificPrefix;
+       }
+
+       $replacements = [
+           '#givenName#'       => $this->givenName ?? '',
+           '#displayname#'     => $this->getDisplayName(false, false) ?? '',
+           '#familyName#'      => $this->familyName ?? '',
+           '#honorificPrefix#' => $formattedPrefix ?? '',
+           '#honorificSuffix#' => $this->honorificSuffix ?? '',
+           '#titleOfNobility#' => $this->titleOfNobility ?? '',
+       ];
+
+       $nameHtml .= str_replace(array_keys($replacements), array_values($replacements), $format);
+
+       if ($html) {
+           $nameHtml .= '</span>';
+       }
+       return $nameHtml;
+   }
+
     
     
     /*
@@ -532,15 +546,27 @@ class Person {
         $config = new Config();
         $post_type = $config->get('person_post_type'); 
          
-         
+        
+                
         $contact_posts = get_posts([
             'post_type' => $post_type,
             'meta_key' => 'person_id',
             'meta_value' => $this->identifier,
             'posts_per_page' => 1, // Only fetch one post matching the person ID
         ]);
-        if (!empty($contact_posts)) {
-            $postid = $contact_posts[0]->ID;
+         
+        if (!empty($contact_posts)) {        
+            $postid = $contact_posts[0]->ID;      
+         
+            if (class_exists('\RRZE\Multilang\Helper')) {
+                // check for multilang plugin
+                $lookforid = \RRZE\Multilang\Helper::getPostIdTranslation($contact_posts[0]->ID);
+             //    do_action( 'rrze.log.info',"FAUdir\Person (getPostId): Looking for post id $postid with Multilang Helper, target: $lookforid");
+                 if ($lookforid) {
+                     $postid = $lookforid;
+                 }
+            }
+            
             $this->postid = $postid;
             return $postid;
         }
@@ -560,6 +586,26 @@ class Person {
         $cpt_url = '';
         if ($postid !== 0) {
             $cpt_url  =  get_permalink($postid); 
+             
+             
+             // if there is a canonical and the setting wants to use it,
+             // then we set the target to it.
+            $canonical = '';
+            $custom = get_post_meta($postid, 'canonical_url', true);
+            if ($custom && filter_var($custom, FILTER_VALIDATE_URL)) {
+                $canonical = esc_url_raw($custom);
+            }
+            
+            if (empty($this->config)) {
+                $this->setConfig();
+            }
+            $opt = $this->config->getOptions();        
+            $usecanonical = $opt['redirect_to_canonicals'];
+                  
+            if ($usecanonical && (!empty($canonical))) {
+                $cpt_url = $canonical;
+            }
+           
         }
         if ((empty($cpt_url)) && ($fallbackfaudir)) {
             if (empty($this->config)) {
@@ -574,24 +620,15 @@ class Person {
     /*
      * Get Content from custom post
      */
-    public function getContent(string $lang = 'de'): string {
+    public function getContent(): string {
          if (empty($this->postid)) {
             $postid = $this->getPostId();
         } else {
             $postid = $this->postid;
         }
         if ($postid !== 0) {
-            if ($lang === 'de') {
-                $raw_content = get_post_field('post_content', $postid);
-                // dont execute shortcodes here, cause we need the rawdata in the cache
-                $content = $raw_content;
-                
-            } else {
-                $raw_content = get_post_meta($postid, '_content_en', true);
-      //          $content   = apply_filters('the_content', $raw_content);
-                 // dont execute shortcodes here, cause we need the rawdata in the cache
-                 $content = $raw_content;
-            }
+            $content = get_post_field('post_content', $postid);
+
             return $content;
         }             
         return '';  
@@ -602,121 +639,238 @@ class Person {
     /*
      * Get teasertext
      */       
-    public function getTeasertext(string $lang = 'de'): string {       
+    public function getTeasertext(): string {       
         if (empty($this->postid)) {
             $postid = $this->getPostId();
         } else {
             $postid = $this->postid;
         }
         if ($postid !== 0) {
-            if ($lang === 'de') {
-                $teaser_text_key = '_teasertext_de';
-            } else {
-                $teaser_text_key = '_teasertext_en';
-            }
-            return get_post_meta($postid, $teaser_text_key, true);
+            
+             $current_post  = get_post($postid);
+             $excerpt       = isset($current_post->post_excerpt) ? $current_post->post_excerpt : '';
+
+            return $excerpt;
         }
                        
         return '';                       
     }
     
-    /*
-     * Get Image as HTML or Replacement
-     */
-    public function getImage(string $css_classes = '', string $figcaption = '', bool $signature = true): string {
-         if (empty($this->postid)) {
-            $postid = $this->getPostId();
-        } else {
-            $postid = $this->postid;
-        }
-        if ($postid !== 0) {
-            $thumb_id = get_post_thumbnail_id( $postid );
-             // Erhalte den Bildpfad, die Breite und Höhe des Bildes in der Größe "full" (oder einer anderen gewünschten Größe)
-             $img_src = wp_get_attachment_image_src( $thumb_id, 'full' );
-             if ($img_src ) {
-                $src    = $img_src[0];
-                $width  = $img_src[1];
-                $height = $img_src[2];
+   /*
+    * Get Image as HTML or Replacement
+    */
+   public function getImage(string $css_classes = '', bool $figcaption = true, bool $signature = true, bool $displaycopyright = true): string {
+       $postid = !empty($this->postid) ? $this->postid : $this->getPostId();
 
-                // Hole srcset und sizes, sofern verfügbar
-                $srcset = wp_get_attachment_image_srcset( $thumb_id, 'full' );
-                $sizes  = wp_get_attachment_image_sizes( $thumb_id, 'full' );
-                $alt = $this->getSignature();
+       if ($postid !== 0) {
+           $thumb_id = get_post_thumbnail_id($postid);
+           $img_src  = $thumb_id ? wp_get_attachment_image_src($thumb_id, 'full') : false;
+
+           if ($img_src) {
+               $src    = $img_src[0];
+               $width  = $img_src[1];
+               $height = $img_src[2];
+
+               // srcset / sizes
+               $srcset = wp_get_attachment_image_srcset($thumb_id, 'full');
+               $sizes  = wp_get_attachment_image_sizes($thumb_id, 'full');
+
+               // ALT-Text: zuerst echtes Anhangs-ALT, sonst Signatur
+               $alt = (string) get_post_meta($thumb_id, '_wp_attachment_image_alt', true);
+               if ($alt === '') {
+                   $alt = (string) $this->getSignature();
+               }
+   
+
+               // Caption-Quelle: 1) Meta 'caption' (falls es bei dir existiert), 2) Attachment-Caption
+               $captionText = '';
+               if ($figcaption) {
+                   $captionMeta = get_post_meta($thumb_id, 'caption', true);
+                   if (is_string($captionMeta) && $captionMeta !== '') {
+                       $captionText = $captionMeta;
+                   } else {
+                       $captionText = (string) wp_get_attachment_caption($thumb_id);
+                   }
+               }
+ 
+ 
+               // EXIF/Meta → Copyright oder Credit
+               $meta = wp_get_attachment_metadata($thumb_id);
+               $copyrightText = '';
+               if (is_array($meta) && !empty($meta['image_meta'])) {
+                   $imeta = (array) $meta['image_meta'];
+                   if (!empty($imeta['copyright'])) {
+                       $copyrightText = trim((string) $imeta['copyright']);
+                   } elseif (!empty($imeta['credit'])) {
+                       $copyrightText = trim((string) $imeta['credit']);
+                   }
+               }
+               if ($copyrightText !== '') {
+                    Filters::pushCopyright($copyrightText, $thumb_id);
+               }
                 
-                $html  = '<figure itemprop="image" itemscope itemtype="http://schema.org/ImageObject"';
-                if (!empty($css_classes)) {
-                    $html  .= ' class="' . esc_attr( $css_classes ) . '"';
-                }
+               // HTML zusammenbauen
+               $html  = '<figure itemprop="image" itemscope itemtype="http://schema.org/ImageObject"';
+               if (!empty($css_classes)) {
+                   $html .= ' class="' . esc_attr($css_classes) . '"';
+               }
                 $html .= '>';
-                $html .= '<img src="' . esc_url( $src ) . '" ';
-                if (!empty($alt)) {
-                    $html .= 'alt="' . esc_attr( $alt ) . '" ';
+
+                $html .= '<img src="' . esc_url($src) . '" ';
+                if ($alt !== '') {
+                    $html .= 'alt="' . esc_attr($alt) . '" ';
                 }
-                $html .= 'width="' . esc_attr( $width ) . '" ';
-                $html .= 'height="' . esc_attr( $height ) . '" ';
-                if ( $srcset ) {
-                    $html .= 'srcset="' . esc_attr( $srcset ) . '" ';
+                $html .= 'width="' . esc_attr($width) . '" ';
+                $html .= 'height="' . esc_attr($height) . '" ';
+                if ($srcset) {
+                    $html .= 'srcset="' . esc_attr($srcset) . '" ';
                 }
-                if ( $sizes ) {
-                    $html .= 'sizes="' . esc_attr( $sizes ) . '" ';
+                if ($sizes) {
+                    $html .= 'sizes="' . esc_attr($sizes) . '" ';
                 }
                 $html .= 'itemprop="contentUrl">';
-                $html .= '<meta itemprop="width" content="' . esc_attr( $width ) . '">';
-                $html .= '<meta itemprop="height" content="' . esc_attr( $height ) . '">';
-                if (!empty($figcaption)) {
-                    $html .= '<figcaption itemprop="caption">'.esc_html($figcaption).'</figcaption>';
-                }
-                $html .= '</figure>';
 
-                return $html;
+                $html .= '<meta itemprop="width" content="' . esc_attr($width) . '">';
+                $html .= '<meta itemprop="height" content="' . esc_attr($height) . '">';
+                // Wenn Copyright NICHT sichtbar ausgegeben werden soll ODER keine figcaption erlaubt ist:
+                if ($copyrightText !== '' && (!$displaycopyright || !$figcaption)) {
+                // Unsichtbare Meta-Info im Figure-Kontext (schema.org)
+                    $html .= '<meta itemprop="copyrightNotice" content="' . esc_attr($copyrightText) . '">';
+                }
+                
+
+               // Figcaption nur wenn gewünscht + Inhalt vorhanden
+                if ($figcaption && ($captionText !== '' || ($displaycopyright && $copyrightText !== ''))) {
+                    $html .= '<figcaption>';
+                    if ($captionText !== '') {
+                        $html .= '<p itemprop="caption">' . esc_html($captionText) . '</p>';
+                    }
+                    // Sichtbare Copyright-Info nur wenn gewünscht
+                    if ($displaycopyright && $copyrightText !== '') {
+                        $html .= '<p class="image-copyright" itemprop="copyrightNotice">' . esc_html($copyrightText) . '</p>';
+                    }
+                    $html .= '</figcaption>';
+                }
+
+               $html .= '</figure>';
+
+               return $html;
+           }
+       }
+
+       // Fallback: Text-Signatur (ohne Bild)
+       if ($signature) {
+           $alt  = $this->getSignature();
+           $html = '<figure';
+           $css_classes = trim($css_classes . ' signature');
+           $html .= ' class="' . esc_attr($css_classes) . '">';
+           $html .= '<span class="text">' . esc_html($alt) . '</span>';
+           $html .= '</figure>';
+           return $html;
+       }
+
+       return '';
+   }
+
+    
+   /*
+    * Liefert den Contacteintrag zurück, der auf einen Role-FUnktionsstring matcht
+    */
+    public function getContactByRole(string $role = '', bool $fallback = true, bool $partial = true): ?Contact {
+        if (empty($this->contacts) || $role === '') {
+            return null;
+        }
+
+        // Wenn es nur einen einzigen Contacteintrag gibt → ggf. Fallback auf diesen
+        if (count($this->contacts) === 1 && !empty($this->contacts[0]) && $fallback) {
+            return new Contact($this->contacts[0]);
+        }
+
+       // Komma-separierte Rollen in Reihenfolge der Eingabe auswerten
+        $needles = preg_split('/\s*,\s*/u', (string) $role, -1, PREG_SPLIT_NO_EMPTY);
+        $needles = array_values(array_filter(array_map(fn($r) => $this->normalizeRoleString($r), (array) $needles)));
+
+        if (empty($needles)) {
+            return null;
+        }
+
+        // In der Reihenfolge der Needles suchen (erste Übereinstimmung gewinnt)
+        foreach ($needles as $needle) {
+            foreach ((array) $this->contacts as $contactData) {
+                if (empty($contactData) || !is_array($contactData)) {
+                    continue;
+                }
+                $contact = new Contact($contactData);
+                foreach ($contact->getAllFunctionLabels() as $labelString) {
+                    $hay   = $this->normalizeRoleString($labelString);
+                    $match = $partial ? (strpos($hay, $needle) !== false) : ($hay === $needle);
+                    if ($match) {
+                        return $contact;
+                    }
+                }
             }
         }
-        
-        if ($signature) {
-            // No image returned, therefor create the text variant and return this
-            $alt = $this->getSignature();
-            $html  = '<figure ';
-            if (!empty($css_classes)) {
-               $css_classes .= ' signature';
-            } else {
-               $css_classes = 'signature';
-            }
-            $html  .= ' class="' . esc_attr( $css_classes ) . '"';
-            $html .= '>';
-            $html .= '<span class="text">'.$alt.'</span>';    
-            $html .= '</figure>';
-            return $html;
-        }
-        return '';
-        
+
+        // kein Treffer
+        return null;
     }
+
+    /**
+     * Hilfsfunktion: trim + (mb_)strtolower + Tags entfernen
+     */
+    private function normalizeRoleString(string $s): string {
+        $s = trim(wp_strip_all_tags($s));
+        if ($s === '') {
+            return '';
+        }
+        return function_exists('mb_strtolower') ? mb_strtolower($s, 'UTF-8') : strtolower($s);
+    }
+
     
-    
-    public function getPrimaryContact(): ?Contact {       
+    /*
+     * Lieder den Contact-Eintrag zurück, der entweder im Backend definiert
+     *  wurde als Primärer, den spezifischnen zu eine Role oder als Fallback
+     * den erst möglichen  
+     */
+    public function getPrimaryContact(string $role = ''): ?Contact {       
         // Wenn es keinen Contact-Array gibt, dann gibt es kein Contact
         if (empty($this->contacts)) {
             return false;
         }
-    
-        if (!empty($this->primary_contact)) {
-            // we already calculated this, therfor we return this            
-            return $this->primary_contact;
-        }
-         
-          
+
         // Wenn es nur einen einzigen Contacteintrag gibt, dann returne diesen        
         if ((count($this->contacts)==1) && (!empty($this->contacts[0]))) {         
             $this->primary_contact = new Contact($this->contacts[0]);
             return $this->primary_contact;
         }
         
-        // get primary contact
+        if (!empty($role)) {
+            // wenn wir eine spezifische Role/Funktionslabel übergeben bekommen haben, dann
+            // schauen wir zunächst ob diese matcht nehmen daher nicht den
+            // vordefinierten Contact.
+            $rolecontact = $this->getContactByRole($role); 
+            if ($rolecontact) {
+                $this->primary_contact = $rolecontact;
+                return $this->primary_contact;
+            }
+           
+        }
+        if (!empty($this->primary_contact)) {
+            // we already calculated this, therfor we return this            
+            return $this->primary_contact;
+        }
+         
+        
+        // look for existing local cpt
         if (empty($this->postid)) {
             $postid = $this->getPostId();
         } else {
             $postid = $this->postid;
         }
 
+       
+        
+        
         if (($postid === 0) && (!empty($this->contacts[0]))) {
             // No custum post entry, therfor i take the first entry
             $this->primary_contact = new Contact($this->contacts[0]);
@@ -760,20 +914,24 @@ class Person {
         return str_replace(array_keys($replacements), array_values($replacements), $template);
     }
     
-    
-    private static function getAcademicTitleLongVersion(string $prefix): string  {
-        $prefixes = array(
-            'Dr.' => __('Doctor', 'rrze-faudir'),
-            'Prof.' => __('Professor', 'rrze-faudir'),
-            'Prof. Dr.' => __('Professor Doctor', 'rrze-faudir'),
-            'Prof. em.' => __('Professor (Emeritus)', 'rrze-faudir'),
-            'Prof. Dr. em.' => __('Professor Doctor (Emeritus)', 'rrze-faudir'),
-            'PD' => __('Private lecturer', 'rrze-faudir'),
-            'PD Dr.' => __('Private lecturer doctor', 'rrze-faudir')
-        );
+    /**
+    * Liefert die Langform (lokalisierte Bezeichnung) eines akademischen Titels
+    * anhand der in der Config gepflegten Präfix-Tabelle.
+    * Optionale Eingaben: keine.
+    * Rückgabe: string (übersetzte Langbezeichnung) oder '' wenn unbekannt.
+    */
+   private static function getAcademicTitleLongVersion(string $prefix): string {
+       // Normalisieren/zuordnen (nutzt intern die Config-Mapping-Tabelle + Aliase)
+       $norm = \RRZE\FAUdir\FaudirUtils::normalizeAcademicTitle($prefix);
 
-        return isset($prefixes[$prefix]) ? $prefixes[$prefix] : '';
-    }
+       // Wenn in der Config gefunden, die dort gepflegte Langbezeichnung zurückgeben
+       if (!empty($norm['label'])) {
+           return (string) $norm['label'];
+       }
+
+       return '';
+   }
+
     
     /*
      * Get a random identifier; Used for aria-labelledby if more entries 
@@ -789,5 +947,6 @@ class Person {
         
         return $res;
     }
-  
+    
+    
 }

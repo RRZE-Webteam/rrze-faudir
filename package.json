@@ -1,6 +1,6 @@
 {
     "name": "rrze-faudir",
-    "version": "2.4.1",
+    "version": "2.5.2",
     "description": "Plugin for displaying the FAUdir and institution directory on websites.",
     "main": "rrze-faudir.php",
     "textdomain": "rrze-faudir",
@@ -12,11 +12,13 @@
         "format": "wp-scripts format --cwd faudir-block",
         "lint:css": "wp-scripts lint-style --cwd faudir-block",
         "lint:js": "wp-scripts lint-js --cwd faudir-block",
-        "packages-update": "wp-scripts packages-update"
+        "packages-update": "wp-scripts packages-update",
+        "create-pot-for-blockeditor-l10n": "wp i18n make-pot . languages/rrze-faudir.pot --slug=rrze-faudir --domain=rrze-faudir --exclude=node_modules,src",
+        "create-json-for-l10n": "wp i18n make-json languages/ --no-purge"
     },
     "compatibility": {
         "wprequires": "6.7",
-        "wptestedup": "6.8.1",
+        "wptestedup": "6.8.2",
         "phprequires": "8.2"
     },
     "author": {

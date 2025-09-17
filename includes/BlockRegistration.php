@@ -8,10 +8,8 @@ use Exception;
 /**
  * Handles Block Registration, Localization and Rendering of the FAUdir Block.
  */
-class BlockRegistration
-{
-    public function __construct()
-    {
+class BlockRegistration {
+    public function __construct() {
         add_action('init', [$this, 'rrze_faudir_block_init'], 15);
         add_filter('block_categories_all', [$this, 'register_rrze_block_category'], 10, 2);
     }
@@ -19,8 +17,7 @@ class BlockRegistration
     /**
      * Register the FAUdir Block and initialize the l10n.
      */
-    public function rrze_faudir_block_init(): void
-    {
+    public function rrze_faudir_block_init(): void {
         $this->rrze_register_blocks();
         //$this->rrze_register_translations();
     }
@@ -28,8 +25,7 @@ class BlockRegistration
     /**
      * Register the FAUdir block for the BlockEditor
      */
-    public function rrze_register_blocks(): void
-    {
+    public function rrze_register_blocks(): void {
         register_block_type(plugin_dir_path(__DIR__) . 'build/block', [
             'render_callback' => [$this, 'render_faudir_block'],
             'skip_inner_blocks' => true
@@ -55,8 +51,7 @@ class BlockRegistration
      * @param WP_Post $post Current post object.
      * @return array Modified block categories.
      */
-    public static function register_rrze_block_category($categories, $post)
-    {
+    public static function register_rrze_block_category($categories, $post) {
         // Check if there is already a RRZE category present
         foreach ($categories as $category) {
             if (isset($category['slug']) && $category['slug'] === 'rrze') {
@@ -66,7 +61,7 @@ class BlockRegistration
 
         $custom_category = [
             'slug' => 'fau',
-            'title' => __('FAU', 'rrze-bluesky'),
+            'title' => __('FAU', 'rrze-faudir'),
         ];
 
         $categories[] = $custom_category;
@@ -82,9 +77,9 @@ class BlockRegistration
     public static function render_faudir_block($attributes): string {
         try {
             if (!shortcode_exists('faudir')) {
-                throw new Exception('FAUDIR shortcode is not registered');
+                throw new Exception('FAUdir shortcode is not registered');
             }
-
+            
             // Get default organization from options with proper checks
             $options = get_option('rrze_faudir_options', []);
             $default_org = isset($options['default_organization']) && is_array($options['default_organization'])
@@ -92,71 +87,62 @@ class BlockRegistration
                 : [];
             $defaultOrgIdentifier = isset($default_org['id']) ? $default_org['id'] : '';
 
-            if (
-                isset($attributes['display']) &&
-                'org' === $attributes['display'] &&
-                empty($attributes['orgid']) &&
-                empty($attributes['orgnr'])
-            ) {
+            if (isset($attributes['display']) && 'org' === $attributes['display'] &&
+                empty($attributes['orgid']) && empty($attributes['orgnr'])) {
                 throw new \Exception(
                     __('You selected display="org", but neither a FAUorganization ID (orgid) nor a FAU Organization Number (orgnr) was provided.', 'rrze-faudir')
                 );
             }
-
+            
+            $shortcode_atts = [];
+            
+            if ($attributes['selectedFormat']) {
+                $shortcode_atts['format'] =  $attributes['selectedFormat'];
+            } else {
+                $shortcode_atts['format'] =  'compact';
+            }
             // First check if we have function and orgnr
             if (!empty($attributes['role'])) {
-                $shortcode_atts = [
-                    'format' => $attributes['selectedFormat'] ?? 'compact',
-                    'role' => $attributes['role'],
-                    'orgnr' => !empty($attributes['orgnr']) ? $attributes['orgnr'] : $defaultOrgIdentifier
-                ];
-            } // Then check for category
-            else if (!empty($attributes['selectedCategory'])) {
-                $shortcode_atts = [
-                    'format' => $attributes['selectedFormat'] ?? 'compact',
-                    'category' => $attributes['selectedCategory']
-                ];
-
-                // Only add identifiers if they're specifically selected for this category
-                if (!empty($attributes['selectedPersonIds'])) {
-                    $shortcode_atts['identifier'] = implode(',', $attributes['selectedPersonIds']);
-                }
-            } // Finally check for selectedPersonIds without category
-            else if (!empty($attributes['selectedPersonIds'])) {
-                $shortcode_atts = [
-                    'format' => $attributes['selectedFormat'] ?? 'compact',
-                    'identifier' => is_array($attributes['selectedPersonIds']) ?
-                        implode(',', $attributes['selectedPersonIds']) :
-                        $attributes['selectedPersonIds']
-                ];
-            } // Org without other parameters from above given
-            else if (!empty($attributes['orgid'])) {
-                $shortcode_atts = [
-                    'format' => $attributes['selectedFormat'] ?? 'compact',
-                    'orgid' => $attributes['orgid']
-                ];
-            } else if (!empty($attributes['orgnr'])) {
-                $shortcode_atts = [
-                    'format' => $attributes['selectedFormat'] ?? 'compact',
-                    'orgnr' => $attributes['orgnr']
-                ];
-            } else if (!empty($attributes['identifier'])) {
-                $shortcode_atts = [
-                    'format' => $attributes['selectedFormat'] ?? 'compact',
-                    'identifier' => $attributes['identifier']
-                ];
-            } else {
-                throw new Exception(__('Neither person IDs, function+orgnr, nor category were provided', 'rrze-faudir'));
+                $shortcode_atts['role'] =  $attributes['role'];
+            }    
+            if (!empty($attributes['orgid'])) {
+               $shortcode_atts['orgid'] =  $attributes['orgid'];
             }
+            if (!empty($attributes['orgnr'])) {
+               $shortcode_atts['orgnr'] =  $attributes['orgnr'];
+            }
+            
 
+
+            if (!empty($attributes['selectedPosts'])) {
+                if (is_array($attributes['selectedPosts'])) {
+                    $shortcode_atts['id'] = implode(',', $attributes['selectedPosts']);
+                } else {
+                    $shortcode_atts['id'] = $attributes['selectedPosts'];
+                }
+            }  
+
+
+            
+            if (!empty($attributes['identifier'])) {
+                $shortcode_atts['identifier'] = $attributes['identifier'];  
+            } elseif (!empty($attributes['selectedPersonIds'])) {
+                if (is_array($attributes['selectedPersonIds'])) {
+                    $shortcode_atts['identifier'] = implode(',', $attributes['selectedPersonIds']);
+                } else {
+                    $shortcode_atts['identifier'] = $attributes['selectedPersonIds'];
+                }
+            }
+            
+            if (!empty($attributes['selectedCategory'])) {
+                $shortcode_atts['category'] =   $attributes['selectedCategory'];
+            } 
+            
             // Add optional attributes
             if (!empty($attributes['selectedFields'])) {
                 $shortcode_atts['show'] = implode(',', $attributes['selectedFields']);
             }
 
-            if (!empty($attributes['hideFields'])) {
-                $shortcode_atts['hide'] = implode(',', $attributes['hideFields']);
-            }
 
             if (!empty($attributes['url'])) {
                 $shortcode_atts['url'] = $attributes['url'];
@@ -164,9 +150,11 @@ class BlockRegistration
             if (!empty($attributes['format_displayname'])) {
                 $shortcode_atts['format_displayname'] = $attributes['format_displayname'];
             }
-
             if (!empty($attributes['sort'])) {
                 $shortcode_atts['sort'] = $attributes['sort'];
+            }
+            if (!empty($attributes['order'])) {
+                $shortcode_atts['order'] = $attributes['order'];
             }
 
             if (!empty($attributes['display'])) {
@@ -180,13 +168,16 @@ class BlockRegistration
                     $shortcode .= sprintf(' %s="%s"', esc_attr($key), esc_attr($value));
                 }
             }
+            $shortcode .= ' blockeditor="true"';
             $shortcode .= ']';
+          //  do_action( 'rrze.log.notice', "FAUdir\BlockRegistration (render_faudir_block): Creating Shortcode: ".$shortcode, $attributes);   
 
+            
             // Execute shortcode
             $output = do_shortcode($shortcode);
 
             if (empty(trim($output))) {
-                throw new Exception('Shortcode returned empty content');
+                throw new Exception(esc_html__('No output avaible', 'rrze-faudir'));
             }
 
             return $output;

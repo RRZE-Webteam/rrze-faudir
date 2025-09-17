@@ -17,7 +17,8 @@ if (!defined('ABSPATH')) {
     $fieldsbyformat = $config->get('avaible_fields_byformat');
     $available_fields = $config->getFieldsByFormat('table');
     $opt = $config->getOptions();        
-     
+    $normalize_titles = $opt['default_normalize_honorificPrefix'];
+
    
     $displayorder = $config->get('default_display_order');
     if (!empty($displayorder)) {
@@ -55,7 +56,7 @@ if (!defined('ABSPATH')) {
                         if (!empty($format_displayname)) {
                             $formatstring = $format_displayname;
                         }
-                        $displayname = $person->getDisplayName(true, false,$formatstring);
+                        $displayname = $person->getDisplayName(true, $normalize_titles,$formatstring);
                         $mailadresses= $person->getEMail();
                         $phonenumbers = $person->getPhone();   
                         if (!empty($url)) {
@@ -63,7 +64,7 @@ if (!defined('ABSPATH')) {
                         } else {
                             $final_url = $person->getTargetURL($opt['fallback_link_faudir']);
                         }
-                        $contact = $person->getPrimaryContact();
+                        $contact = $person->getPrimaryContact($role);
                         $workplaces = [];
                         if (!empty($contact)) { 
                             $workplaces = $contact->getWorkplaces();                    
@@ -193,10 +194,28 @@ if (!defined('ABSPATH')) {
                                                 $roomfloor = false;
                                             }
                                 
-                                        
-                                            foreach ($workplaces as $w => $wdata) {                                        
-                                                $wval .= $contact->getAddressByWorkplace($wdata, false, $lang, $roomfloor);
+                                            $seen      = [];
+                                            foreach ($workplaces as $w => $wdata) {
+                                                $html = (string) $contact->getAddressByWorkplace($wdata, false, $lang, $roomfloor);
+                                                if ($html === '') {
+                                                    continue;
+                                                }
+                                                // Kanonische Signatur: HTML → Text, Entities decodieren, trimmen, Whitespaces normalisieren, lowercasing
+                                               $key = strtolower(
+                                                   preg_replace('/\s+/u', ' ',
+                                                       trim( wp_strip_all_tags( html_entity_decode( $html ) ) )
+                                                   )
+                                               );
+
+                                               if ($key === '') {
+                                                   continue;
+                                               }
+                                               if (!isset($seen[$key])) {
+                                                   $seen[$key] = true;
+                                                   $wval .= $html; 
+                                               }
                                             }
+
                                             $value = $wval;      
                                     }
                                 } elseif ($key_lower === 'street')  {        

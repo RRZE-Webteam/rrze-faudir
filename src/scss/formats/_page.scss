@@ -30,16 +30,12 @@
 	    margin-bottom: 1rem;
 	    
 	    .profile-image-section {
-		background-color: #ccc; /* Falls kein Bild vorhanden ist */
 		display: flex;
-		align-items: center;
 		justify-content: center;
 		text-align: center;
 		border-radius: var(--faudir-figure-border-radius);
 		overflow: hidden;
 		grid-area: image;
-		width: var(--faudir-profile-image-section-width);
-		height: var(--faudir-profile-image-section-height);
 		
 		img {
 		    width: var(--faudir-profile-image-width);
@@ -50,13 +46,29 @@
 		figure {
 		    margin: 0;
 		}
+		figure.signature {
+		    
+		    
+		    .text {
+			background-color: var(--faudir-figure-textsignature-background);
+			width: var(--faudir-profile-image-width);
+			height: var(--faudir-profile-image-height);
+			display: block;
+			align-content: center;
+		    }
+		}
+		figcaption {
+		    p {
+			font-size: var(--faudir-figcaption-font-size);
+			padding: 0;
+		    }
+		}
 	    }
 	    
 	    .profile-header {
 		grid-area: header;
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
 		padding: var(--faudir-profile-padding);
 		 h1 {
 			margin-top: 0;
@@ -77,6 +89,7 @@
 		
 		.profile-address, .profile-consultation, .profile-contact, .profile-socialmedia {
 		   padding: var(--faudir-profile-padding);
+		   
 		}
 		
 		.profile-address {
@@ -89,7 +102,7 @@
 
 		}
 		.profile-socialmedia {
-
+		    margin: 0 0 1rem 0;
 		}
 	    }
 	    .profile-content-region {
@@ -97,7 +110,7 @@
 	    }
 	    .profile-content {
 		.teasertext {
-		 
+		    margin: 1em 0;
 		}
 	    }
 	    

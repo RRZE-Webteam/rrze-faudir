@@ -130,11 +130,15 @@ export default function CustomPlaceholder({
                           paddingTop="1rem"
                           paddingBottom="1.5rem"
                         >
-                          <OrganizationNumberDetector
+			  <PersonIdentifierDetector attributes={attributes} setAttributes={setAttributes}/>
+                          
+			  <OrganizationNumberDetector
                             attributes={attributes}
                             setAttributes={setAttributes}
                           />
-                          <PersonIdentifierDetector attributes={attributes} setAttributes={setAttributes}/>
+			  <OrganizationIdentifierDetector attributes={attributes} setAttributes={setAttributes}/>
+			  
+                          
                         </Spacer>
                       </PanelBody>
                     </Panel>
@@ -149,7 +153,7 @@ export default function CustomPlaceholder({
                     <OrganizationNumberDetector
                       attributes={attributes}
                       setAttributes={setAttributes}
-                      label={__('Display via FAUOrg Number', 'rrze-faudir')}
+                      label={__('Via FAUOrg Number', 'rrze-faudir')}
                       helpText={__('To display an Institution as contact, insert your FAUOrg Number (Cost center number).', 'rrze-faudir')}
                     />
                     <OrganizationIdentifierDetector attributes={attributes} setAttributes={setAttributes}/>

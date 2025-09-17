@@ -14,7 +14,8 @@ if (!defined('ABSPATH')) {
 <?php
     $config = new Config;
     $available_fields = $config->getFieldsByFormat('page');
-    $opt = $config->getOptions();        
+    $opt = $config->getOptions();       
+    $normalize_titles = $opt['default_normalize_honorificPrefix'];
     $lang = FAUdirUtils::getLang();
 
 
@@ -37,7 +38,7 @@ if (!defined('ABSPATH')) {
                 if (!empty($format_displayname)) {
                     $formatstring = $format_displayname;
                 }
-                $displayname = $person->getDisplayName(true, false,$formatstring);
+                $displayname = $person->getDisplayName(true, $normalize_titles,$formatstring);
                 $mailadresses= $person->getEMail();
                 $phonenumbers = $person->getPhone();                        
                 if (!empty($url) && ($url !== '#')) {
@@ -47,7 +48,7 @@ if (!defined('ABSPATH')) {
                 } else {
                     $final_url = $person->getTargetURL($opt['fallback_link_faudir']);
                 }
-                $contact = $person->getPrimaryContact();
+                $contact = $person->getPrimaryContact($role);
                 $workplaces = [];
                 if (!empty($contact)) { 
                     $workplaces = $contact->getWorkplaces();                    
@@ -100,10 +101,29 @@ if (!defined('ABSPATH')) {
                                     $roomfloor = false;
                                 }
                                 
-                                
+                                $seen      = [];
                                 foreach ($workplaces as $w => $wdata) {
-                                    $wval .= $contact->getAddressByWorkplace($wdata, false, $lang, $roomfloor);
+                                    $html = (string) $contact->getAddressByWorkplace($wdata, false, $lang, $roomfloor);
+                                    if ($html === '') {
+                                        continue;
+                                    }
+                                    // Kanonische Signatur: HTML → Text, Entities decodieren, trimmen, Whitespaces normalisieren, lowercasing
+                                   $key = strtolower(
+                                       preg_replace('/\s+/u', ' ',
+                                           trim( wp_strip_all_tags( html_entity_decode( $html ) ) )
+                                       )
+                                   );
+
+                                   if ($key === '') {
+                                       continue;
+                                   }
+                                   if (!isset($seen[$key])) {
+                                       $seen[$key] = true;
+                                       $wval .= $html; 
+                                   }
                                 }
+
+                                
                                 $address .= $wval;      
                             }
                            
@@ -191,9 +211,10 @@ if (!defined('ABSPATH')) {
                         }
                         
                         if (in_array('socialmedia', $show_fields) ) {
-                            $some = $contact->getSocialMedia('span');
+                            $some = $contact->getSocialMedia();
                             if (!empty($some)) {
                                 echo '<div class="profile-socialmedia">';
+                                echo '<h2 class="screen-reader-text">'.__('Social Media and Websites', 'rrze-faudir').'</h2>';
                                 echo $some;
                                 echo '</div>';
                             }
@@ -276,7 +297,7 @@ if (!defined('ABSPATH')) {
                     $profilcontent = '';
                     if (in_array('teasertext', $show_fields) ) {    
                         
-                            $wval = $person->getTeasertext($lang);
+                            $wval = $person->getTeasertext();
                             if (!empty($wval)) {
                                 $profilcontent .= '<div class="teasertext">';
                                 $profilcontent .= wp_kses_post($wval);
@@ -285,7 +306,7 @@ if (!defined('ABSPATH')) {
                     }
                     
                     if (in_array('content', $show_fields)) {                          
-                            $wval = $person->getContent($lang);
+                            $wval = $person->getContent();
                             if (!empty($wval)) {
                                 $profilcontent .= '<div class="content">';
                                 $profilcontent .= $wval;

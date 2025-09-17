@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
     $available_fields = $config->getFieldsByFormat('compact');
     $opt = $config->getOptions();        
     $lang = FAUdirUtils::getLang();
-
+    $normalize_titles = $opt['default_normalize_honorificPrefix'];
     
     $dbopt = get_option('rrze_faudir_options', []);
      
@@ -26,8 +26,8 @@ if (!defined('ABSPATH')) {
     //echo "<hr>";
     
     if (!empty($persons)) { ?>
-    <div class="format-compact">
-    <?php foreach ($persons as $persondata) {
+         <div class="format-compact">
+        <?php foreach ($persons as $persondata) {
         if (isset($persondata['error'])) {  
             if ($opt['show_error_message']) {
             ?>
@@ -43,7 +43,7 @@ if (!defined('ABSPATH')) {
                 if (!empty($format_displayname)) {
                     $formatstring = $format_displayname;
                 }
-                $displayname = $person->getDisplayName(true, false,$formatstring);
+                $displayname = $person->getDisplayName(true, $normalize_titles,$formatstring);
                 $mailadresses= $person->getEMail();
                 $phonenumbers = $person->getPhone();                        
                 if (!empty($url)) {
@@ -51,7 +51,9 @@ if (!defined('ABSPATH')) {
                 } else {
                     $final_url = $person->getTargetURL($opt['fallback_link_faudir']);
                 }
-                $contact = $person->getPrimaryContact();
+ 
+                
+                $contact = $person->getPrimaryContact($role);
                 $workplaces = [];
                 
                
@@ -90,7 +92,9 @@ if (!defined('ABSPATH')) {
                             if (!empty($opt['jobtitle_format'])) {
                                 $jobtitleformat = $opt['jobtitle_format'];
                             }                           
-                            echo '<p class="jobtitle">'. $contact->getJobTitle($lang,$jobtitleformat).'</p>';
+                            if ($contact) {
+                                echo '<p class="jobtitle">'. $contact->getJobTitle($lang,$jobtitleformat).'</p>';
+                            }
                         }
                         ?>
                 
@@ -110,9 +114,28 @@ if (!defined('ABSPATH')) {
                                 
                                 
                                 $wval = '';
+                                $seen      = [];
                                 foreach ($workplaces as $w => $wdata) {
-                                    $wval .= $contact->getAddressByWorkplace($wdata, false, $lang, $roomfloor);
+                                    $html = (string) $contact->getAddressByWorkplace($wdata, false, $lang, $roomfloor);
+                                    if ($html === '') {
+                                        continue;
+                                    }
+                                    // Kanonische Signatur: HTML → Text, Entities decodieren, trimmen, Whitespaces normalisieren, lowercasing
+                                   $key = strtolower(
+                                       preg_replace('/\s+/u', ' ',
+                                           trim( wp_strip_all_tags( html_entity_decode( $html ) ) )
+                                       )
+                                   );
+
+                                   if ($key === '') {
+                                       continue;
+                                   }
+                                   if (!isset($seen[$key])) {
+                                       $seen[$key] = true;
+                                       $wval .= $html; 
+                                   }
                                 }
+
                                 $address .= $wval;      
                             }
                            
@@ -250,13 +273,12 @@ if (!defined('ABSPATH')) {
                             $some = $contact->getSocialMedia('span');
                             if (!empty($some)) {
                                 echo '<div class="profile-socialmedia">';
+                                echo '<h2 class="screen-reader-text">'.__('Social Media and Websites', 'rrze-faudir').'</h2>';
                                 echo $some;
                                 echo '</div>';
                             }
                         }
-                        ?>
-                    
-                    <?php
+  
                      if (in_array('link', $show_fields) ) {                          
                             if (!empty($final_url)) {
                                 $link = '<div class="profile-link">';

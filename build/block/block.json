@@ -51,10 +51,6 @@
       "type": "string",
       "default": ""
     },
-    "hideFields": {
-      "type": "array",
-      "default": []
-    },
     "showCategory": {
       "type": "boolean",
       "default": false
@@ -66,6 +62,10 @@
     "sort": {
       "type": "string",
       "default": "familyName"
+    },
+    "order": {
+      "type": "string",
+      "default": "asc"
     },
     "format_displayname": {
       "type": "string",

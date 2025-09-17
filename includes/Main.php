@@ -4,10 +4,14 @@ namespace RRZE\FAUdir;
 
 defined('ABSPATH') || exit;
 
+use RRZE\FAUdir\Settings;
 use RRZE\FAUdir\Maintenance;
 use RRZE\FAUdir\BlockRegistration;
 use RRZE\FAUdir\REST;
 use RRZE\FAUdir\Config;
+use RRZE\FAUdir\Filters;
+use RRZE\FAUdir\Embeds;
+
 /**
  * Hauptklasse
  */
@@ -29,6 +33,11 @@ class Main {
 
     public function onLoaded() {
         
+        
+        // Einstellungen laden
+        $settings = new Settings();
+        $settings->register_hooks();
+        
         // Register REST API
         new REST();
         
@@ -46,7 +55,12 @@ class Main {
         $maintenance = new Maintenance($this->config);
         $maintenance->register_hooks();
         
-    
+        // Aktiviere die Filter für externe Plugins
+        Filters::register();
+     
+        // Embed Funktionalität aktivieren
+        Embeds::register();
+        
     }
 
 

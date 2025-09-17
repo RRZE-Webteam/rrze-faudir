@@ -10,8 +10,8 @@ Plugin zur Darstellung des Personen- und Einrichtungsverzeichnis der FAU in Webs
 
 ## Contributors
 
-* Mondula, https://mondula.com/
-* RRZE-Webteam, http://www.rrze.fau.de
+* RRZE-Webteam, http://www.rrze.fau.de (Version 2.2 and later)
+* Mondula, https://mondula.com/ (Version 1 - Version 2.1)
 
 ## Copyright
 
@@ -27,3 +27,64 @@ See documenation at https://www.wp.rrze.fau.de
 * https://github.com/RRZE-Webteam/rrze-faudir/issues
 * webmaster@rrze.fau.de
 
+
+## Filter for external plugins and themes
+
+To get data from the plugin to use in other plugins or themes, the following filters are avaible.
+
+* rrze_faudir_get_target_url , input: FAUdir identifier, output: URL
+  
+   Example usage:
+    
+   ```php
+   $url = apply_filters('rrze_faudir_get_target_url', [], $identifier);
+   ```
+
+    To add own overwrites:
+
+    ```php
+    add_filter('rrze_faudir_get_target_url', function($url, $identifier){
+	// z.B. eigene Routing-Logik, Sonderfälle, Tracking-Parameter …
+	return $url;
+    }, 20, 2);
+    ```
+
+    Its also possible to make a direct function call in the following ways:
+    ```php
+    $url = \RRZE\FAUdir\Filters::get_target_url($identifier);
+
+    // or, if wrapper is avaible:
+    $url = function_exists('faudir_get_target_url') ? faudir_get_target_url($identifier) : '';
+    ```
+
+* rrze_faudir_get_person_array , input: FAUdir identifier, output: Array with person data
+
+    Example usage:
+
+   ```php
+   $person = apply_filters('rrze_faudir_get_person_array', [], $identifier);
+   ```
+
+   To add own overwrites:
+
+    ```php
+    add_filter('rrze_faudir_get_person_array', function(array $data, string $identifier) {
+	return $data;
+    }, 20, 2);
+    ```
+
+   Its also possible to make a direct function call in the following ways:
+
+   ```php
+    $person = \RRZE\FAUdir\Filters::get_person_array($identifier);
+
+    // or, if wrapper is avaible:
+    $person = function_exists('faudir_get_person_array') ? faudir_get_person_array($identifier) : [];
+    ```
+
+* Abhängig vom Theme werden die Filter 
+        
+    * `fau_elemental_copyright_info` (beim Theme FAU Elemental )
+    * `fau_copyright_info` (bei allen anderen FAU-Themes)
+  
+  gesetzt. Diese enthalten bei der Ausgabe von Personenbildern mit Copyright-Text den jeweiligen text und die Bild-ID

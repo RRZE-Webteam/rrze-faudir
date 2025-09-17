@@ -53,16 +53,19 @@ class Shortcode {
                 'orgnr'                 => '',
                 'orgid'                 => '',
                 'sort'                  => '',
+                'order'                 => 'asc',
                 'function'              => '',
                 'role'                  => '',
                 'button-text'           => '',
                 'format_displayname'    => '',
+                'blockeditor'           => 'false',
                 'display'               => 'person',
                 'lang'                  => ''
             ),
             $atts
         );
-
+       
+          
         if (empty($atts['lang'])) {
             $atts['lang'] = $lang;
         } else {
@@ -79,6 +82,11 @@ class Shortcode {
         $show = self::resolve_visible_fields_with_format($atts);
         $atts['show'] = implode(', ', $show);
         unset($atts['hide']);
+        
+
+
+        
+     //   do_action( 'rrze.log.notice','FAUdir\Shortcode (fetch_fau_data). Modified Args: ', $atts);
         
         // Enqueue CSS for output
         wp_enqueue_style('rrze-faudir');
@@ -125,6 +133,11 @@ class Shortcode {
         $options = get_option('rrze_faudir_options');
         $default_show_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : [];
 
+        if (isset($atts['blockeditor']) && ($atts['blockeditor'] === 'true')) {
+            $show_fields = isset($atts['show']) ? explode(',', $atts['show']) : [];
+            return $show_fields;
+        }
+        
         
         $format = $atts['format'];
 
@@ -184,8 +197,8 @@ class Shortcode {
         // Convert 'show' and 'hide' attributes into arrays
         $show_fields = array_map('trim', explode(',', $atts['show']));
        
-
-
+         
+         
         if ($atts['display'] == 'org') {
             return self::createOrgOutput($atts, $show_fields);
         } else {
@@ -209,14 +222,21 @@ class Shortcode {
             // optionale URL der Person überschreiben
         $orgnr      = $atts['orgnr'];
             // ORGnr der Einrichtung, falls Personen danach angezeigt werden sollen
+        $faudir_orgid   = $atts['orgid'];
+            // FAUdir Orgid oder Folderid, falls danach Personen angezeigt werden sollen
         $post_id    = $atts['id'];
-            // Personen POst ID falls diese angezeigt werden soll
+            // Personen Post ID falls diese angezeigt werden soll
         $display    = $atts['display'];
             // Art der anzuzeigendenden Daten.  Default: Person. Alternativ: Org
         $format_displayname = $atts['format_displayname'];
             // optionale Formataenderung für die Darstellung des Namens
 
     
+        $sanitizedOrder = FaudirUtils::sanitizeOrderString($atts['order']);
+        // optional: auf Sort-Keys strecken
+        $atts['order']     = FaudirUtils::expandOrderStringForSort($sanitizedOrder, $atts['sort']);
+
+         
         $api = new API(self::$config);
         
         
@@ -225,6 +245,41 @@ class Shortcode {
         $person = new Person();
         $person->setConfig(self::$config);
 
+        
+        if (!empty($role)) {
+            // wir wollen Personen einer Rolle anzeigen.
+            // Hierzu brauchen wir aber immer entweder 
+            // eine OrgNr oder eine FAUdir OrgId
+            // oder eine Identifier/PostId
+            
+            // Wenn beide leer sind, schaue nach ob wir eine Default Orgnr haben
+            // und befülle daamit die orgnr
+            
+            if (!empty($identifiers) || !empty($post_id)) {
+                // wir haben bereits Peoosnen und wollen diese aber nach den Rollen filtern,
+                // benötigen also daher keine vorherige SUche nach Orgs.
+                // do_action( 'rrze.log.info',"FAUdir\Shortcode (createPersonOutput): id  oder post id {$post_id} gesetzt: ", $identifiers);
+                // Tu hier (erstmal nichts)
+                
+            } elseif ((empty($orgnr)) && (empty($faudir_orgid))) {
+                // beide leer, also müssen wir mindestens nach dem Fallbach von 
+                // fauorgnr schauen. und wenn dieser vorhanden ist, dann 
+                // den Wert damit befüllen.
+                
+                $options = get_option('rrze_faudir_options', []);
+                $default_org = $options['default_organization'] ?? null;
+
+                if (!empty($default_org['orgnr'])) {
+                    $orgnr = $default_org['orgnr'];                    
+                } else {
+                    // Wir haben keinen Fallback, also können wir auch keine
+                    // Rolle darstellen
+                    $role = '';
+                }
+                
+            }
+        }
+        
         
         if (!empty($identifiers) || !empty($post_id)) {
             // display a single person by identifier or post id
@@ -239,114 +294,6 @@ class Shortcode {
             }
             // Apply organization and group filters if set
             $persons = self::filterPersonsByOrganization($persons, $orgnr);
-        } elseif (!empty($role)) {
-            // Display Persons by Role (FAUdir Function)
-            
-      //        Debug::log('Shortcode','error',"Look for function $role");
-            if (Organization::isOrgnr($orgnr)) {
-                // Case 1: Explicit orgnr is provided in shortcode - exact match for both org and function
-                
-                $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . $orgnr]);
-          
-                // TODO wir brauchen für den Fall der gekürzten OrgNr eine neue Schleife mit
-                //         $orgdata = $api->getOrgList(20, 0, ['lq' => 'disambiguatingDescription[reg]=^' . $orgnr]);
-                // Danach müssen wir aber über alle Orgs gehen un dnicht wie nachfolgend nur die erste nehmen!
-                
-                if (!empty($orgdata['data'])) {
-                    $org = $orgdata['data'][0];
-                        // Hier nimmt er nur den ersten!!
-                    
-                    $identifier = $org['identifier'];
-                    $queryParts = [];
-                    $queryParts[] = 'contacts.organization.identifier[eq]=' . $identifier;
-
-                    
-                    $params = [
-                        'lq' => implode('&', $queryParts)
-                    ];
-
-                    $result = $api->getPersons(100, 0, $params);      
-                    // Rolle(n) in ein Array aufsplitten und bereinigen
-                    $roles = array_map('trim', explode(',', $role));
-                    
-                    foreach ($result['data'] as $key => &$persondata) {
-                        // Enrich person data with full contact information
-                        
-                        $person->populateFromData($persondata);
-                        $person->reloadContacts();
-                        $persondata = $person->toArray();
-
-                        
-                        foreach ($persondata['contacts'] as $contactKey => $contact) {
-                            $functionMatches = in_array($contact['function'], $roles, true)
-                                || in_array($contact['functionLabel']['de'], $roles, true)
-                                || in_array($contact['functionLabel']['en'], $roles, true);
-
-                            if (!$functionMatches || $contact['organization']['identifier'] !== $identifier) {
-                                unset($persondata['contacts'][$contactKey]);
-                            }
-                        }
-
-                        if (count($persondata['contacts']) === 0) {
-                            unset($result['data'][$key]);
-                        }
-
-                         
-                    }
-
-                    if (!empty($result['data'])) {
-                        $persons = array_values($result['data']);
-                    }
-                }
-            } else {
-                // Case 2: Only function is specified - use default org prefix
-                    $options = get_option('rrze_faudir_options', []);
-                    $default_org = $options['default_organization'] ?? null;
-
-                    if (!empty($default_org['orgnr'])) {
-                        $ids = $default_org['ids'];
-                        $queryParts[] = 'contacts.organization.identifier[reg]=^(' . implode('|', $ids) . ')$';
-
-                        // Format the query according to the specified pattern
-                        $params = [
-                            'lq' => implode('&', $queryParts)
-                        ];
-                        $result = $api->getPersons(60, 0, $params);  
-                        $roles = array_map('trim', explode(',', $role));
-                        
-                        // Process each person and filter contacts
-                        foreach ($result['data'] as $key => &$persondata) {
-                            
-                            $person->populateFromData($persondata);
-                            $person->reloadContacts();
-                            $persondata = $person->toArray();
-                            
-                            
-                            foreach ($persondata['contacts'] as $contactKey => $contact) {
-                                $functionMatches = in_array($contact['function'], $roles, true)
-                                    || in_array($contact['functionLabel']['de'], $roles, true)
-                                    || in_array($contact['functionLabel']['en'], $roles, true);
-
-                                if (!$functionMatches || $contact['organization']['identifier'] !== $ids) {
-                                    unset($persondata['contacts'][$contactKey]);
-                                }
-                            }
-
-                            if (count($persondata['contacts']) === 0) {
-                                unset($result['data'][$key]);
-                            }
-                            
-
-                            
-                        }
-
-                        if (!empty($result['data'])) {
-                            $persons = array_values($result['data']);
-                        }
-                    }
-                
-            }
-
         } elseif (!empty($category)) {
             // get persons by category. 
             $person_identifiers = self::getPersonIdentifiersByCategory($category);
@@ -355,103 +302,30 @@ class Shortcode {
             }
         } elseif (!empty($orgnr))  {
             // get persons by orgnr
-           // error_log("FAUdir\Shortcode (fetch_and_render_fau_data): By Orgnr: {$orgnr}");       
-           $orgdata = $api->getOrgList(0, 0, ['lq' => 'disambiguatingDescription[eq]=' . $orgnr]);
-           
-            if (!empty($orgdata['data'])) {
-                $orgid = $orgdata['data'][0]['identifier'];
-                $lq = 'contacts.organization.identifier[eq]=' . $orgid;
-                $persons = self::fetch_and_process_persons($lq);
-            }
-            
+           $persons = self::getPersonsByOrgNrs($orgnr, $role); 
+         } elseif (!empty($faudir_orgid))  {
+            // get persons by FAUdir Orgid
+           $persons = self::getPersonsByFAUdirOrgId($faudir_orgid, $role);     
+
         } else {
-            error_log('Invalid combination of attributes.');
+      //      do_action( 'rrze.log.error',"FAUdir\Shortcode (createPersonOutput): Invalid combination of attributes.", $atts);
             return '';
         }
 
      
+       
+        
         // Sorting logic based on the specified sorting options
-        $sort_option = $atts['sort'] ?? 'familyName'; // Default sorting by last name
-        $collator = collator_create('de_DE'); // German locale for sorting
-
-        // Sort the persons array
-        usort($persons, function ($a, $b) use ($sort_option, $collator, $identifiers) {
-            switch ($sort_option) {
-                case 'title_familyName':
-                    $academic_titles = ['Prof. Dr.', 'Dr.', 'Prof.', ''];
-                    $a_title = $a['honorificPrefix'] ?? '';
-                    $b_title = $b['honorificPrefix'] ?? '';
-                    $a_title_pos = array_search($a_title, $academic_titles) !== false ? array_search($a_title, $academic_titles) : count($academic_titles);
-                    $b_title_pos = array_search($b_title, $academic_titles) !== false ? array_search($b_title, $academic_titles) : count($academic_titles);
-                    if ($a_title_pos !== $b_title_pos) {
-                        return $a_title_pos - $b_title_pos;
-                    }
-                    return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');
-
-                case 'head_first':
-                    // Sort by 'head' in functionLabel
-                    $a_is_head = false;
-                    $b_is_head = false;
-
-                    foreach ($a['contacts'] as $contact) {
-                        if (isset($contact['function']) && (($contact['function'] === 'leader') || ($contact['function'] === 'deputy'))) {
-                            $a_is_head = true;
-                            break;
-                        }
-                    }
-
-                    foreach ($b['contacts'] as $contact) {
-                        if (isset($contact['function']) && $contact['function'] === 'professor') {
-                            $b_is_head = true;
-                            break;
-                        }
-                    }
-
-                    return $a_is_head === $b_is_head ? collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '') : ($a_is_head ? -1 : 1);
-
-                case 'prof_first':
-                    // Sort by 'professor' in functionLabel
-                    $a_is_professor = false;
-                    $b_is_professor = false;
-
-                    foreach ($a['contacts'] as $contact) {
-                        if (isset($contact['function']) && $contact['function'] === 'professor') {
-                            $a_is_professor = true;
-                            break;
-                        }
-                    }
-
-                    foreach ($b['contacts'] as $contact) {
-                        if (isset($contact['function']) && $contact['function'] === 'professor') {
-                            $b_is_professor = true;
-                            break;
-                        }
-                    }
-
-                    return $a_is_professor === $b_is_professor ? collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '') : ($a_is_professor ? -1 : 1);
-
-                case 'identifier_order':
-                    if (!empty($identifiers)) {
-                        $a_index = array_search($a['identifier'] ?? '', $identifiers);
-                        $b_index = array_search($b['identifier'] ?? '', $identifiers);
-                        if ($a_index === false) $a_index = PHP_INT_MAX;
-                        if ($b_index === false) $b_index = PHP_INT_MAX;
-
-                        return $a_index - $b_index;
-                    }
-                    return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');
-
-                default:
-                    return collator_compare($collator, $a['familyName'] ?? '', $b['familyName'] ?? '');
-            }
-        });
-
+        $sort_option = $atts['sort'] ?? 'title_familyName'; // Default sorting by last name
+        $order_option = $atts['order'] ?? ''; 
+        $persons = self::sortPersons($persons, $sort_option, $identifiers, $order_option);
+         
+         
+       
         // Load the template and pass the sorted data
         $template_dir = RRZE_PLUGIN_PATH . 'templates/';
         $template = new Template($template_dir);
 
-        // Check if button text is set and not empty before passing it to the template
-        $button_text = isset($atts['button-text']) && $atts['button-text'] !== '' ? $atts['button-text'] : '';
 
         // check and sanitize for format for displayname
         $format_displayname = wp_strip_all_tags($format_displayname);
@@ -461,7 +335,7 @@ class Shortcode {
             'format_displayname' => $format_displayname,
             'persons'       => $persons,
             'url'           => $url,
-            'button_text'   => $button_text,
+            'role'          => $role
         ]);
     }
     
@@ -482,8 +356,14 @@ class Shortcode {
         $org = new Organization();
         
         if (Organization::isOrgnr($orgnr)) {   
-            $org->getOrgbyOrgnr($orgnr);
-            $orgdata = $org->toArray();
+            $id = $org->getIdentifierbyOrgnr($orgnr);
+            $orgid = Organization::sanitizeOrgIdentifier($id);
+            if (Organization::isOrgIdentifier($orgid)) {
+                $org->getOrgbyAPI($orgid);
+                $orgdata = $org->toArray();
+            } else {
+                return self::createErrorOut(__('Bad value for parameter orgid', 'rrze-faudir'), 'createOrgOutput');
+            }
         } elseif (!empty($orgid)) {
             $orgid = Organization::sanitizeOrgIdentifier($orgid);
             
@@ -523,7 +403,8 @@ class Shortcode {
         if (empty($error)) {
             $error = __('Error on creating output', 'rrze-faudir');
         }
-        error_log('FAUdir/Shortcode ('.$errorloginfo.'): '. $error);
+        do_action( 'rrze.log.error',"FAUdir\Shortcode (createErrorOut): $errorloginfo", $error);
+        
         $out = '<div class="faudir">';  
         $config = new Config;
         $opt = $config->getOptions(); 
@@ -633,7 +514,293 @@ class Shortcode {
         return array_values(array_unique($person_identifiers));
     }
 
+    
+    /**
+    * Holt Personen zu mehreren Organisations-Nummern (Komma-getrennt) und führt die Ergebnisse zusammen.
+    * Eingabe:
+    *   - $orgnrs (string|array|int): z. B. "123456, 1234567890" oder [123456, 1234567890] oder 1234567890.
+    *   - $role (string|null): optional, kommaseparierte Rollenbezeichnungen zur Filterung (z. B. "Professor,Postdoc").
+    * Rückgabe:
+    *   - array: zusammengeführte Personenliste (kontakt-merge bei Mehrtreffern).
+    */
+   public static function getPersonsByOrgNrs(string|array|int $orgnrs, ?string $role = null): array {
+       // Eingabe normalisieren → Array von Strings (ohne Leerzeichen, ohne leere Einträge)
+       if (is_int($orgnrs)) {
+           $orgList = [(string) $orgnrs];
+       } elseif (is_string($orgnrs)) {
+           $orgList = array_values(array_filter(array_map('trim', explode(',', $orgnrs)), 'strlen'));
+       } else { // array
+           $orgList = array_values(array_filter(array_map(
+               fn($v) => is_string($v) ? trim($v) : (string) $v,
+               $orgnrs
+           ), 'strlen'));
+       }
 
+       if (empty($orgList)) {
+           return [];
+       }
+
+       // Personen nach Identifier sammeln (für Duplikat-Check & Merge)
+       $byId = [];
+
+       foreach ($orgList as $oneOrgNr) {
+           $list = self::getPersonsByOrgNr($oneOrgNr, $role);
+           if (empty($list) || !is_array($list)) {
+               continue;
+           }
+
+           foreach ($list as $person) {
+               $pid = $person['identifier'] ?? null;
+               if (!$pid) {
+                   continue;
+               }
+
+               if (!isset($byId[$pid])) {
+                   // Erstes Auftauchen dieser Person
+                   $byId[$pid] = $person;
+                   continue;
+               }
+
+               // Person existiert schon → Kontakte zusammenführen (einfaches De-Duping)
+               if (isset($person['contacts']) && is_array($person['contacts'])) {
+                   if (!isset($byId[$pid]['contacts']) || !is_array($byId[$pid]['contacts'])) {
+                       $byId[$pid]['contacts'] = [];
+                   }
+
+                   // Index bestehender Kontakte aufbauen (nach Org-ID + Funktion)
+                   $existingKeys = [];
+                   foreach ($byId[$pid]['contacts'] as $c) {
+                       $key = (string)($c['organization']['identifier'] ?? '');
+                       $fn  = $c['function'] ?? ($c['functionLabel']['de'] ?? ($c['functionLabel']['en'] ?? ''));
+                       $existingKeys[$key . '|' . (string)$fn] = true;
+                   }
+
+                   // Neue Kontakte hinzufügen, falls noch nicht vorhanden
+                   foreach ($person['contacts'] as $c) {
+                       $key = (string)($c['organization']['identifier'] ?? '');
+                       $fn  = $c['function'] ?? ($c['functionLabel']['de'] ?? ($c['functionLabel']['en'] ?? ''));
+                       $idx = $key . '|' . (string)$fn;
+                       if (!isset($existingKeys[$idx])) {
+                           $byId[$pid]['contacts'][] = $c;
+                           $existingKeys[$idx] = true;
+                       }
+                   }
+               }
+           }
+       }
+
+       return array_values($byId);
+   }
+
+
+   /**
+    * Liefert Personen zu einer Organisations-Nr (10-stellig exakt oder 6-stelliger Präfix).
+    * Optional:
+    *   - $role (string|null): kommaseparierte Rollen (z. B. "Professor, Postdoc").
+    * Verhalten:
+    *   - 10-stellig: Kontakte müssen in genau dieser Organisation sein; isRole prüft Org-ID exakt.
+    *   - 6-stellig: Kontakte werden auf die per Präfix gefundenen Orgs gefiltert; isRole prüft NUR die Rolle.
+    * Rückgabe:
+    *   - array: Personen (nur mit passenden Kontakten), [] wenn keine Treffer.
+    */
+   public static function getPersonsByOrgNr(string|int $orgnr, ?string $role = null): array {
+       // Nur Ziffern verwenden
+       $orgnrDigits = preg_replace('/\D+/', '', (string) $orgnr);
+
+       // Such-Param für Org-Liste bestimmen
+       if (preg_match('/^\d{10}$/', $orgnrDigits)) {
+           // exakt 10-stellig
+           $orgParams = ['lq' => 'disambiguatingDescription[eq]=' . $orgnrDigits];
+       } elseif (preg_match('/^\d{6}$/', $orgnrDigits)) {
+           // 6-stelliger Präfix
+           $orgParams = ['lq' => 'disambiguatingDescription[reg]=^' . $orgnrDigits];
+       } else {
+           return [];
+       }
+
+       // API
+       $config = (isset(self::$config) && self::$config instanceof Config) ? self::$config : new Config();
+       $api    = new API($config);
+
+       // Organisation(en) abrufen
+       $orgdata = $api->getOrgList(0, 0, $orgParams);
+       if (empty($orgdata['data'])) {
+           return [];
+       }
+
+       // Org-IDs einsammeln
+       $orgIds = array_values(array_unique(array_filter(array_map(
+           static fn($o) => $o['identifier'] ?? null,
+           $orgdata['data']
+       ))));
+       if (empty($orgIds)) {
+           return [];
+       }
+       $orgIdSet = array_flip(array_map('strval', $orgIds)); // schneller Lookup
+
+       // LQ für Personen
+       if (count($orgIds) === 1) {
+           $lq = 'contacts.organization.identifier[eq]=' . $orgIds[0];
+       } else {
+           $safeIds = array_map(static fn($id) => preg_quote((string) $id, '/'), $orgIds);
+           $lq = 'contacts.organization.identifier[reg]=^(' . implode('|', $safeIds) . ')$';
+       }
+
+       // Personen abrufen
+       $params = ['lq' => $lq];
+       $data   = $api->getPersons(0, 0, $params);
+
+       $person  = new Person();
+       $person->setConfig($config);
+
+       $persons = [];
+       $hasRoleFilter = (is_string($role) && trim($role) !== '');
+       $enforceOrgInIsRole = (strlen($orgnrDigits) === 10); // nur bei voller Orgnr in isRole streng prüfen
+
+       if (!empty($data['data'])) {
+           foreach ($data['data'] as $persondata) {
+               $person->populateFromData($persondata);
+               $person->reloadContacts(); // $person->contacts: Array von Kontakt-Arrays
+               // Kein Rollenfilter → Person komplett übernehmen
+               if (!$hasRoleFilter) {
+                   $persons[] = $person->toArray();
+                   continue;
+               }
+
+               // Mit Rollenfilter: nur passende Kontakte übernehmen
+               $matchedContacts = [];
+               if (!empty($person->contacts) && is_array($person->contacts)) {
+                   foreach ($person->contacts as $contactData) {
+                       if (!is_array($contactData)) {
+                           continue;
+                       }
+                       $contactOrgId = $contactData['organization']['identifier'] ?? null;
+
+                       // Immer: Kontakt muss zu einer der gefundenen Orgs gehören (auch bei 6-stelligem Präfix)
+                       if (!$contactOrgId || !isset($orgIdSet[(string) $contactOrgId])) {                          
+                           continue;
+                       }
+
+                       $contact = new Contact($contactData);
+                       $contact->setConfig($config);
+
+                       // Nur bei 10-stelliger Orgnr die exakte Org-ID an isRole übergeben; sonst NULL
+                       $orgArgForIsRole = $enforceOrgInIsRole ? (string) $contactOrgId : null;
+                      
+                       
+                       if ($contact->isRole($role, $orgArgForIsRole)) {
+                           $matchedContacts[] = $contact->toArray();
+                       }
+                       
+                   }
+               }
+
+               if (!empty($matchedContacts)) {
+                   $personArr = $person->toArray();
+                   $personArr['contacts'] = $matchedContacts;
+                   $persons[] = $personArr;
+               }
+           }
+       }
+
+       return $persons ?: [];
+   }
+
+    /**
+     * Liefert Personen über einen FAUdir-Organisations-Identifier (oder passende URL).
+     * Optional:
+     *   - $role (string|null): kommaseparierte Rollen (z. B. "Professor, Postdoc").
+     *
+     * Verhalten:
+     *   - Akzeptiert als $faudir_orgid entweder einen alphanumerischen Identifier
+     *     ODER eine URL: https://faudir.fau.de/public/org/<Identifier>[/]
+     *   - Baut LQ direkt als: contacts.organization.identifier[eq]=<identifier>
+     *   - Ohne $role: Person wird mit allen Kontakten übernommen.
+     *   - Mit $role: Pro Person werden nur die Kontakte übernommen, die:
+     *       * zur angegebenen Organisation gehören (Identifier exakt gleich) UND
+     *       * eine der Rollen matchen (function / functionLabel.de / functionLabel.en).
+     *
+     * @param string   $faudir_orgid  FAUdir-Org-Identifier ODER vollständige URL dazu
+     * @param string|null  $role          Optional: kommaseparierte Rollen
+     * @return array                      Liste passender Personen (jeweils als Array); [] wenn keine Treffer
+     */
+    public static function getPersonsByFAUdirOrgId(string $faudir_orgid, ?string $role = null): array {
+        // Identifier aus URL extrahieren, falls nötig
+        $id = trim((string) $faudir_orgid);
+
+        if (preg_match('#^https?://faudir\.fau\.de/public/org/([A-Za-z0-9]+)(?:/)?$#i', $id, $m)) {
+            $id = $m[1];
+        }
+
+        // Nur alphanumerische Identifier zulassen
+        if (!preg_match('/^[A-Za-z0-9]+$/', $id)) {
+            return [];
+        }
+
+        // API-Setup
+        $config = (isset(self::$config) && self::$config instanceof Config) ? self::$config : new Config();
+        $api    = new API($config);
+
+        // LQ direkt mit exakter Org-ID
+        $lq     = 'contacts.organization.identifier[eq]=' . $id;
+        $params = ['lq' => $lq];
+
+        $data = $api->getPersons(0, 0, $params);
+
+        $person = new Person();
+        $person->setConfig($config);
+
+        $persons        = [];
+        $hasRoleFilter  = (is_string($role) && trim($role) !== '');
+
+        if (!empty($data['data'])) {
+            foreach ($data['data'] as $persondata) {
+                $person->populateFromData($persondata);
+                $person->reloadContacts(); // füllt $person->contacts
+
+                // Kein Rollenfilter → Person komplett übernehmen
+                if (!$hasRoleFilter) {
+                    $persons[] = $person->toArray();
+                    continue;
+                }
+
+                // Mit Rollenfilter: nur Kontakte aus dieser Org + passender Rolle übernehmen
+                $matchedContacts = [];
+                if (!empty($person->contacts) && is_array($person->contacts)) {
+                    foreach ($person->contacts as $contactData) {
+                        if (!is_array($contactData)) {
+                            continue;
+                        }
+
+                        $contactOrgId = $contactData['organization']['identifier'] ?? null;
+                        if (!$contactOrgId || (string) $contactOrgId !== $id) {
+                            // Dieser Kontakt gehört nicht zu der gesuchten Organisation
+                            continue;
+                        }
+
+                        $contact = new Contact($contactData);
+                        $contact->setConfig($config);
+
+                        // isRole prüft NUR diesen Kontakt; exakte Org-ID mitgeben
+                        if ($contact->isRole($role, $id)) {
+                            $matchedContacts[] = $contact->toArray();
+                        }
+                    }
+                }
+
+                if (!empty($matchedContacts)) {
+                    $personArr = $person->toArray();
+                    $personArr['contacts'] = $matchedContacts; // nur die passenden Kontakte
+                    $persons[] = $personArr;
+                }
+            }
+        }
+
+        return $persons ?: [];
+    }
+
+    
+    
     /*
      * Filter Personen nach ihrer Org
      */
@@ -708,42 +875,69 @@ class Shortcode {
 
     
     /*
-     * Abruf der Personendaten anhand der Post-ID
+     * Abruf der Personendaten anhand einer Post-ID oder einer kommaseparierten Liste von Post-IDs.
+     * Optionaler Input: $post_ids (int|string) – z.B. 123 oder "123, 456,789".
+     * Rückgabe: array – Ergebnis von self::process_persons_by_identifiers($person_identifiers).
      */
-    public static function fetchPersonsByPostId(int $post_id): array {
+    public static function fetchPersonsByPostId(int|string $post_ids): array {
         $person_identifiers = [];
         $post_type = self::$config->get('person_post_type') ?? 'custom_person';
-        
-        $args = [
-            'post_type'      => $post_type,
-            'meta_query'     => [
-                [
-                    'key'     => 'old_person_post_id',
-                    'value'   => intval($post_id),
-                    'compare' => '=',
-                ],
-            ],
-            'posts_per_page' => 1,
-        ];
 
-        $person_posts = get_posts($args);
-        if (!empty($person_posts)) {
-            foreach ($person_posts as $person_post) {
-                $person_id = get_post_meta($person_post->ID, 'person_id', true);
-                if (!empty($person_id)) {
-                    $person_identifiers[] = $person_id;
-                }
-            }
+        // Eingabe normalisieren: einzelne ID → Array; CSV-String → Array
+        if (is_string($post_ids)) {
+            $ids = preg_split('/\s*,\s*/', $post_ids, -1, PREG_SPLIT_NO_EMPTY);
+            $ids = array_map('absint', $ids);
         } else {
-            // 3. Fallback: Prüfe ob $post_id existiert und ein person_id-Feld besitzt
+            $ids = [absint($post_ids)];
+        }
+
+        // Pro Post-ID wie bisher verfahren
+        foreach ($ids as $post_id) {
+            if ($post_id <= 0) {
+                continue;
+            }
+
             $post = get_post($post_id);
-            if ($post) {
-                $fallback_person_id = get_post_meta($post_id, 'person_id', true);
-                if (!empty($fallback_person_id)) {
-                    $person_identifiers[] = $fallback_person_id;
+
+            if ($post && ($post_type === $post->post_type)) {
+                // Direkter Treffer im Ziel-CPT
+                $faudir_id = get_post_meta($post_id, 'person_id', true);
+                if (!empty($faudir_id)) {
+                    $person_identifiers[] = $faudir_id;
+                }
+            } else {
+                // Prüfe auf alte IDs (Migration): Mapping finden
+                $args = [
+                    'post_type'      => $post_type,
+                    'meta_query'     => [
+                        [
+                            'key'     => 'old_person_post_id',
+                            'value'   => $post_id,
+                            'compare' => '=',
+                        ],
+                    ],
+                    'posts_per_page' => 1,
+                    'fields'         => 'ids',
+                ];
+
+                $person_posts = get_posts($args);
+
+                if (!empty($person_posts)) {
+                    foreach ($person_posts as $person_post_id) {
+                        $faudir_id = get_post_meta($person_post_id, 'person_id', true);
+                        if (!empty($faudir_id)) {
+       //                     do_action( 'rrze.log.info',"FAUdir\Shortcode (fetchPersonsByPostId): Found FAUdir Id:  ". $faudir_id." in Post for ".$post_id);
+                                                       
+                            $person_identifiers[] = $faudir_id;
+                        }
+                    }
                 }
             }
         }
+
+        // Duplikate entfernen
+        $person_identifiers = array_values(array_unique(array_filter($person_identifiers)));
+
         return self::process_persons_by_identifiers($person_identifiers);
     }
 
@@ -768,6 +962,7 @@ class Shortcode {
                 } else {
                     $persons[] = [
                         'error' => true,
+                        /* translators: 1: FAUdir Identifier Key  */
                         'message' => sprintf(__('Person with ID %s does not exist', 'rrze-faudir'), $identifier)
                     ];
                 }
@@ -791,7 +986,6 @@ class Shortcode {
         $persons = [];
         if (!empty($data['data'])) {
             foreach ($data['data'] as $persondata) {
-          //      error_log("FAUdir\Shortcode (fetch_and_process_persons): Populate Persondata.");
                 $person->populateFromData($persondata);
                 $person->reloadContacts();
                 $persons[] = $person->toArray();  
@@ -803,8 +997,6 @@ class Shortcode {
 
 
     public function register_aliases(): void {
-  //      include_once ABSPATH . 'wp-admin/includes/plugin.php';
-
         if (!is_plugin_active('fau-person/fau-person.php')) {
             add_shortcode('kontakt', [$this, 'kontakt_to_faudir']);
             add_shortcode('kontaktliste', [$this, 'kontaktliste_to_faudir']);
@@ -831,5 +1023,319 @@ class Shortcode {
         }
         return trim($atts_string);
     }
+
+   /**
+    * Sortiert ein Personen-Array gruppiert/lexikographisch nach mehreren Kriterien.
+    * Optionale Eingaben: $sortOption (komma/leerzeichen-separiert, inkl. Legacy "title_familyName"),
+    * $identifiers (für identifier_order), $order (pro Kriterium asc|desc).
+    * Rückgabe: sortiertes Personen-Array (stabil).
+    */
+   public static function sortPersons(array $persons, string $sortOption = 'familyName', array $identifiers = [], string $order = 'asc'): array {
+       // 1) Nichts zu tun bei 0/1 Element
+       if (count($persons) < 2) {
+           return $persons;
+       }
+     //   do_action( 'rrze.log.info',"FAUdir\Shortcode (sortPersons): Sortoption $sortOption, order: $order");
+
+       // 2) Kriterien parsen (inkl. Abwärtskompatibilität)
+       $rawTokens = preg_split('/[,\s]+/', trim($sortOption), -1, PREG_SPLIT_NO_EMPTY) ?: ['familyName'];
+       $criteria  = [];
+       $seen      = [];
+
+       foreach ($rawTokens as $tokenRaw) {
+           $t = strtolower($tokenRaw);
+
+           // Legacy-Mehrfachkriterium: "title_familyName" -> honorificprefix, familyname
+           if ($t === 'title_familyname') {
+               foreach (['honorificprefix', 'familyname'] as $tt) {
+                   if (!isset($seen[$tt])) {
+                       $seen[$tt] = true;
+                       $criteria[] = $tt;
+                   }
+               }
+               continue;
+           }
+
+           // Einfache Aliase (Abwärtskompatibilität)
+           $t = match ($t) {
+               'title', 'prof_first' => 'honorificprefix',
+               'head_first'          => 'role',
+               'surname'             => 'familyname',
+               'firstname'           => 'givenname',
+               'identifier'          => 'identifier_order',
+               default               => $t,
+           };
+
+           if (!isset($seen[$t])) {
+               $seen[$t] = true;
+               $criteria[] = $t;
+           }
+       }
+
+       // 3) Falls identifier_order verlangt ist → nur danach sortieren
+       if (in_array('identifier_order', $criteria, true)) {
+           foreach ($persons as $i => &$p) { $p['__idx'] = $i; }
+           unset($p);
+
+           $index = array_flip($identifiers);
+           usort($persons, function($a, $b) use ($index) {
+               $pa = $index[$a['identifier'] ?? ''] ?? PHP_INT_MAX;
+               $pb = $index[$b['identifier'] ?? ''] ?? PHP_INT_MAX;
+               if ($pa !== $pb) return $pa <=> $pb;
+               return ($a['__idx'] ?? 0) <=> ($b['__idx'] ?? 0);
+           });
+           foreach ($persons as &$p) { unset($p['__idx']); }
+           unset($p);
+           return $persons;
+       }
+
+       // 4) Orders parsen (pro Kriterium), fehlende = 'asc'
+       $rawOrders = preg_split('/[,\s]+/', trim($order), -1, PREG_SPLIT_NO_EMPTY) ?: ['asc'];
+       $orders    = [];
+       $oi = 0;
+       foreach ($criteria as $_) {
+           $dir = strtolower($rawOrders[$oi] ?? 'asc');
+           $orders[] = ($dir === 'desc') ? 'desc' : 'asc';
+           if ($oi < count($rawOrders) - 1) { $oi++; }
+       }
+
+       // 5) Stabilitätsindex vormerken
+       foreach ($persons as $i => &$p) { $p['__idx'] = $i; }
+       unset($p);
+
+       // 6) Gruppierte Rekursion anwenden
+       $sorted = self::sortByCriteriaBuckets($persons, $criteria, $orders, $identifiers);
+
+       // 7) Aufräumen
+       foreach ($sorted as &$p) { unset($p['__idx']); }
+       unset($p);
+
+       return $sorted;
+   }
+
+
+   /**
+    * Gruppiert nach erstem Kriterium und sortiert rekursiv mit verbleibenden Kriterien.
+    * Optionale Eingaben: keine (intern verwendet).
+    * Rückgabe: array (stabil sortiert).
+    */
+   private static function sortByCriteriaBuckets(array $persons, array $criteria, array $orders, array $identifiers): array {
+       if (empty($criteria) || count($persons) < 2) {
+           // Letzte Feinsortierung nur zur deterministischen Stabilität (FamilyName, GivenName, Fallback: Ursprungsindex)
+           $coll = collator_create('de_DE');
+           usort($persons, function($a, $b) use ($coll) {
+               $c = collator_compare($coll, (string)($a['familyName'] ?? ''), (string)($b['familyName'] ?? ''));
+               if ($c !== 0) return $c;
+               $c = collator_compare($coll, (string)($a['givenName'] ?? ''), (string)($b['givenName'] ?? ''));
+               if ($c !== 0) return $c;
+               return ($a['__idx'] ?? 0) <=> ($b['__idx'] ?? 0);
+           });
+           return $persons;
+       }
+
+       $first    = array_shift($criteria);
+       $dir      = array_shift($orders) ?: 'asc';
+
+       [$buckets, $orderKeys] = self::partitionByCriterion($persons, $first, $dir, $identifiers);
+
+       $out = [];
+       foreach ($orderKeys as $k) {
+           $chunk = $buckets[$k] ?? [];
+           if (empty($chunk)) { continue; }
+           $chunk = self::sortByCriteriaBuckets($chunk, $criteria, $orders, $identifiers);
+           $out   = array_merge($out, $chunk);
+       }
+       return $out;
+   }
+
+   /**
+    * Bildet Buckets + deren Reihenfolge für EIN Kriterium (inkl. ASC/DESC).
+    * Unterstützte Kriterien: honorificprefix, role, familyname, givenname, email, identifier_order.
+    * Rückgabe: [ array $buckets, array $orderedKeys ]
+    */
+   private static function partitionByCriterion(array $persons, string $criterion, string $direction, array $identifiers): array {
+       $buckets = [];
+       $order   = [];
+
+       switch ($criterion) {
+           case 'honorificprefix': {
+               // Bucket pro sortorder (Titel) bzw. „no_title“
+               $keySet = [];
+               foreach ($persons as $p) {
+                   $norm = \RRZE\FAUdir\FaudirUtils::normalizeAcademicTitle((string)($p['honorificPrefix'] ?? ''));
+                   if (!empty($norm['key'])) {
+                       // z.B. t:0001 … (fixe Breite für sortierbare Strings)
+                       $k = 't:' . str_pad((string)($norm['sortorder'] ?? 9999), 4, '0', STR_PAD_LEFT);
+                   } else {
+                       $k = 'z:no_title';
+                   }
+                   $buckets[$k][] = $p;
+                   $keySet[$k] = true;
+               }
+               $order = array_keys($keySet);
+               sort($order, SORT_STRING);                // Titel aufsteigend nach sortorder
+               if ($direction === 'desc') { $order = array_reverse($order); }
+               break;
+           }
+
+           case 'role': {
+               // Heads (leader/deputy) vor anderen
+               foreach ($persons as $p) {
+                   $isHead = self::hasHeadRole($p['contacts'] ?? []);
+                   $k = $isHead ? 'a:head' : 'b:other';
+                   $buckets[$k][] = $p;
+               }
+               $order = ['a:head', 'b:other'];
+               if ($direction === 'desc') { $order = array_reverse($order); }
+               break;
+           }
+
+           case 'identifier_order': {
+               // (Normalerweise bereits oben exklusiv behandelt – hier fallback)
+               $index = array_flip($identifiers);
+               foreach ($persons as $p) {
+                   $pos = $index[$p['identifier'] ?? ''] ?? PHP_INT_MAX;
+                   $k = 'i:' . str_pad((string)$pos, 12, '0', STR_PAD_LEFT);
+                   $buckets[$k][] = $p;
+               }
+               $order = array_keys($buckets);
+               sort($order, SORT_STRING);
+               if ($direction === 'desc') { $order = array_reverse($order); }
+               break;
+           }
+
+           case 'familyname':
+           case 'givenname': {
+                $fieldMap = [
+                    'familyname' => 'familyName',
+                    'givenname'  => 'givenName'
+                ];
+                $field = $fieldMap[$criterion] ?? $criterion;
+            
+               // Gleichheits-Buckets nach Feldwert (case-insensitive)
+          //     $field = $criterion; // wie benannt gespeichert
+               foreach ($persons as $p) {
+                   $val = (string)($p[$field] ?? '');
+                   $key = 'v:' . mb_strtolower($val, 'UTF-8');
+                   $buckets[$key][] = $p;
+               }
+               // Reihenfolge der Buckets nach sichtbarem Wert sortieren
+               $coll = collator_create('de_DE');
+               $order = array_keys($buckets);
+               usort($order, function($ka, $kb) use ($buckets, $coll, $field) {
+                   $va = (string)($buckets[$ka][0][$field] ?? '');
+                   $vb = (string)($buckets[$kb][0][$field] ?? '');
+                   return collator_compare($coll, $va, $vb);
+               });
+               if ($direction === 'desc') { $order = array_reverse($order); }
+               break;
+           }
+           case 'email': {
+                // Bucket pro (kanonisierter) E-Mail. Leere E-Mails als eigener Bucket.
+                $keyValue = []; // Map: Bucket-Key -> echter sortierbarer E-Mail-String (lowercased)
+                foreach ($persons as $p) {
+                    // <-- Falls getSortableEmail() woanders liegt, ggf. voll qualifizieren:
+                    // $email = \RRZE\FAUdir\Shortcode::getSortableEmail($p);
+                    $email = (string) self::getSortableEmail($p);
+                    $email = mb_strtolower(trim($email), 'UTF-8');
+
+                    // Leere E-Mails in separaten Bucket, der bei ASC ans Ende soll
+                    $bucketKey = ($email === '') ? 'e:__no_email__' : 'e:' . $email;
+
+                    $buckets[$bucketKey][] = $p;
+                    $keyValue[$bucketKey] = $email; // für die Sortierung der Buckets
+                }
+
+                // Bucket-Reihenfolge nach E-Mail sortieren ('' zuletzt bei ASC)
+                $order = array_keys($buckets);
+                usort($order, function($ka, $kb) use ($keyValue) {
+                    $ea = $keyValue[$ka] ?? '';
+                    $eb = $keyValue[$kb] ?? '';
+                    if ($ea === '' && $eb !== '') return 1;   // '' nach hinten
+                    if ($ea !== '' && $eb === '') return -1;  // echte Mails nach vorne
+                    return strcmp($ea, $eb);                  // lexikografisch
+                });
+
+                if ($direction === 'desc') {
+                    // Bei DESC einfach umdrehen: '' landet dann vorn
+                    $order = array_reverse($order);
+                }
+                break;
+            }
+           default: {
+               // Unbekannt → ein Bucket (keine Gruppierung)
+               $buckets['all'] = $persons;
+               $order = ['all'];
+               break;
+           }
+       }
+
+       return [$buckets, $order];
+   }
+
+   /**
+    * Prüft, ob in den Kontakten eine Head-Rolle vorkommt (leader/deputy).
+    * Optionale Eingaben: keine.
+    * Rückgabe: bool
+    */
+   private static function hasHeadRole(array $contacts): bool {
+       foreach ($contacts as $c) {
+           $fn = strtolower((string)($c['function'] ?? ''));
+           if ($fn === 'leader' || $fn === 'deputy' || $fn === 'professor') { return true; }
+       }
+       return false;
+   }
+
+   
+   /**
+    * Liefert eine kanonische E-Mail für die Sortierung.
+    * Optionale Eingabe: keine (Person kann E-Mail auch in Contacts/Workplaces haben).
+    * Rückgabe: string (lowercased; '' falls nichts gefunden).
+    */
+   private static function getSortableEmail(array $person): string {
+       $candidates = [];
+
+       // 1) Top-Level
+       if (!empty($person['email']) && is_string($person['email'])) {
+           $candidates[] = $person['email'];
+       }
+       if (!empty($person['mails']) && is_array($person['mails'])) {
+           $candidates = array_merge($candidates, $person['mails']);
+       }
+
+       // 2) Contacts + Workplaces
+       if (!empty($person['contacts']) && is_array($person['contacts'])) {
+           foreach ($person['contacts'] as $c) {
+               if (!empty($c['mails']) && is_array($c['mails'])) {
+                   $candidates = array_merge($candidates, $c['mails']);
+               }
+               if (!empty($c['workplaces']) && is_array($c['workplaces'])) {
+                   foreach ($c['workplaces'] as $wp) {
+                       if (!empty($wp['mails']) && is_array($wp['mails'])) {
+                           $candidates = array_merge($candidates, $wp['mails']);
+                       }
+                   }
+               }
+           }
+       }
+
+       // filtern & normalisieren
+       $candidates = array_values(array_filter(array_map('strval', $candidates), static function($e) {
+           $e = trim($e);
+           // grobe E-Mail-Heuristik – reicht für Sortierung
+           return $e !== '' && strpos($e, '@') !== false;
+       }));
+
+       if (empty($candidates)) {
+           return '';
+       }
+
+       // lowercased lexikografische Sortierung und den "kleinsten" Wert nehmen
+       $norm = array_map(static fn($e) => strtolower(trim($e)), $candidates);
+       sort($norm, SORT_STRING);
+       return $norm[0];
+   }
+
+
 
 }

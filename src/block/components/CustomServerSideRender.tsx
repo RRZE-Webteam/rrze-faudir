@@ -13,7 +13,7 @@ export default function CustomServerSideRender({attributes}: CustomServerSideRen
 
   useEffect(() => {
     setComponentKey((prevKey) => prevKey + 1);
-  }, [attributes.orgnr, attributes.selectedCategory, attributes.orgid, attributes.display]);
+  }, [attributes.orgnr, attributes.selectedCategory, attributes.orgid, attributes.display, attributes.sort,  attributes.order]);
 
   return (
     <ServerSideRender
@@ -27,9 +27,9 @@ export default function CustomServerSideRender({attributes}: CustomServerSideRen
         selectedFields: attributes.selectedFields,
         selectedCategory: attributes.selectedCategory,
         selectedPersonIds: attributes.selectedPersonIds,
-        hideFields: attributes.hideFields,
         url: attributes.url,
         sort: attributes.sort,
+	order: attributes.order,
         format_displayname: attributes.format_displayname,
         display: attributes.display,
         identifier: attributes.identifier,

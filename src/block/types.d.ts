@@ -8,10 +8,10 @@ export interface EditProps {
     role: string;
     orgnr: string;
     url: string;
-    hideFields: string[];
     showCategory: boolean;
     showPosts: boolean;
     sort: string;
+    order: string;
     format_displayname: string;
     initialSetup: boolean;
     display: "person" | "org";
@@ -62,7 +62,7 @@ export interface DefaultOrganization {
 }
 
 export interface CustomPersonParams {
-  per_page: number;
+  per_page?: number;
   _fields: string;
   orderby: string;
   order: string;

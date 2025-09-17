@@ -156,6 +156,8 @@ export function jsAdmin() {
     .pipe(touch()); 
 }
 
+
+
 // Task zum Generieren der .pot-Datei
 export function makepot() {
   return src(['**/*.php', '**/*.js', '!vendor/**']) // PHP-Dateien, Vendor ausschließen
@@ -260,6 +262,6 @@ export default series(upversionpatch, css, jsMain, jsAdmin);
 export const build = series(upversionpatch, css, jsMain, jsAdmin, createReadme, buildFaudirBlock);
 
 // Dev Version
-export const dev = series(devversion, devcss, devjsMain, jsAdmin, createReadme);
+export const dev = series(devversion, devcss, devjsMain, jsAdmin,  createReadme);
 
 

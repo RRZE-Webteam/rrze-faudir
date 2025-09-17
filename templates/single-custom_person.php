@@ -42,9 +42,8 @@ get_header();
                         $atts['format'] = 'page';
                         $atts['identifier'] = $person_id;
                         $atts['show'] = implode(', ', $showfields);
-                        $output = Shortcode::fetch_fau_data($atts);
-                        $content = apply_filters('the_content', $output);
-                        echo $content; 
+                        $output_escaped = Shortcode::fetch_fau_data($atts);
+                        echo  apply_filters('the_content', $output_escaped);
                         
                      
                     ?>

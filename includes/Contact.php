@@ -215,7 +215,6 @@ class Contact {
         }
         
         $this->populateFromData($data);
-      //  error_log("FAUdir\Contact (getContactbyAPI): Got contact data by {$identifier}.");
         return true;
     }
     
@@ -320,128 +319,46 @@ class Contact {
      * Get Consultation Infos by Aggreement
      */
     public function getConsultationbyAggreement(array $workplace): ?string {
-         if ((empty($workplace)) || (!isset($workplace['consultationHoursByAggreement']))) {
+        if (empty($workplace)) {
             return '';
-        } 
-        $res = '';
-        if ($workplace['consultationHoursByAggreement'] == true) {
-           $aggreement = ''; 
-           if (!empty($workplace['consultationHoursContactType'])) {
-               switch($workplace['consultationHoursContactType']) {
-                   case 'mail':
-                       $aggreement .= __('By appointment', 'rrze-faudir').' '.__('via email', 'rrze-faudir');
-                       break;
-                   case 'phone':
-                       $aggreement .= __('By appointment', 'rrze-faudir').' '.__('via phone', 'rrze-faudir');
-                       break;
-                   default:
-                       $aggreement .= __('By appointment', 'rrze-faudir');
-               }
+        }
+        // Öffnungszeiten aus Workplace extrahieren & rendern
+        $oh = new OpeningHours($workplace);
+        return $oh->getConsultationbyAggreement();  
+    }
+    
+    
+    
+    /**
+     * Rendert die Öffnungs-/Sprechzeiten eines Workplace als semantisches HTML.
+     * Eingaben:
+     *   - $workplace: Workplace-Teilstruktur aus der API (array)
+     *   - $key: 'consultationHours' (Standard) oder 'officeHours'
+     *   - $withaddress: Wenn true, wird die Workplace-Adresse angehängt
+     *   - $lang: Sprachcode ('de' Standard)
+     *   - $roomfloor: Adressausgabe: Raum/Etage ergänzen
+     *   - $showmap: Adressausgabe: FAU-Map-Link ergänzen
+     * Rückgabe:
+     *   - HTML-Fragment als string (leer, wenn keine Zeiten vorhanden sind)
+     */
+    public function getConsultationsHours(array $workplace, string $key = 'consultationHours', ?bool $withaddress = true,?string $lang = 'de', ?bool $roomfloor = false, ?bool $showmap = false): string {
+        if (empty($workplace)) {
+            return '';
+        }
 
-               if (!empty($workplace['consultationHoursContactHint'])) {
-                   $aggreement .= ' <span class="ContactHint">'. esc_html($workplace['consultationHoursContactHint']).'</span>';
-               }
-           }
+        // Adresse (optional) vorbereiten – wie zuvor in Contact erzeugt
+        $addressHtml = '';
+        if ($withaddress) {
+            $addressHtml = $this->getAddressByWorkplace($workplace, false, $lang, $roomfloor, $showmap) ?? '';
         }
-        if (!empty($aggreement)) {
-            $res = '<p class="consultationHoursByAggreement">'.$aggreement.'</p>';
-        }
-        return $res;
-        
+
+        // Öffnungszeiten rendern
+        $oh = new OpeningHours($workplace);
+        return $oh->getConsultationsHours($key, $addressHtml, $lang);
     }
+
     
-    
-    
-    /*
-     * Get ConsultationHours by Workplace and return in semantic HTML
-     * with key = 'consultationHours' as parameter
-     *   key = 'officeHours' will use this array instead
-     */    
-    public function getConsultationsHours(array $workplace, string $key = 'consultationHours', ?bool $withaddress = true, ?string $lang = 'de', ?bool $roomfloor = false, ?bool $showmap = false): string {
-        if ((empty($workplace)) || (empty($workplace[$key]))) {
-            return '';
-        } 
-        
-        $output = '';
-        $output .= '<div class="workplace-hours" itemprop="contactPoint" itemscope itemtype="https://schema.org/ContactPoint">';
-        $output .= '<meta itemprop="contactType" content="';
-        if ($key === 'officeHours') {
-            $output .= esc_html__('Office Hours', 'rrze-faudir');
-        } else {
-            $output .= esc_html__('Consultation Hours', 'rrze-faudir');
-        }
-        $output .= '">';
-        
-        
-        $num = count($workplace[$key]);
-        if ($num > 1) {
-            $output .= '<ul class="ContactPointList">';
-        }
-        foreach ($workplace[$key] as $consultationHours) {
-            if ($num > 1) {
-                 $output .= '<li>';
-            }
-            
-            $output .= '<div class="hoursAvailable" itemprop="hoursAvailable" itemscope itemtype="https://schema.org/OpeningHoursSpecification">';
-            $output .= '<span class="weekday" itemprop="dayOfWeek" content="https://schema.org/';
-            $output .= esc_attr(self::getWeekdaySpec($consultationHours['weekday']));
-            $output .= '">';
-            $output .= '<span class="dayname">'.esc_html(self::getWeekday($consultationHours['weekday'])).': </span>';
-            $output .= '<span class="daytime"><span itemprop="opens">'.esc_html($consultationHours['from']).'</span> - ';
-            $output .= '<span itemprop="close">'.esc_html($consultationHours['to']).'</span></span>';
-            $output .= '</span>';             
-            if (!empty($consultationHours['comment'])) {
-                $output .= '<p class="comment" itemprop="description">'.esc_html($consultationHours['comment']).'</p>';
-            }
-            if (!empty($consultationHours['url'])) {
-                $output .= '<p class="url" itemprop="url"><a href="'.esc_url($consultationHours['url']).'">'.esc_html($consultationHours['url']).'</a></p>';
-            }
-            $output .= '</div>';
-            if ($num > 1) {
-                $output .= '</li>';
-            }
-        }
-        
-        if ($num > 1) {
-            $output .= '</ul>';
-        }
-        
-        if ($withaddress) {          
-            $addressdata = $this->getAddressByWorkplace($workplace, false, $lang, $roomfloor, $showmap);
-            $output .= $addressdata;
-        }
-        
-        $output .= '</div>';
-        return $output;
-    }
-    
-    /*
-    * Get Weekday
-    */
-    private static function getWeekday($weekday): string {
-        $weekdayMap = [
-            0 => __('Sunday','rrze-faudir'),
-            1 => __('Monday','rrze-faudir'),
-            2 => __('Tuesday','rrze-faudir'),
-            3 => __('Wednesday','rrze-faudir'),
-            4 => __('Thursday','rrze-faudir'),
-            5 => __('Friday','rrze-faudir'),
-            6 => __('Saturday','rrze-faudir'),
-        ];
-        return $weekdayMap[$weekday] ?? __('Unknown','rrze-faudir');
-    }
-    private static function getWeekdaySpec($weekday): string {
-        $weekdayMap = [
-            0 => 'Sunday',
-            1 => 'Monday',
-            2 => 'Tuesday',
-            3 => 'Wednesday',
-            4 => 'Thursday',
-            5 => 'Friday',
-            6 => 'Saturday',
-        ];
-        return $weekdayMap[$weekday] ?? 'Unknown';
-    }
+  
     
     /*
      * Generate Address Output for a Workplace
@@ -547,10 +464,7 @@ class Contact {
         if (empty($data)) {
             return '';
         }
-        if (empty($arialabel)) {
-            $arialabel = __('Social Media and Websites', 'rrze-faudir');
-        }
-        
+
         
         $htmlsurround = self::sanitize_htmlsurround($htmlsurround);
         
@@ -577,7 +491,7 @@ class Contact {
                 $output .= '<li><span class="title">'.ucfirst(esc_html($name)).': </span>'.$formattedValue.'</li>';                        
             }
         }
-        
+        $output .= '</ul>';
         $output .= '</'.$htmlsurround.'>';
         return $output;
         
@@ -653,17 +567,42 @@ class Contact {
         }
     }
     
+     /*
+     * Get all FunctionLabels
+     */
+    public function getAllFunctionLabels(): array {
+        $out = [];
+
+        if (!empty($this->function) && is_string($this->function)) {
+            $out[] = $this->function;
+        }
+        if (!empty($this->functionLabel['de'])) {
+            $out[] = (string) $this->functionLabel['de'];
+        }
+        if (!empty($this->functionLabel['en'])) {
+            $out[] = (string) $this->functionLabel['en'];
+        }
+
+        // trimmen, Leere raus, Duplikate entfernen
+        $out = array_map(static fn($s) => trim((string) $s), $out);
+        $out = array_values(array_unique(array_filter($out, static fn($s) => $s !== '')));
+
+        return $out;
+    }
+
+    
+    
     
     /*
      * Build JobTitle by Functionlabel and Orgname
      */
-    public function getJobTitle(string $lang = "de", ?string $template =  null): ?string {
-        $label = $this->getFunctionLabel($lang);
-        
+    public function getJobTitle(string $lang = "de", ?string $template = ''): ?string {   
+        $label = $this->getFunctionLabel($lang);   
         if (empty($label)) {
             return '';
         }
 
+ 
         if (empty($this->organization) || !isset($this->organization['longDescription'])) {
             return $label;
         }
@@ -694,9 +633,47 @@ class Contact {
         ]; 
         $jobtitle = str_replace(array_keys($replacements), array_values($replacements), $template);     
         $this->jobTitle = $jobtitle;
+        
         return $jobtitle;      
     }
 
-    
+
+    /*
+    * Prüft, ob der Kontakt eine der übergebenen Rollen besitzt.
+    * Optional: Wenn $organizationIdentifier übergeben ist, muss die Org-ID
+    *           dieses Kontakts exakt übereinstimmen.
+    *
+    * @param string      $role                   Kommaseparierte Rollen (z. B. "Professor, Postdoc")
+    * @param string|null $organizationIdentifier Erwartete Org-ID dieses Kontakts (optional)
+    * @return bool       true, wenn (optional Org passt und) eine Rollen-Übereinstimmung besteht
+    */
+   public function isRole(string $role, ?string $organizationIdentifier = null): bool {
+       // Rollen normalisieren
+       $roles = array_values(array_filter(array_map('trim', explode(',', $role)), 'strlen'));
+       if (empty($roles)) {
+           return false;
+       }
+
+       // Optional: Organisation abgleichen
+       if ($organizationIdentifier !== null) {
+           $contactOrgId = $this->organization['identifier'] ?? null;
+           if (!$contactOrgId || (string) $contactOrgId !== (string) $organizationIdentifier) {
+               return false;
+           }
+       }
+
+       // Rollenfelder prüfen (exakte Matches)
+       $fn   = $this->function ?? null;
+       $fnDe = $this->functionLabel['de'] ?? null;
+       $fnEn = $this->functionLabel['en'] ?? null;
+
+       $matches =
+           ($fn   !== null && in_array($fn, $roles, true)) ||
+           ($fnDe !== null && in_array($fnDe, $roles, true)) ||
+           ($fnEn !== null && in_array($fnEn, $roles, true));
+
+       return $matches;
+   }
+
 }
 
