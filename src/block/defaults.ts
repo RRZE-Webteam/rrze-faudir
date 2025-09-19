@@ -37,7 +37,7 @@ export const availableFields: AvailableFieldsSet = {
   city: __('City', 'rrze-faudir'),
   faumap: __('FAU Map', 'rrze-faudir'),
   officehours: __('Office Hours', 'rrze-faudir'),
-  consultationhours: __('Consultation Hours', 'rrze-faudir')
+  consultationhours: __('Consultation Hours', 'rrze-faudir'),
 };
 
 export const formatFields: FormatFieldsSet = {
@@ -95,7 +95,7 @@ export const formatFields: FormatFieldsSet = {
     'zip',
     'city',
     'faumap',
-    'content'
+    'text'
   ],
   compact: Object.keys(availableFields),
   page: Object.keys(availableFields),

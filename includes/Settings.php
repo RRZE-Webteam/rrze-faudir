@@ -74,6 +74,64 @@ class Settings {
     
 
     private function register_sections_and_fields(): void {
+        
+        
+        /* --- Allgemeines --- */
+        add_settings_section(
+            'rrze_faudir_misc_section',
+            __('General Settings', 'rrze-faudir'),
+            [$this, 'misc_section_cb'],
+            'rrze_faudir_settings_general'
+        );
+        
+        
+        add_settings_field(
+            'rrze_faudir_default_normalize_honorificPrefix',
+            __('Normalize Honorific Prefix', 'rrze-faudir'),
+            [$this, 'render_normalize_honorific_prefix'],
+            'rrze_faudir_settings_general',     
+            'rrze_faudir_misc_section'     
+        );
+        add_settings_field(
+            'rrze_faudir_redirect_to_canonicals',
+            __('Canonical URL', 'rrze-faudir'),
+            [$this, 'render_redirect_to_canonicals'],
+            'rrze_faudir_settings_general',
+            'rrze_faudir_misc_section'
+        );
+        add_settings_field(
+            'rrze_faudir_default_visible_copyrightmeta',
+            __('Copyright meta visibility', 'rrze-faudir'),
+            [$this, 'render_default_visible_copyrightmeta'],
+            'rrze_faudir_settings_general',
+            'rrze_faudir_misc_section'
+        );
+
+        add_settings_field(
+            'rrze_faudir_default_visible_bildunterschrift',
+            __('Image caption visibility', 'rrze-faudir'),
+            [$this, 'render_default_visible_bildunterschrift'],
+            'rrze_faudir_settings_general',
+            'rrze_faudir_misc_section'
+        );
+
+       
+         
+         /* --- Fehlerbehandlung --- */
+        add_settings_section(
+            'rrze_faudir_error_section',
+            __('Error Handling', 'rrze-faudir'),
+            [$this, 'error_section_cb'],
+            'rrze_faudir_settings_error'
+        );
+        add_settings_field(
+            'rrze_faudir_error_message',
+            __('Show Error Message for Invalid Contacts', 'rrze-faudir'),
+            [$this, 'render_error_message'],
+            'rrze_faudir_settings_error',
+            'rrze_faudir_error_section'
+        );
+        
         /* --- Suche: Personen --- */
         add_settings_section(
             'rrze_faudir_contacts_search_section',
@@ -156,6 +214,36 @@ class Settings {
             'rrze_faudir_shortcode_org_section'
         );
 
+        
+        
+        /*
+         * Erweiterte Einstellungen
+         */
+         /* --- Allgemeines --- */
+        add_settings_section(
+            'rrze_faudir_advanced_uri_section',
+            __('General Settings', 'rrze-faudir'),
+            [$this, 'advanced_section_cb'],
+            'rrze_faudir_settings_advanced'
+        );
+        
+        
+       add_settings_field(
+            'rrze_faudir_person_slug',
+            __('Person Slug', 'rrze-faudir'),
+            [$this, 'render_person_slug'],
+            'rrze_faudir_settings_advanced',
+            'rrze_faudir_advanced_uri_section'
+        );
+        add_settings_field(
+            'rrze_faudir_redirect_archivpage_uri',
+            __('Index page', 'rrze-faudir'),
+            [$this, 'render_misc_section_message'],
+            'rrze_faudir_settings_advanced',
+            'rrze_faudir_advanced_uri_section'
+        );
+        
+        
         /* --- API --- */
         add_settings_section(
             'rrze_faudir_api_section',
@@ -191,6 +279,9 @@ class Settings {
             [$this, 'cache_section_cb'],
             'rrze_faudir_settings_cache'
         );
+        
+       
+        
         add_settings_field(
             'rrze_faudir_no_cache_logged_in',
             __('No Caching for Logged-in Editors', 'rrze-faudir'),
@@ -219,62 +310,8 @@ class Settings {
             'rrze_faudir_settings_cache',
             'rrze_faudir_cache_section'
         );
-
-       
-
-        /* --- Sonstiges --- */
-        add_settings_section(
-            'rrze_faudir_misc_section',
-            __('General Settings', 'rrze-faudir'),
-            [$this, 'misc_section_cb'],
-            'rrze_faudir_settings_uri'
-        );
-        add_settings_field(
-            'rrze_faudir_person_slug',
-            __('Person Slug', 'rrze-faudir'),
-            [$this, 'render_person_slug'],
-            'rrze_faudir_settings_uri',
-            'rrze_faudir_misc_section'
-        );
-        add_settings_field(
-            'rrze_faudir_redirect_archivpage_uri',
-            __('Index page', 'rrze-faudir'),
-            [$this, 'render_misc_section_message'],
-            'rrze_faudir_settings_uri',
-            'rrze_faudir_misc_section'
-        );
         
-        add_settings_field(
-            'rrze_faudir_default_normalize_honorificPrefix',
-            __('Normalize Honorific Prefix', 'rrze-faudir'),
-            [$this, 'render_normalize_honorific_prefix'],
-            'rrze_faudir_settings_uri',     
-            'rrze_faudir_misc_section'     
-        );
-        add_settings_field(
-            'rrze_faudir_redirect_to_canonicals',
-            __('Canonical URL', 'rrze-faudir'),
-            [$this, 'render_redirect_to_canonicals'],
-            'rrze_faudir_settings_uri',
-            'rrze_faudir_misc_section'
-        );
-
-         /* --- Fehlerbehandlung --- */
-        add_settings_section(
-            'rrze_faudir_error_section',
-            __('Error Handling', 'rrze-faudir'),
-            [$this, 'error_section_cb'],
-            'rrze_faudir_settings_error'
-        );
-        add_settings_field(
-            'rrze_faudir_error_message',
-            __('Show Error Message for Invalid Contacts', 'rrze-faudir'),
-            [$this, 'render_error_message'],
-            'rrze_faudir_settings_error',
-            'rrze_faudir_error_section'
-        );
-        
-        
+   
     }
 
     /* -----------------------------
@@ -287,7 +324,7 @@ class Settings {
                 'type'  => 'form',
                 'group' => 'rrze_faudir_general',
                 'pages' => [
-                    'rrze_faudir_settings_uri',   
+                    'rrze_faudir_settings_general',   
                     'rrze_faudir_settings_error', 
                 ],
                 'after' => [$this, 'render_orgs_search_tab'],
@@ -321,6 +358,7 @@ class Settings {
                 'type'  => 'form',
                 'group' => 'rrze_faudir_admin',
                 'pages' => [
+                    'rrze_faudir_settings_advanced',
                     'rrze_faudir_settings_api',
                     'rrze_faudir_settings_cache'
                 ],
@@ -388,6 +426,41 @@ class Settings {
         }
     }
 
+    
+    public function render_default_visible_copyrightmeta(): void {
+        $options = get_option('rrze_faudir_options');
+        if (!isset($options['default_visible_copyrightmeta'])) {
+            $config = new Config();
+            // Default aus der Config übernehmen (bool → int)
+            $options['default_visible_copyrightmeta'] = (int) $config->get('default_visible_copyrightmeta');
+        }
+        $checked = !empty($options['default_visible_copyrightmeta']);
+
+        echo '<label>';
+        echo '<input type="hidden" name="rrze_faudir_options[default_visible_copyrightmeta]" value="0">';
+        echo '<input type="checkbox" name="rrze_faudir_options[default_visible_copyrightmeta]" value="1" ' . checked(true, $checked, false) . '>';
+        echo ' <span>' . esc_html__('Show copyright information visibly (otherwise only as meta tag)', 'rrze-faudir') . '</span>';
+        echo '</label>';
+    }
+
+    public function render_default_visible_bildunterschrift(): void {
+        $options = get_option('rrze_faudir_options');
+        if (!isset($options['default_visible_bildunterschrift'])) {
+            $config = new Config();
+            // Default aus der Config übernehmen (bool → int)
+            $options['default_visible_bildunterschrift'] = (int) $config->get('default_visible_bildunterschrift');
+        }
+        $checked = !empty($options['default_visible_bildunterschrift']);
+
+        echo '<label>';
+        echo '<input type="hidden" name="rrze_faudir_options[default_visible_bildunterschrift]" value="0">';
+        echo '<input type="checkbox" name="rrze_faudir_options[default_visible_bildunterschrift]" value="1" ' . checked(true, $checked, false) . '>';
+        echo ' <span>' . esc_html__('Show image caption (Bildunterschrift)', 'rrze-faudir') . '</span>';
+        echo '</label>';
+    }
+
+    
+    
     /* -----------------------------
      * Custom-Tab: Kontakte suchen
      * ----------------------------- */
@@ -552,6 +625,9 @@ class Settings {
         echo '<p>' . esc_html__('Configure the default output fields for the profile page of a single person.', 'rrze-faudir') . '</p>';
     }
     public function misc_section_cb(): void {
+ //       echo '<p>' . esc_html__('Configure general settings.', 'rrze-faudir') . '</p>';
+    }
+    public function advanced_section_cb(): void {
         echo '<p>' . esc_html__('Configure other advanced settings.', 'rrze-faudir') . '</p>';
     }
     public function contacts_search_section_cb(): void {
@@ -1057,7 +1133,7 @@ class Settings {
                     $edit_link = get_edit_post_link($existing_post[0]->ID);
                     $output .= "<a href='" . esc_url($edit_link) . "' class='edit-person button'><span class='dashicons dashicons-edit'></span> " . esc_html__('Edit', 'rrze-faudir') . "</a>";
                 } else {
-                    $output .= "<button class='add-person button' data-name='" . esc_attr($name) . "' data-id='" . esc_attr($identifier) . "' data-include-default-org='" . ($includeDefaultOrg ? '1' : '0') . "'><span class='dashicons dashicons-plus'></span> Add</button>";
+                    $output .= "<button class='add-person button' data-name='" . esc_attr($name) . "' data-id='" . esc_attr($identifier) . "' data-include-default-org='" . ($includeDefaultOrg ? '1' : '0') . "'><span class='dashicons dashicons-plus'></span> ". esc_html__('Add', 'rrze-faudir') . "</button>";
                 }
 
                 $output .= '</div>';
@@ -1231,6 +1307,8 @@ class Settings {
             'show_error_message',
             'default_normalize_honorificPrefix',
             'redirect_to_canonicals',
+            'default_visible_copyrightmeta',
+            'default_visible_bildunterschrift',
         ];
 
         foreach ($checkboxes as $cb) {

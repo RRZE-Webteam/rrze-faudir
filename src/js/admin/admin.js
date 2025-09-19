@@ -136,7 +136,7 @@ jQuery(function ($) {
     }).fail(function () {
       alert('An error occurred while creating the custom person.');
     }).always(function () {
-      $btn.prop('disabled', false).html('Add');
+      $btn.prop('disabled', false).html(rrzeFaudirAjax.add_text);
     });
   });
 

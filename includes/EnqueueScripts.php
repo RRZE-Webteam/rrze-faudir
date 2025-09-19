@@ -85,7 +85,7 @@ class EnqueueScripts {
             'confirm_clear_cache' => __('Are you sure you want to clear the cache?', 'rrze-faudir'),
             'confirm_import'      => __('Are you sure you want to import contacts from FAU person?', 'rrze-faudir'),
             'edit_text'           => __('Edit', 'rrze-faudir'),
-            'add_text'            => __('Adding...', 'rrze-faudir'),
+            'add_text'            => __('Add', 'rrze-faudir'),
             'saving_text'         => __('Saving...', 'rrze-faudir'),
             'saved_text'          => __('Saved', 'rrze-faudir'),
             'save_text'           => __('Save as Default Organization', 'rrze-faudir'),

@@ -57,6 +57,16 @@
 		    display: inline-block;
 		}
 	    }
+	    &.faudir-email {
+	       span.icon::after {
+		    content: ", ";
+
+		}
+		span.icon:last-child::after {
+		    content: "";
+		}
+
+	    }
   
 	}
 	
