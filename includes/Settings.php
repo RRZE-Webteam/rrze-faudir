@@ -1133,7 +1133,7 @@ class Settings {
                     $edit_link = get_edit_post_link($existing_post[0]->ID);
                     $output .= "<a href='" . esc_url($edit_link) . "' class='edit-person button'><span class='dashicons dashicons-edit'></span> " . esc_html__('Edit', 'rrze-faudir') . "</a>";
                 } else {
-                    $output .= "<button class='add-person button' data-name='" . esc_attr($name) . "' data-id='" . esc_attr($identifier) . "' data-include-default-org='" . ($includeDefaultOrg ? '1' : '0') . "'><span class='dashicons dashicons-plus'></span> Add</button>";
+                    $output .= "<button class='add-person button' data-name='" . esc_attr($name) . "' data-id='" . esc_attr($identifier) . "' data-include-default-org='" . ($includeDefaultOrg ? '1' : '0') . "'><span class='dashicons dashicons-plus'></span> ". esc_html__('Add', 'rrze-faudir') . "</button>";
                 }
 
                 $output .= '</div>';

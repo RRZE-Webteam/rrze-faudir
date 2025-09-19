@@ -1,6 +1,6 @@
 {
     "name": "rrze-faudir",
-    "version": "2.5.4",
+    "version": "2.5.8",
     "description": "Plugin for displaying the FAUdir and institution directory on websites.",
     "main": "rrze-faudir.php",
     "textdomain": "rrze-faudir",

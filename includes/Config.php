@@ -128,7 +128,8 @@ class Config {
             'faumap'            => __('FAU Map', 'rrze-faudir'),
             'officehours'       => __('Office Hours', 'rrze-faudir'),
             'consultationhours' => __('Consultation Hours', 'rrze-faudir'),
-            'link'              => __('Link to Profil', 'rrze-faudir')
+            'link'              => __('Link to Profil', 'rrze-faudir'),
+
         ];
         
         

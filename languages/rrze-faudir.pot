@@ -1,5 +1,6 @@
 # Copyright (C) 2025 RRZE Webteam
 # This file is distributed under the GNU General Public License v3.
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: RRZE FAUdir 2.5.2\n"
@@ -9,575 +10,604 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-09-16T10:39:14+00:00\n"
+"POT-Creation-Date: 2025-09-19 13:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.12.0\n"
+"X-Generator: Loco https://localise.biz/\n"
 "X-Domain: rrze-faudir\n"
+"\n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;"
 
-#. Plugin Name of the plugin
-#: rrze-faudir.php
-#: includes/Settings.php:37
-msgid "RRZE FAUdir"
-msgstr ""
+#. 1: Number of person, 2: Number of persons.
+#: includes/Maintenance.php:269
+msgid "%d person was not able to be imported from the old plugin."
+msgid_plural "%d persons were not able to be imported from the old plugin."
+msgstr[0] ""
+msgstr[1] ""
 
-#. Plugin URI of the plugin
-#: rrze-faudir.php
-msgid "https://github.com/RRZE-Webteam/rrze-faudir"
-msgstr ""
+#. 1: Number of person, 2: Number of persons.
+#: includes/Maintenance.php:263
+msgid "%d person was successfully imported from the old plugin."
+msgid_plural "%d persons were successfully imported from the old plugin."
+msgstr[0] ""
+msgstr[1] ""
 
-#. Description of the plugin
-#: rrze-faudir.php
-msgid "Plugin for displaying the FAU person and institution directory on websites."
-msgstr ""
-
-#. Author of the plugin
-#: rrze-faudir.php
-msgid "RRZE Webteam"
-msgstr ""
-
-#: includes/BlockRegistration.php:64
-msgid "FAU"
-msgstr ""
-
-#: includes/BlockRegistration.php:93
-msgid "You selected display=\"org\", but neither a FAUorganization ID (orgid) nor a FAU Organization Number (orgnr) was provided."
-msgstr ""
-
-#: includes/BlockRegistration.php:180
-msgid "No output avaible"
-msgstr ""
-
-#: includes/Config.php:100
-msgid "To the profile"
-msgstr ""
-
-#: includes/Config.php:102
-msgid "Image"
-msgstr ""
-
-#: includes/Config.php:103
-msgid "Display Name"
-msgstr ""
-
-#: includes/Config.php:106
-#: build/block/index.js:1
-msgid "Academic Title"
-msgstr ""
-
-#: includes/Config.php:107
+#: includes/Config.php:109
 msgid "Academic Suffix"
 msgstr ""
 
-#: includes/Config.php:108
-msgid "First Name"
+#: includes/Config.php:108 src/block/components/SortSelector.tsx:14
+msgid "Academic Title"
 msgstr ""
 
-#: includes/Config.php:109
-msgid "Title of Nobility"
+#: src/block/components/SortSelector.tsx:59
+msgid "Academic title, then family name"
 msgstr ""
 
-#: includes/Config.php:110
-#: includes/CPT.php:255
-#: includes/Settings.php:437
-msgid "Family Name"
+#: includes/EnqueueScripts.php:88 includes/Settings.php:1136
+msgid "Add"
 msgstr ""
 
-#: includes/Config.php:111
-#: includes/Config.php:140
-#: includes/CPT.php:252
-#: includes/Organization.php:218
-#: includes/Settings.php:441
-#: includes/Settings.php:1136
-#: templates/org_compact.php:107
-#: templates/person_card.php:97
-#: templates/person_compact.php:206
-#: templates/person_list.php:132
-#: templates/person_page.php:148
-#: templates/person_table.php:121
-#: build/block/index.js:1
-msgid "Email"
+#: includes/CPT.php:598
+msgid "Add New"
 msgstr ""
 
-#: includes/Config.php:112
-#: includes/Config.php:141
-#: includes/Organization.php:217
-#: includes/Settings.php:1135
-#: templates/org_compact.php:123
-#: templates/org_compact.php:135
-#: templates/person_card.php:111
-#: templates/person_compact.php:220
-#: templates/person_list.php:144
-#: templates/person_page.php:162
-#: templates/person_table.php:133
-msgid "Phone"
-msgstr ""
-
-#: includes/Config.php:113
-#: includes/Config.php:142
-#: includes/Contact.php:267
-#: templates/person_card.php:127
-#: templates/person_compact.php:237
-#: templates/person_list.php:156
-#: templates/person_page.php:178
-#: templates/person_table.php:150
-msgid "Fax"
-msgstr ""
-
-#: includes/Config.php:114
-#: includes/CPT.php:286
-#: includes/Settings.php:1044
-msgid "Organization"
-msgstr ""
-
-#: includes/Config.php:115
-#: includes/Settings.php:123
-msgid "Jobtitle"
-msgstr ""
-
-#: includes/Config.php:116
-#: includes/Config.php:144
-#: includes/Contact.php:270
-#: includes/Organization.php:219
-#: templates/org_compact.php:147
-#: templates/person_card.php:142
-#: templates/person_card.php:159
-#: templates/person_compact.php:252
-#: templates/person_list.php:172
-#: templates/person_page.php:193
-#: templates/person_table.php:162
-msgid "URL"
-msgstr ""
-
-#: includes/Config.php:117
-msgid "Content"
-msgstr ""
-
-#: includes/Config.php:118
-msgid "Teasertext"
-msgstr ""
-
-#: includes/Config.php:119
-#: includes/Config.php:148
-#: templates/org_compact.php:188
-#: templates/person_card.php:180
-#: templates/person_compact.php:276
-#: templates/person_page.php:217
-msgid "Social Media and Websites"
-msgstr ""
-
-#: includes/Config.php:120
-#: includes/Contact.php:246
-#: includes/Contact.php:376
-#: templates/person_list.php:121
-#: templates/person_table.php:108
-msgid "Room"
-msgstr ""
-
-#: includes/Config.php:121
-#: includes/Contact.php:249
-#: includes/Contact.php:379
-#: templates/person_list.php:214
-#: templates/person_table.php:181
-msgid "Floor"
-msgstr ""
-
-#: includes/Config.php:122
-#: includes/Config.php:150
-#: includes/Settings.php:1130
-#: templates/org_compact.php:80
-#: templates/person_compact.php:145
-#: templates/person_page.php:133
-msgid "Address"
-msgstr ""
-
-#: includes/Config.php:123
-#: includes/Contact.php:252
-#: includes/Organization.php:220
-#: templates/person_list.php:272
-#: templates/person_table.php:226
-msgid "Street"
-msgstr ""
-
-#: includes/Config.php:124
-#: includes/Contact.php:255
-#: includes/Organization.php:221
-msgid "ZIP Code"
-msgstr ""
-
-#: includes/Config.php:125
-#: includes/Contact.php:258
-#: includes/Organization.php:222
-#: templates/person_list.php:294
-#: templates/person_table.php:246
-msgid "City"
-msgstr ""
-
-#: includes/Config.php:126
-#: includes/Config.php:143
-#: includes/Contact.php:261
-#: includes/Contact.php:383
-#: includes/Organization.php:223
-#: includes/Organization.php:269
-#: templates/org_compact.php:158
-#: templates/person_list.php:225
-#: templates/person_table.php:257
-msgid "FAU Map"
-msgstr ""
-
-#: includes/Config.php:127
-#: includes/Config.php:154
-#: includes/Contact.php:279
-#: includes/OpeningHours.php:162
-#: templates/person_compact.php:185
-#: templates/person_page.php:256
-msgid "Office Hours"
-msgstr ""
-
-#: includes/Config.php:128
-#: includes/Config.php:155
-#: includes/Contact.php:285
-#: includes/OpeningHours.php:163
-#: templates/org_compact.php:199
-#: templates/person_compact.php:173
-#: templates/person_page.php:244
-msgid "Consultation Hours"
-msgstr ""
-
-#: includes/Config.php:129
-msgid "Link to Profil"
-msgstr ""
-
-#: includes/Config.php:134
-#: includes/CPT.php:249
-#: includes/Settings.php:475
-msgid "Name"
-msgstr ""
-
-#: includes/Config.php:135
-msgid "Alternate Name"
-msgstr ""
-
-#: includes/Config.php:136
-msgid "Disambiguating Description"
-msgstr ""
-
-#: includes/Config.php:137
-msgid "Description"
-msgstr ""
-
-#: includes/Config.php:147
-msgid "Text"
-msgstr ""
-
-#: includes/Config.php:151
-#: templates/org_compact.php:92
-msgid "Postal Address"
-msgstr ""
-
-#: includes/Config.php:152
-msgid "Internal Address"
-msgstr ""
-
-#: includes/Config.php:161
-msgid "Administrative Employee"
-msgstr ""
-
-#: includes/Config.php:162
-msgid "Adjunct professors"
-msgstr ""
-
-#: includes/Config.php:163
-msgid "Privat dozent"
-msgstr ""
-
-#: includes/Config.php:164
-msgid "Campo administrator"
-msgstr ""
-
-#: includes/Config.php:165
-msgid "Deputy leader"
-msgstr ""
-
-#: includes/Config.php:166
-msgid "Doctoral candidate"
-msgstr ""
-
-#: includes/Config.php:167
-msgid "Employee"
-msgstr ""
-
-#: includes/Config.php:168
-#: includes/Config.php:184
-msgid "Visiting lecturers"
-msgstr ""
-
-#: includes/Config.php:169
-msgid "Visiting researchers"
-msgstr ""
-
-#: includes/Config.php:170
-msgid "Honorary professors"
-msgstr ""
-
-#: includes/Config.php:171
-msgid "IdM coordinator"
-msgstr ""
-
-#: includes/Config.php:172
-msgid "IT support staff"
-msgstr ""
-
-#: includes/Config.php:173
-msgid "Assistant professors"
-msgstr ""
-
-#: includes/Config.php:174
-msgid "Head"
-msgstr ""
-
-#: includes/Config.php:175
-msgid "Professors"
-msgstr ""
-
-#: includes/Config.php:176
-msgid "Research assistant"
-msgstr ""
-
-#: includes/Config.php:177
-msgid "Retired professors"
-msgstr ""
-
-#: includes/Config.php:178
-msgid "Scholarship holder"
-msgstr ""
-
-#: includes/Config.php:179
-msgid "Research associates"
-msgstr ""
-
-#: includes/Config.php:180
-msgid "Secretary"
-msgstr ""
-
-#: includes/Config.php:181
-msgid "Student employee"
-msgstr ""
-
-#: includes/Config.php:182
-msgid "Technical employee"
-msgstr ""
-
-#: includes/Config.php:183
-msgid "Trainee"
-msgstr ""
-
-#: includes/Config.php:185
-msgid "Workplace manager"
-msgstr ""
-
-#: includes/Config.php:189
-msgid "List"
-msgstr ""
-
-#: includes/Config.php:190
-msgid "Table"
-msgstr ""
-
-#: includes/Config.php:191
-msgid "Card"
-msgstr ""
-
-#: includes/Config.php:192
-#: includes/Config.php:194
-msgid "Compact"
-msgstr ""
-
-#: includes/Config.php:193
-msgid "Page"
-msgstr ""
-
-#: includes/Config.php:210
-msgid "Professor Doctor"
-msgstr ""
-
-#: includes/Config.php:218
-msgid "Professor Doctor (Emeritus)"
-msgstr ""
-
-#: includes/Config.php:226
-msgid "Professor"
-msgstr ""
-
-#: includes/Config.php:231
-msgid "Professor (Emeritus)"
-msgstr ""
-
-#: includes/Config.php:236
-msgid "Doctor"
-msgstr ""
-
-#: includes/Config.php:241
-msgid "Doctor Private lecturer"
-msgstr ""
-
-#: includes/Config.php:249
-msgid "Private lecturer"
-msgstr ""
-
-#: includes/Config.php:256
-msgid "Professor Doctor (multiple)"
-msgstr ""
-
-#: includes/Config.php:261
-msgid "Professor (multiple)"
-msgstr ""
-
-#: includes/Config.php:266
-msgid "Doctor (multiple)"
-msgstr ""
-
-#: includes/Config.php:272
-msgid "Professor Doctor (Emeritus, multiple)"
-msgstr ""
-
-#: includes/Contact.php:237
-msgid "No workplaces available"
-msgstr ""
-
-#: includes/Contact.php:264
-msgid "Phones"
-msgstr ""
-
-#: includes/Contact.php:273
-msgid "Emails"
-msgstr ""
-
-#: includes/Contact.php:277
-#: includes/Contact.php:283
-msgid "Weekday "
-msgstr ""
-
-#: includes/Contact.php:384
-#: includes/Organization.php:270
-#: templates/org_compact.php:159
-#: templates/person_list.php:226
-#: templates/person_table.php:258
-msgid "Map"
-msgstr ""
-
-#: includes/Contact.php:422
-#: includes/Organization.php:283
-msgid "Box Number"
-msgstr ""
-
-#: includes/Contact.php:533
-#: includes/Organization.php:568
-msgid "No social media available"
-msgstr ""
-
-#: includes/CPT.php:77
-#: includes/CPT.php:79
-#: includes/Settings.php:96
-#: includes/Settings.php:302
-#: build/block/index.js:1
-msgid "Persons"
-msgstr ""
-
-#: includes/CPT.php:78
-msgid "Person"
-msgstr ""
-
-#: includes/CPT.php:80
-#: includes/CPT.php:597
+#: includes/CPT.php:80 includes/CPT.php:597
 msgid "Add New Person"
-msgstr ""
-
-#: includes/CPT.php:80
-msgid "via FAUdir search"
-msgstr ""
-
-#: includes/CPT.php:81
-msgid "Edit Person"
 msgstr ""
 
 #: includes/CPT.php:152
 msgid "Additional Fields"
 msgstr ""
 
-#: includes/CPT.php:173
-#: includes/Settings.php:256
-msgid "Canonical URL"
+#: templates/person_compact.php:145 templates/person_page.php:133
+#: templates/org_compact.php:80 includes/Config.php:124 includes/Config.php:153
+#: includes/Settings.php:1206
+msgid "Address"
 msgstr ""
 
-#: includes/CPT.php:175
-msgid "The canonical URL is the designated, most representative URL for a page like this person info, when that content is available at multiple URLs, a situation known as duplicate content. By specifying the canonical URL, search engines like Google know which page is added to its index, preventing confusion, consolidation of link equity, and improving search result presentation."
+#: includes/Config.php:165
+msgid "Adjunct professors"
 msgstr ""
 
-#: includes/CPT.php:185
-msgid "Please note that this URL will be used when creating links to the person."
+#: includes/Config.php:164
+msgid "Administrative Employee"
 msgstr ""
 
-#: includes/CPT.php:192
-#: includes/CPT.php:262
+#: includes/Settings.php:357
+msgid "Advanced Settings"
+msgstr ""
+
+#: includes/Settings.php:481
+msgid ""
+"After a successful search, a person can be taken over for further processing."
+msgstr ""
+
+#: includes/Maintenance.php:85
+msgid "After this you can restart importing old contact entries from there."
+msgstr ""
+
+#: includes/Settings.php:1026
+msgid "All cache cleared successfully."
+msgstr ""
+
+#: includes/Maintenance.php:231
+msgid "already exists"
+msgstr ""
+
+#: includes/Maintenance.php:221
+msgid "already exists or cannot be found on FAUdir"
+msgstr ""
+
+#: includes/Config.php:138
+msgid "Alternate Name"
+msgstr ""
+
+#: src/block/components/PersonSelector.tsx:83
+msgid "Alternatively, select persons from the checkboxes below:"
+msgstr ""
+
+#: includes/Settings.php:258
+msgid "API Key"
+msgstr ""
+
+#: includes/Maintenance.php:85 includes/Maintenance.php:87
+msgid "API Key missing. Please enter an API key in settings."
+msgstr ""
+
+#: includes/Settings.php:250
+msgid "API Settings"
+msgstr ""
+
+#: includes/Settings.php:502
+msgid "API-Person-Identifier"
+msgstr ""
+
+#: src/block/edit.tsx:254
+msgid "Appearance"
+msgstr ""
+
+#: src/block/components/SortSelector.tsx:80
+msgid "Applies to all criteria unless you override per-criterion below."
+msgstr ""
+
+#: includes/EnqueueScripts.php:85
+msgid "Are you sure you want to clear the cache?"
+msgstr ""
+
+#: includes/Settings.php:553
+msgid "Are you sure you want to delete the default organization?"
+msgstr ""
+
+#: includes/EnqueueScripts.php:86
+msgid "Are you sure you want to import contacts from FAU person?"
+msgstr ""
+
+#: includes/Settings.php:591
+msgid "Are you sure you want to reset all settings to their default values?"
+msgstr ""
+
+#: src/block/components/SortSelector.tsx:75
+#: src/block/components/SortSelector.tsx:97
+msgid "Ascending (A→Z)"
+msgstr ""
+
+#: includes/Config.php:176
+msgid "Assistant professors"
+msgstr ""
+
+#: includes/Settings.php:877 includes/Settings.php:951
+msgid "Avaible in formats"
+msgstr ""
+
+#: src/block/components/CustomPlaceholder.tsx:203
+msgid "Back to Data selection"
+msgstr ""
+
+#: includes/Shortcode.php:365 includes/Shortcode.php:374
+msgid "Bad value for parameter orgid"
+msgstr ""
+
+#: build/block/block.json:1 src/block/block.json:1
+msgctxt "block description"
+msgid "Display FAUdir information"
+msgstr ""
+
+#: build/block/block.json:1 src/block/block.json:1
+msgctxt "block keyword"
+msgid "Contact"
+msgstr ""
+
+#: build/block/block.json:1 src/block/block.json:1
+msgctxt "block keyword"
+msgid "FAU"
+msgstr ""
+
+#: build/block/block.json:1 src/block/block.json:1
+msgctxt "block keyword"
 msgid "FAUdir"
 msgstr ""
 
-#: includes/CPT.php:192
-msgid "Data"
+#: build/block/block.json:1 src/block/block.json:1
+msgctxt "block keyword"
+msgid "Kontakt"
 msgstr ""
 
-#: includes/CPT.php:192
-#: includes/CPT.php:262
-msgid "Read-only"
+#: build/block/block.json:1 src/block/block.json:1
+msgctxt "block keyword"
+msgid "Person"
 msgstr ""
 
-#: includes/CPT.php:193
-msgid "The following data comes from the FAUdir portal. A change of data is only possible by the persons or the appointed contact persons in the FAUdir portal."
+#: build/block/block.json:1 src/block/block.json:1
+msgctxt "block keyword"
+msgid "UnivIS"
 msgstr ""
 
-#: includes/CPT.php:201
-msgid "FAUdir Identifier"
+#: build/block/block.json:1 src/block/block.json:1
+msgctxt "block title"
+msgid "FAUdir"
 msgstr ""
 
-#: includes/CPT.php:202
-msgid "Internal \"API Person Identification\" as used by FAUdir."
+#: includes/Organization.php:283 includes/Contact.php:422
+msgid "Box Number"
 msgstr ""
 
-#: includes/CPT.php:253
-msgid "Telephone"
+#: includes/OpeningHours.php:120 includes/OpeningHours.php:123
+#: includes/OpeningHours.php:126 includes/OpeningHours.php:134
+msgid "By appointment"
 msgstr ""
 
-#: includes/CPT.php:254
-#: includes/Settings.php:433
-msgid "Given Name"
+#: includes/Settings.php:278
+msgid "Cache Settings"
 msgstr ""
 
-#: includes/CPT.php:256
-msgid "Title"
+#: includes/Settings.php:294
+msgid "Cache Timeout (in minutes)"
 msgstr ""
 
-#: includes/CPT.php:257
-msgid "Suffix"
+#: includes/Config.php:167
+msgid "Campo administrator"
 msgstr ""
 
-#: includes/CPT.php:258
-msgid "Nobility Title"
+#: includes/Maintenance.php:115
+msgid "cannot be found on UnivIS. Account either removed or UnivIS Id wrong"
+msgstr ""
+
+#: includes/CPT.php:173 includes/Settings.php:97
+msgid "Canonical URL"
+msgstr ""
+
+#: includes/Config.php:194
+msgid "Card"
+msgstr ""
+
+#: src/block/components/NameFormatSelector.tsx:21
+msgid "Change display format"
+msgstr ""
+
+#: src/block/edit.tsx:167
+msgid "Change the Appearance"
+msgstr ""
+
+#: src/block/edit.tsx:168
+msgid "Change the Data"
+msgstr ""
+
+#: templates/person_list.php:294 templates/person_table.php:256
+#: includes/Organization.php:222 includes/Config.php:127
+#: includes/Contact.php:258
+msgid "City"
+msgstr ""
+
+#: includes/Settings.php:308
+msgid "Clear All Cache"
+msgstr ""
+
+#: includes/Settings.php:720
+msgid "Clear Cache Now"
+msgstr ""
+
+#: includes/Settings.php:583
+msgid "Click the button below to reset all settings to their default values."
+msgstr ""
+
+#: includes/Settings.php:721
+msgid "Click the button to clear all cached data."
+msgstr ""
+
+#: includes/Settings.php:682
+msgid ""
+"Click the button to restart the import of contact entries from FAU Person. "
+"Notice, that this will only import contact entries, which refer to a public "
+"viewable person in FAUdir."
+msgstr ""
+
+#: src/block/components/PersonSelector.tsx:99
+msgid "Close"
+msgstr ""
+
+#: includes/Config.php:195 includes/Config.php:197
+msgid "Compact"
+msgstr ""
+
+#: includes/Settings.php:616
+msgid "Configure caching settings for the plugin."
+msgstr ""
+
+#: includes/Settings.php:631
+msgid "Configure other advanced settings."
+msgstr ""
+
+#: includes/Settings.php:613
+msgid ""
+"Configure the API settings for accessing the FAU person and institution "
+"directory."
+msgstr ""
+
+#: src/block/components/CustomPlaceholder.tsx:194
+msgid "Configure the appearance of your Contact"
+msgstr ""
+
+#: includes/Settings.php:622
+msgid "Configure the default fields for the output formats."
+msgstr ""
+
+#: includes/Settings.php:625
+msgid ""
+"Configure the default output fields for the profile page of a single person."
+msgstr ""
+
+#: src/block/edit.tsx:185
+msgid "Configure your contact"
+msgstr ""
+
+#: templates/person_compact.php:173 templates/person_page.php:244
+#: templates/org_compact.php:199 includes/Config.php:130
+#: includes/Config.php:158 includes/Contact.php:285
+#: includes/OpeningHours.php:163
+msgid "Consultation Hours"
+msgstr ""
+
+#: templates/person_compact.php:265 templates/person_page.php:206
+#: templates/org_compact.php:177 templates/person_card.php:169
+#: includes/CPT.php:277
+msgid "Contact"
+msgstr ""
+
+#: src/block/components/CustomPlaceholder.tsx:84
+msgid "Contact type"
 msgstr ""
 
 #: includes/CPT.php:262
 msgid "Contacts"
 msgstr ""
 
-#: includes/CPT.php:277
-#: templates/org_compact.php:177
-#: templates/person_card.php:169
-#: templates/person_compact.php:265
-#: templates/person_page.php:206
-msgid "Contact"
+#: includes/Config.php:119
+msgid "Content"
+msgstr ""
+
+#: includes/Settings.php:104
+msgid "Copyright meta visibility"
+msgstr ""
+
+#: includes/Maintenance.php:212
+msgid ""
+"could not be importet. Possible Reasons: Either E-Mail-Adress from UnivIS "
+"wasnt found in public FAUdir entry or person name is not unique in FAUdir"
+msgstr ""
+
+#: includes/Settings.php:546
+msgid "Current Default Organization"
+msgstr ""
+
+#: includes/CPT.php:490
+msgid "Custom person created successfully!"
+msgstr ""
+
+#: includes/CPT.php:192
+msgid "Data"
+msgstr ""
+
+#: includes/Settings.php:196
+msgid "Data fields that are shown on the profil page"
+msgstr ""
+
+#: src/block/edit.tsx:196
+msgid "Data Selection"
+msgstr ""
+
+#: includes/Settings.php:154 includes/Settings.php:190
+#: includes/Settings.php:205 includes/Settings.php:339
+#: includes/Settings.php:345 includes/Settings.php:351
+msgid "Default output fields"
+msgstr ""
+
+#: includes/Settings.php:653
+msgid "Default value"
+msgstr ""
+
+#: includes/Settings.php:785
+msgid "Define the format of jobtitles."
+msgstr ""
+
+#: includes/Settings.php:554
+msgid "Delete Default Organization"
+msgstr ""
+
+#: includes/Config.php:168
+msgid "Deputy leader"
+msgstr ""
+
+#: src/block/components/SortSelector.tsx:76
+#: src/block/components/SortSelector.tsx:98
+msgid "Descending (Z→A)"
+msgstr ""
+
+#: includes/Config.php:140
+msgid "Description"
+msgstr ""
+
+#: src/block/components/PersonIdentifierDetector.tsx:41
+msgid "Direct Select via FAUdir"
+msgstr ""
+
+#: includes/Settings.php:693
+msgid "Disable caching for logged-in editors."
+msgstr ""
+
+#: includes/Config.php:139
+msgid "Disambiguating Description"
+msgstr ""
+
+#: includes/Config.php:105
+msgid "Display Name"
 msgstr ""
 
 #: includes/CPT.php:280
 msgid "Display this contact"
+msgstr ""
+
+#: src/block/edit.tsx:202 src/block/components/CustomPlaceholder.tsx:85
+msgid "Do you want to output a Person entry or a FAUdir Institution/Folder?"
+msgstr ""
+
+#: includes/Config.php:239
+msgid "Doctor"
+msgstr ""
+
+#: includes/Config.php:269
+msgid "Doctor (multiple)"
+msgstr ""
+
+#: includes/Config.php:244
+msgid "Doctor Private lecturer"
+msgstr ""
+
+#: includes/Config.php:169
+msgid "Doctoral candidate"
+msgstr ""
+
+#: includes/EnqueueScripts.php:87 includes/Settings.php:1134
+msgid "Edit"
+msgstr ""
+
+#: includes/CPT.php:81
+msgid "Edit Person"
+msgstr ""
+
+#: templates/person_compact.php:206 templates/person_page.php:148
+#: templates/org_compact.php:107 templates/person_list.php:132
+#: templates/person_card.php:97 templates/person_table.php:131
+#: includes/Organization.php:218 includes/Config.php:113
+#: includes/Config.php:143 includes/CPT.php:252 includes/Settings.php:514
+#: includes/Settings.php:1212 src/block/components/SortSelector.tsx:13
+msgid "Email"
+msgstr ""
+
+#: includes/Contact.php:273
+msgid "Emails"
+msgstr ""
+
+#: includes/Config.php:170
+msgid "Employee"
+msgstr ""
+
+#: src/block/components/OrganizationNumberDetector.tsx:58
+msgid "Enter 6–10 digits, or a comma-separated list of 10-digit numbers."
+msgstr ""
+
+#: includes/Settings.php:566
+msgid "Enter organization name or identifier"
+msgstr ""
+
+#: includes/Settings.php:808
+msgid "Enter the slug for the person post type."
+msgstr ""
+
+#: includes/Settings.php:677
+msgid "Enter your API key here."
+msgstr ""
+
+#: includes/CPT.php:450
+msgid "Error fetching person attributes."
+msgstr ""
+
+#: includes/Settings.php:123
+msgid "Error Handling"
+msgstr ""
+
+#: includes/Shortcode.php:404
+msgid "Error on creating output"
+msgstr ""
+
+#: includes/EnqueueScripts.php:93
+msgid "Error saving organization."
+msgstr ""
+
+#. 1: String for Error Message.
+#. 1: Error message
+#: includes/Settings.php:1096 includes/Settings.php:1170
+#, php-format
+msgid "Error: %s"
+msgstr ""
+
+#: includes/Settings.php:600
+msgid "Failed to reset settings. Please try again."
+msgstr ""
+
+#: includes/Settings.php:174
+msgid "Fallback FAUdir link"
+msgstr ""
+
+#: includes/Config.php:112 includes/CPT.php:255 includes/Settings.php:510
+msgid "Family Name"
+msgstr ""
+
+#: src/block/components/SortSelector.tsx:11
+msgid "Family name"
+msgstr ""
+
+#: includes/BlockRegistration.php:64
+msgid "FAU"
+msgstr ""
+
+#: templates/org_compact.php:158 templates/person_list.php:225
+#: templates/person_table.php:267 includes/Organization.php:223
+#: includes/Organization.php:269 includes/Config.php:128
+#: includes/Config.php:146 includes/Contact.php:261 includes/Contact.php:383
+msgid "FAU Map"
+msgstr ""
+
+#: includes/CPT.php:192 includes/CPT.php:262
+msgid "FAUdir"
+msgstr ""
+
+#: includes/CPT.php:201
+msgid "FAUdir Identifier"
+msgstr ""
+
+#: src/block/components/LoadingPlaceholder.tsx:8
+#: src/block/components/EmptyPlaceholder.tsx:7
+msgid "FAUdir Preview…"
+msgstr ""
+
+#: includes/Settings.php:387
+msgid "FAUdir Settings"
+msgstr ""
+
+#: src/block/components/OrganizationNumberDetector.tsx:97
+msgid "FAUOrg Number"
+msgstr ""
+
+#: templates/person_compact.php:237 templates/person_page.php:178
+#: templates/person_list.php:156 templates/person_card.php:127
+#: templates/person_table.php:160 includes/Config.php:115
+#: includes/Config.php:145 includes/Contact.php:267
+msgid "Fax"
+msgstr ""
+
+#: includes/Settings.php:877 includes/Settings.php:950
+msgid "Fieldname for Show/Hide-Attribut in Shortcodes"
+msgstr ""
+
+#: includes/Settings.php:492
+msgid "Filter by default organization"
+msgstr ""
+
+#: src/block/components/RoleSelector.tsx:22
+msgid "Filter by Role"
+msgstr ""
+
+#: src/block/components/RoleSelector.tsx:23
+msgid ""
+"Filter contact entries by FAUdir job / FAUdir role. (E.g. \"Head\", "
+"\"Deputy\", \"Professor\", \"Employee\" as you see in FAUdir)."
+msgstr ""
+
+#: src/block/edit.tsx:186
+msgid "Finish configuration"
+msgstr ""
+
+#: src/block/components/CustomPlaceholder.tsx:169
+#: src/block/components/CustomPlaceholder.tsx:209
+msgid "Finish initial setup"
+msgstr ""
+
+#: includes/Config.php:110
+msgid "First Name"
+msgstr ""
+
+#: templates/person_list.php:214 templates/person_table.php:191
+#: includes/Config.php:123 includes/Contact.php:249 includes/Contact.php:379
+msgid "Floor"
+msgstr ""
+
+#: includes/Settings.php:181
+msgid "Format"
+msgstr ""
+
+#: includes/OpeningHours.php:267
+msgid "Friday"
 msgstr ""
 
 #: includes/CPT.php:291
@@ -588,975 +618,926 @@ msgstr ""
 msgid "Function (German)"
 msgstr ""
 
-#: includes/CPT.php:301
-msgid "Socials"
-msgstr ""
-
-#: includes/CPT.php:306
-msgid "Workplace"
-msgstr ""
-
-#: includes/CPT.php:414
-msgid "Invalid person ID."
-msgstr ""
-
-#: includes/CPT.php:447
-msgid "No contact found."
-msgstr ""
-
-#: includes/CPT.php:450
-msgid "Error fetching person attributes."
-msgstr ""
-
-#: includes/CPT.php:490
-msgid "Custom person created successfully!"
-msgstr ""
-
-#: includes/CPT.php:598
-msgid "Add New"
-msgstr ""
-
-#: includes/CPT.php:616
-msgid "Redirecting to FAUdir search."
-msgstr ""
-
-#: includes/EnqueueScripts.php:85
-msgid "Are you sure you want to clear the cache?"
-msgstr ""
-
-#: includes/EnqueueScripts.php:86
-msgid "Are you sure you want to import contacts from FAU person?"
-msgstr ""
-
-#: includes/EnqueueScripts.php:87
-#: includes/Settings.php:1058
-msgid "Edit"
-msgstr ""
-
-#: includes/EnqueueScripts.php:88
-msgid "Adding..."
-msgstr ""
-
-#: includes/EnqueueScripts.php:89
-msgid "Saving..."
-msgstr ""
-
-#: includes/EnqueueScripts.php:90
-msgid "Saved"
-msgstr ""
-
-#: includes/EnqueueScripts.php:91
-#: includes/Settings.php:1148
-msgid "Save as Default Organization"
-msgstr ""
-
-#: includes/EnqueueScripts.php:92
-msgid "Organization has been saved as default."
-msgstr ""
-
-#: includes/EnqueueScripts.php:93
-msgid "Error saving organization."
-msgstr ""
-
-#: includes/Maintenance.php:85
-#: includes/Maintenance.php:87
-msgid "API Key missing. Please enter an API key in settings."
-msgstr ""
-
-#: includes/Maintenance.php:85
-msgid "After this you can restart importing old contact entries from there."
-msgstr ""
-
-#: includes/Maintenance.php:115
-#: includes/Maintenance.php:212
-#: includes/Maintenance.php:221
-#: includes/Maintenance.php:231
-msgid "Person with UnivIS ID"
-msgstr ""
-
-#: includes/Maintenance.php:115
-msgid "cannot be found on UnivIS. Account either removed or UnivIS Id wrong"
-msgstr ""
-
-#: includes/Maintenance.php:204
-msgid "Person successfully importet"
-msgstr ""
-
-#: includes/Maintenance.php:209
-#: includes/Maintenance.php:218
-#: includes/Maintenance.php:228
-msgid "Missing UnivIS ID for person"
-msgstr ""
-
-#: includes/Maintenance.php:212
-msgid "could not be importet. Possible Reasons: Either E-Mail-Adress from UnivIS wasnt found in public FAUdir entry or person name is not unique in FAUdir"
-msgstr ""
-
-#: includes/Maintenance.php:221
-msgid "already exists or cannot be found on FAUdir"
-msgstr ""
-
-#: includes/Maintenance.php:231
-msgid "already exists"
-msgstr ""
-
-#. translators: 1: Number of person, 2: Number of persons.
-#: includes/Maintenance.php:263
-#, php-format
-msgid "%d person was successfully imported from the old plugin."
-msgid_plural "%d persons were successfully imported from the old plugin."
-msgstr[0] ""
-msgstr[1] ""
-
-#. translators: 1: Number of person, 2: Number of persons.
-#: includes/Maintenance.php:269
-#, php-format
-msgid "%d person was not able to be imported from the old plugin."
-msgid_plural "%d persons were not able to be imported from the old plugin."
-msgstr[0] ""
-msgstr[1] ""
-
-#: includes/Maintenance.php:453
-#: templates/person_card.php:194
-#: templates/person_compact.php:336
-#: templates/person_list.php:339
-#: templates/person_list.php:345
-#: templates/person_page.php:330
-#: templates/person_table.php:331
-msgid "No contact entry could be found."
-msgstr ""
-
-#: includes/OpeningHours.php:120
-#: includes/OpeningHours.php:123
-#: includes/OpeningHours.php:126
-#: includes/OpeningHours.php:134
-msgid "By appointment"
-msgstr ""
-
-#: includes/OpeningHours.php:120
-msgid "via email"
-msgstr ""
-
-#: includes/OpeningHours.php:123
-msgid "via phone"
-msgstr ""
-
-#: includes/OpeningHours.php:262
-msgid "Sunday"
-msgstr ""
-
-#: includes/OpeningHours.php:263
-msgid "Monday"
-msgstr ""
-
-#: includes/OpeningHours.php:264
-msgid "Tuesday"
-msgstr ""
-
-#: includes/OpeningHours.php:265
-msgid "Wednesday"
-msgstr ""
-
-#: includes/OpeningHours.php:266
-msgid "Thursday"
-msgstr ""
-
-#: includes/OpeningHours.php:267
-msgid "Friday"
-msgstr ""
-
-#: includes/OpeningHours.php:268
-msgid "Saturday"
-msgstr ""
-
-#: includes/OpeningHours.php:271
-msgid "Unknown"
-msgstr ""
-
-#: includes/Organization.php:211
-msgid "No address available"
-msgstr ""
-
-#: includes/REST.php:87
-msgid "No contacts found with the provided identifier."
-msgstr ""
-
-#: includes/Settings.php:36
-msgid "RRZE FAUdir Settings"
-msgstr ""
-
-#: includes/Settings.php:80
-#: includes/Settings.php:296
-msgid "Search and create persons"
-msgstr ""
-
-#: includes/Settings.php:88
-#: includes/Settings.php:486
-msgid "Search Organizations"
-msgstr ""
-
-#: includes/Settings.php:96
-#: includes/Settings.php:132
-#: includes/Settings.php:147
-#: includes/Settings.php:302
-#: includes/Settings.php:308
-#: includes/Settings.php:314
-msgid "Default output fields"
-msgstr ""
-
-#: includes/Settings.php:102
-#: includes/Settings.php:153
-msgid "Output fields for formats"
-msgstr ""
-
-#: includes/Settings.php:109
-msgid "Kompakt Card Button Title"
-msgstr ""
-
-#: includes/Settings.php:116
-msgid "Fallback FAUdir link"
-msgstr ""
-
-#: includes/Settings.php:123
-msgid "Format"
-msgstr ""
-
-#: includes/Settings.php:132
-#: includes/Settings.php:308
-msgid "Profilpages"
-msgstr ""
-
-#: includes/Settings.php:138
-msgid "Data fields that are shown on the profil page"
-msgstr ""
-
-#: includes/Settings.php:147
-#: includes/Settings.php:314
-msgid "Organizations and folders"
-msgstr ""
-
-#: includes/Settings.php:162
-msgid "API Settings"
-msgstr ""
-
-#: includes/Settings.php:170
-msgid "API Key"
-msgstr ""
-
-#: includes/Settings.php:179
-msgid "Import"
-msgstr ""
-
-#: includes/Settings.php:190
-msgid "Cache Settings"
-msgstr ""
-
-#: includes/Settings.php:196
-msgid "No Caching for Logged-in Editors"
-msgstr ""
-
-#: includes/Settings.php:203
-msgid "Cache Timeout (in minutes)"
-msgstr ""
-
-#: includes/Settings.php:210
-msgid "Transient Time for Organization ID (in days)"
-msgstr ""
-
-#: includes/Settings.php:217
-msgid "Clear All Cache"
-msgstr ""
-
-#: includes/Settings.php:228
-msgid "General Settings"
-msgstr ""
-
-#: includes/Settings.php:234
-msgid "Person Slug"
-msgstr ""
-
-#: includes/Settings.php:241
-msgid "Index page"
-msgstr ""
-
-#: includes/Settings.php:249
-msgid "Normalize Honorific Prefix"
-msgstr ""
-
-#: includes/Settings.php:265
-msgid "Error Handling"
-msgstr ""
-
-#: includes/Settings.php:271
-msgid "Show Error Message for Invalid Contacts"
-msgstr ""
-
-#: includes/Settings.php:286
+#: includes/Settings.php:323
 msgid "General"
 msgstr ""
 
-#: includes/Settings.php:320
-msgid "Advanced Settings"
+#: includes/Settings.php:82 includes/Settings.php:225
+msgid "General Settings"
 msgstr ""
 
-#: includes/Settings.php:349
-msgid "FAUdir Settings"
+#: includes/CPT.php:254 includes/Settings.php:506
+msgid "Given Name"
 msgstr ""
 
-#: includes/Settings.php:361
-msgid "Nothing to display."
+#: src/block/components/SortSelector.tsx:12
+msgid "Given name"
 msgstr ""
 
-#: includes/Settings.php:405
-msgid "Please enter at least one search term. If more than one parameter is entered, the search results must contain all values (AND search)."
-msgstr ""
-
-#: includes/Settings.php:406
-msgid "Please note that only people whose FAUdir entries are public can be found."
-msgstr ""
-
-#: includes/Settings.php:408
-msgid "After a successful search, a person can be taken over for further processing."
-msgstr ""
-
-#: includes/Settings.php:414
-msgid "Search Options"
-msgstr ""
-
-#: includes/Settings.php:419
-msgid "Filter by default organization"
-msgstr ""
-
-#: includes/Settings.php:425
-msgid "Search Terms"
-msgstr ""
-
-#: includes/Settings.php:429
-msgid "API-Person-Identifier"
-msgstr ""
-
-#: includes/Settings.php:449
-#: includes/Settings.php:495
-msgid "Search"
-msgstr ""
-
-#: includes/Settings.php:469
-msgid "Organizations"
-msgstr ""
-
-#: includes/Settings.php:473
-msgid "Current Default Organization"
-msgstr ""
-
-#: includes/Settings.php:474
-msgid "This is the organization that will be used by default in shortcodes and blocks."
-msgstr ""
-
-#: includes/Settings.php:476
-#: includes/Settings.php:1119
-msgid "Organization Number"
-msgstr ""
-
-#: includes/Settings.php:480
-msgid "Are you sure you want to delete the default organization?"
-msgstr ""
-
-#: includes/Settings.php:481
-msgid "Delete Default Organization"
-msgstr ""
-
-#: includes/Settings.php:491
-msgid "Search Term"
-msgstr ""
-
-#: includes/Settings.php:493
-msgid "Enter organization name or identifier"
-msgstr ""
-
-#: includes/Settings.php:509
-msgid "Reset to Default Settings"
-msgstr ""
-
-#: includes/Settings.php:510
-msgid "Click the button below to reset all settings to their default values."
-msgstr ""
-
-#: includes/Settings.php:512
-msgid "Reset to Default Values"
-msgstr ""
-
-#: includes/Settings.php:518
-msgid "Are you sure you want to reset all settings to their default values?"
-msgstr ""
-
-#: includes/Settings.php:524
-#: includes/Settings.php:938
-msgid "Settings have been reset to default values."
-msgstr ""
-
-#: includes/Settings.php:527
-msgid "Failed to reset settings. Please try again."
-msgstr ""
-
-#: includes/Settings.php:540
-msgid "Configure the API settings for accessing the FAU person and institution directory."
-msgstr ""
-
-#: includes/Settings.php:543
-msgid "Configure caching settings for the plugin."
-msgstr ""
-
-#: includes/Settings.php:546
+#: includes/Settings.php:619
 msgid "Handle error messages for invalid contact entries."
 msgstr ""
 
-#: includes/Settings.php:549
-msgid "Configure the default fields for the output formats."
+#: includes/Config.php:177
+msgid "Head"
 msgstr ""
 
-#: includes/Settings.php:552
-msgid "Configure the default output fields for the profile page of a single person."
+#: src/block/components/SortSelector.tsx:15
+msgid "Head of Department first"
 msgstr ""
 
-#: includes/Settings.php:555
-msgid "Configure other advanced settings."
+#: src/block/components/SortSelector.tsx:61
+msgid "Head of Department first, then academic title"
 msgstr ""
 
-#: includes/Settings.php:558
-msgid "Search for FAU contacts by ID, name or email."
+#: includes/Config.php:173
+msgid "Honorary professors"
 msgstr ""
 
-#: includes/Settings.php:561
-msgid "Search for FAU organizations by name or identifier."
+#. URI of the plugin
+msgid "https://github.com/RRZE-Webteam/rrze-faudir"
 msgstr ""
 
-#: includes/Settings.php:577
-#: includes/Settings.php:801
-msgid "Output data"
+#: src/block/components/SortSelector.tsx:16
+msgid "Identifier Order"
 msgstr ""
 
-#: includes/Settings.php:577
-msgid "Default value"
+#: includes/Config.php:174
+msgid "IdM coordinator"
 msgstr ""
 
-#: includes/Settings.php:586
-msgid "Visible"
+#: includes/Config.php:104
+msgid "Image"
 msgstr ""
 
-#: includes/Settings.php:586
-msgid "Invisible"
+#: includes/Settings.php:112
+msgid "Image caption visibility"
 msgstr ""
 
-#: includes/Settings.php:590
-msgid "Select the fields to display in the profil page of a single person."
+#: includes/Settings.php:267
+msgid "Import"
 msgstr ""
 
-#: includes/Settings.php:595
-msgid "The API key is being used from the network installation."
-msgstr ""
-
-#: includes/Settings.php:601
-msgid "Enter your API key here."
-msgstr ""
-
-#: includes/Settings.php:605
+#: includes/Settings.php:681
 msgid "Import contact entries from FAU Person"
 msgstr ""
 
-#: includes/Settings.php:606
-msgid "Click the button to restart the import of contact entries from FAU Person. Notice, that this will only import contact entries, which refer to a public viewable person in FAUdir."
+#: includes/Settings.php:240
+msgid "Index page"
 msgstr ""
 
-#: includes/Settings.php:617
-msgid "Disable caching for logged-in editors."
+#: includes/CPT.php:202
+msgid "Internal \"API Person Identification\" as used by FAUdir."
 msgstr ""
 
-#: includes/Settings.php:626
-msgid "Set the cache timeout in minutes (minimum 15 minutes)."
-msgstr ""
-
-#: includes/Settings.php:633
-msgid "Set the transient time in days for intermediate stored organization identifiers (minimum 1 day)."
-msgstr ""
-
-#: includes/Settings.php:640
-msgid "Set the cache timeout in days for organization identifiers."
-msgstr ""
-
-#: includes/Settings.php:644
-msgid "Clear Cache Now"
-msgstr ""
-
-#: includes/Settings.php:645
-msgid "Click the button to clear all cached data."
-msgstr ""
-
-#: includes/Settings.php:659
-msgid "Show error messages for incorrect contact entries."
-msgstr ""
-
-#: includes/Settings.php:679
-msgid "Link title for optional links pointing to the users detail page."
-msgstr ""
-
-#: includes/Settings.php:689
-msgid "On using profil links, fallback to the public faudir portal, if no local custom post is avaible."
-msgstr ""
-
-#: includes/Settings.php:709
-msgid "Define the format of jobtitles."
-msgstr ""
-
-#: includes/Settings.php:710
-msgid "You might use the variables #orgname# (Name of the defined organisation), #functionlabel# (function label by FAUdir) and #alternatename# (short or alternative name for the organization) here and other strings, but no HTML or special chars."
-msgstr ""
-
-#: includes/Settings.php:718
-msgid "Optional: Path to a local page, which is used as index for all contact entries."
-msgstr ""
-
-#: includes/Settings.php:732
-msgid "Enter the slug for the person post type."
-msgstr ""
-
-#: includes/Settings.php:747
-msgid "Use official short form of the academic degree"
-msgstr ""
-
-#: includes/Settings.php:768
-msgid "Use Canonical URL as target for personal links, if set in the person data"
-msgstr ""
-
-#: includes/Settings.php:801
-#: includes/Settings.php:874
-msgid "Fieldname for Show/Hide-Attribut in Shortcodes"
-msgstr ""
-
-#: includes/Settings.php:801
-#: includes/Settings.php:875
-msgid "Avaible in formats"
-msgstr ""
-
-#: includes/Settings.php:823
-msgid "Select the fields to display by default in shortcodes and blocks."
-msgstr ""
-
-#: includes/Settings.php:852
-msgid "No organization/folder fields available for selection."
-msgstr ""
-
-#: includes/Settings.php:873
-msgid "Output data (organizations/folders)"
-msgstr ""
-
-#: includes/Settings.php:906
-msgid "Select the organization/folder fields to display by default in shortcodes and blocks."
-msgstr ""
-
-#: includes/Settings.php:915
-#: includes/Settings.php:1160
-msgid "You do not have sufficient permissions to access this page."
-msgstr ""
-
-#: includes/Settings.php:950
-msgid "All cache cleared successfully."
-msgstr ""
-
-#. translators: 1: String for Error Message.
-#. translators: 1: Error message
-#: includes/Settings.php:1020
-#: includes/Settings.php:1094
-#, php-format
-msgid "Error: %s"
-msgstr ""
-
-#: includes/Settings.php:1068
-msgid "No contacts found. Please verify the IdM-Kennung or names provided."
-msgstr ""
-
-#: includes/Settings.php:1077
-msgid "Please enter a search term"
-msgstr ""
-
-#: includes/Settings.php:1100
-msgid "No organizations found. Please try a different search term."
-msgstr ""
-
-#: includes/Settings.php:1117
-msgid "Organization ID"
-msgstr ""
-
-#: includes/Settings.php:1123
-msgid "Parent Organization"
-msgstr ""
-
-#: includes/Settings.php:1127
-msgid "Type"
-msgstr ""
-
-#: includes/Settings.php:1137
-msgid "Website"
-msgstr ""
-
-#: includes/Shortcode.php:365
-#: includes/Shortcode.php:374
-msgid "Bad value for parameter orgid"
+#: includes/Config.php:155
+msgid "Internal Address"
 msgstr ""
 
 #: includes/Shortcode.php:378
 msgid "Invalid oder missing parameter orgnr or orgid"
 msgstr ""
 
-#: includes/Shortcode.php:404
-msgid "Error on creating output"
+#: includes/CPT.php:414
+msgid "Invalid person ID."
 msgstr ""
 
-#. translators: 1: FAUdir Identifier Key
-#: includes/Shortcode.php:966
-#, php-format
-msgid "Person with ID %s does not exist"
+#: includes/Settings.php:662
+msgid "Invisible"
 msgstr ""
 
-#. translators: 1: PHP  version number, 2: required PHP Version.
-#: rrze-faudir.php:97
-#, php-format
-msgid "Your PHP version (%1$s) is outdated. Please upgrade to PHP %2$s or higher."
+#: includes/Config.php:175
+msgid "IT support staff"
 msgstr ""
 
-#. translators: 1: WordPress version number, 2: Required WP Version.
-#: rrze-faudir.php:104
-#, php-format
-msgid "Your WordPress version (%1$s) is outdated. Please upgrade to WordPress %2$s or higher."
+#: includes/Config.php:117 includes/Settings.php:181
+msgid "Jobtitle"
 msgstr ""
 
-#: templates/org_compact.php:205
-msgid "Opening hours"
+#: includes/Settings.php:167
+msgid "Kompakt Card Button Title"
+msgstr ""
+
+#: includes/Settings.php:755
+msgid "Link title for optional links pointing to the users detail page."
+msgstr ""
+
+#: includes/Config.php:131
+msgid "Link to Profil"
+msgstr ""
+
+#: includes/Config.php:192
+msgid "List"
+msgstr ""
+
+#: src/block/components/PersonSelector.tsx:34
+msgid "Loading available contacts..."
+msgstr ""
+
+#: templates/org_compact.php:159 templates/person_list.php:226
+#: templates/person_table.php:268 includes/Organization.php:270
+#: includes/Contact.php:384
+msgid "Map"
+msgstr ""
+
+#: includes/Maintenance.php:209 includes/Maintenance.php:218
+#: includes/Maintenance.php:228
+msgid "Missing UnivIS ID for person"
+msgstr ""
+
+#: includes/OpeningHours.php:263
+msgid "Monday"
+msgstr ""
+
+#: includes/Config.php:137 includes/CPT.php:249 includes/Settings.php:548
+msgid "Name"
+msgstr ""
+
+#: includes/Organization.php:211
+msgid "No address available"
+msgstr ""
+
+#: includes/Settings.php:287
+msgid "No Caching for Logged-in Editors"
+msgstr ""
+
+#: templates/person_compact.php:336 templates/person_page.php:330
+#: templates/person_list.php:339 templates/person_list.php:345
+#: templates/person_card.php:194 templates/person_table.php:341
+#: includes/Maintenance.php:453
+msgid "No contact entry could be found."
+msgstr ""
+
+#: includes/CPT.php:447
+msgid "No contact found."
+msgstr ""
+
+#: includes/REST.php:87
+msgid "No contacts found with the provided identifier."
+msgstr ""
+
+#: includes/Settings.php:1144
+msgid "No contacts found. Please verify the IdM-Kennung or names provided."
 msgstr ""
 
 #: templates/org_compact.php:243
 msgid "No org entry could be found."
 msgstr ""
 
-#: templates/person_compact.php:290
-#: templates/person_list.php:186
-#: templates/person_page.php:284
-#: templates/person_table.php:272
-msgid "User profil"
+#: includes/Settings.php:928
+msgid "No organization/folder fields available for selection."
 msgstr ""
 
-#: templates/person_list.php:283
-#: templates/person_table.php:236
-msgid "Postal Code"
+#: includes/Settings.php:1176
+msgid "No organizations found. Please try a different search term."
 msgstr ""
 
-#: build/block/index.js:1
-msgid "FAUdir Preview…"
+#: includes/BlockRegistration.php:180
+msgid "No output avaible"
 msgstr ""
 
-#: build/block/index.js:1
-msgid "The Preview is loading…"
+#: includes/Organization.php:568 includes/Contact.php:533
+msgid "No social media available"
 msgstr ""
 
-#: build/block/index.js:1
-msgid "Your current configuration does not return a contact. Try adjusting your filter settings."
+#: includes/Contact.php:237
+msgid "No workplaces available"
 msgstr ""
 
-#: build/block/index.js:1
-msgid "Select organization by FAUOrg Number"
+#: includes/CPT.php:258
+msgid "Nobility Title"
 msgstr ""
 
-#: build/block/index.js:1
-msgid "FAUOrg Number"
+#: includes/Settings.php:90
+msgid "Normalize Honorific Prefix"
 msgstr ""
 
-#: build/block/index.js:1
-msgid "Enter 6–10 digits, or a comma-separated list of 10-digit numbers."
+#: includes/Settings.php:399
+msgid "Nothing to display."
 msgstr ""
 
-#: build/block/index.js:1
-msgid "Some entries are not 10 digits and were ignored."
+#: templates/person_compact.php:185 templates/person_page.php:256
+#: includes/Config.php:129 includes/Config.php:157 includes/Contact.php:279
+#: includes/OpeningHours.php:162
+msgid "Office Hours"
 msgstr ""
 
-#: build/block/index.js:1
-msgid "When entering multiple numbers, each must be exactly 10 digits."
+#: includes/Settings.php:765
+msgid ""
+"On using profil links, fallback to the public faudir portal, if no local "
+"custom post is avaible."
 msgstr ""
 
-#: build/block/index.js:1
-msgid "To display all Persons from within your Organization, insert your FAUOrg Number (Cost center number)."
+#: templates/org_compact.php:205
+msgid "Opening hours"
 msgstr ""
 
-#: build/block/index.js:1
-msgid "Select Persons"
+#: includes/Settings.php:794
+msgid ""
+"Optional: Path to a local page, which is used as index for all contact "
+"entries."
 msgstr ""
 
-#: build/block/index.js:1
-msgid "Type to add persons"
-msgstr ""
-
-#: build/block/index.js:1
+#: src/block/components/PersonSelector.tsx:70
 msgid "Or choose by List."
 msgstr ""
 
-#: build/block/index.js:1
-msgid "There are currently no Contacts available. Start adding your first FAUdir Contacts via the WordPress Dashboard > Persons."
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Alternatively, select persons from the checkboxes below:"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Close"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Select Categories"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Type to add categories"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "There are currently no Categories available. Start adding your first FAUdir Categories via the WordPress Dashboard > Persons > Categories."
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Select Format"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Select fields"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Change display format"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Select organization by FAUdir Identifier"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Via FAUdir-ID or FAUdir-URL"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Please enter a valid FAUdir-URL or the FAUdir-identifier."
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Please enter either the complete FAUdir-URL (\"https://faudir.fau.de/public/org/…\"), or the FAUdir-Identifier (the last part of the URL after \"org/\"."
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Direct Select via FAUdir"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Via Person Identifier or FAUdir-URL"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Please enter a valid FAUdir-URL or the identifier."
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Please enter either a FAUdir-URL (\"https://faudir.fau.de/public/person/…\"), or the Person-Identifier. This will display your contact, even if the contact is not created via Dashboard > Persons."
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Setup your FAUdir Block"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Configure the appearance of your Contact"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Back to Data selection"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Finish initial setup"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Preview"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Which type of contact would you like to display?"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Contact type"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Do you want to output a Person entry or a FAUdir Institution/Folder?"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Organization or FAUdir-Folder"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Select Organization or FAUdir-Folder to display"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Via FAUOrg Number"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "To display an Institution as contact, insert your FAUOrg Number (Cost center number)."
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Select Contacts to display"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Select Contacts from your WordPress Site"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Select Contacts directly from FAUdir"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Step 2: Change Appearance"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Filter by Role"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Filter contact entries by FAUdir job / FAUdir role. (E.g. \"Head\", \"Deputy\", \"Professor\", \"Employee\" as you see in FAUdir)."
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Family name"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Given name"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Head of Department first"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Identifier Order"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Sort by"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Academic title, then family name"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Head of Department first, then academic title"
-msgstr ""
-
-#: build/block/index.js:1
+#: src/block/components/SortSelector.tsx:72
 msgid "Order (global)"
 msgstr ""
 
-#: build/block/index.js:1
-msgid "Ascending (A→Z)"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Descending (Z→A)"
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Applies to all criteria unless you override per-criterion below."
-msgstr ""
-
-#: build/block/index.js:1
-msgid "Per-criterion order (optional)"
-msgstr ""
-
-#: build/block/index.js:1
+#: src/block/components/SortSelector.tsx:110
 msgid "Order is ignored when using “Identifier Order”."
 msgstr ""
 
-#: build/block/index.js:1
-msgid "Change the Data"
+#: includes/Config.php:116 includes/CPT.php:286 includes/Settings.php:1120
+msgid "Organization"
 msgstr ""
 
-#: build/block/index.js:1
-msgid "Change the Appearance"
+#: includes/EnqueueScripts.php:92
+msgid "Organization has been saved as default."
 msgstr ""
 
-#: build/block/index.js:1
-msgid "Finish configuration"
+#: includes/Settings.php:1193
+msgid "Organization ID"
 msgstr ""
 
-#: build/block/index.js:1
-msgid "Configure your contact"
+#: includes/Settings.php:549 includes/Settings.php:1195
+msgid "Organization Number"
 msgstr ""
 
-#: build/block/index.js:1
-msgid "Data Selection"
+#: src/block/edit.tsx:211 src/block/components/CustomPlaceholder.tsx:94
+msgid "Organization or FAUdir-Folder"
 msgstr ""
 
-#: build/block/index.js:1
-msgid "What type of Contact do you want to display?"
+#: includes/Settings.php:542
+msgid "Organizations"
 msgstr ""
 
-#: build/block/index.js:1
-msgid "Appearance"
+#: includes/Settings.php:205 includes/Settings.php:351
+msgid "Organizations and folders"
 msgstr ""
 
-#: build/block/index.js:1
-msgid "Sorting"
+#: includes/Settings.php:653 includes/Settings.php:877
+msgid "Output data"
 msgstr ""
 
-#: build/block/block.json
-msgctxt "block title"
-msgid "FAUdir"
+#: includes/Settings.php:949
+msgid "Output data (organizations/folders)"
 msgstr ""
 
-#: build/block/block.json
-msgctxt "block description"
-msgid "Display FAUdir information"
+#: includes/Settings.php:160 includes/Settings.php:211
+msgid "Output fields for formats"
 msgstr ""
 
-#: build/block/block.json
-msgctxt "block keyword"
-msgid "FAUdir"
+#: includes/Config.php:196
+msgid "Page"
 msgstr ""
 
-#: build/block/block.json
-msgctxt "block keyword"
-msgid "UnivIS"
+#: includes/Settings.php:1199
+msgid "Parent Organization"
 msgstr ""
 
-#: build/block/block.json
-msgctxt "block keyword"
+#: src/block/components/SortSelector.tsx:87
+msgid "Per-criterion order (optional)"
+msgstr ""
+
+#: includes/CPT.php:78
 msgid "Person"
 msgstr ""
 
-#: build/block/block.json
-msgctxt "block keyword"
-msgid "Contact"
+#: includes/Settings.php:233
+msgid "Person Slug"
 msgstr ""
 
-#: build/block/block.json
-msgctxt "block keyword"
-msgid "Kontakt"
+#: includes/Maintenance.php:204
+msgid "Person successfully importet"
 msgstr ""
 
-#: build/block/block.json
-msgctxt "block keyword"
-msgid "FAU"
+#. 1: FAUdir Identifier Key
+#: includes/Shortcode.php:966
+#, php-format
+msgid "Person with ID %s does not exist"
+msgstr ""
+
+#: includes/Maintenance.php:115 includes/Maintenance.php:212
+#: includes/Maintenance.php:221 includes/Maintenance.php:231
+msgid "Person with UnivIS ID"
+msgstr ""
+
+#: includes/CPT.php:77 includes/CPT.php:79 includes/Settings.php:154
+#: includes/Settings.php:339 src/block/edit.tsx:207
+#: src/block/components/CustomPlaceholder.tsx:90
+msgid "Persons"
+msgstr ""
+
+#: templates/person_compact.php:220 templates/person_page.php:162
+#: templates/org_compact.php:123 templates/org_compact.php:135
+#: templates/person_list.php:144 templates/person_card.php:111
+#: templates/person_table.php:143 includes/Organization.php:217
+#: includes/Config.php:114 includes/Config.php:144 includes/Settings.php:1211
+msgid "Phone"
+msgstr ""
+
+#: includes/Contact.php:264
+msgid "Phones"
+msgstr ""
+
+#: includes/Settings.php:1153
+msgid "Please enter a search term"
+msgstr ""
+
+#: src/block/components/OrganizationIdentifierDetector.tsx:31
+msgid "Please enter a valid FAUdir-URL or the FAUdir-identifier."
+msgstr ""
+
+#: src/block/components/PersonIdentifierDetector.tsx:30
+msgid "Please enter a valid FAUdir-URL or the identifier."
+msgstr ""
+
+#: includes/Settings.php:478
+msgid ""
+"Please enter at least one search term. If more than one parameter is entered,"
+" the search results must contain all values (AND search)."
+msgstr ""
+
+#: src/block/components/OrganizationIdentifierDetector.tsx:51
+msgid ""
+"Please enter either the complete FAUdir-URL (\"https://faudir.fau."
+"de/public/org/…\"), or the FAUdir-Identifier (the last part of the URL after "
+"\"org/\"."
+msgstr ""
+
+#: includes/Settings.php:479
+msgid ""
+"Please note that only people whose FAUdir entries are public can be found."
+msgstr ""
+
+#: includes/CPT.php:185
+msgid ""
+"Please note that this URL will be used when creating links to the person."
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"Plugin for displaying the FAU person and institution directory on websites."
+msgstr ""
+
+#: templates/org_compact.php:92 includes/Config.php:154
+msgid "Postal Address"
+msgstr ""
+
+#: templates/person_list.php:283 templates/person_table.php:246
+msgid "Postal Code"
+msgstr ""
+
+#: src/block/components/CustomPlaceholder.tsx:181
+#: src/block/components/CustomPlaceholder.tsx:213
+msgid "Preview"
+msgstr ""
+
+#: includes/Config.php:166
+msgid "Privat dozent"
+msgstr ""
+
+#: includes/Config.php:252
+msgid "Private lecturer"
+msgstr ""
+
+#: includes/Config.php:229
+msgid "Professor"
+msgstr ""
+
+#: includes/Config.php:234
+msgid "Professor (Emeritus)"
+msgstr ""
+
+#: includes/Config.php:264
+msgid "Professor (multiple)"
+msgstr ""
+
+#: includes/Config.php:213
+msgid "Professor Doctor"
+msgstr ""
+
+#: includes/Config.php:221
+msgid "Professor Doctor (Emeritus)"
+msgstr ""
+
+#: includes/Config.php:275
+msgid "Professor Doctor (Emeritus, multiple)"
+msgstr ""
+
+#: includes/Config.php:259
+msgid "Professor Doctor (multiple)"
+msgstr ""
+
+#: includes/Config.php:178
+msgid "Professors"
+msgstr ""
+
+#: includes/Settings.php:190 includes/Settings.php:345
+msgid "Profilpages"
+msgstr ""
+
+#: includes/CPT.php:192 includes/CPT.php:262
+msgid "Read-only"
+msgstr ""
+
+#: includes/CPT.php:616
+msgid "Redirecting to FAUdir search."
+msgstr ""
+
+#: includes/Config.php:179
+msgid "Research assistant"
+msgstr ""
+
+#: includes/Config.php:182
+msgid "Research associates"
+msgstr ""
+
+#: includes/Settings.php:582
+msgid "Reset to Default Settings"
+msgstr ""
+
+#: includes/Settings.php:585
+msgid "Reset to Default Values"
+msgstr ""
+
+#: includes/Config.php:180
+msgid "Retired professors"
+msgstr ""
+
+#: templates/person_list.php:121 templates/person_table.php:118
+#: includes/Config.php:122 includes/Contact.php:246 includes/Contact.php:376
+msgid "Room"
+msgstr ""
+
+#. Name of the plugin
+#: includes/Settings.php:37
+msgid "RRZE FAUdir"
+msgstr ""
+
+#: includes/Settings.php:36
+msgid "RRZE FAUdir Settings"
+msgstr ""
+
+#. Author of the plugin
+msgid "RRZE Webteam"
+msgstr ""
+
+#: includes/OpeningHours.php:268
+msgid "Saturday"
+msgstr ""
+
+#: includes/EnqueueScripts.php:91 includes/Settings.php:1224
+msgid "Save as Default Organization"
+msgstr ""
+
+#: includes/EnqueueScripts.php:90
+msgid "Saved"
+msgstr ""
+
+#: includes/EnqueueScripts.php:89
+msgid "Saving..."
+msgstr ""
+
+#: includes/Config.php:181
+msgid "Scholarship holder"
+msgstr ""
+
+#: includes/Settings.php:522 includes/Settings.php:568
+msgid "Search"
+msgstr ""
+
+#: includes/Settings.php:138 includes/Settings.php:333
+msgid "Search and create persons"
+msgstr ""
+
+#: includes/Settings.php:634
+msgid "Search for FAU contacts by ID, name or email."
+msgstr ""
+
+#: includes/Settings.php:637
+msgid "Search for FAU organizations by name or identifier."
+msgstr ""
+
+#: includes/Settings.php:487
+msgid "Search Options"
+msgstr ""
+
+#: includes/Settings.php:146 includes/Settings.php:559
+msgid "Search Organizations"
+msgstr ""
+
+#: includes/Settings.php:564
+msgid "Search Term"
+msgstr ""
+
+#: includes/Settings.php:498
+msgid "Search Terms"
+msgstr ""
+
+#: includes/Config.php:183
+msgid "Secretary"
+msgstr ""
+
+#: src/block/components/CategorySelector.tsx:36
+msgid "Select Categories"
+msgstr ""
+
+#: src/block/components/CustomPlaceholder.tsx:128
+msgid "Select Contacts directly from FAUdir"
+msgstr ""
+
+#: src/block/components/PersonSelector.tsx:34
+msgid "Select Contacts for Display."
+msgstr ""
+
+#: src/block/components/CustomPlaceholder.tsx:107
+msgid "Select Contacts from your WordPress Site"
+msgstr ""
+
+#: src/block/components/CustomPlaceholder.tsx:103
+msgid "Select Contacts to display"
+msgstr ""
+
+#: src/block/components/ShowHideSelector.tsx:95
+msgid "Select fields"
+msgstr ""
+
+#: src/block/components/FormatSelector.tsx:58
+msgid "Select Format"
+msgstr ""
+
+#: src/block/components/OrganizationIdentifierDetector.tsx:42
+msgid "Select organization by FAUdir Identifier"
+msgstr ""
+
+#: src/block/components/OrganizationNumberDetector.tsx:95
+msgid "Select organization by FAUOrg Number"
+msgstr ""
+
+#: src/block/components/CustomPlaceholder.tsx:150
+msgid "Select Organization or FAUdir-Folder to display"
+msgstr ""
+
+#: src/block/components/PersonSelector.tsx:39
+#: src/block/components/PersonSelector.tsx:80
+msgid "Select Persons"
+msgstr ""
+
+#: includes/Settings.php:899
+msgid "Select the fields to display by default in shortcodes and blocks."
+msgstr ""
+
+#: includes/Settings.php:666
+msgid "Select the fields to display in the profil page of a single person."
+msgstr ""
+
+#: includes/Settings.php:982
+msgid ""
+"Select the organization/folder fields to display by default in shortcodes "
+"and blocks."
+msgstr ""
+
+#: includes/Settings.php:716
+msgid "Set the cache timeout in days for organization identifiers."
+msgstr ""
+
+#: includes/Settings.php:702
+msgid "Set the cache timeout in minutes (minimum 15 minutes)."
+msgstr ""
+
+#: includes/Settings.php:709
+msgid ""
+"Set the transient time in days for intermediate stored organization "
+"identifiers (minimum 1 day)."
+msgstr ""
+
+#: includes/Settings.php:597 includes/Settings.php:1014
+msgid "Settings have been reset to default values."
+msgstr ""
+
+#: src/block/components/CustomPlaceholder.tsx:71
+msgid "Setup your FAUdir Block"
+msgstr ""
+
+#: includes/Settings.php:442
+msgid "Show copyright information visibly (otherwise only as meta tag)"
+msgstr ""
+
+#: includes/Settings.php:129
+msgid "Show Error Message for Invalid Contacts"
+msgstr ""
+
+#: includes/Settings.php:735
+msgid "Show error messages for incorrect contact entries."
+msgstr ""
+
+#: includes/Settings.php:458
+msgid "Show image caption (Bildunterschrift)"
+msgstr ""
+
+#: templates/person_compact.php:276 templates/person_page.php:217
+#: templates/org_compact.php:188 templates/person_card.php:180
+#: includes/Config.php:121 includes/Config.php:151
+msgid "Social Media and Websites"
+msgstr ""
+
+#: includes/CPT.php:301
+msgid "Socials"
+msgstr ""
+
+#: src/block/components/OrganizationNumberDetector.tsx:75
+msgid "Some entries are not 10 digits and were ignored."
+msgstr ""
+
+#: src/block/components/SortSelector.tsx:55
+msgid "Sort by"
+msgstr ""
+
+#: src/block/edit.tsx:264
+msgid "Sorting"
+msgstr ""
+
+#: src/block/components/CustomPlaceholder.tsx:175
+msgid "Step 2: Change Appearance"
+msgstr ""
+
+#: templates/person_list.php:272 templates/person_table.php:236
+#: includes/Organization.php:220 includes/Config.php:125
+#: includes/Contact.php:252
+msgid "Street"
+msgstr ""
+
+#: includes/Config.php:184
+msgid "Student employee"
+msgstr ""
+
+#: includes/CPT.php:257
+msgid "Suffix"
+msgstr ""
+
+#: includes/OpeningHours.php:262
+msgid "Sunday"
+msgstr ""
+
+#: includes/Config.php:193
+msgid "Table"
+msgstr ""
+
+#: includes/Config.php:120
+msgid "Teasertext"
+msgstr ""
+
+#: includes/Config.php:185
+msgid "Technical employee"
+msgstr ""
+
+#: includes/CPT.php:253
+msgid "Telephone"
+msgstr ""
+
+#: includes/Config.php:150
+msgid "Text"
+msgstr ""
+
+#: includes/Settings.php:671
+msgid "The API key is being used from the network installation."
+msgstr ""
+
+#: includes/CPT.php:175
+msgid ""
+"The canonical URL is the designated, most representative URL for a page like "
+"this person info, when that content is available at multiple URLs, a "
+"situation known as duplicate content. By specifying the canonical URL, "
+"search engines like Google know which page is added to its index, preventing "
+"confusion, consolidation of link equity, and improving search result "
+"presentation."
+msgstr ""
+
+#: includes/CPT.php:193
+msgid ""
+"The following data comes from the FAUdir portal. A change of data is only "
+"possible by the persons or the appointed contact persons in the FAUdir "
+"portal."
+msgstr ""
+
+#: src/block/components/LoadingPlaceholder.tsx:14
+msgid "The Preview is loading…"
+msgstr ""
+
+#: src/block/components/CategorySelector.tsx:47
+msgid ""
+"There are currently no Categories available. Start adding your first FAUdir "
+"Categories via the WordPress Dashboard > Persons > Categories."
+msgstr ""
+
+#: src/block/components/PersonSelector.tsx:75
+msgid ""
+"There are currently no Contacts available. Start adding your first FAUdir "
+"Contacts via the WordPress Dashboard > Persons."
+msgstr ""
+
+#: includes/Settings.php:547
+msgid ""
+"This is the organization that will be used by default in shortcodes and "
+"blocks."
+msgstr ""
+
+#: src/block/components/PersonIdentifierDetector.tsx:50
+msgid ""
+"This will display your contact, even if the contact is not created via "
+"Dashboard > Persons."
+msgstr ""
+
+#: includes/OpeningHours.php:266
+msgid "Thursday"
+msgstr ""
+
+#: includes/CPT.php:256
+msgid "Title"
+msgstr ""
+
+#: includes/Config.php:111
+msgid "Title of Nobility"
+msgstr ""
+
+#: src/block/components/OrganizationNumberDetector.tsx:103
+msgid ""
+"To display all Persons from within your Organization, insert your FAUOrg "
+"Number (Cost center number)."
+msgstr ""
+
+#: src/block/components/CustomPlaceholder.tsx:157
+msgid ""
+"To display an Institution as contact, insert your FAUOrg Number (Cost center "
+"number)."
+msgstr ""
+
+#: includes/Config.php:102
+msgid "To the profile"
+msgstr ""
+
+#: includes/Config.php:186
+msgid "Trainee"
+msgstr ""
+
+#: includes/Settings.php:301
+msgid "Transient Time for Organization ID (in days)"
+msgstr ""
+
+#: includes/OpeningHours.php:264
+msgid "Tuesday"
+msgstr ""
+
+#: includes/Settings.php:1203
+msgid "Type"
+msgstr ""
+
+#: src/block/components/CategorySelector.tsx:39
+msgid "Type to add categories"
+msgstr ""
+
+#: src/block/components/PersonSelector.tsx:42
+msgid "Type to add persons"
+msgstr ""
+
+#: includes/OpeningHours.php:271
+msgid "Unknown"
+msgstr ""
+
+#: templates/person_compact.php:252 templates/person_page.php:193
+#: templates/org_compact.php:147 templates/person_list.php:172
+#: templates/person_card.php:142 templates/person_card.php:159
+#: templates/person_table.php:172 includes/Organization.php:219
+#: includes/Config.php:118 includes/Config.php:147 includes/Contact.php:270
+msgid "URL"
+msgstr ""
+
+#: includes/Settings.php:844
+msgid ""
+"Use Canonical URL as target for personal links, if set in the person data"
+msgstr ""
+
+#: includes/Settings.php:823
+msgid "Use official short form of the academic degree"
+msgstr ""
+
+#: templates/person_compact.php:290 templates/person_page.php:284
+#: templates/person_list.php:186 templates/person_table.php:282
+msgid "User profil"
+msgstr ""
+
+#: includes/OpeningHours.php:120
+msgid "via email"
+msgstr ""
+
+#: includes/CPT.php:80
+msgid "via FAUdir search"
+msgstr ""
+
+#: src/block/components/OrganizationIdentifierDetector.tsx:44
+msgid "Via FAUdir-ID or FAUdir-URL"
+msgstr ""
+
+#: src/block/components/CustomPlaceholder.tsx:156
+msgid "Via FAUOrg Number"
+msgstr ""
+
+#: src/block/components/PersonIdentifierDetector.tsx:43
+msgid "Via Person Identifier or FAUdir-URL"
+msgstr ""
+
+#: includes/OpeningHours.php:123
+msgid "via phone"
+msgstr ""
+
+#: includes/Settings.php:662
+msgid "Visible"
+msgstr ""
+
+#: includes/Config.php:171 includes/Config.php:187
+msgid "Visiting lecturers"
+msgstr ""
+
+#: includes/Config.php:172
+msgid "Visiting researchers"
+msgstr ""
+
+#: includes/Settings.php:1213
+msgid "Website"
+msgstr ""
+
+#: includes/OpeningHours.php:265
+msgid "Wednesday"
+msgstr ""
+
+#: includes/Contact.php:277 includes/Contact.php:283
+msgid "Weekday "
+msgstr ""
+
+#: src/block/edit.tsx:201
+msgid "What type of Contact do you want to display?"
+msgstr ""
+
+#: src/block/components/OrganizationNumberDetector.tsx:83
+msgid "When entering multiple numbers, each must be exactly 10 digits."
+msgstr ""
+
+#: src/block/components/CustomPlaceholder.tsx:79
+msgid "Which type of contact would you like to display?"
+msgstr ""
+
+#: includes/CPT.php:306
+msgid "Workplace"
+msgstr ""
+
+#: includes/Config.php:188
+msgid "Workplace manager"
+msgstr ""
+
+#: includes/Settings.php:991 includes/Settings.php:1236
+msgid "You do not have sufficient permissions to access this page."
+msgstr ""
+
+#: includes/Settings.php:786
+msgid ""
+"You might use the variables #orgname# (Name of the defined organisation), "
+"#functionlabel# (function label by FAUdir) and #alternatename# (short or "
+"alternative name for the organization) here and other strings, but no HTML "
+"or special chars."
+msgstr ""
+
+#: includes/BlockRegistration.php:93
+msgid ""
+"You selected display=\"org\", but neither a FAUorganization ID (orgid) nor a "
+"FAU Organization Number (orgnr) was provided."
+msgstr ""
+
+#: src/block/components/EmptyPlaceholder.tsx:10
+msgid ""
+"Your current configuration does not return a contact. Try adjusting your "
+"filter settings."
+msgstr ""
+
+#. 1: PHP  version number, 2: required PHP Version.
+#: rrze-faudir.php:97
+#, php-format
+msgid ""
+"Your PHP version (%1$s) is outdated. Please upgrade to PHP %2$s or higher."
+msgstr ""
+
+#. 1: WordPress version number, 2: Required WP Version.
+#: rrze-faudir.php:104
+#, php-format
+msgid ""
+"Your WordPress version (%1$s) is outdated. Please upgrade to WordPress %2$s "
+"or higher."
+msgstr ""
+
+#: includes/Organization.php:221 includes/Config.php:126
+#: includes/Contact.php:255
+msgid "ZIP Code"
 msgstr ""
