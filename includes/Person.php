@@ -662,7 +662,9 @@ class Person {
    public function getImage(string $css_classes = '', bool $signature = true, ?bool $figcaption = null, ?bool $displaycopyright = null): string {
         $postid = !empty($this->postid) ? $this->postid : $this->getPostId();
 
-       
+        if (empty($this->config)) {
+                $this->setConfig();
+        }
         $opt = $this->config->getOptions();        
         $visible_copyrightmeta    = filter_var($opt['default_visible_copyrightmeta']    ?? true, FILTER_VALIDATE_BOOLEAN);
         $visible_bildunterschrift = filter_var($opt['default_visible_bildunterschrift'] ?? true, FILTER_VALIDATE_BOOLEAN);

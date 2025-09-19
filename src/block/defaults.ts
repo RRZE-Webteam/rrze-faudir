@@ -95,7 +95,7 @@ export const formatFields: FormatFieldsSet = {
     'zip',
     'city',
     'faumap',
-    'content'
+    'text'
   ],
   compact: Object.keys(availableFields),
   page: Object.keys(availableFields),

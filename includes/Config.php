@@ -22,7 +22,7 @@ class Config {
         'default_visible_copyrightmeta'     => false,
         'default_visible_bildunterschrift'  => false,
         'default_display_order'     => [
-            'table' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'link'],
+            'table' => ['image', 'displayname', 'familyName', 'givenName', 'jobTitle', 'organization', 'phone', 'email', 'url', 'socialmedia','address', 'room', 'floor', 'faumap', 'teasertext', 'link'],
             'list'  => ['displayname', 'familyName', 'givenName', 'jobTitle', 'url', 'email', 'socialmedia', 'room', 'floor', 'address','faumap', 'link']
         ],
         'avaible_fields_byformat'   => [

@@ -89,7 +89,17 @@ if (!defined('ABSPATH')) {
                                         }
                                     }     
 
-                                    
+                                } elseif ($key_lower === 'familyname') {    
+                                    if (!empty($person->titleOfNobility))  { 
+                                        $value = $person->titleOfNobility.' ';
+                                    }
+                                    $value .= $person->familyName;
+                                } elseif ($key_lower === 'givenname') {    
+                                    $value = $person->givenName;    
+                                } elseif ($key_lower === 'honorificprefix') {    
+                                    $value = $person->honorificPrefix;         
+                                } elseif ($key_lower === 'honorificsuffix') {    
+                                    $value = $person->honorificSuffix;               
                                 } elseif ($key_lower === 'jobtitle') {
                                     $jobtitleformat = '#functionlabel#';
                                     if (!empty($opt['jobtitle_format'])) {
