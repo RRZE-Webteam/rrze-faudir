@@ -659,8 +659,21 @@ class Person {
    /*
     * Get Image as HTML or Replacement
     */
-   public function getImage(string $css_classes = '', bool $figcaption = true, bool $signature = true, bool $displaycopyright = true): string {
-       $postid = !empty($this->postid) ? $this->postid : $this->getPostId();
+   public function getImage(string $css_classes = '', bool $signature = true, ?bool $figcaption = null, ?bool $displaycopyright = null): string {
+        $postid = !empty($this->postid) ? $this->postid : $this->getPostId();
+
+       
+        $opt = $this->config->getOptions();        
+        $visible_copyrightmeta    = filter_var($opt['default_visible_copyrightmeta']    ?? true, FILTER_VALIDATE_BOOLEAN);
+        $visible_bildunterschrift = filter_var($opt['default_visible_bildunterschrift'] ?? true, FILTER_VALIDATE_BOOLEAN);
+
+        // Wenn Argumente nicht gesetzt wurden, auf Optionen zurückfallen
+        if ($figcaption === null) {
+            $figcaption = $visible_bildunterschrift;
+        }
+        if ($displaycopyright === null) {
+            $displaycopyright = $visible_copyrightmeta;
+        }
 
        if ($postid !== 0) {
            $thumb_id = get_post_thumbnail_id($postid);
@@ -697,14 +710,66 @@ class Person {
                // EXIF/Meta → Copyright oder Credit
                $meta = wp_get_attachment_metadata($thumb_id);
                $copyrightText = '';
+               $schemaMeta = [];
+               $required_imageprop_given = false;
+               
                if (is_array($meta) && !empty($meta['image_meta'])) {
-                   $imeta = (array) $meta['image_meta'];
-                   if (!empty($imeta['copyright'])) {
-                       $copyrightText = trim((string) $imeta['copyright']);
-                   } elseif (!empty($imeta['credit'])) {
-                       $copyrightText = trim((string) $imeta['credit']);
-                   }
+                    $imeta = (array) $meta['image_meta'];
+                    if (!empty($imeta['copyright'])) {
+                        $copyrightText = trim((string) $imeta['copyright']);
+                        $schemaMeta['copyrightNotice'] = $copyrightText;
+                        $required_imageprop_given = true;
+                    } elseif (!empty($imeta['credit'])) {
+                        $copyrightText = trim((string) $imeta['credit']);
+                    }
+                    
+                    // name (IPTC/EXIF title)
+                    if (!empty($imeta['title'])) {
+                        $schemaMeta['name'] = (string) $imeta['title'];
+                    }
+
+                    // caption (IPTC caption/abstract) – unabhängig davon, ob du eine sichtbare figcaption ausgibst
+                    if (!empty($captionText)) {
+                        $schemaMeta['caption'] = (string) $captionText;
+                    }
+
+                    // creditText
+                    if (!empty($imeta['credit'])) {
+                        $schemaMeta['creditText'] = (string) $imeta['credit'];
+                        $required_imageprop_given = true;
+                    }  
+
+                    // dateCreated (UNIX → ISO 8601)
+                    if (!empty($imeta['created_timestamp']) && ctype_digit((string) $imeta['created_timestamp'])) {
+                        $schemaMeta['dateCreated'] = gmdate('c', (int) $imeta['created_timestamp']);
+                    }
+
+                    // keywords (Array → kommagetrennt)
+                    if (!empty($imeta['keywords']) && is_array($imeta['keywords'])) {
+                        // Du kannst auch mehrere <meta itemprop="keywords"> schreiben; hier kommagetrennt:
+                        $schemaMeta['keywords'] = implode(', ', array_filter(array_map('trim', $imeta['keywords'])));
+                    }
+                   
                }
+               if (($required_imageprop_given === false) && (empty($schemaMeta['license']))) {
+                   // wir haben nur die url. Das reicht nicht, wir brauchen mindestens einen der folgenden 
+                   // itemprops: creator, creditText, copyrightNotice, licence
+                   // befülle daher wenigstens licence mit der Impressums-URL
+                    $locale = function_exists('get_locale') ? (string) get_locale() : (string) get_bloginfo('language');
+                    // DE → /impressum, sonst → /imprint
+                    $slug   = (stripos($locale, 'de') === 0) ? 'impressum' : 'imprint';
+
+                    // Domain + URI
+                    $url = home_url('/' . $slug);
+
+                    if (filter_var($url, FILTER_VALIDATE_URL)) {
+                        // schema.org korrekt:
+                        $schemaMeta['license'] = $url;
+                    }
+               }
+                   
+               
+               
                if ($copyrightText !== '') {
                     Filters::pushCopyright($copyrightText, $thumb_id);
                }
@@ -732,25 +797,27 @@ class Person {
 
                 $html .= '<meta itemprop="width" content="' . esc_attr($width) . '">';
                 $html .= '<meta itemprop="height" content="' . esc_attr($height) . '">';
-                // Wenn Copyright NICHT sichtbar ausgegeben werden soll ODER keine figcaption erlaubt ist:
-                if ($copyrightText !== '' && (!$displaycopyright || !$figcaption)) {
-                // Unsichtbare Meta-Info im Figure-Kontext (schema.org)
-                    $html .= '<meta itemprop="copyrightNotice" content="' . esc_attr($copyrightText) . '">';
+                foreach ($schemaMeta as $prop => $val) {
+                    if ($val === '' || $val === null) { continue; }
+                    $html .= '<meta itemprop="' . esc_attr($prop) . '" content="' . esc_attr((string) $val) . '">';
                 }
-                
+               
+              
 
                // Figcaption nur wenn gewünscht + Inhalt vorhanden
                 if ($figcaption && ($captionText !== '' || ($displaycopyright && $copyrightText !== ''))) {
                     $html .= '<figcaption>';
                     if ($captionText !== '') {
                         $html .= '<p itemprop="caption">' . esc_html($captionText) . '</p>';
+                       
                     }
                     // Sichtbare Copyright-Info nur wenn gewünscht
                     if ($displaycopyright && $copyrightText !== '') {
-                        $html .= '<p class="image-copyright" itemprop="copyrightNotice">' . esc_html($copyrightText) . '</p>';
+                        $html .= '<p class="image-copyright">' . esc_html($copyrightText) . '</p>';
                     }
                     $html .= '</figcaption>';
                 }
+                
 
                $html .= '</figure>';
 

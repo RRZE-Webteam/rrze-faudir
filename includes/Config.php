@@ -7,18 +7,20 @@ defined('ABSPATH') || exit;
 
 class Config {
     private array $config = [
-        'version'                   => 6,  // please count this up any time we change the config array
-        'api_key'                   => '',
-        'api-baseurl'               => 'https://api.fau.de/pub/v1/opendir/',
-        'faudir-url'                => 'https://faudir.fau.de/',
-        'no_cache_logged_in'        => true,
-        'cache_timeout'             => 120, // Minimum 15 minutes
-        'transient_time_for_org_id' => 1, // Minimum 1 day
-        'show_error_message'        => false,
-        'business_card_title'       => '',
-        'fallback_link_faudir'      => true,
+        'version'                           => 7,  // please count this up any time we change the config array
+        'api_key'                           => '',
+        'api-baseurl'                       => 'https://api.fau.de/pub/v1/opendir/',
+        'faudir-url'                        => 'https://faudir.fau.de/',
+        'no_cache_logged_in'                => true,
+        'cache_timeout'                     => 120, // Minimum 15 minutes
+        'transient_time_for_org_id'         => 1, // Minimum 1 day
+        'show_error_message'                => false,
+        'business_card_title'               => '',
+        'fallback_link_faudir'              => true,
         'default_normalize_honorificPrefix' => false,
         'default_redirect_to_canonicals'    => false,
+        'default_visible_copyrightmeta'     => false,
+        'default_visible_bildunterschrift'  => false,
         'default_display_order'     => [
             'table' => ['image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'link'],
             'list'  => ['displayname', 'familyName', 'givenName', 'jobTitle', 'url', 'email', 'socialmedia', 'room', 'floor', 'address','faumap', 'link']
