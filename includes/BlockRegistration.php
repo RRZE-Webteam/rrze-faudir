@@ -170,7 +170,7 @@ class BlockRegistration {
             }
             $shortcode .= ' blockeditor="true"';
             $shortcode .= ']';
-          //  do_action( 'rrze.log.notice', "FAUdir\BlockRegistration (render_faudir_block): Creating Shortcode: ".$shortcode, $attributes);   
+            // do_action( 'rrze.log.notice', "FAUdir\BlockRegistration (render_faudir_block): Creating Shortcode: ".$shortcode, $attributes);   
 
             
             // Execute shortcode

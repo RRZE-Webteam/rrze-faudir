@@ -21,13 +21,13 @@
     --faudir-figure-textsignature-background: #ddd;
     --faudir-border-color: var(--color-ContentBorders, #e9edf2);
     
-    --faudir-h1-font-size: var(--font-size-xl, 1.25rem);
-    --faudir-h2-font-size: var(--font-size-normal, 1rem);
-    --faudir-h3-font-size: var(--font-size-tiny,  0.938rem);
-    --faudir-h4-font-size: var(--font-size-sm,  0.875rem);
-    --faudir-h5-font-size: var(--font-size-xs,  0.76rem);
+    --faudir-h1-font-size: var(--font-size-h1,var(--font-size-xl, 1.25rem));
+    --faudir-h2-font-size: var(--font-size-h2,var(--font-size-normal, 1rem));
+    --faudir-h3-font-size: var(--font-size-h3,var(--font-size-tiny,  0.938rem));
+    --faudir-h4-font-size: var(--font-size-h4,var(--font-size-sm,  0.875rem));
+    --faudir-h5-font-size: var(--font-size-h5,var(--font-size-xs,  0.76rem));
     
-    --faudir-figcaption-font-size: var(--font-size-tiny,  0.938rem);
+    --faudir-figcaption-font-size: var(--P-Caption, var(--font-size-tiny,  0.938rem));
     
     --faudir-format-margins: 1rem auto;
     
