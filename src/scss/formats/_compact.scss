@@ -20,7 +20,8 @@
 	    --faudir-profile-image-height: auto;
 	    --faudir-profile-padding: 0;
 	    --faudir-profile-compact-gab: 1rem;
-	    
+	    --faudir-icon_background-color: transparent;
+	     
 	    display: grid;
 	    gap: 0;
 	    grid-template-areas:
@@ -28,6 +29,9 @@
 		"header"
 		"details";
 	    margin-bottom: 1rem;
+	    background-color: var(--faudir-compact-color-background, transparent);
+	    color: var(--faudir-compact-color-text, #000);
+	   
 	    
 	    .profile-image-section {
 		display: flex;
@@ -62,21 +66,44 @@
 		}
 	    }
 	    
+	    .fau-elemental & {
+		.icon-list.icon {
+		    --_icon-size: 2.2rem;
+		--_icon-mask-size: 1.8rem;
+		}
+		
+		 address, p, h1, h2, h3, a {
+		    padding: 0;
+		    color: var(--faudir-compact-color-text, #000);
+		}
+		h1 a {
+		    text-decoration: none;
+		}
+		
+	    }
+	   
+	    
+	    
 	    .profile-header {
 		grid-area: header;
 		display: flex;
 		flex-direction: column;
-	//	justify-content: center;
 		padding: var(--faudir-profile-padding);
-		 h1 {
-			margin-top: 0;
-		 }
+		
+		
+		
+		
+		h1 {
+		    margin-top: 0;
+		}
 
-		 p.jobtitle,
-		 p.organisation_name {
-		     padding-bottom: 0;
-		       margin: 0;
-		 }
+		p.jobtitle,
+		p.organisation_name {
+		    padding-bottom: 0;
+		    margin: 0;
+		}
+		 
+		 
 	    }
 
 

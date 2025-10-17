@@ -58,7 +58,7 @@
 	    --_icon-border-color: var(--color-Text, currentColor);
 	    --_icon-border-width: 1px;
 	    --_icon-border-radius: 50%;
-	    --_icon_background-color: white;
+	    --_icon_background-color: var(--faudir-icon_background-color, white);		;
 	    --_icon-mask-size: 1rem;
 	    --_outer_icon-size: 1.6rem;
 	    --_icon-size:  clamp(var(--faudir-min-iconwidth, 24px), var(--_outer_icon-size, var(--faudir-icon-size, 1.5rem)), 42px);
