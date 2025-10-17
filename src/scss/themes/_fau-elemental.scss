@@ -9,14 +9,19 @@
 	--faudir-compact-color-background: var(--color-FAU);
 	--faudir-compact-color-text: var(--FAU-Col-FAU-Weiss-100, #fff);
 	--faudir-figure-textsignature-background: var(--FAU-Col-FAU-Dunkelblau-100, var(--color-primary-dunkler, #eee));
-    
+	
+	    
 	max-width: var(--small-max-width);
 	margin: 0 auto;
 	
 	li, p, address {
 		font-size: var(--P-Body-Text, var(--font-size-normal, 1rem));
 	}
-    
+	p.organisation_name,  p.jobtitle, a {
+	    font-weight: normal;
+	}
+	
+	
 	figure:has(> img)::before {
 	    background-color: transparent;
 	}

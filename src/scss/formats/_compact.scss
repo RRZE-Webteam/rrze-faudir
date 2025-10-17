@@ -67,6 +67,7 @@
 	    }
 	    
 	    .fau-elemental & {
+		--faudir-profile-padding: var(--Spacing-3x, 5px);
 		.icon-list.icon {
 		    --_icon-size: 2.2rem;
 		--_icon-mask-size: 1.8rem;
@@ -94,7 +95,7 @@
 		
 		
 		h1 {
-		    margin-top: 0;
+		    margin-top: var(--faudir-elemental-header-margin-top, 0);
 		}
 
 		p.jobtitle,
@@ -114,26 +115,39 @@
 		gap: 10px;
 		
 		
+		.fau-elemental & {
+		    grid-template-areas:
+			"profile-address profile-contact"
+			 "profile-consultation profile-socialmedia"
+			 "profile-link profile-link";
+		    grid-template-columns: 2fr 3fr;
+		}
+		
 		.profile-address, .profile-consultation, .profile-contact, .profile-socialmedia {
 		   padding: var(--faudir-profile-padding);
 		}
-		
+		.profile-link {
+		    grid-area: profile-link;
+		}
 		.profile-address {
-
+		    grid-area: profile-address;
 		}
 		.profile-consultation {
+		     grid-area: profile-consultation;
 		    h2 {
 			margin-top: 1rem;
 		    }
 
 		}
 		.profile-contact {
-
+		    grid-area: profile-contact;
 		}
 		.profile-socialmedia {
+		     grid-area: profile-socialmedia;
 		     margin: 0 0 1rem 0;
 		}
 	    }
+	    
 	    .profile-content {
 		.teasertext {
 		 
