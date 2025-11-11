@@ -5,10 +5,37 @@ import { EditProps } from "./types";
 import {
   InspectorControls
 } from "@wordpress/block-editor";
+import { useEffect } from "@wordpress/element";
+import apiFetch from "@wordpress/api-fetch";
 import OrganizationIdentifierDetector from "../components/OrganizationIdentifierDetector"
 
 export default function Edit({attributes, setAttributes}: EditProps) {
   const props = useBlockProps();
+  const { orgid } = attributes;
+
+  useEffect(() => {
+    if (!orgid) {
+      return;
+    }
+
+    const controller = new AbortController();
+
+    apiFetch({
+      path: `/rrze-faudir/v1/organization?orgid=${encodeURIComponent(orgid)}`,
+      signal: controller.signal,
+    })
+      .then((response) => {
+        // Mock request to preview organization payload while we shape the UI.
+        console.log("FAUdir organization response", response);
+      })
+      .catch((error) => {
+        if (error?.name !== "AbortError") {
+          console.error("FAUdir organization request failed", error);
+        }
+      });
+
+    return () => controller.abort();
+  }, [orgid]);
 
   return (
     <>
