@@ -23,6 +23,21 @@
     "orgid": {
       "type": "string",
       "default": ""
+    },
+    "contact": {
+      "type": "object",
+      "default": {
+        "phone": "",
+        "mail": "",
+        "url": "",
+        "street": "",
+        "zip": "",
+        "city": ""
+      },
+      "name": {
+        "type": "string",
+        "default": ""
+      }
     }
   },
   "textdomain": "rrze-faudir",
