@@ -20,6 +20,10 @@
     "anchor": true
   },
   "attributes": {
+    "orgid": {
+      "type": "string",
+      "default": ""
+    }
   },
   "textdomain": "rrze-faudir",
   "editorScript": "file:./index.js",

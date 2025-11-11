@@ -1,11 +1,12 @@
 import { __experimentalHeading as Heading, TextControl } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { useState } from "@wordpress/element";
-import { EditProps } from "../faudir/types";
 
 interface OrganizationIdDetectorProps {
-  attributes: EditProps["attributes"];
-  setAttributes: EditProps["setAttributes"];
+  attributes: {
+    orgid: string;
+  };
+  setAttributes: (attributes: Partial<OrganizationIdDetectorProps["attributes"]>) => void;
   label?: string;
   helpText?: string;
 }
