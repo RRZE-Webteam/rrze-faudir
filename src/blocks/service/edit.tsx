@@ -5,17 +5,24 @@ import {EditProps, OrganizationResponseProps} from "./types";
 import {
   PanelBody,
   ToggleControl,
-  Modal
+  ToolbarGroup,
+  ToolbarItem,
+  ToolbarButton,
+  SVG,
+  Path,
+  Modal,
+  Notice
 } from "@wordpress/components";
 import {
-  InspectorControls
+  InspectorControls,
+  BlockControls
 } from "@wordpress/block-editor";
 import {useEffect, useMemo, useState, useCallback} from "@wordpress/element";
 import apiFetch from "@wordpress/api-fetch";
 import {__, sprintf} from "@wordpress/i18n";
 import OrganizationIdentifierDetector from "../components/OrganizationIdentifierDetector"
-import { DataViews } from "@wordpress/dataviews";
-import type { View } from "@wordpress/dataviews/build-types";
+import {DataViews} from "@wordpress/dataviews";
+import type {View} from "@wordpress/dataviews/build-types";
 
 type ContactData = {
   phone: string;
@@ -65,12 +72,12 @@ export default function Edit({attributes, setAttributes}: EditProps) {
   const [dataView, setDataView] = useState<View>({
     type: "table",
     fields: ["label", "value", "visibility"],
-    sort: {
-      field: "label",
-      direction: "asc",
-    },
     perPage: 10,
+    filters: [],
     page: 1,
+    layout: {
+      enableMoving: false
+    },
   });
   const [modalDataView, setModalDataView] = useState(false);
 
@@ -86,7 +93,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
       path: `/rrze-faudir/v1/organization?orgid=${encodeURIComponent(orgid)}`,
       signal: controller.signal,
     })
-      .then((response: OrganizationResponseProps ) => {
+      .then((response: OrganizationResponseProps) => {
         console.log(response);
         const address = response?.data?.address ?? {};
         const nextContact: ContactData = {
@@ -145,19 +152,23 @@ export default function Edit({attributes, setAttributes}: EditProps) {
       id: "label",
       label: __("Field", "rrze-faudir"),
       enableHiding: false,
-      getValue: ({item}: {item: DataViewRow}) => item.label,
+      enableSorting: false,
+      getValue: ({item}: { item: DataViewRow }) => item.label,
     },
     {
       id: "value",
       label: __("API value", "rrze-faudir"),
       enableSorting: false,
-      render: ({item}: {item: DataViewRow}) => item.value ? item.value : <span className="rrze-faudir__dataviews-empty">{__("No data", "rrze-faudir")}</span>,
+      enableHiding: false,
+      render: ({item}: { item: DataViewRow }) => item.value ? item.value :
+        <span className="rrze-faudir__dataviews-empty">{__("No data", "rrze-faudir")}</span>,
     },
     {
       id: "visibility",
       label: __("Display", "rrze-faudir"),
       enableSorting: false,
-      render: ({item}: {item: DataViewRow}) => (
+      enableHiding: false,
+      render: ({item}: { item: DataViewRow }) => (
         <ToggleControl
           label={item.label}
           aria-label={sprintf(__("Toggle %s", "rrze-faudir"), item.label)}
@@ -175,9 +186,46 @@ export default function Edit({attributes, setAttributes}: EditProps) {
 
   const hasAnyContact = ["phone", "mail", "url"].some((fieldId) => isFieldVisible(fieldId) && contact[fieldId as keyof ContactData]);
   const hasAddress = ["street", "zip", "city"].some((fieldId) => isFieldVisible(fieldId) && contact[fieldId as keyof ContactData]);
+  const dataIcon = <SVG xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="evenodd"><Path d="M440-240q116 0 198-81.5T720-520q0-116-82-198t-198-82q-117 0-198.5 82T160-520q0 117 81.5 198.5T440-240Zm0-280Zm0 160q-83 0-147.5-44.5T200-520q28-70 92.5-115T440-680q82 0 146.5 45T680-520q-29 71-93.5 115.5T440-360Zm0-60q55 0 101-26.5t72-73.5q-26-46-72-73t-101-27q-56 0-102 27t-72 73q26 47 72 73.5T440-420Zm0-40q25 0 42.5-17t17.5-43q0-25-17.5-42.5T440-580q-26 0-43 17.5T380-520q0 26 17 43t43 17Zm0 300q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T80-520q0-74 28.5-139.5t77-114.5q48.5-49 114-77.5T440-880q74 0 139.5 28.5T694-774q49 49 77.5 114.5T800-520q0 64-21 121t-58 104l159 159-57 56-159-158q-47 37-104 57.5T440-160Z"/></SVG>;
 
   return (
     <>
+      <BlockControls>
+        <ToolbarGroup>
+          <ToolbarGroup>
+            <ToolbarItem>
+              {() => (
+                <ToolbarButton
+                 label={__("Manage Data Visibility", "rrze-faudir")}
+                 icon={ dataIcon }
+                 onClick={ () => setModalDataView(true) }
+                />
+              )}
+            </ToolbarItem>
+          </ToolbarGroup>
+        </ToolbarGroup>
+      </BlockControls>
+      {modalDataView && (
+        <Modal size={"medium"} onRequestClose={() => setModalDataView(false)}>
+          <Notice isDismissible={false} spokenMessage={__("Please be aware, that all data displayed within the service block is in sync with the Portal FAUdir. You cannot change contact details from within your web page.", "rrze-faudir")} status="info">
+            {__('The data displayed below is in sync with FAUdir and cannot be changed from within your website. Contact data can only be edited within the FAUdir Portal.',"rrze-faudir")}
+          </Notice>
+          <DataViews
+            data={dataviewData}
+            fields={dataViewFields}
+            view={dataView}
+            onChangeView={() => {
+            }}
+            paginationInfo={dataviewPagination}
+            defaultLayouts={{table: {showMedia: false}}}
+            getItemId={(item: DataViewRow) => item.id}
+            empty={<p>{__("No API data fetched yet.", "rrze-faudir")}</p>}
+            search={false}
+          >
+            <DataViews.Layout/>
+          </DataViews>
+        </Modal>
+      )}
       <InspectorControls>
         <PanelBody title={__("Organization", "rrze-faudir")} initialOpen={true}>
           <OrganizationIdentifierDetector
@@ -186,16 +234,22 @@ export default function Edit({attributes, setAttributes}: EditProps) {
           />
         </PanelBody>
         <PanelBody title={__("Available data", "rrze-faudir")} initialOpen={true}>
+          <Notice isDismissible={false} spokenMessage={__("Please be aware, that all data displayed within the service block is in sync with the Portal FAUdir. You cannot change contact details from within your web page.", "rrze-faudir")} status="info">
+            {__('The data displayed below is in sync with FAUdir and cannot be changed from within your website. Contact data can only be edited within the FAUdir Portal.',"rrze-faudir")}
+          </Notice>
           <DataViews
             data={dataviewData}
             fields={dataViewFields}
             view={dataView}
             onChangeView={setDataView}
+            search={false}
             paginationInfo={dataviewPagination}
             defaultLayouts={{table: {showMedia: false}}}
             getItemId={(item: DataViewRow) => item.id}
             empty={<p>{__("No API data fetched yet.", "rrze-faudir")}</p>}
-          />
+          >
+            <DataViews.Layout/>
+          </DataViews>
         </PanelBody>
       </InspectorControls>
       <article
@@ -209,10 +263,10 @@ export default function Edit({attributes, setAttributes}: EditProps) {
         </figure>
 
         {name && isFieldVisible("name") && (
-            <header className="rrze-elements-blocks_service__meta_headline">
-                <h2 id="service-title" className="meta-headline">{name}</h2>
-                <p className="lede">Wir helfen bei der Wahl des Studiums gerne weiter.</p>
-            </header>
+          <header className="rrze-elements-blocks_service__meta_headline">
+            <h2 id="service-title" className="meta-headline">{name}</h2>
+            <p className="lede">Wir helfen bei der Wahl des Studiums gerne weiter.</p>
+          </header>
         )}
 
         {hasAddress && (
