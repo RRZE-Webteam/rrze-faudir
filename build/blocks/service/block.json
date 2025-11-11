@@ -33,11 +33,23 @@
         "street": "",
         "zip": "",
         "city": ""
-      },
-      "name": {
-        "type": "string",
-        "default": ""
       }
+    },
+    "name": {
+      "type": "string",
+      "default": ""
+    },
+    "visibleFields": {
+      "type": "array",
+      "default": [
+        "name",
+        "street",
+        "zip",
+        "city",
+        "phone",
+        "mail",
+        "url"
+      ]
     }
   },
   "textdomain": "rrze-faudir",

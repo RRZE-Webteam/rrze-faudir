@@ -11,6 +11,7 @@ export interface EditProps {
       city: string;
     };
     name: string;
+    visibleFields: string[];
   };
   setAttributes: (attributes: Partial<EditProps["attributes"]>) => void;
   clientId: string;
