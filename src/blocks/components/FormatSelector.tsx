@@ -1,7 +1,7 @@
 import {__} from "@wordpress/i18n";
 import {SelectControl} from "@wordpress/components";
 import apiFetch from '@wordpress/api-fetch';
-import {EditProps, SettingsRESTApi} from "../types";
+import {EditProps, SettingsRESTApi} from "../faudir/types";
 import {useEffect, useState} from "@wordpress/element";
 
 interface FormatSelectorProps {

@@ -26,11 +26,21 @@ class BlockRegistration {
      * Register the FAUdir block for the BlockEditor
      */
     public function rrze_register_blocks(): void {
-        register_block_type(plugin_dir_path(__DIR__) . 'build/block', [
+        register_block_type(plugin_dir_path(__DIR__) . 'build/blocks/faudir', [
             'render_callback' => [$this, 'render_faudir_block'],
             'skip_inner_blocks' => true
         ]);
-        $scriptHandle = generate_block_asset_handle('rrze-faudir/block', 'editorScript');
+        $scriptHandle = generate_block_asset_handle('rrze-faudir/blocks/faudir', 'editorScript');
+        wp_set_script_translations(
+            $scriptHandle,
+            'rrze-faudir',
+            plugin_dir_path(__DIR__) . 'languages'
+        );
+        register_block_type(plugin_dir_path(__DIR__) . 'build/blocks/service', [
+            'render_callback' => [$this, 'render_faudir_block'],
+            'skip_inner_blocks' => true
+        ]);
+        $scriptHandle = generate_block_asset_handle('rrze-faudir/blocks/service', 'editorScript');
         wp_set_script_translations(
             $scriptHandle,
             'rrze-faudir',

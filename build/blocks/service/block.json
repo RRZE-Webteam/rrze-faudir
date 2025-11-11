@@ -1,0 +1,26 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "rrze-faudir/service",
+  "title": "Service",
+  "category": "rrze",
+  "icon": "businessperson",
+  "description": "Display Service contacts via FAUdir",
+  "keywords": [
+    "FAUdir",
+    "UnivIS",
+    "Service",
+    "Contact",
+    "Kontakt",
+    "FAU",
+    "RRZE"
+  ],
+  "supports": {
+    "html": false,
+    "anchor": true
+  },
+  "attributes": {},
+  "textdomain": "rrze-faudir",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css"
+}

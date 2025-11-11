@@ -9,17 +9,17 @@ import {
   __experimentalToggleGroupControl as ToggleGroupControl,
 } from '@wordpress/components';
 import {useState, useEffect} from '@wordpress/element';
-import CustomServerSideRender from "./components/CustomServerSideRender";
+import CustomServerSideRender from "../components/CustomServerSideRender";
 import apiFetch, {APIFetchOptions} from '@wordpress/api-fetch';
 import {fieldMapping} from "./defaults";
-import OrganizationNumberDetector from "./components/OrganizationNumberDetector";
-import PersonSelector from "./components/PersonSelector";
-import CategorySelector from "./components/CategorySelector";
-import FormatSelector from "./components/FormatSelector";
-import ShowHideSelector from "./components/ShowHideSelector";
-import NameFormatSelector from "./components/NameFormatSelector";
+import OrganizationNumberDetector from "../components/OrganizationNumberDetector";
+import PersonSelector from "../components/PersonSelector";
+import CategorySelector from "../components/CategorySelector";
+import FormatSelector from "../components/FormatSelector";
+import ShowHideSelector from "../components/ShowHideSelector";
+import NameFormatSelector from "../components/NameFormatSelector";
 import {edit, check, postAuthor, styles} from "@wordpress/icons";
-import '../scss/rrze-faudir.scss';
+import '../../scss/rrze-faudir.scss';
 import './editor.scss';
 import {
   EditProps,
@@ -27,11 +27,11 @@ import {
   CustomPersonParams,
   CustomPersonRESTApi,
 } from "./types";
-import CustomPlaceholder from "./components/CustomPlaceholder";
-import OrganizationIdentifierDetector from "./components/OrganizationIdentifierDetector";
-import RoleSelector from "./components/RoleSelector";
-import SortSelector from "./components/SortSelector";
-import PersonIdentifierDetector from "./components/PersonIdentifierDetector";
+import CustomPlaceholder from "../components/CustomPlaceholder";
+import OrganizationIdentifierDetector from "../components/OrganizationIdentifierDetector";
+import RoleSelector from "../components/RoleSelector";
+import SortSelector from "../components/SortSelector";
+import PersonIdentifierDetector from "../components/PersonIdentifierDetector";
 import {fetchAllPages} from './helper';
 
 export default function Edit({attributes, setAttributes}: EditProps) {

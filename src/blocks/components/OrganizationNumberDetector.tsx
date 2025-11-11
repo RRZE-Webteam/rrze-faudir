@@ -4,7 +4,7 @@ import {
 } from "@wordpress/components";
 import {__} from "@wordpress/i18n";
 import {useState} from "@wordpress/element";
-import {EditProps} from "../types";
+import {EditProps} from "../faudir/types";
 
 interface OrganizationNumberDetectorProps {
   attributes: EditProps['attributes'];

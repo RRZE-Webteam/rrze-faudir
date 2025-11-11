@@ -1,6 +1,6 @@
 import ServerSideRender from "@wordpress/server-side-render";
 import {useEffect, useState} from "@wordpress/element";
-import {EditProps} from "../types";
+import {EditProps} from "../faudir/types";
 import LoadingPlaceholder from "./LoadingPlaceholder";
 import EmptyPlaceholder from "./EmptyPlaceholder";
 
