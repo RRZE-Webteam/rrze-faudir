@@ -27,7 +27,7 @@ export default function OrganizationIdentifierDetector({
     const match = trimmedValue.match(/^https?:\/\/faudir\.fau\.de\/public\/org\/([^/]+)\/?$/);
     let extractedId = match ? match[1] : trimmedValue;
 
-    if (!extractedId) {
+    if (!extractedId || extractedId.length < 10) {
       setAttributes({ orgid: "" });
       setErrorMessage(__("Please enter a valid FAUdir-URL or the FAUdir-identifier.", "rrze-faudir"));
     } else {
