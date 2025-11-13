@@ -1,25 +1,16 @@
+export interface ServiceBlockAttributes {
+  orgid?: string;
+  displayText?: string;
+  imageURL?: string;
+  imageId?: number;
+  imageWidth?: number;
+  imageHeight?: number;
+  visibleFields?: string[];
+}
+
 export interface EditProps {
-  attributes: {
-    orgid: string;
-    displayText: string;
-    identifier: string;
-    imageURL: string;
-    imageId: number;
-    imageWidth: number;
-    imageHeight: number;
-    contact: {
-      phone: string;
-      mail: string;
-      url: string;
-      street: string;
-      zip: string;
-      city: string;
-    };
-    name: string;
-    visibleFields: string[];
-    officeHours: OfficeHour[];
-  };
-  setAttributes: (attributes: Partial<EditProps["attributes"]>) => void;
+  attributes: ServiceBlockAttributes;
+  setAttributes: (attributes: Partial<ServiceBlockAttributes>) => void;
   clientId: string;
   blockProps: any;
 }
@@ -36,26 +27,26 @@ export interface OrganizationResponseProps {
       city?: string;
       faumap?: string;
     };
-    alternateName: string;
+    alternateName?: string;
     consultationHours?: string[];
     consultationHoursByAgreement?: string;
     consultationHoursContactHint?: string;
     consultationHoursContactType?: string;
-    content: string[];
-    disambiguatingDescription: string;
-    identifier: string;
+    content?: string[];
+    disambiguatingDescription?: string;
+    identifier?: string;
     internalAddress?: string[];
-    longDescription: {
-      de: string;
-      en: string;
+    longDescription?: {
+      de?: string;
+      en?: string;
     };
-    name: string;
+    name?: string;
     officeHours?: OfficeHour[];
-    parentOrganization: string[];
-    postalAddress: string[];
-    subOrganization: string[];
-    socials: string[];
-  }
+    parentOrganization?: string[];
+    postalAddress?: string[];
+    subOrganization?: string[];
+    socials?: string[];
+  };
 }
 
 export interface OfficeHour {

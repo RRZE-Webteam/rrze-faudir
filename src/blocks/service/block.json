@@ -44,21 +44,6 @@
       "type": "string",
       "default": ""
     },
-    "contact": {
-      "type": "object",
-      "default": {
-        "phone": "",
-        "mail": "",
-        "url": "",
-        "street": "",
-        "zip": "",
-        "city": ""
-      }
-    },
-    "name": {
-      "type": "string",
-      "default": ""
-    },
     "visibleFields": {
       "type": "array",
       "default": [
@@ -71,10 +56,6 @@
         "url",
         "officeHours"
       ]
-    },
-    "officeHours": {
-      "type": "array",
-      "default": []
     }
   },
   "textdomain": "rrze-faudir",

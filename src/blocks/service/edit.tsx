@@ -60,8 +60,6 @@ const emptyContact: ContactData = {
   city: "",
 };
 
-const emptyOfficeHours: OfficeHour[] = [];
-
 const DEFAULT_VISIBLE_FIELDS = [
   "name",
   "street",
@@ -95,11 +93,13 @@ const formatOfficeHour = (entry: OfficeHour): string => {
 export default function Edit({attributes, setAttributes}: EditProps) {
   const props = useBlockProps();
   const {
-    orgid,
-    contact: contactAttr = emptyContact,
-    name = "",
+    orgid = "",
     visibleFields: visibleFieldsAttr,
-    officeHours: officeHoursAttr = emptyOfficeHours,
+    imageId = undefined,
+    imageURL = "",
+    imageWidth = 0,
+    imageHeight = 0,
+    displayText = "",
   } = attributes;
   const visibleFields = (visibleFieldsAttr && visibleFieldsAttr.length > 0)
     ? visibleFieldsAttr
@@ -115,10 +115,19 @@ export default function Edit({attributes, setAttributes}: EditProps) {
     },
   });
   const [modalDataView, setModalDataView] = useState(false);
+  const [organizationName, setOrganizationName] = useState<string>("");
+  const [contact, setContact] = useState<ContactData>({...emptyContact});
+  const [officeHours, setOfficeHours] = useState<OfficeHour[]>([]);
+  const resetOrgData = useCallback(() => {
+    setOrganizationName("");
+    setContact({...emptyContact});
+    setOfficeHours([]);
+  }, []);
 
   useEffect(() => {
+    resetOrgData();
+
     if (!orgid) {
-      setAttributes({contact: {...emptyContact}, name: "", officeHours: []});
       return;
     }
 
@@ -129,7 +138,6 @@ export default function Edit({attributes, setAttributes}: EditProps) {
       signal: controller.signal,
     })
       .then((response: OrganizationResponseProps) => {
-        console.log(response);
         const address = response?.data?.address ?? {};
         const nextContact: ContactData = {
           phone: address?.phone ?? "",
@@ -139,7 +147,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
           zip: address?.zip ?? "",
           city: address?.city ?? "",
         };
-        const name = response?.data?.name ?? "";
+        const resolvedName = response?.data?.name ?? "";
         const nextOfficeHours: OfficeHour[] = Array.isArray(response?.data?.officeHours)
           ? response.data.officeHours.map((entry) => ({
               weekday: entry?.weekday ?? "",
@@ -148,31 +156,21 @@ export default function Edit({attributes, setAttributes}: EditProps) {
             }))
           : [];
 
-        setAttributes({contact: nextContact, name: name, officeHours: nextOfficeHours});
+        setContact(nextContact);
+        setOrganizationName(resolvedName);
+        setOfficeHours(nextOfficeHours);
       })
       .catch((error) => {
         if (error?.name !== "AbortError") {
           console.error("FAUdir organization request failed", error);
-          setAttributes({contact: {...emptyContact}, name: "", officeHours: []});
+          resetOrgData();
         }
       });
 
     return () => controller.abort();
-  }, [orgid]);
-
-  const contact = useMemo(() => ({
-    ...emptyContact,
-    ...contactAttr,
-  }), [contactAttr]);
+  }, [orgid, resetOrgData]);
 
   const {phone, mail, url, street, zip, city} = contact;
-
-  const officeHours = useMemo(() => {
-    if (!Array.isArray(officeHoursAttr)) {
-      return [] as OfficeHour[];
-    }
-    return officeHoursAttr.filter((item) => item && (item.weekday || item.from || item.to));
-  }, [officeHoursAttr]);
 
   const formattedOfficeHours = useMemo(() => (
     officeHours.map((entry) => formatOfficeHour(entry)).filter(Boolean)
@@ -191,7 +189,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
   }, [visibleFields]);
 
   const dataviewData: DataViewRow[] = useMemo(() => ([
-    {id: "name", label: __("Name", "rrze-faudir"), value: name || ""},
+    {id: "name", label: __("Name", "rrze-faudir"), value: organizationName || ""},
     {id: "street", label: __("Street", "rrze-faudir"), value: street || ""},
     {id: "zip", label: __("ZIP", "rrze-faudir"), value: zip || ""},
     {id: "city", label: __("City", "rrze-faudir"), value: city || ""},
@@ -203,7 +201,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
       label: __("Office hours", "rrze-faudir"),
       value: formattedOfficeHours.length ? formattedOfficeHours.join("\n") : "",
     },
-  ]), [name, street, zip, city, phone, mail, url, formattedOfficeHours]);
+  ]), [organizationName, street, zip, city, phone, mail, url, formattedOfficeHours]);
 
   const dataViewFields = useMemo(() => ([
     {
@@ -250,7 +248,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
   return (
     <>
       <BlockControls>
-        <ImageSelector mediaId={attributes.imageId} mediaURL={attributes.imageURL} mediaWidth={attributes.imageWidth} mediaHeight={attributes.imageHeight} setAttributes={setAttributes} />
+        <ImageSelector mediaId={imageId} mediaURL={imageURL} mediaWidth={imageWidth} mediaHeight={imageHeight} setAttributes={setAttributes} />
         <ToolbarGroup>
           <ToolbarGroup>
             <ToolbarItem>
@@ -301,13 +299,13 @@ export default function Edit({attributes, setAttributes}: EditProps) {
       >
         <figure className="rrze-elements-blocks_service__figure">
           <img className="rrze-elements-blocks_service__image"
-               src={ attributes.imageURL } width={ attributes.imageWidth } alt="" height={ attributes.imageHeight}/>
+               src={ imageURL } width={ imageWidth } alt="" height={ imageHeight}/>
         </figure>
 
-        {name && isFieldVisible("name") && (
+        {organizationName && isFieldVisible("name") && (
           <header className="rrze-elements-blocks_service__meta_headline">
-            <h2 id="service-title" className="meta-headline">{name}</h2>
-            <RichText value={attributes.displayText} tagName={"p"} placeholder={__("Add your service description...", "rrze-faudir")} onChange={(newText) => setAttributes({displayText: newText})}/>
+            <h2 id="service-title" className="meta-headline">{organizationName}</h2>
+            <RichText value={displayText} tagName={"p"} placeholder={__("Add your service description...", "rrze-faudir")} onChange={(newText) => setAttributes({displayText: newText})}/>
           </header>
         )}
 

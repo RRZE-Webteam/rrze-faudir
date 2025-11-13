@@ -4,7 +4,7 @@ import { useState } from "@wordpress/element";
 
 interface OrganizationIdDetectorProps {
   attributes: {
-    orgid: string;
+    orgid?: string;
   };
   setAttributes: (attributes: Partial<OrganizationIdDetectorProps["attributes"]>) => void;
   label?: string;
