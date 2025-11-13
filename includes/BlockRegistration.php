@@ -37,7 +37,7 @@ class BlockRegistration {
             plugin_dir_path(__DIR__) . 'languages'
         );
         register_block_type(plugin_dir_path(__DIR__) . 'build/blocks/service', [
-            'render_callback' => [$this, 'render_faudir_block'],
+            'render_callback' => [$this, 'render_service_block'],
             'skip_inner_blocks' => true
         ]);
         $scriptHandle = generate_block_asset_handle('rrze-faudir/blocks/service', 'editorScript');
@@ -198,5 +198,224 @@ class BlockRegistration {
                 esc_html($e->getMessage())
             );
         }
+    }
+
+    /**
+     * Render the Service block with live FAUdir data.
+     */
+    public static function render_service_block($attributes): string {
+        $orgid = $attributes['orgid'] ?? '';
+        $orgid = Organization::sanitizeOrgIdentifier((string) $orgid);
+
+        if (empty($orgid)) {
+            return '';
+        }
+
+        $organization = new Organization();
+        if (!$organization->getOrgbyAPI($orgid)) {
+            return '';
+        }
+
+        $orgData   = $organization->toArray();
+        $address   = isset($orgData['address']) && is_array($orgData['address']) ? $orgData['address'] : [];
+        $name      = $orgData['name'] ?? '';
+        $officeRaw = $orgData['officeHours'] ?? ($organization->openingHours?->officeHours ?? []);
+
+        $visibleFields = self::get_service_visible_fields($attributes['visibleFields'] ?? null);
+        $isVisible = fn(string $field): bool => in_array($field, $visibleFields, true);
+
+        $street = (string) ($address['street'] ?? '');
+        $zip    = (string) ($address['zip'] ?? '');
+        $city   = (string) ($address['city'] ?? '');
+        $phone  = (string) ($address['phone'] ?? '');
+        $mail   = (string) ($address['mail'] ?? '');
+        $url    = (string) ($address['url'] ?? '');
+
+        $imageUrl    = !empty($attributes['imageURL']) ? esc_url($attributes['imageURL']) : '';
+        $imageWidth  = isset($attributes['imageWidth']) ? (int) $attributes['imageWidth'] : 0;
+        $imageHeight = isset($attributes['imageHeight']) ? (int) $attributes['imageHeight'] : 0;
+
+        $displayText = !empty($attributes['displayText']) ? wp_kses_post($attributes['displayText']) : '';
+
+        $formattedOfficeHours = $isVisible('officeHours')
+            ? self::format_service_hours($officeRaw)
+            : [];
+
+        $hasAddress = (
+            ($isVisible('street') && $street) ||
+            (($isVisible('zip') && $zip) || ($isVisible('city') && $city))
+        );
+        $hasContact = (
+            ($isVisible('phone') && $phone) ||
+            ($isVisible('mail') && $mail) ||
+            ($isVisible('url') && $url)
+        );
+        $hasOfficeHours = !empty($formattedOfficeHours);
+
+        $title_id = 'service-title-' . wp_unique_id();
+
+        ob_start();
+        ?>
+        <article class="rrze-elements-blocks_service_card" aria-labelledby="<?php echo esc_attr($title_id); ?>">
+            <?php if ($imageUrl): ?>
+                <figure class="rrze-elements-blocks_service__figure">
+                    <img class="rrze-elements-blocks_service__image"
+                         src="<?php echo $imageUrl; ?>"
+                         alt=""
+                         <?php if ($imageWidth > 0): ?>width="<?php echo esc_attr((string) $imageWidth); ?>"<?php endif; ?>
+                         <?php if ($imageHeight > 0): ?>height="<?php echo esc_attr((string) $imageHeight); ?>"<?php endif; ?> />
+                </figure>
+            <?php endif; ?>
+
+            <?php if ($isVisible('name') && $name): ?>
+                <header class="rrze-elements-blocks_service__meta_headline">
+                    <h2 id="<?php echo esc_attr($title_id); ?>" class="meta-headline"><?php echo esc_html($name); ?></h2>
+                    <?php if (!empty($displayText)): ?>
+                        <?php echo $displayText; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                    <?php endif; ?>
+                </header>
+            <?php endif; ?>
+
+            <?php if ($hasAddress): ?>
+                <section class="rrze-elements-blocks_service__information" aria-labelledby="addr-h">
+                    <h3 id="addr-h"><?php esc_html_e('Adresse', 'rrze-faudir'); ?></h3>
+                    <address>
+                        <?php if ($isVisible('street') && $street): ?>
+                            <span><?php echo esc_html($street); ?><br/></span>
+                        <?php endif; ?>
+                        <?php if (($isVisible('zip') && $zip) || ($isVisible('city') && $city)): ?>
+                            <span>
+                                <?php
+                                $zipCity = [];
+                                if ($isVisible('zip') && $zip) {
+                                    $zipCity[] = esc_html($zip);
+                                }
+                                if ($isVisible('city') && $city) {
+                                    $zipCity[] = esc_html($city);
+                                }
+                                echo implode(' ', $zipCity);
+                                ?>
+                            </span>
+                        <?php endif; ?>
+                    </address>
+                </section>
+            <?php endif; ?>
+
+            <?php if ($hasOfficeHours): ?>
+                <section aria-labelledby="hours-h">
+                    <h3 id="hours-h"><?php esc_html_e('Office hours', 'rrze-faudir'); ?></h3>
+                    <ul>
+                        <?php foreach ($formattedOfficeHours as $index => $entry): ?>
+                            <li><?php echo esc_html($entry); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </section>
+            <?php endif; ?>
+
+            <?php if ($hasContact): ?>
+                <section aria-labelledby="contact-h">
+                    <h3 id="contact-h"><?php esc_html_e('Contact', 'rrze-faudir'); ?></h3>
+                    <address>
+                        <?php if ($isVisible('phone') && $phone): ?>
+                            <p>
+                                <a href="tel:<?php echo esc_attr(preg_replace('/\s+/', '', $phone)); ?>">
+                                    <?php echo esc_html($phone); ?>
+                                </a>
+                            </p>
+                        <?php endif; ?>
+                        <?php if ($isVisible('mail') && $mail): ?>
+                            <p>
+                                <a href="mailto:<?php echo esc_attr($mail); ?>">
+                                    <?php echo esc_html($mail); ?>
+                                </a>
+                            </p>
+                        <?php endif; ?>
+                        <?php if ($isVisible('url') && $url): ?>
+                            <p>
+                                <a href="<?php echo esc_url($url); ?>" target="_blank" rel="noreferrer">
+                                    <?php echo esc_html($url); ?>
+                                </a>
+                            </p>
+                        <?php endif; ?>
+                    </address>
+                </section>
+            <?php endif; ?>
+        </article>
+        <?php
+        return trim(ob_get_clean()) ?: '';
+    }
+
+    private const SERVICE_DEFAULT_VISIBLE_FIELDS = [
+        'name',
+        'street',
+        'zip',
+        'city',
+        'phone',
+        'mail',
+        'url',
+        'officeHours',
+    ];
+
+    private static function get_service_visible_fields($fields): array {
+        if (is_array($fields) && !empty($fields)) {
+            $sanitized = array_values(array_filter(array_map('strval', $fields)));
+            if (!empty($sanitized)) {
+                return $sanitized;
+            }
+        }
+        return self::SERVICE_DEFAULT_VISIBLE_FIELDS;
+    }
+
+    private static function format_service_hours($hours): array {
+        if (!is_array($hours) || empty($hours)) {
+            return [];
+        }
+
+        $formatted = [];
+        foreach ($hours as $entry) {
+            if (!is_array($entry)) {
+                continue;
+            }
+            $weekdayRaw = $entry['weekday'] ?? null;
+            $weekday = is_numeric($weekdayRaw) ? (int) $weekdayRaw : null;
+            if ($weekday !== null) {
+                if ($weekday > 6) {
+                    $weekday = $weekday % 7;
+                }
+                if ($weekday < 0) {
+                    $weekday = null;
+                }
+            }
+            $weekdayLabel = self::get_weekday_label($weekday);
+            $from = isset($entry['from']) ? (string) $entry['from'] : '';
+            $to   = isset($entry['to']) ? (string) $entry['to'] : '';
+
+            $timeLabel = '';
+            if ($from && $to) {
+                $timeLabel = sprintf('%s – %s', $from, $to);
+            } elseif ($from || $to) {
+                $timeLabel = $from ?: $to;
+            }
+
+            $parts = array_filter([$weekdayLabel, $timeLabel]);
+            if (!empty($parts)) {
+                $formatted[] = implode(': ', $parts);
+            }
+        }
+
+        return $formatted;
+    }
+
+    private static function get_weekday_label(?int $weekday): string {
+        $map = [
+            0 => __('Sunday', 'rrze-faudir'),
+            1 => __('Monday', 'rrze-faudir'),
+            2 => __('Tuesday', 'rrze-faudir'),
+            3 => __('Wednesday', 'rrze-faudir'),
+            4 => __('Thursday', 'rrze-faudir'),
+            5 => __('Friday', 'rrze-faudir'),
+            6 => __('Saturday', 'rrze-faudir'),
+        ];
+        return $map[$weekday ?? -1] ?? '';
     }
 }
