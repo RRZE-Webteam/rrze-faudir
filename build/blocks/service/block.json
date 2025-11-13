@@ -24,6 +24,26 @@
       "type": "string",
       "default": ""
     },
+    "imageId": {
+      "type": "number",
+      "default": ""
+    },
+    "imageURL": {
+      "type": "string",
+      "default": ""
+    },
+    "imageWidth": {
+      "type": "number",
+      "default": 0
+    },
+    "imageHeight": {
+      "type": "number",
+      "default": 0
+    },
+    "displayText": {
+      "type": "string",
+      "default": ""
+    },
     "contact": {
       "type": "object",
       "default": {
@@ -48,8 +68,13 @@
         "city",
         "phone",
         "mail",
-        "url"
+        "url",
+        "officeHours"
       ]
+    },
+    "officeHours": {
+      "type": "array",
+      "default": []
     }
   },
   "textdomain": "rrze-faudir",
