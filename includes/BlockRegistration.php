@@ -231,9 +231,36 @@ class BlockRegistration {
         $mail   = (string) ($address['mail'] ?? '');
         $url    = (string) ($address['url'] ?? '');
 
+        $imageId     = isset($attributes['imageId']) ? (int) $attributes['imageId'] : 0;
         $imageUrl    = !empty($attributes['imageURL']) ? esc_url($attributes['imageURL']) : '';
         $imageWidth  = isset($attributes['imageWidth']) ? (int) $attributes['imageWidth'] : 0;
         $imageHeight = isset($attributes['imageHeight']) ? (int) $attributes['imageHeight'] : 0;
+
+        $imageHtml = '';
+        if ($imageId > 0) {
+            $imageHtml = wp_get_attachment_image(
+                $imageId,
+                'full',
+                false,
+                [
+                    'class'   => 'rrze-elements-blocks_service__image',
+                    'loading' => 'lazy',
+                ]
+            );
+        } elseif ($imageUrl) {
+            $attributesAttr = '';
+            if ($imageWidth > 0) {
+                $attributesAttr .= ' width="' . esc_attr((string) $imageWidth) . '"';
+            }
+            if ($imageHeight > 0) {
+                $attributesAttr .= ' height="' . esc_attr((string) $imageHeight) . '"';
+            }
+            $imageHtml = sprintf(
+                '<img class="rrze-elements-blocks_service__image" src="%s" alt=""%s />',
+                $imageUrl,
+                $attributesAttr
+            );
+        }
 
         $displayText = !empty($attributes['displayText']) ? wp_kses_post($attributes['displayText']) : '';
 
@@ -257,13 +284,9 @@ class BlockRegistration {
         ob_start();
         ?>
         <article class="rrze-elements-blocks_service_card" aria-labelledby="<?php echo esc_attr($title_id); ?>">
-            <?php if ($imageUrl): ?>
+            <?php if ($imageHtml): ?>
                 <figure class="rrze-elements-blocks_service__figure">
-                    <img class="rrze-elements-blocks_service__image"
-                         src="<?php echo $imageUrl; ?>"
-                         alt=""
-                         <?php if ($imageWidth > 0): ?>width="<?php echo esc_attr((string) $imageWidth); ?>"<?php endif; ?>
-                         <?php if ($imageHeight > 0): ?>height="<?php echo esc_attr((string) $imageHeight); ?>"<?php endif; ?> />
+                    <?php echo $imageHtml; ?>
                 </figure>
             <?php endif; ?>
 
@@ -271,7 +294,7 @@ class BlockRegistration {
                 <header class="rrze-elements-blocks_service__meta_headline">
                     <h2 id="<?php echo esc_attr($title_id); ?>" class="meta-headline"><?php echo esc_html($name); ?></h2>
                     <?php if (!empty($displayText)): ?>
-                        <?php echo $displayText; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                        <?php echo $displayText; ?>
                     <?php endif; ?>
                 </header>
             <?php endif; ?>
