@@ -290,6 +290,7 @@ class BlockRegistration {
                 </figure>
             <?php endif; ?>
 
+            <div class="rrze-elements-blocks_service__information_card">
             <?php if ($isVisible('name') && $name): ?>
                 <header class="rrze-elements-blocks_service__meta_headline">
                     <h2 id="<?php echo esc_attr($title_id); ?>" class="meta-headline"><?php echo esc_html($name); ?></h2>
@@ -363,6 +364,7 @@ class BlockRegistration {
                     </address>
                 </section>
             <?php endif; ?>
+            </div>
         </article>
         <?php
         return trim(ob_get_clean()) ?: '';

@@ -1,1 +1,35 @@
-// Editor Stylesheet
+@mixin mobile-service-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	grid-gap: var(--Spacing-2x, 1rem);
+}
+
+figure.rrze-elements-blocks_service__figure {
+	img {
+		width: 100%;
+		height: auto;
+	}
+	z-index: -1;
+}
+
+article.rrze-elements-blocks_service_card div.rrze-elements-blocks_service__information_card {
+
+	@include mobile-service-grid;
+	padding-inline: var(--Spacing-4x, 2rem);
+	margin-inline: var(--Spacing-3x, .5rem);
+	background-color: var(--FAU-Col-FAU-Weiss-100, #fff);
+	margin-top: -85px;
+	padding-top: 30px;
+
+	h2 {
+		margin-top: 0;
+	}
+
+	header, section{
+		grid-column: 1/-1;
+	}
+
+	section{
+		grid-column: span 2;
+	}
+}
