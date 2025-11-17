@@ -356,7 +356,7 @@ class BlockRegistration {
                         <?php endif; ?>
                         <?php if ($isVisible('url') && $url): ?>
                             <p>
-                                <a href="<?php echo esc_url($url); ?>" target="_blank" rel="noreferrer">
+                                <a href="<?php echo esc_url($url); ?>">
                                     <?php echo esc_html($url); ?>
                                 </a>
                             </p>
