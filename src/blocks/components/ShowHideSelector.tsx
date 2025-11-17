@@ -2,7 +2,7 @@ import { useState, useEffect } from '@wordpress/element';
 import { CheckboxControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
-import { EditProps, SettingsRESTApi } from '../types';
+import { EditProps, SettingsRESTApi } from "../faudir/types";
 
 interface ShowHideSelectorProps {
   attributes: EditProps['attributes'];

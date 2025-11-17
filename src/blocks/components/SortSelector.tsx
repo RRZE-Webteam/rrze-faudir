@@ -1,6 +1,6 @@
 import {SelectControl, __experimentalDivider as Divider} from "@wordpress/components";
 import {__} from "@wordpress/i18n";
-import {EditProps} from "../types";
+import {EditProps} from "../faudir/types";
 
 interface SortSelectorProps {
   attributes: EditProps['attributes'];

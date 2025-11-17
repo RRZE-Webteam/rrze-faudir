@@ -1,0 +1,65 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "rrze-faudir/service",
+  "title": "Service",
+  "category": "rrze",
+  "icon": "businessperson",
+  "description": "Display Service contacts via FAUdir",
+  "keywords": [
+    "FAUdir",
+    "UnivIS",
+    "Service",
+    "Contact",
+    "Kontakt",
+    "FAU",
+    "RRZE"
+  ],
+  "supports": {
+    "html": false,
+    "anchor": true
+  },
+  "attributes": {
+    "orgid": {
+      "type": "string",
+      "default": ""
+    },
+    "imageId": {
+      "type": "number",
+      "default": ""
+    },
+    "imageURL": {
+      "type": "string",
+      "default": ""
+    },
+    "imageWidth": {
+      "type": "number",
+      "default": 0
+    },
+    "imageHeight": {
+      "type": "number",
+      "default": 0
+    },
+    "displayText": {
+      "type": "string",
+      "default": ""
+    },
+    "visibleFields": {
+      "type": "array",
+      "default": [
+        "name",
+        "street",
+        "zip",
+        "city",
+        "phone",
+        "mail",
+        "url",
+        "officeHours"
+      ]
+    }
+  },
+  "textdomain": "rrze-faudir",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./index.css"
+}

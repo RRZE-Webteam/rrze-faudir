@@ -1,11 +1,12 @@
 import { __experimentalHeading as Heading, TextControl } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { useState } from "@wordpress/element";
-import { EditProps } from "../types";
 
 interface OrganizationIdDetectorProps {
-  attributes: EditProps["attributes"];
-  setAttributes: EditProps["setAttributes"];
+  attributes: {
+    orgid?: string;
+  };
+  setAttributes: (attributes: Partial<OrganizationIdDetectorProps["attributes"]>) => void;
   label?: string;
   helpText?: string;
 }
@@ -26,7 +27,7 @@ export default function OrganizationIdentifierDetector({
     const match = trimmedValue.match(/^https?:\/\/faudir\.fau\.de\/public\/org\/([^/]+)\/?$/);
     let extractedId = match ? match[1] : trimmedValue;
 
-    if (!extractedId) {
+    if (!extractedId || extractedId.length < 10) {
       setAttributes({ orgid: "" });
       setErrorMessage(__("Please enter a valid FAUdir-URL or the FAUdir-identifier.", "rrze-faudir"));
     } else {

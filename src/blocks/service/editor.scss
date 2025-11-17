@@ -1,0 +1,89 @@
+@mixin mobile-service-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	grid-gap: var(--Spacing-2x, 1rem);
+}
+
+@mixin tablet-service-grid{
+	display: grid;
+	grid-template-columns: repeat(8, 1fr);
+	grid-gap: var(--Spacing-2x, 1rem);
+}
+
+@mixin desktop-service-grid{
+	display: grid;
+	grid-template-columns: repeat(12, 1fr);
+	grid-gap: var(--Spacing-2x, 1rem);
+}
+
+article.rrze-elements-blocks_service_card {
+	container-type: inline-size;
+
+	figure.rrze-elements-blocks_service__figure {
+		img {
+			width: 100%;
+			height: auto;
+		}
+		z-index: -1;
+	}
+}
+
+article.rrze-elements-blocks_service_card div.rrze-elements-blocks_service__information_card {
+
+	@include mobile-service-grid;
+	padding-inline: var(--Spacing-4x, 2rem);
+	margin-inline: var(--Spacing-3x, .5rem);
+	background-color: var(--FAU-Col-FAU-Weiss-100, #fff);
+	margin-top: -85px;
+	padding-top: 30px;
+
+	h2 {
+		margin-top: 0;
+	}
+
+	header, section{
+		grid-column: 1/-1;
+	}
+
+	section{
+		grid-column: span 2;
+	}
+
+	#hours-h, #addr-h, #contact-h {
+		font-weight: 700;
+		font-size: var(--P-Body-Text);
+		color: var(--FAU-Col-FAU-Schwarz-100);
+	}
+}
+
+// Breakpoint for Tablet View
+@media screen and (width >= 768px) {
+
+	article.rrze-elements-blocks_service_card {
+		@include tablet-service-grid;
+		grid-column: 1/-1;
+
+		.rrze-elements-blocks_service__figure {
+			grid-column: 1/-1;
+		}
+	}
+
+	article.rrze-elements-blocks_service_card div.rrze-elements-blocks_service__information_card {
+		@include tablet-service-grid;
+		margin-left: calc( -1 * var(--Spacing-6x, 1rem));
+		margin-right: calc( -1 * var(--Spacing-6x, 1rem));
+		grid-column: 2/-2;
+
+		section {
+			grid-column: span 4;
+		}
+
+	}
+}
+
+@media screen and (width >= 1440px)
+{
+	article.rrze-elements-blocks_service_card {
+		@include desktop-service-grid;
+	}
+}

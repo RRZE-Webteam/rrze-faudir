@@ -9,7 +9,7 @@ import {
   Panel,
   PanelBody
 } from '@wordpress/components';
-import {EditProps} from '../types';
+import {EditProps} from "../faudir/types";
 import PersonSelector from './PersonSelector';
 import {PersonSelectorProps} from "./PersonSelector";
 import CategorySelector from "./CategorySelector";
