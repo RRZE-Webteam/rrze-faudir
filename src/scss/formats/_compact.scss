@@ -68,12 +68,20 @@
 	    
 	    .fau-elemental & {
 		--faudir-profile-padding: var(--Spacing-3x, 5px);
+		
+		
+		border: none;
+		padding: 0;
+		
+		.profile-image-section {
+		    background-color: var(--FAU-Col-FAU-Dunkelblau-100);
+		}
 		.icon-list.icon {
 		    --_icon-size: 2.2rem;
-		--_icon-mask-size: 1.8rem;
+		    --_icon-mask-size: 1.8rem;
 		}
 		
-		 address, p, h1, h2, h3, a {
+		address, p, h1, h2, h3, a, li {
 		    padding: 0;
 		    color: var(--faudir-compact-color-text, #000);
 		}

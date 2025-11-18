@@ -166,7 +166,7 @@ class OpeningHours {
 
         $num = count($list);
         if ($num > 1) {
-            $output .= '<ul class="ContactPointList">';
+            $output .= '<ul class="ContactPointList list-icons">';
         }
 
         foreach ($list as $row) {

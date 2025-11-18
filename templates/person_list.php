@@ -77,7 +77,7 @@ if (!defined('ABSPATH')) {
                         
              //            $output .= Debug::get_html_var_dump($show_fields_lower);
                          
-                        $output_escaped .= '<ul class="datalist">';
+                        $output_escaped .= '<ul class="datalist list-icons">';
                         foreach ($ordered_keys as $key) {
 
                             $key_lower = strtolower($key);

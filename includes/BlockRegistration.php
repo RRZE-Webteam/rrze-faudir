@@ -328,7 +328,7 @@ class BlockRegistration {
             <?php if ($hasOfficeHours): ?>
                 <section aria-labelledby="hours-h">
                     <h3 id="hours-h"><?php esc_html_e('Office hours', 'rrze-faudir'); ?></h3>
-                    <ul>
+                    <ul class="list-icons">
                         <?php foreach ($formattedOfficeHours as $index => $entry): ?>
                             <li><?php echo esc_html($entry); ?></li>
                         <?php endforeach; ?>

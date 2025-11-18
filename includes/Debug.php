@@ -52,7 +52,7 @@ class Debug {
        
         $pattern = '/%[0-9A-Fa-f]{2}/';
         $out = "<code>$uri_string</code>";
-        $out .= '<br>=&gt; URI Parts: <ul class="nolist">';
+        $out .= '<br>=&gt; URI Parts: <ul class="nolist list-icons">';
         $first = true;
         foreach ($params as $value) {
             if ($first) {
