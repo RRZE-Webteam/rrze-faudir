@@ -19,6 +19,9 @@
     --faudir-figure-tablesize: 150px;
     --faudir-figure-border-radius: var(--border-radius, 0);
     --faudir-figure-textsignature-background: #ddd;
+    --faudir-figure-textsignature-text: var(--color-Text, #000);
+    --faudir-figure-textsignature-font-size:  1.5rem;
+    --faudir-figure-textsignature-font-weight: bold;
     --faudir-border-color: var(--color-ContentBorders, #e9edf2);
     
     --faudir-h1-font-size: var(--font-size-h2,var(--font-size-xl, 1.25rem));

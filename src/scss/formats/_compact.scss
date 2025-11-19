@@ -29,6 +29,8 @@
 		"header"
 		"details";
 	    margin-bottom: 1rem;
+	    
+	    
 	    background-color: var(--faudir-compact-color-background, transparent);
 	    color: var(--faudir-compact-color-text, #000);
 	   
@@ -52,6 +54,9 @@
 		figure.signature {		    
 		    .text {
 			background-color: var(--faudir-figure-textsignature-background);
+			color: var(--faudir-figure-textsignature-text);
+			font-size: var(--faudir-figure-textsignature-font-size);
+			font-weight: var(--faudir-figure-textsignature-font-weight);
 			width: var(--faudir-profile-image-width);
 			height: var(--faudir-profile-image-height);
 			display: block;
@@ -67,9 +72,7 @@
 	    }
 	    
 	    .fau-elemental & {
-		--faudir-profile-padding: var(--Spacing-3x, 5px);
-		
-		
+		--faudir-profile-padding: var(--Spacing-4x) 0 var(--Spacing-4x) var(--Spacing-6x);
 		border: none;
 		padding: 0;
 		
@@ -84,10 +87,13 @@
 		address, p, h1, h2, h3, a, li {
 		    padding: 0;
 		    color: var(--faudir-compact-color-text, #000);
+		    line-height: 1.5;
 		}
 		h1 a {
+		    line-height: 1.3;
 		    text-decoration: none;
 		}
+		
 		
 	    }
 	   
@@ -118,20 +124,46 @@
 
 	    .profile-details {
 		grid-area: details;
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: 10px;
-		
-		
+	
 		.fau-elemental & {
+		    display: grid;
+		    grid-template-columns: 1fr;
+		    gap: 0;
 		    grid-template-areas:
 			"profile-address profile-contact"
-			 "profile-consultation profile-socialmedia"
-			 "profile-link profile-link";
+			"profile-consultation profile-socialmedia"
+			"profile-link profile-link";
 		    grid-template-columns: 2fr 3fr;
+ 
+		}
+		.fau-elemental &:not(:has(.profile-address)) {
+		    grid-template-areas:
+		      "profile-contact      profile-contact"
+		      "profile-consultation profile-socialmedia"
+		      "profile-link         profile-link";
+		  }
+		/* Wenn consultation fehlt → socialmedia über volle Breite */
+		.fau-elemental &:not(:has(.profile-consultation)) {
+		  grid-template-areas:
+		    "profile-address      profile-contact"
+		    "profile-socialmedia  profile-socialmedia"
+		    "profile-link         profile-link";
+		}
+
+		/* Wenn beide links fehlen → beide rechten Reihen vollbreit */
+		.fau-elemental &:not(:has(.profile-address)):not(:has(.profile-consultation)) {
+		  grid-template-areas:
+		    "profile-contact     profile-contact"
+		    "profile-socialmedia profile-socialmedia"
+		    "profile-link        profile-link";
 		}
 		
-		.profile-address, .profile-consultation, .profile-contact, .profile-socialmedia {
+		.profile-address, 
+		.profile-consultation, 
+		.profile-contact, 
+		.profile-socialmedia, 
+		.profile-link,
+		.profile-content {
 		   padding: var(--faudir-profile-padding);
 		}
 		.profile-link {
@@ -156,11 +188,8 @@
 		}
 	    }
 	    
-	    .profile-content {
-		.teasertext {
-		 
-		}
-	    }
+	  
+	    
 	    
 	}
 	
@@ -177,6 +206,8 @@
 			"header"
 			"details";
 		    grid-template-columns: 1fr;
+		    
+		   
 		}
 		.format-compact-container:has(.profile-image-section) {
 		   grid-template-areas:
@@ -188,6 +219,8 @@
 		    width: var(--faudir-profile-image-size);
 		    height: auto;
 		}
+		
+		
 	    }    
 
 	@container faudir-compact-container (min-width: 480px) {
@@ -228,12 +261,35 @@
 		grid-template-columns: 1fr;
 		grid-template-rows: auto 1fr;
 		align-items: stretch;
+		
+		
 	    }
 	    .format-compact-container:has(.profile-image-section) {
 		   grid-template-areas:
 			 "image header"
 			"image details";
 		   grid-template-columns: var(--faudir-profile-image-section-width) 1fr;
+		   
+		   .fau-elemental & {
+			--faudir-profile-image-section-width: 250px;
+			--faudir-profile-image-section-height: 250px;
+			--faudir-profile-image-width: 250px;
+			--faudir-profile-image-height: 250px;
+
+			grid-template-areas:
+			    "image   header " 
+			    "details details";
+			
+			
+			.profile-header {
+			    z-index: 10;
+			    background: var(--faudir-compact-color-background);
+			    margin-top: auto;
+			    margin-bottom: auto;
+			    margin-left: var(--fau-elemental-image-insert);
+			}
+		    }
+		   
 		}
 	    .profile-image-section {
 		height: 100%; 

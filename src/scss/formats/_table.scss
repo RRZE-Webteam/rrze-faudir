@@ -33,6 +33,9 @@
 		    
 		    .text {
 			background-color: var(--faudir-figure-textsignature-background);
+			color: var(--faudir-figure-textsignature-text);
+			font-size: var(--faudir-figure-textsignature-font-size);
+			font-weight: var(--faudir-figure-textsignature-font-weight);
 			height: var(--faudir-figure-tablesize,150px);
 			width: var(--faudir-figure-tablesize,150px);
 			align-content: center;
