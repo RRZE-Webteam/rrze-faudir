@@ -82,7 +82,7 @@ class FaudirUtils {
     // Sanitize and format telephone number
     public static function format_phone_number(string $phone): string {
         // Entferne alle Zeichen außer Zahlen, "+", "(", ")", "-" und Leerzeichen
-        $phone = preg_replace('/[^\d\+\-\(\) ]/', '', $phone);
+        $phone = preg_replace('/[^\d\+\(\) ]+/', '', $phone);
         $phone = preg_replace('/\s+/', ' ', trim($phone));
 
         // Falls die Nummer mit "+49(0)" beginnt → zu "+49" umwandeln
@@ -95,7 +95,7 @@ class FaudirUtils {
         }
 
         // Standardisiere das Format mit Leerzeichen zwischen Gruppen
-        $phone = preg_replace('/(\+?\d{1,3})\s*(\d{3,4})\s*(\d{2,4})\s*(\d{0,5})/', '$1 $2 $3 $4', $phone);
+        $phone = preg_replace('/(\+?\d{1,3})\s*(\d{3,4})\s*(\d{2})\s*(\d{0,5})/', '$1 $2 $3 - $4', $phone);
 
         return trim($phone); // Entfernt überflüssige Leerzeichen am Ende
     }

@@ -60,6 +60,9 @@
 		figure.signature {		    
 		    .text {
 			background-color: var(--faudir-figure-textsignature-background);
+			color: var(--faudir-figure-textsignature-text);
+			font-size: var(--faudir-figure-textsignature-font-size);
+			font-weight: var(--faudir-figure-textsignature-font-weight);
 			width: var(--faudir-profile-image-width);
 			height: var(--faudir-profile-image-height);
 			border-radius: var(--faudir-figure-border-radius);

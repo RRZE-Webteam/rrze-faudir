@@ -11,11 +11,11 @@
 // Symbols
 @use 'icons/icons';
 
-// Formats
-@use 'formats/formats';
-
 // Settings for themes
 @use 'themes/themes';
+
+// Formats
+@use 'formats/formats';
 
 // Override PanelBodies for FAU-Einrichtungen
 .editor-visual-editor {

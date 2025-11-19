@@ -1,0 +1,88 @@
+/*----------------------------------------------------------------------------*/
+/* _fau-elemental 
+/* Settings for FAU Einrichtungen theme
+/* Created on : 16.10.2025, 17:12:28
+/*----------------------------------------------------------------------------*/
+.fau-elemental {
+
+    .faudir {
+	--faudir-compact-color-background: var(--color-FAU);
+	--faudir-compact-color-text: var(--FAU-Col-FAU-Weiss-100, #fff);
+	--faudir-figure-textsignature-background: var(--FAU-Col-FAU-Dunkelblau-100, var(--color-primary-dunkler, #eee));
+	--faudir-figure-textsignature-text:  var(--FAU-Col-FAU-Weiss-100, #fff);
+	--faudir-figure-textsignature-font-size: var(--H-Heading-3, 1.5rem);
+	--fau-elemental-image-insert: calc(var(--FAU-Image-Insert, 2.5rem) * -1);
+	--faudir-profile-padding: var(--Spacing-4x) 0 var(--Spacing-4x) var(--Spacing-6x);
+	
+	max-width: var(--small-max-width);
+	margin: 0 auto;
+	
+	li, p, address {
+		font-size: var(--P-Body-Text-Small, var(--font-size-normal, 1rem));
+		font-weight: normal;
+	}
+	p.organisation_name,  p.jobtitle, a {
+	    font-weight: normal;
+	}
+	
+	a {
+	    text-decoration: underline;
+	    transition: var(--basic-animation);
+	    text-underline-offset: var(--Spacing-1x);
+	}
+	a:hover, a:focus {
+	    text-decoration-thickness: var(--Spacing-1x);
+	}
+	
+	figure:has(> img)::before {
+	    background-color: transparent;
+	}
+	h1 {
+	    font-size: var(--font-size-h4, 1.25rem);
+	    a {
+		font-weight: bold;
+		text-decoration: none;
+		color: var(--FAU-Col-FAU-Blau-100);
+		
+		font-weight: 700;
+	    }
+	    a:hover, a:focus {
+		text-decoration: underline;
+		text-underline-offset: var(--Spacing-1x);
+	    }
+	}
+	.format-page {
+	    h1 {
+		font-size: var(--H-Heading-1);
+	    }
+	}
+	
+	h2 {
+	    font-size: var(--P-Body-Text-Small, var(--font-size-normal, 1rem));
+	    font-weight: bold;
+	}
+	.contact-title,
+	.address-title, 
+	.consultation-title {
+	    margin: 1rem 0 0 0;
+	}
+	
+	ul.icon {
+		    margin: 0;
+	}
+	
+	.icon span.texticon::before, 
+	.icon a::before {
+	    text-decoration: underline;
+	    text-underline-offset: var(--Spacing-1x);
+	}
+	.icon.icon-list ul li a:hover, 
+	.icon.icon-list ul li a:focus,
+	.icon.icon-list ul li a:hover::before, 
+	.icon.icon-list ul li a:focus::before {
+	    color: inherit;
+	    text-decoration-thickness: var(--Spacing-1x);
+	}
+    }
+ 
+}

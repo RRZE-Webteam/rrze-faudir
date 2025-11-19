@@ -10,6 +10,7 @@ class REST {
 
     public function register_routes(): void{
         add_action('rest_api_init', [$this, 'settings_route']);
+        add_action('rest_api_init', [$this, 'organization_route']);
         
          // AJAX-Hooks (eingeloggt & nopriv)
         
@@ -30,6 +31,85 @@ class REST {
             'permission_callback' => function () {
                 return current_user_can('edit_posts');
             },
+        ]);
+    }
+
+    /**
+     * Registers a route for fetching organization data via the block editor.
+     */
+    public function organization_route(): void {
+        register_rest_route('rrze-faudir/v1', '/organization', [
+            'methods'             => \WP_REST_Server::READABLE,
+            'callback'            => [$this, 'get_organization_payload'],
+            'permission_callback' => function () {
+                return current_user_can('edit_posts');
+            },
+            'args'                => [
+                'orgid' => [
+                    'description'        => __('FAUdir organization identifier.', 'rrze-faudir'),
+                    'type'               => 'string',
+                    'required'           => false,
+                    'sanitize_callback'  => [Organization::class, 'sanitizeOrgIdentifier'],
+                    'validate_callback'  => function ($value) {
+                        return empty($value) || Organization::isOrgIdentifier($value);
+                    },
+                ],
+                'orgnr' => [
+                    'description'        => __('Legacy 10 digit organization number.', 'rrze-faudir'),
+                    'type'               => 'string',
+                    'required'           => false,
+                    'sanitize_callback'  => 'sanitize_text_field',
+                    'validate_callback'  => function ($value) {
+                        $value = preg_replace('/\D/', '', (string) $value);
+                        return empty($value) || Organization::isOrgnr($value);
+                    },
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * Returns the organization payload for the provided identifiers.
+     */
+    public function get_organization_payload(\WP_REST_Request $request) {
+        $orgnr = preg_replace('/\D/', '', (string) ($request->get_param('orgnr') ?? ''));
+        $orgid = (string) ($request->get_param('orgid') ?? '');
+        $orgid = Organization::sanitizeOrgIdentifier($orgid ?? '') ?? '';
+
+        $org = new Organization();
+
+        if (!empty($orgnr)) {
+            if (!Organization::isOrgnr($orgnr)) {
+                return new \WP_Error('rrze_faudir_invalid_orgnr', __('Invalid parameter orgnr. Expecting a 10 digit number.', 'rrze-faudir'), ['status' => 400]);
+            }
+
+            $resolvedId = $org->getIdentifierbyOrgnr($orgnr);
+            $resolvedId = Organization::sanitizeOrgIdentifier($resolvedId ?? '') ?? '';
+
+            if (empty($resolvedId) || !Organization::isOrgIdentifier($resolvedId)) {
+                return new \WP_Error('rrze_faudir_orgnr_not_found', __('Could not resolve an orgid from the provided orgnr.', 'rrze-faudir'), ['status' => 404]);
+            }
+
+            $orgid = $resolvedId;
+        }
+
+        if (empty($orgid)) {
+            return new \WP_Error('rrze_faudir_missing_orgid', __('Missing parameter orgid or orgnr.', 'rrze-faudir'), ['status' => 400]);
+        }
+
+        if (!Organization::isOrgIdentifier($orgid)) {
+            return new \WP_Error('rrze_faudir_invalid_orgid', __('Invalid parameter orgid.', 'rrze-faudir'), ['status' => 400]);
+        }
+
+        $hasData = $org->getOrgbyAPI($orgid);
+
+        if (!$hasData) {
+            return new \WP_Error('rrze_faudir_org_not_found', __('No organization data found for the provided identifier.', 'rrze-faudir'), ['status' => 404]);
+        }
+
+        return rest_ensure_response([
+            'identifier' => $orgid,
+            'data'       => $org->toArray(),
         ]);
     }
 

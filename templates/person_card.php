@@ -167,7 +167,7 @@ if (!defined('ABSPATH')) {
                         if (!empty($contactlist)) {                       
                             echo '<div class="profile-contact icon icon-list">';
                             echo '<h2 class="screen-reader-text">'.__('Contact', 'rrze-faudir').'</h2>';
-                            echo '<ul>';
+                            echo '<ul class="list-icons">';
                             echo $contactlist;
                             echo '</ul>';
                             echo '</div>';

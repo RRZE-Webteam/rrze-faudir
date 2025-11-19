@@ -477,7 +477,7 @@ class Contact {
              $output .= ' class="'.trim(esc_attr($class)).'"';
         }
         $output .= '>';
-        $output .= '<ul>';
+        $output .= '<ul class="list-icons">';
         foreach ($data as $name => $value) {
             if (preg_match('/^https?:\/\//i', $value)) {
                 $displayValue = preg_replace('/^https?:\/\//i', '', $value);
