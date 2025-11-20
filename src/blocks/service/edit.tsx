@@ -285,7 +285,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
             {(showOfficeHours && formattedOfficeHours.length !== 0) && (
               <section aria-labelledby="hours-h">
                 <h3 id="hours-h">{__("Office hours", "rrze-faudir")}</h3>
-                <ul>
+                <ul className="list-icons">
                   {formattedOfficeHours.map((entry, index) => (
                     <li key={`office-hour-${index}`}>
                       {entry}
