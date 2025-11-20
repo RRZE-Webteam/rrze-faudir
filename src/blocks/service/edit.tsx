@@ -25,6 +25,7 @@ import {__} from "@wordpress/i18n";
 import OrganizationIdentifierDetector from "../components/OrganizationIdentifierDetector"
 import ImageSelector from "../components/ImageSelector"
 import ServiceDataView, {ServiceDataRow} from "../components/ServiceDataView";
+import "./editor.scss";
 
 type ContactData = {
   phone: string;
