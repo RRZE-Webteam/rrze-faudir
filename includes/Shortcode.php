@@ -84,13 +84,10 @@ class Shortcode {
         unset($atts['hide']);
         
 
-
-        
      //   do_action( 'rrze.log.notice','FAUdir\Shortcode (fetch_fau_data). Modified Args: ', $atts);
         
         // Enqueue CSS for output
         wp_enqueue_style('rrze-faudir');
-          
           
           
         // If user is logged in and no-cache option is enabled, always fetch fresh data
@@ -99,6 +96,7 @@ class Shortcode {
        
         if ($no_cache_logged_in && is_user_logged_in()) {
             $output = self::fetch_and_render_fau_data($atts);
+            $output = do_blocks($output);    
             $output = do_shortcode(shortcode_unautop($output));
             return $output;
         }
@@ -111,7 +109,8 @@ class Shortcode {
         
      
         if ($cached_data !== false) {
-            return  do_shortcode(shortcode_unautop($cached_data));
+            $output = do_blocks($cached_data);  
+            return  do_shortcode(shortcode_unautop($output));
         }
         
         // Fetch and render fresh data
@@ -121,9 +120,9 @@ class Shortcode {
         // Dont execute shortcodes here and safe the raw code! Cause they have to be executed on 
         // creating the website, due the fact that they might embed js oder css.
         set_transient($cache_key, $output, $cache_timeout);
-                
-        $output = do_shortcode(shortcode_unautop($output));
-        return $output;
+        $output = do_blocks($output);            
+        return do_shortcode(shortcode_unautop($output));
+
     }
 
     /*

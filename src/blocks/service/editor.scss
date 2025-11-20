@@ -80,10 +80,3 @@ article.rrze-elements-blocks_service_card div.rrze-elements-blocks_service__info
 
 	}
 }
-
-@media screen and (width >= 1440px)
-{
-	article.rrze-elements-blocks_service_card {
-		@include desktop-service-grid;
-	}
-}

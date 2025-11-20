@@ -599,9 +599,11 @@ class Person {
             if (empty($this->config)) {
                 $this->setConfig();
             }
-            $opt = $this->config->getOptions();        
-            $usecanonical = $opt['redirect_to_canonicals'];
-                  
+            $opt = $this->config->getOptions();   
+            $usecanonical = 0;
+            if (isset($opt['redirect_to_canonicals'])) {
+                $usecanonical = $opt['redirect_to_canonicals'];
+            }      
             if ($usecanonical && (!empty($canonical))) {
                 $cpt_url = $canonical;
             }

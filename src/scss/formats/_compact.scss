@@ -192,10 +192,27 @@
 	    
 	    
 	}
+
 	
+	@container faudir-compact-container (max-width: 392px) {
+	   
+	     .fau-elemental & {
+			.profile-header {
+			    z-index: 10;
+			    display: block;
+			    width: calc(100% - 3rem);
+			    margin-top: var(--fau-elemental-image-insert);;
+			    margin-right: auto;
+			    margin-left: auto;
+			    justify-self: center;
+			    padding: var(--Spacing-4x, 1rem);
+			    background: var(--faudir-compact-color-background);   
+			}
+		    }
+	    
+	}
 	
-	
-	@container faudir-compact-container (min-width: 320px) {
+	@container faudir-compact-container (min-width: 393px) {
 		.format-compact-container {
 		    --faudir-profile-image-section-width: 120px;
 		    --faudir-profile-image-section-height: 120px;
@@ -306,7 +323,13 @@
 	}
 
 	
+	@media (max-width: 392px) {
+	     .fau-elemental & {
+	       margin-left: var(--faue_fullbleed_inline-margin);
+    		margin-right: var(--faue_fullbleed_inline-margin);
+	    }
+	}
 
-}
+    }
     
 } 
