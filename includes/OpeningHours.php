@@ -150,13 +150,20 @@ class OpeningHours {
      */
     public function getConsultationsHours(string $key = 'consultationHours', ?string $addressHtml = null, string $lang = 'de', ?string $label = null): string {
         $list = ($key === 'officeHours') ? $this->officeHours : $this->consultationHours;
+
         if (empty($list)) {
+            return '';
+        }
+
+        // Nach Wochentag gruppieren
+        $grouped = $this->groupHoursByWeekday($list);
+        if (empty($grouped)) {
             return '';
         }
 
         $output  = '';
         $output .= '<div class="workplace-hours" itemprop="contactPoint" itemscope itemtype="https://schema.org/ContactPoint">';
-        
+
         // Label bestimmen: optionaler Parameter hat Vorrang, sonst Defaults
         $metaLabel = $label ?? (($key === 'officeHours')
             ? esc_html__('Office Hours', 'rrze-faudir')
@@ -164,44 +171,65 @@ class OpeningHours {
 
         $output .= '<meta itemprop="contactType" content="' . esc_attr($metaLabel) . '">';
 
-        $num = count($list);
-        if ($num > 1) {
+        $numDays = count($grouped);
+        if ($numDays > 1) {
             $output .= '<ul class="ContactPointList list-icons">';
         }
 
-        foreach ($list as $row) {
-            $weekday = isset($row['weekday']) ? (int) $row['weekday'] : -1;
-            $from    = isset($row['from']) ? (string) $row['from'] : '';
-            $to      = isset($row['to']) ? (string) $row['to'] : '';
-            $comment = isset($row['comment']) ? (string) $row['comment'] : '';
-            $url     = isset($row['url']) ? (string) $row['url'] : '';
-
-            if ($num > 1) {
+        foreach ($grouped as $weekday => $rowsOfDay) {
+            if ($numDays > 1) {
                 $output .= '<li>';
             }
 
-            $output .= '<div class="hoursAvailable" itemprop="hoursAvailable" itemscope itemtype="https://schema.org/OpeningHoursSpecification">';
-            $output .= '<span class="weekday" itemprop="dayOfWeek" content="https://schema.org/' . esc_attr(self::getWeekdaySpec($weekday)) . '">';
+            // Tagesname einmal ausgeben
+            $output .= '<div class="hoursAvailable">';
+            $output .= '<span class="weekday">';
             $output .= '<span class="dayname">' . esc_html(self::getWeekday($weekday, $lang)) . ': </span>';
-            $output .= '<span class="daytime"><span itemprop="opens">' . esc_html($from) . '</span> - ';
-            $output .= '<span itemprop="close">' . esc_html($to) . '</span></span>';
             $output .= '</span>';
 
-            if (!empty($comment)) {
-                $output .= '<p class="comment" itemprop="description">' . esc_html($comment) . '</p>';
-            }
-            if (!empty($url)) {
-                $output .= '<p class="url" itemprop="url"><a href="' . esc_url($url) . '">' . esc_html($url) . '</a></p>';
+            $slotCount = count($rowsOfDay);
+            $slotIndex = 0;
+
+            foreach ($rowsOfDay as $row) {
+                $from    = isset($row['from']) ? (string) $row['from'] : '';
+                $to      = isset($row['to']) ? (string) $row['to'] : '';
+                $comment = isset($row['comment']) ? (string) $row['comment'] : '';
+                $url     = isset($row['url']) ? (string) $row['url'] : '';
+
+                // Einzelnen Slot als OpeningHoursSpecification ausgeben
+                $output .= '<span class="daytime" itemprop="hoursAvailable" itemscope itemtype="https://schema.org/OpeningHoursSpecification">';
+                $output .= '<meta itemprop="dayOfWeek" content="https://schema.org/' . esc_attr(self::getWeekdaySpec($weekday)) . '">';
+
+                if ($from !== '' || $to !== '') {
+                    $output .= '<span class="time"><span itemprop="opens">' . esc_html($from) . '</span> - ';
+                    $output .= '<span itemprop="close">' . esc_html($to) . '</span></span>';
+                }
+
+                if ($comment !== '') {
+                    $output .= ' <span class="comment" itemprop="description">' . esc_html($comment) . '</span>';
+                }
+
+                if ($url !== '') {
+                    $output .= ' (<span class="url" itemprop="url"><a href="' . esc_url($url) . '">' . esc_html($url) . '</a></span>)';
+                }
+
+                $output .= '</span>';
+
+                $slotIndex++;
+                if ($slotIndex < $slotCount) {
+                    // Trennung zwischen mehreren Slots am selben Tag
+                    $output .= ', ';
+                }
             }
 
             $output .= '</div>';
 
-            if ($num > 1) {
+            if ($numDays > 1) {
                 $output .= '</li>';
             }
         }
 
-        if ($num > 1) {
+        if ($numDays > 1) {
             $output .= '</ul>';
         }
 
@@ -210,7 +238,38 @@ class OpeningHours {
         }
 
         $output .= '</div>';
+
         return $output;
+    }
+
+    
+    
+     /**
+     * Gruppiert Stunden-Einträge nach Wochentag.
+     */
+    private function groupHoursByWeekday(array $rows): array {
+        $grouped = [];
+
+        foreach ($rows as $row) {
+            if (!is_array($row) || !isset($row['weekday'])) {
+                continue;
+            }
+
+            $weekday = (int) $row['weekday'];
+            if ($weekday < 0 || $weekday > 6) {
+                continue;
+            }
+
+            if (!isset($grouped[$weekday])) {
+                $grouped[$weekday] = [];
+            }
+
+            $grouped[$weekday][] = $row;
+        }
+
+        ksort($grouped);
+
+        return $grouped;
     }
 
     /**
