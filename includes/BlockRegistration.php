@@ -278,12 +278,28 @@ class BlockRegistration {
             ($isVisible('url') && $url)
         );
         $hasOfficeHours = !empty($formattedOfficeHours);
+        $hasImage = !empty($imageHtml);
+        $hasDescription = !empty($displayText);
+
+        $wrapperClass = '';
+        if ($hasAddress) {
+            $wrapperClass = ' has_address';
+        }
+        if ($hasContact) {
+            $wrapperClass = $wrapperClass . ' has_contact';
+        }
+        if ($hasDescription) {
+            $wrapperClass = $wrapperClass . ' has_desc';
+        }
+        if ($hasImage) {
+            $wrapperClass = $wrapperClass . ' has_image';
+        }
 
         $title_id = 'service-title-' . wp_unique_id();
 
         ob_start();
         ?>
-        <article class="rrze-elements-blocks_service_card" aria-labelledby="<?php echo esc_attr($title_id); ?>">
+        <article class="rrze-elements-blocks_service_card<?php echo($wrapperClass); ?>" aria-labelledby="<?php echo esc_attr($title_id); ?>">
             <?php if ($imageHtml): ?>
                 <figure class="rrze-elements-blocks_service__figure">
                     <?php echo $imageHtml; ?>
@@ -302,7 +318,7 @@ class BlockRegistration {
 
             <?php if ($hasAddress): ?>
                 <section class="rrze-elements-blocks_service__information" aria-labelledby="addr-h">
-                    <h3 id="addr-h"><?php esc_html_e('Adresse', 'rrze-faudir'); ?></h3>
+                    <h3 class="addr-h"><?php esc_html_e('Adresse', 'rrze-faudir'); ?></h3>
                     <address>
                         <?php if ($isVisible('street') && $street): ?>
                             <span><?php echo esc_html($street); ?><br/></span>
@@ -327,7 +343,7 @@ class BlockRegistration {
 
             <?php if ($hasOfficeHours): ?>
                 <section aria-labelledby="hours-h">
-                    <h3 id="hours-h"><?php esc_html_e('Office hours', 'rrze-faudir'); ?></h3>
+                    <h3 class="hours-h"><?php esc_html_e('Office hours', 'rrze-faudir'); ?></h3>
                     <ul class="list-icons">
                         <?php foreach ($formattedOfficeHours as $index => $entry): ?>
                             <li><?php echo esc_html($entry); ?></li>
@@ -337,9 +353,9 @@ class BlockRegistration {
             <?php endif; ?>
 
             <?php if ($hasContact): ?>
-                <section aria-labelledby="contact-h">
-                    <h3 id="contact-h"><?php esc_html_e('Contact', 'rrze-faudir'); ?></h3>
-                    <address>
+                <section class="contact-section" aria-labelledby="contact-h">
+                    <h3 class="contact-h"><?php esc_html_e('Contact', 'rrze-faudir'); ?></h3>
+                    <address class="contact-address">
                         <?php if ($isVisible('phone') && $phone): ?>
                             <p>
                                 <a href="tel:<?php echo esc_attr(preg_replace('/\s+/', '', $phone)); ?>">
