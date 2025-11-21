@@ -250,7 +250,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
           </InspectorControls>
           <article
             {...props}
-            className={`rrze-elements-blocks_service_card ${props.className ?? ''}`}
+            className={`faudir rrze-elements-blocks_service_card ${props.className ?? ''}`}
             aria-labelledby="service-title"
           >
             <figure className="rrze-elements-blocks_service__figure">

@@ -1,3 +1,5 @@
+@forward "../../scss/icons/icons";
+
 @mixin mobile-service-grid {
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
@@ -29,7 +31,29 @@ article.rrze-elements-blocks_service_card {
 	}
 }
 
+article.rrze-elements-blocks_service_card.no_image {
+	div.rrze-elements-blocks_service__information_card{
+		margin-top: 0;
+	}
+}
+
 article.rrze-elements-blocks_service_card div.rrze-elements-blocks_service__information_card {
+
+	.contact-section ul li::before {
+		content: initial;
+	}
+
+	div.workplace-hours ul {
+		padding-left: 0;
+	}
+
+	.hoursAvailable span.weekday{
+		font-weight: bold;
+	}
+
+	.workplace-hours li{
+		padding-bottom: var(--Spacing-1, 1rem);
+	}
 
 	@include mobile-service-grid;
 	padding-inline: var(--Spacing-4x, 2rem);
@@ -119,8 +143,8 @@ article.rrze-elements-blocks_service_card div.rrze-elements-blocks_service__info
 				position: absolute;
 				content: "";
 				background: #fff;
-				top: 12%;
-				height: 25%;
+				top: 80px;
+				height: 160px;
 				right: 96%;
 			}
 		}

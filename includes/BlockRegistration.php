@@ -216,10 +216,11 @@ class BlockRegistration {
             return '';
         }
 
-        $orgData   = $organization->toArray();
-        $address   = isset($orgData['address']) && is_array($orgData['address']) ? $orgData['address'] : [];
-        $name      = $orgData['name'] ?? '';
-        $officeRaw = $orgData['officeHours'] ?? ($organization->openingHours?->officeHours ?? []);
+        $orgData = $organization->toArray();
+        $address = isset($orgData['address']) && is_array($orgData['address']) ? $orgData['address'] : [];
+        $name    = $orgData['name'] ?? '';
+
+        $openingHours = $organization->openingHours ?? new OpeningHours($orgData);
 
         $visibleFields = self::get_service_visible_fields($attributes['visibleFields'] ?? null);
         $isVisible = fn(string $field): bool => in_array($field, $visibleFields, true);
@@ -264,9 +265,16 @@ class BlockRegistration {
 
         $displayText = !empty($attributes['displayText']) ? wp_kses_post($attributes['displayText']) : '';
 
-        $formattedOfficeHours = $isVisible('officeHours')
-            ? self::format_service_hours($officeRaw)
-            : [];
+        $officeHoursLabel = __('Office hours', 'rrze-faudir');
+        $officeHoursHtml = '';
+        if ($isVisible('officeHours') && $openingHours instanceof OpeningHours) {
+            $officeHoursHtml = $openingHours->getConsultationsHours(
+                'officeHours',
+                null,
+                self::get_opening_hours_lang(),
+                $officeHoursLabel
+            );
+        }
 
         $hasAddress = (
             ($isVisible('street') && $street) ||
@@ -277,29 +285,20 @@ class BlockRegistration {
             ($isVisible('mail') && $mail) ||
             ($isVisible('url') && $url)
         );
-        $hasOfficeHours = !empty($formattedOfficeHours);
+        $hasOfficeHours = !empty(trim($officeHoursHtml));
         $hasImage = !empty($imageHtml);
         $hasDescription = !empty($displayText);
 
         $wrapperClass = '';
-        if ($hasAddress) {
-            $wrapperClass = ' has_address';
-        }
-        if ($hasContact) {
-            $wrapperClass = $wrapperClass . ' has_contact';
-        }
-        if ($hasDescription) {
-            $wrapperClass = $wrapperClass . ' has_desc';
-        }
-        if ($hasImage) {
-            $wrapperClass = $wrapperClass . ' has_image';
+        if (!$hasImage) {
+            $wrapperClass = $wrapperClass . ' no_image';
         }
 
         $title_id = 'service-title-' . wp_unique_id();
 
         ob_start();
         ?>
-        <article class="rrze-elements-blocks_service_card<?php echo($wrapperClass); ?>" aria-labelledby="<?php echo esc_attr($title_id); ?>">
+        <article class="faudir rrze-elements-blocks_service_card<?php echo($wrapperClass); ?>" aria-labelledby="<?php echo esc_attr($title_id); ?>">
             <?php if ($imageHtml): ?>
                 <figure class="rrze-elements-blocks_service__figure">
                     <?php echo $imageHtml; ?>
@@ -343,41 +342,37 @@ class BlockRegistration {
 
             <?php if ($hasOfficeHours): ?>
                 <section aria-labelledby="hours-h">
-                    <h3 class="hours-h"><?php esc_html_e('Office hours', 'rrze-faudir'); ?></h3>
-                    <ul class="list-icons">
-                        <?php foreach ($formattedOfficeHours as $index => $entry): ?>
-                            <li><?php echo esc_html($entry); ?></li>
-                        <?php endforeach; ?>
-                    </ul>
+                    <h3 class="hours-h"><?php echo esc_html($officeHoursLabel); ?></h3>
+                    <?php echo $officeHoursHtml; ?>
                 </section>
             <?php endif; ?>
 
             <?php if ($hasContact): ?>
                 <section class="contact-section" aria-labelledby="contact-h">
                     <h3 class="contact-h"><?php esc_html_e('Contact', 'rrze-faudir'); ?></h3>
-                    <address class="contact-address">
+                    <ul class="contact-address icon icon-list">
                         <?php if ($isVisible('phone') && $phone): ?>
-                            <p>
+                            <li>
                                 <a href="tel:<?php echo esc_attr(preg_replace('/\s+/', '', $phone)); ?>">
                                     <?php echo esc_html($phone); ?>
                                 </a>
-                            </p>
+                            </li>
                         <?php endif; ?>
                         <?php if ($isVisible('mail') && $mail): ?>
-                            <p>
+                            <li>
                                 <a href="mailto:<?php echo esc_attr($mail); ?>">
                                     <?php echo esc_html($mail); ?>
                                 </a>
-                            </p>
+                            </li>
                         <?php endif; ?>
                         <?php if ($isVisible('url') && $url): ?>
-                            <p>
+                            <li>
                                 <a href="<?php echo esc_url($url); ?>">
                                     <?php echo esc_html($url); ?>
                                 </a>
-                            </p>
+                            </li>
                         <?php endif; ?>
-                    </address>
+                    </ul>
                 </section>
             <?php endif; ?>
             </div>
@@ -407,56 +402,18 @@ class BlockRegistration {
         return self::SERVICE_DEFAULT_VISIBLE_FIELDS;
     }
 
-    private static function format_service_hours($hours): array {
-        if (!is_array($hours) || empty($hours)) {
-            return [];
+    /**
+     * Keeps OpeningHours output in sync with the current site language.
+     */
+    private static function get_opening_hours_lang(): string {
+        $locale = '';
+        if (function_exists('determine_locale')) {
+            $locale = (string) determine_locale();
+        } elseif (function_exists('get_locale')) {
+            $locale = (string) get_locale();
         }
 
-        $formatted = [];
-        foreach ($hours as $entry) {
-            if (!is_array($entry)) {
-                continue;
-            }
-            $weekdayRaw = $entry['weekday'] ?? null;
-            $weekday = is_numeric($weekdayRaw) ? (int) $weekdayRaw : null;
-            if ($weekday !== null) {
-                if ($weekday > 6) {
-                    $weekday = $weekday % 7;
-                }
-                if ($weekday < 0) {
-                    $weekday = null;
-                }
-            }
-            $weekdayLabel = self::get_weekday_label($weekday);
-            $from = isset($entry['from']) ? (string) $entry['from'] : '';
-            $to   = isset($entry['to']) ? (string) $entry['to'] : '';
-
-            $timeLabel = '';
-            if ($from && $to) {
-                $timeLabel = sprintf('%s – %s', $from, $to);
-            } elseif ($from || $to) {
-                $timeLabel = $from ?: $to;
-            }
-
-            $parts = array_filter([$weekdayLabel, $timeLabel]);
-            if (!empty($parts)) {
-                $formatted[] = implode(': ', $parts);
-            }
-        }
-
-        return $formatted;
-    }
-
-    private static function get_weekday_label(?int $weekday): string {
-        $map = [
-            0 => __('Sunday', 'rrze-faudir'),
-            1 => __('Monday', 'rrze-faudir'),
-            2 => __('Tuesday', 'rrze-faudir'),
-            3 => __('Wednesday', 'rrze-faudir'),
-            4 => __('Thursday', 'rrze-faudir'),
-            5 => __('Friday', 'rrze-faudir'),
-            6 => __('Saturday', 'rrze-faudir'),
-        ];
-        return $map[$weekday ?? -1] ?? '';
+        $prefix = strtolower(substr($locale, 0, 2));
+        return ($prefix === 'en') ? 'en' : 'de';
     }
 }
