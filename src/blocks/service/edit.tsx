@@ -197,7 +197,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
 
   return (
     <>
-      { orgid ? (
+      {orgid ? (
         <>
           <BlockControls>
             <ImageSelector mediaId={imageId} mediaURL={imageURL} mediaWidth={imageWidth} mediaHeight={imageHeight}
@@ -258,86 +258,88 @@ export default function Edit({attributes, setAttributes}: EditProps) {
                    src={imageURL} width={imageWidth} alt="" height={imageHeight}/>
             </figure>
 
-            {organizationName && isFieldVisible("name") && (
-              <header className="rrze-elements-blocks_service__meta_headline">
-                <h2 id="service-title" className="meta-headline">{organizationName}</h2>
-                <RichText value={displayText} tagName={"p"}
-                          placeholder={__("Add your service description...", "rrze-faudir")}
-                          onChange={(newText) => setAttributes({displayText: newText})}/>
-              </header>
-            )}
+            <div className={"rrze-elements-blocks_service__info"}>
+              {organizationName && isFieldVisible("name") && (
+                <header className="rrze-elements-blocks_service__meta_headline">
+                  <h2 id="service-title" className="meta-headline">{organizationName}</h2>
+                  <RichText value={displayText} tagName={"p"}
+                            placeholder={__("Add your service description...", "rrze-faudir")}
+                            onChange={(newText) => setAttributes({displayText: newText})}/>
+                </header>
+              )}
 
-            {hasAddress && (
-              <section className="rrze-elements-blocks_service__information" aria-labelledby="addr-h">
-                <h3 id="addr-h">{__("Adresse", "rrze-faudir")}</h3>
-                <address>
-                  {street && isFieldVisible("street") && <span>{street}<br/></span>}
-                  {(zip || city) && (
-                    <span>{[
-                      isFieldVisible("zip") ? zip : null,
-                      isFieldVisible("city") ? city : null,
-                    ].filter(Boolean).join(' ')}
-                </span>
-                  )}
-                </address>
-              </section>
-            )}
-
-            {(showOfficeHours && formattedOfficeHours.length !== 0) && (
-              <section aria-labelledby="hours-h">
-                <h3 id="hours-h">{__("Office hours", "rrze-faudir")}</h3>
-                <ul className="list-icons">
-                  {formattedOfficeHours.map((entry, index) => (
-                    <li key={`office-hour-${index}`}>
-                      {entry}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-            {hasAnyContact && (
-              <>
-                <section aria-labelledby="contact-h">
-                  <h3 id="contact-h">{__("Contact", "rrze-faudir")}</h3>
+              {hasAddress && (
+                <section className="rrze-elements-blocks_service__information" aria-labelledby="addr-h">
+                  <h3 id="addr-h">{__("Adresse", "rrze-faudir")}</h3>
                   <address>
-                    {phone && isFieldVisible("phone") && (
-                      <p>
-                        <a href={`tel:${phone.replace(/\s+/g, '')}`}>
-                          {phone}
-                        </a>
-                      </p>
-                    )}
-                    {mail && isFieldVisible("mail") && (
-                      <p>
-                        <a href={`mailto:${mail}`}>
-                          {mail}
-                        </a>
-                      </p>
-                    )}
-                    {url && isFieldVisible("url") && (
-                      <p>
-                        <a href={url} target="_blank" rel="noreferrer">
-                          {url}
-                        </a>
-                      </p>
+                    {street && isFieldVisible("street") && <span>{street}<br/></span>}
+                    {(zip || city) && (
+                      <span>{[
+                        isFieldVisible("zip") ? zip : null,
+                        isFieldVisible("city") ? city : null,
+                      ].filter(Boolean).join(' ')}
+                </span>
                     )}
                   </address>
                 </section>
-              </>
-            )}
+              )}
+
+              {(showOfficeHours && formattedOfficeHours.length !== 0) && (
+                <section aria-labelledby="hours-h">
+                  <h3 id="hours-h">{__("Office hours", "rrze-faudir")}</h3>
+                  <ul className="list-icons">
+                    {formattedOfficeHours.map((entry, index) => (
+                      <li key={`office-hour-${index}`}>
+                        {entry}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+              {hasAnyContact && (
+                <>
+                  <section aria-labelledby="contact-h">
+                    <h3 id="contact-h">{__("Contact", "rrze-faudir")}</h3>
+                    <address>
+                      {phone && isFieldVisible("phone") && (
+                        <p>
+                          <a href={`tel:${phone.replace(/\s+/g, '')}`}>
+                            {phone}
+                          </a>
+                        </p>
+                      )}
+                      {mail && isFieldVisible("mail") && (
+                        <p>
+                          <a href={`mailto:${mail}`}>
+                            {mail}
+                          </a>
+                        </p>
+                      )}
+                      {url && isFieldVisible("url") && (
+                        <p>
+                          <a href={url} target="_blank" rel="noreferrer">
+                            {url}
+                          </a>
+                        </p>
+                      )}
+                    </address>
+                  </section>
+                </>
+              )}
+            </div>
           </article>
         </>
-        ):(
-      <Placeholder
-        label={__("FAUdir Service-Block", "rrze-faudir")}
-        icon={<SVG xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                   fill="evenodd"><Path
-          d="M440-120v-80h320v-284q0-117-81.5-198.5T480-764q-117 0-198.5 81.5T200-484v244h-40q-33 0-56.5-23.5T80-320v-80q0-21 10.5-39.5T120-469l3-53q8-68 39.5-126t79-101q47.5-43 109-67T480-840q68 0 129 24t109 66.5Q766-707 797-649t40 126l3 52q19 9 29.5 27t10.5 38v92q0 20-10.5 38T840-249v49q0 33-23.5 56.5T760-120H440Zm-80-280q-17 0-28.5-11.5T320-440q0-17 11.5-28.5T360-480q17 0 28.5 11.5T400-440q0 17-11.5 28.5T360-400Zm240 0q-17 0-28.5-11.5T560-440q0-17 11.5-28.5T600-480q17 0 28.5 11.5T640-440q0 17-11.5 28.5T600-400Zm-359-62q-7-106 64-182t177-76q89 0 156.5 56.5T720-519q-91-1-167.5-49T435-698q-16 80-67.5 142.5T241-462Z"/></SVG>}
-        instructions={__("Insert your FAUdir Folder/Org Id to display service information.", "rrze-faudir")}
-      >
-        <OrganizationIdentifierDetector attributes={attributes} setAttributes={setAttributes} />
-      </Placeholder>
-    )}
+      ) : (
+        <Placeholder
+          label={__("FAUdir Service-Block", "rrze-faudir")}
+          icon={<SVG xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                     fill="evenodd"><Path
+            d="M440-120v-80h320v-284q0-117-81.5-198.5T480-764q-117 0-198.5 81.5T200-484v244h-40q-33 0-56.5-23.5T80-320v-80q0-21 10.5-39.5T120-469l3-53q8-68 39.5-126t79-101q47.5-43 109-67T480-840q68 0 129 24t109 66.5Q766-707 797-649t40 126l3 52q19 9 29.5 27t10.5 38v92q0 20-10.5 38T840-249v49q0 33-23.5 56.5T760-120H440Zm-80-280q-17 0-28.5-11.5T320-440q0-17 11.5-28.5T360-480q17 0 28.5 11.5T400-440q0 17-11.5 28.5T360-400Zm240 0q-17 0-28.5-11.5T560-440q0-17 11.5-28.5T600-480q17 0 28.5 11.5T640-440q0 17-11.5 28.5T600-400Zm-359-62q-7-106 64-182t177-76q89 0 156.5 56.5T720-519q-91-1-167.5-49T435-698q-16 80-67.5 142.5T241-462Z"/></SVG>}
+          instructions={__("Insert your FAUdir Folder/Org Id to display service information.", "rrze-faudir")}
+        >
+          <OrganizationIdentifierDetector attributes={attributes} setAttributes={setAttributes}/>
+        </Placeholder>
+      )}
     </>
   );
 }

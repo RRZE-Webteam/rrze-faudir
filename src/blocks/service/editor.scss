@@ -6,3 +6,22 @@
 article.rrze-elements-blocks_service_card figure.rrze-elements-blocks_service__figure {
 	z-index: 0;
 }
+
+.wp-block-rrze-faudir-service.rrze-elements-blocks_service_card{
+	margin-inline: var(--faue_wide-max-width_bleed_inline-margin);
+	max-width: var(--wide-max-width);
+
+	figure.rrze-elements-blocks_service__figure{
+		grid-column-start: 7;
+	}
+
+	div.rrze-elements-blocks_service__info{
+		grid-column: 1/12;
+		//display: grid;
+		//grid-template-rows: repeat(8, 1fr);
+		//
+		//>* {
+		//	grid-column: span 8;
+		//}
+	}
+}
