@@ -84,7 +84,7 @@ class Shortcode {
         unset($atts['hide']);
         
 
-     //   do_action( 'rrze.log.notice','FAUdir\Shortcode (fetch_fau_data). Modified Args: ', $atts);
+       // do_action( 'rrze.log.notice','FAUdir\Shortcode (fetch_fau_data). Modified Args: ', $atts);
         
         // Enqueue CSS for output
         wp_enqueue_style('rrze-faudir');
@@ -1215,7 +1215,7 @@ class Shortcode {
           //     $field = $criterion; // wie benannt gespeichert
                foreach ($persons as $p) {
                    $val = (string)($p[$field] ?? '');
-                   $key = 'v:' . mb_strtolower($val, 'UTF-8');
+                   $key = 'v:' . FaudirUtils::lower($val);
                    $buckets[$key][] = $p;
                }
                // Reihenfolge der Buckets nach sichtbarem Wert sortieren

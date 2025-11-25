@@ -661,16 +661,17 @@ class Person {
    /*
     * Get Image as HTML or Replacement
     */
-   public function getImage(string $css_classes = '', bool $signature = true, ?bool $figcaption = null, ?bool $displaycopyright = null): string {
+   public function getImage(string $css_classes = '', ?bool $signature = null, ?bool $figcaption = null, ?bool $displaycopyright = null): string {
         $postid = !empty($this->postid) ? $this->postid : $this->getPostId();
 
         if (empty($this->config)) {
                 $this->setConfig();
         }
         $opt = $this->config->getOptions();        
-        $visible_copyrightmeta    = filter_var($opt['default_visible_copyrightmeta']    ?? true, FILTER_VALIDATE_BOOLEAN);
-        $visible_bildunterschrift = filter_var($opt['default_visible_bildunterschrift'] ?? true, FILTER_VALIDATE_BOOLEAN);
-
+        $visible_copyrightmeta      = filter_var($opt['default_visible_copyrightmeta']    ?? true, FILTER_VALIDATE_BOOLEAN);
+        $visible_bildunterschrift   = filter_var($opt['default_visible_bildunterschrift'] ?? true, FILTER_VALIDATE_BOOLEAN);
+        $placeholder_with_sign      = filter_var($opt['default_placeholder_image_with_signature'] ?? true, FILTER_VALIDATE_BOOLEAN);
+        
         // Wenn Argumente nicht gesetzt wurden, auf Optionen zurückfallen
         if ($figcaption === null) {
             $figcaption = $visible_bildunterschrift;
@@ -678,8 +679,11 @@ class Person {
         if ($displaycopyright === null) {
             $displaycopyright = $visible_copyrightmeta;
         }
-
-       if ($postid !== 0) {
+        if ($signature === null) {
+            $signature = $placeholder_with_sign;
+        }
+        
+        if ($postid !== 0) {
            $thumb_id = get_post_thumbnail_id($postid);
            $img_src  = $thumb_id ? wp_get_attachment_image_src($thumb_id, 'full') : false;
 

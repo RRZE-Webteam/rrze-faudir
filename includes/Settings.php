@@ -106,7 +106,13 @@ class Settings {
             'rrze_faudir_settings_general',
             'rrze_faudir_misc_section'
         );
-
+        add_settings_field(
+            'rrze_faudir_default_placeholder_image_with_signature',
+            __('Image Placeholder', 'rrze-faudir'),
+            [$this, 'render_default_placeholder_image_with_signature'],
+            'rrze_faudir_settings_general',
+            'rrze_faudir_misc_section'
+        );
         add_settings_field(
             'rrze_faudir_default_visible_bildunterschrift',
             __('Image caption visibility', 'rrze-faudir'),
@@ -443,6 +449,23 @@ class Settings {
         echo '</label>';
     }
 
+    
+     public function render_default_placeholder_image_with_signature(): void {
+        $options = get_option('rrze_faudir_options');
+        if (!isset($options['default_placeholder_image_with_signature'])) {
+            $config = new Config();
+            // Default aus der Config übernehmen (bool → int)
+            $options['default_placeholder_image_with_signature'] = (int) $config->get('default_placeholder_image_with_signature');
+        }
+        $checked = !empty($options['default_placeholder_image_with_signature']);
+
+        echo '<label>';
+        echo '<input type="hidden" name="rrze_faudir_options[default_placeholder_image_with_signature]" value="0">';
+        echo '<input type="checkbox" name="rrze_faudir_options[default_placeholder_image_with_signature]" value="1" ' . checked(true, $checked, false) . '>';
+        echo ' <span>' . esc_html__('Show image placeholder', 'rrze-faudir') . '</span>';
+        echo '</label>';
+    }
+    
     public function render_default_visible_bildunterschrift(): void {
         $options = get_option('rrze_faudir_options');
         if (!isset($options['default_visible_bildunterschrift'])) {
