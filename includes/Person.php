@@ -512,6 +512,9 @@ class Person {
         if (empty($this->givenName) && empty($this->familyName)) {
             return '';
         }
+        // Sperrliste (immer kleingeschrieben vergleichen)
+        $restricted_abbr = ['ss', 'sex'];
+        
         $firstLetter = $middleLetter = $lastLetter = $res = '';
         
         if (!empty($this->givenName)) {
@@ -527,6 +530,19 @@ class Person {
             $res .= mb_strtoupper($lastLetter, 'UTF-8');
         }
 
+        // Prüfen gegen Sperrliste (case-insensitive)
+        $resLower = mb_strtolower($res, 'UTF-8');
+        if (in_array($resLower, $restricted_abbr, true)) {
+             if ((!empty($this->familyName)) &&  (mb_strlen((string) $this->givenName, 'UTF-8') >=2)) {
+                $addletter = mb_strtolower(mb_substr($this->familyName, 1, 1, 'UTF-8'),'UTF-8'); 
+             } elseif ((!empty($this->givenName)) &&  (mb_strlen((string) $this->givenName, 'UTF-8') >=2)) {
+                 $addletter = mb_strtolower(mb_substr($this->givenName, 1, 1, 'UTF-8'),'UTF-8'); 
+             } else {
+                 $addletter = ".";
+             }
+             $res .= $addletter;
+        }
+        
         return $res;        
     }  
     
