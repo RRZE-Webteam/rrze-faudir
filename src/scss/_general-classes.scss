@@ -3,10 +3,11 @@
 /* Classes to use for all formats and backend
 /* Created on : 30.01.2025, 10:03:17
 /*----------------------------------------------------------------------------*/
-@use 'mixins' as *;
+@use 'mixins';
+
 .faudir {
     .screen-reader-text {
-	@include sr-only();	
+	@include mixins.sr-only();
     }
     .text-list {
 	 ul {
@@ -29,7 +30,7 @@
     .text-list,
     .icon-list {
 	.website.title {
-	    @include sr-only();	  
+	    @include mixins.sr-only();
 	}  
     }
     
@@ -131,6 +132,7 @@
     
     .namepart {
 	white-space: nowrap;
+	text-wrap: balance;
     }
     
     .hoursAvailable {

@@ -1,7 +1,7 @@
 /*
 Settings for FAU Einrichtungen theme
 */
-@use 'mixins' as *;
+@use 'mixins';
 
 .fau-theme {
     .content-row .entry-content {
@@ -13,7 +13,7 @@ Settings for FAU Einrichtungen theme
     .faudir {
 	.address-title, 
 	.contact-title {
-	    @include sr-only();	
+	     @include mixins.sr-only();
 	}
 	
     }
