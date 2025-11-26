@@ -59,7 +59,7 @@ if (!defined('ABSPATH')) {
                 <section class="format-page-container" aria-labelledby="<?php echo $aria_id;?>" itemscope itemtype="https://schema.org/Person">
                     <?php if (in_array('image', $show_fields)) {
                     
-                     $image_content = $person->getImage();
+                     $image_content = $person->getImage('',false);
                         if (!empty($image_content)) { ?>
                         <div class="profile-image-section"> 
                             <?php echo $image_content;?>
