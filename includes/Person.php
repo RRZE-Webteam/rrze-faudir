@@ -678,9 +678,18 @@ class Person {
    /*
     * Get Image as HTML or Replacement
     */
-   public function getImage(string $css_classes = '', ?bool $signature = null, ?bool $figcaption = null, ?bool $displaycopyright = null): string {
+   public function getImage(string $css_classes = '', ?bool $signature = null, ?bool $figcaption = null, ?bool $displaycopyright = null, ?string $link_url = null): string {
         $postid = !empty($this->postid) ? $this->postid : $this->getPostId();
 
+        // Link-URL validieren
+        $valid_link_url = null;
+        if (is_string($link_url)) {
+            $link_url = trim($link_url);
+            if ($link_url !== '' && filter_var($link_url, FILTER_VALIDATE_URL)) {
+                $valid_link_url = $link_url;
+            }
+        }
+    
         if (empty($this->config)) {
                 $this->setConfig();
         }
@@ -845,7 +854,9 @@ class Person {
                 
 
                $html .= '</figure>';
-
+                if ($valid_link_url !== null) {
+                    $html = '<a href="' . esc_url($valid_link_url) . '">' . $html . '</a>';
+                }
                return $html;
            }
        }
@@ -858,6 +869,11 @@ class Person {
            $html .= ' class="' . esc_attr($css_classes) . '">';
            $html .= '<span class="text">' . esc_html($alt) . '</span>';
            $html .= '</figure>';
+           
+            if ($valid_link_url !== null) {
+                $html = '<a href="' . esc_url($valid_link_url) . '">' . $html . '</a>';
+            }
+
            return $html;
        }
 

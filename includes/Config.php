@@ -31,7 +31,7 @@ class Config {
             'list'          => ['displayname', 'honorificPrefix','honorificSuffix', 'givenName', 'titleOfNobility', 'familyName', 'jobTitle', 'phone', 'fax',  'url', 'email', 'socialmedia', 'organization','address', 'room', 'floor', 'city', 'faumap', 'link', 'format_displayname'],
             'compact'       => ['image', 'displayname', 'honorificPrefix','honorificSuffix', 'givenName', 'titleOfNobility', 'familyName', 'jobTitle', 'phone', 'fax', 'email', 'url', 'socialmedia', 'organization', 'address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],
             'page'          => ['image', 'displayname', 'jobTitle', 'phone', 'fax', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'content', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'format_displayname'],
-            'card'          => ['image', 'displayname','honorificPrefix','honorificSuffix', 'givenName',  'titleOfNobility', 'familyName', 'jobTitle', 'phone', 'fax', 'organization', 'url', 'email', 'socialmedia', 'link', 'format_displayname'],
+            'card'          => ['image', 'displayname', 'givenName',  'familyName', 'jobTitle', 'phone', 'fax', 'organization', 'url', 'email', 'socialmedia', 'link', 'format_displayname'],
             'org-compact'   => [ 'name', 'alternateName', 'phone', 'fax', 'email', 'url', 'socialmedia','address', 'postalAddress', 'faumap', 'officehours', 'consultationhours', 'text'],
         ],
         'default_format'    => 'compact',

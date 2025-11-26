@@ -44,15 +44,12 @@ export const formatFields: FormatFieldsSet = {
   card: [
     'image',
     'displayName',
-    'honorificPrefix',
     'givenName',
     'familyName',
-    'honorificSuffix',
     'email',
     'phone',
     'jobTitle',
     'socialmedia',
-    'titleOfNobility',
     'organization',
   ],
   table: [
@@ -103,7 +100,7 @@ export const formatFields: FormatFieldsSet = {
 
 // Define required fields for each format
 export const requiredFields = {
-  card: ['displayname', 'honorificPrefix', 'givenName', 'familyName'],
+  card: ['displayname', 'givenName', 'familyName'],
   table: ['displayname', 'honorificPrefix', 'givenName', 'familyName'],
   list: ['displayname', 'honorificPrefix', 'givenName', 'familyName'],
   compact: ['displayname', 'honorificPrefix', 'givenName', 'familyName'],

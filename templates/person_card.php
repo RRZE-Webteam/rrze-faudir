@@ -50,27 +50,52 @@ if (!defined('ABSPATH')) {
                     $workplaces = $contact->getWorkplaces();                    
                 }
                 $aria_id = $person->getRandomId("section-title-");
+                
+                $showname = '';
+                
+                if (in_array('displayname', $show_fields)) {
+                     $showname = $displayname;
+                } elseif (in_array('familyname', $show_fields)) {       
+                    if (!empty($person->titleOfNobility))  { 
+                        $showname = $person->titleOfNobility.' ';
+                    }
+                   $showname .= $person->familyName;
+         
+                } elseif (in_array('givenname', $show_fields)) {    
+                    $showname = $person->givenName;    
+                }
+   
                 ?>
 
                 <section class="format-card-container" aria-labelledby="<?php echo $aria_id;?>" itemscope itemtype="https://schema.org/Person">
-                    <?php if (in_array('image', $show_fields) ) { ?>
+                    <?php if (in_array('image', $show_fields) ) {   ?>
                     <div class="profile-image-section">
-                        <?php echo $person->getImage(); ?>
+                        <?php 
+                        
+                        if ((empty($showname)) && (!empty($final_url))) {
+                            echo $person->getImage(link_url: $final_url);
+                        } else {
+                            echo $person->getImage();
+                        }
+                        
+                         ?>
                     </div>
                     <?php } ?>
                     <header class="profile-header">
                        <?php 
 
                         $value = '';
-                        if (!empty($final_url)) {
-                            $value .= '<a itemprop="url" href="'.esc_url($final_url).'">';     
+                        if (!empty($showname)) {
+                            if (!empty($final_url)) {
+                                $value .= '<a itemprop="url" href="'.esc_url($final_url).'">';     
+                            }
+                            $value .= $displayname;
+                            
+                            if (!empty($final_url)) {
+                                $value .= '</a>';
+                            }                        
+                            echo '<h1 id="'.$aria_id.'">'.$value.'</h1>';
                         }
-                        $value .= $displayname;
-                        if (!empty($final_url)) {
-                            $value .= '</a>';
-                        }                        
-                        echo '<h1 id="'.$aria_id.'">'.$value.'</h1>';
-                        
                         if (in_array('organization', $show_fields)) {
                             echo '<p class="organisation_name">'. $contact->getOrganizationName($lang).'</p>';
                         }
