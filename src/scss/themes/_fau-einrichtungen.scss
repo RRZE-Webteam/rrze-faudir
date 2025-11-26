@@ -1,10 +1,20 @@
 /*
 Settings for FAU Einrichtungen theme
 */
+@use 'mixins' as *;
+
 .fau-theme {
     .content-row .entry-content {
 	.faudir {		    
 	    overflow-x: auto;
 	}
     }    
+    
+    .faudir {
+	.address-title, 
+	.contact-title {
+	    @include sr-only();	
+	}
+	
+    }
 }

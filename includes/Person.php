@@ -513,7 +513,8 @@ class Person {
             return '';
         }
         // Sperrliste (immer kleingeschrieben vergleichen)
-        $restricted_abbr = ['ss', 'sex'];
+        $restricted_abbr = ['hj', 'kz', 'ns', 'sa', 'ss', 'sex'];
+            // gemäss: https://www.bundesverkehrsamt.online/verbotene-kennzeichen/
         
         $firstLetter = $middleLetter = $lastLetter = $res = '';
         

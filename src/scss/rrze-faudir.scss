@@ -3,6 +3,10 @@
 // Definition for Custom properties
 @use 'settings';
 
+// Mixins fpr misc classes
+@use 'mixins';
+
+// Global CSS Classes in .faudir context
 @use 'general-classes';
 
 // Settings-Page in Backend

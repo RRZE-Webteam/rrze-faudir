@@ -1,0 +1,17 @@
+/*----------------------------------------------------------------------------*/
+/* _mixins 
+/* Created on : 26.11.2025, 12:39:32
+/*----------------------------------------------------------------------------*/
+@mixin sr-only {
+    border: 0;
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    word-wrap: normal !important;
+}
+
+
