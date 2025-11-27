@@ -54,7 +54,8 @@
         "phone",
         "mail",
         "url",
-        "officeHours"
+        "officeHours",
+        "text"
       ]
     }
   },
