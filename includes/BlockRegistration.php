@@ -271,7 +271,14 @@ class BlockRegistration {
             );
         }
 
+        $language = self::get_opening_hours_lang();
+        $apiTextContent = '';
+        if ($isVisible('text') && method_exists($organization, 'getContentText')) {
+            $apiTextContent = $organization->getContentText($language);
+        }
+
         $displayText = !empty($attributes['displayText']) ? wp_kses_post($attributes['displayText']) : '';
+        $descriptionHtml = $apiTextContent ?: $displayText;
 
         $officeHoursLabel = __('Office hours', 'rrze-faudir');
         $officeHoursHtml = '';
@@ -279,7 +286,7 @@ class BlockRegistration {
             $officeHoursHtml = $openingHours->getConsultationsHours(
                 'officeHours',
                 null,
-                self::get_opening_hours_lang(),
+                $language,
                 $officeHoursLabel
             );
         }
@@ -295,7 +302,7 @@ class BlockRegistration {
         );
         $hasOfficeHours = !empty(trim($officeHoursHtml));
         $hasImage = !empty($imageHtml);
-        $hasDescription = !empty($displayText);
+        $hasDescription = !empty($descriptionHtml);
 
         $wrapperClass = '';
         if (!$hasImage) {
@@ -321,8 +328,8 @@ class BlockRegistration {
             <?php if ($isVisible('name') && $name): ?>
                 <header class="rrze-elements-blocks_service__meta_headline">
                     <h2 id="<?php echo esc_attr($title_id); ?>" class="meta-headline"><?php echo esc_html($name); ?></h2>
-                    <?php if (!empty($displayText)): ?>
-                        <?php echo $displayText; ?>
+                    <?php if (!empty($descriptionHtml)): ?>
+                        <?php echo $descriptionHtml; ?>
                     <?php endif; ?>
                 </header>
             <?php endif; ?>

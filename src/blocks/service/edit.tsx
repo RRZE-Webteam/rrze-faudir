@@ -102,6 +102,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
   const [contact, setContact] = useState<ContactData>({...emptyContact});
   const [officeHours, setOfficeHours] = useState<OfficeHour[]>([]);
   const [textContent, setTextContent] = useState<OrgDataShort[]>([]);
+  const [description, setDescription] = useState<string>("");
   const [dataViewDataBuffer, setDataViewDataBuffer] = useState([]);
   const resetOrgData = useCallback(() => {
     setOrganizationName("");
@@ -202,6 +203,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
       count++;
     });
 
+    setDescription(output);
     dataviewData.push({
       id: `content-${count}`,
       label: __("Text", "rrze-faudir"),
@@ -288,6 +290,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
                 {organizationName && isFieldVisible("name") && (
                   <header className="rrze-elements-blocks_service__meta_headline">
                     <h2 id="service-title" className="meta-headline">{organizationName}</h2>
+                    <p>{description}</p>
                   </header>
                 )}
 
