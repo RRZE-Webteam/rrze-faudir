@@ -512,6 +512,10 @@ class Person {
         if (empty($this->givenName) && empty($this->familyName)) {
             return '';
         }
+        // Sperrliste (immer kleingeschrieben vergleichen)
+        $restricted_abbr = ['hj', 'kz', 'ns', 'sa', 'ss', 'sex'];
+            // gemäss: https://www.bundesverkehrsamt.online/verbotene-kennzeichen/
+        
         $firstLetter = $middleLetter = $lastLetter = $res = '';
         
         if (!empty($this->givenName)) {
@@ -527,6 +531,19 @@ class Person {
             $res .= mb_strtoupper($lastLetter, 'UTF-8');
         }
 
+        // Prüfen gegen Sperrliste (case-insensitive)
+        $resLower = mb_strtolower($res, 'UTF-8');
+        if (in_array($resLower, $restricted_abbr, true)) {
+             if ((!empty($this->familyName)) &&  (mb_strlen((string) $this->givenName, 'UTF-8') >=2)) {
+                $addletter = mb_strtolower(mb_substr($this->familyName, 1, 1, 'UTF-8'),'UTF-8'); 
+             } elseif ((!empty($this->givenName)) &&  (mb_strlen((string) $this->givenName, 'UTF-8') >=2)) {
+                 $addletter = mb_strtolower(mb_substr($this->givenName, 1, 1, 'UTF-8'),'UTF-8'); 
+             } else {
+                 $addletter = ".";
+             }
+             $res .= $addletter;
+        }
+        
         return $res;        
     }  
     
@@ -661,16 +678,26 @@ class Person {
    /*
     * Get Image as HTML or Replacement
     */
-   public function getImage(string $css_classes = '', bool $signature = true, ?bool $figcaption = null, ?bool $displaycopyright = null): string {
+   public function getImage(string $css_classes = '', ?bool $signature = null, ?bool $figcaption = null, ?bool $displaycopyright = null, ?string $link_url = null): string {
         $postid = !empty($this->postid) ? $this->postid : $this->getPostId();
 
+        // Link-URL validieren
+        $valid_link_url = null;
+        if (is_string($link_url)) {
+            $link_url = trim($link_url);
+            if ($link_url !== '' && filter_var($link_url, FILTER_VALIDATE_URL)) {
+                $valid_link_url = $link_url;
+            }
+        }
+    
         if (empty($this->config)) {
                 $this->setConfig();
         }
         $opt = $this->config->getOptions();        
-        $visible_copyrightmeta    = filter_var($opt['default_visible_copyrightmeta']    ?? true, FILTER_VALIDATE_BOOLEAN);
-        $visible_bildunterschrift = filter_var($opt['default_visible_bildunterschrift'] ?? true, FILTER_VALIDATE_BOOLEAN);
-
+        $visible_copyrightmeta      = filter_var($opt['default_visible_copyrightmeta']    ?? true, FILTER_VALIDATE_BOOLEAN);
+        $visible_bildunterschrift   = filter_var($opt['default_visible_bildunterschrift'] ?? true, FILTER_VALIDATE_BOOLEAN);
+        $placeholder_with_sign      = filter_var($opt['default_placeholder_image_with_signature'] ?? true, FILTER_VALIDATE_BOOLEAN);
+        
         // Wenn Argumente nicht gesetzt wurden, auf Optionen zurückfallen
         if ($figcaption === null) {
             $figcaption = $visible_bildunterschrift;
@@ -678,8 +705,11 @@ class Person {
         if ($displaycopyright === null) {
             $displaycopyright = $visible_copyrightmeta;
         }
-
-       if ($postid !== 0) {
+        if ($signature === null) {
+            $signature = $placeholder_with_sign;
+        }
+        
+        if ($postid !== 0) {
            $thumb_id = get_post_thumbnail_id($postid);
            $img_src  = $thumb_id ? wp_get_attachment_image_src($thumb_id, 'full') : false;
 
@@ -824,7 +854,9 @@ class Person {
                 
 
                $html .= '</figure>';
-
+                if ($valid_link_url !== null) {
+                    $html = '<a href="' . esc_url($valid_link_url) . '">' . $html . '</a>';
+                }
                return $html;
            }
        }
@@ -837,6 +869,11 @@ class Person {
            $html .= ' class="' . esc_attr($css_classes) . '">';
            $html .= '<span class="text">' . esc_html($alt) . '</span>';
            $html .= '</figure>';
+           
+            if ($valid_link_url !== null) {
+                $html = '<a href="' . esc_url($valid_link_url) . '">' . $html . '</a>';
+            }
+
            return $html;
        }
 

@@ -1,10 +1,38 @@
 /*
 Settings for FAU Einrichtungen theme
 */
+@use '../mixins';
+
 .fau-theme {
     .content-row .entry-content {
 	.faudir {		    
 	    overflow-x: auto;
 	}
     }    
+    
+    .faudir {
+	--faudir-profile-padding: 0.5rem 0;
+	
+	
+	.address-title, 
+	.contact-title {
+	     @include mixins.sr-only();
+	}
+	h2.consultation-title {
+	   --faudir-h2-font-size: 1rem;
+	}
+    }
+
+    article.rrze-elements-blocks_service_card {
+	display: block !important;
+	
+	.rrze-elements-blocks_service__information_card .workplace-hours li {
+	    padding-bottom: 0.3rem;
+	}
+    }
+    
+    
+    .faudir__service .icon a {
+	border: none;
+    }
 }

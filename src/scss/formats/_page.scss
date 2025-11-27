@@ -29,6 +29,9 @@
 		"contentregion";
 	    margin-bottom: 1rem;
 	    
+
+	    
+	    
 	    .profile-image-section {
 		display: flex;
 		justify-content: center;
@@ -119,13 +122,13 @@
 	    
 	}
 	
-	@container faudir-page-container (max-width: 320px) {
+	@container faudir-page-container (max-width: 391px) {
 	    figure.signature {
 		display: none;
 	    }
 	}
 	
-	@container faudir-page-container (min-width: 320px) {
+	@container faudir-page-container (min-width: 392px) {
 		.format-page-container {
 		    --faudir-profile-image-section-width: 150px;
 		    --faudir-profile-image-section-height: 150px;
@@ -137,6 +140,7 @@
 			"details"
 			"contentregion";
 		    grid-template-columns: 1fr;
+		   
 		}
 		.format-page-container:has(.profile-image-section) {
 		   grid-template-areas:
@@ -162,7 +166,7 @@
 			"details"
 			"contentregion";
 		    grid-template-columns: 1fr;
-		    padding: 5px;
+		   
 		}
 		.format-page-container:has(.profile-image-section) {
 		   grid-template-areas:
@@ -213,7 +217,12 @@
 	    }
 	}
 
-	
+	@media (max-width: 768px) {
+	     .fau-theme & .format-page-container {
+		 padding-left: 5px;
+		 padding-right: 5px;
+	    }
+	}
 
     }
     

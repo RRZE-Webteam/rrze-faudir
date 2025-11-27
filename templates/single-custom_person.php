@@ -13,7 +13,7 @@ get_header();
 
 <main id="main" class="site-main faudir-custom-post">
     <?php
-    while (have_posts()) :
+    if (have_posts()) {
         the_post();
         
         // Get the person ID from post meta
@@ -52,7 +52,7 @@ get_header();
         </article>
 
     <?php
-    endwhile;
+    }
     ?>
 </main>
 

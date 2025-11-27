@@ -25,6 +25,7 @@ import {__} from "@wordpress/i18n";
 import OrganizationIdentifierDetector from "../components/OrganizationIdentifierDetector"
 import ImageSelector from "../components/ImageSelector"
 import ServiceDataView, {ServiceDataRow} from "../components/ServiceDataView";
+import "./editor.scss";
 
 type ContactData = {
   phone: string;
@@ -196,147 +197,149 @@ export default function Edit({attributes, setAttributes}: EditProps) {
 
   return (
     <>
-      { orgid ? (
-        <>
-          <BlockControls>
-            <ImageSelector mediaId={imageId} mediaURL={imageURL} mediaWidth={imageWidth} mediaHeight={imageHeight}
-                           setAttributes={setAttributes}/>
-            <ToolbarGroup>
+      <div {...props} >
+        {orgid ? (
+          <>
+            <BlockControls>
+              <ImageSelector mediaId={imageId} mediaURL={imageURL} mediaWidth={imageWidth} mediaHeight={imageHeight}
+                             setAttributes={setAttributes}/>
               <ToolbarGroup>
-                <ToolbarItem>
-                  {() => (
-                    <ToolbarButton
-                      label={__("Manage Data Visibility", "rrze-faudir")}
-                      icon={dataIcon}
-                      onClick={() => setModalDataView(true)}
-                    />
-                  )}
-                </ToolbarItem>
+                <ToolbarGroup>
+                  <ToolbarItem>
+                    {() => (
+                      <ToolbarButton
+                        label={__("Manage Data Visibility", "rrze-faudir")}
+                        icon={dataIcon}
+                        onClick={() => setModalDataView(true)}
+                      />
+                    )}
+                  </ToolbarItem>
+                </ToolbarGroup>
               </ToolbarGroup>
-            </ToolbarGroup>
-          </BlockControls>
-          {modalDataView && (
-            <Modal size={"large"} onRequestClose={() => setModalDataView(false)}>
-              <Notice isDismissible={false}
-                      spokenMessage={__("Please be aware, that all data displayed within the service block is in sync with the Portal FAUdir. You cannot change contact details from within your web page.", "rrze-faudir")}
-                      status="info">
-                {__('The data displayed below is in sync with FAUdir and cannot be changed from within your website. Contact data can only be edited within the FAUdir Portal.', "rrze-faudir")}
-              </Notice>
-              <ServiceDataView
-                data={dataviewData}
-                visibleFields={visibleFields}
-                onToggleField={toggleFieldVisibility}
-                search={false}
-              />
-            </Modal>
-          )}
-          <InspectorControls>
-            <PanelBody title={__("Organization", "rrze-faudir")} initialOpen={true}>
-              <OrganizationIdentifierDetector
-                attributes={attributes}
-                setAttributes={setAttributes}
-              />
-            </PanelBody>
-            <PanelBody title={__("Available data", "rrze-faudir")} initialOpen={false}>
-              <Button
-                variant="tertiary"
-                onClick={() => setModalDataView(true)}
-                disabled={modalDataView}
-              >
-                {__("Manage Data View", "rrze-faudir")}
-              </Button>
-            </PanelBody>
-          </InspectorControls>
-          <article
-            {...props}
-            className={`rrze-elements-blocks_service_card ${props.className ?? ''}`}
-            aria-labelledby="service-title"
-          >
-            <figure className="rrze-elements-blocks_service__figure">
-              <img className="rrze-elements-blocks_service__image"
-                   src={imageURL} width={imageWidth} alt="" height={imageHeight}/>
-            </figure>
-
-            {organizationName && isFieldVisible("name") && (
-              <header className="rrze-elements-blocks_service__meta_headline">
-                <h2 id="service-title" className="meta-headline">{organizationName}</h2>
-                <RichText value={displayText} tagName={"p"}
-                          placeholder={__("Add your service description...", "rrze-faudir")}
-                          onChange={(newText) => setAttributes({displayText: newText})}/>
-              </header>
+            </BlockControls>
+            {modalDataView && (
+              <Modal size={"large"} onRequestClose={() => setModalDataView(false)}>
+                <Notice isDismissible={false}
+                        spokenMessage={__("Please be aware, that all data displayed within the service block is in sync with the Portal FAUdir. You cannot change contact details from within your web page.", "rrze-faudir")}
+                        status="info">
+                  {__('The data displayed below is in sync with FAUdir and cannot be changed from within your website. Contact data can only be edited within the FAUdir Portal.', "rrze-faudir")}
+                </Notice>
+                <ServiceDataView
+                  data={dataviewData}
+                  visibleFields={visibleFields}
+                  onToggleField={toggleFieldVisibility}
+                  search={false}
+                />
+              </Modal>
             )}
+            <InspectorControls>
+              <PanelBody title={__("Organization", "rrze-faudir")} initialOpen={true}>
+                <OrganizationIdentifierDetector
+                  attributes={attributes}
+                  setAttributes={setAttributes}
+                />
+              </PanelBody>
+              <PanelBody title={__("Available data", "rrze-faudir")} initialOpen={false}>
+                <Button
+                  variant="tertiary"
+                  onClick={() => setModalDataView(true)}
+                  disabled={modalDataView}
+                >
+                  {__("Manage Data View", "rrze-faudir")}
+                </Button>
+              </PanelBody>
+            </InspectorControls>
+            <article
+              className={`faudir rrze-elements-blocks_service_card`}
+              aria-labelledby="service-title"
+            >
+              {attributes.imageURL &&
+              <figure className="rrze-elements-blocks_service__figure">
+                <img className="rrze-elements-blocks_service__image"
+                     src={imageURL} width={imageWidth} alt="" height={imageHeight}/>
+              </figure>
+              }
 
-            {hasAddress && (
-              <section className="rrze-elements-blocks_service__information" aria-labelledby="addr-h">
-                <h3 id="addr-h">{__("Adresse", "rrze-faudir")}</h3>
-                <address>
-                  {street && isFieldVisible("street") && <span>{street}<br/></span>}
-                  {(zip || city) && (
-                    <span>{[
-                      isFieldVisible("zip") ? zip : null,
-                      isFieldVisible("city") ? city : null,
-                    ].filter(Boolean).join(' ')}
+              <div className={"rrze-elements-blocks_service__info"}>
+                {organizationName && isFieldVisible("name") && (
+                  <header className="rrze-elements-blocks_service__meta_headline">
+                    <h2 id="service-title" className="meta-headline">{organizationName}</h2>
+                  </header>
+                )}
+
+                {hasAddress && (
+                  <section className="rrze-elements-blocks_service__information" aria-labelledby="addr-h">
+                    <h3 id="addr-h">{__("Adresse", "rrze-faudir")}</h3>
+                    <address>
+                      {street && isFieldVisible("street") && <span>{street}<br/></span>}
+                      {(zip || city) && (
+                        <span>{[
+                          isFieldVisible("zip") ? zip : null,
+                          isFieldVisible("city") ? city : null,
+                        ].filter(Boolean).join(' ')}
                 </span>
-                  )}
-                </address>
-              </section>
-            )}
+                      )}
+                    </address>
+                  </section>
+                )}
 
-            {(showOfficeHours && formattedOfficeHours.length !== 0) && (
-              <section aria-labelledby="hours-h">
-                <h3 id="hours-h">{__("Office hours", "rrze-faudir")}</h3>
-                <ul className="list-icons">
-                  {formattedOfficeHours.map((entry, index) => (
-                    <li key={`office-hour-${index}`}>
-                      {entry}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-            {hasAnyContact && (
-              <>
-                <section aria-labelledby="contact-h">
-                  <h3 id="contact-h">{__("Contact", "rrze-faudir")}</h3>
-                  <address>
-                    {phone && isFieldVisible("phone") && (
-                      <p>
-                        <a href={`tel:${phone.replace(/\s+/g, '')}`}>
-                          {phone}
-                        </a>
-                      </p>
-                    )}
-                    {mail && isFieldVisible("mail") && (
-                      <p>
-                        <a href={`mailto:${mail}`}>
-                          {mail}
-                        </a>
-                      </p>
-                    )}
-                    {url && isFieldVisible("url") && (
-                      <p>
-                        <a href={url} target="_blank" rel="noreferrer">
-                          {url}
-                        </a>
-                      </p>
-                    )}
-                  </address>
-                </section>
-              </>
-            )}
-          </article>
-        </>
-        ):(
-      <Placeholder
-        label={__("FAUdir Service-Block", "rrze-faudir")}
-        icon={<SVG xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                   fill="evenodd"><Path
-          d="M440-120v-80h320v-284q0-117-81.5-198.5T480-764q-117 0-198.5 81.5T200-484v244h-40q-33 0-56.5-23.5T80-320v-80q0-21 10.5-39.5T120-469l3-53q8-68 39.5-126t79-101q47.5-43 109-67T480-840q68 0 129 24t109 66.5Q766-707 797-649t40 126l3 52q19 9 29.5 27t10.5 38v92q0 20-10.5 38T840-249v49q0 33-23.5 56.5T760-120H440Zm-80-280q-17 0-28.5-11.5T320-440q0-17 11.5-28.5T360-480q17 0 28.5 11.5T400-440q0 17-11.5 28.5T360-400Zm240 0q-17 0-28.5-11.5T560-440q0-17 11.5-28.5T600-480q17 0 28.5 11.5T640-440q0 17-11.5 28.5T600-400Zm-359-62q-7-106 64-182t177-76q89 0 156.5 56.5T720-519q-91-1-167.5-49T435-698q-16 80-67.5 142.5T241-462Z"/></SVG>}
-        instructions={__("Insert your FAUdir Folder/Org Id to display service information.", "rrze-faudir")}
-      >
-        <OrganizationIdentifierDetector attributes={attributes} setAttributes={setAttributes} />
-      </Placeholder>
-    )}
+                {(showOfficeHours && formattedOfficeHours.length !== 0) && (
+                  <section aria-labelledby="hours-h">
+                    <h3 id="hours-h">{__("Office hours", "rrze-faudir")}</h3>
+                    <ul className="list-icons">
+                      {formattedOfficeHours.map((entry, index) => (
+                        <li key={`office-hour-${index}`}>
+                          {entry}
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
+                {hasAnyContact && (
+                  <>
+                    <section aria-labelledby="contact-h">
+                      <h3 id="contact-h">{__("Contact", "rrze-faudir")}</h3>
+                      <address>
+                        {phone && isFieldVisible("phone") && (
+                          <p>
+                            <a href={`tel:${phone.replace(/\s+/g, '')}`}>
+                              {phone}
+                            </a>
+                          </p>
+                        )}
+                        {mail && isFieldVisible("mail") && (
+                          <p>
+                            <a href={`mailto:${mail}`}>
+                              {mail}
+                            </a>
+                          </p>
+                        )}
+                        {url && isFieldVisible("url") && (
+                          <p>
+                            <a href={url}>
+                              {url}
+                            </a>
+                          </p>
+                        )}
+                      </address>
+                    </section>
+                  </>
+                )}
+              </div>
+            </article>
+          </>
+        ) : (
+          <Placeholder
+            label={__("FAUdir Service-Block", "rrze-faudir")}
+            icon={<SVG xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                       fill="evenodd"><Path
+              d="M440-120v-80h320v-284q0-117-81.5-198.5T480-764q-117 0-198.5 81.5T200-484v244h-40q-33 0-56.5-23.5T80-320v-80q0-21 10.5-39.5T120-469l3-53q8-68 39.5-126t79-101q47.5-43 109-67T480-840q68 0 129 24t109 66.5Q766-707 797-649t40 126l3 52q19 9 29.5 27t10.5 38v92q0 20-10.5 38T840-249v49q0 33-23.5 56.5T760-120H440Zm-80-280q-17 0-28.5-11.5T320-440q0-17 11.5-28.5T360-480q17 0 28.5 11.5T400-440q0 17-11.5 28.5T360-400Zm240 0q-17 0-28.5-11.5T560-440q0-17 11.5-28.5T600-480q17 0 28.5 11.5T640-440q0 17-11.5 28.5T600-400Zm-359-62q-7-106 64-182t177-76q89 0 156.5 56.5T720-519q-91-1-167.5-49T435-698q-16 80-67.5 142.5T241-462Z"/></SVG>}
+            instructions={__("Insert your FAUdir Folder/Org Id to display service information.", "rrze-faudir")}
+          >
+            <OrganizationIdentifierDetector attributes={attributes} setAttributes={setAttributes}/>
+          </Placeholder>
+        )}
+      </div>
     </>
   );
 }

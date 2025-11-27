@@ -82,6 +82,15 @@
 	.profile-header, .profile-details {
 	    text-align: center;
 	}
+	.profile-header {
+	    h1 {
+		margin-top: 1rem;
+		margin-bottom: 0.5rem;
+	    }
+	    .jobtitle {
+		margin-top: 0.5rem;
+	    }
+	}
     
     }
     @container faudir-card-container (min-width: 480px) {

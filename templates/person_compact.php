@@ -66,11 +66,14 @@ if (!defined('ABSPATH')) {
                 ?>
 
                 <section class="format-compact-container" aria-labelledby="<?php echo $aria_id;?>" itemscope itemtype="https://schema.org/Person">
-                    <?php if (in_array('image', $show_fields)) { ?>
-                    <div class="profile-image-section">
-                        <?php echo $person->getImage(); ?>
-                    </div>
-                    <?php } ?>
+                    <?php if (in_array('image', $show_fields)) { 
+                        $image_content = $person->getImage();
+                        if (!empty($image_content)) { ?>
+                        <div class="profile-image-section"> 
+                            <?php echo $image_content;?>
+                        </div>
+                        <?php }
+                    } ?>
                     <header class="profile-header">
                        <?php 
 
@@ -148,52 +151,7 @@ if (!defined('ABSPATH')) {
                         }
                         
                         
-                        if (in_array('officehours', $show_fields) || (in_array('consultationhours', $show_fields) )) {
-
-                            if (!empty($workplaces)) {
-                                
-                                if (count($workplaces) > 1) {
-                                    $showaddress = true;
-                                    $roompos = true;
-                                } else {
-                                    $showaddress = false;
-                                    $roompos = false;
-                                }
-                                
-                                
-                                $hours = $cons =  '';
-                                if (in_array('consultationhours', $show_fields)) {
-                                    foreach ($workplaces as $w => $wdata) {
-                                        if (!empty($wdata['consultationHours'])) {
-                                            $hours .= $contact->getConsultationsHours($wdata, 'consultationHours', $showaddress, $lang, $roompos );
-                                        }
-                                        $hours .= $contact->getConsultationbyAggreement($wdata);
-                                    }
-                                    if (!empty($hours)) {
-                                            $cons .=  '<h2 class="consultation-title">'.__('Consultation Hours', 'rrze-faudir').'</h2>';
-                                            $cons .= $hours;
-                                    }
-                                }
-                                $hours = '';
-                                if (in_array('officehours', $show_fields)) {
-                                    foreach ($workplaces as $w => $wdata) {
-                                        if (!empty($wdata['officeHours'])) { 
-                                            $hours .= $contact->getConsultationsHours($wdata, 'officeHours', $showaddress, $lang, $roompos);
-                                        }
-                                    } 
-                                    if (!empty($hours)) {
-                                            $cons .=  '<h2 class="consultation-title">'. __('Office Hours', 'rrze-faudir').'</h2>';
-                                            $cons .= $hours;
-                                    }
-                                }
-                               if (!empty($cons)) {   
-                                   echo '<div class="profile-consultation">';
-                                   echo $cons;
-                                   echo '</div>';
-                               }
-                            }   
-                           
-                        }
+                        
             
                         
                         $contactlist = '';
@@ -279,6 +237,54 @@ if (!defined('ABSPATH')) {
                             }
                         }
   
+                        
+                        if (in_array('officehours', $show_fields) || (in_array('consultationhours', $show_fields) )) {
+                            if (!empty($workplaces)) {
+                                
+                                if (count($workplaces) > 1) {
+                                    $showaddress = true;
+                                    $roompos = true;
+                                } else {
+                                    $showaddress = false;
+                                    $roompos = false;
+                                }
+                                
+                                
+                                $hours = $cons =  '';
+                                if (in_array('consultationhours', $show_fields)) {
+                                    foreach ($workplaces as $w => $wdata) {
+                                        if (!empty($wdata['consultationHours'])) {
+                                            $hours .= $contact->getConsultationsHours($wdata, 'consultationHours', $showaddress, $lang, $roompos );
+                                        }
+                                        $hours .= $contact->getConsultationbyAggreement($wdata);
+                                    }
+                                    if (!empty($hours)) {
+                                            $cons .=  '<h2 class="consultation-title">'.__('Consultation Hours', 'rrze-faudir').'</h2>';
+                                            $cons .= $hours;
+                                    }
+                                }
+                                $hours = '';
+                                if (in_array('officehours', $show_fields)) {
+                                    foreach ($workplaces as $w => $wdata) {
+                                        if (!empty($wdata['officeHours'])) { 
+                                            $hours .= $contact->getConsultationsHours($wdata, 'officeHours', $showaddress, $lang, $roompos);
+                                        }
+                                    } 
+                                    if (!empty($hours)) {
+                                            $cons .=  '<h2 class="consultation-title">'. __('Office Hours', 'rrze-faudir').'</h2>';
+                                            $cons .= $hours;
+                                    }
+                                }
+                               if (!empty($cons)) {   
+                                   echo '<div class="profile-consultation">';
+                                   echo $cons;
+                                   echo '</div>';
+                               }
+                            }   
+                           
+                        }
+                        
+                        
                      if (in_array('link', $show_fields) ) {                          
                             if (!empty($final_url)) {
                                 $link = '<div class="profile-link">';

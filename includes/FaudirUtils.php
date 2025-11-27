@@ -43,7 +43,11 @@ class FaudirUtils {
         return $lang; 
     }
 
-    
+    public static function lower(string $s): string {
+        return \function_exists('\mb_strtolower')
+            ? \mb_strtolower($s, 'UTF-8')
+            : \strtolower($s);
+    }
     
     public static function getDefaultOutputFields() {
         $options = get_option('rrze_faudir_options');
