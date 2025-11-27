@@ -302,7 +302,11 @@ class BlockRegistration {
             $wrapperClass = $wrapperClass . ' no_image';
         }
 
-        $title_id = 'service-title-' . wp_unique_id();
+        $block_unique_id   = wp_unique_id('service-');
+        $title_id          = $block_unique_id . '-title';
+        $address_heading_id = $block_unique_id . '-address';
+        $hours_heading_id   = $block_unique_id . '-hours';
+        $contact_heading_id = $block_unique_id . '-contact';
 
         ob_start();
         ?>
@@ -324,8 +328,8 @@ class BlockRegistration {
             <?php endif; ?>
 
             <?php if ($hasAddress): ?>
-                <section class="rrze-elements-blocks_service__information" aria-labelledby="addr-h">
-                    <h3 class="addr-h"><?php esc_html_e('Address', 'rrze-faudir'); ?></h3>
+                <section class="rrze-elements-blocks_service__information" aria-labelledby="<?php echo esc_attr($address_heading_id); ?>">
+                    <h3 id="<?php echo esc_attr($address_heading_id); ?>" class="addr-h"><?php esc_html_e('Address', 'rrze-faudir'); ?></h3>
                     <address>
                         <?php if ($isVisible('street') && $street): ?>
                             <span><?php echo esc_html($street); ?><br/></span>
@@ -349,15 +353,15 @@ class BlockRegistration {
             <?php endif; ?>
 
             <?php if ($hasOfficeHours): ?>
-                <section aria-labelledby="hours-h">
-                    <h3 class="hours-h"><?php echo esc_html($officeHoursLabel); ?></h3>
+                <section aria-labelledby="<?php echo esc_attr($hours_heading_id); ?>">
+                    <h3 id="<?php echo esc_attr($hours_heading_id); ?>" class="hours-h"><?php echo esc_html($officeHoursLabel); ?></h3>
                     <?php echo $officeHoursHtml; ?>
                 </section>
             <?php endif; ?>
 
             <?php if ($hasContact): ?>
-                <section class="contact-section" aria-labelledby="contact-h">
-                    <h3 class="contact-h"><?php esc_html_e('Contact', 'rrze-faudir'); ?></h3>
+                <section class="contact-section" aria-labelledby="<?php echo esc_attr($contact_heading_id); ?>">
+                    <h3 id="<?php echo esc_attr($contact_heading_id); ?>" class="contact-h"><?php esc_html_e('Contact', 'rrze-faudir'); ?></h3>
                     <ul class="contact-address icon icon-list">
                         <?php if ($isVisible('phone') && $phone): ?>
                             <li>
