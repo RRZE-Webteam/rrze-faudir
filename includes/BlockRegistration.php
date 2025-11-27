@@ -277,8 +277,11 @@ class BlockRegistration {
             $apiTextContent = $organization->getContentText($language);
         }
 
-        $displayText = !empty($attributes['displayText']) ? wp_kses_post($attributes['displayText']) : '';
-        $descriptionHtml = $apiTextContent ?: $displayText;
+        $descriptionHtml = '';
+        if ($isVisible('text')) {
+            $displayText = !empty($attributes['displayText']) ? wp_kses_post($attributes['displayText']) : '';
+            $descriptionHtml = $apiTextContent ?: $displayText;
+        }
 
         $officeHoursLabel = __('Office hours', 'rrze-faudir');
         $officeHoursHtml = '';
@@ -328,7 +331,7 @@ class BlockRegistration {
             <?php if ($isVisible('name') && $name): ?>
                 <header class="rrze-elements-blocks_service__meta_headline">
                     <h2 id="<?php echo esc_attr($title_id); ?>" class="meta-headline"><?php echo esc_html($name); ?></h2>
-                    <?php if (!empty($descriptionHtml)): ?>
+                    <?php if (!empty($descriptionHtml) && $isVisible('text')): ?>
                         <?php echo $descriptionHtml; ?>
                     <?php endif; ?>
                 </header>

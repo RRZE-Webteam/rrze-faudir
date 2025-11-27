@@ -63,6 +63,7 @@ const DEFAULT_VISIBLE_FIELDS = [
   "mail",
   "url",
   "officeHours",
+  "text",
 ];
 
 const formatOfficeHour = (entry: OfficeHour): string => {
@@ -195,7 +196,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
     },
   ];
 
-  if (textContent) {
+  if (Array.isArray(textContent) && textContent.length > 0) {
     let count = 0;
     let output = "";
     textContent.forEach((entry) => {
@@ -205,7 +206,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
 
     setDescription(output);
     dataviewData.push({
-      id: `content-${count}`,
+      id: "text",
       label: __("Text", "rrze-faudir"),
       value: output
     })
@@ -290,7 +291,9 @@ export default function Edit({attributes, setAttributes}: EditProps) {
                 {organizationName && isFieldVisible("name") && (
                   <header className="rrze-elements-blocks_service__meta_headline">
                     <h2 id="service-title" className="meta-headline">{organizationName}</h2>
+                    { isFieldVisible('text') &&
                     <p>{description}</p>
+                    }
                   </header>
                 )}
 
