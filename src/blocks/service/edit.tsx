@@ -264,9 +264,6 @@ export default function Edit({attributes, setAttributes}: EditProps) {
                 {organizationName && isFieldVisible("name") && (
                   <header className="rrze-elements-blocks_service__meta_headline">
                     <h2 id="service-title" className="meta-headline">{organizationName}</h2>
-                    <RichText value={displayText} tagName={"p"}
-                              placeholder={__("Add your service description...", "rrze-faudir")}
-                              onChange={(newText) => setAttributes({displayText: newText})}/>
                   </header>
                 )}
 
