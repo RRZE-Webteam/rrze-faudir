@@ -1,7 +1,7 @@
 import {
   useBlockProps,
 } from "@wordpress/block-editor";
-import {EditProps, OrganizationResponseProps, OfficeHour} from "./types";
+import {EditProps, OrganizationResponseProps, OfficeHour, OrgDataShort} from "./types";
 import {
   PanelBody,
   ToolbarGroup,
@@ -17,7 +17,6 @@ import {
 import {
   InspectorControls,
   BlockControls,
-  RichText,
 } from "@wordpress/block-editor";
 import {useEffect, useMemo, useState, useCallback} from "@wordpress/element";
 import apiFetch from "@wordpress/api-fetch";
@@ -94,7 +93,6 @@ export default function Edit({attributes, setAttributes}: EditProps) {
     imageURL = "",
     imageWidth = 0,
     imageHeight = 0,
-    displayText = "",
   } = attributes;
   const visibleFields = (visibleFieldsAttr && visibleFieldsAttr.length > 0)
     ? visibleFieldsAttr
@@ -103,6 +101,8 @@ export default function Edit({attributes, setAttributes}: EditProps) {
   const [organizationName, setOrganizationName] = useState<string>("");
   const [contact, setContact] = useState<ContactData>({...emptyContact});
   const [officeHours, setOfficeHours] = useState<OfficeHour[]>([]);
+  const [textContent, setTextContent] = useState<OrgDataShort[]>([]);
+  const [dataViewDataBuffer, setDataViewDataBuffer] = useState([]);
   const resetOrgData = useCallback(() => {
     setOrganizationName("");
     setContact({...emptyContact});
@@ -140,10 +140,15 @@ export default function Edit({attributes, setAttributes}: EditProps) {
             to: entry?.to ?? "",
           }))
           : [];
+        const content: OrgDataShort[] = response?.data?.content ?? [];
+        const nextTextContent = content.filter((data) => data["type"] === "text")
+
+        //const nextContent: String = response?.data?.content?.text ?? "";
 
         setContact(nextContact);
         setOrganizationName(resolvedName);
         setOfficeHours(nextOfficeHours);
+        setTextContent(nextTextContent);
       })
       .catch((error) => {
         if (error?.name !== "AbortError") {
@@ -173,7 +178,8 @@ export default function Edit({attributes, setAttributes}: EditProps) {
     return visibleFields.includes(fieldId);
   }, [visibleFields]);
 
-  const dataviewData: ServiceDataRow[] = useMemo(() => ([
+  useEffect(() => {
+  const dataviewData: ServiceDataRow[] = [
     {id: "name", label: __("Name", "rrze-faudir"), value: organizationName || ""},
     {id: "street", label: __("Street", "rrze-faudir"), value: street || ""},
     {id: "zip", label: __("ZIP", "rrze-faudir"), value: zip || ""},
@@ -186,7 +192,25 @@ export default function Edit({attributes, setAttributes}: EditProps) {
       label: __("Office hours", "rrze-faudir"),
       value: formattedOfficeHours.length ? formattedOfficeHours.join("\n") : "",
     },
-  ]), [organizationName, street, zip, city, phone, mail, url, formattedOfficeHours]);
+  ];
+
+  if (textContent) {
+    let count = 0;
+    let output = "";
+    textContent.forEach((entry) => {
+      output += `${entry.text.de} `;
+      count++;
+    });
+
+    dataviewData.push({
+      id: `content-${count}`,
+      label: __("Text", "rrze-faudir"),
+      value: output
+    })
+  }
+
+  setDataViewDataBuffer(dataviewData);
+  }, [organizationName, street, zip, city, phone, mail, url, formattedOfficeHours, textContent]);
 
   const hasAnyContact = ["phone", "mail", "url"].some((fieldId) => isFieldVisible(fieldId) && contact[fieldId as keyof ContactData]);
   const hasAddress = ["street", "zip", "city"].some((fieldId) => isFieldVisible(fieldId) && contact[fieldId as keyof ContactData]);
@@ -225,7 +249,7 @@ export default function Edit({attributes, setAttributes}: EditProps) {
                   {__('The data displayed below is in sync with FAUdir and cannot be changed from within your website. Contact data can only be edited within the FAUdir Portal.', "rrze-faudir")}
                 </Notice>
                 <ServiceDataView
-                  data={dataviewData}
+                  data={dataViewDataBuffer}
                   visibleFields={visibleFields}
                   onToggleField={toggleFieldVisibility}
                   search={false}
@@ -254,10 +278,10 @@ export default function Edit({attributes, setAttributes}: EditProps) {
               aria-labelledby="service-title"
             >
               {attributes.imageURL &&
-              <figure className="rrze-elements-blocks_service__figure">
-                <img className="rrze-elements-blocks_service__image"
-                     src={imageURL} width={imageWidth} alt="" height={imageHeight}/>
-              </figure>
+                  <figure className="rrze-elements-blocks_service__figure">
+                      <img className="rrze-elements-blocks_service__image"
+                           src={imageURL} width={imageWidth} alt="" height={imageHeight}/>
+                  </figure>
               }
 
               <div className={"rrze-elements-blocks_service__info"}>
