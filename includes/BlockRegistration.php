@@ -362,7 +362,7 @@ class BlockRegistration {
             <?php if ($hasContact): ?>
                 <section class="contact-section" aria-labelledby="<?php echo esc_attr($contact_heading_id); ?>">
                     <h3 id="<?php echo esc_attr($contact_heading_id); ?>" class="contact-h"><?php esc_html_e('Contact', 'rrze-faudir'); ?></h3>
-                    <ul class="contact-address icon icon-list">
+                    <ul class="contact-address icon icon-list list-icons">
                         <?php if ($isVisible('phone') && $phone): ?>
                             <li>
                                 <a href="tel:<?php echo esc_attr(preg_replace('/\s+/', '', $phone)); ?>">

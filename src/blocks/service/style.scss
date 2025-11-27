@@ -18,160 +18,175 @@
 	grid-gap: var(--Spacing-2x, 1rem);
 }
 
-article.rrze-elements-blocks_service_card {
-	container-type: inline-size;
+.fau-elemental {
+    article.rrze-elements-blocks_service_card {
+	    container-type: inline-size;
 
-	figure.rrze-elements-blocks_service__figure {
-		img {
-			width: 100%;
-			height: auto;
-		}
+	    figure.rrze-elements-blocks_service__figure {
+		    img {
+			    width: 100%;
+			    height: auto;
+		    }
 
-		z-index: -1;
-	}
+		    z-index: -1;
+	    }
+    }
+
+    article.rrze-elements-blocks_service_card.no_image {
+	    div.rrze-elements-blocks_service__information_card{
+		    margin-top: 0;
+	    }
+    }
+
+    article.rrze-elements-blocks_service_card div.rrze-elements-blocks_service__information_card {
+
+	    .contact-section ul li::before {
+		    content: initial;
+	    }
+
+	    div.workplace-hours ul {
+		    padding-left: 0;
+	    }
+
+	    .hoursAvailable span.weekday{
+		    font-weight: bold;
+	    }
+
+	    .workplace-hours li{
+		    padding-bottom: var(--Spacing-1, 1rem);
+	    }
+
+	    @include mobile-service-grid;
+	    padding-inline: var(--Spacing-4x, 2rem);
+	    margin-inline: var(--Spacing-3x, .5rem);
+	    background-color: var(--FAU-Col-FAU-Weiss-100, #fff);
+	    margin-top: -85px;
+	    padding-top: 30px;
+
+	    h2 {
+		    margin-top: 0;
+	    }
+
+	    header, section {
+		    grid-column: 1/-1;
+	    }
+
+	    section {
+		    grid-column: span 2;
+	    }
+
+	    #hours-h, #addr-h, #contact-h {
+		    font-weight: 700;
+		    font-size: var(--P-Body-Text);
+		    color: var(--FAU-Col-FAU-Schwarz-100);
+	    }
+    }
+
+    // Breakpoint for Tablet View
+    @media screen and (min-width: 768px) {
+
+	    article.rrze-elements-blocks_service_card {
+		    @include tablet-service-grid;
+		    grid-column: 1/-1;
+
+		    .rrze-elements-blocks_service__figure {
+			    grid-column: 1/-1;
+		    }
+	    }
+
+	    article.rrze-elements-blocks_service_card div.rrze-elements-blocks_service__information_card {
+		    @include tablet-service-grid;
+		    margin-left: calc(-1 * var(--Spacing-6x, 1rem));
+		    margin-right: calc(-1 * var(--Spacing-6x, 1rem));
+		    grid-column: 2/-2;
+
+		    section {
+			    grid-column: span 4;
+		    }
+
+	    }
+    }
+
+    @media screen and (min-width: 1315px) {
+
+	    article.rrze-elements-blocks_service_card {
+		    @include desktop-service-grid;
+		    margin-inline: var(--faue_wide-max-width_bleed_minimal_inline-margin);
+		    grid-template-rows: 50px 1fr;
+
+		    .meta-headline{
+			    font-size: var(--H-Heading-Big-Teaser);
+		    }
+
+		    section h3,
+		    section h4,
+		    section h5,
+		    section h6
+		    {
+			    font-size: var(--P-Body-Text);
+			    font-weight: bold;
+			    color: var(--FAU-Col-FAU-Schwarz-100);
+			    margin-bottom: var(--Spacing-1);
+		    }
+
+		    figure.rrze-elements-blocks_service__figure {
+			    grid-column: 6/-1;
+			    grid-row: 1/-1;
+
+			    img {
+				    object-fit: cover;
+				    aspect-ratio: 3/2;
+				    height: auto;
+				    width: 100%;
+			    }
+
+			    &::before {
+				    position: absolute;
+				    content: "";
+				    background: #fff;
+				    top: 80px;
+				    height: 160px;
+				    right: 96%;
+			    }
+		    }
+
+		    div.rrze-elements-blocks_service__information_card {
+			    grid-column: 1/6;
+			    grid-row: 2/-1;
+			    margin-top: 0;
+			    margin-inline: 0;
+
+			    ul.list-icons{
+				    padding-left: 0;
+			    }
+			    section.contact-section {
+				    grid-column: span 8;
+
+				    address.contact-address {
+					    columns: 2;
+				    }
+			    }
+		    }
+
+	    }
+
+	    article.rrze-elements-blocks_service_card.has_desc {
+		    .meta-headline{
+			    grid-row: 1/-1;
+		    }
+	    }
+    }
 }
-
-article.rrze-elements-blocks_service_card.no_image {
-	div.rrze-elements-blocks_service__information_card{
-		margin-top: 0;
+.fau-theme {
+    .faudir__service {
+	.icon a {
+	    border: none;
 	}
-}
-
-article.rrze-elements-blocks_service_card div.rrze-elements-blocks_service__information_card {
-
-	.contact-section ul li::before {
-		content: initial;
+	 &.rrze-elements-blocks_service_card {
+	    display: grid;
+	    grid-template-columns: 1fr 1fr;
+	    grid-gap: var(--width-gutter, 1rem);
 	}
-
-	div.workplace-hours ul {
-		padding-left: 0;
-	}
-
-	.hoursAvailable span.weekday{
-		font-weight: bold;
-	}
-
-	.workplace-hours li{
-		padding-bottom: var(--Spacing-1, 1rem);
-	}
-
-	@include mobile-service-grid;
-	padding-inline: var(--Spacing-4x, 2rem);
-	margin-inline: var(--Spacing-3x, .5rem);
-	background-color: var(--FAU-Col-FAU-Weiss-100, #fff);
-	margin-top: -85px;
-	padding-top: 30px;
-
-	h2 {
-		margin-top: 0;
-	}
-
-	header, section {
-		grid-column: 1/-1;
-	}
-
-	section {
-		grid-column: span 2;
-	}
-
-	#hours-h, #addr-h, #contact-h {
-		font-weight: 700;
-		font-size: var(--P-Body-Text);
-		color: var(--FAU-Col-FAU-Schwarz-100);
-	}
-}
-
-// Breakpoint for Tablet View
-@media screen and (width >= 768px) {
-
-	article.rrze-elements-blocks_service_card {
-		@include tablet-service-grid;
-		grid-column: 1/-1;
-
-		.rrze-elements-blocks_service__figure {
-			grid-column: 1/-1;
-		}
-	}
-
-	article.rrze-elements-blocks_service_card div.rrze-elements-blocks_service__information_card {
-		@include tablet-service-grid;
-		margin-left: calc(-1 * var(--Spacing-6x, 1rem));
-		margin-right: calc(-1 * var(--Spacing-6x, 1rem));
-		grid-column: 2/-2;
-
-		section {
-			grid-column: span 4;
-		}
-
-	}
-}
-
-@media screen and (width >= 1315px) {
-
-	article.rrze-elements-blocks_service_card {
-		@include desktop-service-grid;
-		margin-inline: var(--faue_wide-max-width_bleed_minimal_inline-margin);
-		grid-template-rows: 50px 1fr;
-
-		.meta-headline{
-			font-size: var(--H-Heading-Big-Teaser);
-		}
-
-		section h3,
-		section h4,
-		section h5,
-		section h6
-		{
-			font-size: var(--P-Body-Text);
-			font-weight: bold;
-			color: var(--FAU-Col-FAU-Schwarz-100);
-			margin-bottom: var(--Spacing-1);
-		}
-
-		figure.rrze-elements-blocks_service__figure {
-			grid-column: 6/-1;
-			grid-row: 1/-1;
-
-			img {
-				object-fit: cover;
-				aspect-ratio: 3/2;
-				height: auto;
-				width: 100%;
-			}
-
-			&::before {
-				position: absolute;
-				content: "";
-				background: #fff;
-				top: 80px;
-				height: 160px;
-				right: 96%;
-			}
-		}
-
-		div.rrze-elements-blocks_service__information_card {
-			grid-column: 1/6;
-			grid-row: 2/-1;
-			margin-top: 0;
-			margin-inline: 0;
-
-			ul.list-icons{
-				padding-left: 0;
-			}
-			section.contact-section {
-				grid-column: span 8;
-
-				address.contact-address {
-					columns: 2;
-				}
-			}
-		}
-
-	}
-
-	article.rrze-elements-blocks_service_card.has_desc {
-		.meta-headline{
-			grid-row: 1/-1;
-		}
-	}
+    }
+   
 }
