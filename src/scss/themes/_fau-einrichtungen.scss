@@ -11,6 +11,9 @@ Settings for FAU Einrichtungen theme
     }    
     
     .faudir {
+	--faudir-profile-padding: 0.5rem 0;
+	
+	
 	.address-title, 
 	.contact-title {
 	     @include mixins.sr-only();

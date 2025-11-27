@@ -317,7 +317,7 @@ class BlockRegistration {
 
             <?php if ($hasAddress): ?>
                 <section class="rrze-elements-blocks_service__information" aria-labelledby="addr-h">
-                    <h3 class="addr-h"><?php esc_html_e('Adresse', 'rrze-faudir'); ?></h3>
+                    <h3 class="addr-h"><?php esc_html_e('Address', 'rrze-faudir'); ?></h3>
                     <address>
                         <?php if ($isVisible('street') && $street): ?>
                             <span><?php echo esc_html($street); ?><br/></span>

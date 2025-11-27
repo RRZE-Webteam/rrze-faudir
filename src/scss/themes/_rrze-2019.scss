@@ -1,0 +1,40 @@
+/*----------------------------------------------------------------------------*/
+/* _rrze-2019 
+/* Created on : 27.11.2025, 09:27:35
+/*----------------------------------------------------------------------------*/
+@use '../mixins';
+.rrze-2019.single {
+    
+    @media screen and (min-width: 768px) {
+	.site-content:has(.faudir-custom-post) {
+	    flex-direction: column;
+	}
+    }
+    
+    .faudir-custom-post {
+	margin: 1rem 0.5rem;
+    }
+    
+    .faudir {
+	--faudir-profile-padding: 0.5rem 0;
+	--faudir-h2-font-size: 1.5rem;
+	--font-size-h1:  2rem;
+	--font-size-h2:  1.75rem;
+	--font-size-h3:  1.5rem;
+	
+	.address-title, 
+	.contact-title {
+	     @include mixins.sr-only();
+	}
+	
+	.profile-header {
+	    
+	 
+	    h1, h2, h3, h4, h5, h6 {
+		font-weight: bold;
+	    }
+	}
+    }
+    
+    
+}
