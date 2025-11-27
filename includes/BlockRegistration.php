@@ -306,7 +306,7 @@ class BlockRegistration {
 
         ob_start();
         ?>
-        <article class="faudir rrze-elements-blocks_service_card<?php echo($wrapperClass); ?>" aria-labelledby="<?php echo esc_attr($title_id); ?>">
+        <article class="faudir__service rrze-elements-blocks_service_card<?php echo($wrapperClass); ?>" aria-labelledby="<?php echo esc_attr($title_id); ?>">
             <?php if ($imageHtml): ?>
                 <figure class="rrze-elements-blocks_service__figure">
                     <?php echo $imageHtml; ?>
