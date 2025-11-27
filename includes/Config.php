@@ -37,17 +37,17 @@ class Config {
         'default_format'    => 'compact',
         'default_display'   => 'person',
         'avaible_formats_by_display'   => [
-            'person'    => ['compact', 'table', 'list',  'page', 'card'],               
+            'person'    => ['compact', 'table', 'list',  'page', 'card'],
             'org'       => ['compact'],
              // in all cases: first entry is default for the given display
         ],
-        
-        'default_output_fields'     => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia'], // Default fields      
+
+        'default_output_fields'     => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia'], // Default fields
         'default_org_output_fields' => ['name', 'phone', 'fax', 'email', 'url', 'socialmedia', 'address', 'faumap', 'officehours', 'consultationhours', 'longDescription'],
         'default_output_fields_endpoint' => [
-            'image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization', 'address', 'room', 'floor',  
+            'image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization', 'address', 'room', 'floor',
             'teasertext', 'content', 'officehours', 'consultationhours'
-        ],        
+        ],
         'args_person_to_faudir' => [
             "titel"         => 'honorificPrefix',
             "name"          => 'displayname',
@@ -85,7 +85,7 @@ class Config {
                 'honorificPrefix','honorificSuffix', 'givenName', 'titleOfNobility', 'familyName'
             ]
         ],
-       
+
         'overwriteable_as_option' => [
             'show_error_message',
             'cache_timeout',
@@ -97,15 +97,13 @@ class Config {
         ]
 
     ];
-    
-  
+
+
     public function __construct() {
-        $this->config['business_card_title'] = __('To the profile', 'rrze-faudir');         
+        $this->config['business_card_title'] = __('To the profile', 'rrze-faudir');
         $this->config['avaible_fields'] = [
             'image'             => __('Image', 'rrze-faudir'),
             'displayname'       => __('Display Name', 'rrze-faudir'),
-            
-            
             'honorificPrefix'   => __('Academic Title', 'rrze-faudir'),
             'honorificSuffix'   => __('Academic Suffix', 'rrze-faudir'),
             'givenName'         => __('First Name', 'rrze-faudir'),
@@ -130,37 +128,40 @@ class Config {
             'officehours'       => __('Office Hours', 'rrze-faudir'),
             'consultationhours' => __('Consultation Hours', 'rrze-faudir'),
             'link'              => __('Link to Profil', 'rrze-faudir'),
-
+            'alternateName'     => __('Alternate Name', 'rrze-faudir'),
+            'text'              => __('Text', 'rrze-faudir'),
+            'postalAddress'     => __('Postal Address', 'rrze-faudir'),
+            'name'              => __('Name', 'rrze-faudir'),
         ];
-        
-        
+
+
         $this->config['avaible_fields_org'] = [
             'name'              => __('Name', 'rrze-faudir'),
             'alternateName'     => __('Alternate Name', 'rrze-faudir'),
             'disambiguatingDescription'     => __('Disambiguating Description', 'rrze-faudir'),
             'longDescription'   => __('Description', 'rrze-faudir'),
-            
+
             // as part of address array:
             'email'             => __('Email', 'rrze-faudir'),
             'phone'             => __('Phone', 'rrze-faudir'),
             'fax'               => __('Fax', 'rrze-faudir'),
             'faumap'            => __('FAU Map', 'rrze-faudir'),
             'url'               => __('URL', 'rrze-faudir'),
-            
+
             // in content:
-            'text'              => __('Text', 'rrze-faudir'),         
+            'text'              => __('Text', 'rrze-faudir'),
             'socialmedia'       => __('Social Media and Websites', 'rrze-faudir'),
 
             'address'           => __('Address', 'rrze-faudir'),
             'postalAddress'     => __('Postal Address', 'rrze-faudir'),
             'internalAddress'   => __('Internal Address', 'rrze-faudir'),
-          
+
             'officehours'       => __('Office Hours', 'rrze-faudir'),
             'consultationhours' => __('Consultation Hours', 'rrze-faudir'),
 
         ];
-        
-        
+
+
         $this->config['person_roles'] = [
             'administrative_employee'   => __('Administrative Employee', 'rrze-faudir'),
             'adjunct_professor'         => __('Adjunct professors', 'rrze-faudir'),
@@ -188,7 +189,7 @@ class Config {
             'visitinglecturer'          => __('Visiting lecturers', 'rrze-faudir'),
             'workplace_manager'         => __('Workplace manager', 'rrze-faudir'),
         ];
-         
+
         $this->config['formatnames'] = [
             'list'      => __( 'List', 'rrze-faudir' ),
             'table'     => __( 'Table', 'rrze-faudir' ),
@@ -199,7 +200,7 @@ class Config {
         ];
 
     }
-    
+
 
 
     /**
@@ -288,7 +289,7 @@ class Config {
     public function getAcademicIgnoreTokens(): array {
         // Liste der Tokens und Strings, die oftmals in den akademischen Titeln vorkommen, 
         // jedoch kein offizieller Teil davon sind. In Fall von MA sind diese sogar falsch, da sie in den Namenszusatz gehören und kein Titel sind
-        
+
         $tokens = [
             'univ',
             'univ.',   // mit Punkt-Variante
@@ -298,7 +299,7 @@ class Config {
             'm.a.',
             'msc.',
             'm.sc.'
-          
+
         ];
 
         /**
@@ -308,7 +309,7 @@ class Config {
         return apply_filters('faudir_academic_ignore_tokens', $tokens);
     }
 
-    
+
     /**
      * Abrufen eines Konfigurationswertes
      *
@@ -318,7 +319,7 @@ class Config {
     public function get(string $key): mixed {
         return $this->config[$key] ?? null;
     }
-    
+
     /*
      * Setzen eines Keys
      * @param string $key Der Schlüssel des Konfigurationswertes und $value als Wert
@@ -332,14 +333,14 @@ class Config {
         return false;
     }
 
-    
+
     /**
      * Alle Konfigurationswerte abrufen
      */
     public function getAll(): array {
         return $this->config;
     }
-    
+
     /*
      * Get Array of those options with config content, that are overwiteable
      * We use these values as default values for the first init
@@ -353,66 +354,66 @@ class Config {
         return $res;
     }
 
-    
-    
+
+
     /*
      * Get allowed fields for format
      */
-    public function getFieldsByFormat(string $format = '', ?string $display = ''): array {      
+    public function getFieldsByFormat(string $format = '', ?string $display = ''): array {
         if ((!empty($display)) && ($display === 'org')) {
             $format = 'org-'.$format;
         }
-        
-        
+
+
         if ((empty($format)) || (!isset($this->config['avaible_fields_byformat'][$format]))) {
             return $this->config['avaible_fields'];
         }
-               
+
         $fieldlist = $this->config['avaible_fields_byformat'][$format];
         $all = $this->config['avaible_fields'];
         $res = [];
-        
+
         foreach ($fieldlist as $num => $val) {
             if ((!empty($val)) && (isset($all[$val]))) {
                 $res[$val] = $all[$val];
             }
         }
         return $res;
-        
+
     }
     public function getAvaibleFieldlist(): array {
         return $this->config['avaible_fields_byformat'];
     }
-    
-    
-    public function getAvaibleFieldlistByFormat(string $format = '', ?string $display = ''): array {       
+
+
+    public function getAvaibleFieldlistByFormat(string $format = '', ?string $display = ''): array {
         if (empty($format)) {
             $format = $this->config['default_format'];
         }
         if ((!empty($display)) && ($display === 'org')) {
             $format = 'org-'.$format;
         }
-        
+
         return $this->config['avaible_fields_byformat'][$format];
-  
+
     }
-    
-    
+
+
     /*
      * Get Site Option and merge with CONFIG if needed
      */
-    public function getOptions(): array {          
+    public function getOptions(): array {
         $default_settings = $this->getAll();
         $options = get_option('rrze_faudir_options', []);
         $settings = wp_parse_args($options, $default_settings);
-        
+
         return $settings;
     }
-    
- 
+
+
     public function insertOptions(): bool {
         $options = get_option('rrze_faudir_options', []);
-        $found = false; 
+        $found = false;
          foreach ($options as $key => $value) {
              if (isset($this->config[$key]) && ($this->config[$key] !== $value)) {
                  $this->config[$key] = $value;
@@ -421,6 +422,6 @@ class Config {
          }
          return $found;
     }
-    
+
 }
 
