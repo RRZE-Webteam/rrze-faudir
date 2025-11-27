@@ -18,39 +18,47 @@ class BlockRegistration {
      * Register the FAUdir Block and initialize the l10n.
      */
     public function rrze_faudir_block_init(): void {
-        $this->rrze_register_blocks();
-        //$this->rrze_register_translations();
+        $this->rrze_faudir_register_dynamic_blocks();
     }
 
     /**
-     * Register the FAUdir block for the BlockEditor
+     * Registriert die dynamischen FAUdir-Blöcke und deren Render-Funktionen.
+     *
+     * @return void
      */
-    public function rrze_register_blocks(): void {
-        register_block_type(plugin_dir_path(__DIR__) . 'build/blocks/faudir', [
-            'render_callback' => [$this, 'render_faudir_block'],
-            'skip_inner_blocks' => true
-        ]);
-        $scriptHandle = generate_block_asset_handle('rrze-faudir/blocks/faudir', 'editorScript');
-        wp_set_script_translations(
-            $scriptHandle,
-            'rrze-faudir',
-            plugin_dir_path(__DIR__) . 'languages'
-        );
-        register_block_type(plugin_dir_path(__DIR__) . 'build/blocks/service', [
-            'render_callback' => [$this, 'render_service_block'],
-            'skip_inner_blocks' => true
-        ]);
-        $scriptHandle = generate_block_asset_handle('rrze-faudir/blocks/service', 'editorScript');
-        wp_set_script_translations(
-            $scriptHandle,
-            'rrze-faudir',
-            plugin_dir_path(__DIR__) . 'languages'
-        );
-        load_plugin_textdomain(
-            'rrze-faudir',
-            false,
-            dirname(plugin_basename(__DIR__)) . '/languages'
-        );
+    function rrze_faudir_register_dynamic_blocks(): void
+    {
+        $blocks = [
+            [
+                'build_folder'     => 'faudir',
+                'block_name'       => 'rrze-faudir/block',   // aus block.json -> "name"
+                'render_callback'  => [$this, 'render_faudir_block'],
+            ],
+            [
+                'build_folder'     => 'service',
+                'block_name'       => 'rrze-faudir/service', // aus block.json -> "name"
+                'render_callback'  => [$this, 'render_service_block'],
+            ],
+        ];
+
+        $plugin_dir = plugin_dir_path(__DIR__);
+        $textdomain = 'rrze-faudir';
+        $languages_dir = $plugin_dir . 'languages';
+
+        foreach ($blocks as $block_def) {
+            register_block_type(
+                $plugin_dir . 'build/blocks/' . $block_def['build_folder'],
+                [
+                    'render_callback'   => $block_def['render_callback'],
+                    'skip_inner_blocks' => true,
+                ]
+            );
+
+            load_plugin_textdomain('rrze-faudir', false, dirname(plugin_basename(__DIR__)) . 'languages');
+
+            $script_handle = generate_block_asset_handle( $block_def['block_name'], 'editorScript');
+            wp_set_script_translations($script_handle, 'rrze-faudir', plugin_dir_path(__DIR__) . 'languages');
+        }
     }
 
 
