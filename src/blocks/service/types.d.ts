@@ -32,7 +32,7 @@ export interface OrganizationResponseProps {
     consultationHoursByAgreement?: string;
     consultationHoursContactHint?: string;
     consultationHoursContactType?: string;
-    content?: string[];
+    content?: OrgDataShort[];
     disambiguatingDescription?: string;
     identifier?: string;
     internalAddress?: string[];
@@ -53,4 +53,18 @@ export interface OfficeHour {
   weekday?: string | number;
   from?: string;
   to?: string;
+}
+
+export interface OrgDataShort{
+  type: string;
+  function?: string;
+  text?: {
+    de: string;
+    en: string;
+  };
+  functionLabel?: {
+    de: string;
+    en: string;
+  }
+  custom?: boolean;
 }
