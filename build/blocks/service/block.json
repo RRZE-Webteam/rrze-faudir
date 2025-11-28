@@ -2,7 +2,7 @@
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
   "name": "rrze-faudir/service",
-  "title": "Service",
+  "title": "FAUdir Service",
   "category": "rrze",
   "icon": "businessperson",
   "description": "Display Service contacts via FAUdir",
@@ -54,7 +54,8 @@
         "phone",
         "mail",
         "url",
-        "officeHours"
+        "officeHours",
+        "text"
       ]
     }
   },

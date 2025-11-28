@@ -2,14 +2,14 @@
 # This file is distributed under the GNU General Public License v3.
 msgid ""
 msgstr ""
-"Project-Id-Version: RRZE FAUdir 2.5.27\n"
+"Project-Id-Version: RRZE FAUdir 2.5.30\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-faudir\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-11-27T09:09:19+00:00\n"
+"POT-Creation-Date: 2025-11-27T14:55:08+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: rrze-faudir\n"
@@ -35,26 +35,26 @@ msgstr ""
 msgid "RRZE Webteam"
 msgstr ""
 
-#: includes/BlockRegistration.php:74
+#: includes/BlockRegistration.php:82
 msgid "FAU"
 msgstr ""
 
-#: includes/BlockRegistration.php:103
+#: includes/BlockRegistration.php:111
 msgid "You selected display=\"org\", but neither a FAUorganization ID (orgid) nor a FAU Organization Number (orgnr) was provided."
 msgstr ""
 
-#: includes/BlockRegistration.php:190
+#: includes/BlockRegistration.php:198
 msgid "No output avaible"
 msgstr ""
 
-#: includes/BlockRegistration.php:268
+#: includes/BlockRegistration.php:276
 #: build/blocks/service/index.js:115
 msgid "Office hours"
 msgstr ""
 
-#: includes/BlockRegistration.php:320
-#: includes/Config.php:125
-#: includes/Config.php:154
+#: includes/BlockRegistration.php:332
+#: includes/Config.php:123
+#: includes/Config.php:155
 #: includes/Settings.php:1229
 #: templates/org_compact.php:80
 #: templates/person_compact.php:148
@@ -62,11 +62,11 @@ msgstr ""
 msgid "Address"
 msgstr ""
 
-#: includes/BlockRegistration.php:352
+#: includes/BlockRegistration.php:364
 #: includes/CPT.php:277
 #: templates/org_compact.php:177
 #: templates/person_card.php:194
-#: templates/person_compact.php:268
+#: templates/person_compact.php:223
 #: templates/person_page.php:210
 #: build/blocks/service/index.js:115
 msgid "Contact"
@@ -84,38 +84,38 @@ msgstr ""
 msgid "Display Name"
 msgstr ""
 
-#: includes/Config.php:109
+#: includes/Config.php:107
 #: build/blocks/faudir/index.js:1
 msgid "Academic Title"
 msgstr ""
 
-#: includes/Config.php:110
+#: includes/Config.php:108
 msgid "Academic Suffix"
 msgstr ""
 
-#: includes/Config.php:111
+#: includes/Config.php:109
 msgid "First Name"
 msgstr ""
 
-#: includes/Config.php:112
+#: includes/Config.php:110
 msgid "Title of Nobility"
 msgstr ""
 
-#: includes/Config.php:113
+#: includes/Config.php:111
 #: includes/CPT.php:255
 #: includes/Settings.php:533
 msgid "Family Name"
 msgstr ""
 
-#: includes/Config.php:114
-#: includes/Config.php:144
+#: includes/Config.php:112
+#: includes/Config.php:145
 #: includes/CPT.php:252
 #: includes/Organization.php:218
 #: includes/Settings.php:537
 #: includes/Settings.php:1235
 #: templates/org_compact.php:107
 #: templates/person_card.php:122
-#: templates/person_compact.php:209
+#: templates/person_compact.php:164
 #: templates/person_list.php:132
 #: templates/person_page.php:152
 #: templates/person_table.php:131
@@ -124,14 +124,14 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#: includes/Config.php:115
-#: includes/Config.php:145
+#: includes/Config.php:113
+#: includes/Config.php:146
 #: includes/Organization.php:217
 #: includes/Settings.php:1234
 #: templates/org_compact.php:123
 #: templates/org_compact.php:135
 #: templates/person_card.php:136
-#: templates/person_compact.php:223
+#: templates/person_compact.php:178
 #: templates/person_list.php:144
 #: templates/person_page.php:166
 #: templates/person_table.php:143
@@ -139,61 +139,61 @@ msgstr ""
 msgid "Phone"
 msgstr ""
 
-#: includes/Config.php:116
-#: includes/Config.php:146
+#: includes/Config.php:114
+#: includes/Config.php:147
 #: includes/Contact.php:267
 #: templates/person_card.php:152
-#: templates/person_compact.php:240
+#: templates/person_compact.php:195
 #: templates/person_list.php:156
 #: templates/person_page.php:182
 #: templates/person_table.php:160
 msgid "Fax"
 msgstr ""
 
-#: includes/Config.php:117
+#: includes/Config.php:115
 #: includes/CPT.php:286
 #: includes/Settings.php:1143
 #: build/blocks/service/index.js:115
 msgid "Organization"
 msgstr ""
 
-#: includes/Config.php:118
+#: includes/Config.php:116
 #: includes/Settings.php:187
 msgid "Jobtitle"
 msgstr ""
 
-#: includes/Config.php:119
-#: includes/Config.php:148
+#: includes/Config.php:117
+#: includes/Config.php:149
 #: includes/Contact.php:270
 #: includes/Organization.php:219
 #: templates/org_compact.php:147
 #: templates/person_card.php:167
 #: templates/person_card.php:184
-#: templates/person_compact.php:255
+#: templates/person_compact.php:210
 #: templates/person_list.php:172
 #: templates/person_page.php:197
 #: templates/person_table.php:172
 msgid "URL"
 msgstr ""
 
-#: includes/Config.php:120
+#: includes/Config.php:118
 msgid "Content"
 msgstr ""
 
-#: includes/Config.php:121
+#: includes/Config.php:119
 msgid "Teasertext"
 msgstr ""
 
-#: includes/Config.php:122
-#: includes/Config.php:152
+#: includes/Config.php:120
+#: includes/Config.php:153
 #: templates/org_compact.php:188
 #: templates/person_card.php:205
-#: templates/person_compact.php:279
+#: templates/person_compact.php:234
 #: templates/person_page.php:221
 msgid "Social Media and Websites"
 msgstr ""
 
-#: includes/Config.php:123
+#: includes/Config.php:121
 #: includes/Contact.php:246
 #: includes/Contact.php:376
 #: templates/person_list.php:121
@@ -201,7 +201,7 @@ msgstr ""
 msgid "Room"
 msgstr ""
 
-#: includes/Config.php:124
+#: includes/Config.php:122
 #: includes/Contact.php:249
 #: includes/Contact.php:379
 #: templates/person_list.php:214
@@ -209,7 +209,7 @@ msgstr ""
 msgid "Floor"
 msgstr ""
 
-#: includes/Config.php:126
+#: includes/Config.php:124
 #: includes/Contact.php:252
 #: includes/Organization.php:220
 #: templates/person_list.php:272
@@ -218,13 +218,13 @@ msgstr ""
 msgid "Street"
 msgstr ""
 
-#: includes/Config.php:127
+#: includes/Config.php:125
 #: includes/Contact.php:255
 #: includes/Organization.php:221
 msgid "ZIP Code"
 msgstr ""
 
-#: includes/Config.php:128
+#: includes/Config.php:126
 #: includes/Contact.php:258
 #: includes/Organization.php:222
 #: templates/person_list.php:294
@@ -233,8 +233,8 @@ msgstr ""
 msgid "City"
 msgstr ""
 
-#: includes/Config.php:129
-#: includes/Config.php:147
+#: includes/Config.php:127
+#: includes/Config.php:148
 #: includes/Contact.php:261
 #: includes/Contact.php:383
 #: includes/Organization.php:223
@@ -245,220 +245,224 @@ msgstr ""
 msgid "FAU Map"
 msgstr ""
 
-#: includes/Config.php:130
-#: includes/Config.php:158
+#: includes/Config.php:128
+#: includes/Config.php:159
 #: includes/Contact.php:279
 #: includes/OpeningHours.php:169
-#: templates/person_compact.php:188
+#: templates/person_compact.php:274
 #: templates/person_page.php:260
 msgid "Office Hours"
 msgstr ""
 
-#: includes/Config.php:131
-#: includes/Config.php:159
+#: includes/Config.php:129
+#: includes/Config.php:160
 #: includes/Contact.php:285
 #: includes/OpeningHours.php:170
 #: templates/org_compact.php:199
-#: templates/person_compact.php:176
+#: templates/person_compact.php:262
 #: templates/person_page.php:248
 msgid "Consultation Hours"
 msgstr ""
 
-#: includes/Config.php:132
+#: includes/Config.php:130
 msgid "Link to Profil"
 msgstr ""
 
-#: includes/Config.php:138
+#: includes/Config.php:131
+#: includes/Config.php:140
+msgid "Alternate Name"
+msgstr ""
+
+#: includes/Config.php:132
+#: includes/Config.php:152
+msgid "Text"
+msgstr ""
+
+#: includes/Config.php:133
+#: includes/Config.php:156
+#: templates/org_compact.php:92
+msgid "Postal Address"
+msgstr ""
+
+#: includes/Config.php:134
+#: includes/Config.php:139
 #: includes/CPT.php:249
 #: includes/Settings.php:571
 #: build/blocks/service/index.js:115
 msgid "Name"
 msgstr ""
 
-#: includes/Config.php:139
-msgid "Alternate Name"
-msgstr ""
-
-#: includes/Config.php:140
+#: includes/Config.php:141
 msgid "Disambiguating Description"
 msgstr ""
 
-#: includes/Config.php:141
+#: includes/Config.php:142
 msgid "Description"
 msgstr ""
 
-#: includes/Config.php:151
-msgid "Text"
-msgstr ""
-
-#: includes/Config.php:155
-#: templates/org_compact.php:92
-msgid "Postal Address"
-msgstr ""
-
-#: includes/Config.php:156
+#: includes/Config.php:157
 msgid "Internal Address"
 msgstr ""
 
-#: includes/Config.php:165
+#: includes/Config.php:166
 msgid "Administrative Employee"
 msgstr ""
 
-#: includes/Config.php:166
+#: includes/Config.php:167
 msgid "Adjunct professors"
 msgstr ""
 
-#: includes/Config.php:167
+#: includes/Config.php:168
 msgid "Privat dozent"
 msgstr ""
 
-#: includes/Config.php:168
+#: includes/Config.php:169
 msgid "Campo administrator"
 msgstr ""
 
-#: includes/Config.php:169
+#: includes/Config.php:170
 msgid "Deputy leader"
 msgstr ""
 
-#: includes/Config.php:170
+#: includes/Config.php:171
 msgid "Doctoral candidate"
 msgstr ""
 
-#: includes/Config.php:171
+#: includes/Config.php:172
 msgid "Employee"
 msgstr ""
 
-#: includes/Config.php:172
-#: includes/Config.php:188
+#: includes/Config.php:173
+#: includes/Config.php:189
 msgid "Visiting lecturers"
 msgstr ""
 
-#: includes/Config.php:173
+#: includes/Config.php:174
 msgid "Visiting researchers"
 msgstr ""
 
-#: includes/Config.php:174
+#: includes/Config.php:175
 msgid "Honorary professors"
 msgstr ""
 
-#: includes/Config.php:175
+#: includes/Config.php:176
 msgid "IdM coordinator"
 msgstr ""
 
-#: includes/Config.php:176
+#: includes/Config.php:177
 msgid "IT support staff"
 msgstr ""
 
-#: includes/Config.php:177
+#: includes/Config.php:178
 msgid "Assistant professors"
 msgstr ""
 
-#: includes/Config.php:178
+#: includes/Config.php:179
 msgid "Head"
 msgstr ""
 
-#: includes/Config.php:179
+#: includes/Config.php:180
 msgid "Professors"
 msgstr ""
 
-#: includes/Config.php:180
+#: includes/Config.php:181
 msgid "Research assistant"
 msgstr ""
 
-#: includes/Config.php:181
+#: includes/Config.php:182
 msgid "Retired professors"
 msgstr ""
 
-#: includes/Config.php:182
+#: includes/Config.php:183
 msgid "Scholarship holder"
 msgstr ""
 
-#: includes/Config.php:183
+#: includes/Config.php:184
 msgid "Research associates"
 msgstr ""
 
-#: includes/Config.php:184
+#: includes/Config.php:185
 msgid "Secretary"
 msgstr ""
 
-#: includes/Config.php:185
+#: includes/Config.php:186
 msgid "Student employee"
 msgstr ""
 
-#: includes/Config.php:186
+#: includes/Config.php:187
 msgid "Technical employee"
 msgstr ""
 
-#: includes/Config.php:187
+#: includes/Config.php:188
 msgid "Trainee"
 msgstr ""
 
-#: includes/Config.php:189
+#: includes/Config.php:190
 msgid "Workplace manager"
 msgstr ""
 
-#: includes/Config.php:193
+#: includes/Config.php:194
 msgid "List"
 msgstr ""
 
-#: includes/Config.php:194
+#: includes/Config.php:195
 msgid "Table"
 msgstr ""
 
-#: includes/Config.php:195
+#: includes/Config.php:196
 msgid "Card"
 msgstr ""
 
-#: includes/Config.php:196
-#: includes/Config.php:198
+#: includes/Config.php:197
+#: includes/Config.php:199
 msgid "Compact"
 msgstr ""
 
-#: includes/Config.php:197
+#: includes/Config.php:198
 msgid "Page"
 msgstr ""
 
-#: includes/Config.php:214
+#: includes/Config.php:215
 msgid "Professor Doctor"
 msgstr ""
 
-#: includes/Config.php:222
+#: includes/Config.php:223
 msgid "Professor Doctor (Emeritus)"
 msgstr ""
 
-#: includes/Config.php:230
+#: includes/Config.php:231
 msgid "Professor"
 msgstr ""
 
-#: includes/Config.php:235
+#: includes/Config.php:236
 msgid "Professor (Emeritus)"
 msgstr ""
 
-#: includes/Config.php:240
+#: includes/Config.php:241
 msgid "Doctor"
 msgstr ""
 
-#: includes/Config.php:245
+#: includes/Config.php:246
 msgid "Doctor Private lecturer"
 msgstr ""
 
-#: includes/Config.php:253
+#: includes/Config.php:254
 msgid "Private lecturer"
 msgstr ""
 
-#: includes/Config.php:260
+#: includes/Config.php:261
 msgid "Professor Doctor (multiple)"
 msgstr ""
 
-#: includes/Config.php:265
+#: includes/Config.php:266
 msgid "Professor (multiple)"
 msgstr ""
 
-#: includes/Config.php:270
+#: includes/Config.php:271
 msgid "Doctor (multiple)"
 msgstr ""
 
-#: includes/Config.php:276
+#: includes/Config.php:277
 msgid "Professor Doctor (Emeritus, multiple)"
 msgstr ""
 
@@ -733,7 +737,7 @@ msgstr[1] ""
 
 #: includes/Maintenance.php:453
 #: templates/person_card.php:219
-#: templates/person_compact.php:339
+#: templates/person_compact.php:342
 #: templates/person_list.php:339
 #: templates/person_list.php:345
 #: templates/person_page.php:334
@@ -1313,7 +1317,7 @@ msgstr ""
 msgid "No org entry could be found."
 msgstr ""
 
-#: templates/person_compact.php:293
+#: templates/person_compact.php:296
 #: templates/person_list.php:186
 #: templates/person_page.php:288
 #: templates/person_table.php:282
@@ -1652,10 +1656,6 @@ msgid "Manage Data View"
 msgstr ""
 
 #: build/blocks/service/index.js:115
-msgid "Add your service description..."
-msgstr ""
-
-#: build/blocks/service/index.js:115
 msgid "Adresse"
 msgstr ""
 
@@ -1714,7 +1714,7 @@ msgstr ""
 
 #: build/blocks/service/block.json
 msgctxt "block title"
-msgid "Service"
+msgid "FAUdir Service"
 msgstr ""
 
 #: build/blocks/service/block.json
