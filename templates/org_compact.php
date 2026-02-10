@@ -27,13 +27,13 @@ if (!defined('ABSPATH')) {
     <?php 
 
                 $org = new Organization($orgdata);                
-                $displayname = $org->getName();
+                $displayname = $org->getName(true,$lang);
                 
                 
        //         echo "<p>Showfields:<br> <b>";
        //        echo Debug::get_html_var_dump($show_fields);
        //         echo "</b></p>";
-           //     echo Debug::get_html_var_dump($org);
+       //        echo Debug::get_html_var_dump($org);
                          
                 if (!empty($url)) {
                     $final_url = $url;
