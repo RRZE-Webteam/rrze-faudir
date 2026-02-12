@@ -1,16 +1,15 @@
-=== Plugin Name ===
-Plugin Name: rrze-faudir
+=== Plugin Name: rrze-faudir ===
+Version: 2.5.36
 Plugin URI: https://github.com/RRZE-Webteam/rrze-faudir
-Version: 2.5.35
-Requires at least: 6.7
-Tested up to: 6.8.2
-Requires PHP: 8.2
 GitHub Issue URL: https://github.com/RRZE-Webteam/rrze-faudir/issues
 Author: RRZE-Webteam <webmaster@fau.de> (https://www.rrze.fau.de)
-Author URI: https://www.wordpress.rrze.fau.de
-License: GNU General Public License v3 or later
-License URI: http://www.gnu.org/licenses/gpl-3.0.html
-Text Domain: rrze-faudir
+Author URI: 
+Licence: GNU General Public License v3 or later
+Licence URI: http://www.gnu.org/licenses/gpl-3.0.html
+Requires at least: 6.7
+Tested up to: 6.9.1
+Requires PHP: 8.2
+Tags: Plugin, WordPress, FAUdir, FAU, RRZE
 
 == Description ==
 

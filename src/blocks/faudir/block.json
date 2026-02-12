@@ -60,13 +60,23 @@
       "default": false
     },
     "sort": {
-      "type": "string",
-      "default": "familyName"
-    },
-    "order": {
-      "type": "string",
-      "default": "asc"
-    },
+	"type": "string",
+	"default": "familyName",
+	"enum": [
+	  "familyName",
+	  "email",
+	  "role",
+	  "honorificprefix, familyName",
+	  "role, honorificprefix",
+	  "honorificprefix",
+	  "identifier_order"
+	]
+      },
+      "order": {
+	"type": "string",
+	"default": "asc",
+	"enum": ["asc", "desc"]
+      },
     "format_displayname": {
       "type": "string",
       "default": ""
@@ -80,8 +90,9 @@
       "default": true
     },
     "display": {
-      "type": "string",
-      "default": ""
+	"type": "string",
+	"default": "person",
+	"enum": ["person", "org"]
     },
     "orgid": {
       "type": "string",

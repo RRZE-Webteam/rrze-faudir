@@ -10,7 +10,23 @@ export interface EditProps {
     url: string;
     showCategory: boolean;
     showPosts: boolean;
-    sort: string;
+    sort:
+      | "familyName"
+      | "email"
+      | "role"
+      | "honorificprefix, familyName"
+      | "role, honorificprefix"
+      | "honorificprefix"
+      | "identifier_order"
+      | (
+          | "familyName"
+          | "email"
+          | "role"
+          | "honorificprefix, familyName"
+          | "role, honorificprefix"
+          | "honorificprefix"
+          | "identifier_order"
+        )[];
     order: string;
     format_displayname: string;
     initialSetup: boolean;

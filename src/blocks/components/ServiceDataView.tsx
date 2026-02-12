@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback } from "@wordpress/element";
 import { ToggleControl } from "@wordpress/components";
 import { __, sprintf } from "@wordpress/i18n";
 // @ts-ignore
-import { DataViews } from "@wordpress/dataviews/wp";
+import { DataViews } from "@wordpress/dataviews";
 import type { View } from "@wordpress/dataviews/build-types";
 
 export type ServiceDataRow = {
