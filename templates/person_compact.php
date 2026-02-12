@@ -25,7 +25,10 @@ if (!defined('ABSPATH')) {
     //echo Debug::get_html_var_dump($dbopt);
     //echo "<hr>";
     
-    if (!empty($persons)) { ?>
+    if (!empty($persons)) { 
+     //   do_action('rrze.log.info', 'FAUdir Opt: ', $dbopt);
+        
+        ?>
          <div class="format-compact">
         <?php foreach ($persons as $persondata) {
         if (isset($persondata['error'])) {  
@@ -39,6 +42,7 @@ if (!defined('ABSPATH')) {
             if (!empty($persondata)) {
 
                 $person = new Person($persondata);
+ do_action('rrze.log.info', 'FAUdir Person: ', $person);                
                 $formatstring = '';
                 if (!empty($format_displayname)) {
                     $formatstring = $format_displayname;
