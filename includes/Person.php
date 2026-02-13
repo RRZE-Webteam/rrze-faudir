@@ -9,6 +9,8 @@ namespace RRZE\FAUdir;
 
 defined('ABSPATH') || exit;
 
+use RRZE\FAUdir\FaudirUtils;
+
 
 class Person {
     public string $identifier;
@@ -64,49 +66,52 @@ class Person {
      * Aktualisiert die Eigenschaften der Person anhand der übergebenen Daten.
      * @param array $data Das Array mit den neuen Personendaten.
      */
-    public function populateFromData(array $data, bool $clear = true): void { 
+    public function populateFromData(array $data, bool $clear = true): void {
         if ($clear) {
-            // Setze alle bekannten Felder auf ihre Standardwerte zurück.
-            $this->identifier           = '';
-            $this->givenName            = '';
-            $this->familyName           = '';
-            $this->honorificPrefix      = '';
-            $this->honorificSuffix      = '';
-            $this->titleOfNobility      = '';
-            $this->pronoun              = '';
-            $this->email                = '';
-            $this->telephone            = '';
-            $this->postid               = 0;
-            $this->contacts             = null;
-            $this->primary_contact      = null;
-            // Leere rawdata zurücksetzen
-            $this->rawdata              = [];
+            $this->identifier      = '';
+            $this->givenName       = '';
+            $this->familyName      = '';
+            $this->honorificPrefix = '';
+            $this->honorificSuffix = '';
+            $this->titleOfNobility = '';
+            $this->pronoun         = '';
+            $this->email           = '';
+            $this->telephone       = '';
+            $this->postid          = 0;
+            $this->contacts        = null;
+            $this->primary_contact = null;
+            $this->rawdata         = [];
         }
-        
-        // Aktualisiere die einzelnen Eigenschaften, falls Werte vorhanden sind
+
         if (isset($data['identifier'])) {
-            $this->identifier = $data['identifier'];
+            $this->identifier = (string) $data['identifier'];
         }
         if (isset($data['givenName'])) {
-            $this->givenName = $data['givenName'];
+            $this->givenName = (string) $data['givenName'];
         }
         if (isset($data['familyName'])) {
-            $this->familyName = $data['familyName'];
+            $this->familyName = (string) $data['familyName'];
         }
+
+        // Titel: bevorzugt "personalTitle", fallback "honorificPrefix"
         if (isset($data['personalTitle'])) {
-            $this->honorificPrefix = $data['personalTitle'];
+            $this->honorificPrefix = (string) $data['personalTitle'];
+        } elseif (isset($data['honorificPrefix'])) {
+            $this->honorificPrefix = (string) $data['honorificPrefix'];
         }
-         if (isset($data['personalTitleSuffix'])) {
-            $this->honorificSuffix = $data['personalTitleSuffix'];
+
+        // Suffix: bevorzugt "personalTitleSuffix", fallback "honorificSuffix"
+        if (isset($data['personalTitleSuffix'])) {
+            $this->honorificSuffix = (string) $data['personalTitleSuffix'];
+        } elseif (isset($data['honorificSuffix'])) {
+            $this->honorificSuffix = (string) $data['honorificSuffix'];
         }
-        if (isset($data['honorificSuffix'])) {
-            $this->honorificSuffix = $data['honorificSuffix'];
-        }
+
         if (isset($data['titleOfNobility'])) {
-            $this->titleOfNobility = $data['titleOfNobility'];
+            $this->titleOfNobility = (string) $data['titleOfNobility'];
         }
         if (isset($data['pronoun'])) {
-            $this->pronoun = $data['pronoun'];
+            $this->pronoun = (string) $data['pronoun'];
         }
         if (isset($data['email'])) {
             $this->email = $data['email'];
@@ -115,19 +120,21 @@ class Person {
             $this->telephone = $data['telephone'];
         }
         if (isset($data['contacts'])) {
-            $this->contacts = $data['contacts'];
+            $this->contacts = is_array($data['contacts']) ? $data['contacts'] : null;
         }
         if (isset($data['postid'])) {
-            $this->postid = $data['postid'];
+            $this->postid = (int) $data['postid'];
         }
 
-        // Aktualisiere rawdata: Füge alle übrigen Schlüssel hinzu, die nicht zu den Standardfeldern gehören.
+        // rawdata: alles, was nicht in die bekannten Felder gehört
         $usedKeys = [
             'identifier',
             'givenName',
             'familyName',
             'honorificPrefix',
             'honorificSuffix',
+            'personalTitle',
+            'personalTitleSuffix',
             'titleOfNobility',
             'pronoun',
             'email',
@@ -135,6 +142,7 @@ class Person {
             'contacts',
             'postid'
         ];
+
         $remaining = array_diff_key($data, array_flip($usedKeys));
         $this->rawdata = array_merge($this->rawdata, $remaining);
     }
@@ -278,42 +286,45 @@ class Person {
      * - if its empty use the phones address from active primary contact
      * Cause a person can use more as one phone number, we result with an array
      */ 
-    public function getPhone(): ?array {
-        $resphone = [];
-        if (!empty($this->telephone)) {
-            if ((is_string($this->telephone)) && (preg_match('/^\+?[0-9\s\-\(\)]{7,20}$/', $this->telephone)) ) {
-                $resphone[] = $this->telephone;
-            } elseif (is_array($this->telephone)) {           
-                foreach ($this->telephone as $i => $val) {
-                    if (preg_match('/^\+?[0-9\s\-\(\)]{7,20}$/', $this->telephone)) {
-                        $resphone[] = $val;
-                    }
+    public function getPhone(): array {
+        $vals = FaudirUtils::normalizeScalarOrArrayToList($this->telephone);
+
+        if (!empty($vals)) {
+            $out = [];
+            foreach ($vals as $val) {
+                if (FaudirUtils::isValidPhoneNumber($val)) {
+                    $out[] = $val;
                 }
             }
-            return $resphone;
+            return array_values(array_unique($out));
         }
+
         $workplaces = $this->getWorkplaces();
-        if (empty($workplaces)) {
+        if (empty($workplaces) || !is_array($workplaces)) {
             return [];
         }
-        
-        
-        $gatherphones = [];     
-        foreach ($workplaces as $num => $wdata) {
-            if (isset($wdata['phones'])) {
-                foreach ($wdata['phones'] as $i => $val) {
-                    if (preg_match('/^\+?[0-9\s\-\(\)]{7,20}$/', $val)) {
-                        $gatherphones[] = $val;
-                    }
-                 
+
+        $out = [];
+        foreach ($workplaces as $wdata) {
+            if (!is_array($wdata) || empty($wdata['phones']) || !is_array($wdata['phones'])) {
+                continue;
+            }
+
+            foreach ($wdata['phones'] as $val) {
+                if (!is_string($val)) {
+                    continue;
+                }
+                $val = trim($val);
+                if ($val === '') {
+                    continue;
+                }
+                if (FaudirUtils::isValidPhoneNumber($val)) {
+                    $out[] = $val;
                 }
             }
         }
-        if (!empty($gatherphones)) {
-            // Entferne etwaige Dupletten und returne dann die neu indizierte Liste
-            return array_values(array_unique($gatherphones));
-        }
-        return [];
+
+        return array_values(array_unique($out));
     }
     
     /*
@@ -322,75 +333,97 @@ class Person {
      * - if its empty use the phones address from active primary contact
      * Cause a person can use more as one phone number, we result with an array
      */ 
-    public function getFax(): ?array {
-        $resphone = [];
-       
+    public function getFax(): array {
+        $vals = FaudirUtils::normalizeScalarOrArrayToList($this->fax);
+
+        if (!empty($vals)) {
+            $out = [];
+            foreach ($vals as $val) {
+                if (FaudirUtils::isValidPhoneNumber($val)) {
+                    $out[] = $val;
+                }
+            }
+            return array_values(array_unique($out));
+        }
+
         $workplaces = $this->getWorkplaces();
-        if (empty($workplaces)) {
+        if (empty($workplaces) || !is_array($workplaces)) {
             return [];
         }
-        
-        
-        $gatherphones = [];     
-        foreach ($workplaces as $num => $wdata) {
-            if (isset($wdata['fax'])) {
-                foreach ($wdata['fax'] as $i => $val) {
-                    if (preg_match('/^\+?[0-9\s\-\(\)]{7,20}$/', $val)) {
-                        $gatherphones[] = $val;
-                    }
-                 
+
+        $out = [];
+        foreach ($workplaces as $wdata) {
+            if (!is_array($wdata)) {
+                continue;
+            }
+
+            // dein bisheriges Modell: 'fax' ist ein Array
+            if (empty($wdata['fax']) || !is_array($wdata['fax'])) {
+                continue;
+            }
+
+            foreach ($wdata['fax'] as $val) {
+                if (!is_string($val)) {
+                    continue;
+                }
+                $val = trim($val);
+                if ($val === '') {
+                    continue;
+                }
+                if (FaudirUtils::isValidPhoneNumber($val)) {
+                    $out[] = $val;
                 }
             }
         }
-        if (!empty($gatherphones)) {
-            // Entferne etwaige Dupletten und returne dann die neu indizierte Liste
-            return array_values(array_unique($gatherphones));
-        }
-        return [];
+
+        return array_values(array_unique($out));
     }
-    
+
     /*
      * Get Email address for person
      * - if $person->email is set, use this.
      * - if its empty use the email address from active primary contact
      * Cause a person can use more as one mail adress, we result with an array
      */ 
-    public function getEMail(): ?array {
-        $resmail = [];
-        if (!empty($this->email)) {
-            if ((is_string($this->email)) && (filter_var($this->email, FILTER_VALIDATE_EMAIL))) {
-                $resmail[] = $this->email;
-            } elseif (is_array($this->email)) {           
-                foreach ($this->email as $i => $val) {
-                    if (filter_var($val, FILTER_VALIDATE_EMAIL)) {
-                        $resmail[] = $val;
-                    }
+    public function getEMail(): array {
+        $vals = FaudirUtils::normalizeScalarOrArrayToList($this->email);
+
+        if (!empty($vals)) {
+            $out = [];
+            foreach ($vals as $val) {
+                if (FaudirUtils::isValidEmailAddress($val)) {
+                    $out[] = $val;
                 }
             }
-            return $resmail;
+            return array_values(array_unique($out));
         }
+
         $workplaces = $this->getWorkplaces();
-        if (empty($workplaces)) {
+        if (empty($workplaces) || !is_array($workplaces)) {
             return [];
         }
-        
-        
-        $gathermails = [];     
-        foreach ($workplaces as $num => $wdata) {
-            if (isset($wdata['mails'])) {
-                foreach ($wdata['mails'] as $i => $val) {
-                    if (filter_var($val, FILTER_VALIDATE_EMAIL)) {
-                        $gathermails[] = $val;
-                    }
-                 
+
+        $out = [];
+        foreach ($workplaces as $wdata) {
+            if (!is_array($wdata) || empty($wdata['mails']) || !is_array($wdata['mails'])) {
+                continue;
+            }
+
+            foreach ($wdata['mails'] as $val) {
+                if (!is_string($val)) {
+                    continue;
+                }
+                $val = trim($val);
+                if ($val === '') {
+                    continue;
+                }
+                if (FaudirUtils::isValidEmailAddress($val)) {
+                    $out[] = $val;
                 }
             }
         }
-        if (!empty($gathermails)) {
-            // Entferne etwaige Dupletten und returne dann die neu indizierte Liste
-            return array_values(array_unique($gathermails));
-        }
-        return [];
+
+        return array_values(array_unique($out));
     }
     
     
@@ -559,35 +592,36 @@ class Person {
     /*
      * Get Post Id for a person
      */
-     public function getPostId(): int {
-        $config = new Config();
-        $post_type = $config->get('person_post_type'); 
-         
-        
-                
+    public function getPostId(): int {
+        if (empty($this->config)) {
+            $this->setConfig();
+        }
+
+        $post_type = (string) $this->config->get('person_post_type');
+
         $contact_posts = get_posts([
-            'post_type' => $post_type,
-            'meta_key' => 'person_id',
-            'meta_value' => $this->identifier,
-            'posts_per_page' => 1, // Only fetch one post matching the person ID
+            'post_type'      => $post_type,
+            'meta_key'       => 'person_id',
+            'meta_value'     => $this->identifier,
+            'posts_per_page' => 1,
+            'fields'         => 'ids',
         ]);
-         
-        if (!empty($contact_posts)) {        
-            $postid = $contact_posts[0]->ID;      
-         
+
+        if (!empty($contact_posts)) {
+            $postid = (int) $contact_posts[0];
+
             if (class_exists('\RRZE\Multilang\Helper')) {
-                // check for multilang plugin
-                $lookforid = \RRZE\Multilang\Helper::getPostIdTranslation($contact_posts[0]->ID);
-             //    do_action( 'rrze.log.info',"FAUdir\Person (getPostId): Looking for post id $postid with Multilang Helper, target: $lookforid");
-                 if ($lookforid) {
-                     $postid = $lookforid;
-                 }
+                $lookforid = \RRZE\Multilang\Helper::getPostIdTranslation($postid);
+                if (!empty($lookforid)) {
+                    $postid = (int) $lookforid;
+                }
             }
-            
+
             $this->postid = $postid;
             return $postid;
         }
-        return 0;               
+
+        return 0;
     }
     
     
@@ -940,68 +974,52 @@ class Person {
      *  wurde als Primärer, den spezifischnen zu eine Role oder als Fallback
      * den erst möglichen  
      */
-    public function getPrimaryContact(string $role = ''): ?Contact {       
-        // Wenn es keinen Contact-Array gibt, dann gibt es kein Contact
-        if (empty($this->contacts)) {
-            return false;
+    public function getPrimaryContact(string $role = ''): ?Contact {
+        if (empty($this->contacts) || !is_array($this->contacts)) {
+            return null;
         }
 
-        // Wenn es nur einen einzigen Contacteintrag gibt, dann returne diesen        
-        if ((count($this->contacts)==1) && (!empty($this->contacts[0]))) {         
+        if (count($this->contacts) === 1 && !empty($this->contacts[0]) && is_array($this->contacts[0])) {
             $this->primary_contact = new Contact($this->contacts[0]);
             return $this->primary_contact;
         }
-        
+
         if (!empty($role)) {
-            // wenn wir eine spezifische Role/Funktionslabel übergeben bekommen haben, dann
-            // schauen wir zunächst ob diese matcht nehmen daher nicht den
-            // vordefinierten Contact.
-            $rolecontact = $this->getContactByRole($role); 
+            $rolecontact = $this->getContactByRole($role);
             if ($rolecontact) {
                 $this->primary_contact = $rolecontact;
                 return $this->primary_contact;
             }
-           
-        }
-        if (!empty($this->primary_contact)) {
-            // we already calculated this, therfor we return this            
-            return $this->primary_contact;
-        }
-         
-        
-        // look for existing local cpt
-        if (empty($this->postid)) {
-            $postid = $this->getPostId();
-        } else {
-            $postid = $this->postid;
         }
 
-       
-        
-        
-        if (($postid === 0) && (!empty($this->contacts[0]))) {
-            // No custum post entry, therfor i take the first entry
-            $this->primary_contact = new Contact($this->contacts[0]);
-            return $this->primary_contact;         
-        }        
-        
+        if (!empty($this->primary_contact)) {
+            return $this->primary_contact;
+        }
+
+        $postid = !empty($this->postid) ? (int) $this->postid : (int) $this->getPostId();
+
+        if ($postid === 0) {
+            if (!empty($this->contacts[0]) && is_array($this->contacts[0])) {
+                $this->primary_contact = new Contact($this->contacts[0]);
+                return $this->primary_contact;
+            }
+            return null;
+        }
+
         $displayed_contacts = get_post_meta($postid, 'displayed_contacts', true);
-        
-        // downwardcompatbility
-        if ((is_array($displayed_contacts)) || (empty($displayed_contacts))) {
-            $displayed_contacts = 0;
-        }
-        
-    
-        if (isset($this->contacts[$displayed_contacts])) {
-            $this->primary_contact = new Contact($this->contacts[$displayed_contacts]);
-            return $this->primary_contact;
-        } else {              
-                          
-            $this->primary_contact = new Contact($this->contacts);
+        $idx = absint($displayed_contacts);
+
+        if (isset($this->contacts[$idx]) && is_array($this->contacts[$idx])) {
+            $this->primary_contact = new Contact($this->contacts[$idx]);
             return $this->primary_contact;
         }
-                            
+
+        if (!empty($this->contacts[0]) && is_array($this->contacts[0])) {
+            $this->primary_contact = new Contact($this->contacts[0]);
+            return $this->primary_contact;
+        }
+
+        return null;
     }
     
     
