@@ -16,75 +16,22 @@ class Contact {
     public array $organization = [];
     public string $givenName = '';
     public string $familyName = '';
-    public ?string $titleOfNobility = '';
-    public ?string $function = '';
-    public ?string $jobTitle = '';
-    public ?array $functionLabel = [];
-    public ?array $workplaces = [];
-    public ?array $socials = [];
-    public ?array $org = [];
-    private array $rawdata;
+    public ?string $titleOfNobility = null;
+    public ?string $function = null;
+    public ?string $jobTitle = null;
+    public array $functionLabel = [];
+    public array $workplaces = [];
+    public array $socials = [];
+    public array $org = [];
+
+    private array $rawdata = [];
     protected ?Config $config = null;
     
     /**
      * Contact constructor
      */
     public function __construct(array $data = []) {
-
-        if (isset($data['identifier']) && is_string($data['identifier'])) {
-            $this->identifier = $data['identifier'];
-        }
-        if (isset($data['person']) && is_array($data['person'])) {
-            $this->person = $data['person'];
-        }
-        if (isset($data['organization']) && is_array($data['organization'])) {
-            $this->organization = $data['organization'];
-        }
-        if (isset($data['givenName']) && is_string($data['givenName'])) {
-            $this->givenName = $data['givenName'];
-        }
-        if (isset($data['familyName']) && is_string($data['familyName'])) {
-            $this->familyName = $data['familyName'];
-        }
-        if (isset($data['titleOfNobility']) && is_string($data['titleOfNobility'])) {
-            $this->titleOfNobility = $data['titleOfNobility'];
-        }
-        if (isset($data['jobTitle']) && is_string($data['jobTitle'])) {
-            $this->jobTitle = $data['jobTitle'];
-        }
-        if (isset($data['function']) && is_string($data['function'])) {
-            $this->function = $data['function'];
-        }
-        if (isset($data['functionLabel']) && is_array($data['functionLabel'])) {
-            $this->functionLabel = $data['functionLabel'];
-        }
-        if (isset($data['workplaces']) && is_array($data['workplaces'])) {
-            $this->workplaces = $data['workplaces'];
-        }
-        if (isset($data['org']) && is_array($data['org'])) {
-            $this->org = $data['org'];
-        }
-        if (isset($data['socials']) && is_array($data['socials'])) {
-            $this->socials = $data['socials'];
-        }
-        
-           // Aktualisiere rawdata: Füge alle übrigen Schlüssel hinzu, die nicht zu den Standardfeldern gehören.
-        $usedKeys = [     
-            'identifier',
-            'person',
-            'organization',
-            'givenName',
-            'familyName',
-            'titleOfNobility',
-            'jobTitle',
-            'function',
-            'functionLabel',
-            'workplaces',
-            'org',
-            'socials'
-        ];
-        $remaining = array_diff_key($data, array_flip($usedKeys));
-        $this->rawdata = $remaining;
+        $this->populateFromData($data, true);
     }
      /**
      * Aktualisiert die Eigenschaften der Person anhand der übergebenen Daten.
@@ -143,7 +90,7 @@ class Contact {
             $this->workplaces = $data['workplaces'];
         }
         if (isset($data['org']) && is_array($data['org'])) {
-            $this->organization_address = $data['org'];
+            $this->org = $data['org']; // BUGFIX: war organization_address
         }
         if (isset($data['socials']) && is_array($data['socials'])) {
             $this->socials = $data['socials'];
@@ -549,32 +496,29 @@ class Contact {
     /*
      * Get the FunctionLabel
      */
-    public function getFunctionLabel(string $lang = "de"): ?string {
-        if (empty($this->functionLabel)) {
+    public function getFunctionLabel(string $lang = "de"): string {
+        if (empty($this->functionLabel) || !is_array($this->functionLabel)) {
             return '';
         }
-        if ((!empty($lang)) && (isset($this->functionLabel[$lang]))) {
-            return $this->functionLabel[$lang];
+
+        $lang = ($lang === 'en') ? 'en' : 'de';
+
+        if (!empty($this->functionLabel[$lang])) {
+            return (string) $this->functionLabel[$lang];
         }
-        
-        if (!isset($this->functionLabel[$lang])) {
-            if (($lang === "de") && ($this->functionLabel["en"])) {
-                return $this->functionLabel["en"];
-            } elseif (($lang === "en") && ($this->functionLabel["de"])) {
-                return $this->functionLabel["en"];
-            }
-            return '';
-        }
+
+        $fallback = ($lang === 'de') ? 'en' : 'de';
+        return !empty($this->functionLabel[$fallback]) ? (string) $this->functionLabel[$fallback] : '';
     }
-    
+
      /*
      * Get all FunctionLabels
      */
     public function getAllFunctionLabels(): array {
         $out = [];
 
-        if (!empty($this->function) && is_string($this->function)) {
-            $out[] = $this->function;
+        if (!empty($this->function)) {
+            $out[] = (string) $this->function;
         }
         if (!empty($this->functionLabel['de'])) {
             $out[] = (string) $this->functionLabel['de'];
@@ -583,11 +527,8 @@ class Contact {
             $out[] = (string) $this->functionLabel['en'];
         }
 
-        // trimmen, Leere raus, Duplikate entfernen
-        $out = array_map(static fn($s) => trim((string) $s), $out);
-        $out = array_values(array_unique(array_filter($out, static fn($s) => $s !== '')));
 
-        return $out;
+        return FaudirUtils::normalizeStringArray($out);
     }
 
     
@@ -596,45 +537,39 @@ class Contact {
     /*
      * Build JobTitle by Functionlabel and Orgname
      */
-    public function getJobTitle(string $lang = "de", ?string $template = ''): ?string {   
-        $label = $this->getFunctionLabel($lang);   
-        if (empty($label)) {
+    public function getJobTitle(string $lang = "de", ?string $template = ''): string {
+        $label = $this->getFunctionLabel($lang);
+        if ($label === '') {
             return '';
         }
 
- 
-        if (empty($this->organization) || !isset($this->organization['longDescription'])) {
-            return $label;
-        }
-    
         $orgname = '';
-        if ((!empty($lang)) && (isset($this->organization['longDescription'][$lang]))) {
-            $orgname = $this->organization['longDescription'][$lang];
+        if (!empty($this->organization['longDescription']) && is_array($this->organization['longDescription'])) {
+            $lang = ($lang === 'en') ? 'en' : 'de';
+            if (!empty($this->organization['longDescription'][$lang])) {
+                $orgname = (string) $this->organization['longDescription'][$lang];
+            } else {
+                $fallback = ($lang === 'de') ? 'en' : 'de';
+                if (!empty($this->organization['longDescription'][$fallback])) {
+                    $orgname = (string) $this->organization['longDescription'][$fallback];
+                }
+            }
         }
-        
-        if (!empty($lang) && !empty($this->organization['longDescription'][$lang])) {
-            $orgname = $this->organization['longDescription'][$lang];
-        } elseif ($lang === "de" && !empty($this->organization['longDescription']['en'])) {
-            $orgname = $this->organization['longDescription']['en'];
-        } elseif ($lang === "en" && !empty($this->organization['longDescription']['de'])) {
-            $orgname = $this->organization['longDescription']['de'];
+
+        if ($template === null || $template === '') {
+            $template = "#functionlabel# #orgname#";
         }
-        
-        
-        
-        if (empty($template)) {
-            $template = "#functionlabel# #orgname#".PHP_EOL;
-        }
-        // Platzhalter mit den entsprechenden Werten ersetzen
+
         $replacements = [
-            '#orgname#' => $orgname ?? '',
-            '#functionlabel#' => $label ?? '',
-            '#alternatename#' =>  $this->organization['alternateName'] ?? ''
-        ]; 
-        $jobtitle = str_replace(array_keys($replacements), array_values($replacements), $template);     
+            '#orgname#'        => $orgname,
+            '#functionlabel#'  => $label,
+            '#alternatename#'  => (string) ($this->organization['alternateName'] ?? '')
+        ];
+
+        $jobtitle = str_replace(array_keys($replacements), array_values($replacements), $template);
         $this->jobTitle = $jobtitle;
-        
-        return $jobtitle;      
+
+        return $jobtitle;
     }
 
 
@@ -648,32 +583,49 @@ class Contact {
     * @return bool       true, wenn (optional Org passt und) eine Rollen-Übereinstimmung besteht
     */
    public function isRole(string $role, ?string $organizationIdentifier = null): bool {
-       // Rollen normalisieren
-       $roles = array_values(array_filter(array_map('trim', explode(',', $role)), 'strlen'));
-       if (empty($roles)) {
-           return false;
-       }
+        $roles = FaudirUtils::csvToArray($role);
+        if (empty($roles)) {
+            return false;
+        }
 
-       // Optional: Organisation abgleichen
-       if ($organizationIdentifier !== null) {
-           $contactOrgId = $this->organization['identifier'] ?? null;
-           if (!$contactOrgId || (string) $contactOrgId !== (string) $organizationIdentifier) {
-               return false;
-           }
-       }
+        // Optional: Organisation abgleichen
+        if ($organizationIdentifier !== null) {
+            $contactOrgId = $this->organization['identifier'] ?? null;
+            if (!$contactOrgId || (string) $contactOrgId !== (string) $organizationIdentifier) {
+                return false;
+            }
+        }
 
-       // Rollenfelder prüfen (exakte Matches)
-       $fn   = $this->function ?? null;
-       $fnDe = $this->functionLabel['de'] ?? null;
-       $fnEn = $this->functionLabel['en'] ?? null;
+        // Rollen normalisieren (trim + lowercase)
+        $needles = [];
+        foreach ($roles as $r) {
+            $r = trim((string) $r);
+            if ($r === '') {
+                continue;
+            }
+            $needles[] = function_exists('mb_strtolower') ? mb_strtolower($r, 'UTF-8') : strtolower($r);
+        }
+        $needles = FaudirUtils::normalizeStringArray($needles);
+        if (empty($needles)) {
+            return false;
+        }
 
-       $matches =
-           ($fn   !== null && in_array($fn, $roles, true)) ||
-           ($fnDe !== null && in_array($fnDe, $roles, true)) ||
-           ($fnEn !== null && in_array($fnEn, $roles, true));
+        // Labels des Kontakts normalisieren und vergleichen
+        $labels = $this->getAllFunctionLabels();
+        foreach ($labels as $label) {
+            $label = trim((string) $label);
+            if ($label === '') {
+                continue;
+            }
+            $hay = function_exists('mb_strtolower') ? mb_strtolower($label, 'UTF-8') : strtolower($label);
 
-       return $matches;
-   }
+            if (in_array($hay, $needles, true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 }
 
