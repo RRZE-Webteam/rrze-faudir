@@ -334,6 +334,57 @@ class FaudirUtils {
        return implode(', ', $out);
    }
 
-   
+   /*
+    * Wandelt eine kommaseparierte Zeichenkette in ein bereinigtes Array um.
+    *
+    * - Trennt an Kommas
+    * - Entfernt führende und nachgestellte Leerzeichen
+    * - Entfernt leere Einträge
+    *
+    * @param string $csv Kommaseparierte Liste (z. B. "a, b, c")
+    * @return array Bereinigtes Array von Strings
+    */
+   public static function csvToArray(string $csv): array {
+        $csv = trim($csv);
+        if ($csv === '') {
+            return [];
+        }
+
+        $parts = explode(',', $csv);
+        $out = [];
+
+        foreach ($parts as $p) {
+            $p = trim($p);
+            if ($p !== '') {
+                $out[] = $p;
+            }
+        }
+
+        return $out;
+    }
+    
+    /*
+     * Normalisiert ein Array von Strings.
+     *
+     * - Castet Werte zu String
+     * - Entfernt führende und nachgestellte Leerzeichen
+     * - Entfernt leere Einträge
+     * - Entfernt doppelte Werte (Reihenfolge bleibt erhalten)
+     *
+     * @param array $values Eingabearray mit beliebigen Werten
+     * @return array Bereinigtes Array eindeutiger Strings
+     */
+    public static function normalizeStringArray(array $values): array {
+        $out = [];
+
+        foreach ($values as $v) {
+            $v = trim((string) $v);
+            if ($v !== '') {
+                $out[] = $v;
+            }
+        }
+
+        return array_values(array_unique($out));
+    }
 
 }

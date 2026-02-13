@@ -2,10 +2,13 @@
 // Template file for RRZE FAUDIR
 use RRZE\FAUdir\Config;
 use RRZE\FAUdir\Shortcode;
+use RRZE\FAUdir\EnqueueScripts;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
+
+EnqueueScripts::enqueue_frontend_on_demand();
 
 get_header();
 
@@ -26,24 +29,22 @@ get_header();
                     <?php 
                     // Execute the shortcode with the person ID and page format
                     
-                        $config = new Config;
-                        $opt = $config->getOptions(); 
-                        
-                        $showfields = [];
-                        
-                        if (isset($opt['output_fields_endpoint']) && (!empty($opt['output_fields_endpoint']))) {
-                            $showfields = $opt['output_fields_endpoint'];
-                        } elseif (isset($opt['default_output_fields_endpoint']) && (!empty($opt['default_output_fields_endpoint']))) {
-                            $showfields = $opt['default_output_fields_endpoint'];
-                        }
-                       
-                        
-                        $atts['display'] = 'person';
-                        $atts['format'] = 'page';
-                        $atts['identifier'] = $person_id;
-                        $atts['show'] = implode(', ', $showfields);
-                        $output_escaped = Shortcode::render($atts);
-                        echo  apply_filters('the_content', $output_escaped);
+                    $config = new Config();
+                    $opt = $config->getOptions();
+
+                    $showfields = [];
+                    if (!empty($opt['output_fields_endpoint'])) {
+                        $showfields = (array) $opt['output_fields_endpoint'];
+                    } elseif (!empty($opt['default_output_fields_endpoint'])) {
+                        $showfields = (array) $opt['default_output_fields_endpoint'];
+                    }
+
+                    $shortcode = new Shortcode();
+
+                    echo $shortcode->renderPersonPage((string) $person_id, $showfields);
+
+                        // $output_escaped = Shortcode::render($atts);
+                        // echo  apply_filters('the_content', $output_escaped);
                         
                      
                     ?>

@@ -21,7 +21,7 @@ class EnqueueScripts {
         add_action('enqueue_block_editor_assets', [self::class, 'enqueue_block_editor']);
 
         // Enqueue
-        add_action('wp_enqueue_scripts', [self::class, 'enqueue_frontend_conditionally'], 20);
+        add_action('wp_enqueue_scripts', [self::class, 'enqueue_frontend_conditionally'], 5);
         
 
     }
@@ -60,8 +60,23 @@ class EnqueueScripts {
         if (is_admin()) {
             return;
         }
+        
+        // 1) CPT-Single immer als "needs"
+        $config = new \RRZE\FAUdir\Config();
+        $postType = (string) $config->get('person_post_type');
 
-        $post = get_post();
+        if ($postType !== '' && is_singular($postType)) {
+            self::enqueue_frontend();
+            return;
+        }
+
+        // 2) Content-basiert (Shortcode/Block)
+        $postId = (int) get_queried_object_id();
+        if ($postId <= 0) {
+            return;
+        }
+
+        $post = get_post($postId);
         if (!$post || empty($post->post_content)) {
             return;
         }
