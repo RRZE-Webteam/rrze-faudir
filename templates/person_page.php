@@ -101,15 +101,17 @@ if (!defined('ABSPATH')) {
                         if (in_array('address', $show_fields) ) {
                             if (!empty($workplaces)) {
                                 $wval = '';
-                                if ((in_array('room', $show_fields)) || (in_array('floor', $show_fields))) {
-                                    $roomfloor = true;
-                                } else {
-                                    $roomfloor = false;
+                                $room = $floor =  false;
+                                if (in_array('room', $show_fields)) {
+                                    $room = true;
+                                }
+                                if (in_array('floor', $show_fields))  {
+                                    $floor = true;
                                 }
                                 
                                 $seen      = [];
                                 foreach ($workplaces as $w => $wdata) {
-                                    $html = (string) $contact->getAddressByWorkplace($wdata, false, $lang, $roomfloor);
+                                    $html = (string) $contact->getAddressByWorkplace($wdata, false, $lang, $room, $floor);
                                     if ($html === '') {
                                         continue;
                                     }
@@ -280,25 +282,7 @@ if (!defined('ABSPATH')) {
                      </div>
                     <div class="profile-content-region">
                     <?php
-                     if (in_array('link', $show_fields)) {                          
-                            if (!empty($final_url)) {
-                                $link = '<div class="profile-link">';
-                                $link .= '<a class="buttonlink" itemprop="sameAs" href="'.esc_url($final_url).'">';     
-                                $opt = $config->getOptions();                       
-                                $linkttitle = $opt['business_card_title'];
-                                if (empty($linkttitle)) {
-                                     $linkttitle  = __('User profil', 'rrze-faudir');
-                                }
-                                
-                                $link .= $linkttitle;
-                                $link .= '</a>';
-                                $link .= '</div>';
-                                
-                                
-                                echo $link;
-                            }
-                    }
-                    
+                   
                     
                     $profilcontent = '';
                     if (in_array('teasertext', $show_fields) ) {    

@@ -82,11 +82,11 @@ if (!defined('ABSPATH')) {
                                 $value =  '';
                                 if ($key_lower === 'displayname')  {
                                     if ($displayname) {
-                                        if (!empty($final_url)) {
+                                        if ((!empty($final_url)) && (in_array('link', $show_fields))) {
                                              $value .= '<a itemprop="url" href="'.esc_url($final_url).'">';     
                                         }
                                         $value .= $displayname;
-                                        if (!empty($final_url)) {
+                                        if ((!empty($final_url)) && (in_array('link', $show_fields))) {
                                              $value .= '</a>';
                                         }
                                     } 
@@ -171,27 +171,7 @@ if (!defined('ABSPATH')) {
                                             }
                                             $value = $wval;      
                                     }
-                                 } elseif ($key_lower === 'link')  {          
-                                                          
-                                    if (!empty($final_url)) {
-                                        $link = '<span class="profile-link">';
-                                        $link .= '<a class="buttonlink" itemprop="sameAs" href="'.esc_url($final_url).'">';  
-
-                                        $opt = $config->getOptions();                       
-                                        $linkttitle = $opt['business_card_title'];
-                                        if (empty($linkttitle)) {
-                                             $linkttitle  = __('User profil', 'rrze-faudir');
-                                        }
-
-                                        $link .= $linkttitle;
-                                        $link .= '</a>';
-                                        $link .= '</span>';
-
-                                        $value = $link;    
-                                    }
-  
-                    
-                                    
+                           
                                     
                                 } elseif ($key_lower === 'image')  {      
                                     $value = $person->getImage();
@@ -228,16 +208,18 @@ if (!defined('ABSPATH')) {
                                         }
                                 } elseif ($key_lower === 'address')  {     
                                     if (!empty($workplaces)) {
-                                            if ((in_array('room', $show_fields)) || (in_array('floor', $show_fields))) {
-                                                $roomfloor = true;
-                                            } else {
-                                                $roomfloor = false;
+                                            $room = $floor =  false;
+                                            if (in_array('room', $show_fields)) {
+                                                $room = true;
+                                            }
+                                            if (in_array('floor', $show_fields))  {
+                                                $floor = true;
                                             }
                                 
                                             $wval = '';
                                             $seen      = [];
                                             foreach ($workplaces as $w => $wdata) {
-                                                $html = (string) $contact->getAddressByWorkplace($wdata, false, $lang, $roomfloor);
+                                                $html = (string) $contact->getAddressByWorkplace($wdata, false, $lang, $room, $floor);
                                                 if ($html === '') {
                                                     continue;
                                                 }

@@ -341,7 +341,7 @@ class Contact {
      * Rückgabe:
      *   - HTML-Fragment als string (leer, wenn keine Zeiten vorhanden sind)
      */
-    public function getConsultationsHours(array $workplace, string $key = 'consultationHours', ?bool $withaddress = true,?string $lang = 'de', ?bool $roomfloor = false, ?bool $showmap = false): string {
+    public function getConsultationsHours(array $workplace, string $key = 'consultationHours', ?bool $withaddress = true,?string $lang = 'de', ?bool $room = false, ?bool $floor = false, ?bool $showmap = false): string {
         if (empty($workplace)) {
             return '';
         }
@@ -349,7 +349,7 @@ class Contact {
         // Adresse (optional) vorbereiten – wie zuvor in Contact erzeugt
         $addressHtml = '';
         if ($withaddress) {
-            $addressHtml = $this->getAddressByWorkplace($workplace, false, $lang, $roomfloor, $showmap) ?? '';
+            $addressHtml = $this->getAddressByWorkplace($workplace, false, $lang, $room, $floor, $showmap) ?? '';
         }
 
         // Öffnungszeiten rendern
@@ -357,26 +357,28 @@ class Contact {
         return $oh->getConsultationsHours($key, $addressHtml, $lang);
     }
 
-    
-  
+   
     
     /*
      * Generate Address Output for a Workplace
      */
-    public function getAddressByWorkplace(array $workplace, bool $orgname = true, string $lang = "de", ?bool $roomfloor = false, ?bool $showmap = false): ?string {
+    public function getAddressByWorkplace(array $workplace, bool $orgname = true, string $lang = "de", ?bool $room = false, ?bool $floor = false, ?bool $showmap = false): ?string {
         $address = $result = $roomfloorpart = '';
 
         if ($orgname) {
             $address .= $this->getOrganizationName($lang);  
         }
-        if (($roomfloor) || ($showmap)) {
+        if ($room || $floor || $showmap) {
             
-                $room = $floor = $map = '';        
-                if (($roomfloor) && (!empty($workplace['room']))) {
-                     $room = '<span class="texticon room"><span class="screen-reader-text">'.__('Room','rrze-faudir').': </span><span itemprop="floorLevel">'.esc_html($workplace['room']).'</span></span>';
+                $roomhtml = '';
+                $floorhtml = '';
+                $map = '';        
+                
+                if (($room) && (!empty($workplace['room']))) {
+                     $roomhtml = '<span class="texticon room"><span class="screen-reader-text">'.__('Room','rrze-faudir').': </span><span itemprop="floorLevel">'.esc_html($workplace['room']).'</span></span>';
                 }
-                if (($roomfloor) && (!empty($workplace['floor']))) {
-                    $floor = '<span class="texticon floor"><span class="screen-reader-text">'.__('Floor','rrze-faudir').': </span><span itemprop="floorLevel">'.esc_html($workplace['floor']).'</span></span>';
+                if (($floor) && (!empty($workplace['floor']))) {
+                    $floorhtml = '<span class="texticon floor"><span class="screen-reader-text">'.__('Floor','rrze-faudir').': </span><span itemprop="floorLevel">'.esc_html($workplace['floor']).'</span></span>';
                 }
                 if (($showmap) && (!empty($workplace['faumap']))) {
                     if (preg_match('/^https?:\/\/karte\.fau\.de/i', $workplace['faumap'])) {  
@@ -388,19 +390,20 @@ class Contact {
 
                 $adressparts = '';
                 
-                if (!empty($room)) {
-                    $adressparts .= $room;
-                    if ((!empty($floor)) || (!empty($map))) {
-                        $adressparts .= ', ';
-                    }
+                if (!empty($roomhtml)) {
+                    $adressparts .= $roomhtml;
                 }
-                if (!empty($floor)) {
-                    $adressparts .= $floor;
-                    if (!empty($map)) {
+                if (!empty($floorhtml)) {
+                    if (!empty($adressparts)) {
                         $adressparts .= ', ';
                     }
+                    $adressparts .= $floorhtml;
+
                 }
                 if (!empty($map)) {
+                    if (!empty($adressparts)) {
+                        $adressparts .= ', ';
+                    }
                     $adressparts .= $map;
                 }
 
@@ -409,10 +412,7 @@ class Contact {
                     $roomfloorpart .= $adressparts;
                     $roomfloorpart .= '</span>'; 
                 }
-              
-         
 
-           
         }
         
         if ($workplace['street']) {

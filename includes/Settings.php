@@ -760,23 +760,7 @@ class Settings {
     }
 
 
-    public function render_business_card_title(): void {
-        $options = get_option('rrze_faudir_options');
-        $config  = new Config();
-        $default_title = $config->get('business_card_title');
-
-        $value = isset($options['business_card_title']) && !empty($options['business_card_title'])
-            ? sanitize_text_field($options['business_card_title'])
-            : $default_title;
-
-        if (!isset($options['business_card_title']) || empty($options['business_card_title'])) {
-            $options['business_card_title'] = $default_title;
-            update_option('rrze_faudir_options', $options);
-        }
-
-        echo '<input type="text" name="rrze_faudir_options[business_card_title]" value="' . esc_attr($value) . '" size="50">';
-        echo '<p class="description">' . esc_html__('Link title for optional links pointing to the users detail page.', 'rrze-faudir') . '</p>';
-    }
+    
 
    public function render_fallback_link_faudir(): void {
         $options = get_option('rrze_faudir_options');
@@ -1304,9 +1288,7 @@ class Settings {
         if (array_key_exists('api_key', $new_options)) {
             $merged['api_key'] = sanitize_text_field($new_options['api_key']);
         }
-        if (array_key_exists('business_card_title', $new_options)) {
-            $merged['business_card_title'] = sanitize_text_field($new_options['business_card_title']);
-        }
+
         if (array_key_exists('jobtitle_format', $new_options)) {
             $merged['jobtitle_format'] = sanitize_text_field($new_options['jobtitle_format']);
         }
