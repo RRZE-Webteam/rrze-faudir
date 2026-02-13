@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 // Shortcode handler for RRZE FAUDIR
 // namespace RRZE\FAUdir;
 namespace RRZE\FAUdir;
@@ -86,9 +87,9 @@ class Shortcode {
         }
         
         
-        $atts['display'] = self::validateDisplay($atts['display']);
-        $atts['format'] = self::validateFormat($atts['format'], $atts['display']);
-        $show = self::resolve_visible_fields_with_format($atts);
+        $atts['display'] = $this->validateDisplay($atts['display']);
+        $atts['format'] = $this->validateFormat($atts['format'], $atts['display']);
+        $show = $this->resolve_visible_fields_with_format($atts);
         $atts['show'] = implode(', ', $show);
         unset($atts['hide']);
         
@@ -101,7 +102,7 @@ class Shortcode {
         $no_cache_logged_in = isset($options['no_cache_logged_in']) && $options['no_cache_logged_in'];    
        
         if ($no_cache_logged_in && is_user_logged_in()) {
-            $output = self::fetch_and_render_fau_data($atts);
+            $output = $this->fetch_and_render_fau_data($atts);
             $output = do_blocks($output);    
             $output = do_shortcode(shortcode_unautop($output));
             return $output;
@@ -122,7 +123,7 @@ class Shortcode {
         }
         
         // Fetch and render fresh data
-        $output = self::fetch_and_render_fau_data($atts);
+        $output = $this->fetch_and_render_fau_data($atts);
        
         // Cache the rendered output using Transients API
         // Dont execute shortcodes here and safe the raw code! Cause they have to be executed on 
@@ -136,7 +137,7 @@ class Shortcode {
     /*
      * Create Array for those fields we want to show 
      */
-   public static function resolve_visible_fields_with_format(array $atts): array {
+   public function resolve_visible_fields_with_format(array $atts): array {
         $options = get_option('rrze_faudir_options');
         $default_show_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : [];
 
@@ -145,11 +146,8 @@ class Shortcode {
             return $show_fields;
         }
         
-        
-        $format = $atts['format'];
-
         // Alias-Mapping
-        $aliases = self::$config->get('args_person_to_faudir');
+        $aliases = $this->config->get('args_person_to_faudir');
 
         // Helper-Funktion zum Umwandeln alter Feldnamen in aktuelle
         $normalize_fields = function (array $fields) use ($aliases) {
@@ -176,7 +174,7 @@ class Shortcode {
         // Doppelte entfernen und nur gültige Felder nach Format zurückgeben
         $fields = array_unique($fields);
        
-        $available = self::$config->getAvaibleFieldlistByFormat($atts['format'], $atts['display']);
+        $available = $this->config->getAvaibleFieldlistByFormat($atts['format'], $atts['display']);
         
         $resolved_fields = array_values(array_intersect(
             $available,
@@ -184,7 +182,7 @@ class Shortcode {
         ));
 
         // Entferne abhängige Felder laut hide_on_parameter
-        $hide_on_parameter = self::$config->get('hide_on_parameter');
+        $hide_on_parameter = $this->config->get('hide_on_parameter');
         foreach ($hide_on_parameter as $trigger => $dependent_fields) {
             if (in_array($trigger, $resolved_fields, true)) {
                 $resolved_fields = array_diff($resolved_fields, $dependent_fields);
@@ -200,16 +198,15 @@ class Shortcode {
     /*
      * Create Output for Shortcode 
      */
-    public static function fetch_and_render_fau_data($atts) {
+    public function fetch_and_render_fau_data(array $atts): string {
         // Convert 'show' and 'hide' attributes into arrays
         $show_fields = array_map('trim', explode(',', $atts['show']));
        
-         
-         
+      
         if ($atts['display'] == 'org') {
-            return self::createOrgOutput($atts, $show_fields);
+            return $this->createOrgOutput($atts, $show_fields);
         } else {
-            return self::createPersonOutput($atts, $show_fields);
+            return $this->createPersonOutput($atts, $show_fields);
         }
     }
 
@@ -217,7 +214,7 @@ class Shortcode {
     /*
      * Create Output for Person Display
      */
-    public static function createPersonOutput(array $atts, array $show_fields): string {     
+    public function createPersonOutput(array $atts, array $show_fields): string {     
         // Extract the attributes from the shortcode
         $identifiers = empty($atts['identifier']) ? [] : explode(',', $atts['identifier']);
             // FAUdir Identifier von einer oder mehreren Personen
@@ -244,13 +241,13 @@ class Shortcode {
         $atts['order']     = FaudirUtils::expandOrderStringForSort($sanitizedOrder, $atts['sort']);
 
          
-        $api = new API(self::$config);
+        $api = new API($this->config);
         
         
         // Display persons by function
         $persons = [];
         $person = new Person();
-        $person->setConfig(self::$config);
+        $person->setConfig($this->config);
 
         
         if (!empty($role)) {
@@ -291,28 +288,28 @@ class Shortcode {
         if (!empty($identifiers) || !empty($post_id)) {
             // display a single person by identifier or post id
             if (!empty($identifiers)) {
-                $persons = self::process_persons_by_identifiers($identifiers);
+                $persons = $this->process_persons_by_identifiers($identifiers);
             } elseif (!empty($post_id)) {                
-                $persons = self::fetchPersonsByPostId($post_id);
+                $persons = $this->fetchPersonsByPostId($post_id);
             }
             // Apply category filter if category is set
             if (!empty($category)) {
-                $persons = self::filterPersonsByCategory($persons, $category);
+                $persons = $this->filterPersonsByCategory($persons, $category);
             }
             // Apply organization and group filters if set
-            $persons = self::filterPersonsByOrganization($persons, $orgnr);
+            $persons = $this->filterPersonsByOrganization($persons, $orgnr);
         } elseif (!empty($category)) {
             // get persons by category. 
-            $person_identifiers = self::getPersonIdentifiersByCategory($category);
+            $person_identifiers = $this->getPersonIdentifiersByCategory($category);
             if (!empty($person_identifiers)) {
-                $persons = self::process_persons_by_identifiers($person_identifiers);
+                $persons = $this->process_persons_by_identifiers($person_identifiers);
             }
         } elseif (!empty($orgnr))  {
             // get persons by orgnr
-           $persons = self::getPersonsByOrgNrs($orgnr, $role); 
+           $persons = $this->getPersonsByOrgNrs($orgnr, $role); 
          } elseif (!empty($faudir_orgid))  {
             // get persons by FAUdir Orgid
-           $persons = self::getPersonsByFAUdirOrgId($faudir_orgid, $role);     
+           $persons = $this->getPersonsByFAUdirOrgId($faudir_orgid, $role);     
 
         } else {
       //      do_action( 'rrze.log.error',"FAUdir\Shortcode (createPersonOutput): Invalid combination of attributes.", $atts);
@@ -350,7 +347,7 @@ class Shortcode {
     /*
      * Create Output for Org Display
      */
-    public static function createOrgOutput(array $atts, array $show_fields): string {     
+    public function createOrgOutput(array $atts, array $show_fields): string {     
         $orgnr      = $atts['orgnr'];
             // Org Nr der Einrichtung, die anzuzeigen ist
         $orgid      = $atts['orgid'];
@@ -369,7 +366,7 @@ class Shortcode {
                 $org->getOrgbyAPI($orgid);
                 $orgdata = $org->toArray();
             } else {
-                return self::createErrorOut(__('Bad value for parameter orgid', 'rrze-faudir'), 'createOrgOutput');
+                return $this->createErrorOut(__('Bad value for parameter orgid', 'rrze-faudir'), 'createOrgOutput');
             }
         } elseif (!empty($orgid)) {
             $orgid = Organization::sanitizeOrgIdentifier($orgid);
@@ -378,11 +375,11 @@ class Shortcode {
                 $org->getOrgbyAPI($orgid);
                 $orgdata = $org->toArray();
             } else {
-                return self::createErrorOut(__('Bad value for parameter orgid', 'rrze-faudir'), 'createOrgOutput');
+                return $this->createErrorOut(__('Bad value for parameter orgid', 'rrze-faudir'), 'createOrgOutput');
             }
 
         } else {
-            return self::createErrorOut(__('Invalid oder missing parameter orgnr or orgid', 'rrze-faudir'), 'createOrgOutput');
+            return $this->createErrorOut(__('Invalid oder missing parameter orgnr or orgid', 'rrze-faudir'), 'createOrgOutput');
         }
         
         
@@ -406,15 +403,14 @@ class Shortcode {
     /*
      * Create Error Output in cases it is not promptet within templates
      */
-    public static function createErrorOut(string $error, string $errorloginfo = ''): string {
+    public function createErrorOut(string $error, string $errorloginfo = ''): string {
         if (empty($error)) {
             $error = __('Error on creating output', 'rrze-faudir');
         }
         do_action( 'rrze.log.error',"FAUdir\Shortcode (createErrorOut): $errorloginfo", $error);
         
         $out = '<div class="faudir">';  
-        $config = new Config;
-        $opt = $config->getOptions(); 
+        $opt = $this->config->getOptions(); 
         if ($opt['show_error_message']) {
           $out .= '<div class="faudir-error">';
           $out .= $error;
@@ -430,11 +426,11 @@ class Shortcode {
      * Check the given display for validity and return it if its avaible, otherwise 
      * the default format
      */
-    public static function validateDisplay(string $display = ''): string {        
-        $allformats =   self::$config->get('avaible_formats_by_display');
+    public function validateDisplay(string $display = ''): string {        
+        $allformats =  $this->config->get('avaible_formats_by_display');
         $display = sanitize_key($display);
         if ((empty($display))  ||  (!isset($allformats[$display]))) {
-            $display = self::$config->get('default_display');
+            $display = $this->config->get('default_display');
         }
         
         return $display;
@@ -444,8 +440,8 @@ class Shortcode {
      * Check the given format for validity and return it if its avaible, otherwise 
      * the default format
      */
-    public static function validateFormat(string $format = '', ?string $display = ''): string {
-        $allformats =   self::$config->get('avaible_formats_by_display');
+    public function validateFormat(string $format = '', ?string $display = ''): string {
+        $allformats =   $this->config->get('avaible_formats_by_display');
         $format = sanitize_key($format);
    
         
@@ -457,7 +453,7 @@ class Shortcode {
             $format = 'list';
         }
         if (empty($display)) {
-            $display = self::$config->get('default_display');
+            $display = $this->config->get('default_display');
         }
 
         
@@ -468,19 +464,19 @@ class Shortcode {
             return $format;
         }
         // Fallback
-        return self::$config->get('default_format');
+        return $this->config->get('default_format');
     }
     
    /*
     * Hole Personeneinträge aus dem CPT, die zu einer definierten Kategorie gehören
     */ 
-    public static function getPersonIdentifiersByCategory(string $category): array {
+    public function getPersonIdentifiersByCategory(string $category): array {
         if (empty($category)) {
             return [];
         }
 
-        $taxonomy = self::$config->get('person_taxonomy') ?? 'custom_taxonomy';
-        $post_type = self::$config->get('person_post_type') ?? 'custom_person';
+        $taxonomy = $this->config->get('person_taxonomy') ?? 'custom_taxonomy';
+        $post_type = $this->config->get('person_post_type') ?? 'custom_person';
 
         $categories = array_map('trim', explode(',', $category));
         $person_identifiers = [];
@@ -530,7 +526,7 @@ class Shortcode {
     * Rückgabe:
     *   - array: zusammengeführte Personenliste (kontakt-merge bei Mehrtreffern).
     */
-   public static function getPersonsByOrgNrs(string|array|int $orgnrs, ?string $role = null): array {
+   public function getPersonsByOrgNrs(string|array|int $orgnrs, ?string $role = null): array {
        // Eingabe normalisieren → Array von Strings (ohne Leerzeichen, ohne leere Einträge)
        if (is_int($orgnrs)) {
            $orgList = [(string) $orgnrs];
@@ -551,7 +547,7 @@ class Shortcode {
        $byId = [];
 
        foreach ($orgList as $oneOrgNr) {
-           $list = self::getPersonsByOrgNr($oneOrgNr, $role);
+           $list = $this->getPersonsByOrgNr($oneOrgNr, $role);
            if (empty($list) || !is_array($list)) {
                continue;
            }
@@ -610,7 +606,7 @@ class Shortcode {
     * Rückgabe:
     *   - array: Personen (nur mit passenden Kontakten), [] wenn keine Treffer.
     */
-   public static function getPersonsByOrgNr(string|int $orgnr, ?string $role = null): array {
+   public function getPersonsByOrgNr(string|int $orgnr, ?string $role = null): array {
        // Nur Ziffern verwenden
        $orgnrDigits = preg_replace('/\D+/', '', (string) $orgnr);
 
@@ -626,8 +622,7 @@ class Shortcode {
        }
 
        // API
-       $config = (isset(self::$config) && self::$config instanceof Config) ? self::$config : new Config();
-       $api    = new API($config);
+       $api    = new API($this->config);
 
        // Organisation(en) abrufen
        $orgdata = $api->getOrgList(0, 0, $orgParams);
@@ -658,7 +653,7 @@ class Shortcode {
        $data   = $api->getPersons(0, 0, $params);
 
        $person  = new Person();
-       $person->setConfig($config);
+       $person->setConfig($this->config);
 
        $persons = [];
        $hasRoleFilter = (is_string($role) && trim($role) !== '');
@@ -689,7 +684,7 @@ class Shortcode {
                        }
 
                        $contact = new Contact($contactData);
-                       $contact->setConfig($config);
+                       $contact->setConfig($this->config);
 
                        // Nur bei 10-stelliger Orgnr die exakte Org-ID an isRole übergeben; sonst NULL
                        $orgArgForIsRole = $enforceOrgInIsRole ? (string) $contactOrgId : null;
@@ -731,7 +726,7 @@ class Shortcode {
      * @param string|null  $role          Optional: kommaseparierte Rollen
      * @return array                      Liste passender Personen (jeweils als Array); [] wenn keine Treffer
      */
-    public static function getPersonsByFAUdirOrgId(string $faudir_orgid, ?string $role = null): array {
+    public function getPersonsByFAUdirOrgId(string $faudir_orgid, ?string $role = null): array {
         // Identifier aus URL extrahieren, falls nötig
         $id = trim((string) $faudir_orgid);
 
@@ -745,8 +740,7 @@ class Shortcode {
         }
 
         // API-Setup
-        $config = (isset(self::$config) && self::$config instanceof Config) ? self::$config : new Config();
-        $api    = new API($config);
+        $api    = new API($this->config);
 
         // LQ direkt mit exakter Org-ID
         $lq     = 'contacts.organization.identifier[eq]=' . $id;
@@ -755,7 +749,7 @@ class Shortcode {
         $data = $api->getPersons(0, 0, $params);
 
         $person = new Person();
-        $person->setConfig($config);
+        $person->setConfig($this->config);
 
         $persons        = [];
         $hasRoleFilter  = (is_string($role) && trim($role) !== '');
@@ -786,7 +780,7 @@ class Shortcode {
                         }
 
                         $contact = new Contact($contactData);
-                        $contact->setConfig($config);
+                        $contact->setConfig($this->config);
 
                         // isRole prüft NUR diesen Kontakt; exakte Org-ID mitgeben
                         if ($contact->isRole($role, $id)) {
@@ -811,12 +805,12 @@ class Shortcode {
     /*
      * Filter Personen nach ihrer Org
      */
-    public static function filterPersonsByOrganization(array $persons, ?string $orgnr): array {
+    public function filterPersonsByOrganization(array $persons, ?string $orgnr): array {
         if (empty($orgnr)) {
             return $persons;
         }
 
-        $api = new API(self::$config);
+        $api = new API($this->config);
         $orgdata = $api->getOrgList(0, 0, [
             'lq' => 'disambiguatingDescription[eq]=' . $orgnr
         ]);
@@ -844,14 +838,14 @@ class Shortcode {
     /*
      * Rufe poersonen aus der gegebenen Kategorie ab
      */
-    public static function filterPersonsByCategory(array $persons, string $category): array {
+    public function filterPersonsByCategory(array $persons, string $category): array {
         if (empty($category)) {
             return $persons;
         }
 
         // Taxonomie-Slug aus der Konfiguration lesen (Fallback: 'custom_taxonomy')
-        $taxonomy = self::$config->get('person_taxonomy') ?? 'custom_taxonomy';
-        $post_type = self::$config->get('person_post_type') ?? 'custom_person';
+        $taxonomy = $this->config->get('person_taxonomy') ?? 'custom_taxonomy';
+        $post_type = $this->config->get('person_post_type') ?? 'custom_person';
         
         $args = [
             'post_type'      => $post_type,
@@ -884,11 +878,11 @@ class Shortcode {
     /*
      * Abruf der Personendaten anhand einer Post-ID oder einer kommaseparierten Liste von Post-IDs.
      * Optionaler Input: $post_ids (int|string) – z.B. 123 oder "123, 456,789".
-     * Rückgabe: array – Ergebnis von self::process_persons_by_identifiers($person_identifiers).
+     * Rückgabe: array – Ergebnis von $this->process_persons_by_identifiers($person_identifiers).
      */
-    public static function fetchPersonsByPostId(int|string $post_ids): array {
+    public function fetchPersonsByPostId(int|string $post_ids): array {
         $person_identifiers = [];
-        $post_type = self::$config->get('person_post_type') ?? 'custom_person';
+        $post_type = $this->config->get('person_post_type') ?? 'custom_person';
 
         // Eingabe normalisieren: einzelne ID → Array; CSV-String → Array
         if (is_string($post_ids)) {
@@ -945,19 +939,19 @@ class Shortcode {
         // Duplikate entfernen
         $person_identifiers = array_values(array_unique(array_filter($person_identifiers)));
 
-        return self::process_persons_by_identifiers($person_identifiers);
+        return $this->process_persons_by_identifiers($person_identifiers);
     }
 
 
     /**
      * Process persons by a list of identifiers.
      */
-    public static function process_persons_by_identifiers($identifiers) {
+    public function process_persons_by_identifiers(array $identifiers): array {
         $persons = [];
         $errors = [];
 
         $person = new Person();
-        $person->setConfig(self::$config);
+        $person->setConfig($this->config);
                 
         foreach ($identifiers as $identifier) {
             $identifier = trim($identifier);
@@ -982,13 +976,13 @@ class Shortcode {
     /**
      * Fetch and process persons based on query parameters.
      */
-    public static function fetch_and_process_persons($lq = null) {
+    public function fetch_and_process_persons(?string $lq = null): array {
         $params = $lq ? ['lq' => $lq] : [];
-        $api = new API(self::$config);
+        $api = new API($this->config);
         $data = $api->getPersons(0, 0, $params);
         
         $person = new Person();
-        $person->setConfig(self::$config);
+        $person->setConfig($this->config);
         
         $persons = [];
         if (!empty($data['data'])) {
