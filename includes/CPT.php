@@ -4,7 +4,6 @@ namespace RRZE\FAUdir;
 
 defined('ABSPATH') || exit;
 
-use RRZE\FAUdir\FaudirUtils;
 use RRZE\FAUdir\Config;
 use RRZE\FAUdir\API;
 use RRZE\FAUdir\Organization;

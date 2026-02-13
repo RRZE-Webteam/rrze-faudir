@@ -5,7 +5,6 @@ namespace RRZE\FAUdir;
 
 use RRZE\FAUdir\FaudirUtils;
 use RRZE\FAUdir\Template;
-use RRZE\FAUdir\Debug;
 use RRZE\FAUdir\API;
 use RRZE\FAUdir\Organization;
 
@@ -14,27 +13,37 @@ defined('ABSPATH') || exit;
 
 class Shortcode { 
 
-    protected static $config;
+    private Config $config;
+
     
     public function __construct() {
-        self::$config = new Config();
+        $this->config = new Config();
          
         // Haupt-Shortcode registrieren
-        add_shortcode('faudir', [$this, 'fetch_fau_data']);
+        add_shortcode('faudir', [$this, 'render']);
         // Alias-Shortcodes registrieren
         add_action('init', [$this, 'register_aliases'], 15);
     }
   
-    // Shortcode function
-    public static function fetch_fau_data($atts) {
-        // Only return early if it's a pure admin page, not the block editor
+    
+    /*
+     * Main render funktion: Für Shortcodes und Blocks
+     */
+    public function render($atts, $content = null): string {
         
+        // Only return early if it's a pure admin page, not the block editor
+        /*
         if (
             is_admin() &&
             !(defined('REST_REQUEST') && REST_REQUEST) && // Allow REST requests (block editor)
             !(defined('DOING_AJAX') && DOING_AJAX) && // Allow AJAX calls
             !(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) // Allow autosave
         ) {
+            return '';
+        }
+        */
+         
+        if (is_admin() && !wp_doing_ajax() && !(defined('REST_REQUEST') && REST_REQUEST)) {
             return '';
         }
         $lang = FaudirUtils::getLang();
@@ -84,11 +93,8 @@ class Shortcode {
         unset($atts['hide']);
         
 
-       // do_action( 'rrze.log.notice','FAUdir\Shortcode (fetch_fau_data). Modified Args: ', $atts);
+       // do_action( 'rrze.log.notice','FAUdir\Shortcode (render). Modified Args: ', $atts);
         
-        // Enqueue CSS for output
-        wp_enqueue_style('rrze-faudir');
-          
           
         // If user is logged in and no-cache option is enabled, always fetch fresh data
         $options = get_option('rrze_faudir_options');
@@ -101,7 +107,9 @@ class Shortcode {
             return $output;
         }
 
-        $cache_key = 'faudir_shortcode_' . md5(serialize($atts));
+        ksort($atts);
+        $cache_key = 'faudir_shortcode_' . md5(wp_json_encode($atts));
+        
         $cache_timeout = isset($options['cache_timeout']) ? intval($options['cache_timeout']) * 60 : 900; // Default to 15 minutes
 
         // Check if cached data exists
@@ -994,8 +1002,13 @@ class Shortcode {
         return $persons;
     }
 
-
+    /*
+     * Übernehme alte Shortcodes von FAU Person, sofern FAU-Person nicht mehr aktiv ist.
+     */
     public function register_aliases(): void {
+        if (!function_exists('is_plugin_active')) {
+            require_once ABSPATH . 'wp-admin/includes/plugin.php';
+        }
         if (!is_plugin_active('fau-person/fau-person.php')) {
             add_shortcode('kontakt', [$this, 'kontakt_to_faudir']);
             add_shortcode('kontaktliste', [$this, 'kontaktliste_to_faudir']);
@@ -1335,6 +1348,6 @@ class Shortcode {
        return $norm[0];
    }
 
-
+  
 
 }

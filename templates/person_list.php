@@ -1,7 +1,6 @@
 <?php
 // Template file for RRZE FAUDIR
 
-use RRZE\FAUdir\Debug;
 use RRZE\FAUdir\FAUdirUtils;
 use RRZE\FAUdir\Person;
 use RRZE\FAUdir\Config;
@@ -73,9 +72,7 @@ if (!defined('ABSPATH')) {
                             $workplaces = $contact->getWorkplaces($workplaces);                    
                         }
                         
-             //           $output .= Debug::get_html_var_dump($workplaces);
-                        
-             //            $output .= Debug::get_html_var_dump($show_fields_lower);
+
                          
                         $output_escaped .= '<ul class="datalist list-icons">';
                         foreach ($ordered_keys as $key) {

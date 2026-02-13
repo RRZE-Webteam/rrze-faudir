@@ -28,6 +28,9 @@ class Filters {
             // Theme ruft z.B. apply_filters('fau_copyright_info', [], $args) auf
             add_filter($tag, [__CLASS__, 'collectCopyrightInfo'], 10, 2);
         }
+        
+        
+        
     }
 
    

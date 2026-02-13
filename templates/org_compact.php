@@ -1,6 +1,5 @@
 <?php
 // Template file for RRZE FAUDIR
-use RRZE\FAUdir\Debug;
 use RRZE\FAUdir\FAUdirUtils;
 use RRZE\FAUdir\Organization;
 use RRZE\FAUdir\Config;
@@ -29,12 +28,7 @@ if (!defined('ABSPATH')) {
                 $org = new Organization($orgdata);                
                 $displayname = $org->getName(true,$lang);
                 
-                
-       //         echo "<p>Showfields:<br> <b>";
-       //        echo Debug::get_html_var_dump($show_fields);
-       //         echo "</b></p>";
-       //        echo Debug::get_html_var_dump($org);
-                         
+
                 if (!empty($url)) {
                     $final_url = $url;
                 } else {

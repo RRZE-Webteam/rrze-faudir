@@ -1,6 +1,5 @@
 <?php
 // Template file for RRZE FAUDIR
-use RRZE\FAUdir\Debug;
 use RRZE\FAUdir\FAUdirUtils;
 use RRZE\FAUdir\Person;
 use RRZE\FAUdir\Config;
@@ -20,10 +19,7 @@ if (!defined('ABSPATH')) {
     
     $dbopt = get_option('rrze_faudir_options', []);
      
-     
-    //echo "DB OPTIONS:<br>";
-    //echo Debug::get_html_var_dump($dbopt);
-    //echo "<hr>";
+
     
     if (!empty($persons)) { 
      //   do_action('rrze.log.info', 'FAUdir Opt: ', $dbopt);
@@ -42,7 +38,7 @@ if (!defined('ABSPATH')) {
             if (!empty($persondata)) {
 
                 $person = new Person($persondata);
- do_action('rrze.log.info', 'FAUdir Person: ', $person);                
+                // do_action('rrze.log.info', 'FAUdir Person: ', $person);                
                 $formatstring = '';
                 if (!empty($format_displayname)) {
                     $formatstring = $format_displayname;

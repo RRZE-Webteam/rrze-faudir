@@ -1,6 +1,5 @@
 <?php
 // Template file for RRZE FAUDIR
-use RRZE\FAUdir\Debug;
 use RRZE\FAUdir\FAUdirUtils;
 use RRZE\FAUdir\Person;
 use RRZE\FAUdir\Config;

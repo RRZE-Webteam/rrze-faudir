@@ -1,1 +1,150 @@
-(()=>{jQuery(function(r){r("#clear-cache-button").on("click",function(){window.rrzeFaudirAjax&&confirm(rrzeFaudirAjax.confirm_clear_cache)&&r.post(rrzeFaudirAjax.ajax_url,{action:"rrze_faudir_clear_cache",security:rrzeFaudirAjax.api_nonce}).done(function(a){alert(a&&a.success?a.data:"Error clearing cache.")})}),r("#import-fau-person-button").on("click",function(){if(window.rrzeFaudirAjax&&confirm(rrzeFaudirAjax.confirm_import)){var a=r("#migration-progress");a.empty().append('<div id="import-progress"><div class="progress-bar" style="width:0%;height:20px;background-color:#4CAF50;"></div></div><div id="import-response" style="margin-top:10px;"></div>');var i=setInterval(function(){var e=r("#import-progress .progress-bar"),t=parseInt(e.css("width"))/r("#import-progress").width()*100||0;e.css("width",Math.min(t+10,90)+"%")},500);r.post(rrzeFaudirAjax.ajax_url,{action:"rrze_faudir_import_fau_person",security:rrzeFaudirAjax.api_nonce}).done(function(e){if(clearInterval(i),r("#import-progress .progress-bar").css("width","100%"),e.success){var t=String(e.data).replace(/\n/g,"</li><li>");r("#import-response").html('<ul style="max-width:75ch;"><li>'+t+"</li></ul>")}else r("#import-response").html("<p>No contact from FAU Person imported.</p>")}).fail(function(){clearInterval(i),r("#import-progress .progress-bar").css("width","100%"),r("#import-response").html("<p>An error occurred during the import.</p>")})}}),r("#search-person-form").length&&(r("#search-person-form input").on("keypress",function(a){a.which===13&&(a.preventDefault(),r("#search-person-form").submit())}),r("#search-person-form input").on("input",function(){var a=!0;r('#search-person-form input[type="text"], #search-person-form input[type="email"]').each(function(){r(this).val()!==""&&(a=!1)}),(r("#given-name").val().length===1||r("#family-name").val().length===1)&&(a=!0),r("#search-person-form button").prop("disabled",a)}),r("#search-person-form").on("submit",function(a){if(a.preventDefault(),!!window.rrzeFaudirAjax){var i=r("#person-id").val().trim(),e=r("#given-name").val().trim(),t=r("#family-name").val().trim(),s=r("#email").val().trim(),n=r("#include-default-org").is(":checked")?"1":"0";i||e||t||s?r.post(rrzeFaudirAjax.ajax_url,{action:"rrze_faudir_search_person",security:rrzeFaudirAjax.api_nonce,person_id:i,given_name:e,family_name:t,email:s,include_default_org:n}).done(function(o){r("#contacts-list").html(o.success?o.data:"<p>"+o.data+"</p>")}).fail(function(){r("#contacts-list").html("<p>An error occurred during the request.</p>")}):r("#contacts-list").html("<p>Please enter a valid search term.</p>")}})),r(document).on("click",".add-person",function(){if(window.rrzeFaudirAjax){var a=r(this),i=a.data("name"),e=a.data("id"),t=a.data("include-default-org"),s=a.data("functionLabel")||[];a.prop("disabled",!0).html('<span class="dashicons dashicons-update"></span> '+rrzeFaudirAjax.add_text),r.post(rrzeFaudirAjax.ajax_url,{action:"rrze_faudir_create_custom_person",security:rrzeFaudirAjax.api_nonce,person_name:i,person_id:e,include_default_org:t,functions:s}).done(function(n){if(n.success){var o=r("<a>",{href:n.data.edit_url,class:"edit-person button",html:'<span class="dashicons dashicons-edit"></span> '+rrzeFaudirAjax.edit_text});a.replaceWith(o)}else alert("Error creating custom person: "+(n.data||"Unknown error"))}).fail(function(){alert("An error occurred while creating the custom person.")}).always(function(){a.prop("disabled",!1).html(rrzeFaudirAjax.add_text)})}}),r("#search-org-form").length&&(r("#search-org-form").on("submit",function(a){if(a.preventDefault(),!!window.rrzeFaudirAjax){var i=r("#org-search").val().trim();if(!i){r("#organizations-list").html("<p>Please enter a search term.</p>");return}r.post(rrzeFaudirAjax.ajax_url,{action:"rrze_faudir_search_org",security:rrzeFaudirAjax.api_nonce,search_term:i}).done(function(e){r("#organizations-list").html(e.success?e.data:"<p>"+e.data+"</p>")}).fail(function(){r("#organizations-list").html("<p>An error occurred during the request.</p>")})}}),r("#search-org-form input").on("keypress",function(a){a.which===13&&(a.preventDefault(),r("#search-org-form").submit())}))});})();
+"use strict";
+(() => {
+  // src/js/admin/admin.js
+  jQuery(function($) {
+    $("#clear-cache-button").on("click", function() {
+      if (!window.rrzeFaudirAjax) return;
+      if (confirm(rrzeFaudirAjax.confirm_clear_cache)) {
+        $.post(rrzeFaudirAjax.ajax_url, {
+          action: "rrze_faudir_clear_cache",
+          security: rrzeFaudirAjax.api_nonce
+        }).done(function(resp) {
+          alert(resp && resp.success ? resp.data : "Error clearing cache.");
+        });
+      }
+    });
+    $("#import-fau-person-button").on("click", function() {
+      if (!window.rrzeFaudirAjax) return;
+      if (!confirm(rrzeFaudirAjax.confirm_import)) return;
+      var $target = $("#migration-progress");
+      $target.empty().append(
+        '<div id="import-progress"><div class="progress-bar" style="width:0%;height:20px;background-color:#4CAF50;"></div></div><div id="import-response" style="margin-top:10px;"></div>'
+      );
+      var progressInterval = setInterval(function() {
+        var $bar = $("#import-progress .progress-bar");
+        var current = parseInt($bar.css("width")) / $("#import-progress").width() * 100 || 0;
+        $bar.css("width", Math.min(current + 10, 90) + "%");
+      }, 500);
+      $.post(rrzeFaudirAjax.ajax_url, {
+        action: "rrze_faudir_import_fau_person",
+        security: rrzeFaudirAjax.api_nonce
+      }).done(function(response) {
+        clearInterval(progressInterval);
+        $("#import-progress .progress-bar").css("width", "100%");
+        if (response.success) {
+          var formatted = String(response.data).replace(/\n/g, "</li><li>");
+          $("#import-response").html('<ul style="max-width:75ch;"><li>' + formatted + "</li></ul>");
+        } else {
+          $("#import-response").html("<p>No contact from FAU Person imported.</p>");
+        }
+      }).fail(function() {
+        clearInterval(progressInterval);
+        $("#import-progress .progress-bar").css("width", "100%");
+        $("#import-response").html("<p>An error occurred during the import.</p>");
+      });
+    });
+    if ($("#search-person-form").length) {
+      $("#search-person-form input").on("keypress", function(e) {
+        if (e.which === 13) {
+          e.preventDefault();
+          $("#search-person-form").submit();
+        }
+      });
+      $("#search-person-form input").on("input", function() {
+        var disabled = true;
+        $('#search-person-form input[type="text"], #search-person-form input[type="email"]').each(function() {
+          if ($(this).val() !== "") disabled = false;
+        });
+        if ($("#given-name").val().length === 1 || $("#family-name").val().length === 1) {
+          disabled = true;
+        }
+        $("#search-person-form button").prop("disabled", disabled);
+      });
+      $("#search-person-form").on("submit", function(e) {
+        e.preventDefault();
+        if (!window.rrzeFaudirAjax) return;
+        var personId = $("#person-id").val().trim();
+        var givenName = $("#given-name").val().trim();
+        var familyName = $("#family-name").val().trim();
+        var email = $("#email").val().trim();
+        var includeDefaultOrg = $("#include-default-org").is(":checked") ? "1" : "0";
+        if (personId || givenName || familyName || email) {
+          $.post(rrzeFaudirAjax.ajax_url, {
+            action: "rrze_faudir_search_person",
+            security: rrzeFaudirAjax.api_nonce,
+            person_id: personId,
+            given_name: givenName,
+            family_name: familyName,
+            email,
+            include_default_org: includeDefaultOrg
+          }).done(function(response) {
+            $("#contacts-list").html(response.success ? response.data : "<p>" + response.data + "</p>");
+          }).fail(function() {
+            $("#contacts-list").html("<p>An error occurred during the request.</p>");
+          });
+        } else {
+          $("#contacts-list").html("<p>Please enter a valid search term.</p>");
+        }
+      });
+    }
+    $(document).on("click", ".add-person", function() {
+      if (!window.rrzeFaudirAjax) return;
+      var $btn = $(this);
+      var personName = $btn.data("name");
+      var personId = $btn.data("id");
+      var includeDefaultOrg = $btn.data("include-default-org");
+      var functions = $btn.data("functionLabel") || [];
+      $btn.prop("disabled", true).html('<span class="dashicons dashicons-update"></span> ' + rrzeFaudirAjax.add_text);
+      $.post(rrzeFaudirAjax.ajax_url, {
+        action: "rrze_faudir_create_custom_person",
+        security: rrzeFaudirAjax.api_nonce,
+        person_name: personName,
+        person_id: personId,
+        include_default_org: includeDefaultOrg,
+        functions
+      }).done(function(response) {
+        if (response.success) {
+          var editLink = $("<a>", {
+            href: response.data.edit_url,
+            class: "edit-person button",
+            html: '<span class="dashicons dashicons-edit"></span> ' + rrzeFaudirAjax.edit_text
+          });
+          $btn.replaceWith(editLink);
+        } else {
+          alert("Error creating custom person: " + (response.data || "Unknown error"));
+        }
+      }).fail(function() {
+        alert("An error occurred while creating the custom person.");
+      }).always(function() {
+        $btn.prop("disabled", false).html(rrzeFaudirAjax.add_text);
+      });
+    });
+    if ($("#search-org-form").length) {
+      $("#search-org-form").on("submit", function(e) {
+        e.preventDefault();
+        if (!window.rrzeFaudirAjax) return;
+        var searchTerm = $("#org-search").val().trim();
+        if (!searchTerm) {
+          $("#organizations-list").html("<p>Please enter a search term.</p>");
+          return;
+        }
+        $.post(rrzeFaudirAjax.ajax_url, {
+          action: "rrze_faudir_search_org",
+          security: rrzeFaudirAjax.api_nonce,
+          search_term: searchTerm
+        }).done(function(response) {
+          $("#organizations-list").html(response.success ? response.data : "<p>" + response.data + "</p>");
+        }).fail(function() {
+          $("#organizations-list").html("<p>An error occurred during the request.</p>");
+        });
+      });
+      $("#search-org-form input").on("keypress", function(e) {
+        if (e.which === 13) {
+          e.preventDefault();
+          $("#search-org-form").submit();
+        }
+      });
+    }
+  });
+})();
+//# sourceMappingURL=rrze-faudir-admin.js.map

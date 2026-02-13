@@ -20,10 +20,10 @@ class EnqueueScripts {
         // Nur im Block-Editor laden, und nur für unseren CPT
         add_action('enqueue_block_editor_assets', [self::class, 'enqueue_block_editor']);
 
-        // Optionales Opt-in für Frontend (standardmäßig AUS)
-        if (apply_filters('rrze_faudir/enqueue_frontend_globally', false)) {
-            add_action('wp_enqueue_scripts', [self::class, 'enqueue_frontend']);
-        }
+        // Enqueue
+        add_action('wp_enqueue_scripts', [self::class, 'enqueue_frontend_conditionally'], 20);
+        
+
     }
 
     /** Assets global registrieren – Version = Plugin-Version */
@@ -45,7 +45,47 @@ class EnqueueScripts {
             true
         );
     }
+    
+    
+    /*
+     * Enqueue conditional durchführen
+     */
 
+    public static function enqueue_frontend_conditionally(): void {
+        if (apply_filters('rrze_faudir/enqueue_frontend_globally', false)) {
+            self::enqueue_frontend();
+            return;
+        }
+
+        if (is_admin()) {
+            return;
+        }
+
+        $post = get_post();
+        if (!$post || empty($post->post_content)) {
+            return;
+        }
+
+        $needs = false;
+
+        if (function_exists('has_shortcode') && has_shortcode($post->post_content, 'faudir')) {
+            $needs = true;
+        }
+
+        if (!$needs && function_exists('has_block')) {
+            if (has_block('rrze-faudir/block', $post) || has_block('rrze-faudir/service', $post)) {
+                $needs = true;
+            }
+        }
+
+        $needs = (bool) apply_filters('rrze_faudir/enqueue_frontend_on_demand', $needs, $post);
+
+        if ($needs) {
+            self::enqueue_frontend();
+        }
+    }
+    
+    
     /** FRONTEND: nur per Opt-in-Filter oder explizitem Aufruf laden */
     public static function enqueue_frontend(): void {
         wp_enqueue_style('rrze-faudir');
