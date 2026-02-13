@@ -387,4 +387,51 @@ class FaudirUtils {
         return array_values(array_unique($out));
     }
 
+    
+    /**
+    * Normalisiert ein Feld (string|array|null) zu einem Array von Strings.
+    * Entfernt Leerwerte und trimmt Einträge.
+    */
+   public static function normalizeScalarOrArrayToList($value): array {
+       $out = [];
+
+       if (is_string($value)) {
+           $value = trim($value);
+           if ($value !== '') {
+               $out[] = $value;
+           }
+           return $out;
+       }
+
+       if (!is_array($value)) {
+           return [];
+       }
+
+       foreach ($value as $v) {
+           if (!is_string($v)) {
+               continue;
+           }
+           $v = trim($v);
+           if ($v === '') {
+               continue;
+           }
+           $out[] = $v;
+       }
+
+       return $out;
+   }
+
+   /**
+    * Prüft grob, ob eine Telefonnummer/Faxnummer valide aussieht.
+    */
+   public static function isValidPhoneNumber(string $val): bool {
+       return (bool) preg_match('/^\+?[0-9\s\-\(\)]{7,20}$/', $val);
+   }
+   /**
+    * Prüft, ob eine E-Mail-Adresse valide ist.
+    */
+   public static function isValidEmailAddress(string $val): bool {
+       return (bool) filter_var($val, FILTER_VALIDATE_EMAIL);
+   }
+
 }

@@ -78,11 +78,11 @@ if (!defined('ABSPATH')) {
                        <?php 
 
                         $value = '';
-                        if (!empty($final_url)) {
+                        if ((!empty($final_url)) && (in_array('link', $show_fields))) {
                             $value .= '<a itemprop="url" href="'.esc_url($final_url).'">';     
                         }
                         $value .= $displayname;
-                        if (!empty($final_url)) {
+                         if ((!empty($final_url)) && (in_array('link', $show_fields))) {
                             $value .= '</a>';
                         }                        
                         echo '<h1 id="'.$aria_id.'">'.$value.'</h1>';

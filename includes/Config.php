@@ -7,7 +7,7 @@ defined('ABSPATH') || exit;
 
 class Config {
     private array $config = [
-        'version'                           => 8,  // please count this up any time we change the config array
+        'version'                           => 9,  // please count this up any time we change the config array
         'api_key'                           => '',
         'api-baseurl'                       => 'https://api.fau.de/pub/v1/opendir/',
         'faudir-url'                        => 'https://faudir.fau.de/',
@@ -42,7 +42,7 @@ class Config {
              // in all cases: first entry is default for the given display
         ],
 
-        'default_output_fields'     => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia'], // Default fields
+        'default_output_fields'     => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia', 'link'], // Default fields
         'default_org_output_fields' => ['name', 'phone', 'fax', 'email', 'url', 'socialmedia', 'address', 'faumap', 'officehours', 'consultationhours', 'longDescription'],
         'default_output_fields_endpoint' => [
             'image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization', 'address', 'room', 'floor',

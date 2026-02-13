@@ -20,9 +20,9 @@ class Person {
     public ?string $honorificSuffix;
     public ?string $titleOfNobility;   
     public ?string $pronoun;
-    public ?string $email;
-    public ?string $telephone;
-    public ?string $fax;
+    public string|array|null $email;
+    public string|array|null $telephone;
+    public string|array|null $fax;
     public ?array $contacts;
     private array $rawdata;
     protected ?Config $config = null;
@@ -31,18 +31,21 @@ class Person {
     
     
     public function __construct(array $data = []) {
-        $this->identifier = $data['identifier'] ?? '';
-        $this->givenName = $data['givenName'] ?? '';
-        $this->familyName = $data['familyName'] ?? '';    
-        $this->honorificPrefix = $data['honorificPrefix'] ?? '';
-        $this->honorificSuffix = $data['honorificSuffix'] ?? '';
-        $this->titleOfNobility = $data['titleOfNobility'] ?? '';       
-        $this->pronoun = $data['pronoun'] ?? '';
-        $this->email = $data['email'] ?? '';
-        $this->telephone = $data['telephone'] ?? '';     
-        $this->contacts = $data['contacts'] ?? null;
-        $this->postid = $data['postid'] ?? 0;
-        $this->primary_contact = null;
+        $this->identifier       = (string) ($data['identifier'] ?? '');
+        $this->givenName        = (string) ($data['givenName'] ?? '');
+        $this->familyName       = (string) ($data['familyName'] ?? '');
+        $this->honorificPrefix  = isset($data['honorificPrefix']) ? (string) $data['honorificPrefix'] : '';
+        $this->honorificSuffix  = isset($data['honorificSuffix']) ? (string) $data['honorificSuffix'] : '';
+        $this->titleOfNobility  = isset($data['titleOfNobility']) ? (string) $data['titleOfNobility'] : '';
+        $this->pronoun          = isset($data['pronoun']) ? (string) $data['pronoun'] : '';
+
+        $this->email            = $data['email'] ?? null;
+        $this->telephone        = $data['telephone'] ?? null;
+        $this->fax              = $data['fax'] ?? null;
+
+        $this->contacts         = isset($data['contacts']) && is_array($data['contacts']) ? $data['contacts'] : null;
+        $this->postid           = isset($data['postid']) ? (int) $data['postid'] : 0;
+        $this->primary_contact  = null;
 
         // Everything else that comes over data move in rawdata       
         $usedKeys = [
@@ -68,19 +71,20 @@ class Person {
      */
     public function populateFromData(array $data, bool $clear = true): void {
         if ($clear) {
-            $this->identifier      = '';
-            $this->givenName       = '';
-            $this->familyName      = '';
-            $this->honorificPrefix = '';
-            $this->honorificSuffix = '';
-            $this->titleOfNobility = '';
-            $this->pronoun         = '';
-            $this->email           = '';
-            $this->telephone       = '';
-            $this->postid          = 0;
-            $this->contacts        = null;
-            $this->primary_contact = null;
-            $this->rawdata         = [];
+            $this->identifier          = '';
+            $this->givenName           = '';
+            $this->familyName          = '';
+            $this->honorificPrefix     = '';
+            $this->honorificSuffix     = '';
+            $this->titleOfNobility     = '';
+            $this->pronoun             = '';
+            $this->email               = null;
+            $this->telephone           = null;
+            $this->fax                 = null;
+            $this->postid              = 0;
+            $this->contacts            = null;
+            $this->primary_contact     = null;
+            $this->rawdata             = [];
         }
 
         if (isset($data['identifier'])) {
@@ -113,11 +117,14 @@ class Person {
         if (isset($data['pronoun'])) {
             $this->pronoun = (string) $data['pronoun'];
         }
-        if (isset($data['email'])) {
-            $this->email = $data['email'];
+        if (array_key_exists('email', $data)) {
+            $this->email = $this->normalizeScalarOrStringArray($data['email']);
         }
-        if (isset($data['telephone'])) {
-            $this->telephone = $data['telephone'];
+        if (array_key_exists('telephone', $data)) {
+            $this->telephone = $this->normalizeScalarOrStringArray($data['telephone']);
+        }
+        if (array_key_exists('fax', $data)) {
+            $this->fax = $this->normalizeScalarOrStringArray($data['fax']);
         }
         if (isset($data['contacts'])) {
             $this->contacts = is_array($data['contacts']) ? $data['contacts'] : null;
@@ -147,27 +154,56 @@ class Person {
         $this->rawdata = array_merge($this->rawdata, $remaining);
     }
     
-    
+    private function normalizeScalarOrStringArray(mixed $value): string|array|null {
+        if ($value === null) {
+            return null;
+        }
+
+        if (is_string($value)) {
+            $v = trim($value);
+            return ($v === '') ? null : $v;
+        }
+
+        if (is_array($value)) {
+            $out = [];
+            foreach ($value as $v) {
+                $v = trim((string) $v);
+                if ($v !== '') {
+                    $out[] = $v;
+                }
+            }
+
+            if (empty($out)) {
+                return null;
+            }
+
+            $out = array_values(array_unique($out));
+            return $out;
+        }
+
+        // alles andere: als String versuchen
+        $v = trim((string) $value);
+        return ($v === '') ? null : $v;
+    }
     /*
      * Personendaten als Array zurückliefern
      */
     public function toArray(): array {
         $data = [
-            'identifier'            => $this->identifier,
-            'givenName'             => $this->givenName,
-            'familyName'            => $this->familyName,
-            'honorificPrefix'       => $this->honorificPrefix,
-            'honorificSuffix'       => $this->honorificSuffix,
-            'titleOfNobility'       => $this->titleOfNobility,
-            'pronoun'               => $this->pronoun,
-            'email'                 => $this->email,
-            'telephone'             => $this->telephone,
-            'contacts'              => $this->contacts,
-            'postid'                => $this->postid,
+            'identifier'       => $this->identifier,
+            'givenName'        => $this->givenName,
+            'familyName'       => $this->familyName,
+            'honorificPrefix'  => $this->honorificPrefix,
+            'honorificSuffix'  => $this->honorificSuffix,
+            'titleOfNobility'  => $this->titleOfNobility,
+            'pronoun'          => $this->pronoun,
+            'email'            => $this->email,
+            'telephone'        => $this->telephone,
+            'fax'              => $this->fax,
+            'contacts'         => $this->contacts,
+            'postid'           => $this->postid,
         ];
 
-        // Füge alle restlichen Schlüssel und Werte (rawdata) hinzu,
-        // so dass das ursprüngliche Array wiederhergestellt wird.
         return array_merge($data, $this->rawdata);
     }
     
@@ -203,68 +239,107 @@ class Person {
      * Contact-Daten befüllen
      */
     public function reloadContacts(bool $loadorg = false): bool {
-        $personContacts = [];
-        
-        // Falls keine Kontakte gesetzt sind, nichts tun
         if (empty($this->contacts) || !is_array($this->contacts)) {
             return false;
         }
         if (empty($this->config)) {
             $this->setConfig();
         }
-        
+
         $api = new API($this->config);
-        
-        // Iteriere über die Kontakte
+
+        $personContacts = [];
         foreach ($this->contacts as $contact) {
-            $contactIdentifier = $contact['identifier'] ?? null;
-            if ($contactIdentifier) {        
-                
-                $contactData = $api->getContacts(0, 0, ['identifier' => $contactIdentifier]);
-                
-                if (!empty($contactData['data'])) {
-                    $contact = $contactData['data'][0];
-                    $organizationId = $contact['organization']['identifier'] ?? null;
+            if (empty($contact) || !is_array($contact)) {
+                continue;
+            }
 
-                    if (($organizationId) && ($loadorg)) {
-                        // Wozu brauchen wir die Orgdaten eigentlich?
-                        // Adresse kommt doch aus dem Workplaces...
-                        
-                        $organizationData = $api->getOrgById($organizationId);
-                        
-                        
-                        if (!empty($organizationData['address'])) {
-                             $contact['org']['address'] = $organizationData['address'];                 
-                        }
-                        if (!empty($organizationData['identifier'])) {
-                             $contact['org']['identifier'] = $organizationData['identifier'];                 
-                        }
-                        if (!empty($organizationData['longDescription'])) {
-                             $contact['org']['longDescription'] = $organizationData['longDescription'];                 
-                        }
-                        if (!empty($organizationData['name'])) {
-                             $contact['org']['name'] = $organizationData['name'];                 
-                        }
-                        if (!empty($organizationData['disambiguatingDescription'])) {
-                             $contact['org']['disambiguatingDescription'] = $organizationData['disambiguatingDescription'];                 
-                        }
-                        if (!empty($organizationData['parentOrganization'])) {
-                             $contact['org']['parentOrganization'] = $organizationData['parentOrganization'];                 
-                        }
-                        if (!empty($organizationData['subOrganization'])) {
-                             $contact['org']['subOrganization'] = $organizationData['subOrganization'];                 
-                        }
-                    
-                        
-                    }
-
-                    $personContacts[] = $contact;
+            /*
+             * Wenn Contact schon "voll" ist (z.B. workplaces vorhanden),
+             * dann nicht erneut per API laden.
+             */
+            if (!empty($contact['workplaces']) && is_array($contact['workplaces'])) {
+                if ($loadorg) {
+                    $contact = $this->enrichContactOrganization($api, $contact);
                 }
+                $personContacts[] = $contact;
+                continue;
+            }
+
+            $contactIdentifier = $contact['identifier'] ?? '';
+            $contactIdentifier = is_string($contactIdentifier) ? trim($contactIdentifier) : '';
+            if ($contactIdentifier === '') {
+                /*
+                 * Kein Identifier → wir können nicht nachladen.
+                 * Contact so übernehmen, wie er ist.
+                 */
+                if ($loadorg) {
+                    $contact = $this->enrichContactOrganization($api, $contact);
+                }
+                $personContacts[] = $contact;
+                continue;
+            }
+
+            $contactData = $api->getContacts(0, 0, ['identifier' => $contactIdentifier]);
+            if (empty($contactData['data']) || !is_array($contactData['data'])) {
+                continue;
+            }
+
+            $full = $contactData['data'][0] ?? null;
+            if (empty($full) || !is_array($full)) {
+                continue;
+            }
+
+            if ($loadorg) {
+                $full = $this->enrichContactOrganization($api, $full);
+            }
+
+            $personContacts[] = $full;
+        }
+
+        $this->contacts = $personContacts;
+
+        return !empty($this->contacts);
+    }
+    
+    /*
+     * Helper-Funktion für die Org-Daten 
+     */
+    private function enrichContactOrganization(API $api, array $contact): array {
+        $orgId = $contact['organization']['identifier'] ?? '';
+        $orgId = is_string($orgId) ? trim($orgId) : '';
+        if ($orgId === '') {
+            return $contact;
+        }
+
+        $organizationData = $api->getOrgById($orgId);
+        if (empty($organizationData) || !is_array($organizationData)) {
+            return $contact;
+        }
+
+        if (!isset($contact['organization']) || !is_array($contact['organization'])) {
+            $contact['organization'] = [];
+        }
+
+        $keys = [
+            'address',
+            'identifier',
+            'longDescription',
+            'name',
+            'disambiguatingDescription',
+            'parentOrganization',
+            'subOrganization',
+        ];
+
+        foreach ($keys as $k) {
+            if (isset($organizationData[$k])) {
+                $contact['organization'][$k] = $organizationData[$k];
             }
         }
-        $this->contacts = $personContacts;
-        return true;
+
+        return $contact;
     }
+    
     
     /*
      * Get Workplaces of Person as Array
@@ -919,58 +994,134 @@ class Person {
     * Liefert den Contacteintrag zurück, der auf einen Role-FUnktionsstring matcht
     */
     public function getContactByRole(string $role = '', bool $fallback = true, bool $partial = true): ?Contact {
-        if (empty($this->contacts) || $role === '') {
+        if (empty($this->contacts) || !is_array($this->contacts)) {
             return null;
         }
 
-        // Wenn es nur einen einzigen Contacteintrag gibt → ggf. Fallback auf diesen
-        if (count($this->contacts) === 1 && !empty($this->contacts[0]) && $fallback) {
-            return new Contact($this->contacts[0]);
+        $role = $this->normalizeRoleString($role);
+        if ($role === '') {
+            if ($fallback) {
+                return $this->getFirstContactOrNull();
+            }
+            return null;
         }
 
-       // Komma-separierte Rollen in Reihenfolge der Eingabe auswerten
-        $needles = preg_split('/\s*,\s*/u', (string) $role, -1, PREG_SPLIT_NO_EMPTY);
-        $needles = array_values(array_filter(array_map(fn($r) => $this->normalizeRoleString($r), (array) $needles)));
+        // Wenn nur ein Contact vorhanden ist → optional Fallback
+        if (count($this->contacts) === 1) {
+            if ($fallback) {
+                return $this->getFirstContactOrNull();
+            }
+            return null;
+        }
 
+        // Komma-separierte Rollen in Eingabe-Reihenfolge auswerten
+        $needles = $this->splitAndNormalizeRoles($role);
         if (empty($needles)) {
+            if ($fallback) {
+                return $this->getFirstContactOrNull();
+            }
             return null;
         }
 
-        // In der Reihenfolge der Needles suchen (erste Übereinstimmung gewinnt)
         foreach ($needles as $needle) {
-            foreach ((array) $this->contacts as $contactData) {
+            foreach ($this->contacts as $contactData) {
                 if (empty($contactData) || !is_array($contactData)) {
                     continue;
                 }
+
                 $contact = new Contact($contactData);
-                foreach ($contact->getAllFunctionLabels() as $labelString) {
-                    $hay   = $this->normalizeRoleString($labelString);
-                    $match = $partial ? (strpos($hay, $needle) !== false) : ($hay === $needle);
-                    if ($match) {
-                        return $contact;
+
+                $labels = $contact->getAllFunctionLabels();
+                if (empty($labels) || !is_array($labels)) {
+                    continue;
+                }
+
+                foreach ($labels as $labelString) {
+                    $hay = $this->normalizeRoleString((string) $labelString);
+                    if ($hay === '') {
+                        continue;
+                    }
+
+                    if ($partial) {
+                        if (strpos($hay, $needle) !== false) {
+                            return $contact;
+                        }
+                    } else {
+                        if ($hay === $needle) {
+                            return $contact;
+                        }
                     }
                 }
             }
         }
 
-        // kein Treffer
+        if ($fallback) {
+            return $this->getFirstContactOrNull();
+        }
+
         return null;
     }
 
     /**
      * Hilfsfunktion: trim + (mb_)strtolower + Tags entfernen
      */
-    private function normalizeRoleString(string $s): string {
+   private function normalizeRoleString(string $s): string {
         $s = trim(wp_strip_all_tags($s));
         if ($s === '') {
             return '';
         }
-        return function_exists('mb_strtolower') ? mb_strtolower($s, 'UTF-8') : strtolower($s);
+
+        if (function_exists('mb_strtolower')) {
+            return mb_strtolower($s, 'UTF-8');
+        }
+
+        return strtolower($s);
     }
 
+    private function splitAndNormalizeRoles(string $csv): array {
+        $csv = trim($csv);
+        if ($csv === '') {
+            return [];
+        }
+
+        $parts = preg_split('/\s*,\s*/u', $csv, -1, PREG_SPLIT_NO_EMPTY);
+        if (empty($parts) || !is_array($parts)) {
+            return [];
+        }
+
+        $out = [];
+        foreach ($parts as $p) {
+            $p = $this->normalizeRoleString((string) $p);
+            if ($p !== '') {
+                $out[] = $p;
+            }
+        }
+
+        // Duplikate entfernen, Reihenfolge behalten
+        $uniq = [];
+        $seen = [];
+        foreach ($out as $p) {
+            if (!isset($seen[$p])) {
+                $seen[$p] = true;
+                $uniq[] = $p;
+            }
+        }
+
+        return $uniq;
+    }
+    
+    private function getFirstContactOrNull(): ?Contact {
+        $first = $this->contacts[0] ?? null;
+        if (empty($first) || !is_array($first)) {
+            return null;
+        }
+        return new Contact($first);
+    }
+    
+    
     
     /*
-     * Lieder den Contact-Eintrag zurück, der entweder im Backend definiert
+     * Liefert den Contact-Eintrag zurück, der entweder im Backend definiert
      *  wurde als Primärer, den spezifischnen zu eine Role oder als Fallback
      * den erst möglichen  
      */
@@ -979,47 +1130,48 @@ class Person {
             return null;
         }
 
-        if (count($this->contacts) === 1 && !empty($this->contacts[0]) && is_array($this->contacts[0])) {
-            $this->primary_contact = new Contact($this->contacts[0]);
+        // Wenn Role übergeben wurde: NICHT cachen, sondern gezielt suchen
+        $role = $this->normalizeRoleString($role);
+        if ($role !== '') {
+            $roleContact = $this->getContactByRole($role, false, true);
+            if ($roleContact instanceof Contact) {
+                return $roleContact;
+            }
+            // wenn Role gesucht aber nicht gefunden → Fallback auf "normalen" Primary
+            // (optional: hier auch null zurückgeben; ich bleibe bei fallback)
+        }
+
+        // Cache nur für "ohne role"
+        if ($this->primary_contact instanceof Contact) {
             return $this->primary_contact;
         }
 
-        if (!empty($role)) {
-            $rolecontact = $this->getContactByRole($role);
-            if ($rolecontact) {
-                $this->primary_contact = $rolecontact;
+        // Nur ein Contact → fertig
+        if (count($this->contacts) === 1) {
+            $this->primary_contact = $this->getFirstContactOrNull();
+            return $this->primary_contact;
+        }
+
+        // CPT: displayed_contacts Index holen
+        $postId = !empty($this->postid) ? (int) $this->postid : (int) $this->getPostId();
+        if ($postId > 0) {
+            $idx = get_post_meta($postId, 'displayed_contacts', true);
+
+            // Downward compatibility: alte Werte/Arrays → 0
+            if (is_array($idx) || $idx === '' || $idx === null) {
+                $idx = 0;
+            }
+
+            $idx = (int) $idx;
+            if (isset($this->contacts[$idx]) && is_array($this->contacts[$idx])) {
+                $this->primary_contact = new Contact($this->contacts[$idx]);
                 return $this->primary_contact;
             }
         }
 
-        if (!empty($this->primary_contact)) {
-            return $this->primary_contact;
-        }
-
-        $postid = !empty($this->postid) ? (int) $this->postid : (int) $this->getPostId();
-
-        if ($postid === 0) {
-            if (!empty($this->contacts[0]) && is_array($this->contacts[0])) {
-                $this->primary_contact = new Contact($this->contacts[0]);
-                return $this->primary_contact;
-            }
-            return null;
-        }
-
-        $displayed_contacts = get_post_meta($postid, 'displayed_contacts', true);
-        $idx = absint($displayed_contacts);
-
-        if (isset($this->contacts[$idx]) && is_array($this->contacts[$idx])) {
-            $this->primary_contact = new Contact($this->contacts[$idx]);
-            return $this->primary_contact;
-        }
-
-        if (!empty($this->contacts[0]) && is_array($this->contacts[0])) {
-            $this->primary_contact = new Contact($this->contacts[0]);
-            return $this->primary_contact;
-        }
-
-        return null;
+        // Default-Fallback: erster Contact
+        $this->primary_contact = $this->getFirstContactOrNull();
+        return $this->primary_contact;
     }
     
     

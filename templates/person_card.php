@@ -85,12 +85,12 @@ if (!defined('ABSPATH')) {
 
                         $value = '';
                         if (!empty($showname)) {
-                            if (!empty($final_url)) {
+                            if ((!empty($final_url)) && (in_array('link', $show_fields))) {
                                 $value .= '<a itemprop="url" href="'.esc_url($final_url).'">';     
                             }
                             $value .= $displayname;
                             
-                            if (!empty($final_url)) {
+                            if ((!empty($final_url)) && (in_array('link', $show_fields))) {
                                 $value .= '</a>';
                             }                        
                             echo '<h1 id="'.$aria_id.'">'.$value.'</h1>';
@@ -171,21 +171,7 @@ if (!defined('ABSPATH')) {
                                 }
                             }
                         }
-                         if (in_array('link', $show_fields)) {                          
-                            if (!empty($final_url)) {
-                                               
-                                $displayValue = $opt['business_card_title'];
-                                if (empty($displayValue)) {
-                                     $displayValue = preg_replace('/^https?:\/\//i', '', $final_url);     
-                                }
-
-                                $formattedValue = '<a href="' . esc_url($final_url) . '" itemprop="sameAs">' . esc_html($displayValue) . '</a>';
-                                $wval = '<span class="value"><span class="screen-reader-text">'.__('URL','rrze-faudir').': </span>'.$formattedValue.'</span>';
-                                $contactlist .= '<li class="profilurl listcontent">'.$wval.'</li>';
-                                
-                               
-                            }
-                    }
+                        
                         
                         
                         if (!empty($contactlist)) {                       
