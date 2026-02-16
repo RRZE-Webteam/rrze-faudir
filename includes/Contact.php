@@ -46,9 +46,9 @@ class Contact {
             $this->organization     = [];
             $this->givenName        = '';
             $this->familyName       = '';
-            $this->titleOfNobility  = '';
-            $this->jobTitle         = '';
-            $this->function         = '';
+            $this->titleOfNobility  = null;
+            $this->function         = null;
+            $this->jobTitle         = null;
             $this->functionLabel    = [];
             $this->workplaces       = [];
             $this->org              = [];
@@ -169,10 +169,7 @@ class Contact {
     /*
      * Get workplaces and return as Array if exists
      */  
-    public function getWorkplaces(): ?array {
-        if (empty($this->workplaces)) {
-            return null;
-        }
+    public function getWorkplaces(): array {
         return $this->workplaces;   
     }
     
@@ -187,8 +184,8 @@ class Contact {
        }
 
        // normalize separators for textarea output
-       $lineSeparator = $this->normalizeTextareaSeparator($lineSeparator, "\n");
-       $blockSeparator = $this->normalizeTextareaSeparator($blockSeparator, "\n\n");
+       $lineSeparator = FaudirUtils::normalizeTextareaSeparator($lineSeparator, "\n");
+       $blockSeparator = FaudirUtils::normalizeTextareaSeparator($blockSeparator, "\n\n");
 
        $workplaceBlocks = [];
 
@@ -327,17 +324,7 @@ class Contact {
        return implode($blockSeparator, $workplaceBlocks);
    }
 
-   /*
-    * Normalize separators for textarea usage.
-    * Allows "\n", "\n\n", " ", and returns default otherwise.
-    */
-   private function normalizeTextareaSeparator(string $sep, string $default): string {
-       $sep = str_replace("\r\n", "\n", $sep);
-       if ($sep === "\n" || $sep === "\n\n" || $sep === ' ') {
-           return $sep;
-       }
-       return $default;
-   }
+   
     /*
      * Get Orgname
      */

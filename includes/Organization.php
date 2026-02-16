@@ -465,7 +465,7 @@ class Organization {
            $safeText = esc_html($raw);
 
            if (!empty($wrapTag)) {
-               $tag = self::sanitize_htmlsurround($wrapTag);
+               $tag = FaudirUtils::sanitizeHtmlSurround($wrapTag);
                $parts[] = '<' . $tag . '>' . $safeText . '</' . $tag . '>';
            } else {
                $parts[] = $safeText;
@@ -515,7 +515,7 @@ class Organization {
             return '';
         }
 
-        $htmlsurround = self::sanitize_htmlsurround($htmlsurround);
+        $htmlsurround = FaudirUtils::sanitizeHtmlSurround($htmlsurround);
 
         $output = '';
         $output .= '<' . $htmlsurround;
@@ -544,11 +544,7 @@ class Organization {
         return $output;
     }
 
-    private static function sanitize_htmlsurround(string $htmlsurround): string {
-        $allowed_tags = ['div', 'span', 'nav', 'p'];
-        $htmlsurround = strtolower(trim($htmlsurround));
-        return in_array($htmlsurround, $allowed_tags, true) ? $htmlsurround : 'div';
-    }
+
 
     public function getSocialArray(): ?array {
         if (empty($this->socials)) {

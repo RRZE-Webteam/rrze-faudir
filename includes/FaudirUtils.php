@@ -449,4 +449,16 @@ class FaudirUtils {
 
        return in_array($tag, $allowed, true) ? $tag : $default;
    }
+   
+   /*
+    * Normalize separators for textarea usage.
+    * Allows "\n", "\n\n", " ", and returns default otherwise.
+    */
+   public static function normalizeTextareaSeparator(string $sep, string $default): string {
+       $sep = str_replace("\r\n", "\n", $sep);
+       if ($sep === "\n" || $sep === "\n\n" || $sep === ' ') {
+           return $sep;
+       }
+       return $default;
+   }
 }
