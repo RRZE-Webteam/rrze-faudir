@@ -112,7 +112,6 @@
   margin: 0 0 1rem 0;
 }
 .faudir .workplace-address .street,
-.faudir .workplace-address .zipcity,
 .faudir .workplace-address .postbox,
 .faudir .workplace-address .addressCountry {
   display: flex;
@@ -693,6 +692,9 @@ Settings for FAU Einrichtungen theme
 }
 .fau-theme .faudir h2.consultation-title {
   --faudir-h2-font-size: 1rem;
+}
+.fau-theme .faudir .workplace-address address {
+  padding-bottom: 0;
 }
 .fau-theme .faudir__service .icon a {
   border: none;
