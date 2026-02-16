@@ -434,4 +434,19 @@ class FaudirUtils {
        return (bool) filter_var($val, FILTER_VALIDATE_EMAIL);
    }
 
+   
+   /*
+    * Sanitizes an HTML wrapper tag name for list/fragment outputs.
+    * Allows only a small whitelist to prevent invalid markup and injection.
+    */
+   public static function sanitizeHtmlSurround(string $tag, string $default = 'div'): string {
+       $allowed = ['div', 'span', 'nav', 'p'];
+
+       $tag = strtolower(trim($tag));
+       if ($tag === '') {
+           return $default;
+       }
+
+       return in_array($tag, $allowed, true) ? $tag : $default;
+   }
 }

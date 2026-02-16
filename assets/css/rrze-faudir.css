@@ -385,9 +385,6 @@
 .faudir__service a[href*=feed]:before {
   --_icon: var(--faudir-icon-feed);
 }
-.faudir a[itemprop=sameAs]:before, .faudir__service a[itemprop=sameAs]:before {
-  --_icon: var(--faudir-icon-contact);
-}
 .faudir .texticon.room, .faudir__service .texticon.room {
   --_icon: var(--faudir-icon-room);
 }

@@ -176,71 +176,168 @@ class Contact {
         return $this->workplaces;   
     }
     
-     /*
-     * Get workplaces and return as Array if exists
-     */  
-    public function getWorkplacesString(): string {
-        if (empty($this->workplaces)) {
-            return __('No workplaces available', 'rrze-faudir');
-        }
-        
-        // Format workplaces into a string
-        $formattedWorkplaces = [];
-        foreach ($this->workplaces as $workplace) {
-            $workplaceDetails = [];
+   /*
+    * Get workplaces as plain text for <textarea>.
+    * $lineSeparator: separator between fields inside one workplace (default "\n")
+    * $blockSeparator: separator between workplaces (default "\n\n")
+    */
+   public function getWorkplacesString(string $lineSeparator = "\n", string $blockSeparator = "\n\n"): string {
+       if (empty($this->workplaces) || !is_array($this->workplaces)) {
+           return __('No workplaces available', 'rrze-faudir');
+       }
 
-            if (!empty($workplace['room'])) {
-                $workplaceDetails[] = __('Room', 'rrze-faudir').': ' . $workplace['room'];
-            }
-            if (!empty($workplace['floor'])) {
-                $workplaceDetails[] = __('Floor', 'rrze-faudir').': ' . $workplace['floor'];
-            }
-            if (!empty($workplace['street'])) {
-                $workplaceDetails[] = __('Street', 'rrze-faudir').': ' . $workplace['street'];
-            }
-            if (!empty($workplace['zip'])) {
-                $workplaceDetails[] = __('ZIP Code', 'rrze-faudir').': ' . $workplace['zip'];
-            }
-            if (!empty($workplace['city'])) {
-                $workplaceDetails[] = __('City', 'rrze-faudir').': ' . $workplace['city'];
-            }
-            if (!empty($workplace['faumap'])) {
-                $workplaceDetails[] = __('FAU Map', 'rrze-faudir').': ' . $workplace['faumap'];
-            }
-            if (!empty($workplace['phones'])) {
-                $workplaceDetails[] = __('Phones', 'rrze-faudir').': ' . implode(', ', $workplace['phones']);
-            }
-            if (!empty($workplace['fax'])) {
-                $workplaceDetails[] = __('Fax', 'rrze-faudir').': ' . $workplace['fax'];
-            }
-            if (!empty($workplace['url'])) {
-                $workplaceDetails[] = __('URL', 'rrze-faudir').': ' . $workplace['url'];
-            }
-            if (!empty($workplace['mails'])) {
-                $workplaceDetails[] = __('Emails', 'rrze-faudir').': ' . implode(', ', $workplace['mails']);
-            }
-            if (!empty($workplace['officeHours'])) {
-                $officeHours = array_map(function ($hours) {
-                    return __('Weekday ', 'rrze-faudir') . $hours['weekday'] . ': ' . $hours['from'] . ' - ' . $hours['to'];
-                }, $workplace['officeHours']);
-                $workplaceDetails[] = __('Office Hours', 'rrze-faudir') . implode('; ', $officeHours);
-            }
-            if (!empty($workplace['consultationHours'])) {
-                $consultationHours = array_map(function ($hours) {
-                    return __('Weekday ', 'rrze-faudir') . $hours['weekday'] . ': ' . $hours['from'] . ' - ' . $hours['to'] . ' (' . $hours['comment'] . ') ' . $hours['url'];
-                }, $workplace['consultationHours']);
-                $workplaceDetails[] = __('Consultation Hours', 'rrze-faudir') . implode('; ', $consultationHours);
-            }
+       // normalize separators for textarea output
+       $lineSeparator = $this->normalizeTextareaSeparator($lineSeparator, "\n");
+       $blockSeparator = $this->normalizeTextareaSeparator($blockSeparator, "\n\n");
 
-            $formattedWorkplaces[] = implode("\n", $workplaceDetails);
-        }
+       $workplaceBlocks = [];
 
-        return implode("\n\n", $formattedWorkplaces);
-        
-        
-    }
-    
-    
+       foreach ($this->workplaces as $workplace) {
+           if (empty($workplace) || !is_array($workplace)) {
+               continue;
+           }
+
+           $parts = [];
+
+           if (!empty($workplace['room'])) {
+               $parts[] = __('Room', 'rrze-faudir') . ': ' . (string) $workplace['room'];
+           }
+           if (!empty($workplace['floor'])) {
+               $parts[] = __('Floor', 'rrze-faudir') . ': ' . (string) $workplace['floor'];
+           }
+           if (!empty($workplace['street'])) {
+               $parts[] = __('Street', 'rrze-faudir') . ': ' . (string) $workplace['street'];
+           }
+
+           $zip = '';
+           if (!empty($workplace['zip'])) {
+               $zip = (string) $workplace['zip'];
+           } elseif (!empty($workplace['postalCode'])) {
+               $zip = (string) $workplace['postalCode'];
+           }
+           if ($zip !== '') {
+               $parts[] = __('ZIP Code', 'rrze-faudir') . ': ' . $zip;
+           }
+
+           $city = '';
+           if (!empty($workplace['city'])) {
+               $city = (string) $workplace['city'];
+           } elseif (!empty($workplace['addressLocality'])) {
+               $city = (string) $workplace['addressLocality'];
+           }
+           if ($city !== '') {
+               $parts[] = __('City', 'rrze-faudir') . ': ' . $city;
+           }
+
+           if (!empty($workplace['faumap'])) {
+               $parts[] = __('FAU Map', 'rrze-faudir') . ': ' . (string) $workplace['faumap'];
+           }
+
+           if (!empty($workplace['phones']) && is_array($workplace['phones'])) {
+               $phones = FaudirUtils::normalizeStringArray($workplace['phones']);
+               if (!empty($phones)) {
+                   $parts[] = __('Phones', 'rrze-faudir') . ': ' . implode(', ', $phones);
+               }
+           }
+
+           if (!empty($workplace['fax'])) {
+               if (is_array($workplace['fax'])) {
+                   $fax = FaudirUtils::normalizeStringArray($workplace['fax']);
+                   if (!empty($fax)) {
+                       $parts[] = __('Fax', 'rrze-faudir') . ': ' . implode(', ', $fax);
+                   }
+               } else {
+                   $parts[] = __('Fax', 'rrze-faudir') . ': ' . (string) $workplace['fax'];
+               }
+           }
+
+           if (!empty($workplace['url'])) {
+               $parts[] = __('URL', 'rrze-faudir') . ': ' . (string) $workplace['url'];
+           }
+
+           if (!empty($workplace['mails']) && is_array($workplace['mails'])) {
+               $mails = FaudirUtils::normalizeStringArray($workplace['mails']);
+               if (!empty($mails)) {
+                   $parts[] = __('Emails', 'rrze-faudir') . ': ' . implode(', ', $mails);
+               }
+           }
+
+           if (!empty($workplace['officeHours']) && is_array($workplace['officeHours'])) {
+               $oh = [];
+               foreach ($workplace['officeHours'] as $hours) {
+                   if (empty($hours) || !is_array($hours)) {
+                       continue;
+                   }
+                   $wd = isset($hours['weekday']) ? (string) $hours['weekday'] : '';
+                   $from = isset($hours['from']) ? (string) $hours['from'] : '';
+                   $to = isset($hours['to']) ? (string) $hours['to'] : '';
+                   if ($wd !== '' && $from !== '' && $to !== '') {
+                       $oh[] = __('Weekday', 'rrze-faudir') . ' ' . $wd . ': ' . $from . ' - ' . $to;
+                   }
+               }
+               $oh = FaudirUtils::normalizeStringArray($oh);
+               if (!empty($oh)) {
+                   $parts[] = __('Office Hours', 'rrze-faudir') . ': ' . implode('; ', $oh);
+               }
+           }
+
+           if (!empty($workplace['consultationHours']) && is_array($workplace['consultationHours'])) {
+               $ch = [];
+               foreach ($workplace['consultationHours'] as $hours) {
+                   if (empty($hours) || !is_array($hours)) {
+                       continue;
+                   }
+                   $wd = isset($hours['weekday']) ? (string) $hours['weekday'] : '';
+                   $from = isset($hours['from']) ? (string) $hours['from'] : '';
+                   $to = isset($hours['to']) ? (string) $hours['to'] : '';
+                   $comment = isset($hours['comment']) ? trim((string) $hours['comment']) : '';
+                   $url = isset($hours['url']) ? trim((string) $hours['url']) : '';
+
+                   if ($wd === '' || $from === '' || $to === '') {
+                       continue;
+                   }
+
+                   $line = __('Weekday', 'rrze-faudir') . ' ' . $wd . ': ' . $from . ' - ' . $to;
+                   if ($comment !== '') {
+                       $line .= ' (' . $comment . ')';
+                   }
+                   if ($url !== '') {
+                       $line .= ' ' . $url;
+                   }
+                   $ch[] = $line;
+               }
+               $ch = FaudirUtils::normalizeStringArray($ch);
+               if (!empty($ch)) {
+                   $parts[] = __('Consultation Hours', 'rrze-faudir') . ': ' . implode('; ', $ch);
+               }
+           }
+
+           $parts = FaudirUtils::normalizeStringArray($parts);
+           if (empty($parts)) {
+               continue;
+           }
+
+           $workplaceBlocks[] = implode($lineSeparator, $parts);
+       }
+
+       if (empty($workplaceBlocks)) {
+           return __('No workplaces available', 'rrze-faudir');
+       }
+
+       return implode($blockSeparator, $workplaceBlocks);
+   }
+
+   /*
+    * Normalize separators for textarea usage.
+    * Allows "\n", "\n\n", " ", and returns default otherwise.
+    */
+   private function normalizeTextareaSeparator(string $sep, string $default): string {
+       $sep = str_replace("\r\n", "\n", $sep);
+       if ($sep === "\n" || $sep === "\n\n" || $sep === ' ') {
+           return $sep;
+       }
+       return $default;
+   }
     /*
      * Get Orgname
      */
@@ -309,97 +406,114 @@ class Contact {
     /*
      * Generate Address Output for a Workplace
      */
-    public function getAddressByWorkplace(array $workplace, bool $orgname = true, string $lang = "de", ?bool $room = false, ?bool $floor = false, ?bool $showmap = false): ?string {
-        $address = $result = $roomfloorpart = '';
+    public function getAddressByWorkplace( array $workplace,bool $orgname = true,string $lang = 'de', ?bool $room = false, ?bool $floor = false, ?bool $showmap = false, string $sep = ' '): ?string {
+        if (empty($workplace)) {
+            return '';
+        }
+
+        $sep = trim($sep);
+        if ($sep !== '<br>' && $sep !== "\n" && $sep !== ' ') {
+            $sep = ' ';
+        }
+
+        $parts = [];
 
         if ($orgname) {
-            $address .= $this->getOrganizationName($lang);  
-        }
-        if ($room || $floor || $showmap) {
-            
-                $roomhtml = '';
-                $floorhtml = '';
-                $map = '';        
-                
-                if (($room) && (!empty($workplace['room']))) {
-                     $roomhtml = '<span class="texticon room"><span class="screen-reader-text">'.__('Room','rrze-faudir').': </span><span itemprop="floorLevel">'.esc_html($workplace['room']).'</span></span>';
-                }
-                if (($floor) && (!empty($workplace['floor']))) {
-                    $floorhtml = '<span class="texticon floor"><span class="screen-reader-text">'.__('Floor','rrze-faudir').': </span><span itemprop="floorLevel">'.esc_html($workplace['floor']).'</span></span>';
-                }
-                if (($showmap) && (!empty($workplace['faumap']))) {
-                    if (preg_match('/^https?:\/\/karte\.fau\.de/i', $workplace['faumap'])) {  
-                        $formattedValue = '<a href="' . esc_url($workplace['faumap']) . '" itemprop="hasMap" content="' . esc_url($workplace['faumap']) . '">' .__('FAU Map','rrze-faudir'). '</a>';
-                        $map = '<span class="texticon faumap"><span class="screen-reader-text">'.__('Map','rrze-faudir').': </span>'.$formattedValue.'</span>';
-                    }
-                }
-                
-
-                $adressparts = '';
-                
-                if (!empty($roomhtml)) {
-                    $adressparts .= $roomhtml;
-                }
-                if (!empty($floorhtml)) {
-                    if (!empty($adressparts)) {
-                        $adressparts .= ', ';
-                    }
-                    $adressparts .= $floorhtml;
-
-                }
-                if (!empty($map)) {
-                    if (!empty($adressparts)) {
-                        $adressparts .= ', ';
-                    }
-                    $adressparts .= $map;
-                }
-
-                if (!empty($adressparts)) {
-                    $roomfloorpart .= '<span class="inaddress icon roomfloor" itemprop="containedInPlace" itemscope itemtype="https://schema.org/Room">';
-                    $roomfloorpart .= $adressparts;
-                    $roomfloorpart .= '</span>'; 
-                }
-
-        }
-        
-        if ($workplace['street']) {
-            $address .= '<span class="street" itemprop="streetAdress">'.esc_html($workplace['street']).'</span>';    
-        }
-        if (!empty($workplace['postOfficeBoxNumber'])) {
-            $address .= '<span class="postbox"><span class="screen-reader-text">'.__('Box Number', 'rrze-faudir').': </span><span itemprop="postOfficeBoxNumber">'.esc_html($workplace['postOfficeBoxNumber']).'</span></span>';    
-        }
-        
-        if ((!empty($workplace['postalCode'])) && (!empty($workplace['addressLocality']) || (!empty($workplace['city'])))) {
-            $address .= '<span class="zipcity">';
-        }
-        if (!empty(!empty($workplace['postalCode']))) {
-                $address .= '<span class="postalCode" itemprop="postalCode">'.esc_html($workplace['postalCode']).'</span> ';    
-        } elseif (!empty($workplace['zip'])) {
-                $address .= '<span class="postalCode" itemprop="postalCode">'.esc_html($workplace['zip']).'</span> ';    
-        }
-        if (!empty($workplace['addressLocality'])) {
-            $address .= '<span class="addressLocality" itemprop="addressLocality">'.esc_html($workplace['addressLocality']).'</span>';    
-        } elseif (!empty($workplace['city'])) {
-            $address .= '<span class="addressLocality" itemprop="addressLocality">'.esc_html($workplace['city']).'</span>';    
-        }
-        if ((!empty($workplace['postalCode'])) && (!empty($workplace['addressLocality']) || !empty($workplace['city']))) {    
-            $address .= '</span>';
-        }
-        if (!empty($workplace['addressCountry'])) {
-            $address .= '<span class="addressCountry" itemprop="addressCountry">'.esc_html($workplace['addressCountry']).'</span>';    
-        }
-        
-        
-        if (!empty($address)) {
-            $address = '<address class="texticon" itemprop="address" itemscope="" itemtype="https://schema.org/PostalAddress">'.$address;             
-            $address .= '</address>';   
-            if (!empty($roomfloorpart)) {
-                $address .= $roomfloorpart;
+            $org = (string) $this->getOrganizationName($lang);
+            if ($org !== '') {
+                $parts[] = $org;
             }
-           
-            $result = '<div class="workplace-address">' . $address . '</div>';
         }
-        return $result;
+
+        if (!empty($workplace['street']) && is_string($workplace['street'])) {
+            $parts[] = '<span class="street" itemprop="streetAddress">' . esc_html($workplace['street']) . '</span>';
+        }
+
+        if (!empty($workplace['postOfficeBoxNumber']) && is_string($workplace['postOfficeBoxNumber'])) {
+            $parts[] = '<span class="postbox"><span class="screen-reader-text">' . __('Box Number', 'rrze-faudir') . ': </span><span itemprop="postOfficeBoxNumber">' . esc_html($workplace['postOfficeBoxNumber']) . '</span></span>';
+        }
+
+        $postalCode = '';
+        if (!empty($workplace['postalCode']) && is_string($workplace['postalCode'])) {
+            $postalCode = $workplace['postalCode'];
+        } elseif (!empty($workplace['zip']) && is_string($workplace['zip'])) {
+            $postalCode = $workplace['zip'];
+        }
+
+        $locality = '';
+        if (!empty($workplace['addressLocality']) && is_string($workplace['addressLocality'])) {
+            $locality = $workplace['addressLocality'];
+        } elseif (!empty($workplace['city']) && is_string($workplace['city'])) {
+            $locality = $workplace['city'];
+        }
+
+        if ($postalCode !== '' || $locality !== '') {
+            $zipCity = '';
+            if ($postalCode !== '') {
+                $zipCity .= '<span class="postalCode" itemprop="postalCode">' . esc_html($postalCode) . '</span>';
+            }
+            if ($locality !== '') {
+                if ($zipCity !== '') {
+                    $zipCity .= ' ';
+                }
+                $zipCity .= '<span class="addressLocality" itemprop="addressLocality">' . esc_html($locality) . '</span>';
+            }
+            $parts[] = '<span class="zipcity">' . $zipCity . '</span>';
+        }
+
+        if (!empty($workplace['addressCountry']) && is_string($workplace['addressCountry'])) {
+            $parts[] = '<span class="addressCountry" itemprop="addressCountry">' . esc_html($workplace['addressCountry']) . '</span>';
+        }
+
+        // containedInPlace -> Room (optional)
+        $roomFloorPart = '';
+        if ($room || $floor || $showmap) {
+            $chips = [];
+
+            if ($room && !empty($workplace['room']) && is_string($workplace['room'])) {
+                // Schema: Room.name (Raumnummer ist idR der Name)
+                $chips[] = '<span class="texticon room"><span class="screen-reader-text">' . __('Room', 'rrze-faudir') . ': </span><span itemprop="name">' . esc_html($workplace['room']) . '</span></span>';
+            }
+
+            if ($floor && !empty($workplace['floor']) && is_string($workplace['floor'])) {
+                // Schema: Room.floorLevel
+                $chips[] = '<span class="texticon floor"><span class="screen-reader-text">' . __('Floor', 'rrze-faudir') . ': </span><span itemprop="floorLevel">' . esc_html($workplace['floor']) . '</span></span>';
+            }
+
+            if ($showmap && !empty($workplace['faumap']) && is_string($workplace['faumap'])) {
+                $faumap = trim($workplace['faumap']);
+                if ($faumap !== '' && preg_match('/^https?:\/\/karte\.fau\.de/i', $faumap)) {
+                    $chips[] = '<span class="texticon faumap"><span class="screen-reader-text">' . __('Map', 'rrze-faudir') . ': </span><a href="' . esc_url($faumap) . '" itemprop="hasMap">' . __('FAU Map', 'rrze-faudir') . '</a></span>';
+                }
+            }
+
+            if (!empty($chips)) {
+                $chipsJoiner = ($sep === '<br>') ? ', ' : ', ';
+                // containedInPlace hängt semantisch am Place/Workplace-Kontext, nicht am PostalAddress
+                $roomFloorPart  = '<span class="inaddress icon roomfloor" itemprop="containedInPlace" itemscope itemtype="https://schema.org/Room">';
+                $roomFloorPart .= implode($chipsJoiner, $chips);
+                $roomFloorPart .= '</span>';
+            }
+        }
+
+        if (empty($parts) && $roomFloorPart === '') {
+            return '';
+        }
+
+        $joiner = ($sep === '<br>') ? '<br>' : $sep;
+        $addressInner = implode($joiner, $parts);
+
+        $html  = '<div class="workplace-address" data-wpautop="off">';
+        $html .= '<address class="texticon" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">';
+        $html .= $addressInner;
+        $html .= '</address>';
+        if ($roomFloorPart !== '') {
+            // roomfloor is outside PostalAddress, but still associated via itemprop on the surrounding entity in your templates
+            $html .= $roomFloorPart;
+        }
+        $html .= '</div>';
+
+        return $html;
     }
     
     
@@ -407,68 +521,97 @@ class Contact {
      * Get Social Website Liste as semantic HTML
      */
     public function getSocialMedia(string $htmlsurround = 'div', string $class = 'icon-list icon', string $arialabel = ''): string {
-        $data = $this->getSocialArray();
-        if (empty($data)) {
+        $items = $this->getSocialArray();
+        if (empty($items)) {
             return '';
         }
 
-        
-        $htmlsurround = self::sanitize_htmlsurround($htmlsurround);
-        
-        $output = '';
-        $output .= '<'.$htmlsurround;
-        if (!empty($arialabel)) {
-             $output .= ' aria-label="'.trim(esc_attr($arialabel)).'"';
+        $htmlsurround = FaudirUtils::sanitizeHtmlSurround($htmlsurround);
+
+        $out = '<' . $htmlsurround;
+
+        $arialabel = trim($arialabel);
+        if ($arialabel !== '') {
+            $out .= ' aria-label="' . esc_attr($arialabel) . '"';
         }
-        if (!empty($class)) {
-             $output .= ' class="'.trim(esc_attr($class)).'"';
+
+        $class = trim($class);
+        if ($class !== '') {
+            $out .= ' class="' . esc_attr($class) . '"';
         }
-        $output .= '>';
-        $output .= '<ul class="list-icons">';
-        foreach ($data as $name => $value) {
+
+        $out .= '>';
+        $out .= '<ul class="list-icons">';
+
+        foreach ($items as $item) {
+            $name = (string) ($item['platform'] ?? '');
+            $value = (string) ($item['url'] ?? '');
+
+            $label = esc_html($name);
+
             if (preg_match('/^https?:\/\//i', $value)) {
-                $displayValue = preg_replace('/^https?:\/\//i', '', $value);
-                $formattedValue = '<a href="' . esc_url($value) . '" itemprop="url">' . esc_html($displayValue) . '</a>';
-                $output .= '<li><span class="website title">'.ucfirst(esc_html($name)).': </span>'.$formattedValue.'</li>';
+                $display = $value;
+                $p = wp_parse_url($value);
+                if (is_array($p) && !empty($p['host'])) {
+                    $display = $p['host'] . (!empty($p['path']) ? $p['path'] : '');
+                } else {
+                    $display = preg_replace('/^https?:\/\//i', '', $value);
+                }
+
+                $formatted = '<a href="' . esc_url($value) . '" itemprop="sameAs">' . esc_html($display) . '</a>';
+                $out .= '<li><span class="website title">' . $label . ': </span>' . $formatted . '</li>';
             } elseif (filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                $formattedValue = '<a itemprop="email" href="mailto:' . esc_attr($value) . '">' . esc_html($value) . '</a>';
-                $output .= '<li><span class="email title">'.ucfirst(esc_html($name)).': </span>'.$formattedValue.'</li>';
+                $formatted = '<a itemprop="email" href="mailto:' . esc_attr($value) . '">' . esc_html($value) . '</a>';
+                $out .= '<li><span class="email title">' . $label . ': </span>' . $formatted . '</li>';
             } else {
-                $formattedValue = '<span class="value">'. esc_html($value). '</span>';
-                $output .= '<li><span class="title">'.ucfirst(esc_html($name)).': </span>'.$formattedValue.'</li>';                        
+                $out .= '<li><span class="title">' . $label . ': </span><span class="value">' . esc_html($value) . '</span></li>';
             }
         }
-        $output .= '</ul>';
-        $output .= '</'.$htmlsurround.'>';
-        return $output;
-        
+
+        $out .= '</ul>';
+        $out .= '</' . $htmlsurround . '>';
+
+        return $out;
     }
     
-    /*
-     * Sanitize allowed HTML Tag for list outputs
-     */
-    private static function sanitize_htmlsurround(string $htmlsurround): string {
-        $allowed_tags = ['div', 'span', 'nav', 'p']; // Erlaubte Tags
-        $htmlsurround = strtolower(trim($htmlsurround)); // Kleinschreibung und Leerzeichen entfernen
-
-        return in_array($htmlsurround, $allowed_tags, true) ? $htmlsurround : 'div';
-    }
     
     /*
      * Get Social/Website from Contact and transform them into a assoc. array
      */
-    public function getSocialArray(): ?array {
-        if (empty($this->socials)) {
+    public function getSocialArray(): array {
+        if (empty($this->socials) || !is_array($this->socials)) {
             return [];
         }
 
-        $reslist = [];
+        $out = [];
         foreach ($this->socials as $item) {
-            if (isset($item['platform']) && isset($item['url'])) {
-                $reslist[$item['platform']] = $item['url'];
+            if (!is_array($item)) {
+                continue;
             }
+
+            $platform = isset($item['platform']) ? trim((string) $item['platform']) : '';
+            $url = isset($item['url']) ? trim((string) $item['url']) : '';
+
+            if ($platform === '' || $url === '') {
+                continue;
+            }
+
+            $out[] = [
+                'platform' => $platform,
+                'url' => $url,
+            ];
         }
-        return $reslist;
+
+        // Stabil sortieren nach Platform, dann URL
+        usort($out, function($a, $b) {
+            $pc = strcasecmp($a['platform'], $b['platform']);
+            if ($pc !== 0) {
+                return $pc;
+            }
+            return strcasecmp($a['url'], $b['url']);
+        });
+
+        return $out;
     }
     
     
@@ -496,19 +639,33 @@ class Contact {
     /*
      * Get the FunctionLabel
      */
-    public function getFunctionLabel(string $lang = "de"): string {
+    public function getFunctionLabel(string $lang = 'de'): ?string {
+        $lang = sanitize_key((string) $lang);
+        if ($lang === '') {
+            $lang = 'de';
+        }
+
         if (empty($this->functionLabel) || !is_array($this->functionLabel)) {
             return '';
         }
 
-        $lang = ($lang === 'en') ? 'en' : 'de';
+        $candidates = [];
 
+        // Primärsprache
         if (!empty($this->functionLabel[$lang])) {
-            return (string) $this->functionLabel[$lang];
+            $candidates[] = $this->functionLabel[$lang];
         }
 
-        $fallback = ($lang === 'de') ? 'en' : 'de';
-        return !empty($this->functionLabel[$fallback]) ? (string) $this->functionLabel[$fallback] : '';
+        // Gegenfallback
+        if ($lang === 'de' && !empty($this->functionLabel['en'])) {
+            $candidates[] = $this->functionLabel['en'];
+        } elseif ($lang !== 'de' && !empty($this->functionLabel['de'])) {
+            $candidates[] = $this->functionLabel['de'];
+        }
+
+        $normalized = FaudirUtils::normalizeStringArray($candidates);
+
+        return $normalized[0] ?? '';
     }
 
      /*
@@ -537,39 +694,57 @@ class Contact {
     /*
      * Build JobTitle by Functionlabel and Orgname
      */
-    public function getJobTitle(string $lang = "de", ?string $template = ''): string {
+    public function getJobTitle(string $lang = 'de', ?string $template = ''): ?string {
+        $lang = sanitize_key((string) $lang);
+        if ($lang === '') {
+            $lang = 'de';
+        }
+
         $label = $this->getFunctionLabel($lang);
         if ($label === '') {
             return '';
         }
 
-        $orgname = '';
+        $orgCandidates = [];
+
         if (!empty($this->organization['longDescription']) && is_array($this->organization['longDescription'])) {
-            $lang = ($lang === 'en') ? 'en' : 'de';
-            if (!empty($this->organization['longDescription'][$lang])) {
-                $orgname = (string) $this->organization['longDescription'][$lang];
-            } else {
-                $fallback = ($lang === 'de') ? 'en' : 'de';
-                if (!empty($this->organization['longDescription'][$fallback])) {
-                    $orgname = (string) $this->organization['longDescription'][$fallback];
-                }
+            $ld = $this->organization['longDescription'];
+
+            if (!empty($ld[$lang])) {
+                $orgCandidates[] = $ld[$lang];
+            }
+
+            if ($lang === 'de' && !empty($ld['en'])) {
+                $orgCandidates[] = $ld['en'];
+            } elseif ($lang !== 'de' && !empty($ld['de'])) {
+                $orgCandidates[] = $ld['de'];
             }
         }
 
-        if ($template === null || $template === '') {
+        $orgNormalized = FaudirUtils::normalizeStringArray($orgCandidates);
+        $orgname = $orgNormalized[0] ?? '';
+
+        if ($orgname === '') {
+            $this->jobTitle = $label;
+            return $this->jobTitle;
+        }
+
+        if ($template === null || trim((string) $template) === '') {
             $template = "#functionlabel# #orgname#";
         }
 
         $replacements = [
-            '#orgname#'        => $orgname,
-            '#functionlabel#'  => $label,
-            '#alternatename#'  => (string) ($this->organization['alternateName'] ?? '')
+            '#orgname#'       => $orgname,
+            '#functionlabel#' => $label,
+            '#alternatename#' => $this->organization['alternateName'] ?? '',
         ];
 
-        $jobtitle = str_replace(array_keys($replacements), array_values($replacements), $template);
+        $jobtitle = str_replace(array_keys($replacements), array_values($replacements), (string) $template);
+        $jobtitle = trim(preg_replace("/[ \t]+/", " ", $jobtitle) ?? $jobtitle);
+
         $this->jobTitle = $jobtitle;
 
-        return $jobtitle;
+        return $this->jobTitle;
     }
 
 
