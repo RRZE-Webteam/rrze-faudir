@@ -83,8 +83,51 @@ class FaudirUtils {
     }
     
 
-    // Sanitize and format telephone number
+    /*
+     *  Sanitize and format telephone number (DIN 5008-ish: groups with spaces, extension with hyphen)
+     */
     public static function format_phone_number(string $phone): string {
+            $phone = trim($phone);
+        if ($phone === '') {
+            return '';
+        }
+
+        // +49(0) -> +49
+        $phone = preg_replace('/^\+49\s*\(0\)\s*/', '+49 ', $phone);
+        // 0049 -> +49
+        $phone = preg_replace('/^00\s*49\s*/', '+49 ', $phone);
+
+        // erlaubte Zeichen: Ziffern, +, Leerzeichen, Klammern, Slash, Punkt, Bindestrich
+        $phone = preg_replace('/[^\d\+\s\(\)\/\.\-]+/u', '', $phone);
+        $phone = preg_replace('/\s+/u', ' ', $phone);
+
+        // deutsche Nummer ohne Ländercode: 0... -> +49 ...
+        if (preg_match('/^0[1-9]/', $phone)) {
+            $phone = preg_replace('/^0+/', '', $phone);
+            $phone = '+49 ' . $phone;
+        }
+
+        // wenn +49 direkt an Ziffern klebt: +499131... -> +49 9131...
+        $phone = preg_replace('/^\+49\s*/', '+49 ', $phone);
+
+        // Trennzeichen normalisieren:
+        // - Slash & Punkt werden zu Leerzeichen
+        $phone = str_replace(['/', '.'], ' ', $phone);
+
+        // - Klammern raus (DIN 5008: keine "(0)" im internationalen Format)
+        $phone = str_replace(['(', ')'], '', $phone);
+
+        // - Bindestrich: keine Spaces drumrum
+        $phone = preg_replace('/\s*-\s*/', '-', $phone);
+
+        // doppelte Leerzeichen killen
+        $phone = preg_replace('/\s+/u', ' ', trim($phone));
+
+        return $phone;
+    }
+
+    // Sanitize and format telephone number
+    public static function old_format_phone_number(string $phone): string {
         // Entferne alle Zeichen außer Zahlen, "+", "(", ")", "-" und Leerzeichen
         $phone = preg_replace('/[^\d\+\(\) ]+/', '', $phone);
         $phone = preg_replace('/\s+/', ' ', trim($phone));
