@@ -434,7 +434,96 @@ class FaudirUtils {
        return (bool) filter_var($val, FILTER_VALIDATE_EMAIL);
    }
 
+   /*
+    * Prüfe FAUdir personId auf validität: 10 oder 11 Zeichen aus [a-z0-9].
+    */
+   public static function isValidPersonId(string $input): bool {
+        $input = strtolower(trim($input));
+        return (bool) preg_match('/^[a-z0-9]{10,11}$/', $input);
+    }
+
+    public static function sanitizePersonId(string $input): ?string {
+        $clean = strtolower(trim($input));
+        $clean = preg_replace('/[^a-z0-9]/', '', $clean);
+
+        if (preg_match('/^[a-z0-9]{10,11}$/', $clean)) {
+            return $clean;
+        }
+
+        return null;
+    }
+    
+    /*
+    * Prüft, ob eine FAUdir Organization-ID gültig ist.
+    * Erlaubt nur a-z0-9 und exakt 10 Zeichen.
+    */
+   public static function isValidOrganizationId(string $input): bool {
+       $input = strtolower(trim($input));
+       return (bool) preg_match('/^[a-z0-9]{10}$/', $input);
+   }
+
+   /*
+    * Sanitized eine Organization-ID.
+    * Entfernt ungültige Zeichen und gibt null zurück,
+    * wenn das Ergebnis nicht exakt 10 Zeichen a-z0-9 ist.
+    */
+   public static function sanitizeOrganizationId(string $input): ?string {
+       $clean = strtolower(trim($input));
+       $clean = preg_replace('/[^a-z0-9]/', '', $clean);
+
+       if (preg_match('/^[a-z0-9]{10}$/', $clean)) {
+           return $clean;
+       }
+
+       return null;
+   }
+
+   /*
+    * Prüft, ob eine Orgnr (= FAU Kostenstellennummer) gültig ist. 
+    * Erlaubt exakt 10 Ziffern (0-9).
+    */
+   public static function isValidOrgnr(string $input): bool {
+       $input = trim($input);
+       return (bool) preg_match('/^\d{10}$/', $input);
+   }
+
+   /**
+    * Sanitized eine Orgnr.
+    * Entfernt alle Nicht-Ziffern und gibt null zurück,
+    * wenn das Ergebnis nicht exakt 10 Ziffern enthält.
+    */
+   public static function sanitizeOrgnr(string $input): ?string {
+       $clean = preg_replace('/\D/', '', trim($input));
+
+       if (preg_match('/^\d{10}$/', $clean)) {
+           return $clean;
+       }
+
+       return null;
+   }
    
+    /*
+     * Prüft, ob eine Orgnr-Prefixsuche zulässig ist (6 bis 9 Ziffern).
+     */
+    public static function isValidOrgnrPrefix(string $input): bool {
+        $input = trim($input);
+        return (bool) preg_match('/^\d{6,9}$/', $input);
+    }
+
+    /*
+     * Sanitized eine Orgnr-Prefixsuche (6 bis 9 Ziffern) und gibt null zurück wenn ungültig.
+     */
+    public static function sanitizeOrgnrPrefix(string $input): ?string {
+        $clean = preg_replace('/\D+/', '', trim($input));
+
+        if (preg_match('/^\d{6,9}$/', $clean)) {
+            return $clean;
+        }
+
+        return null;
+    }   
+    
+    
    /*
     * Sanitizes an HTML wrapper tag name for list/fragment outputs.
     * Allows only a small whitelist to prevent invalid markup and injection.
@@ -461,4 +550,177 @@ class FaudirUtils {
        }
        return $default;
    }
+   
+       /**
+     * Normalize socials data into a stable list of items:
+     * [
+     *   ['platform' => 'X', 'url' => 'https://...'],
+     *   ...
+     * ]
+     * - trims values
+     * - drops empty/invalid entries
+     * - de-duplicates (platform+url)
+     * - stable sort by platform, then url
+     */
+    public static function normalizeSocialItems(array $socials): array {
+        $out = [];
+        $seen = [];
+
+        foreach ($socials as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+
+            $platform = '';
+            if (isset($item['platform'])) {
+                $platform = trim((string) $item['platform']);
+            }
+
+            $url = '';
+            if (isset($item['url'])) {
+                $url = trim((string) $item['url']);
+            }
+
+            if ($platform === '' || $url === '') {
+                continue;
+            }
+
+            $key = strtolower($platform) . '|' . strtolower($url);
+            if (isset($seen[$key])) {
+                continue;
+            }
+            $seen[$key] = true;
+
+            $out[] = [
+                'platform' => $platform,
+                'url' => $url,
+            ];
+        }
+
+        usort($out, [self::class, 'compareSocialItems']);
+
+        return $out;
+    }
+
+    private static function compareSocialItems(array $a, array $b): int {
+        $ap = isset($a['platform']) ? (string) $a['platform'] : '';
+        $bp = isset($b['platform']) ? (string) $b['platform'] : '';
+
+        $pc = strcasecmp($ap, $bp);
+        if ($pc !== 0) {
+            return $pc;
+        }
+
+        $au = isset($a['url']) ? (string) $a['url'] : '';
+        $bu = isset($b['url']) ? (string) $b['url'] : '';
+
+        return strcasecmp($au, $bu);
+    }
+
+    /**
+     * Render socials list as semantic HTML (<ul>).
+     * Input must be normalized items (see normalizeSocialItems()).
+     */
+    public static function renderSocialMediaList(array $items, string $htmlsurround = 'div', string $class = 'icon-list icon', string $arialabel = ''): string {
+        if (empty($items)) {
+            return '';
+        }
+
+        $htmlsurround = self::sanitizeHtmlSurround($htmlsurround);
+
+        $out = '<' . $htmlsurround;
+
+        $arialabel = trim($arialabel);
+        if ($arialabel !== '') {
+            $out .= ' aria-label="' . esc_attr($arialabel) . '"';
+        }
+
+        $class = trim($class);
+        if ($class !== '') {
+            $out .= ' class="' . esc_attr($class) . '"';
+        }
+
+        $out .= '>';
+        $out .= '<ul class="list-icons">';
+
+        foreach ($items as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+
+            $name = isset($item['platform']) ? (string) $item['platform'] : '';
+            $value = isset($item['url']) ? (string) $item['url'] : '';
+
+            $name = trim($name);
+            $value = trim($value);
+
+            if ($name === '' || $value === '') {
+                continue;
+            }
+
+            $label = esc_html($name);
+
+            if (preg_match('/^https?:\/\//i', $value)) {
+                $display = self::prettyUrl($value);
+                $formatted = '<a href="' . esc_url($value) . '" itemprop="sameAs">' . esc_html($display) . '</a>';
+                $out .= '<li><span class="website title">' . $label . ': </span>' . $formatted . '</li>';
+                continue;
+            }
+
+            if (filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                $formatted = '<a itemprop="email" href="mailto:' . esc_attr($value) . '">' . esc_html($value) . '</a>';
+                $out .= '<li><span class="email title">' . $label . ': </span>' . $formatted . '</li>';
+                continue;
+            }
+
+            $out .= '<li><span class="title">' . $label . ': </span><span class="value">' . esc_html($value) . '</span></li>';
+        }
+
+        $out .= '</ul>';
+        $out .= '</' . $htmlsurround . '>';
+
+        return $out;
+    }
+
+    /**
+     * Render socials as plain text lines for textarea/log.
+     * "Platform: URL"
+     */
+    public static function renderSocialMediaText(array $items, string $lineSeparator = "\n"): string {
+        if (empty($items)) {
+            return '';
+        }
+
+        $lines = [];
+        foreach ($items as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+
+            $p = isset($item['platform']) ? trim((string) $item['platform']) : '';
+            $u = isset($item['url']) ? trim((string) $item['url']) : '';
+
+            if ($p === '' || $u === '') {
+                continue;
+            }
+
+            $lines[] = $p . ': ' . $u;
+        }
+
+        $lines = self::normalizeStringArray($lines);
+
+        return implode($lineSeparator, $lines);
+    }
+
+    private static function prettyUrl(string $url): string {
+        $p = wp_parse_url($url);
+        if (is_array($p) && !empty($p['host'])) {
+            $host = (string) $p['host'];
+            $path = !empty($p['path']) ? (string) $p['path'] : '';
+            return $host . $path;
+        }
+
+        return preg_replace('/^https?:\/\//i', '', $url);
+    }
+   
 }

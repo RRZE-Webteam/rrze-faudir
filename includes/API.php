@@ -25,27 +25,49 @@ class API {
             $this->baseUrl = $this->config->get('api-baseurl');
         }
         $this->api_key = $this->getKey();
+        
+        if (empty($this->api_key)) {
+            do_action( 'rrze.log.error',"FAUdir\API (__construct): API Key empty.");
+        }
     }
     
    
     public static function isUsingNetworkKey(): bool  {
-        if (is_multisite()) {
-            $settingsOptions = get_site_option('rrze_settings');
-            if (!empty($settingsOptions->plugins->faudir_public_apiKey)) {
-                return true;
-            }
+        if (!is_multisite()) {
+            return false;
         }
+
+        $settingsOptions = get_site_option('rrze_settings');
+        if (is_object($settingsOptions)) {
+            return !empty($settingsOptions->plugins->faudir_public_apiKey);
+        }
+        if (is_array($settingsOptions)) {
+            return !empty($settingsOptions['plugins']['faudir_public_apiKey']);
+        }
+
         return false;
     }
 
     public static function getKey()  {
         if (self::isUsingNetworkKey()) {
             $settingsOptions = get_site_option('rrze_settings');
-            return $settingsOptions->plugins->faudir_public_apiKey;
-        } else {
-            $options = get_option('rrze_faudir_options');
-            return isset($options['api_key']) ? $options['api_key'] : '';
+
+            if (is_object($settingsOptions)) {
+                return (string) ($settingsOptions->plugins->faudir_public_apiKey ?? '');
+            }
+            if (is_array($settingsOptions)) {
+                return (string) ($settingsOptions['plugins']['faudir_public_apiKey'] ?? '');
+            }
+
+            return '';
         }
+
+        $options = get_option('rrze_faudir_options');
+        if (!is_array($options)) {
+            return '';
+        }
+
+        return (string) ($options['api_key'] ?? '');
     }
 
     public function getApiBaseUrl() {
@@ -58,13 +80,14 @@ class API {
      * @param personid
      * @return array|null on not found
      */
-    public function getPerson(string $personId): ?array {
+    public function getPerson(string $input): ?array {
         if (!$this->api_key) {
             do_action( 'rrze.log.error', "FAUdir\API (getPerson): API Key missing.");
             return null;
         }
-        if (empty($personId)) {
-            do_action( 'rrze.log.error', "FAUdir\API (getPerson): Required field personid missing.");
+        $personId = FaudirUtils::sanitizePersonId($input);       
+        if ($personId === null) {
+            do_action('rrze.log.error', "FAUdir\\API (getPerson): Invalid personId {$input}.");
             return null;
         }
         $url = "{$this->baseUrl}persons/{$personId}";
@@ -201,7 +224,7 @@ class API {
     * @param array $params - Additional query parameters
     * @return array - Array of contacts
     */
-    function getContacts($limit = 20, $offset = 0, $params = []) {
+    public function getContacts($limit = 20, $offset = 0, $params = []): array {
         if (!$this->api_key) {
             do_action( 'rrze.log.error',"FAUdir\API (getContacts): API Key missing.");
             return null;
@@ -301,7 +324,10 @@ class API {
         }
         // Handle orgnr as special cases to be combined into the 'q' parameter
         if (!empty($params['orgnr'])) {
-            $url .= '&q=' . urlencode('^' . $params['orgnr']);
+            $orgnr = FaudirUtils::sanitizeOrgnr((string) $params['orgnr']);
+            if ($orgnr !== null) {
+                $url .= '&q=' . urlencode('^' . $orgnr);
+            }
         }
      //   do_action( 'rrze.log.info', "FAUdir\API (getOrgList): Requesting {$url}.");
         
@@ -326,10 +352,13 @@ class API {
             do_action( 'rrze.log.error', "FAUdir\API (getOrgById): API Key missing.");
             return null;
         }
-        if (empty($orgid)) {
-            do_action( 'rrze.log.error', "FAUdir\API (getOrgById): Required field orgid missing.");
+        
+        $orgid = FaudirUtils::sanitizeOrganizationId($orgid);
+        if ($orgid === null) {
+            do_action('rrze.log.error', "FAUdir\\API (getOrgById): Invalid organization id.");
             return null;
         }
+        
         $url = "{$this->baseUrl}organizations/{$orgid}";
         
         
@@ -347,7 +376,7 @@ class API {
     }
 
     /**
-     * Encodes a query parameter without affecting lq's = and & symbols
+     * Encodes a query parameter 
      */
     private function encodeParam(string $key, string $value): string {
         return rawurlencode($value);
@@ -367,17 +396,22 @@ class API {
             return null;
         }
 
-        if ($method === "GET" && $data) {
-            // Daten als URL-Parameter kodieren und an die URL anhängen
-            $queryString = http_build_query($data);
-            $url .= '?' . $queryString;
+        $method = strtoupper(trim($method));
+        if ($method !== 'GET') {
+            do_action('rrze.log.error', "FAUdir\API (makeRequest): Unsupported method {$method} for {$url}.");
+            return null;
+        }
+
+        if (!empty($data)) {
+            $url = add_query_arg($data, $url);
         }
                
         // Prüfe, ob gecachte Daten existieren
         $cached = $this->get_cache_data($url);
-        if (!is_null($cached)) {
+        if ($cached !== null) {
             return $cached;
         }
+        // do_action('rrze.log.info', "FAUdir\API (makeRequest): start wp_remote_get for {$url}");
         
         
         $response = wp_remote_get($url, array(
@@ -385,78 +419,78 @@ class API {
                 'accept' => 'application/json',
                 'X-API-KEY' => $this->api_key
             ),
+            'timeout' => 15,
         ));
 
         if (is_wp_error($response)) {
-            return array('error' => true, 'message' => 'Error retrieving data: ' . $response->get_error_message());
+            do_action('rrze.log.error', "FAUdir\API (makeRequest): WP_Error on {$url}: " . $response->get_error_message());
+            return null;
+        }
+        $code = (int) wp_remote_retrieve_response_code($response);
+        if ($code < 200 || $code >= 300) {
+            do_action('rrze.log.error', "FAUdir\API (makeRequest): HTTP {$code} on {$url}.");
+            return null;
         }
 
         $body = wp_remote_retrieve_body($response);
         if (empty($body)) {
-    //        do_action( 'rrze.log.error', "FAUdir\API (makeRequest): Empty content body from api.");
+            do_action('rrze.log.error', "FAUdir\\API (makeRequest): Empty body on {$url}.");
             return null;
         }
 
-        $data = json_decode($body, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            do_action( 'rrze.log.error', "FAUdir\API (makeRequest): Error decoding JSON data.");
+        $decoded = json_decode($body, true);
+        if (!is_array($decoded)) {
+            do_action('rrze.log.error', "FAUdir\API (makeRequest): JSON decode error on {$url}: " . json_last_error_msg());
             return null;
         }
-        
-        // Speichere im Cache
-        $this->set_cache_data($url, $data);
 
-        return $data;
+        $this->set_cache_data($url, $decoded);
+
+        return $decoded;
         
         
     }
  
-    // Take a look for avaible transient data
+    /*
+     * Get Cache from transient data
+     */
     private function get_cache_data(string $url): ?array {
-        $parsed_url = parse_url($url);
-        $path = $parsed_url['path'] ?? '';
+        $parsed = wp_parse_url($url);
+        $path = (string) ($parsed['path'] ?? '');
 
-        // Entferne die baseURL aus dem Pfad
-        $relative_path = str_replace(parse_url($this->baseUrl, PHP_URL_PATH), '', $path);
-        $parts = explode('/', trim($relative_path, '/'));
+        $basePath = (string) wp_parse_url($this->baseUrl, PHP_URL_PATH);
+        $relative = $basePath !== '' ? str_replace($basePath, '', $path) : $path;
 
-        $endpoint = $parts[0] ?? 'default';
+        $parts = explode('/', trim($relative, '/'));
+        $endpoint = $parts[0] !== '' ? $parts[0] : 'default';
 
-        // 2. Transient-Lifetime in Sekunden (Fallback: default)
-        $minutes = $this->transient_times[$endpoint] ?? $this->transient_times['default'];
-        $lifetime = $minutes * 60;
-        
         $transient_key = $this->transient_prefix . $endpoint . '_' . md5($url);
 
         $cached = get_transient($transient_key);
-        if ($cached !== false) {
-       //     do_action( 'rrze.log.info', "FAUdir\API (get_cache_data): Return transient data (transient key: $transient_key.");
+        if ($cached !== false && is_array($cached)) {
+        //    do_action('rrze.log.info', "FAUdir\API (get_cache_data): Get Data from cache", $transient_key);
             return $cached;
         }
 
-        return null;    
+        return null; 
     }
     
     // Save data as transient
     private function set_cache_data(string $url, array $data): void {
-        $parsed_url = parse_url($url);
-        $path = $parsed_url['path'] ?? '';
+        $parsed = wp_parse_url($url);
+        $path = (string) ($parsed['path'] ?? '');
 
-        // Entferne die baseURL aus dem Pfad
-        $relative_path = str_replace(parse_url($this->baseUrl, PHP_URL_PATH), '', $path);
-        $parts = explode('/', trim($relative_path, '/'));
-        
-        // Der Endpoint ist das erste Element nach der Base-URL
-        $endpoint = $parts[0] ?? 'default';
+        $basePath = (string) wp_parse_url($this->baseUrl, PHP_URL_PATH);
+        $relative = $basePath !== '' ? str_replace($basePath, '', $path) : $path;
 
-        // Bestimme Cache-Dauer mit optionalem Zufalls-Offset
-        $base_lifetime = $this->transient_times[$endpoint] ?? $this->transient_times['default'];
-        $random_offset = rand(0, $this->transient_jitter_minutes) * 60;
-        $lifetime = ($base_lifetime * 60) + $random_offset;
-        
-        // Erzeuge Transient-Key und speichere die Daten
+        $parts = explode('/', trim($relative, '/'));
+        $endpoint = $parts[0] !== '' ? $parts[0] : 'default';
+
+        $base_minutes = (int) ($this->transient_times[$endpoint] ?? $this->transient_times['default']);
+        $random_offset = wp_rand(0, $this->transient_jitter_minutes) * 60;
+        $lifetime = ($base_minutes * 60) + $random_offset;
+
         $transient_key = $this->transient_prefix . $endpoint . '_' . md5($url);
-        set_transient($transient_key, $data, $lifetime);
        //  do_action( 'rrze.log.info', "FAUdir\API (set_cache_data): Set Transient key {$transient_key}.");
     }
 

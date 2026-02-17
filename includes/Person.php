@@ -224,6 +224,7 @@ class Person {
         }
         $api = new API($this->config);
         // Hole die Personendaten als Array über die API-Methode.
+                
         $personData = $api->getPerson($identifier);
 
         if (empty($personData) || !is_array($personData)) {

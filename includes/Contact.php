@@ -508,57 +508,8 @@ class Contact {
      * Get Social Website Liste as semantic HTML
      */
     public function getSocialMedia(string $htmlsurround = 'div', string $class = 'icon-list icon', string $arialabel = ''): string {
-        $items = $this->getSocialArray();
-        if (empty($items)) {
-            return '';
-        }
-
-        $htmlsurround = FaudirUtils::sanitizeHtmlSurround($htmlsurround);
-
-        $out = '<' . $htmlsurround;
-
-        $arialabel = trim($arialabel);
-        if ($arialabel !== '') {
-            $out .= ' aria-label="' . esc_attr($arialabel) . '"';
-        }
-
-        $class = trim($class);
-        if ($class !== '') {
-            $out .= ' class="' . esc_attr($class) . '"';
-        }
-
-        $out .= '>';
-        $out .= '<ul class="list-icons">';
-
-        foreach ($items as $item) {
-            $name = (string) ($item['platform'] ?? '');
-            $value = (string) ($item['url'] ?? '');
-
-            $label = esc_html($name);
-
-            if (preg_match('/^https?:\/\//i', $value)) {
-                $display = $value;
-                $p = wp_parse_url($value);
-                if (is_array($p) && !empty($p['host'])) {
-                    $display = $p['host'] . (!empty($p['path']) ? $p['path'] : '');
-                } else {
-                    $display = preg_replace('/^https?:\/\//i', '', $value);
-                }
-
-                $formatted = '<a href="' . esc_url($value) . '" itemprop="sameAs">' . esc_html($display) . '</a>';
-                $out .= '<li><span class="website title">' . $label . ': </span>' . $formatted . '</li>';
-            } elseif (filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                $formatted = '<a itemprop="email" href="mailto:' . esc_attr($value) . '">' . esc_html($value) . '</a>';
-                $out .= '<li><span class="email title">' . $label . ': </span>' . $formatted . '</li>';
-            } else {
-                $out .= '<li><span class="title">' . $label . ': </span><span class="value">' . esc_html($value) . '</span></li>';
-            }
-        }
-
-        $out .= '</ul>';
-        $out .= '</' . $htmlsurround . '>';
-
-        return $out;
+        $items = FaudirUtils::normalizeSocialItems($this->socials);
+        return FaudirUtils::renderSocialMediaList($items, $htmlsurround, $class, $arialabel);
     }
     
     
@@ -566,39 +517,7 @@ class Contact {
      * Get Social/Website from Contact and transform them into a assoc. array
      */
     public function getSocialArray(): array {
-        if (empty($this->socials) || !is_array($this->socials)) {
-            return [];
-        }
-
-        $out = [];
-        foreach ($this->socials as $item) {
-            if (!is_array($item)) {
-                continue;
-            }
-
-            $platform = isset($item['platform']) ? trim((string) $item['platform']) : '';
-            $url = isset($item['url']) ? trim((string) $item['url']) : '';
-
-            if ($platform === '' || $url === '') {
-                continue;
-            }
-
-            $out[] = [
-                'platform' => $platform,
-                'url' => $url,
-            ];
-        }
-
-        // Stabil sortieren nach Platform, dann URL
-        usort($out, function($a, $b) {
-            $pc = strcasecmp($a['platform'], $b['platform']);
-            if ($pc !== 0) {
-                return $pc;
-            }
-            return strcasecmp($a['url'], $b['url']);
-        });
-
-        return $out;
+        return FaudirUtils::normalizeSocialItems($this->socials);
     }
     
     
@@ -606,19 +525,14 @@ class Contact {
      * Get Socials as String
      */
      public function getSocialString(): string {
-        if (empty($this->socials)) {
-             return __('No social media available', 'rrze-faudir');
-        }
-            
-        // Format social media into a string
-        $formattedSocials = [];
-        foreach ($this->socials as $social) {
-            if (!empty($social['platform']) && !empty($social['url'])) {
-                $formattedSocials[] = ucfirst($social['platform']) . ': ' . $social['url'];
-            }
+        $items = FaudirUtils::normalizeSocialItems($this->socials);
+        $text = FaudirUtils::renderSocialMediaText($items, "\n");
+
+        if ($text === '') {
+            return __('No social media available', 'rrze-faudir');
         }
 
-        return implode("\n", $formattedSocials);
+        return $text; 
      }
 
     
@@ -643,7 +557,7 @@ class Contact {
             $candidates[] = $this->functionLabel[$lang];
         }
 
-        // Gegenfallback
+        // Fallback
         if ($lang === 'de' && !empty($this->functionLabel['en'])) {
             $candidates[] = $this->functionLabel['en'];
         } elseif ($lang !== 'de' && !empty($this->functionLabel['de'])) {

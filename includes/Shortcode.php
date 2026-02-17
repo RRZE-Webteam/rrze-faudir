@@ -491,20 +491,21 @@ class Shortcode {
         
         if (Organization::isOrgnr($orgnr)) {   
             $id = $org->getIdentifierbyOrgnr($orgnr);
-            $orgid = Organization::sanitizeOrgIdentifier($id);
-            if (Organization::isOrgIdentifier($orgid)) {
+            $orgid = FaudirUtils::sanitizeOrganizationId($id);
+            if ($orgid !== null) {
                 $org->getOrgbyAPI($orgid);
                 $orgdata = $org->toArray();
             } else {
+                do_action('rrze.log.warn', "FAUdir\Shortcode (createOrgOutput): Invalid organization id.");
                 return $this->createErrorOut(__('Bad value for parameter orgid', 'rrze-faudir'), 'createOrgOutput');
             }
         } elseif (!empty($orgid)) {
-            $orgid = Organization::sanitizeOrgIdentifier($orgid);
-            
-            if (Organization::isOrgIdentifier($orgid)) {
+            $orgid = FaudirUtils::sanitizeOrganizationId($orgid);
+            if ($orgid !== null) {
                 $org->getOrgbyAPI($orgid);
                 $orgdata = $org->toArray();
             } else {
+                do_action('rrze.log.warn', "FAUdir\Shortcode (createOrgOutput): Invalid organization id.");
                 return $this->createErrorOut(__('Bad value for parameter orgid', 'rrze-faudir'), 'createOrgOutput');
             }
 
@@ -737,18 +738,23 @@ class Shortcode {
     *   - array: Personen (nur mit passenden Kontakten), [] wenn keine Treffer.
     */
    public function getPersonsByOrgNr(string|int $orgnr, ?string $role = null): array {
-       // Nur Ziffern verwenden
-       $orgnrDigits = preg_replace('/\D+/', '', (string) $orgnr);
-
-       // Such-Param für Org-Liste bestimmen
-       if (preg_match('/^\d{10}$/', $orgnrDigits)) {
-           // exakt 10-stellig
-           $orgParams = ['lq' => 'disambiguatingDescription[eq]=' . $orgnrDigits];
-       } elseif (preg_match('/^\d{6}$/', $orgnrDigits)) {
-           // 6-stelliger Präfix
-           $orgParams = ['lq' => 'disambiguatingDescription[reg]=^' . $orgnrDigits];
-       } else {
-           return [];
+        // Nur Ziffern verwenden
+        $digits = preg_replace('/\D+/', '', (string) $orgnr);
+        $orgParams = [];
+        $enforceOrgInIsRole = false;
+        $exact = FaudirUtils::sanitizeOrgnr($digits);
+        if ($exact !== null) {
+            // exakt 10-stellig -> "normale" Suche wie bisher
+            $orgParams['orgnr'] = $exact;
+            $enforceOrgInIsRole = true;
+        } else {
+            $prefix = FaudirUtils::sanitizeOrgnrPrefix($digits);
+            if ($prefix !== null) {
+                // 6-9-stelliger Präfix -> Teilsuche via lq[reg]
+                $orgParams['lq'] = 'disambiguatingDescription[reg]=^' . $prefix;
+            } else {
+                return [];
+            }
        }
 
        // API
@@ -787,7 +793,6 @@ class Shortcode {
 
        $persons = [];
        $hasRoleFilter = (is_string($role) && trim($role) !== '');
-       $enforceOrgInIsRole = (strlen($orgnrDigits) === 10); // nur bei voller Orgnr in isRole streng prüfen
 
        if (!empty($data['data'])) {
            foreach ($data['data'] as $persondata) {
@@ -864,16 +869,19 @@ class Shortcode {
             $id = $m[1];
         }
 
-        // Nur alphanumerische Identifier zulassen
-        if (!preg_match('/^[A-Za-z0-9]+$/', $id)) {
+        $orgid = FaudirUtils::sanitizeOrganizationId($id);
+        if ($orgid === null) {
+            do_action('rrze.log.warn', "FAUdir\Shortcode (getPersonsByFAUdirOrgId): Invalid OrgId {$identifier}.");
             return [];
         }
+        
+
 
         // API-Setup
         $api    = new API($this->config);
 
         // LQ direkt mit exakter Org-ID
-        $lq     = 'contacts.organization.identifier[eq]=' . $id;
+        $lq     = 'contacts.organization.identifier[eq]=' . $orgid;
         $params = ['lq' => $lq];
 
         $data = $api->getPersons(0, 0, $params);
@@ -904,7 +912,7 @@ class Shortcode {
                         }
 
                         $contactOrgId = $contactData['organization']['identifier'] ?? null;
-                        if (!$contactOrgId || (string) $contactOrgId !== $id) {
+                        if (!$contactOrgId || (string) $contactOrgId !== $orgid) {
                             // Dieser Kontakt gehört nicht zu der gesuchten Organisation
                             continue;
                         }
@@ -913,7 +921,7 @@ class Shortcode {
                         $contact->setConfig($this->config);
 
                         // isRole prüft NUR diesen Kontakt; exakte Org-ID mitgeben
-                        if ($contact->isRole($role, $id)) {
+                        if ($contact->isRole($role, $orgid)) {
                             $matchedContacts[] = $contact->toArray();
                         }
                     }
@@ -1083,9 +1091,9 @@ class Shortcode {
         $person->setConfig($this->config);
                 
         foreach ($identifiers as $identifier) {
-            $identifier = trim($identifier);
-            if (!empty($identifier)) {                
-                $found = $person->getPersonbyAPI($identifier);
+            $personId = FaudirUtils::sanitizePersonId($identifier);
+            if ($personId !== null) {               
+                $found = $person->getPersonbyAPI($personId);
                 if ($found) {
                     $person->reloadContacts();
                     $persons[] = $person->toArray();
@@ -1093,9 +1101,11 @@ class Shortcode {
                     $persons[] = [
                         'error' => true,
                         /* translators: 1: FAUdir Identifier Key  */
-                        'message' => sprintf(__('Person with ID %s does not exist', 'rrze-faudir'), $identifier)
+                        'message' => sprintf(__('Person with ID %s does not exist', 'rrze-faudir'), $personId)
                     ];
                 }
+            } else {
+                do_action('rrze.log.warn', "FAUdir\Shortcode (process_persons_by_identifiers): Invalid personId {$identifier}.");
             }
         }
 

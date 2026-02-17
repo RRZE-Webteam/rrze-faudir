@@ -166,7 +166,7 @@ class Organization {
      * Hole eine ORG via Identifier von der API
      */
     public function getOrgbyAPI(string $identifier): bool {
-        if (!self::isOrgIdentifier($identifier)) {
+        if (!FaudirUtils::isValidOrganizationId($identifier)) {
             return false;
         }
         if (empty($this->config)) {
@@ -189,7 +189,8 @@ class Organization {
      * Hole die Identifier einer Orgnr
      */
     public function getIdentifierbyOrgnr(string $orgnr): string {
-        if (!self::isOrgnr($orgnr)) {
+        $orgnr = FaudirUtils::sanitizeOrgnr($orgnr);
+        if ($orgnr === null) {
             return '';
         }
         if (empty($this->config)) {
@@ -222,8 +223,9 @@ class Organization {
      * Hole eine ORG via Orgnr von der API
      */
     public function getOrgbyOrgnr(string $orgnr): bool {
-        if (!self::isOrgnr($orgnr)) {
-            return false;
+        $orgnr = FaudirUtils::sanitizeOrgnr($orgnr);
+        if ($orgnr === null) {
+            return '';
         }
         if (empty($this->config)) {
             $this->setConfig();
@@ -266,31 +268,20 @@ class Organization {
         return implode("\n", $addressDetails);
     }
 
-    // Prüfen ob wir eine syntaktisch valide Orgnr haben
-    public static function isOrgnr(string $input): bool {
-        return (bool) preg_match('/^\d{10}$/', $input);
-    }
-
-    // Prüfen ob wir eine syntaktisch valide Org-Identifier haben
-    public static function isOrgIdentifier(string $input): bool {
-        return (bool) preg_match('/^[a-z0-9]+$/', $input);
-    }
 
     // Sanitize Org Identifier, auch wenn eine URL übergeben wurde
     public static function sanitizeOrgIdentifier(string $input): ?string {
-        if (preg_match('/^[a-z0-9]+$/', $input)) {
+        if (FaudirUtils::isValidOrganizationId($input)) {
             return $input;
         }
 
         if (filter_var($input, FILTER_VALIDATE_URL)) {
             $parts = explode('/', rtrim($input, '/'));
             $lastSegment = end($parts);
-            if (preg_match('/^[a-z0-9]+$/', $lastSegment)) {
-                return $lastSegment;
-            }
-            return preg_replace('/[^a-z0-9]/', '', strtolower($lastSegment));
+            
+            return FaudirUtils::sanitizeOrganizationId($lastSegment);
         }
-        return preg_replace('/[^a-z0-9]/', '', strtolower($input));
+        return FaudirUtils::sanitizeOrganizationId($input);
     }
 
     /*
@@ -405,7 +396,7 @@ class Organization {
       
 
         if (!empty($workplace['street'])) {
-            $address .= '<span class="street" itemprop="streetAdress">' . esc_html($workplace['street']) . '</span>';
+            $address .= '<span class="street" itemprop="streetAddress">' . esc_html($workplace['street']) . '</span>';
         }
         
         if (!empty($workplace['zip']) || (!empty($workplace['city']))) {
@@ -579,113 +570,25 @@ class Organization {
     /*
      * Socials as semantic HTML list
      */
-        /*
-     * Get Social Website Liste as semantic HTML
-     */
     public function getSocialMedia(string $htmlsurround = 'div', string $class = 'icon-list icon', string $arialabel = ''): string {
-        $items = $this->getSocialArray();
-        if (empty($items)) {
-            return '';
-        }
-
-        $htmlsurround = FaudirUtils::sanitizeHtmlSurround($htmlsurround);
-
-        $out = '<' . $htmlsurround;
-
-        $arialabel = trim($arialabel);
-        if ($arialabel !== '') {
-            $out .= ' aria-label="' . esc_attr($arialabel) . '"';
-        }
-
-        $class = trim($class);
-        if ($class !== '') {
-            $out .= ' class="' . esc_attr($class) . '"';
-        }
-
-        $out .= '>';
-        $out .= '<ul class="list-icons">';
-
-        foreach ($items as $item) {
-            $name = (string) ($item['platform'] ?? '');
-            $value = (string) ($item['url'] ?? '');
-
-            $label = esc_html($name);
-
-            if (preg_match('/^https?:\/\//i', $value)) {
-                $display = $value;
-                $p = wp_parse_url($value);
-                if (is_array($p) && !empty($p['host'])) {
-                    $display = $p['host'] . (!empty($p['path']) ? $p['path'] : '');
-                } else {
-                    $display = preg_replace('/^https?:\/\//i', '', $value);
-                }
-
-                $formatted = '<a href="' . esc_url($value) . '" itemprop="sameAs">' . esc_html($display) . '</a>';
-                $out .= '<li><span class="website title">' . $label . ': </span>' . $formatted . '</li>';
-            } elseif (filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                $formatted = '<a itemprop="email" href="mailto:' . esc_attr($value) . '">' . esc_html($value) . '</a>';
-                $out .= '<li><span class="email title">' . $label . ': </span>' . $formatted . '</li>';
-            } else {
-                $out .= '<li><span class="title">' . $label . ': </span><span class="value">' . esc_html($value) . '</span></li>';
-            }
-        }
-
-        $out .= '</ul>';
-        $out .= '</' . $htmlsurround . '>';
-
-        return $out;
+        $items = FaudirUtils::normalizeSocialItems($this->socials);
+        return FaudirUtils::renderSocialMediaList($items, $htmlsurround, $class, $arialabel);
     }
-
-
 
     public function getSocialArray(): array {
-        if (empty($this->socials) || !is_array($this->socials)) {
-            return [];
-        }
-
-        $out = [];
-        foreach ($this->socials as $item) {
-            if (!is_array($item)) {
-                continue;
-            }
-
-            $platform = isset($item['platform']) ? trim((string) $item['platform']) : '';
-            $url = isset($item['url']) ? trim((string) $item['url']) : '';
-
-            if ($platform === '' || $url === '') {
-                continue;
-            }
-
-            $out[] = [
-                'platform' => $platform,
-                'url' => $url,
-            ];
-        }
-
-        usort($out, [self::class, 'compareSocialItems']);
-
-        return $out;
+        return FaudirUtils::normalizeSocialItems($this->socials);
     }
 
-    private static function compareSocialItems(array $a, array $b): int {
-        $pc = strcasecmp((string) ($a['platform'] ?? ''), (string) ($b['platform'] ?? ''));
-        if ($pc !== 0) {
-            return $pc;
-        }
-        return strcasecmp((string) ($a['url'] ?? ''), (string) ($b['url'] ?? ''));
-    }
 
     public function getSocialString(): string {
-        if (empty($this->socials)) {
+        $items = FaudirUtils::normalizeSocialItems($this->socials);
+        $text = FaudirUtils::renderSocialMediaText($items, "\n");
+
+        if ($text === '') {
             return __('No social media available', 'rrze-faudir');
         }
-        $formattedSocials = [];
-        foreach ($this->socials as $social) {
-            if (!empty($social['platform']) && !empty($social['url'])) {
-                $formattedSocials[] = ucfirst($social['platform']) . ': ' . $social['url'];
-            }
-        }
-        return implode("\n", $formattedSocials);
+
+        return $text;
     }
 
 
