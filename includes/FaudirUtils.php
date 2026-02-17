@@ -126,28 +126,6 @@ class FaudirUtils {
         return $phone;
     }
 
-    // Sanitize and format telephone number
-    public static function old_format_phone_number(string $phone): string {
-        // Entferne alle Zeichen außer Zahlen, "+", "(", ")", "-" und Leerzeichen
-        $phone = preg_replace('/[^\d\+\(\) ]+/', '', $phone);
-        $phone = preg_replace('/\s+/', ' ', trim($phone));
-
-        // Falls die Nummer mit "+49(0)" beginnt → zu "+49" umwandeln
-        $phone = preg_replace('/^\+49\s*\(0\)/', '+49', $phone);
-        $phone = preg_replace('/^0049/', '+49', $phone);
-
-        // Falls die Nummer mit "0" beginnt (deutsche Nummer ohne Ländercode)
-        if (preg_match('/^0[1-9]/', $phone)) {
-            $phone = preg_replace('/^0/', '+49 ', $phone);
-        }
-
-        // Standardisiere das Format mit Leerzeichen zwischen Gruppen
-        $phone = preg_replace('/(\+?\d{1,3})\s*(\d{3,4})\s*(\d{2})\s*(\d{0,5})/', '$1 $2 $3 - $4', $phone);
-
-        return trim($phone); // Entfernt überflüssige Leerzeichen am Ende
-    }
-
-    
 
   /**
     * Normalisiert/klassifiziert einen akademischen Titel-String (honorificPrefix).
