@@ -85,14 +85,30 @@
     .workplace-hours {
 	margin: 0 0 1rem 0;
 	
-	ul.ContactPointList {
+	ul.hour-list {
+	    display: table;
+	    border-collapse: separate;
 	    margin: 0.5rem 0;
 	    padding-left: 0;
 	    
 	    li {
 		list-style-type: none;
 		padding: 0;
+		display: table-row;
+		
+		.weekday, 
+		.daytime {
+		    display: table-cell;
+		}
+		.weekday {
+		    padding-right: 1rem;
+		}
+		.sep {
+		    padding-right: 0.5rem;
+		}
+		
 	    }
+	    
 	}
     }
     
@@ -135,12 +151,7 @@
 	text-wrap: balance;
     }
     
-    .hoursAvailable {
-	.dayname {
-	    width: 11ch;
-	    display: inline-block;
-	  }
-    }
+
     table th address, table td address {
 	  font-size: var(--font-size-sm, 0.875rem);
     }

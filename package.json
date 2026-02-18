@@ -1,6 +1,6 @@
 {
   "name": "rrze-faudir",
-  "version": "2.5.36-13",
+  "version": "2.5.36-18",
   "description": "Plugin for displaying the FAUdir and institution directory on websites.",
   "main": "rrze-faudir.php",
   "textdomain": "rrze-faudir",
@@ -17,7 +17,7 @@
     "build:readme": "node scripts/build-readme.js",
     "bump:dev": "node scripts/build-version.js dev",
     "bump:prod": "node scripts/build-version.js prod",
-    "build:dev": "node scripts/build-assets.js dev && npm run bump:dev && npm run build:readme",
+    "build:dev": "node scripts/build-assets.js dev && npm run bump:dev && npm run build:readme && wp-scripts build",
     "build:prod": "node scripts/build-assets.js prod && npm run bump:prod && npm run build:readme && wp-scripts build"
   },
   "compatibility": {

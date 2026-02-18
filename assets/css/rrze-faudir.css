@@ -123,13 +123,26 @@
 .faudir .workplace-hours {
   margin: 0 0 1rem 0;
 }
-.faudir .workplace-hours ul.ContactPointList {
+.faudir .workplace-hours ul.hour-list {
+  display: table;
+  border-collapse: separate;
   margin: 0.5rem 0;
   padding-left: 0;
 }
-.faudir .workplace-hours ul.ContactPointList li {
+.faudir .workplace-hours ul.hour-list li {
   list-style-type: none;
   padding: 0;
+  display: table-row;
+}
+.faudir .workplace-hours ul.hour-list li .weekday,
+.faudir .workplace-hours ul.hour-list li .daytime {
+  display: table-cell;
+}
+.faudir .workplace-hours ul.hour-list li .weekday {
+  padding-right: 1rem;
+}
+.faudir .workplace-hours ul.hour-list li .sep {
+  padding-right: 0.5rem;
 }
 .faudir h1 {
   font-size: var(--faudir-h1-font-size, 1.25rem);
@@ -166,10 +179,6 @@
 .faudir .namepart {
   white-space: nowrap;
   text-wrap: balance;
-}
-.faudir .hoursAvailable .dayname {
-  width: 11ch;
-  display: inline-block;
 }
 .faudir table th address, .faudir table td address {
   font-size: var(--font-size-sm, 0.875rem);

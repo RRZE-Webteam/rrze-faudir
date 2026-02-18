@@ -289,7 +289,6 @@ class BlockRegistration {
             $officeHoursHtml = $openingHours->getConsultationsHours(
                 'officeHours',
                 null,
-                $language,
                 $officeHoursLabel
             );
         }

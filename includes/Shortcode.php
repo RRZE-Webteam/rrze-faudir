@@ -404,7 +404,7 @@ class Shortcode {
         
         $org = new Organization();
         
-        if (Organization::isOrgnr($orgnr)) {   
+        if (FaudirUtils::isValidOrgnr($orgnr)) {   
             $id = $org->getIdentifierbyOrgnr($orgnr);
             $orgid = FaudirUtils::sanitizeOrganizationId($id);
             if ($orgid !== null) {

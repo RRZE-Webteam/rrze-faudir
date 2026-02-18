@@ -148,61 +148,90 @@ class OpeningHours {
      * @param string $lang Optional: Sprachcode für Wochentage ('de'|'en'), Standard 'de'
      * @return string HTML (leer, wenn keine Zeiten vorhanden)
      */
-    public function getConsultationsHours(string $key = 'consultationHours', ?string $addressHtml = null, string $lang = 'de', ?string $label = null): string {
+    public function getConsultationsHours(string $key = 'consultationHours',?string $addressHtml = null, ?string $label = null, bool $collapseConsecutiveDays = true): string {
         $list = ($key === 'officeHours') ? $this->officeHours : $this->consultationHours;
 
-        if (empty($list)) {
+        if (empty($list) || !is_array($list)) {
             return '';
         }
 
-        // Nach Wochentag gruppieren
         $grouped = $this->groupHoursByWeekday($list);
         if (empty($grouped)) {
+            return '';
+        }
+
+        $ranges = $collapseConsecutiveDays ? $this->collapseConsecutiveDayRanges($grouped) : $this->expandGroupedToRanges($grouped);
+        if (empty($ranges)) {
             return '';
         }
 
         $output  = '';
         $output .= '<div class="workplace-hours" itemprop="contactPoint" itemscope itemtype="https://schema.org/ContactPoint">';
 
-        // Label bestimmen: optionaler Parameter hat Vorrang, sonst Defaults
-        $metaLabel = $label ?? (($key === 'officeHours')
-            ? esc_html__('Office Hours', 'rrze-faudir')
-            : esc_html__('Consultation Hours', 'rrze-faudir'));
-
-        $output .= '<meta itemprop="contactType" content="' . esc_attr($metaLabel) . '">';
-
-        $numDays = count($grouped);
-        if ($numDays > 1) {
-            $output .= '<ul class="ContactPointList list-icons">';
+        $metaLabel = $label;
+        if ($metaLabel === null || trim((string) $metaLabel) === '') {
+            $metaLabel = ($key === 'officeHours')
+                ? esc_html__('Office Hours', 'rrze-faudir')
+                : esc_html__('Consultation Hours', 'rrze-faudir');
         }
 
-        foreach ($grouped as $weekday => $rowsOfDay) {
-            if ($numDays > 1) {
-                $output .= '<li>';
+        $output .= '<meta itemprop="contactType" content="' . esc_attr($metaLabel) . '">';
+        $output .= '<ul class="hour-list">';
+            // Hinweis: Auch bei nur einem Element kapseln wir alles in eine Liste, da so die
+            // Ausgabe bei mehreren Perosnen nacheinander einheitlich bleibt.
+            // Zudem ist die Barrierefreiheit auch bei einer Liste mit nur einem Element gegeben.
+
+
+        foreach ($ranges as $range) {
+            $startDay = (int) ($range['start'] ?? 0);
+            $endDay   = (int) ($range['end'] ?? $startDay);
+            $rows     = (array) ($range['rows'] ?? []);
+            $days     = (array) ($range['days'] ?? [$startDay]);
+
+
+            $output .= '<li class="hoursAvailable">';
+            $output .= '<span class="weekday">';
+            $dayClass = 'dayname';
+            if ($startDay !== $endDay) {
+                $dayClass .= ' grouped';
             }
 
-            // Tagesname einmal ausgeben
-            $output .= '<div class="hoursAvailable">';
-            $output .= '<span class="weekday">';
-            $output .= '<span class="dayname">' . esc_html(self::getWeekday($weekday, $lang)) . ': </span>';
-            $output .= '</span>';
+            $output .= '<span class="' . esc_attr($dayClass) . '">';
 
-            $slotCount = count($rowsOfDay);
+            if ($startDay === $endDay) {
+                $output .= esc_html(self::getWeekday($startDay)) . ': ';
+            } else {
+                $output .= esc_html(self::getWeekday($startDay)) . ' - ' . esc_html(self::getWeekday($endDay)) . ': ';
+            }
+
+            $output .= '</span></span>';
+
+            $slotCount = count($rows);
             $slotIndex = 0;
 
-            foreach ($rowsOfDay as $row) {
-                $from    = isset($row['from']) ? (string) $row['from'] : '';
-                $to      = isset($row['to']) ? (string) $row['to'] : '';
-                $comment = isset($row['comment']) ? (string) $row['comment'] : '';
-                $url     = isset($row['url']) ? (string) $row['url'] : '';
+            foreach ($rows as $row) {
+                if (!is_array($row)) {
+                    continue;
+                }
 
-                // Einzelnen Slot als OpeningHoursSpecification ausgeben
+                $from    = isset($row['from']) ? trim((string) $row['from']) : '';
+                $to      = isset($row['to']) ? trim((string) $row['to']) : '';
+                $comment = isset($row['comment']) ? trim((string) $row['comment']) : '';
+                $url     = isset($row['url']) ? trim((string) $row['url']) : '';
+
                 $output .= '<span class="daytime" itemprop="hoursAvailable" itemscope itemtype="https://schema.org/OpeningHoursSpecification">';
-                $output .= '<meta itemprop="dayOfWeek" content="https://schema.org/' . esc_attr(self::getWeekdaySpec($weekday)) . '">';
+
+                // Schema: für einen Range mehrere dayOfWeek Werte ausgeben
+                foreach ($days as $d) {
+                    $d = (int) $d;
+                    $output .= '<meta itemprop="dayOfWeek" content="https://schema.org/' . esc_attr(self::getWeekdaySpec($d)) . '">';
+                }
 
                 if ($from !== '' || $to !== '') {
-                    $output .= '<span class="time"><span itemprop="opens">' . esc_html($from) . '</span> - ';
-                    $output .= '<span itemprop="close">' . esc_html($to) . '</span></span>';
+                    $output .= '<span class="time">';
+                    $output .= '<span itemprop="opens">' . esc_html($from) . '</span> - ';
+                    $output .= '<span itemprop="closes">' . esc_html($to) . '</span>';
+                    $output .= '</span>';
                 }
 
                 if ($comment !== '') {
@@ -217,21 +246,15 @@ class OpeningHours {
 
                 $slotIndex++;
                 if ($slotIndex < $slotCount) {
-                    // Trennung zwischen mehreren Slots am selben Tag
-                    $output .= ', ';
+                    $output .= '<span class="sep">, </span>';
                 }
             }
 
-            $output .= '</div>';
-
-            if ($numDays > 1) {
-                $output .= '</li>';
-            }
+            $output .= '</li>';
+        
         }
-
-        if ($numDays > 1) {
-            $output .= '</ul>';
-        }
+        $output .= '</ul>';
+        
 
         if (!empty($addressHtml)) {
             $output .= $addressHtml;
@@ -242,7 +265,113 @@ class OpeningHours {
         return $output;
     }
 
-    
+    /*
+     * Helper für Normalisierung / Zusammenfassung von aufeinander folgenden Tagen
+     */
+    private function expandGroupedToRanges(array $grouped): array {
+        $ranges = [];
+
+        foreach ($grouped as $weekday => $rows) {
+            $weekday = (int) $weekday;
+            $ranges[] = [
+                'start' => $weekday,
+                'end'   => $weekday,
+                'days'  => [$weekday],
+                'rows'  => $this->normalizeDayRows((array) $rows),
+            ];
+        }
+
+        return $ranges;
+    }
+
+    private function collapseConsecutiveDayRanges(array $grouped): array {
+        if (empty($grouped)) {
+            return [];
+        }
+
+        ksort($grouped);
+
+        $ranges = [];
+        $current = null;
+
+        foreach ($grouped as $weekday => $rows) {
+            $weekday = (int) $weekday;
+
+            $normalizedRows = $this->normalizeDayRows((array) $rows);
+            $sig = $this->rowsSignature($normalizedRows);
+
+            if ($current === null) {
+                $current = [
+                    'start' => $weekday,
+                    'end'   => $weekday,
+                    'days'  => [$weekday],
+                    'rows'  => $normalizedRows,
+                    'sig'   => $sig,
+                ];
+                continue;
+            }
+
+            $isConsecutive = ($weekday === ((int) $current['end'] + 1));
+            $sameSig = ($sig === (string) $current['sig']);
+
+            if ($isConsecutive && $sameSig) {
+                $current['end'] = $weekday;
+                $current['days'][] = $weekday;
+                continue;
+            }
+
+            unset($current['sig']);
+            $ranges[] = $current;
+
+            $current = [
+                'start' => $weekday,
+                'end'   => $weekday,
+                'days'  => [$weekday],
+                'rows'  => $normalizedRows,
+                'sig'   => $sig,
+            ];
+        }
+
+        if ($current !== null) {
+            unset($current['sig']);
+            $ranges[] = $current;
+        }
+
+        return $ranges;
+    }
+
+    private function normalizeDayRows(array $rows): array {
+        $out = [];
+
+        foreach ($rows as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+
+            $item = [
+                'from'    => isset($row['from']) ? trim((string) $row['from']) : '',
+                'to'      => isset($row['to']) ? trim((string) $row['to']) : '',
+                'comment' => isset($row['comment']) ? trim((string) $row['comment']) : '',
+                'url'     => isset($row['url']) ? trim((string) $row['url']) : '',
+            ];
+
+            $out[] = $item;
+        }
+
+        usort($out, [self::class, 'compareHourRows']);
+
+        return $out;
+    }
+
+    private static function compareHourRows(array $a, array $b): int {
+        $ka = ($a['from'] ?? '') . '|' . ($a['to'] ?? '') . '|' . ($a['comment'] ?? '') . '|' . ($a['url'] ?? '');
+        $kb = ($b['from'] ?? '') . '|' . ($b['to'] ?? '') . '|' . ($b['comment'] ?? '') . '|' . ($b['url'] ?? '');
+        return strcmp($ka, $kb);
+    }
+
+    private function rowsSignature(array $rows): string {
+        return md5(wp_json_encode($rows));
+    }
     
      /**
      * Gruppiert Stunden-Einträge nach Wochentag.
@@ -280,6 +409,7 @@ class OpeningHours {
      */
     private function sanitizeHoursArray(array $rows, bool $withOptional = false): array {
         $out = [];
+
         foreach ($rows as $row) {
             if (!is_array($row)) {
                 continue;
@@ -287,35 +417,52 @@ class OpeningHours {
             if (!isset($row['weekday'], $row['from'], $row['to'])) {
                 continue;
             }
+
             $weekday = (int) $row['weekday'];
             if ($weekday < 0 || $weekday > 6) {
                 continue;
             }
+
+            $from = trim((string) $row['from']);
+            $to   = trim((string) $row['to']);
+
+            if ($from === '' && $to === '') {
+                continue;
+            }
+
             $item = [
                 'weekday' => $weekday,
-                'from'    => (string) $row['from'],
-                'to'      => (string) $row['to'],
+                'from'    => $from,
+                'to'      => $to,
             ];
+
             if ($withOptional) {
-                if (isset($row['comment']) && $row['comment'] !== '') {
-                    $item['comment'] = (string) $row['comment'];
+                if (isset($row['comment'])) {
+                    $comment = trim((string) $row['comment']);
+                    if ($comment !== '') {
+                        $item['comment'] = $comment;
+                    }
                 }
-                if (isset($row['url']) && $row['url'] !== '') {
-                    $item['url'] = (string) $row['url'];
+                if (isset($row['url'])) {
+                    $url = trim((string) $row['url']);
+                    if ($url !== '') {
+                        $item['url'] = $url;
+                    }
                 }
             }
+
             $out[] = $item;
         }
+
         return $out;
     }
 
     /**
      * Liefert den lokalisierten Namen des Wochentags.
      * @param int $weekday 0..6 (So..Sa)
-     * @param string $lang Optional 'de' oder 'en' (bestimmt Übersetzung)
      * @return string
      */
-    private static function getWeekday(int $weekday, string $lang = 'de'): string {
+    private static function getWeekday(int $weekday): string {
         // Wir nutzen die WP-Übersetzungen – die Schlüssel bleiben deutsch/englisch gleich
         $mapDe = [
             0 => __('Sunday','rrze-faudir'),

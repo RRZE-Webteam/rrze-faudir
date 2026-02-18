@@ -617,6 +617,6 @@ class Organization {
             // Org-Adressblock (ohne Langnamen-Präfix)
             $addressHtml = $this->getAddressOutput(false, $lang, $showmap) ?? '';
         }
-        return $this->openingHours->getConsultationsHours($key, $addressHtml, $lang);
+        return $this->openingHours->getConsultationsHours($key, $addressHtml);
     }
 }
