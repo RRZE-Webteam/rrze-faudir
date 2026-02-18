@@ -32,7 +32,7 @@ class API {
     }
     
    
-    public static function isUsingNetworkKey(): bool  {
+    public static function isUsingNetworkKey(): bool {
         if (!is_multisite()) {
             return false;
         }
@@ -48,7 +48,7 @@ class API {
         return false;
     }
 
-    public static function getKey()  {
+    public static function getKey(): string {
         if (self::isUsingNetworkKey()) {
             $settingsOptions = get_site_option('rrze_settings');
 
@@ -61,16 +61,16 @@ class API {
 
             return '';
         }
-
         $options = get_option('rrze_faudir_options');
         if (!is_array($options)) {
             return '';
         }
 
-        return (string) ($options['api_key'] ?? '');
+        $key = $options['api_key'] ?? '';
+        return is_string($key) ? trim($key) : '';
     }
 
-    public function getApiBaseUrl() {
+    public function getApiBaseUrl(): string {
         return $this->baseUrl;
     }
     
@@ -81,7 +81,7 @@ class API {
      * @return array|null on not found
      */
     public function getPerson(string $input): ?array {
-        if (!$this->api_key) {
+        if ($this->api_key === '') {
             do_action( 'rrze.log.error', "FAUdir\API (getPerson): API Key missing.");
             return null;
         }
@@ -90,15 +90,8 @@ class API {
             do_action('rrze.log.error', "FAUdir\\API (getPerson): Invalid personId {$input}.");
             return null;
         }
-        $url = "{$this->baseUrl}persons/{$personId}";
-        
-        $response = $this->makeRequest($url, "GET");
-
-        if (!$response) {
-            do_action( 'rrze.log.error', "FAUdir\API (getPerson):  No response from server on {$url}.");
-            return null;
-        }
-        return $response;
+        $url = trailingslashit($this->baseUrl) . 'persons/' . $personId;      
+        return $this->makeRequest($url, 'GET');
     }
     
     
@@ -108,24 +101,18 @@ class API {
      * @return array|null on not found
      */
     public function getContact(string $contactId): ?array {
-        if (!$this->api_key) {       
+        if ($this->api_key === '') {
             do_action( 'rrze.log.error', "FAUdir\API (getContact): API Key missing.");
             return null;
         }
-        if (empty($contactId)) {
-            do_action( 'rrze.log.error', "FAUdir\API (getContact): Required field contactId missing.");
-            return null;
-        }
-        $url = "{$this->baseUrl}contacts/{$contactId}";
-        
-        $response = $this->makeRequest($url, "GET");
-
-        if (!$response) {
-            do_action( 'rrze.log.error', "FAUdir\API (getContact): No response from server on {$url}.");
+        $contactId = FaudirUtils::sanitizePersonId($contactId);
+        if ($contactId === null) {
+            do_action('rrze.log.error', 'FAUdir\API (getContact): Invalid contactId.');
             return null;
         }
 
-        return $response;
+        $url = trailingslashit($this->baseUrl) . 'contacts/' . $contactId;
+        return $this->makeRequest($url, 'GET');
     }
     
    
@@ -224,23 +211,23 @@ class API {
     * @param array $params - Additional query parameters
     * @return array - Array of contacts
     */
-    public function getContacts($limit = 20, $offset = 0, $params = []): array {
+    public function getContacts($limit = 20, $offset = 0, $params = []): ?array {
         if (!$this->api_key) {
-            do_action( 'rrze.log.error',"FAUdir\API (getContacts): API Key missing.");
+            do_action('rrze.log.error', "FAUdir\API (getContacts): API Key missing.");
             return null;
         }
         if (empty($params)) {
-            do_action( 'rrze.log.error', "FAUdir\API (getContacts): Required params missing.");
+            do_action('rrze.log.error', "FAUdir\API (getContacts): Required params missing.");
             return null;
         }
+
         $url = "{$this->baseUrl}contacts";
-        if ($limit==0) {
+        if ($limit == 0) {
             $limit = $this->default_limit;
         }
         $url .= '?limit=' . $limit . '&offset=' . $offset;
         $param_uri = '';
-        
-        // Define allowed query parameters and map them to their corresponding keys
+
         $query_params = [
             'q',
             'sort',
@@ -257,31 +244,30 @@ class API {
             } elseif (!empty($params['identifier'])) {
                 $params['q'] = '^' . $params['identifier'];
             } elseif (!empty($params['givenName']) || !empty($params['familyName'])) {
-                $params['q'] = '^' . trim(($params['givenName'] ?? '')
-                        . ' ' . ($params['familyName'] ?? ''));
+                $params['q'] = '^' . trim(($params['givenName'] ?? '') . ' ' . ($params['familyName'] ?? ''));
             }
         }
 
-        // Loop through the parameters and append them to the URL if they exist in $params
         foreach ($query_params as $param) {
             if (!empty($params[$param])) {
-                $param_uri .= '&' . $param . '=' . $this->encodeParam($param, $params[$param]);
+                $param_uri .= '&' . $param . '=' . $this->encodeParam($param, (string) $params[$param]);
             }
         }
 
-        if (!empty($param_uri)) {
-            $url .= $param_uri;
-            $response = $this->makeRequest($url, "GET");
-
-            if (!$response) {
-                do_action( 'rrze.log.error', "FAUdir\API (getContacts): No response from server on {$url}.");
-                return null;
-            }
-
-            return $response;
+        if ($param_uri === '') {
+            do_action('rrze.log.error', "FAUdir\API (getContacts): No params to query for.");
+            return [];
         }
-        do_action( 'rrze.log.error', "FAUdir\API (getContacts): No params to query for.");
-        return [];
+
+        $url .= $param_uri;
+
+        $response = $this->makeRequest($url, "GET");
+        if (!$response) {
+            do_action('rrze.log.error', "FAUdir\API (getContacts): No response from server on {$url}.");
+            return null;
+        }
+
+        return $response;
     }
     
     /**
@@ -348,7 +334,7 @@ class API {
      * @return array|null on not found
      */
     public function getOrgById(string $orgid): ?array {
-        if (!$this->api_key) {
+        if ($this->api_key === '') {
             do_action( 'rrze.log.error', "FAUdir\API (getOrgById): API Key missing.");
             return null;
         }
@@ -359,20 +345,8 @@ class API {
             return null;
         }
         
-        $url = "{$this->baseUrl}organizations/{$orgid}";
-        
-        
-        // TODO: Add cache here, cause this requests will be repeated often 
-        // on list of people from the same department
-        
-        $response = $this->makeRequest($url, "GET");
-
-        if (!$response) {
-            do_action( 'rrze.log.error', "FAUdir\API (getOrgById): No response from server on {$url}.");
-            return null;
-        }
-        
-        return $response;
+        $url = trailingslashit($this->baseUrl) . 'organizations/' . $orgid;
+        return $this->makeRequest($url, 'GET');
     }
 
     /**
@@ -391,7 +365,7 @@ class API {
      * @return array|null Die JSON-Antwort als Array oder null bei Fehlern.
      */
     private function makeRequest(string $url, string $method, ?array $data = null): ?array {
-        if (!$this->api_key) {
+        if ($this->api_key === '') {
             do_action( 'rrze.log.error', "FAUdir\API (makeRequest): API Key missing.");
             return null;
         }
@@ -405,6 +379,8 @@ class API {
         if (!empty($data)) {
             $url = add_query_arg($data, $url);
         }
+        
+        $url = $this->normalizeUrlForCache($url);
                
         // Prüfe, ob gecachte Daten existieren
         $cached = $this->get_cache_data($url);
@@ -491,9 +467,46 @@ class API {
         $lifetime = ($base_minutes * 60) + $random_offset;
 
         $transient_key = $this->transient_prefix . $endpoint . '_' . md5($url);
+        set_transient($transient_key, $data, $lifetime);
        //  do_action( 'rrze.log.info', "FAUdir\API (set_cache_data): Set Transient key {$transient_key}.");
     }
 
+    
+    /*
+     * Reihenfolge der Request Query-Bestandteile normalisieren
+     */
+    private function normalizeUrlForCache(string $url): string {
+        $parsed = wp_parse_url($url);
+        if (!is_array($parsed)) {
+            return $url;
+        }
+
+        $scheme = (string) ($parsed['scheme'] ?? '');
+        $host = (string) ($parsed['host'] ?? '');
+        $path = (string) ($parsed['path'] ?? '');
+        $query = (string) ($parsed['query'] ?? '');
+
+        if ($scheme === '' || $host === '' || $query === '') {
+            return $url;
+        }
+
+        $params = [];
+        parse_str($query, $params);
+
+        if (!is_array($params) || empty($params)) {
+            return $url;
+        }
+
+        ksort($params);
+
+        $rebuilt = $scheme . '://' . $host . $path . '?' . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+
+        if (!empty($parsed['fragment'])) {
+            $rebuilt .= '#' . $parsed['fragment'];
+        }
+
+        return $rebuilt;
+    }
 
 
 }
