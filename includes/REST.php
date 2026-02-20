@@ -51,7 +51,7 @@ class REST {
                     'required'           => false,
                     'sanitize_callback'  => [Organization::class, 'sanitizeOrgIdentifier'],
                     'validate_callback'  => function ($value) {
-                        return empty($value) || Organization::isOrgIdentifier($value);
+                        return empty($value) || Organization::sanitizeOrgIdentifier($value);
                     },
                 ],
                 'orgnr' => [
@@ -61,7 +61,7 @@ class REST {
                     'sanitize_callback'  => 'sanitize_text_field',
                     'validate_callback'  => function ($value) {
                         $value = preg_replace('/\D/', '', (string) $value);
-                        return empty($value) || Organization::isOrgnr($value);
+                        return empty($value) || FaudirUtils::isValidOrgnr($value);
                     },
                 ],
             ],
@@ -79,14 +79,14 @@ class REST {
         $org = new Organization();
 
         if (!empty($orgnr)) {
-            if (!Organization::isOrgnr($orgnr)) {
+            if (!FaudirUtils::isValidOrgnr($orgnr)) {
                 return new \WP_Error('rrze_faudir_invalid_orgnr', __('Invalid parameter orgnr. Expecting a 10 digit number.', 'rrze-faudir'), ['status' => 400]);
             }
 
             $resolvedId = $org->getIdentifierbyOrgnr($orgnr);
             $resolvedId = Organization::sanitizeOrgIdentifier($resolvedId ?? '') ?? '';
 
-            if (empty($resolvedId) || !Organization::isOrgIdentifier($resolvedId)) {
+            if (empty($resolvedId) || !FaudirUtils::isValidOrganizationId($resolvedId)) {
                 return new \WP_Error('rrze_faudir_orgnr_not_found', __('Could not resolve an orgid from the provided orgnr.', 'rrze-faudir'), ['status' => 404]);
             }
 
@@ -97,7 +97,7 @@ class REST {
             return new \WP_Error('rrze_faudir_missing_orgid', __('Missing parameter orgid or orgnr.', 'rrze-faudir'), ['status' => 400]);
         }
 
-        if (!Organization::isOrgIdentifier($orgid)) {
+        if (!FaudirUtils::isValidOrganizationId($orgid)) {
             return new \WP_Error('rrze_faudir_invalid_orgid', __('Invalid parameter orgid.', 'rrze-faudir'), ['status' => 400]);
         }
 
