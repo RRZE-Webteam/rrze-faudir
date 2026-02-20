@@ -1058,10 +1058,11 @@ class Settings {
         $config = new Config();
         $config->insertOptions();
 
-        $mnt = new Maintenance($config);
-        $mnt->migrate_person_data_on_activation();
+        $migration = new Migration($config);
+        $migration->migrate_person_data_on_activation();
 
-        $html = $mnt->rrze_faudir_display_import_notice(false, false);
+        $html = $migration->rrze_faudir_display_import_notice(false, false);
+        
         $result = '';
         if (!empty($html)) {
             $html   = preg_replace('#<(br|BR)\s*/?>#', "\n", $html);

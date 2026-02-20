@@ -211,14 +211,51 @@ class CPT {
             echo '</p>';
         }
 
- 
-        
+         
+        /*
+         * Aktuelle Cron-Info zeigen, wenn vorhanden:
+         */
+        $last_success = (int) get_post_meta($post->ID, Constants::META_LAST_SUCCESS_AT, true);
+        $last_failure = (int) get_post_meta($post->ID, Constants::META_LAST_FAILURE_AT, true);
+        $fail_count   = (int) get_post_meta($post->ID, Constants::META_FAILURE_COUNT, true);
+
         echo '<hr>';
         echo '<p><strong>' . esc_html__('FAUdir', 'rrze-faudir') . ' ' . esc_html__('Data', 'rrze-faudir') .' (' . esc_html__('Read-only', 'rrze-faudir'). ')</strong></p>';      
         echo '<p>' . esc_html__(
             'The following data comes from the FAUdir portal. A change of data is only possible by the persons or the appointed contact persons in the FAUdir portal.',
             'rrze-faudir'
-        ) . '</p>';
+        ) . '</p>';  
+        
+
+
+        $fmt = function (int $ts): string {
+            if ($ts <= 0) {
+                return '';
+            }
+            $dt = wp_date('Y-m-d H:i:s', $ts);
+            return $dt . ' ' . wp_date('T', $ts);
+        };
+
+        $success_str = $fmt($last_success);
+        if ($success_str === '') {
+            $success_str = esc_html__('No successful check yet.', 'rrze-faudir');
+        }
+        echo '<p><strong>' . esc_html__('Last successful data fetch', 'rrze-faudir') . ':</strong> ' . esc_html($success_str) . '</p>';
+
+        if ($last_failure > 0 || $fail_count > 0) {
+            $failure_str = $fmt($last_failure);
+            if ($failure_str === '') {
+                $failure_str = esc_html__('n/a', 'rrze-faudir');
+            }
+
+            echo '<div class="notice notice-warning">';
+            echo '<p><strong>' . esc_html__('Last error', 'rrze-faudir') . ':</strong> ' . esc_html($failure_str) . '</p>';
+            echo '<p><strong>' . esc_html__('Error count', 'rrze-faudir') . ':</strong> ' . esc_html((string) $fail_count) . '</p>';
+            echo '<p><strong>'. esc_html__('This entry will be automatically unpublished and set to private if the persons profile cannot be accessed via FAUdir more than','rrze-faudir').' '.Constants::PERSON_AVAILABILITY_MAX_FAILURES.' '.esc_html__('times. In this case, it must be assumed that the person has set their own FAUdir profile to private.', 'rrze-faudir') . '</strong></p>';
+            echo '</div>';
+        }
+        
+   
         
            // ----  person_id ist nur sichtbar, aber nicht mehr bearbeitbar (ab 2.4) ----
         $person_id_value = get_post_meta($post->ID, 'person_id', true);

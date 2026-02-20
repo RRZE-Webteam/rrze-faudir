@@ -55,6 +55,10 @@ class Main {
         $maintenance = new Maintenance($this->config);
         $maintenance->register_hooks();
         
+        $dashboard = new Dashboard();
+        $dashboard->register_hooks();
+        
+
         // Aktiviere die Filter für externe Plugins
         Filters::register();
      
