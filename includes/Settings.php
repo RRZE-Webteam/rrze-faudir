@@ -302,13 +302,7 @@ class Settings {
             'rrze_faudir_settings_cache',
             'rrze_faudir_cache_section'
         );
-        add_settings_field(
-            'rrze_faudir_transient_time_for_org_id',
-            __('Transient Time for Organization ID (in days)', 'rrze-faudir'),
-            [$this, 'render_transient_time_for_org_id'],
-            'rrze_faudir_settings_cache',
-            'rrze_faudir_cache_section'
-        );
+   
         add_settings_field(
             'rrze_faudir_clear_cache',
             __('Clear All Cache', 'rrze-faudir'),
@@ -713,8 +707,14 @@ class Settings {
         // Hidden-Fallback, damit Abwählen als 0 gepostet wird
         echo '<input type="hidden" name="rrze_faudir_options[no_cache_logged_in]" value="0">';
         echo '<input type="checkbox" name="rrze_faudir_options[no_cache_logged_in]" value="1" ' . checked(true, $checked, false) . '>';
-        echo '<span>' . esc_html__('Disable caching for logged-in editors.', 'rrze-faudir') . '</span>';
+        echo '<span>' . esc_html__('Disable output caching for logged-in editors.', 'rrze-faudir') . '</span>';
         echo '</label>';
+        echo '<div class="notice notice-info inline">';
+        echo '<p><strong>' . esc_html__('Notice', 'rrze-faudir') . ':</strong> ';
+        echo esc_html__('This setting only affects the shortcode/block output cache. All data from the FAUdir API are still be cached separately for up to 3 hours.', 'rrze-faudir');
+        echo '</p>';
+        echo '</div>';
+
     }
 
 
@@ -722,26 +722,16 @@ class Settings {
         $options = get_option('rrze_faudir_options');
         $value   = isset($options['cache_timeout']) ? max((int)$options['cache_timeout'], 15) : 15;
         echo '<label><input type="number" name="rrze_faudir_options[cache_timeout]" value="' . esc_attr($value) . '" min="15">';
-        echo '<p class="description">' . esc_html__('Set the cache timeout in minutes (minimum 15 minutes).', 'rrze-faudir') . '</p></label>';
-    }
-
-    public function render_transient_time_for_org_id(): void {
-        $options = get_option('rrze_faudir_options');
-        $value   = isset($options['transient_time_for_org_id']) ? max((int)$options['transient_time_for_org_id'], 1) : 1;
-        echo '<input type="number" name="rrze_faudir_options[transient_time_for_org_id]" value="' . esc_attr($value) . '" min="1">';
-        echo '<p class="description">' . esc_html__('Set the transient time in days for intermediate stored organization identifiers (minimum 1 day).', 'rrze-faudir') . '</p>';
-    }
-
-    public function render_cache_org_timeout(): void {
-        $options = get_option('rrze_faudir_options');
-        $value   = isset($options['cache_org_timeout']) ? (int)$options['cache_org_timeout'] : 1;
-        echo '<label><input type="number" name="rrze_faudir_options[cache_org_timeout]" value="' . esc_attr($value) . '" min="1">';
-        echo '<p class="description">' . esc_html__('Set the cache timeout in days for organization identifiers.', 'rrze-faudir') . '</p></label>';
+        echo '<p class="description">' . esc_html__('Set the output cache timeout in minutes (minimum 15 minutes).', 'rrze-faudir') . '</p></label>';
     }
 
     public function render_clear_cache(): void {
         echo '<button type="button" class="button button-secondary" id="clear-cache-button">' . esc_html__('Clear Cache Now', 'rrze-faudir') . '</button>';
-        echo '<p class="description">' . esc_html__('Click the button to clear all cached data.', 'rrze-faudir') . '</p>';
+        echo '<p class="description">' . esc_html__('Click the button to clear all cached data, including also data cache.', 'rrze-faudir') . '</p>';
+        
+        echo '<p class="description">';
+        echo esc_html__('Note: This will also clear all data from the FAUdir API.', 'rrze-faudir');
+        echo '</p>';
     }
 
     public function render_error_message(): void {
@@ -1024,13 +1014,35 @@ class Settings {
     public function clear_cache(): void {
         global $wpdb;
 
-        $prefix         = '_transient_faudir_';
-        $prefix_timeout = '_transient_timeout_faudir_';
+        $base = Constants::TRANSIENT_PREFIX_BASE;
+        $like = $wpdb->esc_like($base) . '%';
 
-        $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $prefix . '%'));
-        $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $prefix_timeout . '%'));
+        // wp_options (Single Site)
+        $wpdb->query($wpdb->prepare(
+            "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+            '_transient_' . $like
+        ));
 
-        wp_send_json_success(__('All cache cleared successfully.', 'rrze-faudir'));
+        $wpdb->query($wpdb->prepare(
+            "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+            '_transient_timeout_' . $like
+        ));
+
+        // Multisite
+        if (is_multisite()) {
+            $wpdb->query($wpdb->prepare(
+                "DELETE FROM {$wpdb->sitemeta} WHERE meta_key LIKE %s",
+                '_site_transient_' . $like
+            ));
+
+            $wpdb->query($wpdb->prepare(
+                "DELETE FROM {$wpdb->sitemeta} WHERE meta_key LIKE %s",
+                '_site_transient_timeout_' . $like
+            ));
+        }
+
+        do_action('rrze.log.info', 'FAUdir\\Settings (clear_cache): All faudir transients cleared.');
+        wp_send_json_success(__('All FAUdir cache entries cleared successfully.', 'rrze-faudir'));
     }
 
     public function import_fau_person(): void {
@@ -1301,9 +1313,7 @@ class Settings {
         if (array_key_exists('cache_timeout', $new_options)) {
             $merged['cache_timeout'] = max(15, (int) $new_options['cache_timeout']);
         }
-        if (array_key_exists('transient_time_for_org_id', $new_options)) {
-            $merged['transient_time_for_org_id'] = max(1, (int) $new_options['transient_time_for_org_id']);
-        }
+
 
         // --- Checkboxen (nur wenn im POST enthalten) ---
         $checkboxes = [

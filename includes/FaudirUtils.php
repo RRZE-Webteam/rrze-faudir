@@ -5,8 +5,6 @@ namespace RRZE\FAUdir;
 defined('ABSPATH') || exit;
 
 class FaudirUtils {
-    const API_BASE_URL = 'https://api.fau.de/pub/v1/opendir/';
-
     public static function isUsingNetworkKey(): bool  {
         if (is_multisite()) {
             $settingsOptions = get_site_option('rrze_settings');
@@ -27,11 +25,7 @@ class FaudirUtils {
         }
     }
 
-    public static function getApiBaseUrl() {
-        return self::API_BASE_URL;
-    }
-
-    
+   
     
     public static function getLang($full = false) {
         $locale = get_locale();          

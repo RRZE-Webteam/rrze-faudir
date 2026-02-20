@@ -97,14 +97,11 @@ class Shortcode {
         }
 
         ksort($atts);
-        $cache_key = 'faudir_shortcode_' . md5(wp_json_encode($atts));
-        
+        $cache_key = Constants::TRANSIENT_PREFIX_SHORTCODE . md5(wp_json_encode($atts));
         $cache_timeout = isset($options['cache_timeout']) ? intval($options['cache_timeout']) * 60 : 900; // Default to 15 minutes
 
         // Check if cached data exists
         $cached_data = get_transient($cache_key);
-        
-     
         if ($cached_data !== false) {
             $output = do_blocks($cached_data);  
             return  do_shortcode(shortcode_unautop($output));

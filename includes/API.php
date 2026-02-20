@@ -5,18 +5,12 @@ namespace RRZE\FAUdir;
 defined('ABSPATH') || exit;
 
 class API {
-    private string $baseUrl = 'https://api.fau.de/pub/v1/opendir/';
+    private string $baseUrl = Constants::API_BASE_URL;
+    private string $transient_prefix = Constants::TRANSIENT_PREFIX_API;
+    private int $transient_jitter_minutes = Constants::TRANSIENT_JITTER_MINUTES;
+    private array $transient_times = Constants::TRANSIENT_TIMES;
+    private int $default_limit = Constants::DEFAULT_LIMIT;
     private string $api_key;
-    private string $transient_prefix = 'faudir_api_';
-    private int $transient_jitter_minutes = 5;
-    private array $transient_times = [
-        "persons"       => 120,
-        "contacts"      => 120,
-        "organizations" => 240,
-        "default"       => 150,
-    ];
-    private int $default_limit = 100;
-    
     private Config $config;
 
     public function __construct(Config $config) {
