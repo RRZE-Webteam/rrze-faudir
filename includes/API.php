@@ -375,13 +375,11 @@ class API {
         }
         
         $url = $this->normalizeUrlForCache($url);
-               
         // Prüfe, ob gecachte Daten existieren
         $cached = $this->get_cache_data($url);
         if ($cached !== null) {
             return $cached;
         }
-        // do_action('rrze.log.info', "FAUdir\API (makeRequest): start wp_remote_get for {$url}");
         
         
         $response = wp_remote_get($url, array(
@@ -438,7 +436,6 @@ class API {
 
         $cached = get_transient($transient_key);
         if ($cached !== false && is_array($cached)) {
-        //    do_action('rrze.log.info', "FAUdir\API (get_cache_data): Get Data from cache", $transient_key);
             return $cached;
         }
 
@@ -462,7 +459,7 @@ class API {
 
         $transient_key = $this->transient_prefix . $endpoint . '_' . md5($url);
         set_transient($transient_key, $data, $lifetime);
-       //  do_action( 'rrze.log.info', "FAUdir\API (set_cache_data): Set Transient key {$transient_key}.");
+        do_action( 'rrze.log.info', "FAUdir\API (set_cache_data): Set Transient key {$transient_key}.");
     }
 
     

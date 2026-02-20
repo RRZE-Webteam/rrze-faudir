@@ -38,13 +38,16 @@ class CPT {
         // Save Hook inkl. Migration (nur person_id + displayed_contacts)
         $post_type = $this->config->get('person_post_type');
         add_action("save_post_{$post_type}", [$this, 'save_meta'], 10, 2);
-      //  add_action('save_post', [$this, 'save_meta']);
 
-        // Normale WP Rebisions mit in die eigen Log ergänzen
-        add_action('post_updated', [$this, 'log_content_changes'], 10, 3);
         
-        // Statuswechsel loggen
-        add_action('transition_post_status', [$this, 'log_status_transition'], 10, 3);
+        if ($this->isHistoryEnabled()) {
+            // Normale WP Rebisions mit in die eigen Log ergänzen
+            add_action('post_updated', [$this, 'log_content_changes'], 10, 3);
+
+            // Statuswechsel loggen
+            add_action('transition_post_status', [$this, 'log_status_transition'], 10, 3);         
+        }
+
         
         // AJAX
         add_action('wp_ajax_fetch_person_attributes', [$this, 'fetch_person_attributes']);
@@ -56,7 +59,7 @@ class CPT {
         add_action('init', [$this, 'register_person_meta_for_rest'], 15);
 
         // REST Antwort anreichern (nur Taxonomy, keine API-Felder)
-        add_filter("rest_prepare_{$post_type}", [$this, 'add_taxonomy_to_person_rest'], 10, 3);
+   //     add_filter("rest_prepare_{$post_type}", [$this, 'add_taxonomy_to_person_rest'], 10, 3);
         
         // Umleitung bei "Add New" (post-new.php für diesen CPT)
         add_action('load-post-new.php', [$this, 'redirect_add_new_to_search']);
@@ -64,6 +67,8 @@ class CPT {
         // "Add New" Untermenü ersetzen
         add_action('admin_menu', [$this, 'replace_add_new_submenu'], 99);
         
+        // Rest Endpoints nur wenn sie gebraucht werden
+        add_filter('rest_endpoints', [$this, 'filter_rest_endpoints']);
         
         // Canonical URL verwalten, wenn vorhanden
         add_filter('get_canonical_url', [$this, 'maybe_override_canonical'], 10, 2);
@@ -86,6 +91,12 @@ class CPT {
             ? sanitize_title($options['person_slug'])
             : 'faudir';
 
+        $supports = ['title', 'editor', 'thumbnail', 'excerpt'];
+        if ($this->isHistoryEnabled()) {
+            $supports[] = 'revisions';
+        }
+
+        
         $args = [
             'labels' => [
                 'name'          => __('Persons', 'rrze-faudir'),
@@ -100,7 +111,7 @@ class CPT {
                 'slug'       => $slug,
                 'with_front' => false,
             ],
-            'supports'        => ['title', 'editor', 'thumbnail', 'excerpt', 'revisions'],
+            'supports'        => $supports,
             'taxonomies'      => [$taxonomy],
             'show_in_rest'    => true,
             'rest_base'       => $post_type,
@@ -157,15 +168,16 @@ class CPT {
             'normal',
             'high'
         );
-        
-        add_meta_box(
-            'faudir_change_history',
-            __('Change history', 'rrze-faudir'),
-            [$this, 'render_change_history'],
-            $post_type,
-            'side',
-            'low'
-        );
+        if ($this->isHistoryEnabled()) {
+            add_meta_box(
+                'faudir_change_history',
+                __('Change history', 'rrze-faudir'),
+                [$this, 'render_change_history'],
+                $post_type,
+                'side',
+                'low'
+            );
+        }
     }
 
  
@@ -338,15 +350,17 @@ class CPT {
 
             echo '</div>'; // contacts-wrapper
         }
-
     }
 
     /*
      * Render für die Änderungslog
      */
     public function render_change_history(\WP_Post $post): void {
+        if (!$this->isHistoryEnabled()) {
+            echo '<p class="description">' . esc_html__('History is disabled in settings.', 'rrze-faudir') . '</p>';
+            return;
+        }
         $history = get_post_meta((int) $post->ID, $this->history_meta_key, true);
-
         echo '<div class="faudir-history">';
 
         if (!is_array($history) || empty($history)) {
@@ -357,14 +371,23 @@ class CPT {
 
         echo '<ul class="faudir-history-list">';
 
-        // WordPress-Revisions live holen (damit Anzeige konsistent zur WP-UI bleibt)
-        $revisions = wp_get_post_revisions((int) $post->ID);
-        $rev_count = is_array($revisions) ? count($revisions) : 0;
-        $rev_latest_id = 0;
+        $post_id = (int) $post->ID;
 
-        if ($rev_count > 0) {
-            $keys = array_keys($revisions);
-            $rev_latest_id = (int) $keys[0];
+        $rev_count = 0;
+        if (function_exists('wp_count_post_revisions')) {
+            $rev_count = (int) wp_count_post_revisions($post_id);
+        }
+
+        $rev_latest_id = 0;
+        $latest_ids = wp_get_post_revisions($post_id, [
+            'fields'         => 'ids',
+            'posts_per_page' => 1,
+            'orderby'        => 'ID',
+            'order'          => 'DESC',
+        ]);
+
+        if (is_array($latest_ids) && !empty($latest_ids)) {
+            $rev_latest_id = (int) reset($latest_ids);
         }
 
         foreach ($history as $entry) {
@@ -395,13 +418,10 @@ class CPT {
             echo esc_html__('Revisions', 'rrze-faudir') . ': ' . esc_html((string) $rev_count);
 
             if ($rev_latest_id > 0) {
-                // WP zeigt keine "Revision-ID", sondern implizit die laufende Nummer (# = count)
                 $label = sprintf(
-                    /* translators: %d = revision number */
                     esc_html__('latest revision (#%d)', 'rrze-faudir'),
-                    $rev_count
+                    max(1, $rev_count)
                 );
-
                 $link = admin_url('revision.php?revision=' . $rev_latest_id);
                 echo ' · <a href="' . esc_url($link) . '">' . $label . '</a>';
             }
@@ -434,7 +454,10 @@ class CPT {
     /*
      * Speichern von Post Type Daten, inkl. Migration von alten Metas, wenn notwendig
      */
-    public function save_meta($post_id) {
+    public function save_meta(int $post_id, \WP_Post $post): void {
+        if ($post->post_type !== $this->config->get('person_post_type')) {
+            return;
+        }
         if (!isset($_POST['person_additional_fields_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['person_additional_fields_nonce'])), 'save_person_additional_fields')) {
             return;
         }
@@ -733,12 +756,12 @@ class CPT {
                     do_action( 'rrze.log.error', 'FAUdir\CPT (add_taxonomy_to_person_rest): ERROR ON wp_get_object_terms: taxonomy = '.$taxonomy.' posttype = '.$post_type, $terms->get_error_message());           
                     return;
                 }
-                $term_ids = array_map(function ($term) {
-                    return $term->term_id;
-                }, $terms);
-
-                // Add taxonomy terms to response
-                $response->data['custom_taxonomy'] = $term_ids;
+                $term_ids = wp_get_object_terms($post->ID, $taxonomy, ['fields' => 'ids']);
+                if (is_wp_error($term_ids)) {
+                    do_action('rrze.log.error', 'FAUdir\\CPT: wp_get_object_terms error', $term_ids->get_error_message());
+                    return $response;
+                }
+                $response->data['custom_taxonomy'] = array_map('intval', $term_ids);
 
                 // Add other meta data
                 $person_id = get_post_meta($post->ID, 'person_id', true);
@@ -888,6 +911,9 @@ class CPT {
      * Logs Status wechsel
      */
     public function log_status_transition(string $new_status, string $old_status, \WP_Post $post): void {
+        if (!$this->isHistoryEnabled()) {
+            return;
+        }
         $post_type = $this->config->get('person_post_type');
         if ($post->post_type !== $post_type) {
             return;
@@ -897,7 +923,7 @@ class CPT {
             return;
         }
 
-        if (wp_is_post_revision($post->ID)) {
+        if (wp_is_post_revision($post->ID) || wp_is_post_autosave($post->ID)) {
             return;
         }
 
@@ -912,21 +938,22 @@ class CPT {
      * Revisions-Snapshort holen
      */
     private function getRevisionSnapshot(int $post_id): array {
-        $count = (int) wp_get_post_revisions($post_id, ['fields' => 'ids']) ? count(wp_get_post_revisions($post_id, ['fields' => 'ids'])) : 0;
+        $ids = wp_get_post_revisions($post_id, ['fields' => 'ids']);
+        if (!is_array($ids)) {
+            $ids = [];
+        }
+
+        $count = count($ids);
 
         $latest_id = 0;
+        if ($count > 0) {
+            $latest_id = (int) reset($ids);
+        }
+
         $latest_at = '';
-
-        $latest = wp_get_post_revisions($post_id, [
-            'posts_per_page' => 1,
-            'orderby'        => 'ID',
-            'order'          => 'DESC',
-        ]);
-
-        if (!empty($latest)) {
-            $rev = reset($latest);
+        if ($latest_id > 0) {
+            $rev = get_post($latest_id);
             if ($rev instanceof \WP_Post) {
-                $latest_id = (int) $rev->ID;
                 $latest_at = (string) $rev->post_modified;
             }
         }
@@ -942,6 +969,9 @@ class CPT {
      * Historie-Helper_ Schreibt Snapsshorts der WP Revisions in die History, damit sie da mit angezeigt werden.
      */
     private function addHistoryEntry(int $post_id, string $event, array $context = []): void {
+         if (!$this->isHistoryEnabled()) {
+            return;
+        }
         $history = get_post_meta($post_id, $this->history_meta_key, true);
         if (!is_array($history)) {
             $history = [];
@@ -979,12 +1009,24 @@ class CPT {
      * WP Revisions ebenfalls speichern in unserer Liste
      */
     public function log_content_changes(int $post_id, \WP_Post $post_after, \WP_Post $post_before): void {
+        if (!$this->isHistoryEnabled()) {
+            return;
+        }
         $post_type = $this->config->get('person_post_type');
         if ($post_after->post_type !== $post_type) {
             return;
         }
 
-        if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return;
+        }
+
+        if (wp_is_post_revision($post_id)) {
+            return;
+        }
+
+        $autosave = wp_get_post_autosave($post_id);
+        if ($autosave instanceof \WP_Post) {
             return;
         }
 
@@ -1032,6 +1074,42 @@ class CPT {
 
             $this->addHistoryEntry($post_id, $label, $c);
         }
+    }
+    
+    /*
+     * Revisions/Historie aktiv?
+     */
+    private function isHistoryEnabled(): bool {
+        $opt = get_option('rrze_faudir_options');
+        if (!is_array($opt)) {
+            return false;
+        }
+        return !empty($opt['enable_history']);
+    }
+    
+    
+    /*
+     * Autosave Routen entfernen, wenn keine History an.
+     * (Performance-Optimierung)
+     */
+    public function filter_rest_endpoints(array $endpoints): array {
+        if ($this->isHistoryEnabled()) {
+            return $endpoints;
+        }
+
+        $post_type = (string) $this->config->get('person_post_type');
+
+        $autosaves_route = '/wp/v2/' . $post_type . '/(?P<id>[\\d]+)/autosaves';
+        if (isset($endpoints[$autosaves_route])) {
+            unset($endpoints[$autosaves_route]);
+        }
+
+        $revisions_route = '/wp/v2/' . $post_type . '/(?P<id>[\\d]+)/revisions';
+        if (isset($endpoints[$revisions_route])) {
+            unset($endpoints[$revisions_route]);
+        }
+
+        return $endpoints;
     }
 }
 

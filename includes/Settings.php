@@ -258,7 +258,7 @@ class Settings {
             'rrze_faudir_settings_api' 
         );
 
-        // Felder der API-Sektion registrieren
+        // Felder der API-Section registrieren
         add_settings_field(
             'rrze_faudir_api_key',
             __('API Key', 'rrze-faudir'),
@@ -295,6 +295,15 @@ class Settings {
             'rrze_faudir_settings_cache',
             'rrze_faudir_cache_section'
         );
+        
+        add_settings_field(
+            'rrze_faudir_enable_history',
+            __('Change history & revisions', 'rrze-faudir'),
+            [$this, 'render_enable_history'],
+            'rrze_faudir_settings_cache',
+            'rrze_faudir_cache_section'
+        );
+        
         add_settings_field(
             'rrze_faudir_cache_timeout',
             __('Cache Timeout (in minutes)', 'rrze-faudir'),
@@ -1315,6 +1324,7 @@ class Settings {
         }
 
 
+
         // --- Checkboxen (nur wenn im POST enthalten) ---
         $checkboxes = [
             'no_cache_logged_in',
@@ -1324,6 +1334,7 @@ class Settings {
             'redirect_to_canonicals',
             'default_visible_copyrightmeta',
             'default_visible_bildunterschrift',
+            'enable_history'
         ];
 
         foreach ($checkboxes as $cb) {
@@ -1366,5 +1377,30 @@ class Settings {
         return $merged;
     }
 
+    /*
+     * Aktives/Deaktives History/Revisions für CPT
+     */
+    public function render_enable_history(): void {
+        $options = get_option('rrze_faudir_options');
+        $checked = is_array($options) && !empty($options['enable_history']);
 
+        echo '<label>';
+        echo '<input type="hidden" name="rrze_faudir_options[enable_history]" value="0">';
+        echo '<input type="checkbox" name="rrze_faudir_options[enable_history]" value="1" ' . checked(true, $checked, false) . '>';
+        echo '<span>' . esc_html__('Enable change history and WordPress revisions for persons.', 'rrze-faudir') . '</span>';
+        echo '</label>';
+
+        echo '<p class="description">';
+        echo esc_html__('If enabled, additional logging and revision handling is activated. This can slow down the block editor.', 'rrze-faudir');
+        echo '</p>';
+    }
+
+    private function isHistoryEnabled(): bool {
+        $opt = get_option('rrze_faudir_options');
+        if (!is_array($opt)) {
+            return false;
+        }
+
+        return !empty($opt['enable_history']);
+    }
 }
