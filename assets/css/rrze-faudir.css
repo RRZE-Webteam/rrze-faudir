@@ -322,6 +322,18 @@
   opacity: 1;
 }
 
+.faudir-history .faudir-history-list {
+  margin-left: 1.5rem;
+}
+.faudir-history .faudir-history-item {
+  padding: 0.6rem 0;
+  border-top: 1px solid #eee;
+}
+.faudir-history .faudir-history-context {
+  background: #f6f7f7;
+  padding: 0.6rem;
+}
+
 /*----------------------------------------------------------------------------*/
 /* _symbols 
 /* Created on : 31.01.2025, 17:28:46

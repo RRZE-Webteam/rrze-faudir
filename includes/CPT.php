@@ -19,11 +19,11 @@ class CPT {
     protected string $person_search_tab  = 'contacts'; 
     protected string $canonical_meta_key = 'canonical_url';
     
-    protected string $cleanup_meta_key_done = '_faudir_cleanup_done';
-    protected string $cleanup_meta_key_at = '_faudir_cleanup_at';
-    protected string $cleanup_meta_key_version = '_faudir_cleanup_version';
-    protected string $cleanup_version = '2.5.0';
+   
+    protected string $history_meta_key = '_faudir_change_log';
+    protected int $history_max_entries = 50;
 
+    
     public function __construct() {
         $this->config = new Config();
 
@@ -40,15 +40,22 @@ class CPT {
         add_action("save_post_{$post_type}", [$this, 'save_meta'], 10, 2);
       //  add_action('save_post', [$this, 'save_meta']);
 
+        // Normale WP Rebisions mit in die eigen Log ergänzen
+        add_action('post_updated', [$this, 'log_content_changes'], 10, 3);
+        
+        // Statuswechsel loggen
+        add_action('transition_post_status', [$this, 'log_status_transition'], 10, 3);
+        
         // AJAX
         add_action('wp_ajax_fetch_person_attributes', [$this, 'fetch_person_attributes']);
         add_action('wp_ajax_rrze_faudir_create_custom_person', [$this, 'ajax_create_custom_person']);
 
+        
+        
         // REST-Meta
         add_action('init', [$this, 'register_person_meta_for_rest'], 15);
 
         // REST Antwort anreichern (nur Taxonomy, keine API-Felder)
-        $post_type = $this->config->get('person_post_type');
         add_filter("rest_prepare_{$post_type}", [$this, 'add_taxonomy_to_person_rest'], 10, 3);
         
         // Umleitung bei "Add New" (post-new.php für diesen CPT)
@@ -93,7 +100,7 @@ class CPT {
                 'slug'       => $slug,
                 'with_front' => false,
             ],
-            'supports'        => ['title', 'editor', 'thumbnail', 'excerpt'],
+            'supports'        => ['title', 'editor', 'thumbnail', 'excerpt', 'revisions'],
             'taxonomies'      => [$taxonomy],
             'show_in_rest'    => true,
             'rest_base'       => $post_type,
@@ -149,6 +156,15 @@ class CPT {
             $post_type,
             'normal',
             'high'
+        );
+        
+        add_meta_box(
+            'faudir_change_history',
+            __('Change history', 'rrze-faudir'),
+            [$this, 'render_change_history'],
+            $post_type,
+            'side',
+            'low'
         );
     }
 
@@ -322,9 +338,99 @@ class CPT {
 
             echo '</div>'; // contacts-wrapper
         }
+
     }
 
+    /*
+     * Render für die Änderungslog
+     */
+    public function render_change_history(\WP_Post $post): void {
+        $history = get_post_meta((int) $post->ID, $this->history_meta_key, true);
 
+        echo '<div class="faudir-history">';
+
+        if (!is_array($history) || empty($history)) {
+            echo '<p class="description">' . esc_html__('No history entries yet.', 'rrze-faudir') . '</p>';
+            echo '</div>';
+            return;
+        }
+
+        echo '<ul class="faudir-history-list">';
+
+        // WordPress-Revisions live holen (damit Anzeige konsistent zur WP-UI bleibt)
+        $revisions = wp_get_post_revisions((int) $post->ID);
+        $rev_count = is_array($revisions) ? count($revisions) : 0;
+        $rev_latest_id = 0;
+
+        if ($rev_count > 0) {
+            $keys = array_keys($revisions);
+            $rev_latest_id = (int) $keys[0];
+        }
+
+        foreach ($history as $entry) {
+            if (!is_array($entry)) {
+                continue;
+            }
+
+            $at = isset($entry['at']) ? (string) $entry['at'] : '';
+            $user = isset($entry['user']) ? (string) $entry['user'] : '';
+            $event = isset($entry['event']) ? (string) $entry['event'] : '';
+
+            $ctx = isset($entry['context']) && is_array($entry['context']) ? $entry['context'] : [];
+            $ctx_json = $ctx ? wp_json_encode($ctx, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : '';
+
+            echo '<li class="faudir-history-item">';
+
+            echo '<div class="faudir-history-head">';
+            echo '<strong>' . esc_html($event) . '</strong>';
+            echo '<div class="description">';
+            echo esc_html($at);
+            if ($user !== '') {
+                echo ' · ' . esc_html($user);
+            }
+            echo '</div>';
+            echo '</div>';
+
+            echo '<div class="faudir-history-meta description">';
+            echo esc_html__('Revisions', 'rrze-faudir') . ': ' . esc_html((string) $rev_count);
+
+            if ($rev_latest_id > 0) {
+                // WP zeigt keine "Revision-ID", sondern implizit die laufende Nummer (# = count)
+                $label = sprintf(
+                    /* translators: %d = revision number */
+                    esc_html__('latest revision (#%d)', 'rrze-faudir'),
+                    $rev_count
+                );
+
+                $link = admin_url('revision.php?revision=' . $rev_latest_id);
+                echo ' · <a href="' . esc_url($link) . '">' . $label . '</a>';
+            }
+
+            echo '</div>';
+
+            if ($ctx_json !== '') {
+                echo '<details style="margin-top:6px;">';
+                echo '<summary class="description">' . esc_html__('Details', 'rrze-faudir') . '</summary>';
+                echo '<pre style="white-space:pre-wrap;max-height:160px;overflow:auto;background:#f6f7f7;padding:6px;">' . esc_html($ctx_json) . '</pre>';
+                echo '</details>';
+            }
+
+            echo '</li>';
+        }
+
+        echo '</ul>';
+        echo '</div>';
+    }
+    
+    /*
+     * Helper für die Transaktionslog
+     */
+    private function getHistory(int $post_id): array {
+        $log = get_post_meta($post_id, $this->history_meta_key, true);
+        return is_array($log) ? $log : [];
+    }
+
+    
     /*
      * Speichern von Post Type Daten, inkl. Migration von alten Metas, wenn notwendig
      */
@@ -339,73 +445,137 @@ class CPT {
             return;
         }
 
-        // 'displayed_contacts' (UI-Wahl) weiterhin speichern
-        if (isset($_POST['displayed_contacts'])) {
-            update_post_meta($post_id, 'displayed_contacts', intval($_POST['displayed_contacts']));
-        }
+        $post_id = (int) $post_id;
 
-        // Canonical URL speichern (nur http/https, sonst leer)
+        $old_displayed = (int) get_post_meta($post_id, 'displayed_contacts', true);
+        if (isset($_POST['displayed_contacts'])) {
+            $new_displayed = (int) wp_unslash($_POST['displayed_contacts']);
+            if ($new_displayed < 0) {
+                $new_displayed = 0;
+            }
+            if ($new_displayed !== $old_displayed) {
+                update_post_meta($post_id, 'displayed_contacts', $new_displayed);
+
+                $this->addHistoryEntry((int) $post_id, __('Contact number changed', 'rrze-faudir'), [
+                    'key'  => 'displayed_contacts',
+                    'from' => $old_displayed,
+                    'to'   => $new_displayed,
+                ]);
+            }
+        }
+        
+        
+        $old_canonical = (string) get_post_meta($post_id, $this->canonical_meta_key, true);
         if (isset($_POST['canonical_url'])) {
             $raw = wp_unslash((string) $_POST['canonical_url']);
-            $value = $this->sanitize_canonical_url($raw);
-            if ($value !== '') {
-                update_post_meta($post_id, $this->canonical_meta_key, $value);
-            } else {
-                delete_post_meta($post_id, $this->canonical_meta_key);
-            }
-        }
+            $new_canonical = $this->sanitize_canonical_url($raw);
 
-        // === ONE-TIME CLEANUP/MIGRATION (Flag + Timestamp) ===
-        if ($this->isCleanupDone((int) $post_id)) {
-            return;
-        }
-
-        /**
-         * === MIGRATION: _teasertext_de/_teasertext_en -> post_excerpt ===
-         * - Excerpt bleibt unangetastet, wenn er schon Inhalt hat
-         * - Wenn Site-Sprache EN (en_* oder 'en'): zuerst _teasertext_en, sonst _teasertext_de
-         * - Wenn Site-Sprache NICHT EN: zuerst _teasertext_de, sonst _teasertext_en
-         * - Fallbacks wie beschrieben; am Ende beide Teaser-Metas löschen
-         * - _content_en wird IMMER entfernt (ohne Migration)
-         */
-        $old_teaser_de = get_post_meta($post_id, '_teasertext_de', true);
-        $old_teaser_en = get_post_meta($post_id, '_teasertext_en', true);
-        $current_post  = get_post($post_id);
-        $excerpt       = isset($current_post->post_excerpt) ? $current_post->post_excerpt : '';
-
-        if ('' === trim((string) $excerpt)) {
-            $locale = function_exists('get_locale') ? (string) get_locale() : '';
-            $loc    = strtolower($locale);
-            $is_en  = (strpos($loc, 'en_') === 0) || ($loc === 'en');
-
-            $candidate = '';
-            if ($is_en) {
-                $candidate = (string) ($old_teaser_en ?: '');
-                if ('' === trim($candidate) && !empty($old_teaser_de)) {
-                    $candidate = (string) $old_teaser_de;
+            if ($new_canonical !== $old_canonical) {
+                if ($new_canonical !== '') {
+                    update_post_meta($post_id, $this->canonical_meta_key, $new_canonical);
+                } else {
+                    delete_post_meta($post_id, $this->canonical_meta_key);
                 }
-            } else {
-                $candidate = (string) ($old_teaser_de ?: '');
-                if ('' === trim($candidate) && !empty($old_teaser_en)) {
-                    $candidate = (string) $old_teaser_en;
-                }
-            }
 
-            if ('' !== trim($candidate)) {
-                wp_update_post([
-                    'ID'           => $post_id,
-                    'post_excerpt' => sanitize_text_field($candidate),
+                $this->addHistoryEntry((int) $post_id, __('Canonical URL changed', 'rrze-faudir'), [
+                    'key'  => $this->canonical_meta_key,
+                    'from' => $old_canonical,
+                    'to'   => $new_canonical,
                 ]);
             }
         }
 
-        // Alte Metas entfernen (einmalig)
-        delete_post_meta($post_id, '_teasertext_de');
-        delete_post_meta($post_id, '_teasertext_en');
-        delete_post_meta($post_id, '_content_en');
 
-        // Säuberung: evtl. vorhandene frühere persistente API-Felder entfernen (einmalig)
-        $obsolete_api_metas = [
+        if ($this->needsCleanup((int) $post_id)) {
+
+            /**
+             * === MIGRATION: _teasertext_de/_teasertext_en -> post_excerpt ===
+             * - Excerpt bleibt unangetastet, wenn er schon Inhalt hat
+             * - Wenn Site-Sprache EN (en_* oder 'en'): zuerst _teasertext_en, sonst _teasertext_de
+             * - Wenn Site-Sprache NICHT EN: zuerst _teasertext_de, sonst _teasertext_en
+             * - Fallbacks wie beschrieben; am Ende beide Teaser-Metas löschen
+             * - _content_en wird IMMER entfernt (ohne Migration)
+             */
+            $old_teaser_de = get_post_meta($post_id, '_teasertext_de', true);
+            $old_teaser_en = get_post_meta($post_id, '_teasertext_en', true);
+            $current_post  = get_post($post_id);
+            $excerpt       = isset($current_post->post_excerpt) ? $current_post->post_excerpt : '';
+
+            if ('' === trim((string) $excerpt)) {
+                $locale = function_exists('get_locale') ? (string) get_locale() : '';
+                $loc    = strtolower($locale);
+                $is_en  = (strpos($loc, 'en_') === 0) || ($loc === 'en');
+
+                $candidate = '';
+                if ($is_en) {
+                    $candidate = (string) ($old_teaser_en ?: '');
+                    if ('' === trim($candidate) && !empty($old_teaser_de)) {
+                        $candidate = (string) $old_teaser_de;
+                    }
+                } else {
+                    $candidate = (string) ($old_teaser_de ?: '');
+                    if ('' === trim($candidate) && !empty($old_teaser_en)) {
+                        $candidate = (string) $old_teaser_en;
+                    }
+                }
+
+                if ('' !== trim($candidate)) {
+                    wp_update_post([
+                        'ID'           => $post_id,
+                        'post_excerpt' => sanitize_text_field($candidate),
+                    ]);
+                }
+            }
+
+            // Alte Metas entfernen (einmalig)
+            delete_post_meta($post_id, '_teasertext_de');
+            delete_post_meta($post_id, '_teasertext_en');
+            delete_post_meta($post_id, '_content_en');
+
+            // Säuberung: evtl. vorhandene frühere persistente API-Felder entfernen (einmalig)
+            $obsolete_api_metas = [
+                'person_name',
+                'person_email',
+                'person_telephone',
+                'person_givenName',
+                'person_familyName',
+                'person_honorificPrefix',
+                'person_honorificSuffix',
+                'person_titleOfNobility',
+                'person_contacts',
+            ];
+            foreach ($obsolete_api_metas as $meta_key) {
+                delete_post_meta($post_id, $meta_key);
+            }
+
+            // Cleanup als erledigt markieren (mit Zeitpunkt + Version)
+            $this->addHistoryEntry((int) $post_id, __('Old data entries from FAU Person migrated', 'rrze-faudir'), [
+                'cleanup_version' => '2.5.0',
+            ]);
+
+        }
+    }
+
+    /*
+     * Prüefen ob es alt-Metas gibt aus der Migration aus FAU Person
+     */
+
+    private function needsCleanup(int $post_id): bool {
+        // Legacy-Metas, die wir migrieren/löschen wollen
+        $legacy = [
+            '_teasertext_de',
+            '_teasertext_en',
+            '_content_en',
+        ];
+
+        foreach ($legacy as $k) {
+            if (metadata_exists('post', $post_id, $k)) {
+                return true;
+            }
+        }
+
+        // Obsolete API-Metas, die wir löschen wollen
+        $obsolete = [
             'person_name',
             'person_email',
             'person_telephone',
@@ -416,28 +586,25 @@ class CPT {
             'person_titleOfNobility',
             'person_contacts',
         ];
-        foreach ($obsolete_api_metas as $meta_key) {
-            delete_post_meta($post_id, $meta_key);
+
+        foreach ($obsolete as $k) {
+            if (metadata_exists('post', $post_id, $k)) {
+                return true;
+            }
         }
 
-        // Cleanup als erledigt markieren (mit Zeitpunkt + Version)
-        $this->markCleanupDone((int) $post_id);
-    }
+        // Zusätzlich: Migration nur nötig, wenn Excerpt leer UND Teaser-Metas existieren
+        $post = get_post($post_id);
+        $excerpt = ($post instanceof \WP_Post) ? (string) $post->post_excerpt : '';
 
-    /*
-     * Helper Funktionen für das Speichern des CPT
-     */
-    private function isCleanupDone(int $post_id): bool {
-        $done = get_post_meta($post_id, $this->cleanup_meta_key_done, true);
-        return $done === '1';
-    }
+        if (trim($excerpt) === '') {
+            if (metadata_exists('post', $post_id, '_teasertext_de') || metadata_exists('post', $post_id, '_teasertext_en')) {
+                return true;
+            }
+        }
 
-    private function markCleanupDone(int $post_id): void {
-        update_post_meta($post_id, $this->cleanup_meta_key_done, '1');
-        update_post_meta($post_id, $this->cleanup_meta_key_at, current_time('mysql'));
-        update_post_meta($post_id, $this->cleanup_meta_key_version, $this->cleanup_version);
+        return false;
     }
-    
     
     
     /*
@@ -716,6 +883,155 @@ class CPT {
     public function maybe_override_canonical_for_seo($canonical) {
         return $this->maybe_override_canonical($canonical, get_post());
     }
+    
+    /*
+     * Logs Status wechsel
+     */
+    public function log_status_transition(string $new_status, string $old_status, \WP_Post $post): void {
+        $post_type = $this->config->get('person_post_type');
+        if ($post->post_type !== $post_type) {
+            return;
+        }
 
+        if ($new_status === $old_status) {
+            return;
+        }
+
+        if (wp_is_post_revision($post->ID)) {
+            return;
+        }
+
+        $this->addHistoryEntry((int) $post->ID, __('Post status changed', 'rrze-faudir'), [
+            'from' => $old_status,
+            'to'   => $new_status,
+        ]);
+    }
+
+    
+    /*
+     * Revisions-Snapshort holen
+     */
+    private function getRevisionSnapshot(int $post_id): array {
+        $count = (int) wp_get_post_revisions($post_id, ['fields' => 'ids']) ? count(wp_get_post_revisions($post_id, ['fields' => 'ids'])) : 0;
+
+        $latest_id = 0;
+        $latest_at = '';
+
+        $latest = wp_get_post_revisions($post_id, [
+            'posts_per_page' => 1,
+            'orderby'        => 'ID',
+            'order'          => 'DESC',
+        ]);
+
+        if (!empty($latest)) {
+            $rev = reset($latest);
+            if ($rev instanceof \WP_Post) {
+                $latest_id = (int) $rev->ID;
+                $latest_at = (string) $rev->post_modified;
+            }
+        }
+
+        return [
+            'count'     => $count,
+            'latest_id' => $latest_id,
+            'latest_at' => $latest_at,
+        ];
+    }
+    
+    /*
+     * Historie-Helper_ Schreibt Snapsshorts der WP Revisions in die History, damit sie da mit angezeigt werden.
+     */
+    private function addHistoryEntry(int $post_id, string $event, array $context = []): void {
+        $history = get_post_meta($post_id, $this->history_meta_key, true);
+        if (!is_array($history)) {
+            $history = [];
+        }
+
+        $user_id = get_current_user_id();
+        $user_login = '';
+        if ($user_id > 0) {
+            $u = get_user_by('id', $user_id);
+            if ($u) {
+                $user_login = (string) $u->user_login;
+            }
+        }
+
+        $entry = [
+            'at'        => current_time('mysql'),
+            'user_id'   => $user_id,
+            'user'      => $user_login,
+            'event'     => trim($event),
+            'context'   => $context,
+            'revisions' => $this->getRevisionSnapshot($post_id),
+        ];
+
+        array_unshift($history, $entry);
+
+        if (count($history) > $this->history_max_entries) {
+            $history = array_slice($history, 0, $this->history_max_entries);
+        }
+
+        update_post_meta($post_id, $this->history_meta_key, $history);
+    }
+    
+    
+    /*
+     * WP Revisions ebenfalls speichern in unserer Liste
+     */
+    public function log_content_changes(int $post_id, \WP_Post $post_after, \WP_Post $post_before): void {
+        $post_type = $this->config->get('person_post_type');
+        if ($post_after->post_type !== $post_type) {
+            return;
+        }
+
+        if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
+            return;
+        }
+
+        // Nur echte Änderungen loggen
+        $changes = [];
+
+        if ($post_after->post_title !== $post_before->post_title) {
+            $changes[] = [
+                'key'  => 'post_title',
+                'from' => $post_before->post_title,
+                'to'   => $post_after->post_title,
+            ];
+        }
+
+        if ($post_after->post_excerpt !== $post_before->post_excerpt) {
+            $changes[] = [
+                'key'  => 'post_excerpt',
+                'from' => $post_before->post_excerpt,
+                'to'   => $post_after->post_excerpt,
+            ];
+        }
+
+        if ($post_after->post_content !== $post_before->post_content) {
+            // Content nicht komplett in Meta wegschreiben (riesig + unnötig).
+            $changes[] = [
+                'key'        => 'post_content',
+                'from_hash'  => md5($post_before->post_content),
+                'to_hash'    => md5($post_after->post_content),
+                'from_len'   => strlen($post_before->post_content),
+                'to_len'     => strlen($post_after->post_content),
+            ];
+        }
+
+        if (empty($changes)) {
+            return;
+        }
+
+        foreach ($changes as $c) {
+            $label = __('Content changed', 'rrze-faudir');
+            if ($c['key'] === 'post_title') {
+                $label = __('Title changed', 'rrze-faudir');
+            } elseif ($c['key'] === 'post_excerpt') {
+                $label = __('Excerpt changed', 'rrze-faudir');
+            }
+
+            $this->addHistoryEntry($post_id, $label, $c);
+        }
+    }
 }
 
