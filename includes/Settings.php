@@ -1059,6 +1059,10 @@ class Settings {
         $config->insertOptions();
 
         $migration = new Migration($config);
+        if (!$migration->isFauPersonActive()) {
+            wp_send_json_error(__('FAU Person plugin is not active.', 'rrze-faudir'));
+        }
+
         $migration->migrate_person_data_on_activation();
 
         $html = $migration->rrze_faudir_display_import_notice(false, false);

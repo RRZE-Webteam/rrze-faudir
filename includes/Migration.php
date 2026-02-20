@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace RRZE\FAUdir;
 
 defined('ABSPATH') || exit;
@@ -7,11 +9,36 @@ defined('ABSPATH') || exit;
 use RRZE\FAUdir\API;
 
 class Migration {
-    protected Config $config;
+    private Config $config;
 
     public function __construct(Config $config) {
         $config->insertOptions();
         $this->config = $config;
+    }
+    
+    public function register_hooks(): void {
+        if (!$this->isFauPersonActive()) {
+            return;
+        }
+
+        register_activation_hook(RRZE_PLUGIN_FILE, [$this, 'migrate_person_data_on_activation']);
+        if ($this->isFauPersonActive()) {
+            add_action('admin_notices', [$this, 'rrze_faudir_display_import_notice'], 15);
+        }
+    }
+
+    public function isFauPersonActive(): bool {
+        if (!function_exists('is_plugin_active')) {
+            require_once ABSPATH . 'wp-admin/includes/plugin.php';
+        }
+
+        if (is_multisite() && function_exists('is_plugin_active_for_network')) {
+            if (is_plugin_active_for_network('fau-person/fau-person.php')) {
+                return true;
+            }
+        }
+
+        return is_plugin_active('fau-person/fau-person.php');
     }
 
     /**
@@ -23,20 +50,34 @@ class Migration {
      * - KEINE Speicherung von alten person_* Feldern / Kontaktdaten
      */
     public function migrate_person_data_on_activation(): void {
-        $config = new Config();
-        $post_type = $config->get('person_post_type');
-        $taxonomy = $config->get('person_taxonomy');
+        if (!$this->isFauPersonActive()) {
+            return;
+        }
+        
+        $post_type = (string) $this->config->get('person_post_type');
+        $taxonomy  = (string) $this->config->get('person_taxonomy');
 
         if (!taxonomy_exists($taxonomy)) {
-            register_taxonomy($taxonomy, $post_type, [
-                'hierarchical'      => true,
-                'show_ui'           => true,
-                'show_admin_column' => true,
-                'query_var'         => true,
-                'rewrite'           => ['slug' => 'person-category'],
-                'show_in_rest'      => true,
-                'rest_base'         => $taxonomy,
-            ]);
+            register_taxonomy(
+                $taxonomy,
+                $post_type,
+                [
+                    'hierarchical'          => true,
+                    'public'                => true,
+                    'show_ui'               => true,
+                    'show_in_menu'          => true,
+                    'show_in_nav_menus'     => true,
+                    'show_tagcloud'         => true,
+                    'show_in_quick_edit'    => true,
+                    'meta_box_cb'           => null,
+                    'show_admin_column'     => true,
+                    'query_var'             => true,
+                    'rewrite'               => ['slug' => $taxonomy],
+                    'show_in_rest'          => true,
+                    'rest_base'             => $taxonomy,
+                    'rest_controller_class' => 'WP_REST_Terms_Controller',
+                ]
+            );
         }
 
         $contact_posts = get_posts([
