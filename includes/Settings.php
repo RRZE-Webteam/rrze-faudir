@@ -287,15 +287,7 @@ class Settings {
         );
         
        
-        
-        add_settings_field(
-            'rrze_faudir_no_cache_logged_in',
-            __('No Caching for Logged-in Editors', 'rrze-faudir'),
-            [$this, 'render_no_cache_logged_in'],
-            'rrze_faudir_settings_cache',
-            'rrze_faudir_cache_section'
-        );
-        
+       
         add_settings_field(
             'rrze_faudir_enable_history',
             __('Change history & revisions', 'rrze-faudir'),
@@ -708,23 +700,6 @@ class Settings {
         echo '<p class="description">' . esc_html__('Click the button to restart the import of contact entries from FAU Person. Notice, that this will only import contact entries, which refer to a public viewable person in FAUdir.', 'rrze-faudir') . '</p>';
     }
 
-    public function render_no_cache_logged_in(): void {
-        $options = get_option('rrze_faudir_options');
-        $checked = !empty($options['no_cache_logged_in']);
-
-        echo '<label>';
-        // Hidden-Fallback, damit Abwählen als 0 gepostet wird
-        echo '<input type="hidden" name="rrze_faudir_options[no_cache_logged_in]" value="0">';
-        echo '<input type="checkbox" name="rrze_faudir_options[no_cache_logged_in]" value="1" ' . checked(true, $checked, false) . '>';
-        echo '<span>' . esc_html__('Disable output caching for logged-in editors.', 'rrze-faudir') . '</span>';
-        echo '</label>';
-        echo '<div class="notice notice-info inline">';
-        echo '<p><strong>' . esc_html__('Notice', 'rrze-faudir') . ':</strong> ';
-        echo esc_html__('This setting only affects the shortcode/block output cache. All data from the FAUdir API are still be cached separately for up to 3 hours.', 'rrze-faudir');
-        echo '</p>';
-        echo '</div>';
-
-    }
 
 
     public function render_cache_timeout(): void {
@@ -738,9 +713,12 @@ class Settings {
         echo '<button type="button" class="button button-secondary" id="clear-cache-button">' . esc_html__('Clear Cache Now', 'rrze-faudir') . '</button>';
         echo '<p class="description">' . esc_html__('Click the button to clear all cached data, including also data cache.', 'rrze-faudir') . '</p>';
         
-        echo '<p class="description">';
-        echo esc_html__('Note: This will also clear all data from the FAUdir API.', 'rrze-faudir');
+       echo '<div class="notice notice-info inline">';
+        echo '<p><strong>' . esc_html__('Notice', 'rrze-faudir') . ':</strong> ';
+        echo esc_html__('All data from FAUdir (e.g. personal entries) are cached separately for up to 3 hours. This function will also reset the FAUdir data.', 'rrze-faudir');
         echo '</p>';
+        echo '</div>';
+        
     }
 
     public function render_error_message(): void {
@@ -1332,7 +1310,6 @@ class Settings {
 
         // --- Checkboxen (nur wenn im POST enthalten) ---
         $checkboxes = [
-            'no_cache_logged_in',
             'fallback_link_faudir',
             'show_error_message',
             'default_normalize_honorificPrefix',

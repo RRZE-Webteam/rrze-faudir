@@ -90,7 +90,6 @@ class Config {
         'overwriteable_as_option' => [
             'show_error_message',
             'cache_timeout',
-            'no_cache_logged_in',
             'transient_time_for_org_id',
             'fallback_link_faudir',
             'jobtitle_format',

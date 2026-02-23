@@ -82,19 +82,23 @@ class Shortcode {
         unset($atts['hide']);
         
 
-       // do_action( 'rrze.log.notice','FAUdir\Shortcode (render). Modified Args: ', $atts);
+        do_action( 'rrze.log.notice','FAUdir\Shortcode (render). Modified Args: ', $atts);
         
           
         // If user is logged in and no-cache option is enabled, always fetch fresh data
         $options = get_option('rrze_faudir_options');
-        $no_cache_logged_in = isset($options['no_cache_logged_in']) && $options['no_cache_logged_in'];    
-       
-        if ($no_cache_logged_in && is_user_logged_in()) {
+
+        if (!empty($this->config->get('no_cache_logged_in')) && is_user_logged_in()) {
+            do_action( 'rrze.log.info',"FAUdir\Shortcode (render): Creating new outout, ignoring cache.");
             $output = $this->fetch_and_render_fau_data($atts);
+            do_action( 'rrze.log.info',"FAUdir\Shortcode (render):do_blocks..");
             $output = do_blocks($output);    
+             do_action( 'rrze.log.info',"FAUdir\Shortcode (render):do_shortcode..");
             $output = do_shortcode(shortcode_unautop($output));
+              do_action( 'rrze.log.info',"FAUdir\Shortcode (render):done.");
             return $output;
         }
+        do_action( 'rrze.log.info',"FAUdir\Shortcode (render): Using cache.");
 
         ksort($atts);
         $cache_key = Constants::TRANSIENT_PREFIX_SHORTCODE . md5(wp_json_encode($atts));

@@ -115,6 +115,12 @@ class Migration {
                     ]);
 
                     if ($univisid && !$existing_person) {
+                        
+                        
+                        // Überdenken, da IUnivIS leider kein exakten Match macht!!!!
+                        /// bspw: http://univis.uni-erlangen.de/prg?search=persons&id=1111&show=json
+                        // liefrt Personeienträge, die den String irgendwo im id drin haben.
+                        
                         $url = 'http://univis.uni-erlangen.de/prg?search=persons&id=' . $univisid . '&show=json';
                         $response = wp_remote_get($url);
                         $body = wp_remote_retrieve_body($response);
