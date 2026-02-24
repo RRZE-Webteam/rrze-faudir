@@ -494,22 +494,15 @@ class Settings {
                     <td colspan="2">
                         <p class="description">
                             <?php echo esc_html__('Please enter at least one search term. If more than one parameter is entered, the search results must contain all values (AND search).', 'rrze-faudir'); ?>
-                            <?php echo esc_html__('Please note that only people whose FAUdir entries are public can be found.', 'rrze-faudir'); ?>
                             <br>
-                            <?php echo esc_html__('After a successful search, a person can be taken over for further processing.', 'rrze-faudir'); ?>
-                            
+                            <?php echo esc_html__('After a successful search, a person can be taken over for further processing.', 'rrze-faudir'); ?>                            
                         </p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><?php echo esc_html__('Search Options', 'rrze-faudir'); ?></th>
-                    <td>
-                        <fieldset>
-                            <label for="include-default-org">
-                                <input type="checkbox" id="include-default-org" name="include-default-org" value="1" checked>
-                                <span><?php echo esc_html__('Filter by default organization', 'rrze-faudir'); ?></span>
-                            </label>
-                        </fieldset>
+                        
+                        <div class="notice notice-info inline">
+                            <p><strong><?php echo esc_html__('Notice', 'rrze-faudir'); ?>:</strong>
+                            <?php echo esc_html__('Please note that only people whose FAUdir entries are public can be found.', 'rrze-faudir'); ?>
+                            </p>
+                        </div>
                     </td>
                 </tr>
                 <tr>

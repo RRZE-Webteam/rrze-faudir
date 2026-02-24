@@ -81,7 +81,6 @@ jQuery(function ($) {
       var givenName = $('#given-name').val().trim();
       var familyName = $('#family-name').val().trim();
       var email = $('#email').val().trim();
-      var includeDefaultOrg = $('#include-default-org').is(':checked') ? '1' : '0';
 
       if (personId || givenName || familyName || email) {
         $.post(rrzeFaudirAjax.ajax_url, {
@@ -90,8 +89,7 @@ jQuery(function ($) {
           person_id: personId,
           given_name: givenName,
           family_name: familyName,
-          email: email,
-          include_default_org: includeDefaultOrg
+          email: email
         }).done(function (response) {
           $('#contacts-list').html(response.success ? response.data : '<p>' + response.data + '</p>');
         }).fail(function () {
@@ -110,7 +108,6 @@ jQuery(function ($) {
     var $btn = $(this);
     var personName = $btn.data('name');
     var personId = $btn.data('id');
-    var includeDefaultOrg = $btn.data('include-default-org');
     var functions = $btn.data('functionLabel') || [];
 
     $btn.prop('disabled', true).html('<span class="dashicons dashicons-update"></span> ' + rrzeFaudirAjax.add_text);
@@ -120,7 +117,6 @@ jQuery(function ($) {
       security: rrzeFaudirAjax.api_nonce,
       person_name: personName,
       person_id: personId,
-      include_default_org: includeDefaultOrg,
       functions: functions
     }).done(function (response) {
       if (response.success) {
