@@ -80,8 +80,9 @@ class Migration {
             );
         }
 
-        $contact_posts = get_posts([
-            'post_type'      => 'person',
+        $fau_person_post_type = (string) $this->config->get('fau-person_post_type');
+        $fau_person_posts = get_posts([
+            'post_type'      => $fau_person_post_type,
             'posts_per_page' => -1,
         ]);
 
@@ -91,15 +92,15 @@ class Migration {
         $not_imported_reasons = [];
 
         if (empty($this->config->get('api_key')) && !API::isUsingNetworkKey()) {
-            $not_imported_count = is_array($contact_posts) ? count($contact_posts) : 0;
+            $not_imported_count = is_array($fau_person_posts) ? count($fau_person_posts) : 0;
             if ($not_imported_count > 0) {
                 $not_imported_reasons[] = __('API Key missing. Please enter an API key in settings.', 'rrze-faudir') . ' ' . __('After this you can restart importing old contact entries from there.', 'rrze-faudir');
             } else {
                 $not_imported_reasons[] = __('API Key missing. Please enter an API key in settings.', 'rrze-faudir');
             }
         } else {
-            if (!empty($contact_posts)) {
-                foreach ($contact_posts as $post) {
+            if (!empty($fau_person_posts)) {
+                foreach ($fau_person_posts as $post) {
                     $univisid = get_post_meta($post->ID, 'fau_person_univis_id', true);
 
                     $existing_person = get_posts([

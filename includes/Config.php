@@ -7,7 +7,7 @@ defined('ABSPATH') || exit;
 
 class Config {
     private array $config = [
-        'version'                           => 9,  // please count this up any time we change the config array
+        'version'                           => 10,  // please count this up any time we change the config array
         'api_key'                           => '',
         'api-baseurl'                       => 'https://api.fau.de/pub/v1/opendir/',
         'faudir-url'                        => 'https://faudir.fau.de/',
@@ -75,7 +75,8 @@ class Config {
             // TODO: Change to a non generic name!
         'person_post_type'  => 'custom_person',
             // TODO: Change to a non generic name!
-
+        'fau-person_post_type'  => 'person',
+            // Post Type von FAU Person, hierin wird geschaut zum importieren
         'hide_on_parameter' => [
             'address' => [
                  // If the show-params contains address the following fields will be hidden
