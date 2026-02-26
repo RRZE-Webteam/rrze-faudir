@@ -267,9 +267,8 @@ class Person {
                 continue;
             }
 
-            $contactIdentifier = $contact['identifier'] ?? '';
-            $contactIdentifier = is_string($contactIdentifier) ? trim($contactIdentifier) : '';
-            if ($contactIdentifier === '') {
+            $contactIdentifier = $contact['identifier'] ?? '';                     
+            if (!FaudirUtils::isValidContactId($contactIdentifier)) {
                 /*
                  * Kein Identifier → wir können nicht nachladen.
                  * Contact so übernehmen, wie er ist.
@@ -281,16 +280,13 @@ class Person {
                 continue;
             }
 
-            $contactData = $api->getContacts(0, 0, ['identifier' => $contactIdentifier]);
-            if (empty($contactData['data']) || !is_array($contactData['data'])) {
+            $contactData = $api->getContact($contactIdentifier);
+            
+            do_action('rrze.log.info', "FAUdir\API (getContacts): Getting contact data for {$contactIdentifier}: ", $contactData);
+            if (empty($contactData) || !is_array($contactData)) {
                 continue;
             }
-
-            $full = $contactData['data'][0] ?? null;
-            if (empty($full) || !is_array($full)) {
-                continue;
-            }
-
+            $full = $contactData;
             if ($loadorg) {
                 $full = $this->enrichContactOrganization($api, $full);
             }

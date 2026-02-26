@@ -152,7 +152,7 @@ final class Cron {
             'ID'          => $post_id,
             'post_status' => Constants::PERSON_STATUS_ON_MISSING,
         ]);
-        $this->add_private_alert((int) $post->ID, (string) $current);
+        $this->add_private_alert($post_id, (string) $current);
         
         do_action( 'rrze.log.warn',"FAUdir\Cron (set_post_private): Person post set to private {$post_id}, {$context}");
     }
@@ -203,6 +203,19 @@ final class Cron {
         $opt['last_at'] = time();
 
         update_option(Constants::OPTION_DASHBOARD_PRIVATE_ALERTS, $opt, false);
+    }
+ 
+    /*
+     * Damit ich den Status auch von der Ajax-Aktion aus CPT setzen kann brauche wir noch eine
+     * public funktion:
+     */
+    public function apply_availability_result(int $post_id, bool $ok, array $context = []): void {
+        $status = (string) get_post_status($post_id);
+        if ($status === '') {
+            return;
+        }
+
+        $this->handle_result($post_id, $status, $ok, $context);
     }
 }
   

@@ -6,18 +6,17 @@ defined('ABSPATH') || exit;
 
 class API {
     private string $baseUrl = Constants::API_BASE_URL;
-    private string $transient_prefix = Constants::TRANSIENT_PREFIX_API;
-    private int $transient_jitter_minutes = Constants::TRANSIENT_JITTER_MINUTES;
-    private array $transient_times = Constants::TRANSIENT_TIMES;
     private int $default_limit = Constants::DEFAULT_LIMIT;
     private string $api_key;
     private Config $config;
+    private Cache $cache;
 
     public function __construct(Config $config) {
         $this->config = $config;
         if (!empty($this->config->get('api-baseurl'))) {
             $this->baseUrl = $this->config->get('api-baseurl');
         }
+        $this->cache = new Cache($this->baseUrl);
         $this->api_key = $this->getKey();
         
         if (empty($this->api_key)) {
@@ -85,7 +84,8 @@ class API {
             return null;
         }
         $url = trailingslashit($this->baseUrl) . 'persons/' . $personId;      
-        return $this->makeRequest($url, 'GET');
+        $cacheKeyBasis = Constants::TRANSIENT_KEY_PERSON_PREFIX . $personId;
+        return $this->makeRequest($url, 'GET', null, $cacheKeyBasis);
     }
     
     
@@ -99,14 +99,15 @@ class API {
             do_action( 'rrze.log.error', "FAUdir\API (getContact): API Key missing.");
             return null;
         }
-        $contactId = FaudirUtils::sanitizePersonId($contactId);
+        $contactId = FaudirUtils::sanitizeContactId($contactId);
         if ($contactId === null) {
             do_action('rrze.log.error', 'FAUdir\API (getContact): Invalid contactId.');
             return null;
         }
 
         $url = trailingslashit($this->baseUrl) . 'contacts/' . $contactId;
-        return $this->makeRequest($url, 'GET');
+        $cacheKeyBasis = Constants::TRANSIENT_KEY_CONTACT_PREFIX . $contactId;
+        return $this->makeRequest($url, 'GET', null, $cacheKeyBasis);
     }
     
    
@@ -254,7 +255,7 @@ class API {
         }
 
         $url .= $param_uri;
-
+do_action('rrze.log.info', "FAUdir\API (getContacts): Getting data with url {$url}: ", $params);
         $response = $this->makeRequest($url, "GET");
         if (!$response) {
             do_action('rrze.log.error', "FAUdir\API (getContacts): No response from server on {$url}.");
@@ -340,7 +341,8 @@ class API {
         }
         
         $url = trailingslashit($this->baseUrl) . 'organizations/' . $orgid;
-        return $this->makeRequest($url, 'GET');
+        $cacheKeyBasis = Constants::TRANSIENT_KEY_ORG_PREFIX . $orgid;
+        return $this->makeRequest($url, 'GET', null, $cacheKeyBasis);
     }
 
     /**
@@ -358,7 +360,7 @@ class API {
      * @param array|null $data Optional: Daten für POST-Anfragen.
      * @return array|null Die JSON-Antwort als Array oder null bei Fehlern.
      */
-    private function makeRequest(string $url, string $method, ?array $data = null): ?array {
+    private function makeRequest(string $url, string $method, ?array $data = null, ?string $cache_key_basis = null): ?array {
         if ($this->api_key === '') {
             do_action( 'rrze.log.error', "FAUdir\API (makeRequest): API Key missing.");
             return null;
@@ -374,13 +376,12 @@ class API {
             $url = add_query_arg($data, $url);
         }
         
-        $url = $this->normalizeUrlForCache($url);
-        // Prüfe, ob gecachte Daten existieren
-        $cached = $this->get_cache_data($url);
+        $url = $this->cache->normalizeUrlForCache($url);
+
+        $cached = $this->cache->get($url, $cache_key_basis);
         if ($cached !== null) {
             return $cached;
         }
-        
         
         $response = wp_remote_get($url, array(
             'headers' => array(
@@ -412,92 +413,12 @@ class API {
             return null;
         }
 
-        $this->set_cache_data($url, $decoded);
+        $this->cache->set($url, $decoded, $cache_key_basis);
 
         return $decoded;
         
         
     }
  
-    /*
-     * Get Cache from transient data
-     */
-    private function get_cache_data(string $url): ?array {
-        $parsed = wp_parse_url($url);
-        $path = (string) ($parsed['path'] ?? '');
-
-        $basePath = (string) wp_parse_url($this->baseUrl, PHP_URL_PATH);
-        $relative = $basePath !== '' ? str_replace($basePath, '', $path) : $path;
-
-        $parts = explode('/', trim($relative, '/'));
-        $endpoint = $parts[0] !== '' ? $parts[0] : 'default';
-
-        $transient_key = $this->transient_prefix . $endpoint . '_' . md5($url);
-
-        $cached = get_transient($transient_key);
-        if ($cached !== false && is_array($cached)) {
-            return $cached;
-        }
-
-        return null; 
-    }
-    
-    // Save data as transient
-    private function set_cache_data(string $url, array $data): void {
-        $parsed = wp_parse_url($url);
-        $path = (string) ($parsed['path'] ?? '');
-
-        $basePath = (string) wp_parse_url($this->baseUrl, PHP_URL_PATH);
-        $relative = $basePath !== '' ? str_replace($basePath, '', $path) : $path;
-
-        $parts = explode('/', trim($relative, '/'));
-        $endpoint = $parts[0] !== '' ? $parts[0] : 'default';
-
-        $base_minutes = (int) ($this->transient_times[$endpoint] ?? $this->transient_times['default']);
-        $random_offset = wp_rand(0, $this->transient_jitter_minutes) * 60;
-        $lifetime = ($base_minutes * 60) + $random_offset;
-
-        $transient_key = $this->transient_prefix . $endpoint . '_' . md5($url);
-        set_transient($transient_key, $data, $lifetime);
-        do_action( 'rrze.log.info', "FAUdir\API (set_cache_data): Set Transient key {$transient_key}.");
-    }
-
-    
-    /*
-     * Reihenfolge der Request Query-Bestandteile normalisieren
-     */
-    private function normalizeUrlForCache(string $url): string {
-        $parsed = wp_parse_url($url);
-        if (!is_array($parsed)) {
-            return $url;
-        }
-
-        $scheme = (string) ($parsed['scheme'] ?? '');
-        $host = (string) ($parsed['host'] ?? '');
-        $path = (string) ($parsed['path'] ?? '');
-        $query = (string) ($parsed['query'] ?? '');
-
-        if ($scheme === '' || $host === '' || $query === '') {
-            return $url;
-        }
-
-        $params = [];
-        parse_str($query, $params);
-
-        if (!is_array($params) || empty($params)) {
-            return $url;
-        }
-
-        ksort($params);
-
-        $rebuilt = $scheme . '://' . $host . $path . '?' . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
-
-        if (!empty($parsed['fragment'])) {
-            $rebuilt .= '#' . $parsed['fragment'];
-        }
-
-        return $rebuilt;
-    }
-
 
 }

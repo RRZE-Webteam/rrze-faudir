@@ -31,7 +31,7 @@ if (!defined('ABSPATH')) {
             <?php }
         } else { 
             if (!empty($persondata)) {
-
+ do_action('rrze.log.info', "person-page.php: Preparing data for person: ", $persondata);
                 $person = new Person($persondata);
                 $formatstring = '';
                 if (!empty($format_displayname)) {
@@ -49,13 +49,17 @@ if (!defined('ABSPATH')) {
                 }
                 
       
-                
+                do_action('rrze.log.info', "person-page.php: Getting contact data with role {$role}: ", $person);
+
                 $contact = $person->getPrimaryContact($role);
+                do_action('rrze.log.info', "person-page.php: Results.. ", $contact);
+
                 $workplaces = [];
                 if (!empty($contact)) { 
                     $workplaces = $contact->getWorkplaces();                    
                 }
                 $aria_id = $person->getRandomId("section-title-");
+                   do_action('rrze.log.info', "person-page.php:Workplaces set", $workplaces);
                 ?>
 
                 <section class="format-page-container" aria-labelledby="<?php echo $aria_id;?>" itemscope itemtype="https://schema.org/Person">

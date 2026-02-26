@@ -134,18 +134,26 @@ class EnqueueScripts {
         // Admin-Script + Daten (falls benötigt)
         wp_enqueue_script('rrze-faudir-admin-js');
         wp_localize_script('rrze-faudir-admin-js', 'rrzeFaudirAjax', [
-            'ajax_url'            => admin_url('admin-ajax.php'),
-            'api_nonce'           => wp_create_nonce('rrze_faudir_api_nonce'),
-            'api_key'             => get_option('rrze_faudir_api_key', ''),
-            'confirm_clear_cache' => __('Are you sure you want to clear the cache?', 'rrze-faudir'),
-            'confirm_import'      => __('Are you sure you want to import contacts from FAU person?', 'rrze-faudir'),
-            'edit_text'           => __('Edit', 'rrze-faudir'),
-            'add_text'            => __('Add', 'rrze-faudir'),
-            'saving_text'         => __('Saving...', 'rrze-faudir'),
-            'saved_text'          => __('Saved', 'rrze-faudir'),
-            'save_text'           => __('Save as Default Organization', 'rrze-faudir'),
-            'org_saved_text'      => __('Organization has been saved as default.', 'rrze-faudir'),
-            'error_saving_text'   => __('Error saving organization.', 'rrze-faudir'),
+            'ajax_url'              => admin_url('admin-ajax.php'),
+            'api_nonce'             => wp_create_nonce('rrze_faudir_api_nonce'),
+            'api_key'               => get_option('rrze_faudir_api_key', ''),
+            'confirm_clear_cache'   => __('Are you sure you want to clear the cache?', 'rrze-faudir'),
+            'confirm_import'        => __('Are you sure you want to import contacts from FAU person?', 'rrze-faudir'),
+            'edit_text'             => __('Edit', 'rrze-faudir'),
+            'add_text'              => __('Add', 'rrze-faudir'),
+            'saving_text'           => __('Saving...', 'rrze-faudir'),
+            'saved_text'            => __('Saved', 'rrze-faudir'),
+            'save_text'             => __('Save as Default Organization', 'rrze-faudir'),
+            'org_saved_text'        => __('Organization has been saved as default.', 'rrze-faudir'),
+            'error_saving_text'     => __('Error saving organization.', 'rrze-faudir'),
+            'refresh_action'        => 'rrze_faudir_refresh_person_data',
+            'refresh_nonce'         => wp_create_nonce('rrze_faudir_refresh_person_data'),
+            'refresh_success_text'      => __('Data successfully loaded from FAUdir.', 'rrze-faudir'),
+            'refresh_reload_confirm'    => __('We need to reload this page. Please confirm.', 'rrze-faudir'),
+            'refresh_reload_ok'         => __('OK', 'rrze-faudir'),
+            'refresh_reload_cancel'     => __('Cancel', 'rrze-faudir'),            
+            'refresh_unknown_text'  => __('Unknown error while refreshing person data.', 'rrze-faudir'),
+            'refresh_failed_text'   => __('Request failed while refreshing person data.', 'rrze-faudir'),
         ]);
     }
 

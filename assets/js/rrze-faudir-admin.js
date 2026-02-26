@@ -141,6 +141,50 @@
         }
       });
     }
+    if ($("#rrze-faudir-refresh-person-data").length) {
+      $("#rrze-faudir-refresh-person-data").on("click", function() {
+        if (!window.rrzeFaudirAjax) return;
+        var $btn = $("#rrze-faudir-refresh-person-data");
+        var $spinner = $("#rrze-faudir-refresh-spinner");
+        var $out = $("#rrze-faudir-refresh-result");
+        var postId = $("#rrze-faudir-refresh-postid").val();
+        var personId = $("#rrze-faudir-refresh-personid").val();
+        $out.removeClass("notice notice-error notice-success inline").empty();
+        $btn.prop("disabled", true);
+        $spinner.addClass("is-active");
+        $.post(rrzeFaudirAjax.ajax_url, {
+          action: rrzeFaudirAjax.refresh_action,
+          security: rrzeFaudirAjax.refresh_nonce,
+          post_id: postId,
+          person_id: personId
+        }).done(function(resp) {
+          if (resp && resp.success) {
+            var noticeMsg = rrzeFaudirAjax.refresh_success_text;
+            if (resp.data && resp.data.message) {
+              noticeMsg = resp.data.message;
+            }
+            $out.addClass("notice notice-success inline").html("<p>" + noticeMsg + "</p>");
+            var confirmMsg = rrzeFaudirAjax.refresh_success_text + "\n\n" + rrzeFaudirAjax.refresh_reload_confirm;
+            var doReload = window.confirm(confirmMsg);
+            if (doReload) {
+              window.location.reload();
+              return;
+            }
+          } else {
+            var emsg = rrzeFaudirAjax.refresh_unknown_text;
+            if (resp && resp.data && resp.data.message) {
+              emsg = resp.data.message;
+            }
+            $out.addClass("notice notice-error inline").html("<p>" + emsg + "</p>");
+          }
+        }).fail(function() {
+          $out.addClass("notice notice-error inline").html("<p>" + rrzeFaudirAjax.refresh_failed_text + "</p>");
+        }).always(function() {
+          $spinner.removeClass("is-active");
+          $btn.prop("disabled", false);
+        });
+      });
+    }
   });
 })();
 //# sourceMappingURL=rrze-faudir-admin.js.map

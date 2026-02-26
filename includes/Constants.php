@@ -36,6 +36,9 @@ final class Constants {
     public const TRANSIENT_PREFIX_BASE              = 'faudir_';
     public const TRANSIENT_PREFIX_API               = self::TRANSIENT_PREFIX_BASE . 'api_';
     public const TRANSIENT_PREFIX_SHORTCODE         = self::TRANSIENT_PREFIX_BASE . 'shortcode_';
+    public const TRANSIENT_KEY_PERSON_PREFIX        = 'person_'; // Note: TRANSIENT_PREFIX_API will be prefixed to this
+    public const TRANSIENT_KEY_CONTACT_PREFIX       = 'contact_'; // Note: TRANSIENT_PREFIX_API will be prefixed to this
+    public const TRANSIENT_KEY_ORG_PREFIX           = 'org_'; // Note: TRANSIENT_PREFIX_API will be prefixed to this
     public const TRANSIENT_JITTER_MINUTES           = 5;
 
     /*

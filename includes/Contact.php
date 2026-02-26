@@ -328,7 +328,10 @@ class Contact {
     /*
      * Get Orgname
      */
-    public function getOrganizationName(string $lang = "de"): ?string {
+    public function getOrganizationName(?string $lang = "de"): ?string {
+        if ($lang === null || $lang === '') {
+            $lang = 'de';
+        }
         $res = '';
         if  (!empty($this->organization)) {
             if ((isset($this->organization['longDescription'])) && (isset($this->organization['longDescription'][$lang]))) {

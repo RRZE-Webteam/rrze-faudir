@@ -468,6 +468,32 @@ class FaudirUtils {
         return null;
     }
     
+    
+    /*
+    * Prüft, ob eine FAUdir Contact-ID gültig ist.
+    * Erlaubt nur a-z0-9 und exakt 10 Zeichen.
+    */
+   public static function isValidContactId(string $input): bool {
+       $input = strtolower(trim($input));
+       return (bool) preg_match('/^[a-z0-9]{10}$/', $input);
+   }
+
+   /*
+    * Sanitized eine Contact-ID.
+    * Entfernt ungültige Zeichen und gibt null zurück,
+    * wenn das Ergebnis nicht exakt 10 Zeichen a-z0-9 ist.
+    */
+   public static function sanitizeContactId(string $input): ?string {
+       $clean = strtolower(trim($input));
+       $clean = preg_replace('/[^a-z0-9]/', '', $clean);
+
+       if (preg_match('/^[a-z0-9]{10}$/', $clean)) {
+           return $clean;
+       }
+
+       return null;
+   }
+    
     /*
     * Prüft, ob eine FAUdir Organization-ID gültig ist.
     * Erlaubt nur a-z0-9 und exakt 10 Zeichen.

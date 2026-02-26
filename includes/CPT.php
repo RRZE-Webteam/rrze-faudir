@@ -67,6 +67,9 @@ class CPT {
         // "Add New" Untermenü ersetzen
         add_action('admin_menu', [$this, 'replace_add_new_submenu'], 99);
         
+        // Actions zum Resetten der Personendaten
+        add_action('wp_ajax_rrze_faudir_refresh_person_data', [$this, 'ajax_refresh_person_data']);
+        
         // Rest Endpoints nur wenn sie gebraucht werden
         add_filter('rest_endpoints', [$this, 'filter_rest_endpoints']);
         
@@ -77,6 +80,8 @@ class CPT {
         add_filter('wpseo_canonical',                     [$this, 'maybe_override_canonical_for_seo']);
         add_filter('rank_math/frontend/canonical',        [$this, 'maybe_override_canonical_for_seo']);
         add_filter('the_seo_framework_rel_canonical',     [$this, 'maybe_override_canonical_for_seo']);
+        
+        
 
     }
 
@@ -178,6 +183,14 @@ class CPT {
                 'low'
             );
         }
+        add_meta_box(
+            'faudir_person_cache_tools',
+            __('FAUdir Update', 'rrze-faudir'),
+            [$this, 'render_person_cache_tools_metabox'],
+            $post_type,
+            'side',
+            'high'
+        );
     }
 
  
@@ -285,33 +298,36 @@ class CPT {
 
             $api    = new API($this->config);
             $params = ['identifier' => $person_id_value];
-            $response = $api->getPersons(60, 0, $params);
-            if (is_array($response) && isset($response['data'][0])) {
-                $person_api = $response['data'][0];
+            $person_api = $api->getPerson($person_id_value);
+            if (!is_array($person_api) || empty($person_api)) {
+                $person_api = null;
+            }
 
-                // Kontakte vorbereiten (read-only Anzeige)
-                if (isset($person_api['contacts']) && is_array($person_api['contacts'])) {
-                    $org = new Organization();
-                    $org->setConfig($this->config);
-                    foreach ($person_api['contacts'] as $contactInfo) {
-                        $cont = new Contact($contactInfo);
-                        $cont->setConfig($this->config);
-                        $cont->getContactbyAPI($contactInfo['identifier']);
 
-                        $organizationIdentifier = $contactInfo['organization']['identifier'] ?? '';
-                        $org->getOrgbyAPI($organizationIdentifier);
 
-                        $contacts_api[] = [
-                            'organization' => $contactInfo['organization']['name'] ?? '',
-                            'function_en'  => $contactInfo['functionLabel']['en'] ?? '',
-                            'function_de'  => $contactInfo['functionLabel']['de'] ?? '',
-                            'socials'      => $cont->getSocialString(),
-                            'workplace'    => $cont->getWorkplacesString(),
-                            'address'      => $org->getAdressString(),
-                        ];
-                    }
+            // Kontakte vorbereiten (read-only Anzeige)
+            if (isset($person_api['contacts']) && is_array($person_api['contacts'])) {
+                $org = new Organization();
+                $org->setConfig($this->config);
+                foreach ($person_api['contacts'] as $contactInfo) {
+                    $cont = new Contact($contactInfo);
+                    $cont->setConfig($this->config);
+                    $cont->getContactbyAPI($contactInfo['identifier']);
+
+                    $organizationIdentifier = $contactInfo['organization']['identifier'] ?? '';
+                    $org->getOrgbyAPI($organizationIdentifier);
+
+                    $contacts_api[] = [
+                        'organization' => $contactInfo['organization']['name'] ?? '',
+                        'function_en'  => $contactInfo['functionLabel']['en'] ?? '',
+                        'function_de'  => $contactInfo['functionLabel']['de'] ?? '',
+                        'socials'      => $cont->getSocialString(),
+                        'workplace'    => $cont->getWorkplacesString(),
+                        'address'      => $org->getAdressString(),
+                    ];
                 }
             }
+            
         
             // Hilfsfunktion zur Read-only Ausgabe
             $ro = function($label, $value) {
@@ -1148,5 +1164,135 @@ class CPT {
 
         return $endpoints;
     }
+    
+    
+    /*
+     * Toolbox für das Resetten der Personendaten
+     */
+    public function render_person_cache_tools_metabox(\WP_Post $post): void {
+        $post_type = $this->config->get('person_post_type');
+        if ($post->post_type !== $post_type) {
+            return;
+        }
+
+        $person_id = (string) get_post_meta((int) $post->ID, 'person_id', true);
+        $person_id = (string) (FaudirUtils::sanitizePersonId($person_id) ?? '');
+
+        if ($person_id === '') {
+            echo '<p class="description">' . esc_html__('No valid person_id on this post.', 'rrze-faudir') . '</p>';
+            return;
+        }
+
+        $nonce = wp_create_nonce('rrze_faudir_refresh_person_data');
+
+        echo '<p class="description">'
+            . esc_html__('Deletes cached FAUdir data (transients) and fetches fresh person + contact data from the API.', 'rrze-faudir')
+            . '</p>';
+
+        echo '<input type="hidden" id="rrze-faudir-refresh-nonce" value="' . esc_attr($nonce) . '">';
+        echo '<input type="hidden" id="rrze-faudir-refresh-postid" value="' . esc_attr((string) $post->ID) . '">';
+        echo '<input type="hidden" id="rrze-faudir-refresh-personid" value="' . esc_attr($person_id) . '">';
+
+        echo '<p>';
+        echo '<button type="button" class="button button-primary" id="rrze-faudir-refresh-person-data">'
+            . esc_html__('Update Person-Data from FAUdir', 'rrze-faudir')
+            . '</button> ';
+        echo '<span class="spinner" id="rrze-faudir-refresh-spinner" style="float:none;margin:0 0 0 6px;"></span>';
+        echo '</p>';
+
+        echo '<div id="rrze-faudir-refresh-result" class="description" style="margin-top:8px;"></div>';
+    }
+    
+    /*
+     * Personendaten refreshen
+     */
+    public function ajax_refresh_person_data(): void {
+        check_ajax_referer('rrze_faudir_refresh_person_data', 'security');
+
+        $post_id = isset($_POST['post_id']) ? (int) wp_unslash($_POST['post_id']) : 0;
+        if ($post_id <= 0) {
+            wp_send_json_error(['message' => __('Invalid post_id.', 'rrze-faudir')], 400);
+        }
+
+        if (!current_user_can('edit_post', $post_id)) {
+            wp_send_json_error(['message' => __('Insufficient permissions.', 'rrze-faudir')], 403);
+        }
+
+        $post = get_post($post_id);
+        if (!$post instanceof \WP_Post) {
+            wp_send_json_error(['message' => __('Post not found.', 'rrze-faudir')], 404);
+        }
+
+        $post_type = $this->config->get('person_post_type');
+        if ($post->post_type !== $post_type) {
+            wp_send_json_error(['message' => __('Invalid post type.', 'rrze-faudir')], 400);
+        }
+
+        $person_id_raw = isset($_POST['person_id']) ? (string) wp_unslash($_POST['person_id']) : '';
+        $person_id = FaudirUtils::sanitizePersonId($person_id_raw);
+        if ($person_id === null) {
+            wp_send_json_error(['message' => __('Invalid person_id.', 'rrze-faudir')], 400);
+        }
+
+        $api = new API($this->config);
+
+        // Cache löschen und frisch holen (Person + Contacts)
+        $cache = new Cache($api->getApiBaseUrl());
+        $cache->deletePersonTransient($person_id);
+
+        $person = $api->getPerson($person_id);
+        $ok = (is_array($person) && !empty($person));
+
+        $cron = new Cron($this->config);
+        $cron->apply_availability_result($post_id, $ok, [
+            'person_id' => $person_id,
+            'source'    => 'manual_refresh',
+        ]);
+
+        if (!$ok) {
+            wp_send_json_error([
+                'message' => __('Person not found or API error. Availability failure recorded.', 'rrze-faudir'),
+            ], 500);
+        }
+
+        $refreshed = 0;
+        $failed = 0;
+
+        $contact_ids = [];
+        if (isset($person['contacts']) && is_array($person['contacts'])) {
+            foreach ($person['contacts'] as $c) {
+                $cid = (string) ($c['identifier'] ?? '');
+                $cid = FaudirUtils::sanitizePersonId($cid);
+                if ($cid !== null) {
+                    $contact_ids[] = $cid;
+                }
+            }
+        }
+
+        $contact_ids = array_values(array_unique($contact_ids));
+
+        foreach ($contact_ids as $cid) {
+            $cache->deleteContactTransient($cid);
+
+            $cdata = $api->getContact($cid);
+            if (is_array($cdata) && !empty($cdata)) {
+                $refreshed++;
+            } else {
+                $failed++;
+            }
+        }
+
+        $msg = sprintf(
+            __('Person data refreshed. Contacts refreshed: %1$d, failed: %2$d.', 'rrze-faudir'),
+            $refreshed,
+            $failed
+        );
+
+        wp_send_json_success([
+            'message' => $msg,
+            'reload'  => true,
+        ]);
+    }
+    
 }
 
