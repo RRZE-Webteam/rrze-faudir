@@ -13,34 +13,41 @@
         });
       }
     });
+    function rrzeFaudirModalOpen() {
+      var $m = $("#rrze-faudir-modal");
+      $m.attr("aria-hidden", "false").addClass("is-open");
+    }
+    function rrzeFaudirModalClose() {
+      var $m = $("#rrze-faudir-modal");
+      $m.attr("aria-hidden", "true").removeClass("is-open");
+    }
+    function rrzeFaudirSetModalContent(txt) {
+      $("#rrze-faudir-modal-content").html(txt);
+    }
+    $("#rrze-faudir-modal").on("click", '[data-modal-close="1"]', function() {
+      rrzeFaudirModalClose();
+    });
+    $(document).on("keydown", function(e) {
+      if (e.key === "Escape") {
+        rrzeFaudirModalClose();
+      }
+    });
     $("#import-fau-person-button").on("click", function() {
       if (!window.rrzeFaudirAjax) return;
       if (!confirm(rrzeFaudirAjax.confirm_import)) return;
-      var $target = $("#migration-progress");
-      $target.empty().append(
-        '<div id="import-progress"><div class="progress-bar" style="width:0%;height:20px;background-color:#4CAF50;"></div></div><div id="import-response" style="margin-top:10px;"></div>'
-      );
-      var progressInterval = setInterval(function() {
-        var $bar = $("#import-progress .progress-bar");
-        var current = parseInt($bar.css("width")) / $("#import-progress").width() * 100 || 0;
-        $bar.css("width", Math.min(current + 10, 90) + "%");
-      }, 500);
+      rrzeFaudirSetModalContent("Running import ...");
+      rrzeFaudirModalOpen();
       $.post(rrzeFaudirAjax.ajax_url, {
         action: "rrze_faudir_import_fau_person",
         security: rrzeFaudirAjax.api_nonce
       }).done(function(response) {
-        clearInterval(progressInterval);
-        $("#import-progress .progress-bar").css("width", "100%");
-        if (response.success) {
-          var formatted = String(response.data).replace(/\n/g, "</li><li>");
-          $("#import-response").html('<ul style="max-width:75ch;"><li>' + formatted + "</li></ul>");
+        if (response && response.success && response.data && typeof response.data.text !== "undefined") {
+          rrzeFaudirSetModalContent(response.data.text || "Done.");
         } else {
-          $("#import-response").html("<p>No contact from FAU Person imported.</p>");
+          rrzeFaudirSetModalContent("No contact from FAU Person imported.");
         }
       }).fail(function() {
-        clearInterval(progressInterval);
-        $("#import-progress .progress-bar").css("width", "100%");
-        $("#import-response").html("<p>An error occurred during the import.</p>");
+        rrzeFaudirSetModalContent("An error occurred during the import.");
       });
     });
     if ($("#search-person-form").length) {

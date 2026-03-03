@@ -1294,5 +1294,52 @@ class CPT {
         ]);
     }
     
+    
+    /*
+     * Helper-Funktionen zum Import von Personendaten. Für die Suche nach bereits importierten CPTs.
+     */
+    public function findPostIdByPersonId(string $personId): int {
+        $personId = trim($personId);
+        if ($personId === '') {
+            return 0;
+        }
+
+        $ids = get_posts([
+            'post_type'      => $this->postType,
+            'fields'         => 'ids',
+            'posts_per_page' => 1,
+            'meta_query'     => [
+                [
+                    'key'     => 'person_id',
+                    'value'   => $personId,
+                    'compare' => '=',
+                ],
+            ],
+        ]);
+
+        return (!empty($ids) && is_array($ids)) ? (int) $ids[0] : 0;
+    }
+
+    public function findPostIdByUnivISId(string $univisid): int {
+        $univisid = FaudirUtils::sanitizeUnivISId($univisid);
+        if (!FaudirUtils::isValidUnivISId($univisid)) {
+            return 0;
+        }
+
+        $ids = get_posts([
+            'post_type'      => $this->postType,
+            'fields'         => 'ids',
+            'posts_per_page' => 1,
+            'meta_query'     => [
+                [
+                    'key'     => 'fau_person_faudir_synced',
+                    'value'   => $univisid,
+                    'compare' => '=',
+                ],
+            ],
+        ]);
+
+        return (!empty($ids) && is_array($ids)) ? (int) $ids[0] : 0;
+    }
 }
 

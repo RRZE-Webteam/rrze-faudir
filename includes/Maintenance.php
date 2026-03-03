@@ -6,31 +6,29 @@ defined('ABSPATH') || exit;
 
 class Maintenance {
     protected Config $config;
+    protected CPT $cpt;
     protected Migration $migration;
     protected Cron $cron;
 
     public function __construct(Config $config) {
         $config->insertOptions();
         $this->config = $config;
-
-        $this->migration = new Migration($this->config);
+        $this->cpt = new CPT($this->config);
+        $this->migration = new Migration($this->config, $this->cpt);
         $this->cron = new Cron($this->config);
     }
 
     public function register_hooks(): void {
         // Aktivierungshooks
-        register_activation_hook(RRZE_PLUGIN_FILE, [$this->migration, 'migrate_person_data_on_activation']);
+        register_activation_hook(RRZE_PLUGIN_FILE, [$this, 'on_plugin_activation']);
         register_activation_hook(RRZE_PLUGIN_FILE, [$this->cron, 'on_plugin_activation']);
         register_deactivation_hook(RRZE_PLUGIN_FILE, [$this->cron, 'on_plugin_deactivation']);
 
-        // Admin Notices (Migration)
-        add_action('admin_notices', [$this->migration, 'rrze_faudir_display_import_notice'], 15);
-
+        add_action('admin_notices', [$this, 'maybe_show_activation_notice']);
+    
         // Slug-Änderung überwachen
         add_action('update_option_rrze_faudir_options', [$this, 'rrze_faudir_flush_rewrite_on_slug_change'], 10, 3);
 
-        // Rewrite-Regeln speichern
-        add_action('admin_init', [$this, 'rrze_faudir_save_permalink_settings']);
 
         // Cron / Scheduler
         $this->cron->register_hooks();
@@ -41,6 +39,10 @@ class Maintenance {
         add_action('template_redirect', [$this, 'custom_cpt_404_message']);
     }
 
+    public function on_plugin_activation(): void {
+        flush_rewrite_rules();
+    }
+
     public function rrze_faudir_flush_rewrite_on_slug_change($old_value, $value, $option): void {
         if (
             $option === 'rrze_faudir_options'
@@ -49,11 +51,6 @@ class Maintenance {
         ) {
             flush_rewrite_rules();
         }
-    }
-
-    public function rrze_faudir_save_permalink_settings(): void {
-        global $wp_rewrite;
-        $wp_rewrite->flush_rules();
     }
 
     public function load_custom_person_template($template) {
@@ -155,5 +152,56 @@ class Maintenance {
         $normalized_slug = strtolower(trim($slug, '/'));
 
         return $normalized_uri === $normalized_slug;
+    }
+
+    
+    public function maybe_show_activation_notice(): void {
+        if (!is_admin()) {
+            return;
+        }
+
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        $screen = function_exists('get_current_screen') ? get_current_screen() : null;
+        if (!$screen) {
+            return;
+        }
+
+        if ($screen->base !== 'plugins') {
+            return;
+        }
+
+        $isActivation = (!empty($_GET['activate']) && $_GET['activate'] === 'true')
+            || (!empty($_GET['activate-multi']) && $_GET['activate-multi'] === 'true');
+
+        if (!$isActivation) {
+            return;
+        }
+
+        $plugin = isset($_GET['plugin']) ? (string) $_GET['plugin'] : '';
+        if ($plugin !== plugin_basename(RRZE_PLUGIN_FILE)) {
+            return;
+        }
+
+        $settingsUrl = add_query_arg(
+            [
+                'page' => 'rrze-faudir',
+                'tab'  => 'advanced',
+            ],
+            admin_url('options-general.php')
+        );
+
+        $msg = __('To change basic settings, access the settings.', 'rrze-faudir');
+        if (FaudirUtils::isFauPersonActive()) {
+            $msg .= ' ' . __('Import of entries from FAU Person can be started in the settings (Advanced).', 'rrze-faudir');
+        }
+
+        echo '<div class="notice notice-info is-dismissible">';
+        echo '<p>' . esc_html($msg) . ' ';
+        echo '<a href="' . esc_url($settingsUrl) . '">' . esc_html__('Open settings', 'rrze-faudir') . '</a>';
+        echo '</p>';
+        echo '</div>';
     }
 }

@@ -116,6 +116,104 @@
 	}
     }
     
+    
+    
+    .rrze-faudir-modal {
+      display: none;
+
+
+	&.is-open {
+	  display: block;
+	  position: fixed;
+	  inset: 0;
+	  z-index: 100000;
+	}
+
+	.rrze-faudir-modal__backdrop {
+	  position: absolute;
+	  inset: 0;
+	  background: rgba(0, 0, 0, 0.5);
+	}
+
+	.rrze-faudir-modal__dialog {
+	  position: relative;
+	  max-width: 900px;
+	  margin: 10vh auto;
+	  background: #fff;
+	  border-radius: 6px;
+	  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+	}
+
+	.rrze-faudir-modal__header {
+	  display: flex;
+	  align-items: center;
+	  justify-content: space-between;
+	  padding: 0 16px;
+	  border-bottom: 1px solid #ddd;
+	}
+
+	.rrze-faudir-modal__body {
+	  padding: 12px 16px;
+	  max-height: 60vh;
+	  overflow: auto;
+	  
+	    pre {
+		white-space: pre-wrap;
+		margin: 0;
+	    }
+	    ul {
+		list-style: none;
+		padding-left: 1.8em;
+	    }
+	    ul.success li,
+	    ul.error li {
+		position: relative;
+		margin-bottom: 0.4em;
+	    }
+	    ul.success {
+		background: #e8f5e9;
+		border-left: 4px solid #2e7d32;
+		padding: 10px 15px 10px 35px;
+	    }
+
+	    ul.error {
+		background: #ffebee;
+		border-left: 4px solid #c62828;
+		padding: 10px 15px 10px 35px;
+	    }
+	    ul.success li::before,
+	    ul.error li::before {
+		font-family: "dashicons";
+		position: absolute;
+		left: -1.6em;
+		top: 0.1em;
+		font-size: 16px;
+	    }
+
+	    ul.success li::before {
+		content: "\f147"; /* dashicons-yes */
+		color: #2e7d32;
+	    }
+
+	    ul.error li::before {
+		content: "\f158"; /* dashicons-no */
+		color: #c62828;
+	    }
+	}
+
+
+	.rrze-faudir-modal__close {
+	    min-width: 42px;
+	    min-height: 42px;
+	    font-size: 1.5em;
+	    text-align: center;
+	    text-decoration: none;
+		
+	}
+	
+    }
+
+    
 }
 
 // Used only in the classic version of the custom post editor, 

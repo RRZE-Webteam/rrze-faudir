@@ -468,6 +468,30 @@ class FaudirUtils {
         return null;
     }
     
+    /*
+    * Prüft, ob eine UnivIS ID gültig ist.
+    * Erlaubt nur 0-9 und mindestens 4, aber maximal 10 Zeichen.
+    */
+   public static function isValidUnivISId(string $input): bool {
+       $input = trim($input);
+       return (bool) preg_match('/^[0-9]{4,10}$/', $input);
+   }
+
+   /*
+    * Sanitized eine UnivIS-ID.
+    * Entfernt alle Nicht-Ziffern und kürzt auf maximal 10 Stellen.
+    */
+   public static function sanitizeUnivISId(string $input): string {
+       $input = trim($input);
+
+       // nur Ziffern erlauben
+       $input = preg_replace('/[^0-9]/', '', $input);
+
+       // auf max. 10 Zeichen begrenzen
+       $input = substr($input, 0, 10);
+
+       return $input;
+   }
     
     /*
     * Prüft, ob eine FAUdir Contact-ID gültig ist.
@@ -764,4 +788,21 @@ class FaudirUtils {
         return preg_replace('/^https?:\/\//i', '', $url);
     }
    
+    
+    /*
+     * Prüfung ob FAU Person aktiv ist
+     */
+    public static function isFauPersonActive(): bool {
+        if (!function_exists('is_plugin_active')) {
+            require_once ABSPATH . 'wp-admin/includes/plugin.php';
+        }
+
+        if (is_multisite() && function_exists('is_plugin_active_for_network')) {
+            if (is_plugin_active_for_network('fau-person/fau-person.php')) {
+                return true;
+            }
+        }
+
+        return is_plugin_active('fau-person/fau-person.php');
+    }
 }

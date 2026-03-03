@@ -62,4 +62,11 @@ final class Constants {
     public const DASHBOARD_WIDGET_ID                = 'rrze_faudir_private_alerts_widget';
     public const DASHBOARD_DISMISS_ACTION           = 'rrze_faudir_dismiss_private_alerts';
     public const NONCE_DASHBOARD_DISMISS            = 'rrze_faudir_private_alerts_dismiss';
+    
+    /*
+     * URL für Abfrage von Personen aus UnivIS
+     */
+    public const UNIVIS_PERSON_JSON_URL = 'https://univis.uni-erlangen.de/prg?search=persons&id=%s&show=json';
+
+    
 }
