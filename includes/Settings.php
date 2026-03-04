@@ -1002,7 +1002,8 @@ class Settings {
         check_ajax_referer('rrze_faudir_reset_defaults_nonce', 'security');
 
         $config = new Config();
-        $default_settings = $config->getAll();
+        $default_settings =  $config->getAll(); // $config->getOverwiteableOptions(); //
+    
         update_option('rrze_faudir_options', $default_settings);
 
         wp_send_json_success(__('Settings have been reset to default values.', 'rrze-faudir'));
@@ -1222,8 +1223,7 @@ class Settings {
             $params['q'] = $search_term;
         }
 
-        $config   = new Config();
-        $api      = new API($config);
+        $api      = new API($this->config);
         $response = $api->getOrgList(20, 0, $params);
 
         if (is_string($response)) {
@@ -1327,8 +1327,8 @@ class Settings {
     public function sanitize_options(array $new_options): array {
         // Bisherige Optionen laden und sicherstellen, dass es ein Array ist
         // $existing = get_option('rrze_faudir_options', []);
-        $config = new \RRZE\FAUdir\Config();
-        $existing = $config->getOptions();
+
+        $existing = $this->config->getOptions();
         
         
         if (!is_array($existing)) {
@@ -1413,9 +1413,14 @@ class Settings {
      * Aktives/Deaktives History/Revisions für CPT
      */
     public function render_enable_history(): void {
-        $options = get_option('rrze_faudir_options');
-        $checked = is_array($options) && !empty($options['enable_history']);
+        
+        
+        
+        // $options = get_option('rrze_faudir_options');
+        // $checked = is_array($options) && !empty($options['enable_history']);
 
+       $checked = $this->config->get('enable_history');
+        
         echo '<label>';
         echo '<input type="hidden" name="rrze_faudir_options[enable_history]" value="0">';
         echo '<input type="checkbox" name="rrze_faudir_options[enable_history]" value="1" ' . checked(true, $checked, false) . '>';
@@ -1428,12 +1433,7 @@ class Settings {
     }
 
     private function isHistoryEnabled(): bool {
-        $opt = get_option('rrze_faudir_options');
-        if (!is_array($opt)) {
-            return false;
-        }
-
-        return !empty($opt['enable_history']);
+        return (int) $this->config->get('enable_history') === 1;
     }
     
    

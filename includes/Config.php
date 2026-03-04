@@ -94,7 +94,8 @@ class Config {
             'transient_time_for_org_id',
             'fallback_link_faudir',
             'jobtitle_format',
-            'default_normalize_honorificPrefix'
+            'default_normalize_honorificPrefix',
+            'enable_history'
         ]
 
     ];

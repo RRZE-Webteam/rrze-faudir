@@ -1132,11 +1132,7 @@ class CPT {
      * Revisions/Historie aktiv?
      */
     private function isHistoryEnabled(): bool {
-        $opt = get_option('rrze_faudir_options');
-        if (!is_array($opt)) {
-            return false;
-        }
-        return !empty($opt['enable_history']);
+        return (int) $this->config->get('enable_history') === 1;
     }
     
     
