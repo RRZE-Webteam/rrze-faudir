@@ -5,6 +5,13 @@
 /*----------------------------------------------------------------------------*/
 
 .faudir-settings {
+    --faudir-settings-card-bg: var(--color-white, #fff);
+    --faudir-settings-borders: var(--color-ContentBorders, #efefef);
+    --faudir-settings-textcolor-dark:  var(--color-KontrastDunkel, #333);
+    --faudir-settings-textcolor-meta:  var(--color-MetaTextDefault, #444);
+    --faudir-settings-error-color:  #ffebee;
+    --faudir-settings-success-color: #e8f5e9;
+    
     .contacts-wrapper {
 	display: flex;
 	flex-wrap: wrap;
@@ -21,9 +28,9 @@
 
     .contact-card,
     .organizations-wrapper .organization-card {
-	background-color: var(--color-white);
+	background-color: var(--faudir-settings-card-bg);
 	border-radius: 10px;
-	box-shadow: 0px 4px 6px var(--color-ContentBorders);
+	box-shadow: 0px 4px 6px var(--faudir-settings-borders);
 	padding: 20px;
 	width: calc(33.333% - 20px);
 	box-sizing: border-box;
@@ -36,22 +43,22 @@
 	h2.contact-name {
 	    font-size: var(--font-size-h2, 1.5rem);
 	    margin-bottom: 10px;
-	    color: var(--color-KontrastDunkel);
+	    color: var(--faudir-settings-textcolor-dark);
 	}
 
 	p {
 	    margin: 5px 0;
-	    color: var(--color-MetaTextDefault);
+	    color: var(--faudir-settings-textcolor-meta);
 
 	    strong {
-		color: var(--color-black);
+		color: var(--faudir-settings-textcolor-dark);
 	    }
 	}
 
 	h3 {
 	    font-size: 1.2em;
 	    margin-top: 15px;
-	    color: var(--color-MetaTextDefault);
+	    color: var(--faudir-settings-textcolor-meta);
 	}
 	
 	
@@ -107,7 +114,7 @@
     
     .danger-zone {
 	margin: 2rem 0.5rem 0.5rem 0.5rem;
-	border: 3px solid var(--faudir-color-alert);
+	border: 3px solid var(--faudir-settings-error-color);
 	padding: 1rem;
 	
 	button#reset-to-defaults-button {
@@ -171,13 +178,13 @@
 		margin-bottom: 0.4em;
 	    }
 	    ul.success {
-		background: #e8f5e9;
+		background: var(--faudir-settings-success-color);
 		border-left: 4px solid #2e7d32;
 		padding: 10px 15px 10px 35px;
 	    }
 
 	    ul.error {
-		background: #ffebee;
+		background: var(--faudir-settings-error-color);
 		border-left: 4px solid #c62828;
 		padding: 10px 15px 10px 35px;
 	    }
