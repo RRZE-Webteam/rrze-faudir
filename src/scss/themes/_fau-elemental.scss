@@ -97,8 +97,16 @@
 		.icon a::before {
 			text-decoration: underline;
 			text-underline-offset: var(--Spacing-1x);
+			mask-position: inherit;
 		}
-
+		.icon.icon-list {
+		    --_icon-size: 1.5rem;
+		    --_icon-mask-size: 1.5rem;
+		    
+		    ul li {
+			margin-right: 0.5rem;
+		    }
+		}
 		.icon.icon-list ul li a:hover,
 		.icon.icon-list ul li a:focus,
 		.icon.icon-list ul li a:hover::before,

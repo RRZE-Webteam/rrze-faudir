@@ -727,18 +727,40 @@ class FaudirUtils {
 
             if (preg_match('/^https?:\/\//i', $value)) {
                 $display = self::prettyUrl($value);
-                $formatted = '<a href="' . esc_url($value) . '" itemprop="sameAs">' . esc_html($display) . '</a>';
-                $out .= '<li><span class="website title">' . $label . ': </span>' . $formatted . '</li>';
+            //    $formatted = '<a href="' . esc_url($value) . '" itemprop="sameAs">' . esc_html($display) . '</a>';
+            //    $out .= '<li><span class="website title">' . $label . ': </span>' . $formatted . '</li>';
+                
+                
+                $out .= '<li>';
+                $out .= '<a href="' . esc_url($value) . '" itemprop="sameAs">';
+                $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($display) . '</span>';
+                $out .= '</a>';
+                $out .= '</li>';
+                
                 continue;
             }
 
             if (filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                $formatted = '<a itemprop="email" href="mailto:' . esc_attr($value) . '">' . esc_html($value) . '</a>';
-                $out .= '<li><span class="email title">' . $label . ': </span>' . $formatted . '</li>';
+         //       $formatted = '<a itemprop="email" href="mailto:' . esc_attr($value) . '">' . esc_html($value) . '</a>';
+         //       $out .= '<li><span class="email title">' . $label . ': </span>' . $formatted . '</li>';
+                
+                $out .= '<li>';
+                $out .= '<a  itemprop="email" href="mailto:' . esc_attr($value) . '" itemprop="sameAs">';
+                $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($display) . '</span>';
+                $out .= '</a>';
+                $out .= '</li>';
+                
                 continue;
             }
+            
+            // $out .= '<li><span class="title">' . $label . ': </span><span class="value">' . esc_html($value) . '</span></li>';
+                        
+                        
+                $out .= '<li>';
+                $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($display) . '</span>';
+                $out .= '</li>';
+                
 
-            $out .= '<li><span class="title">' . $label . ': </span><span class="value">' . esc_html($value) . '</span></li>';
         }
 
         $out .= '</ul>';
