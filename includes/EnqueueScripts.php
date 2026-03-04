@@ -8,7 +8,6 @@ use RRZE\FAUdir\Config;
 
 class EnqueueScripts {
 
-    public function __construct() {}
 
     public function register(): void {
         // Assets global REGISTRIEREN (Frontend + Backend verfügbar, aber noch NICHT geladen)

@@ -12,7 +12,7 @@ final class Cron {
     protected Config $config;
 
     public function __construct(Config $config) {
-        $config->insertOptions();
+   //     $config->insertOptions();
         $this->config = $config;
     }
 
@@ -52,7 +52,7 @@ final class Cron {
 
         set_transient(Constants::TRANSIENT_AVAILABILITY_RUNNING, true, (int) Constants::TRANSIENT_AVAILABILITY_TTL);
 
-        $post_type = (new Config())->get('person_post_type');
+        $post_type = $this->config->get('person_post_type');
         $api = new API($this->config);
 
         $posts = get_posts([

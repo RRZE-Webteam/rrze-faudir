@@ -219,10 +219,17 @@ class Migration {
                                $not_imported_reasons[] = '<em>' . $given. ' '. $family. '('.$email.')</em> ' . __('could not be imported due to an internal error.', 'rrze-faudir');
                                continue;
                         }
+                         // Zeitstempel setzen 
+                        update_post_meta($new_post_id, Constants::META_LAST_SUCCESS_AT, time());
+                        update_post_meta($new_post_id, Constants::META_LAST_FAILURE_AT, 0);
+                        update_post_meta($new_post_id, Constants::META_FAILURE_COUNT, 0);
+                        
                         $this->migrate_categories((int) $post->ID, (int) $new_post_id, $taxonomy);
                         if ($thumbnail_id > 0) {
                             set_post_thumbnail((int) $new_post_id, (int) $thumbnail_id);
                         }
+
+                        
                         $imported_count++;
                         $imported_list[] = '<em>' . $given. ' '. $family. '('.$email.')</em> '. __('was successfully imported.', 'rrze-faudir');
                         // do_action('rrze.log.info', "FAUdir\Migration (importFromFauPerson): Successfully added: email: {$email}, firstname: {$given}, lastname: {$family}");

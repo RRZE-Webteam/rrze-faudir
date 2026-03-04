@@ -7,7 +7,7 @@ defined('ABSPATH') || exit;
 
 class Config {
     private array $config = [
-        'version'                           => 10,  // please count this up any time we change the config array
+        'version'                           => 11,  // please count this up any time we change the config array
         'api_key'                           => '',
         'api-baseurl'                       => 'https://api.fau.de/pub/v1/opendir/',
         'faudir-url'                        => 'https://faudir.fau.de/',

@@ -68,5 +68,8 @@ final class Constants {
      */
     public const UNIVIS_PERSON_JSON_URL = 'https://univis.uni-erlangen.de/prg?search=persons&id=%s&show=json';
 
+    public const FAUDIR_DOKU_URL = 'https://www.wp.rrze.fau.de/plugins/inhaltsseiten-mit-funktionen-erweitern/rrze-faudir/';
+    public const FAUDIR_DOKU_TITLE =  'Documentation';
+    
     
 }

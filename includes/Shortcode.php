@@ -13,12 +13,10 @@ defined('ABSPATH') || exit;
 
 
 class Shortcode { 
-
     private Config $config;
 
-    
-    public function __construct() {
-        $this->config = new Config();
+    public function __construct(Config $config) {
+        $this->config = $config;
          
         // Haupt-Shortcode registrieren
         add_shortcode('faudir', [$this, 'render']);

@@ -14,7 +14,7 @@ use RRZE\FAUdir\Contact;
  */
 
 class CPT {
-    protected $config;
+    protected Config $config;
     protected string $settings_page_slug = 'rrze-faudir';
     protected string $person_search_tab  = 'contacts'; 
     protected string $canonical_meta_key = 'canonical_url';
@@ -24,8 +24,8 @@ class CPT {
     protected int $history_max_entries = 50;
 
     
-    public function __construct() {
-        $this->config = new Config();
+    public function __construct(Config $config) {
+        $this->config = $config;
 
         // Register CPT & Taxonomies
         add_action('init', [$this, 'register_post_type'], 15);
@@ -41,7 +41,7 @@ class CPT {
 
         
         if ($this->isHistoryEnabled()) {
-            // Normale WP Rebisions mit in die eigen Log ergänzen
+            // Normale WP Rebisions mit in die eigene Log ergänzen
             add_action('post_updated', [$this, 'log_content_changes'], 10, 3);
 
             // Statuswechsel loggen
@@ -869,7 +869,6 @@ class CPT {
     public function replace_add_new_submenu(): void {
         $post_type = $this->config->get('person_post_type');
         $parent_slug = 'edit.php?post_type=' . $post_type;
-
         // Standard-"Add New" entfernen
         remove_submenu_page($parent_slug, 'post-new.php?post_type=' . $post_type);
 

@@ -9,8 +9,14 @@ use RRZE\FAUdir\API;
 use RRZE\FAUdir\Maintenance;
 
 class Settings {
-
-    public function __construct() {}
+    protected Config $config;
+    protected CPT $cpt;
+    
+    public function __construct(Config $config, CPT $cpt) {
+      //  $config->insertOptions();
+        $this->config = $config;
+        $this->cpt = $cpt;
+    }
 
     /* -----------------------------
      * Hooks
@@ -1056,10 +1062,9 @@ class Settings {
             'ul'   => [],
             'li'   => [],
         ];
-        $config = new Config();
-        $config->insertOptions();
-        $cpt = new CPT($config);
-        $migration = new Migration($config, $cpt);
+
+        
+        $migration = new Migration($this->config, $this->cpt);
         $result = $migration->importFromFauPerson();
         $textParts = [];
 

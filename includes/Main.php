@@ -23,36 +23,41 @@ class Main {
      */
     protected string $pluginFile;
     public Config $config;
-
+    public CPT $cpt;
 
     public function __construct(string $pluginFile)  {
         $this->pluginFile = $pluginFile;
-        $this->config = new Config();
+        $this->config = new Config();   
+        $this->config->insertOptions();
+
         $this->config->set('pluginfile', $pluginFile);
     }
 
     public function onLoaded() {
         
+        // CPT laden
+        $this->cpt = new CPT($this->config);
         
+
         // Einstellungen laden
-        $settings = new Settings();
+        $settings = new Settings($this->config, $this->cpt);
         $settings->register_hooks();
         
         // Register REST API
-        new REST();
+        new REST($this->config);
         
         // Enqueue Scripts
         $enqueues = new EnqueueScripts();
         $enqueues->register();
         
         // Register Shortcodes Actions
-        new Shortcode();
+        new Shortcode($this->config);
         
         // Block Registration
         new BlockRegistration();
     
         // Rufe Maintenance Hooks auf
-        $maintenance = new Maintenance($this->config);
+        $maintenance = new Maintenance($this->config, $this->cpt);
         $maintenance->register_hooks();
         
         $dashboard = new Dashboard();

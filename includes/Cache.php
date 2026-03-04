@@ -94,7 +94,7 @@ final class Cache {
         $key = $this->buildTransientKey($url, $cache_key_basis);
         set_transient($key, $data, $lifetime);
 
-        do_action('rrze.log.info', "FAUdir\\Cache (set): Set Transient key {$key}.");
+       // do_action('rrze.log.info', "FAUdir\Cache (set): Set Transient key {$key}.");
     }
 
     public function deleteByTypeAndId(string $type, string $id): bool {

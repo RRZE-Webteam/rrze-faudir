@@ -4,7 +4,10 @@ namespace RRZE\FAUdir;
 defined ('ABSPATH') || exit;
 
 class REST {
-    public function __construct() {
+    protected Config $config;
+
+    public function __construct(Config $config) {
+        $this->config = $config;
         $this->register_routes();
     }
 
@@ -119,8 +122,7 @@ class REST {
      * Rückgabe: array mit Optionen/Feldern/Rollen.
      */
     public function get_settings_payload(): array {
-        $config  = new Config();
-        $options = $config->getOptions();
+        $options = $this->config->getOptions();
 
         return [
             'default_output_fields'       => get_option('rrze_faudir_options')['default_output_fields'] ?? [],
