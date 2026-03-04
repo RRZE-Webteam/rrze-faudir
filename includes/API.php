@@ -255,7 +255,6 @@ class API {
         }
 
         $url .= $param_uri;
-do_action('rrze.log.info', "FAUdir\API (getContacts): Getting data with url {$url}: ", $params);
         $response = $this->makeRequest($url, "GET");
         if (!$response) {
             do_action('rrze.log.error', "FAUdir\API (getContacts): No response from server on {$url}.");
