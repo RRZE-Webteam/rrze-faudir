@@ -23,7 +23,9 @@
 			font-weight: normal;
 		}
 
-		p.organisation_name, p.jobtitle, a {
+		p.organisation_name, 
+		p.jobtitle, 
+		a {
 			font-weight: normal;
 		}
 
@@ -59,18 +61,7 @@
 			}
 		}
 
-		.format-page {
-			h1 {
-	//			font-size: var(--H-Heading-1);
-			}
-		}
 
-		h2 {
-	//		font-size: var(--P-Body-Text-Small, var(--font-size-normal, 1rem));
-	//		font-weight: bold;
-	
-		
-		}
 		.format-card,
 		.format-compact {
 		    h1 {
