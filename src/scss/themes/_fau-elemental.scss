@@ -6,6 +6,7 @@
 .fau-elemental {
 
 	.faudir {
+	    
 		--faudir-compact-color-background: var(--color-FAU);
 		--faudir-compact-color-text: var(--FAU-Col-FAU-Weiss-100, #fff);
 		--faudir-figure-textsignature-background: var(--FAU-Col-FAU-Dunkelblau-100, var(--color-primary-dunkler, #eee));
@@ -18,7 +19,7 @@
 		margin: 0 auto;
 
 		li, p, address {
-			font-size: var(--P-Body-Text-Small, var(--font-size-normal, 1rem));
+			font-size: var(--P-Body-Text, var(--font-size-normal, 1rem));
 			font-weight: normal;
 		}
 
@@ -42,7 +43,7 @@
 		}
 
 		h1 {
-			font-size: var(--font-size-h4, 1.25rem);
+	//		font-size: var(--font-size-h4, 1.25rem);
 
 			a {
 				font-weight: bold;
@@ -60,15 +61,28 @@
 
 		.format-page {
 			h1 {
-				font-size: var(--H-Heading-1);
+	//			font-size: var(--H-Heading-1);
 			}
 		}
 
 		h2 {
-			font-size: var(--P-Body-Text-Small, var(--font-size-normal, 1rem));
+	//		font-size: var(--P-Body-Text-Small, var(--font-size-normal, 1rem));
+	//		font-weight: bold;
+	
+		
+		}
+		.format-card,
+		.format-compact {
+		    h1 {
+			font-size: var(--H-Heading-2);
+		    }
+		    h2 {
+			font-size: var(--P-Body-Text, var(--font-size-normal, 1rem));
 			font-weight: bold;
+		    }
 		}
 
+		
 		.contact-title,
 		.address-title,
 		.consultation-title {

@@ -59,12 +59,15 @@
 	}
 	span.value::after {
 	    content: "/";
-	    margin-left: 0.2rem;
-	    margin-right: 0.1rem;
+	    margin-left: 0.3rem;
+	    margin-right: 0.3rem;
 	}
 	span.value:last-child::after {
 	    content: "";
 	}
+	// span.value + span.value {
+	//   margin-left: 0.5rem;
+	// }
     }
 
 
@@ -145,7 +148,9 @@
     .content p:empty {
 	display: none;
     }
-    
+    abbr {
+	text-decoration: none;
+    }
     .namepart {
 	white-space: nowrap;
 	text-wrap: balance;

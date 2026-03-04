@@ -39,7 +39,7 @@ get_header();
                         $showfields = (array) $opt['default_output_fields_endpoint'];
                     }
 
-                    $shortcode = new Shortcode();
+                    $shortcode = new Shortcode($config);
 
                     echo $shortcode->renderPersonPage((string) $person_id, $showfields);
 
