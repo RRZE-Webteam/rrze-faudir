@@ -746,17 +746,28 @@ class Person {
      * Get Content from custom post
      */
     public function getContent(): string {
-         if (empty($this->postid)) {
-            $postid = $this->getPostId();
-        } else {
-            $postid = $this->postid;
-        }
-        if ($postid !== 0) {
-            $content = get_post_field('post_content', $postid);
+        $postid = 0;
 
-            return $content;
-        }             
-        return '';  
+        if (!empty($this->postid)) {
+            $postid = (int) $this->postid;
+        } else {
+            $postid = (int) $this->getPostId();
+        }
+        if ($postid <= 0) {
+            return '';
+        }
+        
+           // Preview/Ajax/Shortcode-Kontext: wenn globaler Post gesetzt ist, den nehmen.
+        if (is_preview()) {
+            $autosave = wp_get_post_autosave($postid);
+            if ($autosave instanceof \WP_Post && $autosave->post_parent === $postid) {
+                return (string) $autosave->post_content;
+            }
+        }
+       
+        $content = (string) get_post_field('post_content', $postid);
+
+        return $content;
   
     }
     

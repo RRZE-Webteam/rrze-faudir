@@ -1147,10 +1147,11 @@ class CPT {
 
         $post_type = (string) $this->config->get('person_post_type');
 
-        $autosaves_route = '/wp/v2/' . $post_type . '/(?P<id>[\\d]+)/autosaves';
-        if (isset($endpoints[$autosaves_route])) {
-            unset($endpoints[$autosaves_route]);
-        }
+        // WICHTIG: Autosaves NICHT entfernen, sonst ist Preview im Block-Editor kaputt.
+        //  $autosaves_route = '/wp/v2/' . $post_type . '/(?P<id>[\\d]+)/autosaves';
+        //  if (isset($endpoints[$autosaves_route])) {
+        //     unset($endpoints[$autosaves_route]);
+        // }
 
         $revisions_route = '/wp/v2/' . $post_type . '/(?P<id>[\\d]+)/revisions';
         if (isset($endpoints[$revisions_route])) {

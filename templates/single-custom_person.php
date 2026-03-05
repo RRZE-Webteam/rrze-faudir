@@ -19,11 +19,14 @@ get_header();
     if (have_posts()) {
         the_post();
         
-        // Get the person ID from post meta
-        $person_id = get_post_meta(get_the_ID(), 'person_id', true);
+        // Get the person ID from post meta       
+        $current_id = (int) get_the_ID();
+        $parent_id  = wp_is_post_revision($current_id) ? (int) wp_get_post_parent_id($current_id) : $current_id;
+        $person_id = (string) get_post_meta($parent_id, 'person_id', true);
+                
         ?>
 
-        <article id="post-<?php the_ID(); ?>" <?php post_class(['post']); ?>>
+        <article id="post-<?php echo $parent_id; ?>" <?php post_class(['post']); ?>>
             <div id="content">
                 <div class="content-container">
                     <?php 
@@ -40,13 +43,7 @@ get_header();
                     }
 
                     $shortcode = new Shortcode($config);
-
-                    echo $shortcode->renderPersonPage((string) $person_id, $showfields);
-
-                        // $output_escaped = Shortcode::render($atts);
-                        // echo  apply_filters('the_content', $output_escaped);
-                        
-                     
+                    echo $shortcode->renderPersonPage((string) $person_id, $showfields);         
                     ?>
                 </div>
             </div>
