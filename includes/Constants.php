@@ -47,9 +47,9 @@ final class Constants {
     
     public const CRON_HOOK_PERSON_AVAILABILITY      = 'rrze-faudir_check_person_availability';
     public const CRON_HOOK_PERSON_AVAILABILITY_OLD  = 'check_person_availability';
-    public const CRON_INTERVAL                      = 'hourly';
+    public const CRON_INTERVAL                      = 'twicedaily';
     public const PERSON_STATUS_ON_MISSING           = 'private';
-    public const PERSON_AVAILABILITY_MAX_FAILURES   = 3;
+    public const PERSON_AVAILABILITY_MAX_FAILURES   = 6;
     public const META_LAST_SUCCESS_AT               = '_faudir_api_last_success_at';
     public const META_LAST_FAILURE_AT               = '_faudir_api_last_failure_at';
     public const META_FAILURE_COUNT                 = '_faudir_api_failure_count';
