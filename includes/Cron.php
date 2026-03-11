@@ -12,7 +12,6 @@ final class Cron {
     protected Config $config;
 
     public function __construct(Config $config) {
-   //     $config->insertOptions();
         $this->config = $config;
     }
 

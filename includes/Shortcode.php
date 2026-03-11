@@ -75,17 +75,18 @@ class Shortcode {
         
         $atts['display'] = $this->validateDisplay($atts['display']);
         $atts['format'] = $this->validateFormat($atts['format'], $atts['display']);
+        
+        do_action( 'rrze.log.notice','FAUdir\Shortcode (pre resolve). Modified Args: ', $atts);
+                
         $show = $this->resolve_visible_fields_with_format($atts);
         $atts['show'] = implode(', ', $show);
         unset($atts['hide']);
         
 
-       //  do_action( 'rrze.log.notice','FAUdir\Shortcode (render). Modified Args: ', $atts);
+        do_action( 'rrze.log.notice','FAUdir\Shortcode (render). Modified Args: ', $atts);
         
           
         // If user is logged in and no-cache option is enabled, always fetch fresh data
-        $options = get_option('rrze_faudir_options');
-
         if (!empty($this->config->get('no_cache_logged_in')) && is_user_logged_in()) {
             $output = $this->fetch_and_render_fau_data($atts);
             $output = do_blocks($output);    
@@ -96,7 +97,13 @@ class Shortcode {
 
         ksort($atts);
         $cache_key = Constants::TRANSIENT_PREFIX_SHORTCODE . md5(wp_json_encode($atts));
-        $cache_timeout = isset($options['cache_timeout']) ? intval($options['cache_timeout']) * 60 : 900; // Default to 15 minutes
+        
+        if (!empty($this->config->get('cache_timeout'))) {
+            $cache_timeout = intval($this->config->get('cache_timeout')) * 60;
+        }
+        if ($cache_timeout < Constants::TRANSIENT_DEFAULT_TIMEOUT) {
+            $cache_timeout = Constants::TRANSIENT_DEFAULT_TIMEOUT; //  = 900;
+        }
 
         // Check if cached data exists
         $cached_data = get_transient($cache_key);
@@ -121,8 +128,10 @@ class Shortcode {
      * Create Array for those fields we want to show 
      */
     public function resolve_visible_fields_with_format(array $atts): array {
-        $options = get_option('rrze_faudir_options', []);
-        $default_show_fields = $options['default_output_fields'] ?? [];
+        
+        
+        
+        // $default_show_fields = $this->config->get('default_output_fields') ?? [];
 
         // Block-Editor: Felder direkt übernehmen
         if (isset($atts['blockeditor']) && $atts['blockeditor'] === 'true') {
@@ -131,37 +140,54 @@ class Shortcode {
             );
         }
 
+         
         // Felder aus Shortcode-Parametern lesen
-        $show_fields = FaudirUtils::csvToArray((string) ($atts['show'] ?? ''));
+        if (!empty($atts['show'])) {
+            $show_fields = FaudirUtils::csvToArray((string) ($atts['show'] ?? ''));
+            $show_fields = FaudirUtils::normalizeStringArray($show_fields);
+            
+             do_action( 'rrze.log.notice','FAUdir\Shortcode (resolve_visible_fields_with_format). Show: ', $show_fields);
+             
+        } else {
+            $default_show_fields = $this->config->getDefaultFieldlistByFormat($atts['format'],$atts['display']);
+            $show_fields = FaudirUtils::normalizeStringArray($default_show_fields);
+            
+             do_action( 'rrze.log.notice','FAUdir\Shortcode (resolve_visible_fields_with_format). Default Show: ', $show_fields);
+        }
+        
+        
+        
         $hide_fields = FaudirUtils::csvToArray((string) ($atts['hide'] ?? ''));
-
-        // Normalisieren
-        $show_fields = FaudirUtils::normalizeStringArray($show_fields);
         $hide_fields = FaudirUtils::normalizeStringArray($hide_fields);
-        $default_show_fields = FaudirUtils::normalizeStringArray($default_show_fields);
+        
 
         // Alias-Mapping (fachlich → bleibt im Shortcode)
         $aliases = $this->config->get('args_person_to_faudir') ?? [];
 
         $show_fields = $this->mapFieldAliases($show_fields, $aliases);
         $hide_fields = $this->mapFieldAliases($hide_fields, $aliases);
-        $default_show_fields = $this->mapFieldAliases($default_show_fields, $aliases);
 
+        
+         // Sichtbare Felder berechnen
+        $fields =  array_diff($show_fields, $hide_fields);
+        
         // Sichtbare Felder berechnen
-        $fields = array_merge(
-            array_diff($default_show_fields, $hide_fields),
-            $show_fields
-        );
+        // $fields = array_merge(
+           // array_diff($default_show_fields, $hide_fields),
+           // $show_fields
+       //  );
 
         $fields = array_values(array_unique($fields));
-
+ do_action( 'rrze.log.notice','FAUdir\Shortcode (resolve_visible_fields_with_format). Fields rest: ', $fields);
         // Nur gültige Felder für Format/Display
         $available = $this->config->getAvaibleFieldlistByFormat(
             $atts['format'],
             $atts['display']
         );
+ do_action( 'rrze.log.notice',"FAUdir\Shortcode (resolve_visible_fields_with_format). Avaible for format {$atts['format']} and display {$atts['display']}: ", $available);
 
         $resolved_fields = array_values(array_intersect($available, $fields));
+ do_action( 'rrze.log.notice','FAUdir\Shortcode (resolve_visible_fields_with_format). Resolved rest: ', $resolved_fields);
 
         // Abhängigkeiten entfernen (hide_on_parameter)
         $hide_on_parameter = $this->config->get('hide_on_parameter') ?? [];

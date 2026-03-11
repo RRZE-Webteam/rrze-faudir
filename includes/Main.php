@@ -28,7 +28,6 @@ class Main {
     public function __construct(string $pluginFile)  {
         $this->pluginFile = $pluginFile;
         $this->config = new Config();   
-        $this->config->insertOptions();
 
         $this->config->set('pluginfile', $pluginFile);
     }

@@ -35,11 +35,11 @@ get_header();
                     $config = new Config();
                     $opt = $config->getOptions();
 
-                    $showfields = [];
+                    $showfields = $config->getDefaultFieldlistByFormat('page', 'person');
+                    
+
                     if (!empty($opt['output_fields_endpoint'])) {
                         $showfields = (array) $opt['output_fields_endpoint'];
-                    } elseif (!empty($opt['default_output_fields_endpoint'])) {
-                        $showfields = (array) $opt['default_output_fields_endpoint'];
                     }
 
                     $shortcode = new Shortcode($config);

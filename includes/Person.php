@@ -282,7 +282,7 @@ class Person {
 
             $contactData = $api->getContact($contactIdentifier);
             
-            do_action('rrze.log.info', "FAUdir\API (getContacts): Getting contact data for {$contactIdentifier}: ", $contactData);
+       //     do_action('rrze.log.info', "FAUdir\Person (reloadContacts): Getting contact data for {$contactIdentifier}: ", $contactData);
             if (empty($contactData) || !is_array($contactData)) {
                 continue;
             }

@@ -6,8 +6,12 @@ namespace RRZE\FAUdir;
 defined('ABSPATH') || exit;
 
 class Config {
+    private string $optionName = 'rrze_faudir_options';
     private array $config = [
-        'version'                           => 11,  // please count this up any time we change the config array
+        'version'                           => 12,  // please count this up any time we change the config array
+        'person_slug'                       => 'faudir',
+        'redirect_to_canonicals'            => false,
+        'redirect_archivpage_uri'           => '',
         'api_key'                           => '',
         'api-baseurl'                       => 'https://api.fau.de/pub/v1/opendir/',
         'faudir-url'                        => 'https://faudir.fau.de/',
@@ -15,14 +19,13 @@ class Config {
         'cache_timeout'                     => 120, // Minimum 15 minutes
         'transient_time_for_org_id'         => 1, // Minimum 1 day
         'show_error_message'                => false,
-        'business_card_title'               => '',
         'fallback_link_faudir'              => true,
         'default_normalize_honorificPrefix' => false,
-        'default_redirect_to_canonicals'    => false,
         'default_visible_copyrightmeta'     => false,
         'default_visible_bildunterschrift'  => false,
         'default_placeholder_image_with_signature'  => true,
         'enable_history'                    => 0,   // History & Revisions for CPT
+        'button_link_title'                 => '',
         'default_display_order'     => [
             'table' => ['image', 'displayname', 'familyName', 'givenName', 'jobTitle', 'organization', 'phone', 'email', 'url', 'socialmedia','address', 'room', 'floor', 'faumap', 'teasertext', 'link'],
             'list'  => ['displayname', 'familyName', 'givenName', 'jobTitle', 'url', 'email', 'socialmedia', 'room', 'floor', 'address','faumap', 'link']
@@ -31,24 +34,33 @@ class Config {
             'table'         => ['image', 'displayname','honorificPrefix','honorificSuffix', 'givenName',  'titleOfNobility', 'familyName', 'jobTitle', 'phone', 'fax', 'email', 'url', 'socialmedia', 'organization', 'address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],
             'list'          => ['displayname', 'honorificPrefix','honorificSuffix', 'givenName', 'titleOfNobility', 'familyName', 'jobTitle', 'phone', 'fax',  'url', 'email', 'socialmedia', 'organization','address', 'room', 'floor', 'city', 'faumap', 'link', 'format_displayname'],
             'compact'       => ['image', 'displayname', 'honorificPrefix','honorificSuffix', 'givenName', 'titleOfNobility', 'familyName', 'jobTitle', 'phone', 'fax', 'email', 'url', 'socialmedia', 'organization', 'address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],
-            'page'          => ['image', 'displayname', 'jobTitle', 'phone', 'fax', 'email', 'url', 'socialmedia', 'organization','address', 'room', 'floor', 'faumap', 'teasertext', 'content', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'format_displayname'],
+            'page'          => ['image', 'displayname', 'honorificPrefix','honorificSuffix', 'givenName', 'titleOfNobility', 'familyName', 'jobTitle', 'phone', 'fax', 'email', 'url', 'socialmedia', 'organization', 'address', 'room', 'floor', 'faumap', 'teasertext', 'content', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'format_displayname'],            
             'card'          => ['image', 'displayname', 'givenName',  'familyName', 'jobTitle', 'phone', 'fax', 'organization', 'url', 'email', 'socialmedia', 'link', 'format_displayname'],
             'org-compact'   => [ 'name', 'alternateName', 'phone', 'fax', 'email', 'url', 'socialmedia','address', 'postalAddress', 'faumap', 'officehours', 'consultationhours', 'text'],
+            'org-default'   => [ 'name', 'alternateName', 'phone', 'fax', 'email', 'url', 'socialmedia','address', 'postalAddress', 'faumap', 'officehours', 'consultationhours', 'text'],
         ],
+        'default_fields_byformat'   => [
+            'default'       => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia'],
+            'page'           => [
+                'image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization', 'address', 'room', 'floor',
+                'teasertext', 'content', 'officehours', 'consultationhours'
+            ],
+            'list'          => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia'],
+            'compact'       => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia'],
+            'table'         => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia'],
+            'card'          => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia'],
+            'org-compact'   => ['name', 'phone', 'fax', 'email', 'url', 'socialmedia', 'address', 'faumap', 'officehours', 'consultationhours', 'text'],
+            'org-default'   => ['name', 'phone', 'fax', 'email', 'url', 'socialmedia', 'address', 'faumap', 'officehours', 'consultationhours', 'text'],
+        ],
+        
         'default_format'    => 'compact',
         'default_display'   => 'person',
         'avaible_formats_by_display'   => [
-            'person'    => ['compact', 'table', 'list',  'page', 'card'],
-            'org'       => ['compact'],
-             // in all cases: first entry is default for the given display
+            'person'    => ['default', 'compact', 'table', 'list',  'page', 'card'],
+            'org'       => ['default', 'compact'],
         ],
 
-        'default_output_fields'     => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia', 'link'], // Default fields
-        'default_org_output_fields' => ['name', 'phone', 'fax', 'email', 'url', 'socialmedia', 'address', 'faumap', 'officehours', 'consultationhours', 'longDescription'],
-        'default_output_fields_endpoint' => [
-            'image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization', 'address', 'room', 'floor',
-            'teasertext', 'content', 'officehours', 'consultationhours'
-        ],
+        
         'args_person_to_faudir' => [
             "titel"         => 'honorificPrefix',
             "name"          => 'displayname',
@@ -89,16 +101,29 @@ class Config {
         ],
 
         'overwriteable_as_option' => [
-            'show_error_message',
+            'version',
+            'api_key',
             'cache_timeout',
-            'transient_time_for_org_id',
+            'show_error_message',
             'fallback_link_faudir',
             'jobtitle_format',
             'default_normalize_honorificPrefix',
-            'enable_history'
+            'redirect_to_canonicals',
+            'default_visible_copyrightmeta',
+            'default_visible_bildunterschrift',
+            'default_placeholder_image_with_signature',
+            'enable_history',
+            'person_slug',
+            'redirect_archivpage_uri',
+            'show_output_fields_person_default',
+            'show_output_fields_person_page',
+            'show_output_fields_org_default',
+            'default_organization',
+            'button_link_title'
         ]
 
     ];
+    
 
 
     public function __construct() {
@@ -132,7 +157,7 @@ class Config {
             'alternateName'     => __('Alternate Name', 'rrze-faudir'),
             'text'              => __('Text', 'rrze-faudir'),
             'postalAddress'     => __('Postal Address', 'rrze-faudir'),
-            'name'              => __('Name', 'rrze-faudir'),
+ //           'name'              => __('Name', 'rrze-faudir'),
         ];
 
 
@@ -318,7 +343,22 @@ class Config {
      * @return mixed|null Der Wert oder null, wenn der Schlüssel nicht existiert
      */
     public function get(string $key): mixed {
+        if (in_array($key, $this->getOverwriteableOptionKeys(), true)) {
+            $options = $this->getRawOptions();
+
+            if (array_key_exists($key, $options)) {
+                return $options[$key];
+            }
+        }
+
         return $this->config[$key] ?? null;
+    }
+    
+    /*
+     * Get Options Version
+     */
+    public function getConfigVersion(): int {
+        return (int) ($this->config['version'] ?? 0);
     }
 
     /*
@@ -341,22 +381,47 @@ class Config {
     public function getAll(): array {
         return $this->config;
     }
+    
+    /*
+     * Daten aus der DB lesen
+     */
+    public function getRawOptions(): array {
+        $options = get_option($this->optionName, []);
+
+        return is_array($options) ? $options : [];
+    }
 
     /*
      * Get Array of those options with config content, that are overwiteable
      * We use these values as default values for the first init
      */
-    public function getOverwiteableOptions(): array {
-        $overoptions = $this->config['overwriteable_as_option'];
+    public function getOverwriteableOptionKeys(): array {
+        $keys = $this->config['overwriteable_as_option'] ?? [];
+        return is_array($keys) ? array_values($keys) : [];
+    }
+    
+    public function getOverwriteableOptionDefaults(): array {
         $res = [];
-        foreach ($overoptions as $key) {
-            $res[$key] = $this->config[$key];
+
+        foreach ($this->getOverwriteableOptionKeys() as $key) {
+            if (array_key_exists($key, $this->config)) {
+                $res[$key] = $this->config[$key];
+            }
         }
+
+        $res['show_output_fields_person_default'] = $this->getDefaultFieldlistByFormat('default', 'person');
+        $res['show_output_fields_org_default']    = $this->getDefaultFieldlistByFormat('default', 'org');
+        $res['show_output_fields_person_page']    = $this->getDefaultFieldlistByFormat('page', 'person');
+
         return $res;
     }
+    
+    public function filterAllowedOptions(array $options): array {
+        $allowed = array_flip($this->getOverwriteableOptionKeys());
 
-
-
+        return array_intersect_key($options, $allowed);
+    }
+    
     /*
      * Get allowed fields for format
      */
@@ -387,42 +452,233 @@ class Config {
     }
 
 
-    public function getAvaibleFieldlistByFormat(string $format = '', ?string $display = ''): array {
-        if (empty($format)) {
-            $format = $this->config['default_format'];
-        }
-        if ((!empty($display)) && ($display === 'org')) {
-            $format = 'org-'.$format;
+    /* 
+     * Prüfe und normalisiere format
+     */
+    public function normalizeFormatForDisplay(string $format = '', string $display = 'person'): string {
+        $display = trim(strtolower($display));
+        $format = trim(strtolower($format));
+
+        $available = $this->config['avaible_formats_by_display'] ?? [];
+        if (!isset($available[$display]) || !is_array($available[$display]) || empty($available[$display])) {
+            return 'default';
         }
 
-        return $this->config['avaible_fields_byformat'][$format];
+        $allowedFormats = array_values(array_filter(
+            $available[$display],
+            static function ($value): bool {
+                return is_string($value) && $value !== '';
+            }
+        ));
 
+        if ($format === '' || !in_array($format, $allowedFormats, true)) {
+            return in_array('default', $allowedFormats, true) ? 'default' : (string) $allowedFormats[0];
+        }
+
+        return $format;
     }
+    
+    /*
+     * Prüfe und Normalisiere display
+     */
+    public function normalizeDisplay(string $display = 'person'): string {
+        $display = trim(strtolower($display));
 
+        $available = $this->config['avaible_formats_by_display'] ?? [];
+        if (isset($available[$display]) && is_array($available[$display])) {
+            return $display;
+        }
+
+        return 'person';
+    }
+    
+    /*
+     * Get complete list of avaible output fields by format
+     */
+    public function getAvaibleFieldlistByFormat(string $format = '', ?string $display = 'person'): array {
+        $display = $this->normalizeDisplay((string) $display);
+        $format = $this->normalizeFormatForDisplay($format, $display);
+
+        $configKey = $display === 'org' && $format !== 'default'
+            ? 'org-' . $format
+            : ($display === 'org' ? 'org-compact' : $format);
+
+        if (isset($this->config['avaible_fields_byformat'][$configKey])) {
+            return $this->config['avaible_fields_byformat'][$configKey];
+        }
+
+        if ($display === 'org') {
+            return $this->config['avaible_fields_byformat']['org-compact'] ?? [];
+        }
+
+        return $this->config['avaible_fields_byformat']['compact'] ?? [];
+    }
+    
+    
+    /*
+     * Get Default Output Fields by Format
+     */
+    public function getDefaultFieldlistByFormat(string $format = '', ?string $display = ''): array {
+        $display = $this->normalizeDisplay((string) $display);
+        $format = $this->normalizeFormatForDisplay($format, $display);
+
+        $optionKey = null;
+        $configKey = $format;
+
+        if ($display === 'org') {
+            if ($format === 'default') {
+                $optionKey = 'show_output_fields_org_default';
+                $configKey = 'org-default';
+            } else {
+                $configKey = 'org-' . $format;
+            }
+        } else {
+            if ($format === 'default') {
+                $optionKey = 'show_output_fields_person_default';
+                $configKey = 'default';
+            } elseif ($format === 'page') {
+                $optionKey = 'show_output_fields_person_page';
+                $configKey = 'page';
+            }
+        }
+
+        if ($optionKey !== null) {
+            $stored = $this->get($optionKey);
+            if (is_array($stored) && !empty($stored)) {
+                return $stored;
+            }
+        }
+
+        if (isset($this->config['default_fields_byformat'][$configKey])) {
+            return $this->config['default_fields_byformat'][$configKey];
+        }
+
+        if ($display === 'org') {
+            return $this->config['default_fields_byformat']['org-default'] ?? [];
+        }
+
+        return $this->config['default_fields_byformat']['default'] ?? [];
+    }
+    
+    
+    
 
     /*
      * Get Site Option and merge with CONFIG if needed
      */
     public function getOptions(): array {
-        $default_settings = $this->getAll();
-        $options = get_option('rrze_faudir_options', []);
-        $settings = wp_parse_args($options, $default_settings);
+        $options = wp_parse_args($this->getRawOptions(), $this->getAll());
 
-        return $settings;
+        if (!isset($options['show_output_fields_person_default'])) {
+            $options['show_output_fields_person_default'] = $this->getDefaultFieldlistByFormat('default', 'person');
+        }
+
+        if (!isset($options['show_output_fields_person_page'])) {
+            $options['show_output_fields_person_page'] = $this->getDefaultFieldlistByFormat('page', 'person');
+        }
+
+        if (!isset($options['show_output_fields_org_default'])) {
+            $options['show_output_fields_org_default'] = $this->getDefaultFieldlistByFormat('default', 'org');
+        }
+
+        return $options;
     }
 
 
-    public function insertOptions(): bool {
-        $options = get_option('rrze_faudir_options', []);
-        $found = false;
-         foreach ($options as $key => $value) {
-             if (isset($this->config[$key]) && ($this->config[$key] !== $value)) {
-                 $this->config[$key] = $value;
-                 $found = true;
-             }
-         }
-         return $found;
-    }
 
+    /*
+     * Alle Options speichern, die wir in der DB speichern wollen und ggf. die Option Version speichern
+     */
+    public function saveOptions(array $options): bool {
+        $filtered = $this->filterAllowedOptions($options);
+
+        if (!array_key_exists('version', $filtered)) {
+            $raw = $this->getRawOptions();
+            if (isset($raw['version'])) {
+                $filtered['version'] = (int) $raw['version'];
+            } else {
+                $filtered['version'] = $this->getConfigVersion();
+            }
+        }
+
+        return update_option($this->optionName, $filtered);
+    }
+    
+    /*
+     * Einzelne Option setzen
+     */
+    public function setOption(string $key, mixed $value): bool {
+        $options = $this->getRawOptions();
+
+        if (!in_array($key, $this->getOverwriteableOptionKeys(), true)) {
+            return false;
+        }
+
+        $options[$key] = $value;
+
+        if (!isset($options['version'])) {
+            $options['version'] = $this->getConfigVersion();
+        }
+
+        return $this->saveOptions($options);
+    }
+    
+    /*
+     * Einzelne Option löschen
+     */
+    public function deleteOption(string $key): bool {
+        $options = $this->getRawOptions();
+
+        if (array_key_exists($key, $options)) {
+            unset($options[$key]);
+            return $this->saveOptions($options);
+        }
+
+        return true;
+    }
+    
+    /*
+     * Versionsprüfung und Cleanup bei neuen Config Versionen
+     */
+    public function maybeMigrateStoredOptions(): bool {
+        $raw = $this->getRawOptions();
+        $currentVersion = $this->getConfigVersion();
+        $storedVersion = isset($raw['version']) ? (int) $raw['version'] : 0;
+
+        /*
+         * Alte Keys umwandeln, falls diese vorher in Benutzung waren
+         * (Kann ab V2.7 und später wieder raus, brauchen wir nur vom Schritt 2.5 auf 2.6)
+         */
+        if (isset($raw['default_output_fields']) && !isset($raw['show_output_fields_person_default'])) {
+            $raw['show_output_fields_person_default'] = $raw['default_output_fields'];
+        }
+
+        if (isset($raw['default_org_output_fields']) && !isset($raw['show_output_fields_org_default'])) {
+            $raw['show_output_fields_org_default'] = $raw['default_org_output_fields'];
+        }
+
+        if (isset($raw['output_fields_endpoint']) && !isset($raw['show_output_fields_person_page'])) {
+            $raw['show_output_fields_person_page'] = $raw['output_fields_endpoint'];
+        }  
+        
+        if (isset($raw['business_card_title']) && !isset($raw['button_link_title'])) {
+            $raw['button_link_title'] = $raw['business_card_title'];
+        }  
+        
+        if ($storedVersion === 0) {
+            $cleaned = $this->filterAllowedOptions($raw);
+            $cleaned['version'] = $currentVersion;
+            return update_option($this->optionName, $cleaned);
+        }
+
+        if ($storedVersion >= $currentVersion) {
+            return false;
+        }
+
+        $cleaned = $this->filterAllowedOptions($raw);
+        $cleaned['version'] = $currentVersion;
+
+        return update_option($this->optionName, $cleaned);
+    }
 }
 

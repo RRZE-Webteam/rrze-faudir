@@ -11,7 +11,6 @@ class Maintenance {
     protected Migration $migration;
 
     public function __construct(Config $config, CPT $cpt) {
-        $config->insertOptions();
         $this->config = $config;
         $this->cpt = $cpt;
         $this->cron = new Cron($this->config);

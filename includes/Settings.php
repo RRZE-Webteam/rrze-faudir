@@ -6,21 +6,20 @@ defined('ABSPATH') || exit;
 use RRZE\FAUdir\FaudirUtils;
 use RRZE\FAUdir\Config;
 use RRZE\FAUdir\API;
-use RRZE\FAUdir\Maintenance;
 
 class Settings {
     protected Config $config;
     protected CPT $cpt;
     
     public function __construct(Config $config, CPT $cpt) {
-      //  $config->insertOptions();
         $this->config = $config;
         $this->cpt = $cpt;
     }
 
-    /* -----------------------------
-     * Hooks
-     * ----------------------------- */
+
+    /*
+     * Register Hooks
+     */
     public function register_hooks(): void {
         add_action('admin_menu', [$this, 'add_admin_menu']);
         add_action('admin_init', [$this, 'settings_init']);
@@ -48,17 +47,16 @@ class Settings {
         );
     }
 
-    /* -----------------------------
-     * Settings init (Sections & Fields)
-     * ----------------------------- */
-    public function settings_init(): void {
-        // Defaults initialisieren
-        $config           = new Config();
-        $default_settings = $config->getOverwiteableOptions();
-        $options          = get_option('rrze_faudir_options', []);
-        $settings         = wp_parse_args($options, $default_settings);
-        update_option('rrze_faudir_options', $settings);
 
+    /*
+     * Settings init (Sections & Fields)
+     */
+    public function settings_init(): void {
+        
+        // Bei einem Admin Init prüfen wir ob die Version der Config geändert wurde und machen ggf eine Migration
+        $this->config->maybeMigrateStoredOptions();
+
+        
         // Gleiche Option unter zwei Gruppen registrieren
         register_setting('rrze_faudir_general', 'rrze_faudir_options', [
             'sanitize_callback' => [$this, 'sanitize_options'],
@@ -81,8 +79,6 @@ class Settings {
     
 
     private function register_sections_and_fields(): void {
-        
-        
         /* --- Allgemeines --- */
         add_settings_section(
             'rrze_faudir_misc_section',
@@ -176,9 +172,9 @@ class Settings {
             'rrze_faudir_shortcode_section'
         );
         add_settings_field(
-            'rrze_faudir_business_card_title',
+            'rrze_faudir_button_link_title',
             __('Kompakt Card Button Title', 'rrze-faudir'),
-            [$this, 'render_business_card_title'],
+            [$this, 'render_button_link_title'],
             'rrze_faudir_settings_shortcode',
             'rrze_faudir_shortcode_section'
         );
@@ -436,13 +432,7 @@ class Settings {
 
     
     public function render_default_visible_copyrightmeta(): void {
-        $options = get_option('rrze_faudir_options');
-        if (!isset($options['default_visible_copyrightmeta'])) {
-            $config = new Config();
-            // Default aus der Config übernehmen (bool → int)
-            $options['default_visible_copyrightmeta'] = (int) $config->get('default_visible_copyrightmeta');
-        }
-        $checked = !empty($options['default_visible_copyrightmeta']);
+        $checked = !empty($this->config->get('default_visible_copyrightmeta'));
 
         echo '<label>';
         echo '<input type="hidden" name="rrze_faudir_options[default_visible_copyrightmeta]" value="0">';
@@ -453,13 +443,7 @@ class Settings {
 
     
      public function render_default_placeholder_image_with_signature(): void {
-        $options = get_option('rrze_faudir_options');
-        if (!isset($options['default_placeholder_image_with_signature'])) {
-            $config = new Config();
-            // Default aus der Config übernehmen (bool → int)
-            $options['default_placeholder_image_with_signature'] = (int) $config->get('default_placeholder_image_with_signature');
-        }
-        $checked = !empty($options['default_placeholder_image_with_signature']);
+        $checked = !empty($this->config->get('default_placeholder_image_with_signature'));
 
         echo '<label>';
         echo '<input type="hidden" name="rrze_faudir_options[default_placeholder_image_with_signature]" value="0">';
@@ -469,13 +453,7 @@ class Settings {
     }
     
     public function render_default_visible_bildunterschrift(): void {
-        $options = get_option('rrze_faudir_options');
-        if (!isset($options['default_visible_bildunterschrift'])) {
-            $config = new Config();
-            // Default aus der Config übernehmen (bool → int)
-            $options['default_visible_bildunterschrift'] = (int) $config->get('default_visible_bildunterschrift');
-        }
-        $checked = !empty($options['default_visible_bildunterschrift']);
+        $checked = !empty($this->config->get('default_visible_bildunterschrift'));
 
         echo '<label>';
         echo '<input type="hidden" name="rrze_faudir_options[default_visible_bildunterschrift]" value="0">';
@@ -491,8 +469,7 @@ class Settings {
      * ----------------------------- */
     public function render_contacts_tab(): void {
         ?>
-
-<form id="search-person-form" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+        <form id="search-person-form" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
             <input type="hidden" name="action" value="rrze_faudir_search_person">
             <?php wp_nonce_field('rrze_faudir_search_person', 'rrze_faudir_search_nonce'); ?>
 
@@ -555,7 +532,7 @@ class Settings {
      * ----------------------------- */
     public function render_orgs_search_tab(): void {
         // Aktuelle Default-Org (Anzeige + Löschen)
-        $default_org = get_option('rrze_faudir_options', [])['default_organization'] ?? null;
+        $default_org = $this->config->get('default_organization');
 
         echo '<hr><h2>' . esc_html__('Organizations', 'rrze-faudir') . '</h2>';
 
@@ -655,33 +632,35 @@ class Settings {
         echo '<p>' . esc_html__('Search for FAU organizations by name or identifier.', 'rrze-faudir') . '</p>';
     }
 
-    /* -----------------------------
-     * Feld-Renderer (aus deinem Code)
-     * ----------------------------- */
+    /*
+     * Renderer 
+     */ 
     public function render_profilpage_output_fields(): void {
-        $config = new Config();
-        $opt    = $config->getOptions();
-        $available_fields = $config->get('avaible_fields');
-
-        if (empty($opt['output_fields_endpoint']) && !empty($opt['default_output_fields_endpoint'])) {
-            $opt['output_fields_endpoint'] = $opt['default_output_fields_endpoint'];
-        }
+        $selected_fields = $this->config->getDefaultFieldlistByFormat('page', 'person');
+        $available_fields = $this->config->getFieldsByFormat('page', 'person');
+        $config_defaults = $this->config->getAll()['default_fields_byformat']['page'] ?? [];
 
         echo '<table class="faudir-attributs">';
-        echo '<tr><th>' . esc_html__('Output data', 'rrze-faudir') . '</th><th>' . esc_html__('Default value', 'rrze-faudir') . '</th></tr>';
+        echo '<tr>';
+        echo '<th>' . esc_html__('Output data', 'rrze-faudir') . '</th>';
+        echo '<th>' . esc_html__('Default value', 'rrze-faudir') . '</th>';
+        echo '</tr>';
 
         foreach ($available_fields as $field => $label) {
-            $checked = in_array($field, $opt['output_fields_endpoint'] ?? [], true);
+            $checked = in_array($field, $selected_fields, true);
+            $is_default = in_array($field, $config_defaults, true);
 
             echo '<tr>';
-            echo '<th><label for="' . esc_attr('rrze_faudir_profilpage_output_fields' . $field) . '">';
-            echo '<input type="checkbox" id="' . esc_attr('rrze_faudir_profilpage_output_fields' . $field) . '" name="rrze_faudir_options[output_fields_endpoint][]" value="' . esc_attr($field) . '" ' . checked($checked, true, false) . '>';
+            echo '<th><label for="' . esc_attr('rrze_faudir_profilpage_output_fields_' . $field) . '">';
+            echo '<input type="checkbox" id="' . esc_attr('rrze_faudir_profilpage_output_fields_' . $field) . '" name="rrze_faudir_options[show_output_fields_person_page][]" value="' . esc_attr($field) . '" ' . checked($checked, true, false) . '>';
             echo esc_html($label) . '</label></th>';
-            echo '<td>' . (in_array($field, $opt['default_output_fields_endpoint'] ?? [], true) ? esc_html__('Visible', 'rrze-faudir') : esc_html__('Invisible', 'rrze-faudir')) . '</td>';
+
+            echo '<td>' . ($is_default ? esc_html__('Visible', 'rrze-faudir') : esc_html__('Invisible', 'rrze-faudir')) . '</td>';
             echo '</tr>';
         }
+
         echo '</table>';
-        echo '<p class="description">' . esc_html__('Select the fields to display in the profil page of a single person.', 'rrze-faudir') . '</p>';
+        echo '<p class="description">' . esc_html__('Select the fields to display in the profile page of a single person.', 'rrze-faudir') . '</p>';
     }
 
     public function render_api_key(): void {
@@ -689,8 +668,7 @@ class Settings {
             echo '<p>' . esc_html__('The API key is being used from the network installation.', 'rrze-faudir') . '</p>';
             return;
         }
-        $options = get_option('rrze_faudir_options');
-        $apiKey  = isset($options['api_key']) ? $options['api_key'] : '';
+        $apiKey  = $this->config->get('api_key');
         echo '<label><input type="text" name="rrze_faudir_options[api_key]" value="' . esc_attr($apiKey) . '" size="50">';
         echo '<p class="description">' . esc_html__('Enter your API key here.', 'rrze-faudir') . '</p></label>';
     }
@@ -713,9 +691,14 @@ class Settings {
 
 
     public function render_cache_timeout(): void {
-        $options = get_option('rrze_faudir_options');
-        $value   = isset($options['cache_timeout']) ? max((int)$options['cache_timeout'], 15) : 15;
-        echo '<label><input type="number" name="rrze_faudir_options[cache_timeout]" value="' . esc_attr($value) . '" min="15">';
+        $value = (int) $this->config->get('cache_timeout');
+        $min = CONSTANTS::TRANSIENT_CACHE_TIMEOUT;
+        if (empty($value) || ($value < $min)) {
+            $value = $min;
+        }
+      
+
+        echo '<label><input type="number" name="rrze_faudir_options[cache_timeout]" value="' . esc_attr($value) . '" min="'.esc_attr($min).'">';
         echo '<p class="description">' . esc_html__('Set the output cache timeout in minutes (minimum 15 minutes).', 'rrze-faudir') . '</p></label>';
     }
 
@@ -732,12 +715,7 @@ class Settings {
     }
 
     public function render_error_message(): void {
-        $options = get_option('rrze_faudir_options');
-        if (!isset($options['show_error_message'])) {
-            $config = new Config();
-            $options['show_error_message'] = (int) $config->get('show_error_message');
-        }
-        $checked = !empty($options['show_error_message']);
+        $checked = !empty($this->config->get('show_error_message'));
 
         echo '<label>';
         echo '<input type="hidden" name="rrze_faudir_options[show_error_message]" value="0">';
@@ -747,11 +725,17 @@ class Settings {
     }
 
 
+    public function render_button_link_title(): void {
+        $default_title = sanitize_text_field((string) $this->config->get('button_link_title'));
+
+        echo '<label><input type="text" name="rrze_faudir_options[button_link_title]" value="' . esc_attr($default_title) . '" size="50">';
+        echo '<p class="description">' . esc_html__('Link title for optional links pointing to the users detail page.', 'rrze-faudir') . '</p><label>';
+
+    }
     
 
    public function render_fallback_link_faudir(): void {
-        $options = get_option('rrze_faudir_options');
-        $checked = !empty($options['fallback_link_faudir']);
+        $checked = !empty($this->config->get('fallback_link_faudir'));
 
         echo '<label>';
         echo '<input type="hidden" name="rrze_faudir_options[fallback_link_faudir]" value="0">';
@@ -762,18 +746,7 @@ class Settings {
 
 
     public function render_jobtitle_format(): void {
-        $options = get_option('rrze_faudir_options');
-        $config  = new Config();
-        $default_format = $config->get('jobtitle_format');
-
-        $value = isset($options['jobtitle_format']) && !empty($options['jobtitle_format'])
-            ? sanitize_text_field($options['jobtitle_format'])
-            : $default_format;
-
-        if (!isset($options['jobtitle_format']) || empty($options['jobtitle_format'])) {
-            $options['jobtitle_format'] = $default_format;
-            update_option('rrze_faudir_options', $options);
-        }
+        $value = sanitize_text_field((string) $this->config->get('jobtitle_format'));
 
         echo '<input type="text" name="rrze_faudir_options[jobtitle_format]" value="' . esc_attr($value) . '" size="50">';
         echo '<p class="description">' . esc_html__('Define the format of jobtitles.', 'rrze-faudir') . '<br>' .
@@ -781,36 +754,22 @@ class Settings {
     }
 
     public function render_misc_section_message(): void {
-        $options = get_option('rrze_faudir_options');
-        $value   = isset($options['redirect_archivpage_uri']) ? esc_url($options['redirect_archivpage_uri']) : '';
+        $value   = $this->config->get('redirect_archivpage_uri');
 
         echo '<label><input type="text" name="rrze_faudir_options[redirect_archivpage_uri]" value="' . esc_attr($value) . '" class="regular-text" placeholder="/">';
         echo '<p class="description">' . esc_html__('Optional: Path to a local page, which is used as index for all contact entries.', 'rrze-faudir') . '</p></label>';
     }
 
     public function render_person_slug(): void {
-        $options      = get_option('rrze_faudir_options', []);
-        $default_slug = 'faudir';
-        $slug         = !empty($options['person_slug']) ? sanitize_text_field($options['person_slug']) : $default_slug;
+       $slug = sanitize_text_field((string) $this->config->get('person_slug'));
 
-        if (!isset($options['person_slug']) || empty($options['person_slug'])) {
-            $options['person_slug'] = $default_slug;
-            update_option('rrze_faudir_options', $options);
-        }
-
-        echo '<input type="text" class="regular-text" id="rrze_faudir_person_slug" name="rrze_faudir_options[person_slug]" value="' . esc_attr($slug) . '" size="10">';
-        echo '<p class="description">' . esc_html__('Enter the slug for the person post type.', 'rrze-faudir') . '</p>';
+        echo '<label><input type="text" class="regular-text" id="rrze_faudir_person_slug" name="rrze_faudir_options[person_slug]" value="' . esc_attr($slug) . '" size="10">';
+        echo '<p class="description">' . esc_html__('Enter the slug for the person post type.', 'rrze-faudir') . '</p></label>';
     }
 
     public function render_normalize_honorific_prefix(): void {
-        $options = get_option('rrze_faudir_options');
-        if (!isset($options['default_normalize_honorificPrefix'])) {
-            $config = new Config();
-            $options['default_normalize_honorificPrefix'] = (int) $config->get('default_normalize_honorificPrefix');
-        }
-        $checked = !empty($options['default_normalize_honorificPrefix']);
-        
-        
+        $checked = !empty($this->config->get('default_normalize_honorificPrefix'));
+
         echo '<label>';
         echo '<input type="hidden" name="rrze_faudir_options[default_normalize_honorificPrefix]" value="0">';   
         echo '<input type="checkbox" name="rrze_faudir_options[default_normalize_honorificPrefix]" value="1" ' . checked(1, $checked, false) . ' />';
@@ -820,19 +779,9 @@ class Settings {
 
     
     public function render_redirect_to_canonicals(): void {
-        // aktuelle Optionen laden
-        $options = get_option('rrze_faudir_options');
-
-        // Fallback auf Config-Default, wenn (noch) nicht gesetzt
-        if (!isset($options['redirect_to_canonicals'])) {
-            $config = new Config();
-            $options['redirect_to_canonicals'] = (int) $config->get('default_redirect_to_canonicals');
-        }
-
-        $checked = !empty($options['redirect_to_canonicals']);
+        $checked = !empty($this->config->get('redirect_to_canonicals'));
 
         echo '<label>';
-        // Hidden-Fallback, damit "Abwählen" sicher 0 postet
         echo '<input type="hidden" name="rrze_faudir_options[redirect_to_canonicals]" value="0">';
         echo '<input type="checkbox" name="rrze_faudir_options[redirect_to_canonicals]" value="1" ' . checked(true, $checked, false) . '>';
         echo ' <span>' . esc_html__('Use Canonical URL as target for personal links, if set in the person data', 'rrze-faudir') . '</span>';
@@ -844,51 +793,30 @@ class Settings {
      * Default-Ausgabefelder (Persons) – gefiltert (keine org-*)
      * ----------------------------- */
     public function render_default_output_fields(): void {
-        $options        = get_option('rrze_faudir_options');
-        $default_fields = $options['default_output_fields'] ?? [];
-
-        $config           = new Config();
-        $available_fields = (array) $config->get('avaible_fields');
-        $formatnames      = (array) $config->get('formatnames');
-        $fieldlist        = (array) $config->getAvaibleFieldlist();
-
-        $person_fields = array_filter(
-            $available_fields,
-            static fn($label, $key) => strpos((string) $key, 'org-') !== 0,
-            ARRAY_FILTER_USE_BOTH
-        );
-
-        if (empty($default_fields)) {
-            $default_fields = array_keys($person_fields);
-        } else {
-            $default_fields = array_values(array_filter(
-                (array) $default_fields,
-                static fn($f) => strpos((string) $f, 'org-') !== 0
-            ));
-        }
+        $selected_fields = $this->config->getDefaultFieldlistByFormat('default', 'person');
+        $available_fields = $this->config->getFieldsByFormat('default', 'person');
+        $config_defaults = $this->config->getAll()['default_fields_byformat']['default'] ?? [];
 
         echo '<table class="faudir-attributs">';
-        echo '<tr><th>' . esc_html__('Output data', 'rrze-faudir') . '</th><th>' . esc_html__('Fieldname for Show/Hide-Attribut in Shortcodes', 'rrze-faudir') . '</th><th>' . esc_html__('Avaible in formats', 'rrze-faudir') . '</th></tr>';
+        echo '<tr>';
+        echo '<th>' . esc_html__('Output data', 'rrze-faudir') . '</th>';
+        echo '<th>' . esc_html__('Fieldname for Show-Attribute in Shortcodes', 'rrze-faudir') . '</th>';
+        echo '<th>' . esc_html__('Default value', 'rrze-faudir') . '</th>';
+        echo '</tr>';
 
-        foreach ($person_fields as $field => $label) {
-            $checked = in_array($field, $default_fields, true);
+        foreach ($available_fields as $field => $label) {
+            $checked = in_array($field, $selected_fields, true);
+            $is_default = in_array($field, $config_defaults, true);
+
             echo '<tr>';
             echo '<th><label for="' . esc_attr('rrze_faudir_default_output_fields_' . $field) . '">';
-            echo '<input type="checkbox" id="' . esc_attr('rrze_faudir_default_output_fields_' . $field) . '" name="rrze_faudir_options[default_output_fields][]" value="' . esc_attr($field) . '" ' . checked($checked, true, false) . '>';
+            echo '<input type="checkbox" id="' . esc_attr('rrze_faudir_default_output_fields_' . $field) . '" name="rrze_faudir_options[show_output_fields_person_default][]" value="' . esc_attr($field) . '" ' . checked($checked, true, false) . '>';
             echo esc_html($label) . '</label></th>';
-            echo '<td><code>' . esc_html($field) . '</code></td><td>';
-
-            $canuse_escaped = '';
-            foreach ($fieldlist as $fl => $entries) {
-                if (strpos((string) $fl, 'org-') === 0) { continue; }
-                if (!empty($entries) && in_array($field, (array) $entries, true)) {
-                    if (!empty($canuse_escaped)) { $canuse_escaped .= ', '; }
-                    $canuse_escaped .= ($formatnames[$fl] ?? $fl) . ' (<code>' . esc_html($fl) . '</code>)';
-                }
-            }
-            if (!empty($canuse_escaped)) { echo $canuse_escaped; }
-            echo '</td></tr>';
+            echo '<td><code>' . esc_html($field) . '</code></td>';
+            echo '<td>' . ($is_default ? esc_html__('Visible', 'rrze-faudir') : esc_html__('Invisible', 'rrze-faudir')) . '</td>';
+            echo '</tr>';
         }
+
         echo '</table>';
         echo '<p class="description">' . esc_html__('Select the fields to display by default in shortcodes and blocks.', 'rrze-faudir') . '</p>';
     }
@@ -897,84 +825,32 @@ class Settings {
      * Default-Ausgabefelder (Orgs/Folders) – nur Felder, die in org-* Formaten vorkommen
      * ----------------------------- */
     public function render_default_output_org_fields(): void {
-        $options = get_option('rrze_faudir_options');
-
-        $config           = new Config();
-        $available_fields = (array) $config->get('avaible_fields_org');   // fieldKey => Label
-        $formatnames      = (array) $config->get('formatnames');          // formatKey => Name
-        $fieldlist        = (array) $config->getAvaibleFieldlist();       // formatKey => [fieldKey, ...]
-
-        $org_format_keys = array_values(array_filter(
-            array_keys($fieldlist),
-            static fn($k) => is_string($k) && strpos($k, 'org-') === 0 && is_array($fieldlist[$k])
-        ));
-
-        $org_field_keys_map = [];
-        foreach ($org_format_keys as $fmt) {
-            foreach ((array) $fieldlist[$fmt] as $f) {
-                $org_field_keys_map[$f] = true;
-            }
-        }
-        $org_field_keys = array_keys($org_field_keys_map);
-
-        if (empty($org_field_keys)) {
-            echo '<p class="description">' .
-                 esc_html__('No organization/folder fields available for selection.', 'rrze-faudir') .
-                 '</p>';
-            return;
-        }
-
-        $org_fields = [];
-        foreach ($org_field_keys as $key) {
-            $org_fields[$key] = $available_fields[$key] ?? $key;
-        }
-
-        $org_default_fields = $options['default_org_output_fields'] ?? null;
-        if ($org_default_fields === null) {
-            $fallback_defaults = (array) ($options['default_output_fields'] ?? []);
-            $org_default_fields = array_values(array_intersect($fallback_defaults, $org_field_keys));
-        }
-        if (empty($org_default_fields)) {
-            $org_default_fields = $org_field_keys;
-        }
+        $selected_fields = $this->config->getDefaultFieldlistByFormat('default', 'org');
+        $available_fields = $this->config->getFieldsByFormat('default', 'org');
+        $config_defaults = $this->config->getAll()['default_fields_byformat']['org-default'] ?? [];
 
         echo '<table class="faudir-attributs">';
-        echo '<tr>'
-           . '<th>' . esc_html__('Output data (organizations/folders)', 'rrze-faudir') . '</th>'
-           . '<th>' . esc_html__('Fieldname for Show/Hide-Attribut in Shortcodes', 'rrze-faudir') . '</th>'
-           . '<th>' . esc_html__('Avaible in formats', 'rrze-faudir') . '</th>'
-           . '</tr>';
+        echo '<tr>';
+        echo '<th>' . esc_html__('Output data', 'rrze-faudir') . '</th>';
+        echo '<th>' . esc_html__('Fieldname for Show-Attribute in Shortcodes', 'rrze-faudir') . '</th>';
+        echo '<th>' . esc_html__('Default value', 'rrze-faudir') . '</th>';
+        echo '</tr>';
 
-        foreach ($org_fields as $field => $label) {
-            $checked = in_array($field, $org_default_fields, true);
+        foreach ($available_fields as $field => $label) {
+            $checked = in_array($field, $selected_fields, true);
+            $is_default = in_array($field, $config_defaults, true);
 
             echo '<tr>';
             echo '<th><label for="' . esc_attr('rrze_faudir_default_org_output_fields_' . $field) . '">';
-            echo '<input type="checkbox" id="' . esc_attr('rrze_faudir_default_org_output_fields_' . $field) . '" '
-               . 'name="rrze_faudir_options[default_org_output_fields][]" '
-               . 'value="' . esc_attr($field) . '" ' . checked($checked, true, false) . '>';
+            echo '<input type="checkbox" id="' . esc_attr('rrze_faudir_default_org_output_fields_' . $field) . '" name="rrze_faudir_options[show_output_fields_org_default][]" value="' . esc_attr($field) . '" ' . checked($checked, true, false) . '>';
             echo esc_html($label) . '</label></th>';
-
             echo '<td><code>' . esc_html($field) . '</code></td>';
-
-            $canuse_parts_escaped = [];
-            foreach ($org_format_keys as $fmt) {
-                $entries = (array) $fieldlist[$fmt];
-                if (in_array($field, $entries, true)) {
-                    $alias     = ($fmt === 'org-compact') ? 'compact' : $fmt;
-                    $labelName = $formatnames[$fmt] ?? $alias;
-                    $canuse_parts_escaped[] = esc_html($labelName) . ' (<code>org-' . esc_html($alias) . '</code>)';
-                }
-            }
-            echo '<td>' . implode(', ', $canuse_parts_escaped) . '</td>';
-
+            echo '<td>' . ($is_default ? esc_html__('Visible', 'rrze-faudir') : esc_html__('Invisible', 'rrze-faudir')) . '</td>';
             echo '</tr>';
         }
 
         echo '</table>';
-        echo '<p class="description">'
-           . esc_html__('Select the organization/folder fields to display by default in shortcodes and blocks.', 'rrze-faudir')
-           . '</p>';
+        echo '<p class="description">' . esc_html__('Select the organization/folder fields to display by default in shortcodes and blocks.', 'rrze-faudir') . '</p>';
     }
 
     /* -----------------------------
@@ -986,25 +862,22 @@ class Settings {
         }
         check_admin_referer('delete_default_organization');
 
-        $options = get_option('rrze_faudir_options', []);
-        if (isset($options['default_organization'])) {
-            unset($options['default_organization']);
-            $options['default_organization'] = null;
-            update_option('rrze_faudir_options', $options);
- //           add_settings_error('rrze_faudir_messages', 'default_org_deleted', __('Default organization has been deleted.', 'rrze-faudir'), 'updated');
-        }
+        $this->config->deleteOption('default_organization');
 
         wp_safe_redirect( add_query_arg(['page' => 'rrze-faudir', 'tab' => 'general', 'settings-updated' => 'true'], admin_url('options-general.php')) );
         exit;
     }
 
+    /*
+     * Alle Config Werte in der DB resetten
+     */
     public function reset_defaults(): void {
         check_ajax_referer('rrze_faudir_reset_defaults_nonce', 'security');
 
-        $config = new Config();
-        $default_settings =  $config->getAll(); // $config->getOverwiteableOptions(); //
-    
-        update_option('rrze_faudir_options', $default_settings);
+        $defaults = $this->config->getOverwriteableOptionDefaults();
+        $defaults['version'] =  $this->config->getConfigVersion();
+
+        $this->config->saveOptions($defaults);
 
         wp_send_json_success(__('Settings have been reset to default values.', 'rrze-faudir'));
     }
@@ -1110,23 +983,23 @@ class Settings {
     public function search_person_ajax(): void {
         check_ajax_referer('rrze_faudir_api_nonce', 'security');
 
-        $personId          = isset($_POST['person_id'])   ? sanitize_text_field($_POST['person_id'])   : '';
-        $givenName         = isset($_POST['given_name'])  ? rawurlencode(sanitize_text_field($_POST['given_name']))  : '';
-        $familyName        = isset($_POST['family_name']) ? rawurlencode(sanitize_text_field($_POST['family_name'])) : '';
-        $email             = isset($_POST['email'])       ? sanitize_email($_POST['email'])            : '';
-        $includeDefaultOrg = isset($_POST['include_default_org']) && $_POST['include_default_org'] === '1';
+        $personId           = isset($_POST['person_id'])   ? sanitize_text_field($_POST['person_id'])   : '';
+        $givenName          = isset($_POST['given_name'])  ? rawurlencode(sanitize_text_field($_POST['given_name']))  : '';
+        $familyName         = isset($_POST['family_name']) ? rawurlencode(sanitize_text_field($_POST['family_name'])) : '';
+        $email              = isset($_POST['email'])       ? sanitize_email($_POST['email'])            : '';
+        $includeDefaultOrg  = isset($_POST['include_default_org']) && $_POST['include_default_org'] === '1';
 
-        $defaultOrg    = get_option('rrze_faudir_options', [])['default_organization'] ?? null;
-        $defaultOrgIds = $defaultOrg ? $defaultOrg['ids'] : [];
+        $defaultOrg         = $this->config->get('default_organization');
+        $defaultOrgIds      = $defaultOrg ? $defaultOrg['ids'] : [];
 
         $queryParts = [];
         if (!empty($personId))   { $queryParts[] = 'identifier=' . $personId; }
         if (!empty($givenName))  { $queryParts[] = 'givenName[ireg]=' . $givenName; }
         if (!empty($familyName)) { $queryParts[] = 'familyName[ireg]=' . $familyName; }
 
-        $config = new Config();
-        $post_type = $config->get('person_post_type');
-        $api    = new API($config);
+        // $config = new Config();
+        $post_type = $this->config->get('person_post_type');
+        $api    = new API($this->config);
 
         if (!empty($email)) {
             $response = $api->getContacts(1, 0, ['lq' => 'workplaces.mails[ireg]=' . $email]);
@@ -1310,13 +1183,12 @@ class Settings {
         $org_nr   = isset($_POST['org_nr'])   ? sanitize_text_field($_POST['org_nr'])   : '';
 
         if (!empty($org_ids) && !empty($org_name)) {
-            $options = get_option('rrze_faudir_options', []);
-            $options['default_organization'] = [
+            
+           $this->config->setOption('default_organization', [
                 'ids'   => $org_ids,
                 'name'  => $org_name,
                 'orgnr' => $org_nr,
-            ];
-            update_option('rrze_faudir_options', $options);
+            ]);
 
         }
 
@@ -1325,20 +1197,13 @@ class Settings {
     }
 
     public function sanitize_options(array $new_options): array {
-        // Bisherige Optionen laden und sicherstellen, dass es ein Array ist
-        // $existing = get_option('rrze_faudir_options', []);
-
-        $existing = $this->config->getOptions();
-        
-        
+        $existing = $this->config->getRawOptions();
         if (!is_array($existing)) {
             $existing = [];
         }
 
-        // Merge: nur übermittelte Keys überschreiben, Rest behalten
-        $merged = array_merge($existing, $new_options);
+        $merged = $existing;
 
-        // --- Skalare Felder ---
         if (array_key_exists('api_key', $new_options)) {
             $merged['api_key'] = sanitize_text_field($new_options['api_key']);
         }
@@ -1346,19 +1211,20 @@ class Settings {
         if (array_key_exists('jobtitle_format', $new_options)) {
             $merged['jobtitle_format'] = sanitize_text_field($new_options['jobtitle_format']);
         }
+
         if (array_key_exists('person_slug', $new_options)) {
             $merged['person_slug'] = sanitize_title($new_options['person_slug']);
         }
+
         if (array_key_exists('redirect_archivpage_uri', $new_options)) {
             $merged['redirect_archivpage_uri'] = esc_url_raw($new_options['redirect_archivpage_uri']);
         }
+
         if (array_key_exists('cache_timeout', $new_options)) {
-            $merged['cache_timeout'] = max(15, (int) $new_options['cache_timeout']);
+            $min = (int) Constants::TRANSIENT_CACHE_TIMEOUT;
+            $merged['cache_timeout'] = max($min, (int) $new_options['cache_timeout']);
         }
 
-
-
-        // --- Checkboxen (nur wenn im POST enthalten) ---
         $checkboxes = [
             'fallback_link_faudir',
             'show_error_message',
@@ -1366,7 +1232,8 @@ class Settings {
             'redirect_to_canonicals',
             'default_visible_copyrightmeta',
             'default_visible_bildunterschrift',
-            'enable_history'
+            'default_placeholder_image_with_signature',
+            'enable_history',
         ];
 
         foreach ($checkboxes as $cb) {
@@ -1375,51 +1242,50 @@ class Settings {
             }
         }
 
-
-        // --- Arrays von Feldlisten ---
-        if (array_key_exists('default_output_fields', $new_options)) {
-            $merged['default_output_fields'] = array_values(array_unique(array_map(
+        if (array_key_exists('show_output_fields_person_default', $new_options)) {
+            $merged['show_output_fields_person_default'] = array_values(array_unique(array_map(
                 'sanitize_text_field',
-                (array) $new_options['default_output_fields']
-            )));
-        }
-        if (array_key_exists('default_org_output_fields', $new_options)) {
-            $merged['default_org_output_fields'] = array_values(array_unique(array_map(
-                'sanitize_text_field',
-                (array) $new_options['default_org_output_fields']
-            )));
-        }
-        if (array_key_exists('output_fields_endpoint', $new_options)) {
-            $merged['output_fields_endpoint'] = array_values(array_unique(array_map(
-                'sanitize_text_field',
-                (array) $new_options['output_fields_endpoint']
+                (array) $new_options['show_output_fields_person_default']
             )));
         }
 
-        // --- Strukturierte Werte (nur wenn im POST enthalten) ---
+        if (array_key_exists('show_output_fields_person_page', $new_options)) {
+            $merged['show_output_fields_person_page'] = array_values(array_unique(array_map(
+                'sanitize_text_field',
+                (array) $new_options['show_output_fields_person_page']
+            )));
+        }
+
+        if (array_key_exists('show_output_fields_org_default', $new_options)) {
+            $merged['show_output_fields_org_default'] = array_values(array_unique(array_map(
+                'sanitize_text_field',
+                (array) $new_options['show_output_fields_org_default']
+            )));
+        }
+
         if (array_key_exists('default_organization', $new_options) && is_array($new_options['default_organization'])) {
             $d = $new_options['default_organization'];
             $merged['default_organization'] = [
-                'ids'   => array_values(array_map('sanitize_text_field', (array)($d['ids'] ?? []))),
+                'ids'   => array_values(array_map('sanitize_text_field', (array) ($d['ids'] ?? []))),
                 'name'  => sanitize_text_field($d['name'] ?? ''),
                 'orgnr' => sanitize_text_field($d['orgnr'] ?? ''),
             ];
         }
 
-        return $merged;
+        if (isset($existing['version'])) {
+           $merged['version'] = (int) $existing['version'];
+       } else {
+           $merged['version'] = $this->config->getConfigVersion();
+       }
+
+       return $this->config->filterAllowedOptions($merged);
     }
 
     /*
-     * Aktives/Deaktives History/Revisions für CPT
+     * Aktiviert/deaktiviert History/Revisions für CPT
      */
     public function render_enable_history(): void {
-        
-        
-        
-        // $options = get_option('rrze_faudir_options');
-        // $checked = is_array($options) && !empty($options['enable_history']);
-
-       $checked = $this->config->get('enable_history');
+        $checked = (int) $this->config->get('enable_history') === 1;
         
         echo '<label>';
         echo '<input type="hidden" name="rrze_faudir_options[enable_history]" value="0">';
@@ -1435,6 +1301,5 @@ class Settings {
     private function isHistoryEnabled(): bool {
         return (int) $this->config->get('enable_history') === 1;
     }
-    
-   
+
 }

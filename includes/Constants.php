@@ -40,7 +40,8 @@ final class Constants {
     public const TRANSIENT_KEY_CONTACT_PREFIX       = 'contact_'; // Note: TRANSIENT_PREFIX_API will be prefixed to this
     public const TRANSIENT_KEY_ORG_PREFIX           = 'org_'; // Note: TRANSIENT_PREFIX_API will be prefixed to this
     public const TRANSIENT_JITTER_MINUTES           = 5;
-
+    public const TRANSIENT_DEFAULT_TIMEOUT          = 900; // in Sekunden, intern verwendet
+    public const TRANSIENT_CACHE_TIMEOUT            = 15;  // In Minuten, zur IEngabe auf Settings angezeigt
     /*
      * Constants für Cron-Scheduler und Daten-Prüfung
      */
@@ -66,10 +67,13 @@ final class Constants {
     /*
      * URL für Abfrage von Personen aus UnivIS
      */
-    public const UNIVIS_PERSON_JSON_URL = 'https://univis.uni-erlangen.de/prg?search=persons&id=%s&show=json';
+    public const UNIVIS_PERSON_JSON_URL             = 'https://univis.uni-erlangen.de/prg?search=persons&id=%s&show=json';
 
-    public const FAUDIR_DOKU_URL = 'https://www.wp.rrze.fau.de/plugins/inhaltsseiten-mit-funktionen-erweitern/rrze-faudir/';
-    public const FAUDIR_DOKU_TITLE =  'Documentation';
+    /*
+     * Infos zur Anzeige bei der Pluginübersicht
+     */
+    public const FAUDIR_DOKU_URL                    = 'https://www.wp.rrze.fau.de/plugins/inhaltsseiten-mit-funktionen-erweitern/rrze-faudir/';
+    public const FAUDIR_DOKU_TITLE                  =  'Documentation';
     
     
 }

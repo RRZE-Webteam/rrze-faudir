@@ -13,7 +13,6 @@ class Migration {
     private CPT $cpt;
     
     public function __construct(Config $config, CPT $cpt) {
-        $config->insertOptions();
         $this->config = $config;
         $this->cpt = $cpt;
     }
