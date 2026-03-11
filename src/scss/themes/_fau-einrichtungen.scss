@@ -4,6 +4,9 @@ Settings for FAU Einrichtungen theme
 @use '../mixins';
 
 .fau-theme {
+   
+    
+    
     .content-row .entry-content {
 	.faudir {		    
 	    overflow-x: auto;
@@ -12,7 +15,7 @@ Settings for FAU Einrichtungen theme
     
     .faudir {
 	--faudir-profile-padding: 0.5rem 0;
-	
+	--faudir-icon_background-color: #fff;
 	
 	.address-title, 
 	.contact-title {

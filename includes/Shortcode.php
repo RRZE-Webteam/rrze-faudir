@@ -73,8 +73,8 @@ class Shortcode {
         }
         
         
-        $atts['display'] = $this->validateDisplay($atts['display']);
-        $atts['format'] = $this->validateFormat($atts['format'], $atts['display']);
+        $atts['display'] = $this->config->normalizeDisplay((string) ($atts['display'] ?? 'person'));
+        $atts['format'] = $this->config->normalizeFormatForDisplay((string) ($atts['format'] ?? ''), $atts['display']);
         
         do_action( 'rrze.log.notice','FAUdir\Shortcode (pre resolve). Modified Args: ', $atts);
                 
@@ -171,11 +171,6 @@ class Shortcode {
          // Sichtbare Felder berechnen
         $fields =  array_diff($show_fields, $hide_fields);
         
-        // Sichtbare Felder berechnen
-        // $fields = array_merge(
-           // array_diff($default_show_fields, $hide_fields),
-           // $show_fields
-       //  );
 
         $fields = array_values(array_unique($fields));
  do_action( 'rrze.log.notice','FAUdir\Shortcode (resolve_visible_fields_with_format). Fields rest: ', $fields);
@@ -257,7 +252,7 @@ class Shortcode {
         );
 
         $template_dir = RRZE_PLUGIN_PATH . 'templates/';
-        $template = new Template($template_dir);
+        $template = new Template($this->config, $template_dir);
 
         $format_displayname = wp_strip_all_tags($args['format_displayname']);
         $templatefile = $args['display'] . '_' . $args['format'];
@@ -318,8 +313,7 @@ class Shortcode {
             return $args;
         }
 
-        $options = get_option('rrze_faudir_options', []);
-        $default_org = $options['default_organization'] ?? null;
+        $default_org = $this->config->get('default_organization');
 
         if (!empty($default_org['orgnr'])) {
             $args['orgnr'] = (string) $default_org['orgnr'];
@@ -424,6 +418,7 @@ class Shortcode {
             // optionale URL der ORG überschreiben
         
         $org = new Organization();
+        $org->setConfig($this->config);
         
         if (FaudirUtils::isValidOrgnr($orgnr)) {   
             $id = $org->getIdentifierbyOrgnr($orgnr);
@@ -452,7 +447,7 @@ class Shortcode {
         
            
         $template_dir = RRZE_PLUGIN_PATH . 'templates/';
-        $template = new Template($template_dir);
+        $template = new Template($this->config, $template_dir);
 
         // check and sanitize for format for displayname
         $templatefile = $display.'_'.$atts['format'];
@@ -476,9 +471,7 @@ class Shortcode {
         }
         do_action( 'rrze.log.error',"FAUdir\Shortcode (createErrorOut): $errorloginfo", $error);
         
-        $out = '<div class="faudir">';  
-        $opt = $this->config->getOptions(); 
-        if ($opt['show_error_message']) {
+        if (!empty($this->config->get('show_error_message'))) {
           $out .= '<div class="faudir-error">';
           $out .= $error;
           $out .= '</div>';
@@ -486,53 +479,7 @@ class Shortcode {
         $out .= '</div>';
         return $out;
     }
-    
-    
-    
-    /*
-     * Check the given display for validity and return it if its avaible, otherwise 
-     * the default format
-     */
-    public function validateDisplay(string $display = ''): string {        
-        $allformats =  $this->config->get('avaible_formats_by_display');
-        $display = sanitize_key($display);
-        if ((empty($display))  ||  (!isset($allformats[$display]))) {
-            $display = $this->config->get('default_display');
-        }
-        
-        return $display;
-    }
-    
-    /*
-     * Check the given format for validity and return it if its avaible, otherwise 
-     * the default format
-     */
-    public function validateFormat(string $format = '', ?string $display = ''): string {
-        $allformats =   $this->config->get('avaible_formats_by_display');
-        $format = sanitize_key($format);
-   
-        
-         
-        // first fix for typo or old names:     
-        if ($format == 'kompakt') {
-            $format = 'compact';
-        } elseif ($format == 'liste') {
-            $format = 'list';
-        }
-        if (empty($display)) {
-            $display = $this->config->get('default_display');
-        }
 
-        
-        // Now check if its valid, otherwise return the default.
-         // Wenn ein Format übergeben wurde, prüfen ob es gültig ist
-        if (!empty($format) && in_array($format, $allformats[$display], true)) {
-                       
-            return $format;
-        }
-        // Fallback
-        return $this->config->get('default_format');
-    }
     
    /*
     * Hole Personeneinträge aus dem CPT, die zu einer definierten Kategorie gehören
@@ -807,7 +754,7 @@ class Shortcode {
 
         $orgid = FaudirUtils::sanitizeOrganizationId($id);
         if ($orgid === null) {
-            do_action('rrze.log.warn', "FAUdir\Shortcode (getPersonsByFAUdirOrgId): Invalid OrgId {$identifier}.");
+            do_action('rrze.log.warn', "FAUdir\Shortcode (getPersonsByFAUdirOrgId): Invalid OrgId {$id}.");
             return [];
         }
         

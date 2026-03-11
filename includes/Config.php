@@ -40,15 +40,15 @@ class Config {
             'org-default'   => [ 'name', 'alternateName', 'phone', 'fax', 'email', 'url', 'socialmedia','address', 'postalAddress', 'faumap', 'officehours', 'consultationhours', 'text'],
         ],
         'default_fields_byformat'   => [
-            'default'       => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia'],
+            'default'       => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia', 'link'],
             'page'           => [
                 'image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization', 'address', 'room', 'floor',
                 'teasertext', 'content', 'officehours', 'consultationhours'
             ],
-            'list'          => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia'],
-            'compact'       => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia'],
-            'table'         => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia'],
-            'card'          => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia'],
+            'list'          => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia', 'link'],
+            'compact'       => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia', 'link'],
+            'table'         => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia', 'link'],
+            'card'          => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia', 'link'],
             'org-compact'   => ['name', 'phone', 'fax', 'email', 'url', 'socialmedia', 'address', 'faumap', 'officehours', 'consultationhours', 'text'],
             'org-default'   => ['name', 'phone', 'fax', 'email', 'url', 'socialmedia', 'address', 'faumap', 'officehours', 'consultationhours', 'text'],
         ],
@@ -119,7 +119,6 @@ class Config {
             'show_output_fields_person_page',
             'show_output_fields_org_default',
             'default_organization',
-            'button_link_title'
         ]
 
     ];
@@ -661,9 +660,7 @@ class Config {
             $raw['show_output_fields_person_page'] = $raw['output_fields_endpoint'];
         }  
         
-        if (isset($raw['business_card_title']) && !isset($raw['button_link_title'])) {
-            $raw['button_link_title'] = $raw['business_card_title'];
-        }  
+
         
         if ($storedVersion === 0) {
             $cleaned = $this->filterAllowedOptions($raw);

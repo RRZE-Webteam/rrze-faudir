@@ -131,44 +131,37 @@
 		    gap: 0;
 		    grid-template-areas:
 			"profile-address profile-contact"
-			"profile-consultation profile-socialmedia"
-			"profile-link profile-link";
+			"profile-consultation profile-socialmedia";
 		    grid-template-columns: 2fr 3fr;
  
 		}
 		.fau-elemental &:not(:has(.profile-address)) {
 		    grid-template-areas:
 		      "profile-contact      profile-contact"
-		      "profile-consultation profile-socialmedia"
-		      "profile-link         profile-link";
+		      "profile-consultation profile-socialmedia";
 		  }
 		/* Wenn consultation fehlt → socialmedia über volle Breite */
 		.fau-elemental &:not(:has(.profile-consultation)) {
 		  grid-template-areas:
 		    "profile-address      profile-contact"
-		    "profile-socialmedia  profile-socialmedia"
-		    "profile-link         profile-link";
+		    "profile-socialmedia  profile-socialmedia";
 		}
 
 		/* Wenn beide links fehlen → beide rechten Reihen vollbreit */
 		.fau-elemental &:not(:has(.profile-address)):not(:has(.profile-consultation)) {
 		  grid-template-areas:
 		    "profile-contact     profile-contact"
-		    "profile-socialmedia profile-socialmedia"
-		    "profile-link        profile-link";
+		    "profile-socialmedia profile-socialmedia";
 		}
 		
 		.profile-address, 
 		.profile-consultation, 
 		.profile-contact, 
 		.profile-socialmedia, 
-		.profile-link,
 		.profile-content {
 		   padding: var(--faudir-profile-padding);
 		}
-		.profile-link {
-		    grid-area: profile-link;
-		}
+
 		.profile-address {
 		    grid-area: profile-address;
 		}

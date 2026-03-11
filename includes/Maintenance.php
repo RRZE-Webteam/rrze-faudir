@@ -58,8 +58,7 @@ class Maintenance {
     }
 
     public function load_custom_person_template($template) {
-        $config = new Config();
-        $post_type = $config->get('person_post_type');
+        $post_type = $this->config->get('person_post_type');
 
         if (get_query_var($post_type) || is_singular($post_type)) {
             $plugin_template = plugin_dir_path(__DIR__) . '/templates/single-custom_person.php';
@@ -73,8 +72,7 @@ class Maintenance {
 
     public function custom_cpt_404_message(): void {
         global $wp_query;
-        $config = new Config();
-        $post_type = $config->get('person_post_type');
+        $post_type = $this->config->get('person_post_type');
 
         if (isset($wp_query->query_vars['post_type'])
             && $wp_query->query_vars['post_type'] === $post_type
@@ -83,10 +81,9 @@ class Maintenance {
             return;
         }
 
-        $options = get_option('rrze_faudir_options');
-        $slug = !empty($options['person_slug']) ? sanitize_title($options['person_slug']) : 'faudir';
+        $slug = $this->config->get('person_slug');  // !empty($options['person_slug']) ? sanitize_title($options['person_slug']) : 'faudir';
         if ($this->is_slug_request($slug)) {
-            $redirect = trim($options['redirect_archivpage_uri'] ?? '');
+            $redirect = trim($this->config->get('redirect_archivpage_uri'));
             if (!empty($redirect)) {
                 if (str_starts_with($redirect, '/')) {
                     $redirect = home_url($redirect);
@@ -101,13 +98,12 @@ class Maintenance {
     }
 
     public function maybe_disable_canonical_redirect(): void {
-        $options = get_option('rrze_faudir_options');
-        $redirect = trim($options['redirect_archivpage_uri'] ?? '');
+        $redirect = trim($this->config->get('redirect_archivpage_uri'));
         if (empty($redirect)) {
             return;
         }
+        $slug = $this->config->get('person_slug');
 
-        $slug = !empty($options['person_slug']) ? sanitize_title($options['person_slug']) : 'faudir';
         if ($this->is_slug_request($slug)) {
             remove_filter('template_redirect', 'redirect_canonical');
         }

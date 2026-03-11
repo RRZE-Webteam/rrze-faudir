@@ -11,18 +11,16 @@ if (!defined('ABSPATH')) {
 ?>
 <div class="faudir">
 <?php
-    $config = new Config;
+    $config = $this->config;
     $available_fields = $config->getFieldsByFormat('compact');
     $opt = $config->getOptions();        
     $lang = FAUdirUtils::getLang();
     $normalize_titles = $opt['default_normalize_honorificPrefix'];
     
-    $dbopt = get_option('rrze_faudir_options', []);
      
 
     
     if (!empty($persons)) { 
-     //   do_action('rrze.log.info', 'FAUdir Opt: ', $dbopt);
         
         ?>
          <div class="format-compact">
@@ -286,8 +284,7 @@ if (!defined('ABSPATH')) {
                         }
                         
                         
-                    
-                    
+                   
                     $profilcontent = '';
                     if (in_array('teasertext', $show_fields)) {    
                         

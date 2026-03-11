@@ -171,13 +171,7 @@ class Settings {
             'rrze_faudir_settings_shortcode',
             'rrze_faudir_shortcode_section'
         );
-        add_settings_field(
-            'rrze_faudir_button_link_title',
-            __('Kompakt Card Button Title', 'rrze-faudir'),
-            [$this, 'render_button_link_title'],
-            'rrze_faudir_settings_shortcode',
-            'rrze_faudir_shortcode_section'
-        );
+   
         add_settings_field(
             'rrze_faudir_fallback_link_faudir',
             __('Fallback FAUdir link', 'rrze-faudir'),
@@ -724,14 +718,6 @@ class Settings {
         echo '</label>';
     }
 
-
-    public function render_button_link_title(): void {
-        $default_title = sanitize_text_field((string) $this->config->get('button_link_title'));
-
-        echo '<label><input type="text" name="rrze_faudir_options[button_link_title]" value="' . esc_attr($default_title) . '" size="50">';
-        echo '<p class="description">' . esc_html__('Link title for optional links pointing to the users detail page.', 'rrze-faudir') . '</p><label>';
-
-    }
     
 
    public function render_fallback_link_faudir(): void {
