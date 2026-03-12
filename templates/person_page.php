@@ -11,19 +11,19 @@ if (!defined('ABSPATH')) {
 ?>
 <div class="faudir">
 <?php
-    $config = new Config;
-    $available_fields = $config->getFieldsByFormat('page');
-    $opt = $config->getOptions();       
-    $normalize_titles = $opt['default_normalize_honorificPrefix'];
+    $available_fields = $this->config->getFieldsByFormat('page');
+    $normalize_titles = $this->config->get('default_normalize_honorificPrefix');
     $lang = FAUdirUtils::getLang();
 
+
+    do_action( 'rrze.log.notice',"FAUdir\Template (person_page.php). Pre render with template {$templatefile}: ", $show_fields);
 
     
     if (!empty($persons)) { ?>
     <div class="format-page">
     <?php foreach ($persons as $persondata) {
        if (isset($persondata['error'])) {  
-            if ($opt['show_error_message']) {
+            if ($this->config->get('show_error_message')) {
             ?>
             <div class="faudir-error">
                 <?php echo esc_html($persondata['message']); ?>
@@ -33,6 +33,7 @@ if (!defined('ABSPATH')) {
             if (!empty($persondata)) {
                 // do_action('rrze.log.info', "person-page.php: Preparing data for person: ", $persondata);
                 $person = new Person($persondata);
+                $person->setConfig($this->config);
                 $formatstring = '';
                 if (!empty($format_displayname)) {
                     $formatstring = $format_displayname;
@@ -45,7 +46,7 @@ if (!defined('ABSPATH')) {
                 } elseif ($url == '#') {
                     $final_url = '';
                 } else {
-                    $final_url = $person->getTargetURL($opt['fallback_link_faudir']);
+                    $final_url = $person->getTargetURL($this->config->get('fallback_link_faudir'));
                 }
                 
       
@@ -90,8 +91,8 @@ if (!defined('ABSPATH')) {
                         }
                         if (in_array('jobTitle', $show_fields)) {
                             $jobtitleformat = '#functionlabel#';
-                            if (!empty($opt['jobtitle_format'])) {
-                                $jobtitleformat = $opt['jobtitle_format'];
+                            if (!empty($this->config->get('jobtitle_format'))) {
+                                $jobtitleformat = $this->config->get('jobtitle_format');
                             }                           
                             echo '<p class="jobtitle">'. $contact->getJobTitle($lang,$jobtitleformat).'</p>';
                         }

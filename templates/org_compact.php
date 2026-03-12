@@ -11,21 +11,18 @@ if (!defined('ABSPATH')) {
 ?>
 <div class="faudir">
 <?php
-    $config = new Config;
-   // $available_fields = $config->getFieldsByFormat('org-compact');
-    $opt = $config->getOptions();        
+   // $available_fields = $this->config->getFieldsByFormat('org-compact');
     $lang = FAUdirUtils::getLang();
 
-    
-    $dbopt = get_option('rrze_faudir_options', []);
-     
+
      
     
     if (!empty($orgdata)) { ?>
     <div class="format-org-compact">
     <?php 
 
-                $org = new Organization($orgdata);                
+                $org = new Organization($orgdata);          
+                $org->setConfig($this->config);
                 $displayname = $org->getName(true,$lang);
                 
 

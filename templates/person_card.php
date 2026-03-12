@@ -11,17 +11,15 @@ if (!defined('ABSPATH')) {
 ?>
 <div class="faudir">
 <?php
-    $config = new Config;
-    $available_fields = $config->getFieldsByFormat('card');
-    $opt = $config->getOptions();        
+    $available_fields = $this->config->getFieldsByFormat('card');
     $lang = FAUdirUtils::getLang();
-    $normalize_titles = $opt['default_normalize_honorificPrefix'];
+    $normalize_titles = $this->config->get('default_normalize_honorificPrefix');
     
     if (!empty($persons)) { ?>
     <div class="format-card">
     <?php foreach ($persons as $persondata) {
         if (isset($persondata['error'])) {  
-            if ($opt['show_error_message']) {
+            if ($this->config->get('show_error_message')) {
             ?>
             <div class="faudir-error">
                 <?php echo esc_html($persondata['message']); ?>
@@ -31,6 +29,7 @@ if (!defined('ABSPATH')) {
             if (!empty($persondata)) {
 
                 $person = new Person($persondata);
+                $person->setConfig($this->config);
                 $formatstring = '';
                 if (!empty($format_displayname)) {
                     $formatstring = $format_displayname;
@@ -41,7 +40,7 @@ if (!defined('ABSPATH')) {
                 if (!empty($url)) {
                     $final_url = $url;
                 } else {
-                    $final_url = $person->getTargetURL($opt['fallback_link_faudir']);
+                    $final_url = $person->getTargetURL($this->config->get('fallback_link_faudir'));
                 }
                 $contact = $person->getPrimaryContact($role);
                 $workplaces = [];
@@ -100,8 +99,8 @@ if (!defined('ABSPATH')) {
                         }
                         if (in_array('jobTitle', $show_fields) ) {
                             $jobtitleformat = '#functionlabel#';
-                            if (!empty($opt['jobtitle_format'])) {
-                                $jobtitleformat = $opt['jobtitle_format'];
+                            if (!empty($this->config->get('jobtitle_format'))) {
+                                $jobtitleformat = $this->config->get('jobtitle_format');
                             }                           
                             echo '<p class="jobtitle">'. $contact->getJobTitle($lang,$jobtitleformat).'</p>';
                         }

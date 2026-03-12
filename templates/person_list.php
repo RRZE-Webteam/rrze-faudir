@@ -12,12 +12,10 @@ if (!defined('ABSPATH')) {
 <div class="faudir">
     <?php 
     
-    $config = new Config;    
-    $available_fields = $config->getFieldsByFormat('list');
-    $opt = $config->getOptions(); 
+    $available_fields = $this->config->getFieldsByFormat('list');
     
-    $normalize_titles = $opt['default_normalize_honorificPrefix'];
-    $displayorder = $config->get('default_display_order');
+    $normalize_titles = this->config->get('default_normalize_honorificPrefix');
+    $displayorder = $this->config->get('default_display_order');
         
     if (!empty($displayorder)) {
         $reihenfolge = $displayorder['list'];
@@ -53,6 +51,7 @@ if (!defined('ABSPATH')) {
                         $output_escaped .= '<li class="text-list" itemscope itemtype="https://schema.org/Person">';
          
                         $person = new Person($persondata);
+                        $person->setConfig($this->config);
                         $formatstring = '';
                         if (!empty($format_displayname)) {
                             $formatstring = $format_displayname;

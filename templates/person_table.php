@@ -12,14 +12,11 @@ if (!defined('ABSPATH')) {
 <div class="faudir">
     <?php
     
-    $config = new Config;
-    $fieldsbyformat = $config->get('avaible_fields_byformat');
-    $available_fields = $config->getFieldsByFormat('table');
-    $opt = $config->getOptions();        
-    $normalize_titles = $opt['default_normalize_honorificPrefix'];
+    $available_fields = $this->config->getFieldsByFormat('table');
+    $normalize_titles = $this->config->get('default_normalize_honorificPrefix');
 
    
-    $displayorder = $config->get('default_display_order');
+    $displayorder = $this->config->get('default_display_order');
     if (!empty($displayorder)) {
         $reihenfolge = $displayorder['table'];
     } else {
@@ -39,7 +36,7 @@ if (!defined('ABSPATH')) {
             <?php
                 foreach ($persons as $persondata) { 
                     if (isset($persondata['error'])) {  
-                        if ($opt['show_error_message']) {
+                        if ($this->config->get('show_error_message')) {
                         ?>
                         <div class="faudir-error">
                             <?php echo esc_html($persondata['message']); ?>
@@ -51,6 +48,7 @@ if (!defined('ABSPATH')) {
                         $output .= '<tr itemscope itemtype="https://schema.org/Person">';
          
                         $person = new Person($persondata);
+                        $person->setConfig($this->config);
                         $formatstring = '';
                         if (!empty($format_displayname)) {
                             $formatstring = $format_displayname;
@@ -61,7 +59,7 @@ if (!defined('ABSPATH')) {
                         if (!empty($url)) {
                             $final_url = $url;
                         } else {
-                            $final_url = $person->getTargetURL($opt['fallback_link_faudir']);
+                            $final_url = $person->getTargetURL($this->config->get('fallback_link_faudir'));
                         }
                         $contact = $person->getPrimaryContact($role);
                         $workplaces = [];
@@ -101,8 +99,8 @@ if (!defined('ABSPATH')) {
                                     $value = $person->honorificSuffix;               
                                 } elseif ($key_lower === 'jobtitle') {
                                     $jobtitleformat = '#functionlabel#';
-                                    if (!empty($opt['jobtitle_format'])) {
-                                        $jobtitleformat = $opt['jobtitle_format'];
+                                    if (!empty($this->config->get('jobtitle_format'))) {
+                                        $jobtitleformat = $this->config->get('jobtitle_format');
                                     }                           
                                     $value = $contact->getJobTitle($lang,$jobtitleformat);
                                 } elseif (($key_lower === 'socialmedia') || ($key_lower === 'socials')) { 

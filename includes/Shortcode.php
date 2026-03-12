@@ -128,31 +128,21 @@ class Shortcode {
      * Create Array for those fields we want to show 
      */
     public function resolve_visible_fields_with_format(array $atts): array {
-        
-        
-        
-        // $default_show_fields = $this->config->get('default_output_fields') ?? [];
-
         // Block-Editor: Felder direkt übernehmen
         if (isset($atts['blockeditor']) && $atts['blockeditor'] === 'true') {
             return FaudirUtils::normalizeStringArray(
                 FaudirUtils::csvToArray((string) ($atts['show'] ?? ''))
             );
         }
-
-         
+ 
         // Felder aus Shortcode-Parametern lesen
         if (!empty($atts['show'])) {
             $show_fields = FaudirUtils::csvToArray((string) ($atts['show'] ?? ''));
             $show_fields = FaudirUtils::normalizeStringArray($show_fields);
-            
-             do_action( 'rrze.log.notice','FAUdir\Shortcode (resolve_visible_fields_with_format). Show: ', $show_fields);
-             
+                         
         } else {
             $default_show_fields = $this->config->getDefaultFieldlistByFormat($atts['format'],$atts['display']);
             $show_fields = FaudirUtils::normalizeStringArray($default_show_fields);
-            
-             do_action( 'rrze.log.notice','FAUdir\Shortcode (resolve_visible_fields_with_format). Default Show: ', $show_fields);
         }
         
         
@@ -173,16 +163,14 @@ class Shortcode {
         
 
         $fields = array_values(array_unique($fields));
- do_action( 'rrze.log.notice','FAUdir\Shortcode (resolve_visible_fields_with_format). Fields rest: ', $fields);
         // Nur gültige Felder für Format/Display
         $available = $this->config->getAvaibleFieldlistByFormat(
             $atts['format'],
             $atts['display']
         );
- do_action( 'rrze.log.notice',"FAUdir\Shortcode (resolve_visible_fields_with_format). Avaible for format {$atts['format']} and display {$atts['display']}: ", $available);
+        // do_action( 'rrze.log.notice',"FAUdir\Shortcode (resolve_visible_fields_with_format). Avaible for format {$atts['format']} and display {$atts['display']}: ", $available);
 
         $resolved_fields = array_values(array_intersect($available, $fields));
- do_action( 'rrze.log.notice','FAUdir\Shortcode (resolve_visible_fields_with_format). Resolved rest: ', $resolved_fields);
 
         // Abhängigkeiten entfernen (hide_on_parameter)
         $hide_on_parameter = $this->config->get('hide_on_parameter') ?? [];
@@ -256,7 +244,7 @@ class Shortcode {
 
         $format_displayname = wp_strip_all_tags($args['format_displayname']);
         $templatefile = $args['display'] . '_' . $args['format'];
-
+do_action( 'rrze.log.notice',"FAUdir\Shortcode (createPersonOutput). Pre render with template {$templatefile}: ", $show_fields);
         return $template->render($templatefile, [
             'show_fields' => $show_fields,
             'format_displayname' => $format_displayname,
