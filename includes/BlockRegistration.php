@@ -26,38 +26,43 @@ class BlockRegistration {
      *
      * @return void
      */
-    function rrze_faudir_register_dynamic_blocks(): void
-    {
+    private function rrze_faudir_register_dynamic_blocks(): void {
         $blocks = [
             [
-                'build_folder'     => 'faudir',
-                'block_name'       => 'rrze-faudir/block',   // aus block.json -> "name"
-                'render_callback'  => [$this, 'render_faudir_block'],
+                'build_folder' => 'faudir',
+                'block_name' => 'rrze-faudir/block',
+                'render_callback' => [$this, 'render_faudir_block'],
             ],
             [
-                'build_folder'     => 'service',
-                'block_name'       => 'rrze-faudir/service', // aus block.json -> "name"
-                'render_callback'  => [$this, 'render_service_block'],
+                'build_folder' => 'service',
+                'block_name' => 'rrze-faudir/service',
+                'render_callback' => [$this, 'render_service_block'],
             ],
         ];
 
         $plugin_dir = plugin_dir_path(__DIR__);
-        $textdomain = 'rrze-faudir';
-        $languages_dir = $plugin_dir . 'languages';
+
+        load_plugin_textdomain(
+            'rrze-faudir',
+            false,
+            dirname(plugin_basename(__DIR__)) . 'languages'
+        );
 
         foreach ($blocks as $block_def) {
             register_block_type(
                 $plugin_dir . 'build/blocks/' . $block_def['build_folder'],
                 [
-                    'render_callback'   => $block_def['render_callback'],
+                    'render_callback' => $block_def['render_callback'],
                     'skip_inner_blocks' => true,
                 ]
             );
 
-            load_plugin_textdomain('rrze-faudir', false, dirname(plugin_basename(__DIR__)) . 'languages');
-
-            $script_handle = generate_block_asset_handle( $block_def['block_name'], 'editorScript');
-            wp_set_script_translations($script_handle, 'rrze-faudir', plugin_dir_path(__DIR__) . 'languages');
+            $script_handle = generate_block_asset_handle($block_def['block_name'], 'editorScript');
+            wp_set_script_translations(
+                $script_handle,
+                'rrze-faudir',
+                $plugin_dir . 'languages'
+            );
         }
     }
 
@@ -72,7 +77,7 @@ class BlockRegistration {
     public static function register_rrze_block_category($categories, $post) {
         // Check if there is already a RRZE category present
         foreach ($categories as $category) {
-            if (isset($category['slug']) && $category['slug'] === 'rrze') {
+            if (isset($category['slug']) && $category['slug'] === 'fau') {
                 return $categories;
             }
         }
@@ -97,109 +102,115 @@ class BlockRegistration {
             if (!shortcode_exists('faudir')) {
                 throw new Exception('FAUdir shortcode is not registered');
             }
-            
-            // Get default organization from options with proper checks
-            $options = get_option('rrze_faudir_options', []);
-            $default_org = isset($options['default_organization']) && is_array($options['default_organization'])
-                ? $options['default_organization']
-                : [];
-            $defaultOrgIdentifier = isset($default_org['id']) ? $default_org['id'] : '';
+do_action(
+    'rrze.log.info',
+    'FAUdir\\BlockRegistration (render_faudir_block): context',
+    [
+        'is_admin' => is_admin(),
+        'doing_ajax' => wp_doing_ajax(),
+        'rest_request' => defined('REST_REQUEST') && REST_REQUEST,
+        'attributes' => $attributes,
+    ]
+);
 
-            if (isset($attributes['display']) && 'org' === $attributes['display'] &&
-                empty($attributes['orgid']) && empty($attributes['orgnr'])) {
-                throw new \Exception(
+            if (
+                isset($attributes['display']) &&
+                $attributes['display'] === 'org' &&
+                empty($attributes['orgid']) &&
+                empty($attributes['orgnr'])
+            ) {
+                throw new Exception(
                     __('You selected display="org", but neither a FAUorganization ID (orgid) nor a FAU Organization Number (orgnr) was provided.', 'rrze-faudir')
                 );
             }
             
+            
+            
+ do_action( 'rrze.log.info', "FAUdir\BlockRegistration (render_faudir_block): Attribute unsanitized:", $attributes);  
             $shortcode_atts = [];
-            
-            if ($attributes['selectedFormat']) {
-                $shortcode_atts['format'] =  $attributes['selectedFormat'];
-            } else {
-                $shortcode_atts['format'] =  'compact';
-            }
-            // First check if we have function and orgnr
-            if (!empty($attributes['role'])) {
-                $shortcode_atts['role'] =  $attributes['role'];
-            }    
-            if (!empty($attributes['orgid'])) {
-               $shortcode_atts['orgid'] =  $attributes['orgid'];
-            }
-            if (!empty($attributes['orgnr'])) {
-               $shortcode_atts['orgnr'] =  $attributes['orgnr'];
-            }
-            
 
+            if (!empty($attributes['selectedFormat'])) {
+                $shortcode_atts['format'] = (string) $attributes['selectedFormat'];
+            } else {
+                $shortcode_atts['format'] = 'compact';
+            }
+
+            if (!empty($attributes['role'])) {
+                $shortcode_atts['role'] = (string) $attributes['role'];
+            }
+
+            if (!empty($attributes['orgid'])) {
+                $shortcode_atts['orgid'] = (string) $attributes['orgid'];
+            }
+
+            if (!empty($attributes['orgnr'])) {
+                $shortcode_atts['orgnr'] = (string) $attributes['orgnr'];
+            }
 
             if (!empty($attributes['selectedPosts'])) {
                 if (is_array($attributes['selectedPosts'])) {
                     $shortcode_atts['id'] = implode(',', $attributes['selectedPosts']);
                 } else {
-                    $shortcode_atts['id'] = $attributes['selectedPosts'];
+                    $shortcode_atts['id'] = (string) $attributes['selectedPosts'];
                 }
-            }  
+            }
 
-
-            
             if (!empty($attributes['identifier'])) {
-                $shortcode_atts['identifier'] = $attributes['identifier'];  
+                $shortcode_atts['identifier'] = (string) $attributes['identifier'];
             } elseif (!empty($attributes['selectedPersonIds'])) {
                 if (is_array($attributes['selectedPersonIds'])) {
-                    $shortcode_atts['identifier'] = implode(',', $attributes['selectedPersonIds']);
+                    $shortcode_atts['identifier'] = implode(',', array_map('strval', $attributes['selectedPersonIds']));
                 } else {
-                    $shortcode_atts['identifier'] = $attributes['selectedPersonIds'];
+                    $shortcode_atts['identifier'] = (string) $attributes['selectedPersonIds'];
                 }
             }
-            
+
             if (!empty($attributes['selectedCategory'])) {
-                $shortcode_atts['category'] =   $attributes['selectedCategory'];
-            } 
-            
-            // Add optional attributes
-            if (!empty($attributes['selectedFields'])) {
-                $shortcode_atts['show'] = implode(',', $attributes['selectedFields']);
+                $shortcode_atts['category'] = (string) $attributes['selectedCategory'];
             }
 
+            if (!empty($attributes['selectedFields']) && is_array($attributes['selectedFields'])) {
+                $shortcode_atts['show'] = implode(',', array_map('strval', $attributes['selectedFields']));
+            }
 
             if (!empty($attributes['url'])) {
-                $shortcode_atts['url'] = $attributes['url'];
+                $shortcode_atts['url'] = (string) $attributes['url'];
             }
+
             if (!empty($attributes['format_displayname'])) {
-                $shortcode_atts['format_displayname'] = $attributes['format_displayname'];
+                $shortcode_atts['format_displayname'] = (string) $attributes['format_displayname'];
             }
+
             if (!empty($attributes['sort'])) {
-                $shortcode_atts['sort'] = $attributes['sort'];
+                $shortcode_atts['sort'] = (string) $attributes['sort'];
             }
+
             if (!empty($attributes['order'])) {
-                $shortcode_atts['order'] = $attributes['order'];
+                $shortcode_atts['order'] = (string) $attributes['order'];
             }
 
             if (!empty($attributes['display'])) {
-                $shortcode_atts['display'] = $attributes['display'];
+                $shortcode_atts['display'] = (string) $attributes['display'];
             }
 
-            // Build shortcode string
             $shortcode = '[faudir';
             foreach ($shortcode_atts as $key => $value) {
-                if (!empty($value)) {
+                if ($value !== '') {
                     $shortcode .= sprintf(' %s="%s"', esc_attr($key), esc_attr($value));
                 }
             }
-            $shortcode .= ' blockeditor="true"';
-            $shortcode .= ']';
-            // do_action( 'rrze.log.notice', "FAUdir\BlockRegistration (render_faudir_block): Creating Shortcode: ".$shortcode, $attributes);   
-
+            $shortcode .= ' blockeditor="true"]';
+            do_action( 'rrze.log.info', "FAUdir\BlockRegistration (render_faudir_block): Attributes:", $attributes);  
             
-            // Execute shortcode
+            do_action( 'rrze.log.info', "FAUdir\BlockRegistration (render_faudir_block): Creating Shortcode: $shortcode.");           
             $output = do_shortcode($shortcode);
 
-            if (empty(trim($output))) {
+            if (trim($output) === '') {
+                 do_action( 'rrze.log.info', "FAUdir\BlockRegistration (render_faudir_block): Shortcode lieferte keine Rückgabe??: $shortcode.");         
                 throw new Exception(esc_html__('No output avaible', 'rrze-faudir'));
             }
 
             return $output;
-
         } catch (Exception $e) {
             return sprintf(
                 '<div class="faudir-error">%s</div>',

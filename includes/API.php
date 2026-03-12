@@ -17,7 +17,7 @@ class API {
             $this->baseUrl = $this->config->get('api-baseurl');
         }
         $this->cache = new Cache($this->baseUrl);
-        $this->api_key = $this->getKey();
+        $this->api_key = FaudirUtils::getKey();
         
         if (empty($this->api_key)) {
             do_action( 'rrze.log.error',"FAUdir\API (__construct): API Key empty.");
@@ -70,7 +70,7 @@ class API {
     
     /**
      * Get a person
-     * @param personid
+     * @param $input is a FAUdir Identifier
      * @return array|null on not found
      */
     public function getPerson(string $input): ?array {
@@ -121,7 +121,7 @@ class API {
      * @param array $params - Additional query parameters
      * @return array - Array of persons 
      */
-     public function getPersons($limit = 100, $offset = 0, $params = [], bool $retry = true): ?array {
+     public function getPersons(int $limit = 100, int $offset = 0, array $params = [], bool $retry = true): ?array {
         if (!$this->api_key) {
             do_action( 'rrze.log.error', "FAUdir\API (getPersons): API Key missing.");           
             return null;
@@ -130,7 +130,7 @@ class API {
             do_action( 'rrze.log.error', "FAUdir\API (getPersons): Required params missing.");         
             return null;
         }
-        $url = "{$this->baseUrl}persons";
+        $url = trailingslashit($this->baseUrl) . 'persons';
         if ($limit==0) {
             $limit = $this->default_limit;
         }
@@ -206,7 +206,7 @@ class API {
     * @param array $params - Additional query parameters
     * @return array - Array of contacts
     */
-    public function getContacts($limit = 20, $offset = 0, $params = []): ?array {
+    public function getContacts(int $limit = 20, int $offset = 0, array $params = []): ?array {
         if (!$this->api_key) {
             do_action('rrze.log.error', "FAUdir\API (getContacts): API Key missing.");
             return null;
@@ -215,8 +215,7 @@ class API {
             do_action('rrze.log.error', "FAUdir\API (getContacts): Required params missing.");
             return null;
         }
-
-        $url = "{$this->baseUrl}contacts";
+        $url = trailingslashit($this->baseUrl) . 'contacts';
         if ($limit == 0) {
             $limit = $this->default_limit;
         }
@@ -271,7 +270,7 @@ class API {
     * @param array $params - Additional query parameters
     * @return array - Array of organizations
     */
-    public function getOrgList($limit = 100, $offset = 0, $params = []): ?array {
+    public function getOrgList(int $limit = 100, int $offset = 0, array $params = []): ?array {
         if (!$this->api_key) {
             do_action( 'rrze.log.error', "FAUdir\API (getOrgList): API Key missing.");
             return null;
@@ -280,7 +279,7 @@ class API {
             do_action( 'rrze.log.error', "FAUdir\API (getOrgList): Required params missing.");
             return null;
         }
-        $url = "{$this->baseUrl}organizations";
+        $url = trailingslashit($this->baseUrl) . 'organizations';
         if ($limit==0) {
             $limit = $this->default_limit;
         }

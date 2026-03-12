@@ -42,23 +42,22 @@ class Filters {
     public static function filter_get_target_url(string $url, string $identifier): string {
         $identifier = trim($identifier);
         if ($identifier === '') {
-            return '';
+            return $url;
         }
 
         try {
             $config    = new Config();
-            $opts      = $config->getOptions();
             $post_type = (string) $config->get('person_post_type');
 
             // 1) Lokaler CPT
             $posts = get_posts([
-                'post_type'      => $post_type,
-                'meta_key'       => 'person_id',
-                'meta_value'     => $identifier,
-                'post_status'    => 'publish',
-                'fields'         => 'ids',
-                'numberposts'    => 1,
-                'no_found_rows'  => true,
+                'post_type'         => $post_type,
+                'meta_key'          => 'person_id',
+                'meta_value'        => $identifier,
+                'post_status'       => 'publish',
+                'fields'            => 'ids',
+                'posts_per_page'    => 1,
+                'no_found_rows'     => true,
                 'update_post_term_cache' => false,
                 'update_post_meta_cache' => false,
             ]);
@@ -67,7 +66,7 @@ class Filters {
                 $post_id = (int) $posts[0];
 
                 // Option: Canonical statt Permalink?
-                $useCanonical = !empty($opts['redirect_to_canonicals']);
+                $useCanonical = !empty($config->get('redirect_to_canonicals'));
                 if ($useCanonical) {
                     $canon = (string) get_post_meta($post_id, '_rrze_faudir_canonical_url', true);
                     if ($canon && filter_var($canon, FILTER_VALIDATE_URL)) {
@@ -104,7 +103,7 @@ class Filters {
             do_action('rrze.log.error', 'FAUdir Filters (filter_get_target_url) error: ' . $e->getMessage());
         }
 
-        return '';
+        return $url;
     }
 
     /**
@@ -113,7 +112,7 @@ class Filters {
     public static function filter_get_person_array(array $data, string $identifier): array {
         $identifier = trim($identifier);
         if ($identifier === '') {
-            return [];
+            return $data;
         }
 
         try {
@@ -168,7 +167,7 @@ class Filters {
             do_action('rrze.log.error', 'FAUdir Filters (filter_get_person_array) error: ' . $e->getMessage());
         }
 
-        return [];
+        return $data;
     }
 
     
@@ -233,7 +232,7 @@ class Filters {
         $seen = [];
         $out  = [];
         foreach ($normalized as $item) {
-            $key = strtolower($item['text']) . '|' . (string) $item['image_id'];
+            $key = FaudirUtils::lower($item['text']) . '|' . (string) $item['image_id'];
             if (!isset($seen[$key])) {
                 $seen[$key] = true;
                 $out[] = $item;

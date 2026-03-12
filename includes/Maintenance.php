@@ -180,11 +180,6 @@ class Maintenance {
             return;
         }
 
-  //      $plugin = isset($_GET['plugin']) ? (string) $_GET['plugin'] : '';
-   //     if ($plugin !== plugin_basename(RRZE_PLUGIN_FILE)) {
-   //         return;
-   //     }
-        // Funktioniert nicht bei unserem Setup - die Pluginliste leitet wieder bei Aktivierung um, so dass der GET-Parameter plugin nicht existiert,
 
         $settingsUrl = add_query_arg(
             [

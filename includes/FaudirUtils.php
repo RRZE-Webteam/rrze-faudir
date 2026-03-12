@@ -20,8 +20,8 @@ class FaudirUtils {
             $settingsOptions = get_site_option('rrze_settings');
             return $settingsOptions->plugins->faudir_public_apiKey;
         } else {
-            $options = get_option('rrze_faudir_options');
-            return isset($options['api_key']) ? $options['api_key'] : '';
+            $config = new Config();
+            return (string) $config->get('api_key');
         }
     }
 
@@ -43,12 +43,7 @@ class FaudirUtils {
             : \strtolower($s);
     }
     
-    public static function getDefaultOutputFields() {
-        $options = get_option('rrze_faudir_options');
-        $default_show_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : [];
 
-        return array_unique($default_show_fields);
-    }
 
     
     public static function filterContactsByCriteria($contacts, $includeDefaultOrg, $defaultOrgIds, $email)  {
@@ -727,10 +722,6 @@ class FaudirUtils {
 
             if (preg_match('/^https?:\/\//i', $value)) {
                 $display = self::prettyUrl($value);
-            //    $formatted = '<a href="' . esc_url($value) . '" itemprop="sameAs">' . esc_html($display) . '</a>';
-            //    $out .= '<li><span class="website title">' . $label . ': </span>' . $formatted . '</li>';
-                
-                
                 $out .= '<li>';
                 $out .= '<a href="' . esc_url($value) . '" itemprop="sameAs">';
                 $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($display) . '</span>';
@@ -741,26 +732,20 @@ class FaudirUtils {
             }
 
             if (filter_var($value, FILTER_VALIDATE_EMAIL)) {
-         //       $formatted = '<a itemprop="email" href="mailto:' . esc_attr($value) . '">' . esc_html($value) . '</a>';
-         //       $out .= '<li><span class="email title">' . $label . ': </span>' . $formatted . '</li>';
-                
                 $out .= '<li>';
-                $out .= '<a  itemprop="email" href="mailto:' . esc_attr($value) . '" itemprop="sameAs">';
-                $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($display) . '</span>';
+                $out .= '<a  itemprop="email" href="mailto:' . esc_attr($value) . '">';
+                $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($value) . '</span>';
                 $out .= '</a>';
                 $out .= '</li>';
                 
                 continue;
             }
-            
-            // $out .= '<li><span class="title">' . $label . ': </span><span class="value">' . esc_html($value) . '</span></li>';
+           
                         
-                        
-                $out .= '<li>';
-                $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($display) . '</span>';
-                $out .= '</li>';
-                
-
+            $out .= '<li>';
+            $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($value) . '</span>';
+            $out .= '</li>';
+               
         }
 
         $out .= '</ul>';

@@ -72,49 +72,61 @@ class REST {
     }
 
     /**
-     * Returns the organization payload for the provided identifiers.
-     */
-    public function get_organization_payload(\WP_REST_Request $request) {
-        $orgnr = preg_replace('/\D/', '', (string) ($request->get_param('orgnr') ?? ''));
-        $orgid = (string) ($request->get_param('orgid') ?? '');
-        $orgid = Organization::sanitizeOrgIdentifier($orgid ?? '') ?? '';
+    * Returns the organization payload for the provided identifiers.
+    */
+   public function get_organization_payload(\WP_REST_Request $request) {
+       $orgnr = preg_replace('/\D/', '', (string) ($request->get_param('orgnr') ?? ''));
+       $orgid = FaudirUtils::sanitizeOrganizationId((string) ($request->get_param('orgid') ?? '')) ?? '';
 
-        $org = new Organization();
+       $org = new Organization();
+       $org->setConfig($this->config);
 
-        if (!empty($orgnr)) {
-            if (!FaudirUtils::isValidOrgnr($orgnr)) {
-                return new \WP_Error('rrze_faudir_invalid_orgnr', __('Invalid parameter orgnr. Expecting a 10 digit number.', 'rrze-faudir'), ['status' => 400]);
-            }
+       if ($orgnr !== '') {
+           if (!FaudirUtils::isValidOrgnr($orgnr)) {
+               return new \WP_Error(
+                   'rrze_faudir_invalid_orgnr',
+                   __('Invalid parameter orgnr. Expecting a 10 digit number.', 'rrze-faudir'),
+                   ['status' => 400]
+               );
+           }
 
-            $resolvedId = $org->getIdentifierbyOrgnr($orgnr);
-            $resolvedId = Organization::sanitizeOrgIdentifier($resolvedId ?? '') ?? '';
+           $resolvedId = $org->getIdentifierbyOrgnr($orgnr);
+           $resolvedId = FaudirUtils::sanitizeOrganizationId((string) $resolvedId) ?? '';
 
-            if (empty($resolvedId) || !FaudirUtils::isValidOrganizationId($resolvedId)) {
-                return new \WP_Error('rrze_faudir_orgnr_not_found', __('Could not resolve an orgid from the provided orgnr.', 'rrze-faudir'), ['status' => 404]);
-            }
+           if ($resolvedId === '') {
+               return new \WP_Error(
+                   'rrze_faudir_orgnr_not_found',
+                   __('Could not resolve an orgid from the provided orgnr.', 'rrze-faudir'),
+                   ['status' => 404]
+               );
+           }
 
-            $orgid = $resolvedId;
-        }
+           $orgid = $resolvedId;
+       }
 
-        if (empty($orgid)) {
-            return new \WP_Error('rrze_faudir_missing_orgid', __('Missing parameter orgid or orgnr.', 'rrze-faudir'), ['status' => 400]);
-        }
+       if ($orgid === '') {
+           return new \WP_Error(
+               'rrze_faudir_missing_orgid',
+               __('Missing parameter orgid or orgnr.', 'rrze-faudir'),
+               ['status' => 400]
+           );
+       }
 
-        if (!FaudirUtils::isValidOrganizationId($orgid)) {
-            return new \WP_Error('rrze_faudir_invalid_orgid', __('Invalid parameter orgid.', 'rrze-faudir'), ['status' => 400]);
-        }
+       $hasData = $org->getOrgbyAPI($orgid);
 
-        $hasData = $org->getOrgbyAPI($orgid);
+       if (!$hasData) {
+           return new \WP_Error(
+               'rrze_faudir_org_not_found',
+               __('No organization data found for the provided identifier.', 'rrze-faudir'),
+               ['status' => 404]
+           );
+       }
 
-        if (!$hasData) {
-            return new \WP_Error('rrze_faudir_org_not_found', __('No organization data found for the provided identifier.', 'rrze-faudir'), ['status' => 404]);
-        }
-
-        return rest_ensure_response([
-            'identifier' => $orgid,
-            'data'       => $org->toArray(),
-        ]);
-    }
+       return rest_ensure_response([
+           'identifier' => $orgid,
+           'data'       => $org->toArray(),
+       ]);
+   }
 
     /**
      * Callback für die Settings-Route: gibt Einstellungsdaten zurück.
@@ -122,15 +134,15 @@ class REST {
      * Rückgabe: array mit Optionen/Feldern/Rollen.
      */
     public function get_settings_payload(): array {
-        $options = $this->config->getOptions();
-
         return [
-            'default_output_fields'       => get_option('rrze_faudir_options')['default_output_fields'] ?? [],
-            'available_fields'            => $options['avaible_fields'] ?? [],
-            'avaible_fields_byformat'     => $options['avaible_fields_byformat'] ?? [],
-            'default_organization'        => $options['default_organization'] ?? null,
-            'available_formats_by_display'=> $options['avaible_formats_by_display'] ?? [],
-            'format_names'                => $options['formatnames'] ?? [],
+            'show_output_fields_person_default' => $this->config->getDefaultFieldlistByFormat('default', 'person'),
+            'show_output_fields_person_page'    => $this->config->getDefaultFieldlistByFormat('page', 'person'),
+            'show_output_fields_org_default'    => $this->config->getDefaultFieldlistByFormat('default', 'org'),
+            'available_fields'                  => $this->config->get('avaible_fields') ?? [],
+            'available_fields_org'              => $this->config->get('avaible_fields_org') ?? [],
+            'avaible_fields_byformat'           => $this->config->get('avaible_fields_byformat') ?? [],
+            'default_organization'              => $this->config->get('default_organization'),
+            'format_names'                      => $this->config->get('formatnames') ?? [],
         ];
     }
     

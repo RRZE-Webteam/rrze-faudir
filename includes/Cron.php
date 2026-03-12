@@ -27,17 +27,11 @@ final class Cron {
     }
 
     public function on_plugin_deactivation(): void {
-        $timestamp = wp_next_scheduled(Constants::CRON_HOOK_PERSON_AVAILABILITY);
-        if ($timestamp) {
-            wp_unschedule_event($timestamp, Constants::CRON_HOOK_PERSON_AVAILABILITY);
-        }
+        wp_clear_scheduled_hook(Constants::CRON_HOOK_PERSON_AVAILABILITY);
     }
 
     public function migrate_scheduler_hook(): void {
-        $timestamp = wp_next_scheduled(Constants::CRON_HOOK_PERSON_AVAILABILITY_OLD);
-        if ($timestamp) {
-            wp_unschedule_event($timestamp, Constants::CRON_HOOK_PERSON_AVAILABILITY_OLD);
-        }
+        wp_clear_scheduled_hook(Constants::CRON_HOOK_PERSON_AVAILABILITY_OLD);
 
         if (!wp_next_scheduled(Constants::CRON_HOOK_PERSON_AVAILABILITY)) {
             wp_schedule_event(time(), Constants::CRON_INTERVAL, Constants::CRON_HOOK_PERSON_AVAILABILITY);
@@ -49,24 +43,32 @@ final class Cron {
             return;
         }
 
-        set_transient(Constants::TRANSIENT_AVAILABILITY_RUNNING, true, (int) Constants::TRANSIENT_AVAILABILITY_TTL);
+        set_transient(
+            Constants::TRANSIENT_AVAILABILITY_RUNNING,
+            true,
+            (int) Constants::TRANSIENT_AVAILABILITY_TTL
+        );
 
-        $post_type = $this->config->get('person_post_type');
-        $api = new API($this->config);
+        try {
+            $post_type = (string) $this->config->get('person_post_type');
+            $api = new API($this->config);
 
-        $posts = get_posts([
-            'post_type'      => $post_type,
-            'post_status'    => ['publish', Constants::PERSON_STATUS_ON_MISSING],
-            'posts_per_page' => 1000,
-            'no_found_rows'  => true,
-            'fields'         => 'ids',
-        ]);
+            $posts = get_posts([
+                'post_type'              => $post_type,
+                'post_status'            => ['publish', Constants::PERSON_STATUS_ON_MISSING],
+                'posts_per_page'         => -1,
+                'no_found_rows'          => true,
+                'fields'                 => 'ids',
+                'update_post_term_cache' => false,
+                'update_post_meta_cache' => false,
+            ]);
 
-        foreach ($posts as $post_id) {
-            $this->check_single_post((int) $post_id, $api);
+            foreach ($posts as $post_id) {
+                $this->check_single_post((int) $post_id, $api);
+            }
+        } finally {
+            delete_transient(Constants::TRANSIENT_AVAILABILITY_RUNNING);
         }
-
-        delete_transient(Constants::TRANSIENT_AVAILABILITY_RUNNING);
     }
 
     private function check_single_post(int $post_id, API $api): void {
@@ -153,7 +155,7 @@ final class Cron {
         ]);
         $this->add_private_alert($post_id, (string) $current);
         
-        do_action( 'rrze.log.warn',"FAUdir\Cron (set_post_private): Person post set to private {$post_id}, {$context}");
+        do_action( 'rrze.log.warn',"FAUdir\Cron (set_post_private): Person post set to private {$post_id}", $context);
     }
 
     private function maybe_restore_from_private(int $post_id, array $context = []): void {
@@ -178,7 +180,7 @@ final class Cron {
         ]);
 
         delete_post_meta($post_id, Constants::META_PREV_STATUS);
-        do_action( 'rrze.log.info',"FAUdir\Cron (maybe_restore_from_private) Person post recovered: {$post_id}, {$context}");
+        do_action( 'rrze.log.info',"FAUdir\Cron (maybe_restore_from_private) Person post recovered: {$post_id}", $context);
     }
     
     private function add_private_alert(int $post_id, string $old_status): void {

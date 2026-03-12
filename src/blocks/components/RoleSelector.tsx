@@ -1,31 +1,31 @@
-import {__} from "@wordpress/i18n";
-import {TextControl} from "@wordpress/components";
-import {EditProps} from "../faudir/types";
+import { __ } from "@wordpress/i18n";
+import { TextControl } from "@wordpress/components";
+import { EditProps } from "../faudir/types";
 
 interface RoleSelectorProps {
-  setAttributes: EditProps['setAttributes'];
-  attributes: EditProps['attributes'];
+    setAttributes: EditProps["setAttributes"];
+    attributes: EditProps["attributes"];
 }
 
 export default function RoleSelector({ attributes, setAttributes }: RoleSelectorProps) {
-  const {role} = attributes;
-  const handlePersonRoleChange = (value: string) => {
-    setAttributes({role: value});
-  };
-	
+    const { role } = attributes;
 
+    function handlePersonRoleChange(value: string) {
+        setAttributes({
+            role: value.trim(),
+        });
+    }
 
-  return (
-    <>
-      <TextControl
-       
-        label={__('Filter by Role', 'rrze-faudir')}
-        help={__('Filter contact entries by FAUdir job / FAUdir role. (E.g. "Head", "Deputy", "Professor", "Employee" as you see in FAUdir).', 'rrze-faudir')}
-        type="text"
-	onChange={handlePersonRoleChange}
-        value={role}
-      />
-     
-    </>
-  );
+    return (
+        <TextControl
+            label={__("Filter by role", "rrze-faudir")}
+            help={__(
+                "Filter contacts by FAUdir role or job title (for example: Head, Deputy, Professor, Employee).",
+                "rrze-faudir"
+            )}
+            type="text"
+            value={role}
+            onChange={handlePersonRoleChange}
+        />
+    );
 }

@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "rrze-faudir/block",
   "title": "FAUdir",
-  "category": "rrze",
+  "category": "fau",
   "icon": "businessperson",
   "description": "Display FAUdir information",
   "keywords": [
@@ -74,11 +74,7 @@
     },
     "order": {
       "type": "string",
-      "default": "asc",
-      "enum": [
-        "asc",
-        "desc"
-      ]
+      "default": "asc"
     },
     "format_displayname": {
       "type": "string",

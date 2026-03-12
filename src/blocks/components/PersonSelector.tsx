@@ -1,106 +1,161 @@
-import {__} from "@wordpress/i18n";
+import { __ } from "@wordpress/i18n";
 import {
-  FormTokenField,
-  __experimentalHeading as Heading,
-  __experimentalSpacer as Spacer,
-  Modal,
-  Notice,
-  Button,
-  CheckboxControl,
+    FormTokenField,
+    __experimentalHeading as Heading,
+    __experimentalSpacer as Spacer,
+    Modal,
+    Notice,
+    Button,
+    CheckboxControl,
 } from "@wordpress/components";
-import {useState} from "@wordpress/element";
+import { useMemo, useState } from "@wordpress/element";
+import { CustomPersonRESTApi } from "../faudir/types";
 
 export interface PersonSelectorProps {
-  isLoadingPosts: boolean;
-  posts: any[];
-  selectedPosts: number[];
-  togglePostSelection: (postId: number) => void;
+    isLoadingPosts: boolean;
+    posts: CustomPersonRESTApi[];
+    selectedPosts: number[];
+    togglePostSelection: (postId: number) => void;
 }
 
 export default function PersonSelector({
-                                         isLoadingPosts,
-                                         posts,
-                                         selectedPosts,
-                                         togglePostSelection
-                                       }: PersonSelectorProps) {
-  const suggestionMap = new Map<string, number>();
-  posts.forEach((post) => {
-    suggestionMap.set(post.title.rendered, post.id);
-  });
-  const selectedTitles = posts
-    .filter((post) => selectedPosts.includes(post.id))
-    .map((post) => post.title.rendered);
-  const suggestions = posts.map((post) => post.title.rendered);
-  const [showModal, setShowModal] = useState(false);
+    isLoadingPosts,
+    posts,
+    selectedPosts,
+    togglePostSelection
+}: PersonSelectorProps) {
+    const [showModal, setShowModal] = useState(false);
 
-  return (
-    <>
-      <Heading level={3}>{__("Select Persons", "rrze-faudir")}</Heading>
-      <FormTokenField
-        __next40pxDefaultSize
-        label={__("Type to add persons", "rrze-faudir")}
-        value={selectedTitles}
-        suggestions={suggestions}
-        disabled={isLoadingPosts || posts.length === 0}
-        onChange={(newTokens: string[]) => {
-          const newIds = newTokens
-            .map((token) => suggestionMap.get(token))
-            .filter((id): id is number => typeof id === "number");
+    const postOptions = useMemo(() => {
+        return posts.map(function(post) {
+            const title = post?.title?.rendered ?? "";
+            const personId = post?.meta?.person_id ? String(post.meta.person_id) : "";
+            const label = personId !== ""
+                ? `${title} [${personId}]`
+                : `${title} (#${post.id})`;
 
-          newIds.forEach((id) => {
-            if (!selectedPosts.includes(id)) {
-              togglePostSelection(id);
-            }
-          });
+            return {
+                id: post.id,
+                label,
+            };
+        });
+    }, [posts]);
 
-          selectedPosts.forEach((id) => {
-            if (!newIds.includes(id)) {
-              togglePostSelection(id);
-            }
-          });
-        }}
-      />
-      <Spacer paddingTop="0.5rem" paddingBottom="1rem">
-        <Button
-          variant="tertiary"
-          onClick={() => setShowModal(true)}
-          disabled={isLoadingPosts || posts.length === 0}
-        >
-          {__("Or choose by List.", "rrze-faudir")}
-        </Button>
-      </Spacer>
-      {posts.length === 0 &&
-          <Notice isDismissible={false} status="info">
-            {__("There are currently no Contacts available. Start adding your first FAUdir Contacts via the WordPress Dashboard > Persons.", "rrze-faudir")}
-          </Notice>
-      }
-      {showModal && (
-        <Modal
-          title={__("Select Persons", "rrze-faudir")}
-          onRequestClose={() => setShowModal(false)}
-        >
-          <p>{__("Alternatively, select persons from the checkboxes below:", "rrze-faudir")}</p>
+    const suggestionMap = useMemo(() => {
+        const map = new Map<string, number>();
 
-          {posts.map((post) => {
-            const checked = selectedPosts.includes(post.id);
-            return (
-              <CheckboxControl
-                key={post.id}
-                label={post.title.rendered}
-                checked={checked}
-                onChange={() => togglePostSelection(post.id)}
-              />
-            );
-          })}
+        postOptions.forEach(function(option) {
+            map.set(option.label, option.id);
+        });
 
-          <div style={{marginTop: "1em"}}>
-            <Button variant="secondary" onClick={() => setShowModal(false)}>
-              {__("Close", "rrze-faudir")}
-            </Button>
-          </div>
-        </Modal>
-      )}
-    </>
-  );
+        return map;
+    }, [postOptions]);
 
+    const selectedTitles = useMemo(() => {
+        return postOptions
+            .filter(function(option) {
+                return selectedPosts.includes(option.id);
+            })
+            .map(function(option) {
+                return option.label;
+            });
+    }, [postOptions, selectedPosts]);
+
+    const suggestions = useMemo(() => {
+        return postOptions.map(function(option) {
+            return option.label;
+        });
+    }, [postOptions]);
+
+    return (
+        <>
+            <Heading level={3}>{__("Select Persons", "rrze-faudir")}</Heading>
+
+            <FormTokenField
+                __next40pxDefaultSize
+                label={__("Type to add persons", "rrze-faudir")}
+                value={selectedTitles}
+                suggestions={suggestions}
+                disabled={isLoadingPosts || posts.length === 0}
+                onChange={function(newTokens: string[]) {
+                    const newIds = newTokens
+                        .map(function(token) {
+                            return suggestionMap.get(token);
+                        })
+                        .filter(function(id): id is number {
+                            return typeof id === "number";
+                        });
+
+                    newIds.forEach(function(id) {
+                        if (!selectedPosts.includes(id)) {
+                            togglePostSelection(id);
+                        }
+                    });
+
+                    selectedPosts.forEach(function(id) {
+                        if (!newIds.includes(id)) {
+                            togglePostSelection(id);
+                        }
+                    });
+                }}
+            />
+
+            <Spacer paddingTop="0.5rem" paddingBottom="1rem">
+                <Button
+                    variant="tertiary"
+                    onClick={function() {
+                        setShowModal(true);
+                    }}
+                    disabled={isLoadingPosts || posts.length === 0}
+                >
+                    {__("Or choose by list.", "rrze-faudir")}
+                </Button>
+            </Spacer>
+
+            {posts.length === 0 && (
+                <Notice isDismissible={false} status="info">
+                    {__("There are currently no contacts available. Start adding your first FAUdir contacts via the WordPress Dashboard > Persons.", "rrze-faudir")}
+                </Notice>
+            )}
+
+            {showModal && (
+                <Modal
+                    title={__("Select Persons", "rrze-faudir")}
+                    onRequestClose={function() {
+                        setShowModal(false);
+                    }}
+                >
+                    <p>
+                        {__("Alternatively, select persons from the checkboxes below:", "rrze-faudir")}
+                    </p>
+
+                    {postOptions.map(function(option) {
+                        const checked = selectedPosts.includes(option.id);
+
+                        return (
+                            <CheckboxControl
+                                key={option.id}
+                                label={option.label}
+                                checked={checked}
+                                onChange={function() {
+                                    togglePostSelection(option.id);
+                                }}
+                            />
+                        );
+                    })}
+
+                    <div style={{ marginTop: "1em" }}>
+                        <Button
+                            variant="secondary"
+                            onClick={function() {
+                                setShowModal(false);
+                            }}
+                        >
+                            {__("Close", "rrze-faudir")}
+                        </Button>
+                    </div>
+                </Modal>
+            )}
+        </>
+    );
 }

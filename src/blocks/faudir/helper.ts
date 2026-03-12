@@ -10,26 +10,16 @@ import { addQueryArgs } from '@wordpress/url';
  *
  * @typeParam T - The item type returned by the endpoint.
  * @param path - The REST API endpoint path (e.g. `/wp/v2/posts`).
- * @param query - Query parameters to include with each request (e.g. filters, ordering, `_fields`).
- *   These are appended to `path` via `addQueryArgs`. Optional.
- * @param signal - Abort signal to cancel the request loop early. Optional.
- * @param perPage - Number of items to fetch per page (WordPress max is 100). Defaults to 100.
+ * @param query - Query parameters to include with each request.
+ * @param signal - Abort signal to cancel the request loop early.
+ * @param perPage - Number of items to fetch per page. Defaults to 100.
  * @returns A promise that resolves with an array of all items across all pages.
- *
- * @example
- * ```ts
- * // Fetch all posts of a custom type
- * const people = await fetchAllPages<CustomPersonRESTApi>(
- *   '/wp/v2/custom_person',
- *   { orderby: 'title', order: 'asc', _fields: 'id,title,meta' }
- * );
- * ```
  */
 export async function fetchAllPages<T>(
   path: string,
-  query: Record<string, any> = {},
+  query: Record<string, string | number | boolean | undefined> = {},
   signal?: AbortSignal,
-  perPage = 100,
+  perPage = 100
 ): Promise<T[]> {
   const firstPath = addQueryArgs(path, { ...query, per_page: perPage, page: 1 });
 
@@ -39,16 +29,24 @@ export async function fetchAllPages<T>(
     signal,
   }) as unknown as Response;
 
-  if (signal?.aborted) return [];
+  if (signal?.aborted) {
+    return [];
+  }
 
   const header = res.headers.get('X-WP-TotalPages');
-  const totalPages = header ? Math.max(1, Number(header)) : 1;
+  const parsedTotalPages = header ? Number(header) : 1;
+  const totalPages = Number.isFinite(parsedTotalPages) && parsedTotalPages > 0
+    ? parsedTotalPages
+    : 1;
 
-  const firstPage = await res.json() as T[];
-  const all: T[] = Array.isArray(firstPage) ? [...firstPage] : [];
+  const firstPageRaw = await res.json();
+  const firstPage = Array.isArray(firstPageRaw) ? firstPageRaw as T[] : [];
+  const all: T[] = [...firstPage];
 
   for (let page = 2; page <= totalPages; page += 1) {
-    if (signal?.aborted) break;
+    if (signal?.aborted) {
+      break;
+    }
 
     const pagePath = addQueryArgs(path, { ...query, per_page: perPage, page });
 
@@ -58,15 +56,18 @@ export async function fetchAllPages<T>(
         signal,
       }) as unknown as T[];
 
-      if (Array.isArray(data) && data.length) {
+      if (Array.isArray(data) && data.length > 0) {
         all.push(...data);
       }
-    } catch (e: any) {
-      const status = e?.status ?? e?.data?.status;
-      const code = e?.code ?? e?.data?.code;
+    } catch (e: unknown) {
+      const err = e as { status?: number; code?: string; data?: { status?: number; code?: string } };
+      const status = err?.status ?? err?.data?.status;
+      const code = err?.code ?? err?.data?.code;
+
       if (status === 400 || code === 'invalid_page_number') {
         break;
       }
+
       throw e;
     }
   }

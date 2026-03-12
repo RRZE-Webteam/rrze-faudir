@@ -36,11 +36,6 @@ get_header();
                     $opt = $config->getOptions();
 
                     $showfields = $config->getDefaultFieldlistByFormat('page', 'person');
-                    
-
-                    if (!empty($opt['output_fields_endpoint'])) {
-                        $showfields = (array) $opt['output_fields_endpoint'];
-                    }
 
                     $shortcode = new Shortcode($config);
                     echo $shortcode->renderPersonPage((string) $person_id, $showfields);         

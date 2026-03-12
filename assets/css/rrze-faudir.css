@@ -698,7 +698,7 @@
   --_icon-mask-size: 1rem;
   --_icon-size: clamp(var(--faudir-min-iconwidth, 24px), var(--faudir-icon-size, 1.6rem), 42px);
   --_icon-border-color-hover: var(--_icon_background-color);
-  --_icon-color-hover: var(--_icon_background-color);
+  --_icon-color-hover: var(--faudir-icon-color-hover, var(--_icon_background-color, #fff));
   --_icon-background-color-hover: var(--color-Text, currentColor);
 }
 .faudir .icon.icon-list ul, .faudir__service .icon.icon-list ul {
@@ -777,6 +777,7 @@ Settings for FAU Einrichtungen theme
 .fau-theme .faudir {
   --faudir-profile-padding: 0.5rem 0;
   --faudir-icon_background-color: #fff;
+  --faudir-icon-color-hover: #fff;
 }
 .fau-theme .faudir .address-title,
 .fau-theme .faudir .contact-title {

@@ -1,7 +1,5 @@
-// deprecated.ts
 import { BlockDeprecation } from '@wordpress/blocks';
 
-// The old attributes from the previous Version
 interface AttributesV1 {
   selectedCategory: string;
   selectedPosts: string[];
@@ -18,8 +16,12 @@ interface AttributesV1 {
   identifier: string;
 }
 
-const migrateV2_2_11 = ( attributes: AttributesV1 ) => {
-  const newAttributes = {
+interface MigratedAttributes extends AttributesV1 {
+  initialSetup: boolean;
+}
+
+function migrateV2_2_11(attributes: AttributesV1): MigratedAttributes {
+  const newAttributes: MigratedAttributes = {
     ...attributes,
     initialSetup: false,
     identifier: attributes.identifier || ''
@@ -30,7 +32,7 @@ const migrateV2_2_11 = ( attributes: AttributesV1 ) => {
   }
 
   return newAttributes;
-};
+}
 
 const deprecated: BlockDeprecation<AttributesV1>[] = [
   {
@@ -85,13 +87,18 @@ const deprecated: BlockDeprecation<AttributesV1>[] = [
       },
       identifier: {
         type: 'string',
-        default: ''
+        default: '',
       },
     },
-    save: () => null,
+    save() {
+      return null;
+    },
     migrate: migrateV2_2_11,
-    isEligible( { initialSetup } ) {
-      return typeof initialSetup === 'undefined';
+    isEligible(attributes) {
+      return (
+        typeof (attributes as { initialSetup?: boolean }).initialSetup === 'undefined' ||
+        attributes.selectedFormat === 'kompakt'
+      );
     },
   },
 ];

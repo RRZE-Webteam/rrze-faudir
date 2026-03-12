@@ -40,25 +40,21 @@ class Config {
             'org-default'   => [ 'name', 'alternateName', 'phone', 'fax', 'email', 'url', 'socialmedia','address', 'postalAddress', 'faumap', 'officehours', 'consultationhours', 'text'],
         ],
         'default_fields_byformat'   => [
-            'default'       => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia', 'link'],
+            'default'       => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia', 'link', 'organization'],
             'page'           => [
                 'image', 'displayname', 'jobTitle', 'phone', 'email', 'url', 'socialmedia', 'organization', 'address', 'room', 'floor',
                 'teasertext', 'content', 'officehours', 'consultationhours'
             ],
-            'list'          => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia', 'link'],
-            'compact'       => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia', 'link'],
-            'table'         => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia', 'link'],
-            'card'          => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia', 'link'],
+            'list'          => ['displayname', 'jobTitle', 'email','url', 'phone', 'socialmedia', 'link'],
+            'compact'       => ['image', 'displayname', 'jobTitle', 'email','url', 'phone', 'socialmedia', 'link', 'organization', 'address'],
+            'table'         => ['image', 'displayname', 'jobTitle', 'email','url', 'phone', 'socialmedia', 'link', 'organization'],
+            'card'          => ['image', 'displayname', 'jobTitle', 'email','url', 'phone', 'socialmedia', 'link'],
             'org-compact'   => ['name', 'phone', 'fax', 'email', 'url', 'socialmedia', 'address', 'faumap', 'officehours', 'consultationhours', 'text'],
             'org-default'   => ['name', 'phone', 'fax', 'email', 'url', 'socialmedia', 'address', 'faumap', 'officehours', 'consultationhours', 'text'],
         ],
         
         'default_format'    => 'compact',
         'default_display'   => 'person',
-        'avaible_formats_by_display'   => [
-            'person'    => ['default', 'compact', 'table', 'list',  'page', 'card'],
-            'org'       => ['default', 'compact'],
-        ],
 
         
         'args_person_to_faudir' => [
@@ -451,44 +447,92 @@ class Config {
     }
 
 
-    /* 
-     * Prüfe und normalisiere format
-     */
-    public function normalizeFormatForDisplay(string $format = '', string $display = 'person'): string {
-        $display = trim(strtolower($display));
-        $format = trim(strtolower($format));
+    /*
+    * Liefert alle verfügbaren Displays aus avaible_fields_byformat
+    */
+   public function getAvailableDisplays(): array {
+       $availableByFormat = $this->config['avaible_fields_byformat'] ?? [];
+       $displays = [];
 
-        $available = $this->config['avaible_formats_by_display'] ?? [];
-        if (!isset($available[$display]) || !is_array($available[$display]) || empty($available[$display])) {
-            return 'default';
-        }
+       foreach ($availableByFormat as $key => $fields) {
+           if (!is_string($key) || $key === '') {
+               continue;
+           }
 
-        $allowedFormats = array_values(array_filter(
-            $available[$display],
-            static function ($value): bool {
-                return is_string($value) && $value !== '';
-            }
-        ));
+           if (strpos($key, 'org-') === 0) {
+               $displays['org'] = 'org';
+           } else {
+               $displays['person'] = 'person';
+           }
+       }
 
-        if ($format === '' || !in_array($format, $allowedFormats, true)) {
-            return in_array('default', $allowedFormats, true) ? 'default' : (string) $allowedFormats[0];
-        }
+       if (empty($displays)) {
+           return ['person'];
+       }
 
-        return $format;
-    }
+       return array_values($displays);
+   }
+
+   /*
+    * Liefert erlaubte Formate für ein Display
+    */
+   public function getAvailableFormatsForDisplay(string $display = 'person'): array {
+       $display = $this->normalizeDisplay($display);
+       $availableByFormat = $this->config['avaible_fields_byformat'] ?? [];
+       $formats = [];
+
+       foreach ($availableByFormat as $key => $fields) {
+           if (!is_string($key) || $key === '') {
+               continue;
+           }
+
+           if ($display === 'org') {
+               if (strpos($key, 'org-') === 0) {
+                   $formats[] = substr($key, 4);
+               }
+           } else {
+               if (strpos($key, 'org-') !== 0) {
+                   $formats[] = $key;
+               }
+           }
+       }
+
+       $formats = array_values(array_unique(array_filter($formats)));
+
+       if (empty($formats)) {
+           return ['default'];
+       }
+
+       return $formats;
+   }
+    /*
+    * Prüfe und normalisiere format
+    */
+   public function normalizeFormatForDisplay(string $format = '', string $display = 'person'): string {
+       $display = $this->normalizeDisplay($display);
+       $format = trim(strtolower($format));
+
+       $allowedFormats = $this->getAvailableFormatsForDisplay($display);
+
+       if ($format === '' || !in_array($format, $allowedFormats, true)) {
+           return in_array('default', $allowedFormats, true) ? 'default' : $allowedFormats[0];
+       }
+
+       return $format;
+   }
     
     /*
-     * Prüfe und Normalisiere display
+     * Prüfe und normalisiere display
      */
     public function normalizeDisplay(string $display = 'person'): string {
         $display = trim(strtolower($display));
+        $availableDisplays = $this->getAvailableDisplays();
 
-        $available = $this->config['avaible_formats_by_display'] ?? [];
-        if (isset($available[$display]) && is_array($available[$display])) {
+        if ($display !== '' && in_array($display, $availableDisplays, true)) {
             return $display;
         }
 
-        return 'person';
+        return in_array('person', $availableDisplays, true) ? 'person' : $availableDisplays[0];
     }
     
     /*

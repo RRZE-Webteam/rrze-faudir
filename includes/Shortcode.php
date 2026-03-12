@@ -281,7 +281,7 @@ class Shortcode {
         $args['url'] = trim((string) ($atts['url'] ?? ''));
         $args['orgnr'] = trim((string) ($atts['orgnr'] ?? ''));
         $args['orgid'] = trim((string) ($atts['orgid'] ?? ''));
-        $args['post_id'] = absint($atts['id'] ?? 0);
+        $args['post_ids'] = trim((string) ($atts['id'] ?? ''));
 
         $args['display'] = (string) ($atts['display'] ?? 'person');
         $args['format'] = (string) ($atts['format'] ?? '');
@@ -306,7 +306,7 @@ class Shortcode {
             return $args;
         }
 
-        $hasDirectPersonSelection = (!empty($args['identifiers']) || $args['post_id'] > 0);
+        $hasDirectPersonSelection = (!empty($args['identifiers']) || !empty($args['post_ids']));
         $hasOrgScope = ($args['orgnr'] !== '' || $args['orgid'] !== '');
 
         if ($hasDirectPersonSelection || $hasOrgScope) {
@@ -331,13 +331,13 @@ class Shortcode {
      */
     private function fetchPersonsForPersonDisplay(array $args): array {
         // 1) Direkte Personen (identifier oder post_id)
-        if (!empty($args['identifiers']) || $args['post_id'] > 0) {
+        if (!empty($args['identifiers']) || !empty($args['post_ids'])) {
             $persons = [];
 
             if (!empty($args['identifiers'])) {
                 $persons = $this->process_persons_by_identifiers($args['identifiers']);
             } else {
-                $persons = $this->fetchPersonsByPostId($args['post_id']);
+                $persons = $this->fetchPersonsByPostId($args['post_ids']);
             }
 
             return $persons;

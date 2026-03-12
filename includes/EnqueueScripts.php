@@ -135,7 +135,6 @@ class EnqueueScripts {
         wp_localize_script('rrze-faudir-admin-js', 'rrzeFaudirAjax', [
             'ajax_url'              => admin_url('admin-ajax.php'),
             'api_nonce'             => wp_create_nonce('rrze_faudir_api_nonce'),
-            'api_key'               => get_option('rrze_faudir_api_key', ''),
             'confirm_clear_cache'   => __('Are you sure you want to clear the cache?', 'rrze-faudir'),
             'confirm_import'        => __('Are you sure you want to import contacts from FAU person?', 'rrze-faudir'),
             'edit_text'             => __('Edit', 'rrze-faudir'),
@@ -180,7 +179,7 @@ class EnqueueScripts {
      * Aufruf: \RRZE\FAUdir\EnqueueScripts::enqueue_frontend_on_demand();
      */
     public static function enqueue_frontend_on_demand(): void {
-        wp_enqueue_style('rrze-faudir');
+        self::enqueue_frontend();
     }
 
     /** Plugin-Version aus dem Header der Hauptdatei (Fallback: RRZE_PLUGIN_VERSION) */

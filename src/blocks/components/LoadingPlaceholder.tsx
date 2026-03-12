@@ -1,18 +1,16 @@
-// @ts-ignore
-import {__experimentalText as Text, Placeholder, __experimentalSpacer as Spacer , ProgressBar} from "@wordpress/components";
-import {__} from "@wordpress/i18n";
+import { Placeholder, ProgressBar, __experimentalSpacer as Spacer } from "@wordpress/components";
+import { __ } from "@wordpress/i18n";
 
 export default function LoadingPlaceholder() {
   return (
-    <Placeholder
-      label={__('FAUdir Preview…', 'rrze-faudir')}
-    >
-      <div>
-        <Spacer paddingTop="1rem" paddingBottom="1rem">
+    <Placeholder label={__("FAUdir Preview…", "rrze-faudir")}>
+      <Spacer paddingTop="1rem" paddingBottom="1rem">
         <ProgressBar />
-        </Spacer>
-        <Text>{__('The Preview is loading…', 'rrze-faudir')}</Text>
-      </div>
+      </Spacer>
+
+      <p>
+        {__("The preview is loading…", "rrze-faudir")}
+      </p>
     </Placeholder>
   );
 }

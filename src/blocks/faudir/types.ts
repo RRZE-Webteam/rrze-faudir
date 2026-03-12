@@ -2,7 +2,7 @@ export interface EditProps {
   attributes: {
     selectedCategory: string;
     selectedPosts: number[];
-    selectedPersonIds: number[];
+    selectedPersonIds: string[];
     selectedFormat: string;
     selectedFields: string[];
     role: string;
@@ -10,23 +10,7 @@ export interface EditProps {
     url: string;
     showCategory: boolean;
     showPosts: boolean;
-    sort:
-      | "familyName"
-      | "email"
-      | "role"
-      | "honorificprefix, familyName"
-      | "role, honorificprefix"
-      | "honorificprefix"
-      | "identifier_order"
-      | (
-          | "familyName"
-          | "email"
-          | "role"
-          | "honorificprefix, familyName"
-          | "role, honorificprefix"
-          | "honorificprefix"
-          | "identifier_order"
-        )[];
+    sort: string;
     order: string;
     format_displayname: string;
     initialSetup: boolean;
@@ -53,27 +37,23 @@ export interface WPCategory {
 }
 
 export interface SettingsRESTApi {
-  default_output_fields: string[];
+  show_output_fields_person_default: string[];
+  show_output_fields_person_page: string[];
+  show_output_fields_org_default: string[];
   available_fields: Record<string, string>;
+  available_fields_org: Record<string, string>;
   avaible_fields_byformat: {
     [format: string]: string[];
   };
-  person_roles: PersonRoles[];
   default_organization: DefaultOrganization | null;
-  available_formats_by_display: {
-    person: string[];
-    org: string[];
-  };
   format_names: {
     [format: string]: string;
   };
 }
 
-export interface PersonRoles {
-  [roleKey: string]: string;
-}
-
 export interface DefaultOrganization {
+  ids?: string[];
+  name?: string;
   orgnr?: string;
 }
 
@@ -91,7 +71,7 @@ export interface CustomPersonRESTApi {
   date_gmt: string;
   guid: {
     rendered: string;
-  }
+  };
   modified: string;
   modified_gmt: string;
   slug: string;
@@ -100,20 +80,20 @@ export interface CustomPersonRESTApi {
   link: string;
   title: {
     rendered: string;
-  }
+  };
   content: {
     rendered: string;
     protected: boolean;
-  }
+  };
   featured_media: number;
   template: string;
   meta: {
-    person_id: number;
+    person_id: string;
     person_name: string;
-  }
+  };
   custom_taxonomy?: number[];
   class_list: {
     [key: string]: string;
-  }
+  };
   _links: any;
 }

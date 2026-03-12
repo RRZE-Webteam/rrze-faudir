@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "rrze-faudir/block",
   "title": "FAUdir",
-  "category": "rrze",
+  "category": "fau",
   "icon": "businessperson",
   "description": "Display FAUdir information",
   "keywords": [
@@ -60,23 +60,22 @@
       "default": false
     },
     "sort": {
-	"type": "string",
-	"default": "familyName",
-	"enum": [
-	  "familyName",
-	  "email",
-	  "role",
-	  "honorificprefix, familyName",
-	  "role, honorificprefix",
-	  "honorificprefix",
-	  "identifier_order"
-	]
-      },
-      "order": {
-	"type": "string",
-	"default": "asc",
-	"enum": ["asc", "desc"]
-      },
+      "type": "string",
+      "default": "familyName",
+      "enum": [
+        "familyName",
+        "email",
+        "role",
+        "honorificprefix, familyName",
+        "role, honorificprefix",
+        "honorificprefix",
+        "identifier_order"
+      ]
+    },
+    "order": {
+      "type": "string",
+      "default": "asc"
+    },
     "format_displayname": {
       "type": "string",
       "default": ""
@@ -90,9 +89,9 @@
       "default": true
     },
     "display": {
-	"type": "string",
-	"default": "person",
-	"enum": ["person", "org"]
+      "type": "string",
+      "default": "person",
+      "enum": ["person", "org"]
     },
     "orgid": {
       "type": "string",
