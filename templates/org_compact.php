@@ -1,8 +1,7 @@
 <?php
 // Template file for RRZE FAUDIR
-use RRZE\FAUdir\FAUdirUtils;
+use RRZE\FAUdir\FaudirUtils;
 use RRZE\FAUdir\Organization;
-use RRZE\FAUdir\Config;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
@@ -56,7 +55,7 @@ if (!defined('ABSPATH')) {
                         if (in_array('alternateName', $show_fields) ) {                               
                             $alternateName = $org->getalternateName();
                             if (!empty($alternateName)) {
-                                echo '<p itemprop="alternateName">'.$alternateName.'</p>';
+                                echo '<p itemprop="alternateName">'.esc_html($alternateName).'</p>';
                             }    
                                                   
                         }
@@ -122,8 +121,8 @@ if (!defined('ABSPATH')) {
                             if (!empty($phone)) {
                                 $formattedPhone = FaudirUtils::format_phone_number($phone);
                                 $cleanTel = preg_replace('/[^\+\d]/', '', $phone);
-                                $formattedValue = '<a itemprop="fax" href="tel:' . esc_attr($cleanTel) . '">' . esc_html($formattedPhone) . '</a>';
-                                $wval .= '<span class="value"><span class="screen-reader-text">'.__('Phone','rrze-faudir').': </span>'.$formattedValue.'</span>';
+                                $formattedValue = '<a itemprop="faxNumber" href="tel:' . esc_attr($cleanTel) . '">' . esc_html($formattedPhone) . '</a>';
+                                $wval .= '<span class="value"><span class="screen-reader-text">'.__('Fax','rrze-faudir').': </span>'.$formattedValue.'</span>';
                                 $contactlist_escaped .= '<li class="fax">'.$wval.'</li>';
                                
                             }
@@ -184,16 +183,16 @@ if (!defined('ABSPATH')) {
                          if (in_array('officehours', $show_fields) || (in_array('consultationhours', $show_fields) )) {
                                 $hours = $cons_escaped =  '';
                                 if (in_array('consultationhours', $show_fields)) {
-                                   
+                                    $label = __('Consultation Hours', 'rrze-faudir');   
                                     $hours .= $org->getConsultationsHours( 'consultationHours', false, $lang, true );                                   
                                     if (!empty($hours)) {
-                                            $cons_escaped .=  '<h2 class="consultation-title">'.__('Consultation Hours', 'rrze-faudir').'</h2>';
+                                            $cons_escaped .=  '<h2 class="consultation-title">'.$label.'</h2>';
                                             $cons_escaped .= $hours;
                                     }
                                 }
                                 $hours = '';
                                 if (in_array('officehours', $show_fields)) {
-                                    $label = __('Opening hours', 'rrze-faudir');     
+                                    $label = __('Office Hours', 'rrze-faudir');     
                                     $hours .= $org->getConsultationsHours('officeHours', false, $lang, true, $label);
                
                                     if (!empty($hours)) {

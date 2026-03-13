@@ -1,8 +1,7 @@
 <?php
 // Template file for RRZE FAUDIR
-use RRZE\FAUdir\FAUdirUtils;
+use RRZE\FAUdir\FaudirUtils;
 use RRZE\FAUdir\Person;
-use RRZE\FAUdir\Config;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
@@ -12,8 +11,7 @@ if (!defined('ABSPATH')) {
 <div class="faudir">
 <?php
 
-    $available_fields = $this->config->getFieldsByFormat('compact');
-    $lang = FAUdirUtils::getLang();
+    $lang = FaudirUtils::getLang();
     $normalize_titles = $this->config->get('default_normalize_honorificPrefix');
     
      
@@ -42,8 +40,7 @@ if (!defined('ABSPATH')) {
                     $formatstring = $format_displayname;
                 }
                 $displayname = $person->getDisplayName(true, $normalize_titles,$formatstring);
-                $mailadresses= $person->getEMail();
-                $phonenumbers = $person->getPhone();                        
+                                       
                 if (!empty($url)) {
                     $final_url = $url;
                 } else {
@@ -63,7 +60,7 @@ if (!defined('ABSPATH')) {
                 $aria_id = $person->getRandomId("section-title-");
                 ?>
 
-                <section class="format-compact-container" aria-labelledby="<?php echo $aria_id;?>" itemscope itemtype="https://schema.org/Person">
+                <section class="format-compact-container" aria-labelledby="<?php echo esc_attr($aria_id);?>" itemscope itemtype="https://schema.org/Person">
                     <?php if (in_array('image', $show_fields)) { 
                         $image_content = $person->getImage();
                         if (!empty($image_content)) { ?>
@@ -83,19 +80,17 @@ if (!defined('ABSPATH')) {
                          if ((!empty($final_url)) && (in_array('link', $show_fields))) {
                             $value .= '</a>';
                         }                        
-                        echo '<h1 id="'.$aria_id.'">'.$value.'</h1>';
+                        echo '<h1 id="'.esc_attr($aria_id).'">'.$value.'</h1>';
                         
-                        if (in_array('organization', $show_fields)) {
+                        if (!empty($contact) && in_array('organization', $show_fields)) {
                             echo '<p class="organisation_name">'. $contact->getOrganizationName($lang).'</p>';
                         }
-                        if (in_array('jobTitle', $show_fields)) {
+                        if (!empty($contact) && in_array('jobTitle', $show_fields)) {
                             $jobtitleformat = '#functionlabel#';
                             if (!empty($this->config->get('jobtitle_format'))) {
                                 $jobtitleformat = $this->config->get('jobtitle_format');
                             }                           
-                            if ($contact) {
-                                echo '<p class="jobtitle">'. $contact->getJobTitle($lang,$jobtitleformat).'</p>';
-                            }
+                             echo '<p class="jobtitle">'. $contact->getJobTitle($lang,$jobtitleformat).'</p>';
                         }
                         ?>
                 
@@ -104,7 +99,7 @@ if (!defined('ABSPATH')) {
                         <?php
                         $address = '';
 
-                        if (in_array('address', $show_fields)) {
+                        if (in_array('address', $show_fields, true) && !empty($workplaces) && !empty($contact)) {
                             if (!empty($workplaces)) {
                                 $room = $floor =  false;
                                 if (in_array('room', $show_fields)) {
@@ -169,7 +164,8 @@ if (!defined('ABSPATH')) {
                         }
                         
                         if (in_array('phone', $show_fields)) {
-                            $wval = '';                                    
+                            $wval = '';      
+                            $phonenumbers = $person->getPhone(); 
                             foreach ($phonenumbers as $phone) {
                                 $formattedPhone = FaudirUtils::format_phone_number($phone);
                                 $cleanTel = preg_replace('/[^\+\d]/', '', $phone);
@@ -182,25 +178,23 @@ if (!defined('ABSPATH')) {
                             }
                         }
                         
-                        if (in_array('fax', $show_fields)) { 
-                           if (!empty($workplaces)) {
+                        if (in_array('fax', $show_fields, true) && !empty($workplaces)) {
                                 $wval = '';
                                 foreach ($workplaces as $w => $wdata) {
                                     if (!empty($wdata['fax'])) {
                                         $formattedPhone = FaudirUtils::format_phone_number($wdata['fax']);
                                         $cleanTel = preg_replace('/[^\+\d]/', '', $wdata['fax']);
 
-                                        $formattedValue = '<a itemprop="fax" href="tel:' . esc_attr($cleanTel) . '">' . esc_html($formattedPhone) . '</a>';
+                                        $formattedValue = '<a itemprop="faxNumber" href="tel:' . esc_attr($cleanTel) . '">' . esc_html($formattedPhone) . '</a>';
                                         $wval .= '<span class="value"><span class="screen-reader-text">'.__('Fax','rrze-faudir').': </span>'.$formattedValue.'</span>';
                                     }
                                 }
                                 if (!empty($wval)) {
                                      $contactlist .= '<li class="fax listcontent">'.$wval.'</li>';
                                 } 
-                            }
+                            
                         }
-                        if (in_array('url', $show_fields) ) {
-                            if (!empty($workplaces)) {
+                        if (in_array('url', $show_fields, true) && !empty($workplaces)) {
                                 $wval = '';
                                 foreach ($workplaces as $w => $wdata) {
                                     if (!empty($wdata['url'])) {
@@ -212,7 +206,6 @@ if (!defined('ABSPATH')) {
                                 if (!empty($wval)) {
                                     $contactlist .= '<li class="url listcontent">'.$wval.'</li>';
                                 }
-                            }
                         }
                         
                         
@@ -226,7 +219,7 @@ if (!defined('ABSPATH')) {
                             echo '</div>';
                         }
                         
-                        if (in_array('socialmedia', $show_fields) ) {
+                        if (!empty($contact) && in_array('socialmedia', $show_fields, true)) {
                             $some = $contact->getSocialMedia('span');
                             if (!empty($some)) {
                                 echo '<div class="profile-socialmedia">';
@@ -237,8 +230,8 @@ if (!defined('ABSPATH')) {
                         }
   
                         
-                        if (in_array('officehours', $show_fields) || (in_array('consultationhours', $show_fields) )) {
-                            if (!empty($workplaces)) {
+                        if (in_array('officehours', $show_fields, true) || in_array('consultationhours', $show_fields, true)) {
+                            if (!empty($workplaces) && !empty($contact)) {
                                 
                                 if (count($workplaces) > 1) {
                                     $showaddress = true;
