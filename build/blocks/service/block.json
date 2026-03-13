@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "rrze-faudir/service",
   "title": "FAUdir Service",
-  "category": "rrze",
+  "category": "fau",
   "icon": "businessperson",
   "description": "Display Service contacts via FAUdir",
   "keywords": [
@@ -26,7 +26,7 @@
     },
     "imageId": {
       "type": "number",
-      "default": ""
+      "default": 0
     },
     "imageURL": {
       "type": "string",

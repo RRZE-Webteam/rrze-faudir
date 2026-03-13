@@ -12,7 +12,6 @@ export interface EditProps {
   attributes: ServiceBlockAttributes;
   setAttributes: (attributes: Partial<ServiceBlockAttributes>) => void;
   clientId: string;
-  blockProps: any;
 }
 
 export interface OrganizationResponseProps {
@@ -55,16 +54,16 @@ export interface OfficeHour {
   to?: string;
 }
 
-export interface OrgDataShort{
+export interface OrgDataShort {
   type: string;
   function?: string;
   text?: {
-    de: string;
-    en: string;
+    de?: string;
+    en?: string;
   };
   functionLabel?: {
-    de: string;
-    en: string;
-  }
+    de?: string;
+    en?: string;
+  };
   custom?: boolean;
 }

@@ -355,7 +355,7 @@ class Shortcode {
     
     
     /*
-     * Filter der personenliste nach Kategorie oder Orgnr
+     * Filter der Personenliste nach Kategorie oder Orgnr
      */
     private function applyPostFetchFilters(array $persons, array $args): array {
         $hasDirectPersonSelection = !empty($args['identifiers']) || !empty($args['post_ids']);
