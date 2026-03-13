@@ -500,115 +500,234 @@ class Person {
     
     
     
+
     /**
-    * Erzeugt den Anzeigenamen (optional semantisches HTML).
-    * Optionale Eingaben:
-    *  - $html (bool): HTML mit Microdata ausgeben (Default: true).
-    *  - $normalize (bool): Akademischen Titel normalisieren (Default: false).
-    *  - $format (string): Optionales Format mit Platzhaltern
-    *    (#givenName#, #familyName#, #honorificPrefix#, #honorificSuffix#, #titleOfNobility#, #displayname#).
-    * Rückgabe: string – formatierter Name (HTML oder Plaintext).
+     * Erzeugt den vollständigen Anzeigenamen als HTML.
+     * Rückgabe immer als HTML-Konstrukt.
+     */
+    public function getDisplayName(bool $normalize = false): string {
+        if (empty($this->givenName) && empty($this->familyName)) {
+            return '';
+        }
+
+        $nameHtml = '<span class="displayname" itemprop="name">';
+
+        if (!empty($this->honorificPrefix)) {
+            $displayPrefix = $this->honorificPrefix;
+            $abbrTitleLong = '';
+
+            if ($normalize) {
+                $norm = \RRZE\FAUdir\FaudirUtils::normalizeAcademicTitle($this->honorificPrefix);
+                $displayPrefix = $norm['visible_title_no_discipline'] ?? $this->honorificPrefix;
+                $abbrTitleLong = $norm['label'] ?? '';
+            } else {
+                $abbrTitleLong = self::getAcademicTitleLongVersion($this->honorificPrefix);
+            }
+
+            if (!empty($abbrTitleLong)) {
+                $nameHtml .= '<abbr title="' . esc_attr($abbrTitleLong) . '" itemprop="honorificPrefix">' . esc_html($displayPrefix) . '</abbr> ';
+            } else {
+                $nameHtml .= '<span itemprop="honorificPrefix">' . esc_html($displayPrefix) . '</span> ';
+            }
+        }
+
+        if (!empty($this->givenName) && !empty($this->familyName)) {
+            $nameHtml .= '<span class="namepart">';
+        }
+
+        if (!empty($this->givenName)) {
+            $nameHtml .= '<span itemprop="givenName">' . esc_html($this->givenName) . '</span> ';
+        }
+
+        if (!empty($this->familyName)) {
+            $nameHtml .= '<span itemprop="familyName">';
+            if (!empty($this->titleOfNobility)) {
+                $nameHtml .= esc_html($this->titleOfNobility) . ' ';
+            }
+            $nameHtml .= esc_html($this->familyName) . '</span>';
+        }
+
+        if (!empty($this->givenName) && !empty($this->familyName)) {
+            $nameHtml .= '</span>';
+        }
+
+        if (!empty($this->honorificSuffix)) {
+            $nameHtml .= ' (<span itemprop="honorificSuffix">' . esc_html($this->honorificSuffix) . '</span>)';
+        }
+
+        $nameHtml .= '</span>';
+
+        return $nameHtml;
+    }
+    
+    /**
+    * Liefert die Namensbestandteile als Plain-Text.
     */
-   public function getDisplayName(bool $html = true, bool $normalize = false, string $format = ''): string {
-       if (empty($this->givenName) && empty($this->familyName)) {
-           return '';
-       }
-       $nameText = '';
-       $nameHtml = '';
+   private function getDisplayNameParts(bool $normalize = false): array {
+       $prefix = '';
 
-       if (empty($format)) {
-           // Wrapper für HTML-Ausgabe
-           $nameHtml .= '<span class="displayname" itemprop="name">';
-
-           // "honorificPrefix" (akademischer Titel)
-           if (!empty($this->honorificPrefix)) {
-               $displayPrefix = $this->honorificPrefix;
-               $abbrTitleLong = '';
-
-               if ($normalize) {
-                   // Normalisieren → sichtbarer Titel + Langlabel direkt aus normalizeAcademicTitle()
-                   $norm          = \RRZE\FAUdir\FaudirUtils::normalizeAcademicTitle($this->honorificPrefix);
-                   $displayPrefix = $norm['visible_title_no_discipline'] ?? $this->honorificPrefix;
-                   $abbrTitleLong = $norm['label'] ?? ''; // <-- hier statt getAcademicTitleLongVersion(...)
-               } else {
-                   // Falls bekannt: Langlabel (für title-Attribut) klassisch aus Config-Mapping
-                   $abbrTitleLong = self::getAcademicTitleLongVersion($this->honorificPrefix);
-               }
-
-               if (!empty($abbrTitleLong)) {
-                   $nameHtml .= '<abbr title="' . esc_attr($abbrTitleLong) . '" itemprop="honorificPrefix">' . esc_html($displayPrefix) . '</abbr> ';
-               } else {
-                   $nameHtml .= '<span itemprop="honorificPrefix">' . esc_html($displayPrefix) . '</span> ';
-               }
-               $nameText .= esc_html($displayPrefix) . ' ';
+       if (!empty($this->honorificPrefix)) {
+           if ($normalize) {
+               $norm = \RRZE\FAUdir\FaudirUtils::normalizeAcademicTitle($this->honorificPrefix);
+               $prefix = (string) ($norm['visible_title_no_discipline'] ?? $this->honorificPrefix);
+           } else {
+               $prefix = (string) $this->honorificPrefix;
            }
-
-           // "givenName" + "familyName"
-           if (!empty($this->givenName) && !empty($this->familyName)) {
-               $nameHtml .= '<span class="namepart">';
-           }
-
-           if (!empty($this->givenName)) {
-               $nameHtml .= '<span itemprop="givenName">' . esc_html($this->givenName) . '</span> ';
-               $nameText .= esc_html($this->givenName) . ' ';
-           }
-
-           if (!empty($this->familyName)) {
-               $nameHtml .= '<span itemprop="familyName">';
-               // "titleOfNobility" als Teil des familyName
-               if (!empty($this->titleOfNobility)) {
-                   $nameHtml .= esc_html($this->titleOfNobility) . ' ';
-                   $nameText .= esc_html($this->titleOfNobility) . ' ';
-               }
-               $nameHtml .= esc_html($this->familyName) . '</span>';
-               $nameText .= esc_html($this->familyName);
-           }
-
-           if (!empty($this->givenName) && !empty($this->familyName)) {
-               $nameHtml .= '</span>';
-           }
-
-           // "honorificSuffix"
-           if (!empty($this->honorificSuffix)) {
-               $nameHtml .= ' (<span itemprop="honorificSuffix">' . esc_html($this->honorificSuffix) . '</span>)';
-               $nameText .= ' (' . esc_html($this->honorificSuffix) . ')';
-           }
-
-           $nameHtml .= '</span>';
-           return $html ? $nameHtml : $nameText;
        }
 
-       // Format-String ist übergeben → nur Platzhalter ersetzen (ohne zusätzliche Semantik)
-       $nameHtml = '';
-       if ($html) {
-           $nameHtml = '<span class="displayname" itemprop="name">';
-       }
+       return [
+           'honorificPrefix' => $prefix,
+           'givenName' => (string) ($this->givenName ?? ''),
+           'titleOfNobility' => (string) ($this->titleOfNobility ?? ''),
+           'familyName' => (string) ($this->familyName ?? ''),
+           'honorificSuffix' => (string) ($this->honorificSuffix ?? ''),
+       ];
+   }
+    /**
+     * Liefert den vollständigen Anzeigenamen als Plain-Text.
+     */
+    private function getDisplayNameText(bool $normalize = false): string {
+        $parts = $this->getDisplayNameParts($normalize);
+        $chunks = [];
 
-       // Optional auch im Formatfall den normalisierten sichtbaren Titel verwenden
-       $formattedPrefix = $this->honorificPrefix;
-       if ($normalize && !empty($this->honorificPrefix)) {
-           $norm            = \RRZE\FAUdir\FaudirUtils::normalizeAcademicTitle($this->honorificPrefix);
-           $formattedPrefix = $norm['visible_title'] ?? $this->honorificPrefix;
-       }
+        if ($parts['honorificPrefix'] !== '') {
+            $chunks[] = $parts['honorificPrefix'];
+        }
+
+        if ($parts['givenName'] !== '') {
+            $chunks[] = $parts['givenName'];
+        }
+
+        $family = '';
+        if ($parts['titleOfNobility'] !== '') {
+            $family .= $parts['titleOfNobility'] . ' ';
+        }
+        if ($parts['familyName'] !== '') {
+            $family .= $parts['familyName'];
+        }
+        $family = trim($family);
+
+        if ($family !== '') {
+            $chunks[] = $family;
+        }
+
+        $text = trim(implode(' ', $chunks));
+
+        if ($parts['honorificSuffix'] !== '') {
+            $text .= ' (' . $parts['honorificSuffix'] . ')';
+        }
+
+        return trim($text);
+    }
+    
+    /**
+     * Erzeugt die gewünschte HTML-Ausgabe des Namens abhängig von show_fields und optionalem Format.
+     *
+     * Regeln:
+     * - Wenn "displayname" in show_fields gesetzt ist, wird der vollständige Name ausgegeben.
+     * - Wenn zusätzlich ein Format gesetzt ist, wird dieses verwendet.
+     * - Wenn "displayname" nicht gesetzt ist, werden nur die explizit angeforderten Teilfelder ausgegeben.
+     *
+     * Rückgabe immer als HTML.
+     */
+    public function getRenderedDisplayName(array $showFields = [], bool $normalize = false, string $format = ''): string {
+        if (empty($this->givenName) && empty($this->familyName)) {
+            return '';
+        }
+
+        $showFields = array_map('strtolower', array_map('trim', $showFields));
+
+        if (in_array('displayname', $showFields, true)) {
+            if ($format === '') {
+                return $this->getDisplayName($normalize);
+            }
+
+            return $this->renderFormattedDisplayName($format, $normalize);
+        }
+
+        return $this->renderPartialDisplayName($showFields, $normalize);
+    }    
+
+    /**
+    * Rendert den vollständigen Namen anhand eines Format-Strings.
+    * Rückgabe immer als HTML.
+    */
+   private function renderFormattedDisplayName(string $format, bool $normalize = false): string {
+       $parts = $this->getDisplayNameParts($normalize);
 
        $replacements = [
-           '#givenName#'       => $this->givenName ?? '',
-           '#displayname#'     => $this->getDisplayName(false, false) ?? '',
-           '#familyName#'      => $this->familyName ?? '',
-           '#honorificPrefix#' => $formattedPrefix ?? '',
-           '#honorificSuffix#' => $this->honorificSuffix ?? '',
-           '#titleOfNobility#' => $this->titleOfNobility ?? '',
+           '#givenName#' => esc_html($parts['givenName']),
+           '#displayname#' => esc_html($this->getDisplayNameText($normalize)),
+           '#familyName#' => esc_html($parts['familyName']),
+           '#honorificPrefix#' => esc_html($parts['honorificPrefix']),
+           '#honorificSuffix#' => esc_html($parts['honorificSuffix']),
+           '#titleOfNobility#' => esc_html($parts['titleOfNobility']),
        ];
 
-       $nameHtml .= str_replace(array_keys($replacements), array_values($replacements), $format);
+       $html = str_replace(array_keys($replacements), array_values($replacements), $format);
 
-       if ($html) {
-           $nameHtml .= '</span>';
-       }
-       return $nameHtml;
+       return '<span class="displayname" itemprop="name">' . $html . '</span>';
    }
 
-    
+   /**
+    * Rendert nur die in show_fields angeforderten Namensbestandteile als HTML.
+    * Rückgabe immer als HTML.
+    */
+   private function renderPartialDisplayName(array $showFields = [], bool $normalize = false): string {
+       $parts = $this->getDisplayNameParts($normalize);
+       $htmlParts = [];
+
+       if (in_array('honorificprefix', $showFields, true) && $parts['honorificPrefix'] !== '') {
+           $abbrTitleLong = '';
+
+           if (!empty($this->honorificPrefix) && !$normalize) {
+               $abbrTitleLong = self::getAcademicTitleLongVersion($this->honorificPrefix);
+           } elseif (!empty($this->honorificPrefix) && $normalize) {
+               $norm = \RRZE\FAUdir\FaudirUtils::normalizeAcademicTitle($this->honorificPrefix);
+               $abbrTitleLong = $norm['label'] ?? '';
+           }
+
+           if ($abbrTitleLong !== '') {
+               $htmlParts[] = '<abbr title="' . esc_attr($abbrTitleLong) . '" itemprop="honorificPrefix">' . esc_html($parts['honorificPrefix']) . '</abbr>';
+           } else {
+               $htmlParts[] = '<span itemprop="honorificPrefix">' . esc_html($parts['honorificPrefix']) . '</span>';
+           }
+       }
+
+       if (in_array('givenname', $showFields, true) && $parts['givenName'] !== '') {
+           $htmlParts[] = '<span itemprop="givenName">' . esc_html($parts['givenName']) . '</span>';
+       }
+
+       $familyHtml = '';
+       $hasFamilyPart = false;
+
+       if (in_array('titleofnobility', $showFields, true) && $parts['titleOfNobility'] !== '') {
+           $familyHtml .= esc_html($parts['titleOfNobility']);
+           $hasFamilyPart = true;
+       }
+
+       if (in_array('familyname', $showFields, true) && $parts['familyName'] !== '') {
+           if ($familyHtml !== '') {
+               $familyHtml .= ' ';
+           }
+           $familyHtml .= esc_html($parts['familyName']);
+           $hasFamilyPart = true;
+       }
+
+       if ($hasFamilyPart) {
+           $htmlParts[] = '<span itemprop="familyName">' . $familyHtml . '</span>';
+       }
+
+       if (in_array('honorificsuffix', $showFields, true) && $parts['honorificSuffix'] !== '') {
+           $htmlParts[] = '(<span itemprop="honorificSuffix">' . esc_html($parts['honorificSuffix']) . '</span>)';
+       }
+
+       if (empty($htmlParts)) {
+           return '';
+       }
+
+       return '<span class="displayname" itemprop="name">' . implode(' ', $htmlParts) . '</span>';
+   }
     
     /*
      * Create signature of a person
@@ -1182,23 +1301,7 @@ class Person {
         return $this->primary_contact;
     }
     
-    
-    public function getView(?string $template = null): string {
-        if (empty($template)) {
-            $template = "Name : #displayname#".PHP_EOL;
-        }
-        // Platzhalter mit den entsprechenden Werten ersetzen
-        $replacements = [
-            '#identifier#' => $this->identifier ?? '',
-            '#givenName#' => $this->givenName ?? '',
-            '#displayname#' => $this->getDisplayName() ?? '',
-            '#familyName#' => $this->familyName ?? '',
-            '#honorificPrefix#' => $this->honorificPrefix ?? '',
-            '#honorificSuffix#' => $this->honorificSuffix ?? '',
-            '#titleOfNobility#' => $this->titleOfNobility ?? ''
-        ]; 
-        return str_replace(array_keys($replacements), array_values($replacements), $template);
-    }
+ 
     
     /**
     * Liefert die Langform (lokalisierte Bezeichnung) eines akademischen Titels

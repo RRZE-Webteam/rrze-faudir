@@ -136,7 +136,7 @@ class Filters {
 
             // Zusätzliche Werte
             $out['display_name'] = method_exists($person, 'getDisplayName')
-                ? (string) $person->getDisplayName(true, false)
+                ? (string) $person->getDisplayName(false)
                 : '';
 
             $out['target_url'] = method_exists($person, 'getTargetURL')

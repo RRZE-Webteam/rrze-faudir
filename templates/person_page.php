@@ -43,7 +43,7 @@ if (!defined('ABSPATH')) {
                 if (!empty($format_displayname)) {
                     $formatstring = $format_displayname;
                 }
-                $displayname = $person->getDisplayName(true, $normalize_titles,$formatstring);
+                $displayname = $person->getRenderedDisplayName($show_fields, $normalize_titles, $formatstring);
                                    
                 if (!empty($url) && ($url !== '#')) {
                     $final_url = $url;
