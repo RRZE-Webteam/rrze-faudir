@@ -452,8 +452,38 @@ class FaudirUtils {
         return (bool) preg_match('/^[a-z0-9]{10,11}$/', $input);
     }
 
+    /*
+     * Nummt eine Person Id aus FAUdir entgegen und sanitized sie.
+     * Die EIngabe kann auch die komplette URL aus dem FAUdir-Personeneintrag.
+     */
     public static function sanitizePersonId(string $input): ?string {
-        $clean = strtolower(trim($input));
+        $clean = trim($input);
+        $prefix = Constants::FAUDIR_PUBLIC_PERSON_PREFIX;
+
+        if ($prefix !== '' && str_starts_with($clean, $prefix)) {
+            $clean = substr($clean, strlen($prefix));
+
+            $cutPos = strlen($clean);
+
+            $queryPos = strpos($clean, '?');
+            if ($queryPos !== false && $queryPos < $cutPos) {
+                $cutPos = $queryPos;
+            }
+
+            $fragmentPos = strpos($clean, '#');
+            if ($fragmentPos !== false && $fragmentPos < $cutPos) {
+                $cutPos = $fragmentPos;
+            }
+
+            $slashPos = strpos($clean, '/');
+            if ($slashPos !== false && $slashPos < $cutPos) {
+                $cutPos = $slashPos;
+            }
+
+            $clean = substr($clean, 0, $cutPos);
+        }
+
+        $clean = strtolower(trim($clean));
         $clean = preg_replace('/[^a-z0-9]/', '', $clean);
 
         if (preg_match('/^[a-z0-9]{10,11}$/', $clean)) {
@@ -523,20 +553,47 @@ class FaudirUtils {
    }
 
    /*
-    * Sanitized eine Organization-ID.
+    * Sanitized eine Organization-ID. 
+    * Input: entweder direkte ID eingabe oder URL aus FAUdir
     * Entfernt ungültige Zeichen und gibt null zurück,
     * wenn das Ergebnis nicht exakt 10 Zeichen a-z0-9 ist.
     */
-   public static function sanitizeOrganizationId(string $input): ?string {
-       $clean = strtolower(trim($input));
-       $clean = preg_replace('/[^a-z0-9]/', '', $clean);
+    public static function sanitizeOrganizationId(string $input): ?string {
+        $clean = trim($input);
+        $prefix = Constants::FAUDIR_PUBLIC_ORG_PREFIX;
 
-       if (preg_match('/^[a-z0-9]{10}$/', $clean)) {
-           return $clean;
-       }
+        if ($prefix !== '' && str_starts_with($clean, $prefix)) {
+            $clean = substr($clean, strlen($prefix));
 
-       return null;
-   }
+            $cutPos = strlen($clean);
+
+            $queryPos = strpos($clean, '?');
+            if ($queryPos !== false && $queryPos < $cutPos) {
+                $cutPos = $queryPos;
+            }
+
+            $fragmentPos = strpos($clean, '#');
+            if ($fragmentPos !== false && $fragmentPos < $cutPos) {
+                $cutPos = $fragmentPos;
+            }
+
+            $slashPos = strpos($clean, '/');
+            if ($slashPos !== false && $slashPos < $cutPos) {
+                $cutPos = $slashPos;
+            }
+
+            $clean = substr($clean, 0, $cutPos);
+        }
+
+        $clean = strtolower(trim($clean));
+        $clean = preg_replace('/[^a-z0-9]/', '', $clean);
+
+        if (preg_match('/^[a-z0-9]{10}$/', $clean)) {
+            return $clean;
+        }
+
+        return null;
+    }
 
    /*
     * Prüft, ob eine Orgnr (= FAU Kostenstellennummer) gültig ist. 

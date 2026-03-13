@@ -102,16 +102,17 @@ class BlockRegistration {
             if (!shortcode_exists('faudir')) {
                 throw new Exception('FAUdir shortcode is not registered');
             }
-do_action(
-    'rrze.log.info',
-    'FAUdir\\BlockRegistration (render_faudir_block): context',
-    [
-        'is_admin' => is_admin(),
-        'doing_ajax' => wp_doing_ajax(),
-        'rest_request' => defined('REST_REQUEST') && REST_REQUEST,
-        'attributes' => $attributes,
-    ]
-);
+            /*            
+            do_action('rrze.log.info', 'FAUdir\\BlockRegistration (render_faudir_block): context',
+                [
+                    'is_admin' => is_admin(),
+                    'doing_ajax' => wp_doing_ajax(),
+                    'rest_request' => defined('REST_REQUEST') && REST_REQUEST,
+                    'attributes' => $attributes,
+                ]
+            );
+             * 
+             */
 
             if (
                 isset($attributes['display']) &&
@@ -124,9 +125,7 @@ do_action(
                 );
             }
             
-            
-            
- do_action( 'rrze.log.info', "FAUdir\BlockRegistration (render_faudir_block): Attribute unsanitized:", $attributes);  
+
             $shortcode_atts = [];
 
             if (!empty($attributes['selectedFormat'])) {
@@ -200,13 +199,10 @@ do_action(
                 }
             }
             $shortcode .= ' blockeditor="true"]';
-            do_action( 'rrze.log.info', "FAUdir\BlockRegistration (render_faudir_block): Attributes:", $attributes);  
             
-            do_action( 'rrze.log.info', "FAUdir\BlockRegistration (render_faudir_block): Creating Shortcode: $shortcode.");           
             $output = do_shortcode($shortcode);
 
             if (trim($output) === '') {
-                 do_action( 'rrze.log.info', "FAUdir\BlockRegistration (render_faudir_block): Shortcode lieferte keine Rückgabe??: $shortcode.");         
                 throw new Exception(esc_html__('No output avaible', 'rrze-faudir'));
             }
 

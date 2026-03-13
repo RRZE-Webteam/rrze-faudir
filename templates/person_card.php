@@ -55,24 +55,14 @@ if (!empty($persons)) {
             }
 
             $aria_id = $person->getRandomId("section-title-");
-            $showname = '';
 
-            if (in_array('displayname', $show_fields, true)) {
-                $showname = $displayname;
-            } elseif (in_array('familyName', $show_fields, true)) {
-                if (!empty($person->titleOfNobility)) {
-                    $showname = $person->titleOfNobility . ' ';
-                }
-                $showname .= $person->familyName;
-            } elseif (in_array('givenName', $show_fields, true)) {
-                $showname = $person->givenName;
-            }
+
             ?>
             <section class="format-card-container" aria-labelledby="<?php echo esc_attr($aria_id); ?>" itemscope itemtype="https://schema.org/Person">
                 <?php if (in_array('image', $show_fields, true)) { ?>
                     <div class="profile-image-section">
                         <?php
-                        if ((empty($showname)) && (!empty($final_url))) {
+                        if (!empty($final_url)) {
                             echo $person->getImage(link_url: $final_url);
                         } else {
                             echo $person->getImage();
@@ -84,12 +74,12 @@ if (!empty($persons)) {
                 <header class="profile-header">
                     <?php
                     $value = '';
-                    if (!empty($showname)) {
+                    if (!empty($displayname)) {
                         if ((!empty($final_url)) && in_array('link', $show_fields, true)) {
                             $value .= '<a itemprop="url" href="' . esc_url($final_url) . '">';
                         }
 
-                        $value .= esc_html($showname);
+                        $value .= $displayname;
 
                         if ((!empty($final_url)) && in_array('link', $show_fields, true)) {
                             $value .= '</a>';
@@ -99,7 +89,7 @@ if (!empty($persons)) {
                     }
 
                     if (!empty($contact) && in_array('organization', $show_fields, true)) {
-                        echo '<p class="organisation_name">' . esc_html($contact->getOrganizationName($lang)) . '</p>';
+                        echo '<p class="organisation_name">' . $contact->getOrganizationName($lang) . '</p>';
                     }
 
                     if (!empty($contact) && in_array('jobTitle', $show_fields, true)) {

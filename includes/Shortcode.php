@@ -76,14 +76,15 @@ class Shortcode {
         $atts['display'] = $this->config->normalizeDisplay((string) ($atts['display'] ?? 'person'));
         $atts['format'] = $this->config->normalizeFormatForDisplay((string) ($atts['format'] ?? ''), $atts['display']);
         
-        do_action( 'rrze.log.notice','FAUdir\Shortcode (pre resolve). Modified Args: ', $atts);
+       
                 
         $show = $this->resolve_visible_fields_with_format($atts);
         $atts['show'] = implode(', ', $show);
         unset($atts['hide']);
         
+        
+      //  do_action( 'rrze.log.notice','FAUdir\Shortcode . Modified Args: ', $atts);
 
-        do_action( 'rrze.log.notice','FAUdir\Shortcode (render). Modified Args: ', $atts);
         
           
         // If user is logged in and no-cache option is enabled, always fetch fresh data
@@ -244,7 +245,6 @@ class Shortcode {
 
         $format_displayname = wp_strip_all_tags($args['format_displayname']);
         $templatefile = $args['display'] . '_' . $args['format'];
-do_action( 'rrze.log.notice',"FAUdir\Shortcode (createPersonOutput). Pre render with template {$templatefile}: ", $show_fields);
         return $template->render($templatefile, [
             'show_fields' => $show_fields,
             'format_displayname' => $format_displayname,
@@ -407,24 +407,22 @@ do_action( 'rrze.log.notice',"FAUdir\Shortcode (createPersonOutput). Pre render 
         
         $org = new Organization();
         $org->setConfig($this->config);
-        
         if (FaudirUtils::isValidOrgnr($orgnr)) {   
+            
             $id = $org->getIdentifierbyOrgnr($orgnr);
             $orgid = FaudirUtils::sanitizeOrganizationId($id);
             if ($orgid !== null) {
                 $org->getOrgbyAPI($orgid);
                 $orgdata = $org->toArray();
             } else {
-                do_action('rrze.log.warn', "FAUdir\Shortcode (createOrgOutput): Invalid organization id.");
-                return $this->createErrorOut(__('Bad value for parameter orgid', 'rrze-faudir'), 'createOrgOutput');
+                return $this->createErrorOut(__('Bad value for parameter orgnr', 'rrze-faudir'), 'createOrgOutput');
             }
         } elseif (!empty($orgid)) {
-            $orgid = FaudirUtils::sanitizeOrganizationId($orgid);
-            if ($orgid !== null) {
-                $org->getOrgbyAPI($orgid);
+            $oid = FaudirUtils::sanitizeOrganizationId($orgid);
+            if ($oid !== null) {
+                $org->getOrgbyAPI($oid);
                 $orgdata = $org->toArray();
             } else {
-                do_action('rrze.log.warn', "FAUdir\Shortcode (createOrgOutput): Invalid organization id.");
                 return $this->createErrorOut(__('Bad value for parameter orgid', 'rrze-faudir'), 'createOrgOutput');
             }
 

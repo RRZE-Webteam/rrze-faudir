@@ -161,7 +161,7 @@ if (!defined('ABSPATH')) {
 
                             } elseif ($key_lower === 'organization')  {    
                                 if (!empty($contact)) {
-                                    $value = esc_html($contact->getOrganizationName($lang));
+                                    $value = $contact->getOrganizationName($lang);
                                 }
 
                             } elseif (!empty($workplaces) && $key_lower === 'fax')  {     

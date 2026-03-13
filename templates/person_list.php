@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
     <?php 
     
     $available_fields = $this->config->getFieldsByFormat('list');   
-    $normalize_titles = this->config->get('default_normalize_honorificPrefix');
+    $normalize_titles = $this->config->get('default_normalize_honorificPrefix');
     $displayorder = $this->config->get('default_display_order');
         
     if (!empty($displayorder) && !empty($displayorder['list']) && is_array($displayorder['list'])) {
@@ -169,7 +169,7 @@ if (!defined('ABSPATH')) {
                             }
                         } elseif ($key_lower === 'organization')  {    
                             if (!empty($contact)) {
-                                $value = esc_html($contact->getOrganizationName($lang));
+                                $value = $contact->getOrganizationName($lang);
                             }
                         } elseif ($key_lower === 'url')  {      
                            if (!empty($workplaces)) {

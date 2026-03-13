@@ -75,5 +75,13 @@ final class Constants {
     public const FAUDIR_DOKU_URL                    = 'https://www.wp.rrze.fau.de/plugins/inhaltsseiten-mit-funktionen-erweitern/rrze-faudir/';
     public const FAUDIR_DOKU_TITLE                  =  'Documentation';
     
+    /*
+     * Werte zur Sanitizing von Ids aus FAUdir
+     */
+    public const FAUDIR_PUBLIC_ORG_PREFIX = 'https://faudir.fau.de/public/org/';
+    public const FAUDIR_PUBLIC_PERSON_PREFIX = 'https://faudir.fau.de/public/person/';
+    
+    public const PERSON_SIGNATUR_SPERRLISTE = ['hj', 'kz', 'ns', 'sa', 'ss', 'sex'];
+            // gemäss: https://www.bundesverkehrsamt.online/verbotene-kennzeichen/
     
 }
