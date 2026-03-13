@@ -59,7 +59,7 @@ class EnqueueScripts {
         if (is_admin()) {
             return;
         }
-        
+
         // 1) CPT-Single immer als "needs"
         $config = new \RRZE\FAUdir\Config();
         $postType = (string) $config->get('person_post_type');
@@ -69,7 +69,7 @@ class EnqueueScripts {
             return;
         }
 
-        // 2) Content-basiert (Shortcode/Block)
+        // 2) Content-basiert (Shortcode/Block/oEmbed-URL)
         $postId = (int) get_queried_object_id();
         if ($postId <= 0) {
             return;
@@ -81,14 +81,38 @@ class EnqueueScripts {
         }
 
         $needs = false;
+        $content = (string) $post->post_content;
 
-        if (function_exists('has_shortcode') && has_shortcode($post->post_content, 'faudir')) {
+        if (function_exists('has_shortcode') && has_shortcode($content, 'faudir')) {
             $needs = true;
         }
 
         if (!$needs && function_exists('has_block')) {
             if (has_block('rrze-faudir/block', $post) || has_block('rrze-faudir/service', $post)) {
                 $needs = true;
+            }
+        }
+
+        if (!$needs) {
+            $personPrefix = (string) \RRZE\FAUdir\Constants::FAUDIR_PUBLIC_PERSON_PREFIX;
+            $orgPrefix = (string) \RRZE\FAUdir\Constants::FAUDIR_PUBLIC_ORG_PREFIX;
+
+            $patterns = [];
+
+            if ($personPrefix !== '') {
+                $patterns[] = preg_quote($personPrefix, '~') . '[A-Za-z0-9]+(?:[/?#][^\s<"]*)?';
+            }
+
+            if ($orgPrefix !== '') {
+                $patterns[] = preg_quote($orgPrefix, '~') . '[A-Za-z0-9]+(?:[/?#][^\s<"]*)?';
+            }
+
+            if (!empty($patterns)) {
+                $pattern = '~(?:' . implode('|', $patterns) . ')~i';
+
+                if (preg_match($pattern, $content)) {
+                    $needs = true;
+                }
             }
         }
 

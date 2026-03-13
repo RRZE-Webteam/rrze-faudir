@@ -13,8 +13,6 @@ if (!defined('ABSPATH')) {
 
     $lang = FaudirUtils::getLang();
     $normalize_titles = $this->config->get('default_normalize_honorificPrefix');
-    
-     
 
     
     if (!empty($persons)) { 

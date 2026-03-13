@@ -83,9 +83,7 @@ class Shortcode {
         unset($atts['hide']);
         
         
-      //  do_action( 'rrze.log.notice','FAUdir\Shortcode . Modified Args: ', $atts);
-
-        
+      
           
         // If user is logged in and no-cache option is enabled, always fetch fresh data
         if (!empty($this->config->get('no_cache_logged_in')) && is_user_logged_in()) {
@@ -169,7 +167,6 @@ class Shortcode {
             $atts['format'],
             $atts['display']
         );
-        // do_action( 'rrze.log.notice',"FAUdir\Shortcode (resolve_visible_fields_with_format). Avaible for format {$atts['format']} and display {$atts['display']}: ", $available);
 
         $resolved_fields = array_values(array_intersect($available, $fields));
 
@@ -222,13 +219,13 @@ class Shortcode {
     /*
      * Create Output for Person Display
      */
-    public function createPersonOutput(array $atts, array $show_fields): string {
+    public function createPersonOutput(array $atts, array $show_fields): string {                
         $args = $this->normalizePersonArgs($atts);
         $args = $this->applyRoleFallback($args);
 
         $persons = $this->fetchPersonsForPersonDisplay($args);
         if (empty($persons)) {
-            return '';
+             return $this->createErrorOut(__('No people could be found for display using the specified parameters.', 'rrze-faudir'), 'createPersonOutput');
         }
 
         $persons = $this->applyPostFetchFilters($persons, $args);
@@ -245,6 +242,8 @@ class Shortcode {
 
         $format_displayname = wp_strip_all_tags($args['format_displayname']);
         $templatefile = $args['display'] . '_' . $args['format'];
+        
+                     
         return $template->render($templatefile, [
             'show_fields' => $show_fields,
             'format_displayname' => $format_displayname,
@@ -434,6 +433,7 @@ class Shortcode {
            
         $template_dir = RRZE_PLUGIN_PATH . 'templates/';
         $template = new Template($this->config, $template_dir);
+     
 
         // check and sanitize for format for displayname
         $templatefile = $display.'_'.$atts['format'];
@@ -455,14 +455,14 @@ class Shortcode {
         if (empty($error)) {
             $error = __('Error on creating output', 'rrze-faudir');
         }
-        do_action( 'rrze.log.error',"FAUdir\Shortcode (createErrorOut): $errorloginfo", $error);
+        do_action( 'rrze.log.error',"FAUdir\Shortcode: Error in {$errorloginfo}", $error);
+        $out = '';
         
         if (!empty($this->config->get('show_error_message'))) {
-          $out .= '<div class="faudir-error">';
+          $out = '<div class="faudir-error">';
           $out .= $error;
           $out .= '</div>';
         }
-        $out .= '</div>';
         return $out;
     }
 

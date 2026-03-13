@@ -176,7 +176,7 @@ class Organization {
         $data = $api->getOrgById($identifier);
 
         if (empty($data) || !is_array($data)) {
-            do_action('rrze.log.error', "FAUdir\Organization (getOrgbyAPI): No Orgdata with identifier {$identifier}");
+         //   do_action('rrze.log.error', "FAUdir\Organization (getOrgbyAPI): No Orgdata with identifier {$identifier}");
             return false;
         }
        // do_action('rrze.log.info', "FAUdir\Organization (getOrgbyAPI): Get Orgdata with identifier {$identifier}", $data);

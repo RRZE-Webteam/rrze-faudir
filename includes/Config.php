@@ -515,7 +515,9 @@ class Config {
        $allowedFormats = $this->getAvailableFormatsForDisplay($display);
 
        if ($format === '' || !in_array($format, $allowedFormats, true)) {
-           return in_array('default', $allowedFormats, true) ? 'default' : $allowedFormats[0];
+           $defaultformat = $this->config['default_format'];
+           
+           return in_array($defaultformat, $allowedFormats, true) ? $defaultformat : $allowedFormats[0];
        }
 
        return $format;
