@@ -358,13 +358,15 @@ class Shortcode {
      * Filter der personenliste nach Kategorie oder Orgnr
      */
     private function applyPostFetchFilters(array $persons, array $args): array {
+        $hasDirectPersonSelection = !empty($args['identifiers']) || !empty($args['post_ids']);
+
         // Kategorie-Filter nur sinnvoll, wenn Personen nicht ohnehin aus Kategorie stammen
-        if ($args['category'] !== '' && (!empty($args['identifiers']) || $args['post_id'] > 0)) {
+        if ($args['category'] !== '' && $hasDirectPersonSelection) {
             $persons = $this->filterPersonsByCategory($persons, $args['category']);
         }
 
-        // Org-Filter (nur wenn orgnr angegeben ist)
-        if ($args['orgnr'] !== '' && (!empty($args['identifiers']) || $args['post_id'] > 0)) {
+        // Org-Filter nur sinnvoll, wenn Personen direkt selektiert wurden
+        if ($args['orgnr'] !== '' && $hasDirectPersonSelection) {
             $persons = $this->filterPersonsByOrganization($persons, $args['orgnr']);
         }
 

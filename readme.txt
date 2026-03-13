@@ -1,5 +1,5 @@
 === Plugin Name: rrze-faudir ===
-Version: 2.5.43-8
+Version: 2.5.43-9
 Plugin URI: https://github.com/RRZE-Webteam/rrze-faudir
 GitHub Issue URL: https://github.com/RRZE-Webteam/rrze-faudir/issues
 Author: RRZE-Webteam <webmaster@fau.de> (https://www.rrze.fau.de)
