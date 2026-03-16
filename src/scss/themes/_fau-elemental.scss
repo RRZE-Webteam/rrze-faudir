@@ -4,18 +4,33 @@
 /* Created on : 16.10.2025, 17:12:28
 /*----------------------------------------------------------------------------*/
 .fau-elemental {
-	:where(.wp-block-post-content) .faudir ul:not(.wp-block-list):not(.list-icons) > li::before {
+
+    /*
+    * First we need some overwrites cause of bad defined css classes in fau-elemental
+    */
+    :where(.wp-block-post-content) .faudir ul:not(.wp-block-list):not(.list-icons) {
+	list-style-type: inherit;
+	
+	> li {
+	    margin-bottom: 0;
+	}
+	> li::before {
 		    background-color: inherit;
 		    height: inherit;
 		    width: inherit;
 		    position: inherit;
 		    
 	}
+    }
+    :where(.wp-block-post-content) .faudir  table {
+	font-size: inherit;
+    }
+	  
 		
 	.faudir {
 	    
 		--faudir-compact-color-background: var(--color-FAU);
-		--faudir-compact-color-text: var(--FAU-Col-FAU-Weiss-100, #fff);
+		--faudir-compact-color-text: var(--FAU-Col-FAU-Weiss-100, #fff); 
 		--faudir-figure-textsignature-background: var(--FAU-Col-FAU-Dunkelblau-100, var(--color-primary-dunkler, #eee));
 		--faudir-figure-textsignature-text: var(--FAU-Col-FAU-Weiss-100, #fff);
 		--faudir-figure-textsignature-font-size: var(--H-Heading-3, 1.5rem);
