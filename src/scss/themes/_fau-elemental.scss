@@ -14,7 +14,8 @@
 		--faudir-figure-textsignature-font-size: var(--H-Heading-3, 1.5rem);
 		--fau-elemental-image-insert: calc(var(--FAU-Image-Insert, 2.5rem) * -1);
 		--faudir-profile-padding: var(--Spacing-4x) 0;
-
+		--fau-elemental-transition: var(--basic-animation, all .2s linear);
+		
 		max-width: var(--small-max-width);
 		margin: 0 auto;
 
@@ -31,7 +32,7 @@
 
 		a {
 			text-decoration: underline;
-			transition: var(--basic-animation);
+			transition: var(--fau-elemental-transition);
 			text-underline-offset: var(--Spacing-1x);
 		}
 
@@ -45,8 +46,6 @@
 		}
 
 		h1 {
-	//		font-size: var(--font-size-h4, 1.25rem);
-
 			a {
 				font-weight: bold;
 				text-decoration: none;
@@ -62,17 +61,7 @@
 		}
 
 
-		.format-card,
-		.format-compact {
-		    h1 {
-			font-size: var(--H-Heading-2);
-		    }
-		    h2 {
-			font-size: var(--P-Body-Text, var(--font-size-normal, 1rem));
-			font-weight: bold;
-		    }
-		}
-
+		
 		
 		.contact-title,
 		.address-title,
@@ -104,6 +93,98 @@
 		.icon.icon-list ul li a:focus::before {
 			color: inherit;
 			text-decoration-thickness: var(--Spacing-1x);
+		}
+		
+		// Anpassungen für Formate
+		.format-card {
+		    h1 {
+			font-size: var(--H-Heading-2);
+		    }
+		    h2 {
+			font-size: var(--P-Body-Text, var(--font-size-normal, 1rem));
+			font-weight: bold;
+		    }
+		    .format-card-container .profile-image-section {
+			
+			figure {
+			    width: var(--faudir-profile-image-width);
+			    height: var(--faudir-profile-image-height);
+			    overflow: hidden;
+			    border-radius: var(--faudir-figure-border-radius);
+			}
+			img {
+			    transition: var(--fau-elemental-transition);
+			    width: 100%;
+			    height: 100%;
+			}
+			img:hover, img:focus {
+			    transform: scale(1.03);
+			}
+			figure.signature:hover, figure.signature:focus {
+			    .text {
+				text-decoration: underline;
+				text-underline-offset: var(--Spacing-1x);
+				text-decoration-thickness: var(--Spacing-1x);
+			    }
+			}
+			    
+			
+		    }
+		    
+		    
+		}
+
+		
+		.format-compact {
+		    h1 {
+			font-size: var(--H-Heading-2);
+			a {
+			    line-height: 1.3;
+			    text-decoration: none;
+			}
+			a:hover, a:focus {
+			    text-decoration: underline;
+			}
+		    }
+		    h2 {
+			font-size: var(--P-Body-Text, var(--font-size-normal, 1rem));
+			font-weight: bold;
+		    }
+		    address, p, h1, h2, h3, a, li {
+			    padding: 0;
+			    color: var(--faudir-compact-color-text, #000);
+			    line-height: 1.5;
+		    }
+	   
+			
+		   .format-compact-container  {
+			--faudir-profile-padding: var(--Spacing-4x) 0 var(--Spacing-4x) var(--Spacing-6x);
+			border: none;
+			padding: 0;
+
+			.icon-list.icon {
+			    --_icon-size: 2.2rem;
+			    --_icon-mask-size: 1.8rem;
+			}
+
+			
+
+
+		    }
+		}
+		
+		.format-list {
+		    .faudir-displayname {
+			a:hover, a:focus {
+			    text-decoration-line: underline;
+			    text-decoration-thickness: var(--Spacing-1x);
+			}
+			
+		    }
+		}
+		.format-page {
+
+			
 		}
 	}
 
