@@ -60,10 +60,9 @@
 	    --_icon-border-radius: 50%;
 	    --_icon_background-color: var(--faudir-icon_background-color, white);		;
 	    --_icon-mask-size: 1rem;
-	    --_outer_icon-size: 1.6rem;
-	    --_icon-size:  clamp(var(--faudir-min-iconwidth, 24px), var(--_outer_icon-size, var(--faudir-icon-size, 1.5rem)), 42px);
+	    --_icon-size:  clamp(var(--faudir-min-iconwidth, 24px),  var(--faudir-icon-size, 1.6rem), 42px);
 	    --_icon-border-color-hover: var(--_icon_background-color);
-	    --_icon-color-hover: var(--_icon_background-color);		
+	    --_icon-color-hover: var(--faudir-icon-color-hover, var(--_icon_background-color, #fff));		
 	    --_icon-background-color-hover: var(--color-Text, currentColor);
 	    
 	    
@@ -126,29 +125,7 @@
 	    }
 
      }
-    .profile-link {
-	text-align: right;
-	a {
-	    display: inline-flex;
-	    align-items: center;
-	}
-	
-	a::after {
-		background: currentColor;
-		mask-size: var(--_icon-mask-size, var(--faudir-icon-mask-size, 100%));
-		mask-repeat: no-repeat;
-		mask-position: calc(50% - var(--_icon-border-width, 0));
 
-		display: inline-block;
-		width: var(--_icon-size, var(--faudir-icon-size));
-		height: var(--_icon-size, var(--faudir-icon-size));
-		content: "";
-		font-size: var(--_icon-size, var(--faudir-icon-size));
-		flex-shrink: 0;
-		margin-right: var(--_icon-margin-right, var(--faudir-icon-margin-right)); 
-		mask-image: var(--faudir-icon-right);
-	  }
-      }
       .text-list ul li {
 	.icon.icon-list {
 	    span.texticon::before,

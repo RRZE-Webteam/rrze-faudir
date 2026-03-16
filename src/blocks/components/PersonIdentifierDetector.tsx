@@ -1,6 +1,9 @@
-import { __experimentalHeading as Heading, TextControl } from "@wordpress/components";
+import {
+  __experimentalHeading as Heading,
+  TextControl
+} from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
-import { useState } from "@wordpress/element";
+import { useEffect, useState } from "@wordpress/element";
 import { EditProps } from "../faudir/types";
 
 interface PersonIdentifierDetectorProps {
@@ -11,46 +14,57 @@ interface PersonIdentifierDetectorProps {
 }
 
 export default function PersonIdentifierDetector({
-                                                 attributes,
-                                                 setAttributes,
-                                                 label,
-                                                 helpText
-                                               }: PersonIdentifierDetectorProps) {
+  attributes,
+  setAttributes,
+  label,
+  helpText
+}: PersonIdentifierDetectorProps) {
   const [localValue, setLocalValue] = useState<string>(attributes.identifier || "");
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const handlePersonIdentifierChange = (value: string) => {
+
+  useEffect(function syncLocalValueFromAttributes() {
+    const next = attributes.identifier || "";
+    if (next !== localValue) {
+      setLocalValue(next);
+    }
+  }, [attributes.identifier]);
+
+  function handlePersonIdentifierChange(value: string) {
     const trimmedValue = value.trim();
 
-    // RegEx for "https://faudir.fau.de/public/person/<id>"
-    const match = trimmedValue.match(/^https?:\/\/faudir\.fau\.de\/public\/person\/([^/]+)\/?$/);
+    const match = trimmedValue.match(/^https?:\/\/faudir\.fau\.de\/public\/person\/([^/]+)\/?$/i);
     let extractedId = match ? match[1] : trimmedValue;
 
-    if (!extractedId) {
+    extractedId = extractedId.trim().toLowerCase();
+    extractedId = extractedId.replace(/[^a-z0-9]/g, "");
+
+    if (!/^[a-z0-9]{10,11}$/.test(extractedId)) {
       setAttributes({ identifier: "" });
-      setErrorMessage(__("Please enter a valid FAUdir-URL or the identifier.", "rrze-faudir"));
+      setErrorMessage(
+        __("Please enter a valid FAUdir URL or a valid 10- or 11-character person identifier.", "rrze-faudir")
+      );
     } else {
       setAttributes({ identifier: extractedId });
       setErrorMessage("");
     }
 
     setLocalValue(value);
-  };
+  }
 
   return (
     <>
       <Heading level={3}>{__("Direct Select via FAUdir", "rrze-faudir")}</Heading>
       <TextControl
-        label={label || __('Via Person Identifier or FAUdir-URL', 'rrze-faudir')}
+        label={label || __("Via Person Identifier or FAUdir-URL", "rrze-faudir")}
         value={localValue}
         onChange={handlePersonIdentifierChange}
         type="text"
         help={
-          errorMessage
-            ? errorMessage
-            : helpText || __(
-            'Please enter either a FAUdir-URL ("https://faudir.fau.de/public/person/…"), or the Person-Identifier. ' +
-            'This will display your contact, even if the contact is not created via Dashboard > Persons.',
-            'rrze-faudir'
+          errorMessage ||
+          helpText ||
+          __(
+            'Please enter either a FAUdir URL ("https://faudir.fau.de/public/person/..."), or the person identifier. This will display your contact even if the contact is not created via Dashboard > Persons.',
+            "rrze-faudir"
           )
         }
       />

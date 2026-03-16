@@ -8,8 +8,11 @@ defined('ABSPATH') || exit;
 
 class Template {
     protected $template_dir;
+    protected Config $config;
+    
 
-    public function __construct($template_dir) {
+    public function __construct(Config $config, $template_dir) {
+        $this->config = $config;
         $this->template_dir = $template_dir;
     }
 

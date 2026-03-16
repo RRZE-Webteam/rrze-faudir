@@ -4,6 +4,9 @@ Settings for FAU Einrichtungen theme
 @use '../mixins';
 
 .fau-theme {
+   
+    
+    
     .content-row .entry-content {
 	.faudir {		    
 	    overflow-x: auto;
@@ -12,6 +15,10 @@ Settings for FAU Einrichtungen theme
     
     .faudir {
 	--faudir-profile-padding: 0.5rem 0;
+	--faudir-icon_background-color: #fff;
+	--faudir-icon-color-hover: #fff;
+	
+
 	
 	
 	.address-title, 
@@ -21,9 +28,34 @@ Settings for FAU Einrichtungen theme
 	h2.consultation-title {
 	   --faudir-h2-font-size: 1rem;
 	}
+	
+	.workplace-address {
+	    
+	    address {
+		padding-bottom: 0;
+	    }
+	}
+	
+	
+	.format-card {
+	    .profile-image-section {
+		a:hover, a:focus {
+		   filter: drop-shadow(0px 0px 5px rgba(0,0,0,0.4));
+		}
+ 	    }
+	}
+	
+	
     }
 
-   
+   .faudir-error {
+	margin: 2rem 0.5rem 0.5rem 0.5rem;
+	background-color: var(--color-StandardHellgrau);
+	border: 1px solid var(--color-ContentBorders);
+	border-left: 5px solid var(--color-Notice);
+	padding: 1rem;
+
+    }
     
     
     .faudir__service .icon a {

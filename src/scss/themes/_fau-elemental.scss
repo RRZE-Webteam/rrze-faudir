@@ -5,30 +5,59 @@
 /*----------------------------------------------------------------------------*/
 .fau-elemental {
 
+    /*
+    * First we need some overwrites cause of bad defined css classes in fau-elemental
+    */
+    :where(.wp-block-post-content) .faudir ul:not(.wp-block-list):not(.list-icons) {
+	list-style-type: inherit;
+	
+	> li {
+	    margin-bottom: 0;
+	}
+	> li::before {
+		    background-color: inherit;
+		    height: inherit;
+		    width: inherit;
+		    position: inherit;
+		    
+	}
+    }
+    :where(.wp-block-post-content) .faudir  table {
+	font-size: inherit;
+    }
+	  
+		
 	.faudir {
+	    
 		--faudir-compact-color-background: var(--color-FAU);
-		--faudir-compact-color-text: var(--FAU-Col-FAU-Weiss-100, #fff);
+		--faudir-compact-color-text: var(--FAU-Col-FAU-Weiss-100, #fff); 
 		--faudir-figure-textsignature-background: var(--FAU-Col-FAU-Dunkelblau-100, var(--color-primary-dunkler, #eee));
 		--faudir-figure-textsignature-text: var(--FAU-Col-FAU-Weiss-100, #fff);
 		--faudir-figure-textsignature-font-size: var(--H-Heading-3, 1.5rem);
 		--fau-elemental-image-insert: calc(var(--FAU-Image-Insert, 2.5rem) * -1);
 		--faudir-profile-padding: var(--Spacing-4x) 0;
-
+		--fau-elemental-transition: var(--basic-animation, all .2s linear);
+		
 		max-width: var(--small-max-width);
 		margin: 0 auto;
 
 		li, p, address {
-			font-size: var(--P-Body-Text-Small, var(--font-size-normal, 1rem));
+			font-size: var(--P-Body-Text, var(--font-size-normal, 1rem));
 			font-weight: normal;
 		}
-
-		p.organisation_name, p.jobtitle, a {
+		
+		
+		
+		
+		p.organisation_name, 
+		p.jobtitle, 
+		a {
 			font-weight: normal;
 		}
 
 		a {
 			text-decoration: underline;
-			transition: var(--basic-animation);
+			transition: var(--fau-elemental-transition);
 			text-underline-offset: var(--Spacing-1x);
 		}
 
@@ -42,8 +71,6 @@
 		}
 
 		h1 {
-			font-size: var(--font-size-h4, 1.25rem);
-
 			a {
 				font-weight: bold;
 				text-decoration: none;
@@ -58,17 +85,9 @@
 			}
 		}
 
-		.format-page {
-			h1 {
-				font-size: var(--H-Heading-1);
-			}
-		}
 
-		h2 {
-			font-size: var(--P-Body-Text-Small, var(--font-size-normal, 1rem));
-			font-weight: bold;
-		}
-
+		
+		
 		.contact-title,
 		.address-title,
 		.consultation-title {
@@ -83,14 +102,212 @@
 		.icon a::before {
 			text-decoration: underline;
 			text-underline-offset: var(--Spacing-1x);
+			mask-position: inherit;
 		}
-
+		.icon.icon-list {
+		    --_icon-size: 1.5rem;
+		    --_icon-mask-size: 1.5rem;
+		    
+		    ul li {
+			margin-right: 0.5rem;
+		    }
+		}
 		.icon.icon-list ul li a:hover,
 		.icon.icon-list ul li a:focus,
 		.icon.icon-list ul li a:hover::before,
 		.icon.icon-list ul li a:focus::before {
 			color: inherit;
 			text-decoration-thickness: var(--Spacing-1x);
+		}
+		
+		// Anpassungen für Formate
+		.format-card {
+		    h1 {
+			font-size: var(--H-Heading-2);
+		    }
+		    h2 {
+			font-size: var(--P-Body-Text, var(--font-size-normal, 1rem));
+			font-weight: bold;
+		    }
+		    .format-card-container .profile-image-section {
+			
+			figure {
+			    width: var(--faudir-profile-image-width);
+			    height: var(--faudir-profile-image-height);
+			    overflow: hidden;
+			    border-radius: var(--faudir-figure-border-radius);
+			}
+			img {
+			    transition: var(--fau-elemental-transition);
+			    width: 100%;
+			    height: 100%;
+			}
+			img:hover, img:focus {
+			    transform: scale(1.03);
+			}
+			figure.signature:hover, figure.signature:focus {
+			    .text {
+				text-decoration: underline;
+				text-underline-offset: var(--Spacing-1x);
+				text-decoration-thickness: var(--Spacing-1x);
+			    }
+			}
+			    
+			
+		    }
+		    
+		    
+		}
+
+		
+		.format-compact {
+		    h1 {
+			font-size: var(--H-Heading-2);
+			a {
+			    line-height: 1.3;
+			    text-decoration: none;
+			}
+			a:hover, a:focus {
+			    text-decoration: underline;
+			}
+		    }
+		    h2 {
+			font-size: var(--P-Body-Text, var(--font-size-normal, 1rem));
+			font-weight: bold;
+		    }
+		    address, p, h1, h2, h3, a, li {
+			    padding: 0;
+			    color: var(--faudir-compact-color-text, #000);
+			    line-height: 1.5;
+		    }
+	   
+			
+		   .format-compact-container  {
+			--faudir-profile-padding: var(--Spacing-4x) 0 var(--Spacing-4x) var(--Spacing-6x);
+			border: none;
+			padding: 0;
+
+			.icon-list.icon {
+			    --_icon-size: 2.2rem;
+			    --_icon-mask-size: 1.8rem;
+			}
+
+			
+			.profile-details {
+			    display: grid;
+			    grid-template-columns: 1fr;
+			    gap: 0;
+			    grid-template-areas:
+				"profile-address profile-contact"
+				"profile-consultation profile-socialmedia";
+			    grid-template-columns: auto;
+
+			}
+			.profile-details:not(:has(.profile-address)) {
+			    grid-template-areas:
+			      "profile-contact      profile-contact"
+			      "profile-consultation profile-socialmedia";
+			  }
+			/* Wenn consultation fehlt → socialmedia über volle Breite */
+			.profile-details:not(:has(.profile-consultation)) {
+			  grid-template-areas:
+			    "profile-address      profile-contact"
+			    "profile-socialmedia  profile-socialmedia";
+			}
+
+			 /* Wenn some fehlt → consultation über volle Breite */
+			.profile-details:not(:has(.profile-socialmedia)) {
+			  grid-template-areas:
+			    "profile-address      profile-contact"
+			    "profile-consultation  profile-consultation";
+			}
+			/* Wenn Adresse und SoMe   fehlen */
+			.profile-details:not(:has(.profile-address)):not(:has(.profile-socialmedia)) {
+			  grid-template-areas:
+			    "profile-contact     profile-contact"
+			    "profile-consultation profile-consultation";
+			}
+			/* Wenn Adresse und Consultation  links fehlen → beide rechten Reihen vollbreit */
+			.profile-details:not(:has(.profile-address)):not(:has(.profile-consultation)) {
+			  grid-template-areas:
+			    "profile-contact     profile-contact"
+			    "profile-socialmedia profile-socialmedia";
+			}
+			    
+			    
+			
+			
+
+
+		    }
+		    
+		   @container faudir-compact-container (max-width: 480px) {
+		       .format-compact-container {
+			    .profile-header {
+				z-index: 10;
+				display: block;
+				width: calc(100% - 3rem);
+				margin-top: var(--fau-elemental-image-insert);;
+				margin-right: auto;
+				margin-left: auto;
+				justify-self: center;
+				padding: var(--Spacing-4x, 1rem);
+				background: var(--faudir-compact-color-background);   
+			    }
+			     .profile-details {
+				 display: block;
+			     }
+			     .contact-title, 
+			     .address-title,
+			     .consultation-title,
+			     .workplace-address {
+				 margin: 0;
+			     }
+			 }
+		    }
+		    @container faudir-compact-container (min-width: 768px) {   
+			.format-compact-container:has(.profile-image-section) {
+			    --faudir-profile-image-section-width: 250px;
+			    --faudir-profile-image-section-height: 250px;
+			    --faudir-profile-image-width: 250px;
+			    --faudir-profile-image-height: 250px;
+
+			    grid-template-areas:
+				"image   header " 
+				"details details";
+
+
+			    .profile-header {
+				z-index: 10;
+				background: var(--faudir-compact-color-background);
+				margin-top: auto;
+				margin-bottom: auto;
+				margin-left: var(--fau-elemental-image-insert);
+			    }
+			}
+
+		    }
+		    @media (max-width: 392px) {
+			
+			  margin-left: var(--faue_fullbleed_inline-margin);
+			  margin-right: var(--faue_fullbleed_inline-margin);
+		    
+		   }
+		    
+		}
+		
+		.format-list {
+		    .faudir-displayname {
+			a:hover, a:focus {
+			    text-decoration-line: underline;
+			    text-decoration-thickness: var(--Spacing-1x);
+			}
+			
+		    }
+		}
+		.format-page {
+
+			
 		}
 	}
 

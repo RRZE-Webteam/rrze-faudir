@@ -1,49 +1,43 @@
 /* eslint-disable */
-const defaultConfig = require('@wordpress/scripts/config/webpack.config');
+const defaultConfig = require("@wordpress/scripts/config/webpack.config");
+const { getWebpackEntryPoints } = require("@wordpress/scripts/utils/config");
 
-// Import the helper to find and generate the entry points in the src directory
-const { getWebpackEntryPoints } = require( '@wordpress/scripts/utils/config' );
+function isProductionBuild() {
+    return process.env.NODE_ENV === "production";
+}
 
-// Check if it's a production build
-const isProduction = process.env.NODE_ENV === 'production';
+function getDevtool() {
+    return isProductionBuild() ? false : "eval-source-map";
+}
 
-let optimization = defaultConfig.optimization;
-
-if (isProduction) {
-    optimization = {
+function getOptimization() {
+    if (!isProductionBuild()) {
+        return defaultConfig.optimization;
+    }
+    return {
         ...defaultConfig.optimization,
     };
 }
 
-// Set the devtool based on the build environment
-const devtool = isProduction ? false : 'eval-source-map';
-
 module.exports = {
     ...defaultConfig,
     entry: {
-        ...getWebpackEntryPoints('script')(),
+        ...getWebpackEntryPoints("script")(),
     },
-    devtool: devtool,
+    devtool: getDevtool(),
     module: {
         ...defaultConfig.module,
         rules: [
             ...defaultConfig.module.rules,
-            // TypeScript loader
-            {
-                test: /\.tsx?$/,
-                use: 'ts-loader',
-                exclude: /node_modules/,
-            },
         ],
     },
-    // Erweitern Sie die Dateierweiterungen, die Webpack verarbeiten wird
     resolve: {
         ...defaultConfig.resolve,
-        extensions: ['.tsx', '.ts', '.js', '.json'],
+        extensions: [".tsx", ".ts", ".js", ".json"],
     },
-    optimization: optimization,
+    optimization: getOptimization(),
     performance: {
         ...defaultConfig.performance,
-        hints: false
+        hints: false,
     },
 };

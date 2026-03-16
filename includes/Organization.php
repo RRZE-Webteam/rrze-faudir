@@ -24,7 +24,7 @@ class Organization {
     public array $internalAddress = [];
     public array $parentOrganization = []; // parent org
     public array $subOrganization = [];    // list of subOrgs
-    public ?array $socials = [];
+    public array $socials = [];
     public array $content = [];
 
     /** Öffnungszeiten-/Sprechstunden-Objekt (gekapselt) */
@@ -78,31 +78,70 @@ class Organization {
             $this->resetFields();
         }
 
-        if (isset($data['@context'])) $this->context = $data['@context'];
-        if (isset($data['@id'])) $this->id = $data['@id'];
-        if (isset($data['@type'])) $this->type = $data['@type'];
-        if (isset($data['identifier'])) $this->identifier = $data['identifier'];
-        if (isset($data['disambiguatingDescription'])) $this->disambiguatingDescription = $data['disambiguatingDescription'];
-        if (isset($data['longDescription'])) $this->longDescription = $data['longDescription'];
-        if (isset($data['name'])) $this->name = $data['name'];
-        if (isset($data['alternateName'])) $this->alternateName = $data['alternateName'];
-        if (isset($data['additionalType'])) $this->additionalType = $data['additionalType'];
-        if (isset($data['address'])) $this->address = $data['address'];
-        if (isset($data['postalAddress'])) $this->postalAddress = $data['postalAddress'];
-        if (isset($data['internalAddress'])) $this->internalAddress = $data['internalAddress'];
-        if (isset($data['parentOrganization'])) $this->parentOrganization = $data['parentOrganization'];
-        if (isset($data['subOrganization'])) $this->subOrganization = $data['subOrganization'];
-        if (isset($data['content'])) $this->content = $data['content'];
-        if (isset($data['socials'])) $this->socials = $data['socials'];
+        if (isset($data['@context']) && is_array($data['@context'])) {
+            $this->context = $data['@context'];
+        }
+        if (isset($data['@id']) && is_string($data['@id'])) {
+            $this->id = $data['@id'];
+        }
+        if (isset($data['@type']) && is_string($data['@type'])) {
+            $this->type = $data['@type'];
+        }
+        if (isset($data['identifier']) && is_string($data['identifier'])) {
+            $this->identifier = $data['identifier'];
+        }
+        if (isset($data['disambiguatingDescription']) && is_string($data['disambiguatingDescription'])) {
+            $this->disambiguatingDescription = $data['disambiguatingDescription'];
+        }
+        if (isset($data['longDescription']) && is_array($data['longDescription'])) {
+            $this->longDescription = $data['longDescription'];
+        }
+        if (isset($data['name']) && is_string($data['name'])) {
+            $this->name = $data['name'];
+        }
+        if (isset($data['alternateName']) && is_string($data['alternateName'])) {
+            $this->alternateName = $data['alternateName'];
+        }
+        if (isset($data['additionalType']) && is_string($data['additionalType'])) {
+            $this->additionalType = $data['additionalType'];
+        }
+        if (isset($data['address']) && is_array($data['address'])) {
+            $this->address = $data['address'];
+        }
+        if (isset($data['postalAddress']) && is_array($data['postalAddress'])) {
+            $this->postalAddress = $data['postalAddress'];
+        }
+        if (isset($data['internalAddress']) && is_array($data['internalAddress'])) {
+            $this->internalAddress = $data['internalAddress'];
+        }
+        if (isset($data['parentOrganization']) && is_array($data['parentOrganization'])) {
+            $this->parentOrganization = $data['parentOrganization'];
+        }
+        if (isset($data['subOrganization']) && is_array($data['subOrganization'])) {
+            $this->subOrganization = $data['subOrganization'];
+        }
+        if (isset($data['content']) && is_array($data['content'])) {
+            $this->content = $data['content'];
+        }
+        if (isset($data['socials']) && is_array($data['socials'])) {
+            $this->socials = $data['socials'];
+        }
 
-        // Öffnungszeiten aus gleichen Daten mit befüllen
         if (!$this->openingHours) {
             $this->openingHours = new OpeningHours();
         }
-        // OpeningHours::fromArray ignoriert unbekannte Keys – d.h. safe
         $this->openingHours->fromArray($data, true);
+
+        // identifier notfalls aus @id ziehen (falls API mal anders liefert)
+        if ($this->identifier === '' && !empty($this->id) && is_string($this->id)) {
+            $san = self::sanitizeOrgIdentifier($this->id);
+            if ($san !== null && $san !== '') {
+                $this->identifier = $san;
+            }
+        }
     }
 
+    
     private function resetFields(): void {
         $this->context = [];
         $this->id = '';
@@ -127,7 +166,7 @@ class Organization {
      * Hole eine ORG via Identifier von der API
      */
     public function getOrgbyAPI(string $identifier): bool {
-        if (!self::isOrgIdentifier($identifier)) {
+        if (!FaudirUtils::isValidOrganizationId($identifier)) {
             return false;
         }
         if (empty($this->config)) {
@@ -137,7 +176,7 @@ class Organization {
         $data = $api->getOrgById($identifier);
 
         if (empty($data) || !is_array($data)) {
-            do_action('rrze.log.error', "FAUdir\Organization (getOrgbyAPI): No Orgdata with identifier {$identifier}");
+         //   do_action('rrze.log.error', "FAUdir\Organization (getOrgbyAPI): No Orgdata with identifier {$identifier}");
             return false;
         }
        // do_action('rrze.log.info', "FAUdir\Organization (getOrgbyAPI): Get Orgdata with identifier {$identifier}", $data);
@@ -150,30 +189,33 @@ class Organization {
      * Hole die Identifier einer Orgnr
      */
     public function getIdentifierbyOrgnr(string $orgnr): string {
-        if (!self::isOrgnr($orgnr)) {
-            return false;
+        $orgnr = FaudirUtils::sanitizeOrgnr($orgnr);
+        if ($orgnr === null) {
+            return '';
         }
         if (empty($this->config)) {
             $this->setConfig();
         }
+
         $api = new API($this->config);
-        $data = $api->getOrgList(1, 0, ['lq' => 'disambiguatingDescription[eq]=' . $orgnr, 'attrs' => 'identifier']);
-        $identifier = '';
-         
+        $data = $api->getOrgList(1, 0, [
+            'lq' => 'disambiguatingDescription[eq]=' . $orgnr,
+            'attrs' => 'identifier'
+        ]);
+
         if (empty($data) || !is_array($data)) {
-            do_action('rrze.log.error', "FAUdir\Organization (getOrgbyOrgnr): No Org Identifier found with number {$orgnr}");
-            return $identifier;
+            do_action('rrze.log.error', "FAUdir\\Organization (getIdentifierbyOrgnr): No Org Identifier found with number {$orgnr}");
+            return '';
         }
-       
-       
-        if (isset($data['data']['identifier'])) {
-             $identifier = $data['data']['identifier'];
-        } elseif (isset($data['data'][0]['identifier'])) {
-            $identifier = $data['data'][0]['identifier'];     
+
+        if (isset($data['data']['identifier']) && is_string($data['data']['identifier'])) {
+            return $data['data']['identifier'];
         }
-   //     do_action('rrze.log.info', "FAUdir\Organization (getOrgbyOrgnr): Get org Identifier with number {$orgnr}: $identifier");
-        
-        return $identifier;
+        if (isset($data['data'][0]['identifier']) && is_string($data['data'][0]['identifier'])) {
+            return $data['data'][0]['identifier'];
+        }
+        do_action('rrze.log.error', "FAUdir\\Organization (getIdentifierbyOrgnr): No Org Identifier found with number {$orgnr}");
+        return '';
     }
 
     
@@ -181,8 +223,9 @@ class Organization {
      * Hole eine ORG via Orgnr von der API
      */
     public function getOrgbyOrgnr(string $orgnr): bool {
-        if (!self::isOrgnr($orgnr)) {
-            return false;
+        $orgnr = FaudirUtils::sanitizeOrgnr($orgnr);
+        if ($orgnr === null) {
+            return '';
         }
         if (empty($this->config)) {
             $this->setConfig();
@@ -225,89 +268,107 @@ class Organization {
         return implode("\n", $addressDetails);
     }
 
-    // Prüfen ob wir eine syntaktisch valide Orgnr haben
-    public static function isOrgnr(string $input): bool {
-        return (bool) preg_match('/^\d{10}$/', $input);
-    }
-
-    // Prüfen ob wir eine syntaktisch valide Org-Identifier haben
-    public static function isOrgIdentifier(string $input): bool {
-        return (bool) preg_match('/^[a-z0-9]+$/', $input);
-    }
 
     // Sanitize Org Identifier, auch wenn eine URL übergeben wurde
     public static function sanitizeOrgIdentifier(string $input): ?string {
-        if (preg_match('/^[a-z0-9]+$/', $input)) {
+        if (FaudirUtils::isValidOrganizationId($input)) {
             return $input;
         }
 
         if (filter_var($input, FILTER_VALIDATE_URL)) {
             $parts = explode('/', rtrim($input, '/'));
             $lastSegment = end($parts);
-            if (preg_match('/^[a-z0-9]+$/', $lastSegment)) {
-                return $lastSegment;
-            }
-            return preg_replace('/[^a-z0-9]/', '', strtolower($lastSegment));
+            
+            return FaudirUtils::sanitizeOrganizationId($lastSegment);
         }
-        return preg_replace('/[^a-z0-9]/', '', strtolower($input));
+        return FaudirUtils::sanitizeOrganizationId($input);
     }
 
     /*
      * Generate Address Output (HTML)
      */
-    public function getAddressOutput(bool $orgname = false, string $lang = "de", bool $showmap = false): ?string {
-        $address = $result = '';
+    public function getAddressOutput(bool $orgname = false, string $lang = 'de', bool $showmap = false): ?string {
+        $workplace = $this->address;
+        if (empty($workplace) || !is_array($workplace)) {
+            do_action('rrze.log.warn', "FAUdir\Organization (getAddressOutput): No workplace data in {$orgname}");
+            return '';
+        }
+
+        $parts = [];
 
         if ($orgname) {
-            $address .= $this->getName(true, $lang);
-        }
-        $workplace = $this->address;
-
-        if ($showmap && !empty($workplace['faumap'])) {
-            $map = '';
-            if (preg_match('/^https?:\/\/karte\.fau\.de/i', $workplace['faumap'])) {
-                $formattedValue = '<a href="' . esc_url($workplace['faumap']) . '" itemprop="hasMap" content="' . esc_url($workplace['faumap']) . '">' . __('FAU Map', 'rrze-faudir') . '</a>';
-                $map = '<span class="faumap">' . __('Map', 'rrze-faudir') . ': ' . $formattedValue . '</span>';
-            }
-            if (!empty($map)) {
-                $address .= '<span class="roomfloor" itemprop="containedInPlace" itemscope itemtype="https://schema.org/Room">';
-                $address .= $map;
-                $address .= '</span>';
+            $n = $this->getName(true, $lang);
+            if ($n !== '') {
+                $parts[] = '<span class="organization" itemprop="name">' . esc_html($n) . '</span>';
             }
         }
 
-        if (!empty($workplace['street'])) {
-            $address .= '<span class="street" itemprop="streetAdress">' . esc_html($workplace['street']) . '</span>';
-        }
-        if (!empty($workplace['postOfficeBoxNumber'])) {
-            $address .= '<span class="postbox"><span class="screen-reader-text">' . __('Box Number', 'rrze-faudir') . ': </span><span itemprop="postOfficeBoxNumber">' . esc_html($workplace['postOfficeBoxNumber']) . '</span></span>';
+        if (!empty($workplace['street']) && is_string($workplace['street'])) {
+            $parts[] = '<span class="street" itemprop="streetAddress">' . esc_html($workplace['street']) . '</span>';
         }
 
-        if ((!empty($workplace['zip'])) && (!empty($workplace['postalCode'])) && (!empty($workplace['addressLocality']) || (!empty($workplace['city'])))) {
-            $address .= '<span class="zipcity">';
-        }
-        if (!empty(!empty($workplace['postalCode']))) {
-            $address .= '<span class="postalCode" itemprop="postalCode">' . esc_html($workplace['postalCode']) . '</span> ';
-        } elseif (!empty($workplace['zip'])) {
-            $address .= '<span class="postalCode" itemprop="postalCode">' . esc_html($workplace['zip']) . '</span> ';
-        }
-        if (!empty($workplace['addressLocality'])) {
-            $address .= '<span class="addressLocality" itemprop="addressLocality">' . esc_html($workplace['addressLocality']) . '</span>';
-        } elseif (!empty($workplace['city'])) {
-            $address .= '<span class="addressLocality" itemprop="addressLocality">' . esc_html($workplace['city']) . '</span>';
-        }
-        if ((!empty($workplace['zip'])) && (!empty($workplace['postalCode'])) && (!empty($workplace['addressLocality']) || !empty($workplace['city']))) {
-            $address .= '</span>';
-        }
-        if (!empty($workplace['addressCountry'])) {
-            $address .= '<span class="addressCountry" itemprop="addressCountry">' . esc_html($workplace['addressCountry']) . '</span>';
+        if (!empty($workplace['postOfficeBoxNumber']) && is_string($workplace['postOfficeBoxNumber'])) {
+            $parts[] = '<span class="postbox"><span class="screen-reader-text">' . __('Box Number', 'rrze-faudir') . ': </span><span itemprop="postOfficeBoxNumber">' . esc_html($workplace['postOfficeBoxNumber']) . '</span></span>';
         }
 
-        if (!empty($address)) {
-            $address = '<span class="texticon" itemprop="address" itemscope="" itemtype="https://schema.org/PostalAddress">' . $address . '</span>';
-            $result = '<div class="workplace-address">' . $address . '</div>';
+        $postalCode = '';
+        if (!empty($workplace['postalCode']) && is_string($workplace['postalCode'])) {
+            $postalCode = $workplace['postalCode'];
+        } elseif (!empty($workplace['zip']) && is_string($workplace['zip'])) {
+            $postalCode = $workplace['zip'];
         }
-        return $result;
+
+        $locality = '';
+        if (!empty($workplace['addressLocality']) && is_string($workplace['addressLocality'])) {
+            $locality = $workplace['addressLocality'];
+        } elseif (!empty($workplace['city']) && is_string($workplace['city'])) {
+            $locality = $workplace['city'];
+        }
+
+        if ($postalCode !== '' || $locality !== '') {
+            $zipCity = '';
+            if ($postalCode !== '') {
+                $zipCity .= '<span class="postalCode" itemprop="postalCode">' . esc_html($postalCode) . '</span>';
+            }
+            if (!empty($locality)) {
+                if (!empty($zipCity)) {
+                    $zipCity .= ' ';
+                }
+                $zipCity .= '<span class="addressLocality" itemprop="addressLocality">' . esc_html($locality) . '</span>';
+            }
+            $parts[] = '<span class="zipcity">' . $zipCity . '</span>';
+        }
+
+        if (!empty($workplace['addressCountry']) && is_string($workplace['addressCountry'])) {
+            $parts[] = '<span class="addressCountry" itemprop="addressCountry">' . esc_html($workplace['addressCountry']) . '</span>';
+        }
+
+        $roomFloor = '';
+        if ($showmap && !empty($workplace['faumap']) && is_string($workplace['faumap'])) {
+            $faumap = trim($workplace['faumap']);
+            if ($faumap !== '' && preg_match('/^https?:\/\/karte\.fau\.de/i', $faumap)) {
+                $roomFloor  = '<span class="roomfloor" itemprop="containedInPlace" itemscope itemtype="https://schema.org/Room">';
+                $roomFloor .= '<span class="faumap"><span class="screen-reader-text">' . __('Map', 'rrze-faudir') . ': </span>';
+                $roomFloor .= '<a href="' . esc_url($faumap) . '" itemprop="hasMap">' . __('FAU Map', 'rrze-faudir') . '</a>';
+                $roomFloor .= '</span></span>';
+            }
+        }
+
+        $parts = FaudirUtils::normalizeStringArray($parts);
+        if (empty($parts) && $roomFloor === '') {
+            return '';
+        }
+
+        $html  = '<div class="workplace-address">';
+        $html .= '<address class="texticon" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">';
+        $html .= implode(' ', $parts);
+        $html .= '</address>';
+        if ($roomFloor !== '') {
+            $html .= $roomFloor;
+        }
+        $html .= '</div>';
+
+        return $html;
     }
 
      /*
@@ -335,7 +396,7 @@ class Organization {
       
 
         if (!empty($workplace['street'])) {
-            $address .= '<span class="street" itemprop="streetAdress">' . esc_html($workplace['street']) . '</span>';
+            $address .= '<span class="street" itemprop="streetAddress">' . esc_html($workplace['street']) . '</span>';
         }
         
         if (!empty($workplace['zip']) || (!empty($workplace['city']))) {
@@ -465,7 +526,7 @@ class Organization {
            $safeText = esc_html($raw);
 
            if (!empty($wrapTag)) {
-               $tag = self::sanitize_htmlsurround($wrapTag);
+               $tag = FaudirUtils::sanitizeHtmlSurround($wrapTag);
                $parts[] = '<' . $tag . '>' . $safeText . '</' . $tag . '>';
            } else {
                $parts[] = $safeText;
@@ -510,70 +571,24 @@ class Organization {
      * Socials as semantic HTML list
      */
     public function getSocialMedia(string $htmlsurround = 'div', string $class = 'icon-list icon', string $arialabel = ''): string {
-        $data = $this->getSocialArray();
-        if (empty($data)) {
-            return '';
-        }
-
-        $htmlsurround = self::sanitize_htmlsurround($htmlsurround);
-
-        $output = '';
-        $output .= '<' . $htmlsurround;
-        if (!empty($arialabel)) {
-            $output .= ' aria-label="' . trim(esc_attr($arialabel)) . '"';
-        }
-        if (!empty($class)) {
-            $output .= ' class="' . trim(esc_attr($class)) . '"';
-        }
-        $output .= '>';
-        $output .= '<ul class="list-icons">';
-        foreach ($data as $name => $value) {
-            if (preg_match('/^https?:\/\//i', $value)) {
-                $displayValue = preg_replace('/^https?:\/\//i', '', $value);
-                $formattedValue = '<a href="' . esc_url($value) . '" itemprop="url">' . esc_html($displayValue) . '</a>';
-                $output .= '<li><span class="website title">' . ucfirst(esc_html($name)) . ': </span>' . $formattedValue . '</li>';
-            } elseif (filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                $formattedValue = '<a itemprop="email" href="mailto:' . esc_attr($value) . '">' . esc_html($value) . '</a>';
-                $output .= '<li><span class="email title">' . ucfirst(esc_html($name)) . ': </span>' . $formattedValue . '</li>';
-            } else {
-                $formattedValue = '<span class="value">' . esc_html($value) . '</span>';
-                $output .= '<li><span class="title">' . ucfirst(esc_html($name)) . ': </span>' . $formattedValue . '</li>';
-            }
-        }
-        $output .= '</' . $htmlsurround . '>';
-        return $output;
+        $items = FaudirUtils::normalizeSocialItems($this->socials);
+        return FaudirUtils::renderSocialMediaList($items, $htmlsurround, $class, $arialabel);
     }
 
-    private static function sanitize_htmlsurround(string $htmlsurround): string {
-        $allowed_tags = ['div', 'span', 'nav', 'p'];
-        $htmlsurround = strtolower(trim($htmlsurround));
-        return in_array($htmlsurround, $allowed_tags, true) ? $htmlsurround : 'div';
+    public function getSocialArray(): array {
+        return FaudirUtils::normalizeSocialItems($this->socials);
     }
 
-    public function getSocialArray(): ?array {
-        if (empty($this->socials)) {
-            return [];
-        }
-        $reslist = [];
-        foreach ($this->socials as $item) {
-            if (isset($item['platform']) && isset($item['url'])) {
-                $reslist[$item['platform']] = $item['url'];
-            }
-        }
-        return $reslist;
-    }
 
     public function getSocialString(): string {
-        if (empty($this->socials)) {
+        $items = FaudirUtils::normalizeSocialItems($this->socials);
+        $text = FaudirUtils::renderSocialMediaText($items, "\n");
+
+        if ($text === '') {
             return __('No social media available', 'rrze-faudir');
         }
-        $formattedSocials = [];
-        foreach ($this->socials as $social) {
-            if (!empty($social['platform']) && !empty($social['url'])) {
-                $formattedSocials[] = ucfirst($social['platform']) . ': ' . $social['url'];
-            }
-        }
-        return implode("\n", $formattedSocials);
+
+        return $text;
     }
 
 
@@ -602,6 +617,6 @@ class Organization {
             // Org-Adressblock (ohne Langnamen-Präfix)
             $addressHtml = $this->getAddressOutput(false, $lang, $showmap) ?? '';
         }
-        return $this->openingHours->getConsultationsHours($key, $addressHtml, $lang);
+        return $this->openingHours->getConsultationsHours($key, $addressHtml);
     }
 }

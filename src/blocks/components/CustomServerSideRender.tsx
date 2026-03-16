@@ -11,9 +11,26 @@ interface CustomServerSideRenderProps {
 export default function CustomServerSideRender({attributes}: CustomServerSideRenderProps) {
   const [componentKey, setComponentKey] = useState(0);
 
-  useEffect(() => {
-    setComponentKey((prevKey) => prevKey + 1);
-  }, [attributes.orgnr, attributes.selectedCategory, attributes.orgid, attributes.display, attributes.sort,  attributes.order]);
+  useEffect(function () {
+    setComponentKey(function (prevKey) {
+      return prevKey + 1;
+    });
+  }, [
+    attributes.role,
+    attributes.orgnr,
+    attributes.orgid,
+    attributes.selectedFormat,
+    attributes.selectedFields,
+    attributes.selectedCategory,
+    attributes.selectedPosts,
+    attributes.selectedPersonIds,
+    attributes.url,
+    attributes.sort,
+    attributes.order,
+    attributes.format_displayname,
+    attributes.display,
+    attributes.identifier,
+  ]);
 
   return (
     <ServerSideRender
@@ -26,10 +43,11 @@ export default function CustomServerSideRender({attributes}: CustomServerSideRen
         selectedFormat: attributes.selectedFormat,
         selectedFields: attributes.selectedFields,
         selectedCategory: attributes.selectedCategory,
+        selectedPosts: attributes.selectedPosts,
         selectedPersonIds: attributes.selectedPersonIds,
         url: attributes.url,
         sort: attributes.sort,
-	order: attributes.order,
+        order: attributes.order,
         format_displayname: attributes.format_displayname,
         display: attributes.display,
         identifier: attributes.identifier,

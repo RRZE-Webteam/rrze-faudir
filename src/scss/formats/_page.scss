@@ -123,6 +123,10 @@
 	}
 	
 	@container faudir-page-container (max-width: 391px) {
+	    		 
+	    .profile-header {
+		margin-top: 1rem;
+	    }
 	    figure.signature {
 		display: none;
 	    }

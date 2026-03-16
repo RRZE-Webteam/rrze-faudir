@@ -5,6 +5,13 @@
 /*----------------------------------------------------------------------------*/
 
 .faudir-settings {
+    --faudir-settings-card-bg: var(--color-white, #fff);
+    --faudir-settings-borders: var(--color-ContentBorders, #efefef);
+    --faudir-settings-textcolor-dark:  var(--color-KontrastDunkel, #333);
+    --faudir-settings-textcolor-meta:  var(--color-MetaTextDefault, #444);
+    --faudir-settings-error-color:  #ffebee;
+    --faudir-settings-success-color: #e8f5e9;
+    
     .contacts-wrapper {
 	display: flex;
 	flex-wrap: wrap;
@@ -21,9 +28,9 @@
 
     .contact-card,
     .organizations-wrapper .organization-card {
-	background-color: var(--color-white);
+	background-color: var(--faudir-settings-card-bg);
 	border-radius: 10px;
-	box-shadow: 0px 4px 6px var(--color-ContentBorders);
+	box-shadow: 0px 4px 6px var(--faudir-settings-borders);
 	padding: 20px;
 	width: calc(33.333% - 20px);
 	box-sizing: border-box;
@@ -36,22 +43,22 @@
 	h2.contact-name {
 	    font-size: var(--font-size-h2, 1.5rem);
 	    margin-bottom: 10px;
-	    color: var(--color-KontrastDunkel);
+	    color: var(--faudir-settings-textcolor-dark);
 	}
 
 	p {
 	    margin: 5px 0;
-	    color: var(--color-MetaTextDefault);
+	    color: var(--faudir-settings-textcolor-meta);
 
 	    strong {
-		color: var(--color-black);
+		color: var(--faudir-settings-textcolor-dark);
 	    }
 	}
 
 	h3 {
 	    font-size: 1.2em;
 	    margin-top: 15px;
-	    color: var(--color-MetaTextDefault);
+	    color: var(--faudir-settings-textcolor-meta);
 	}
 	
 	
@@ -107,7 +114,7 @@
     
     .danger-zone {
 	margin: 2rem 0.5rem 0.5rem 0.5rem;
-	border: 3px solid var(--faudir-color-alert);
+	border: 3px solid var(--faudir-settings-error-color);
 	padding: 1rem;
 	
 	button#reset-to-defaults-button {
@@ -115,6 +122,104 @@
 	    color: white;
 	}
     }
+    
+    
+    
+    .rrze-faudir-modal {
+      display: none;
+
+
+	&.is-open {
+	  display: block;
+	  position: fixed;
+	  inset: 0;
+	  z-index: 100000;
+	}
+
+	.rrze-faudir-modal__backdrop {
+	  position: absolute;
+	  inset: 0;
+	  background: rgba(0, 0, 0, 0.5);
+	}
+
+	.rrze-faudir-modal__dialog {
+	  position: relative;
+	  max-width: 900px;
+	  margin: 10vh auto;
+	  background: #fff;
+	  border-radius: 6px;
+	  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+	}
+
+	.rrze-faudir-modal__header {
+	  display: flex;
+	  align-items: center;
+	  justify-content: space-between;
+	  padding: 0 16px;
+	  border-bottom: 1px solid #ddd;
+	}
+
+	.rrze-faudir-modal__body {
+	  padding: 12px 16px;
+	  max-height: 60vh;
+	  overflow: auto;
+	  
+	    pre {
+		white-space: pre-wrap;
+		margin: 0;
+	    }
+	    ul {
+		list-style: none;
+		padding-left: 1.8em;
+	    }
+	    ul.success li,
+	    ul.error li {
+		position: relative;
+		margin-bottom: 0.4em;
+	    }
+	    ul.success {
+		background: var(--faudir-settings-success-color);
+		border-left: 4px solid #2e7d32;
+		padding: 10px 15px 10px 35px;
+	    }
+
+	    ul.error {
+		background: var(--faudir-settings-error-color);
+		border-left: 4px solid #c62828;
+		padding: 10px 15px 10px 35px;
+	    }
+	    ul.success li::before,
+	    ul.error li::before {
+		font-family: "dashicons";
+		position: absolute;
+		left: -1.6em;
+		top: 0.1em;
+		font-size: 16px;
+	    }
+
+	    ul.success li::before {
+		content: "\f147"; /* dashicons-yes */
+		color: #2e7d32;
+	    }
+
+	    ul.error li::before {
+		content: "\f158"; /* dashicons-no */
+		color: #c62828;
+	    }
+	}
+
+
+	.rrze-faudir-modal__close {
+	    min-width: 42px;
+	    min-height: 42px;
+	    font-size: 1.5em;
+	    text-align: center;
+	    text-decoration: none;
+		
+	}
+	
+    }
+
     
 }
 
@@ -152,4 +257,31 @@
 	
     }
 
+}
+
+.edit-post-meta-boxes-area #poststuff {
+    #faudir_change_history,
+    #faudir_person_cache_tools {
+	h2.hndle {
+	    padding: 0 16px;
+	}
+	.inside {
+	    padding: 0 16px 16px;
+	}
+    }
+}
+#faudir_change_history {
+    .faudir-history {
+	.faudir-history-list {
+	    margin-left: 0.2rem;
+	}
+	.faudir-history-item {
+	    padding: 0.6rem 0;
+	    border-top: 1px solid #eee;
+	}
+	.faudir-history-context {
+	    background: #f6f7f7; 
+	    padding: 0.6rem;
+	}   
+    }
 }

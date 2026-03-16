@@ -13,43 +13,51 @@ jQuery(function ($) {
   });
 
   // --- Import FAU Person ---
+  function rrzeFaudirModalOpen() {
+    var $m = $('#rrze-faudir-modal');
+    $m.attr('aria-hidden', 'false').addClass('is-open');
+  }
+
+  function rrzeFaudirModalClose() {
+    var $m = $('#rrze-faudir-modal');
+    $m.attr('aria-hidden', 'true').removeClass('is-open');
+  }
+
+  function rrzeFaudirSetModalContent(txt) {
+    $('#rrze-faudir-modal-content').html(txt);
+  }
+
+  $('#rrze-faudir-modal').on('click', '[data-modal-close="1"]', function () {
+    rrzeFaudirModalClose();
+  });
+
+  $(document).on('keydown', function (e) {
+    if (e.key === 'Escape') {
+      rrzeFaudirModalClose();
+    }
+  });
+
+  // --- Import FAU Person ---
   $('#import-fau-person-button').on('click', function () {
     if (!window.rrzeFaudirAjax) return;
     if (!confirm(rrzeFaudirAjax.confirm_import)) return;
 
-    var $target = $('#migration-progress');
-    $target.empty().append(
-      '<div id="import-progress">' +
-        '<div class="progress-bar" style="width:0%;height:20px;background-color:#4CAF50;"></div>' +
-      '</div>' +
-      '<div id="import-response" style="margin-top:10px;"></div>'
-    );
-
-    var progressInterval = setInterval(function () {
-      var $bar = $('#import-progress .progress-bar');
-      var current = parseInt($bar.css('width')) / $('#import-progress').width() * 100 || 0;
-      $bar.css('width', Math.min(current + 10, 90) + '%');
-    }, 500);
+    rrzeFaudirSetModalContent('Running import ...');
+    rrzeFaudirModalOpen();
 
     $.post(rrzeFaudirAjax.ajax_url, {
       action: 'rrze_faudir_import_fau_person',
       security: rrzeFaudirAjax.api_nonce
     }).done(function (response) {
-      clearInterval(progressInterval);
-      $('#import-progress .progress-bar').css('width', '100%');
-      if (response.success) {
-        var formatted = String(response.data).replace(/\n/g, '</li><li>');
-        $('#import-response').html('<ul style="max-width:75ch;"><li>' + formatted + '</li></ul>');
+      if (response && response.success && response.data && typeof response.data.text !== 'undefined') {
+	rrzeFaudirSetModalContent(response.data.text || 'Done.');
       } else {
-        $('#import-response').html('<p>No contact from FAU Person imported.</p>');
+	rrzeFaudirSetModalContent('No contact from FAU Person imported.');
       }
     }).fail(function () {
-      clearInterval(progressInterval);
-      $('#import-progress .progress-bar').css('width', '100%');
-      $('#import-response').html('<p>An error occurred during the import.</p>');
+      rrzeFaudirSetModalContent('An error occurred during the import.');
     });
   });
-
   // --- Personensuche ---
   if ($('#search-person-form').length) {
     // Enter verhindern
@@ -81,7 +89,6 @@ jQuery(function ($) {
       var givenName = $('#given-name').val().trim();
       var familyName = $('#family-name').val().trim();
       var email = $('#email').val().trim();
-      var includeDefaultOrg = $('#include-default-org').is(':checked') ? '1' : '0';
 
       if (personId || givenName || familyName || email) {
         $.post(rrzeFaudirAjax.ajax_url, {
@@ -90,8 +97,7 @@ jQuery(function ($) {
           person_id: personId,
           given_name: givenName,
           family_name: familyName,
-          email: email,
-          include_default_org: includeDefaultOrg
+          email: email
         }).done(function (response) {
           $('#contacts-list').html(response.success ? response.data : '<p>' + response.data + '</p>');
         }).fail(function () {
@@ -110,7 +116,6 @@ jQuery(function ($) {
     var $btn = $(this);
     var personName = $btn.data('name');
     var personId = $btn.data('id');
-    var includeDefaultOrg = $btn.data('include-default-org');
     var functions = $btn.data('functionLabel') || [];
 
     $btn.prop('disabled', true).html('<span class="dashicons dashicons-update"></span> ' + rrzeFaudirAjax.add_text);
@@ -120,7 +125,6 @@ jQuery(function ($) {
       security: rrzeFaudirAjax.api_nonce,
       person_name: personName,
       person_id: personId,
-      include_default_org: includeDefaultOrg,
       functions: functions
     }).done(function (response) {
       if (response.success) {
@@ -170,4 +174,58 @@ jQuery(function ($) {
       }
     });
   }
+    // --- Refresh Person-Data from FAUdir (Metabox) ---
+  if ($('#rrze-faudir-refresh-person-data').length) {
+    $('#rrze-faudir-refresh-person-data').on('click', function () {
+      if (!window.rrzeFaudirAjax) return;
+
+      var $btn = $('#rrze-faudir-refresh-person-data');
+      var $spinner = $('#rrze-faudir-refresh-spinner');
+      var $out = $('#rrze-faudir-refresh-result');
+
+      var postId = $('#rrze-faudir-refresh-postid').val();
+      var personId = $('#rrze-faudir-refresh-personid').val();
+
+      $out.removeClass('notice notice-error notice-success inline').empty();
+
+      $btn.prop('disabled', true);
+      $spinner.addClass('is-active');
+
+      $.post(rrzeFaudirAjax.ajax_url, {
+        action: rrzeFaudirAjax.refresh_action,
+        security: rrzeFaudirAjax.refresh_nonce,
+        post_id: postId,
+        person_id: personId
+      }).done(function (resp) {
+	if (resp && resp.success) {
+	  var noticeMsg = rrzeFaudirAjax.refresh_success_text;
+	  if (resp.data && resp.data.message) {
+	    noticeMsg = resp.data.message;
+	  }
+
+	  $out.addClass('notice notice-success inline').html('<p>' + noticeMsg + '</p>');
+
+	  var confirmMsg = rrzeFaudirAjax.refresh_success_text + "\n\n" + rrzeFaudirAjax.refresh_reload_confirm;
+	  var doReload = window.confirm(confirmMsg);
+	  if (doReload) {
+	    window.location.reload();
+	    return;
+	  }
+	} else {
+	  var emsg = rrzeFaudirAjax.refresh_unknown_text;
+	  if (resp && resp.data && resp.data.message) {
+	    emsg = resp.data.message;
+	  }
+	  $out.addClass('notice notice-error inline').html('<p>' + emsg + '</p>');
+	}
+      }).fail(function () {
+        $out.addClass('notice notice-error inline').html('<p>' + rrzeFaudirAjax.refresh_failed_text + '</p>');
+      }).always(function () {
+        $spinner.removeClass('is-active');
+        $btn.prop('disabled', false);
+      });
+    });
+  }
 });
+
+

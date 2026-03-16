@@ -9,11 +9,11 @@
     --faudir-color-list-displayname: var(--color-content-links, #222);
     --faudir-color-links:  var(--color-links, #444);
     
-    --faudir-icon-size: 1rem;
+    --faudir-icon-size: 1.2rem;
     --faudir-icon-margin-right: 0.2rem;
     --faudir-icon-color-hover: red; // var(--color-branding-primary, var(--color-content-links-hover, red));
     --faudir-icon-mask-size: 100%;
-    --faudir-min-iconwidth: 24px;  // based on WCAG 2.2, 2.5.8 "Target Size (Minimum)"
+    --faudir-min-iconwidth: 26px;  // based on WCAG 2.2, 2.5.8 "Target Size (Minimum)"
   
     --faudir-figure-listssize: 150px;
     --faudir-figure-tablesize: 150px;
@@ -24,11 +24,11 @@
     --faudir-figure-textsignature-font-weight: bold;
     --faudir-border-color: var(--color-ContentBorders, #e9edf2);
     
-    --faudir-h1-font-size: var(--font-size-h2,var(--font-size-xl, 1.25rem));
-    --faudir-h2-font-size: var(--font-size-h3,var(--font-size-normal, 1rem));
-    --faudir-h3-font-size: var(--font-size-h4,var(--font-size-tiny,  0.938rem));
-    --faudir-h4-font-size: var(--font-size-h5,var(--font-size-sm,  0.875rem));
-    --faudir-h5-font-size: var(--font-size-h6,var(--font-size-xs,  0.76rem));
+    --faudir-h1-font-size: var(--H-Heading-1, var(--font-size-h2,var(--font-size-xl, 1.25rem)));
+    --faudir-h2-font-size: var(--H-Heading-2, var(--font-size-h3,var(--font-size-normal, 1rem)));
+    --faudir-h3-font-size: var(--H-Heading-3, var(--font-size-h4,var(--font-size-tiny,  0.938rem)));
+    --faudir-h4-font-size: var(--H-Heading-4, var(--font-size-h5,var(--font-size-sm,  0.875rem)));
+    --faudir-h5-font-size: var(--H-Heading-5, var(--font-size-h6,var(--font-size-xs,  0.76rem)));
     
     --faudir-figcaption-font-size: var(--P-Caption, var(--font-size-tiny,  0.938rem));
     

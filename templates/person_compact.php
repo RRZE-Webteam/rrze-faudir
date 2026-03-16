@@ -1,9 +1,7 @@
 <?php
 // Template file for RRZE FAUDIR
-use RRZE\FAUdir\Debug;
-use RRZE\FAUdir\FAUdirUtils;
+use RRZE\FAUdir\FaudirUtils;
 use RRZE\FAUdir\Person;
-use RRZE\FAUdir\Config;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
@@ -12,24 +10,18 @@ if (!defined('ABSPATH')) {
 ?>
 <div class="faudir">
 <?php
-    $config = new Config;
-    $available_fields = $config->getFieldsByFormat('compact');
-    $opt = $config->getOptions();        
-    $lang = FAUdirUtils::getLang();
-    $normalize_titles = $opt['default_normalize_honorificPrefix'];
+
+    $lang = FaudirUtils::getLang();
+    $normalize_titles = $this->config->get('default_normalize_honorificPrefix');
+
     
-    $dbopt = get_option('rrze_faudir_options', []);
-     
-     
-    //echo "DB OPTIONS:<br>";
-    //echo Debug::get_html_var_dump($dbopt);
-    //echo "<hr>";
-    
-    if (!empty($persons)) { ?>
+    if (!empty($persons)) { 
+        
+        ?>
          <div class="format-compact">
         <?php foreach ($persons as $persondata) {
         if (isset($persondata['error'])) {  
-            if ($opt['show_error_message']) {
+            if ($this->config->get('show_error_message')) {
             ?>
             <div class="faudir-error">
                 <?php echo esc_html($persondata['message']); ?>
@@ -39,17 +31,18 @@ if (!defined('ABSPATH')) {
             if (!empty($persondata)) {
 
                 $person = new Person($persondata);
+                $person->setConfig($this->config);
+                // do_action('rrze.log.info', 'FAUdir Person: ', $person);                
                 $formatstring = '';
                 if (!empty($format_displayname)) {
                     $formatstring = $format_displayname;
                 }
-                $displayname = $person->getDisplayName(true, $normalize_titles,$formatstring);
-                $mailadresses= $person->getEMail();
-                $phonenumbers = $person->getPhone();                        
+                $displayname = $person->getRenderedDisplayName($show_fields, $normalize_titles, $formatstring);
+                                       
                 if (!empty($url)) {
                     $final_url = $url;
                 } else {
-                    $final_url = $person->getTargetURL($opt['fallback_link_faudir']);
+                    $final_url = $person->getTargetURL($this->config->get('fallback_link_faudir'));
                 }
  
                 
@@ -65,7 +58,7 @@ if (!defined('ABSPATH')) {
                 $aria_id = $person->getRandomId("section-title-");
                 ?>
 
-                <section class="format-compact-container" aria-labelledby="<?php echo $aria_id;?>" itemscope itemtype="https://schema.org/Person">
+                <section class="format-compact-container" aria-labelledby="<?php echo esc_attr($aria_id);?>" itemscope itemtype="https://schema.org/Person">
                     <?php if (in_array('image', $show_fields)) { 
                         $image_content = $person->getImage();
                         if (!empty($image_content)) { ?>
@@ -78,26 +71,24 @@ if (!defined('ABSPATH')) {
                        <?php 
 
                         $value = '';
-                        if (!empty($final_url)) {
+                        if ((!empty($final_url)) && (in_array('link', $show_fields))) {
                             $value .= '<a itemprop="url" href="'.esc_url($final_url).'">';     
                         }
                         $value .= $displayname;
-                        if (!empty($final_url)) {
+                         if ((!empty($final_url)) && (in_array('link', $show_fields))) {
                             $value .= '</a>';
                         }                        
-                        echo '<h1 id="'.$aria_id.'">'.$value.'</h1>';
+                        echo '<h1 id="'.esc_attr($aria_id).'">'.$value.'</h1>';
                         
-                        if (in_array('organization', $show_fields)) {
+                        if (!empty($contact) && in_array('organization', $show_fields)) {
                             echo '<p class="organisation_name">'. $contact->getOrganizationName($lang).'</p>';
                         }
-                        if (in_array('jobTitle', $show_fields)) {
+                        if (!empty($contact) && in_array('jobTitle', $show_fields)) {
                             $jobtitleformat = '#functionlabel#';
-                            if (!empty($opt['jobtitle_format'])) {
-                                $jobtitleformat = $opt['jobtitle_format'];
+                            if (!empty($this->config->get('jobtitle_format'))) {
+                                $jobtitleformat = $this->config->get('jobtitle_format');
                             }                           
-                            if ($contact) {
-                                echo '<p class="jobtitle">'. $contact->getJobTitle($lang,$jobtitleformat).'</p>';
-                            }
+                             echo '<p class="jobtitle">'. $contact->getJobTitle($lang,$jobtitleformat).'</p>';
                         }
                         ?>
                 
@@ -106,20 +97,21 @@ if (!defined('ABSPATH')) {
                         <?php
                         $address = '';
 
-                        if (in_array('address', $show_fields)) {
+                        if (in_array('address', $show_fields, true) && !empty($workplaces) && !empty($contact)) {
                             if (!empty($workplaces)) {
-                                
-                                if ((in_array('room', $show_fields)) || (in_array('floor', $show_fields))) {
-                                    $roomfloor = true;
-                                } else {
-                                    $roomfloor = false;
+                                $room = $floor =  false;
+                                if (in_array('room', $show_fields)) {
+                                    $room = true;
+                                }
+                                if (in_array('floor', $show_fields))  {
+                                    $floor = true;
                                 }
                                 
                                 
                                 $wval = '';
                                 $seen      = [];
                                 foreach ($workplaces as $w => $wdata) {
-                                    $html = (string) $contact->getAddressByWorkplace($wdata, false, $lang, $roomfloor);
+                                    $html = (string) $contact->getAddressByWorkplace($wdata, false, $lang, $room, $floor);
                                     if ($html === '') {
                                         continue;
                                     }
@@ -170,7 +162,8 @@ if (!defined('ABSPATH')) {
                         }
                         
                         if (in_array('phone', $show_fields)) {
-                            $wval = '';                                    
+                            $wval = '';      
+                            $phonenumbers = $person->getPhone(); 
                             foreach ($phonenumbers as $phone) {
                                 $formattedPhone = FaudirUtils::format_phone_number($phone);
                                 $cleanTel = preg_replace('/[^\+\d]/', '', $phone);
@@ -183,25 +176,23 @@ if (!defined('ABSPATH')) {
                             }
                         }
                         
-                        if (in_array('fax', $show_fields)) { 
-                           if (!empty($workplaces)) {
+                        if (in_array('fax', $show_fields, true) && !empty($workplaces)) {
                                 $wval = '';
                                 foreach ($workplaces as $w => $wdata) {
                                     if (!empty($wdata['fax'])) {
                                         $formattedPhone = FaudirUtils::format_phone_number($wdata['fax']);
                                         $cleanTel = preg_replace('/[^\+\d]/', '', $wdata['fax']);
 
-                                        $formattedValue = '<a itemprop="fax" href="tel:' . esc_attr($cleanTel) . '">' . esc_html($formattedPhone) . '</a>';
+                                        $formattedValue = '<a itemprop="faxNumber" href="tel:' . esc_attr($cleanTel) . '">' . esc_html($formattedPhone) . '</a>';
                                         $wval .= '<span class="value"><span class="screen-reader-text">'.__('Fax','rrze-faudir').': </span>'.$formattedValue.'</span>';
                                     }
                                 }
                                 if (!empty($wval)) {
                                      $contactlist .= '<li class="fax listcontent">'.$wval.'</li>';
                                 } 
-                            }
+                            
                         }
-                        if (in_array('url', $show_fields) ) {
-                            if (!empty($workplaces)) {
+                        if (in_array('url', $show_fields, true) && !empty($workplaces)) {
                                 $wval = '';
                                 foreach ($workplaces as $w => $wdata) {
                                     if (!empty($wdata['url'])) {
@@ -213,7 +204,6 @@ if (!defined('ABSPATH')) {
                                 if (!empty($wval)) {
                                     $contactlist .= '<li class="url listcontent">'.$wval.'</li>';
                                 }
-                            }
                         }
                         
                         
@@ -227,7 +217,7 @@ if (!defined('ABSPATH')) {
                             echo '</div>';
                         }
                         
-                        if (in_array('socialmedia', $show_fields) ) {
+                        if (!empty($contact) && in_array('socialmedia', $show_fields, true)) {
                             $some = $contact->getSocialMedia('span');
                             if (!empty($some)) {
                                 echo '<div class="profile-socialmedia">';
@@ -238,8 +228,8 @@ if (!defined('ABSPATH')) {
                         }
   
                         
-                        if (in_array('officehours', $show_fields) || (in_array('consultationhours', $show_fields) )) {
-                            if (!empty($workplaces)) {
+                        if (in_array('officehours', $show_fields, true) || in_array('consultationhours', $show_fields, true)) {
+                            if (!empty($workplaces) && !empty($contact)) {
                                 
                                 if (count($workplaces) > 1) {
                                     $showaddress = true;
@@ -285,27 +275,7 @@ if (!defined('ABSPATH')) {
                         }
                         
                         
-                     if (in_array('link', $show_fields) ) {                          
-                            if (!empty($final_url)) {
-                                $link = '<div class="profile-link">';
-                                $link .= '<a class="buttonlink" itemprop="sameAs" href="'.esc_url($final_url).'">';  
-                                
-                                $opt = $config->getOptions();                       
-                                $linkttitle = $opt['business_card_title'];
-                                if (empty($linkttitle)) {
-                                     $linkttitle  = __('User profil', 'rrze-faudir');
-                                }
-                                
-                                $link .= $linkttitle;
-                                $link .= '</a>';
-                                $link .= '</div>';
-                                
-                                
-                                echo $link;
-                            }
-                    }
-                    
-                    
+                   
                     $profilcontent = '';
                     if (in_array('teasertext', $show_fields)) {    
                         

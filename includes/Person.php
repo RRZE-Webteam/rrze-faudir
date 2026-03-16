@@ -9,6 +9,8 @@ namespace RRZE\FAUdir;
 
 defined('ABSPATH') || exit;
 
+use RRZE\FAUdir\FaudirUtils;
+
 
 class Person {
     public string $identifier;
@@ -18,9 +20,9 @@ class Person {
     public ?string $honorificSuffix;
     public ?string $titleOfNobility;   
     public ?string $pronoun;
-    public ?string $email;
-    public ?string $telephone;
-    public ?string $fax;
+    public string|array|null $email;
+    public string|array|null $telephone;
+    public string|array|null $fax;
     public ?array $contacts;
     private array $rawdata;
     protected ?Config $config = null;
@@ -29,18 +31,21 @@ class Person {
     
     
     public function __construct(array $data = []) {
-        $this->identifier = $data['identifier'] ?? '';
-        $this->givenName = $data['givenName'] ?? '';
-        $this->familyName = $data['familyName'] ?? '';    
-        $this->honorificPrefix = $data['honorificPrefix'] ?? '';
-        $this->honorificSuffix = $data['honorificSuffix'] ?? '';
-        $this->titleOfNobility = $data['titleOfNobility'] ?? '';       
-        $this->pronoun = $data['pronoun'] ?? '';
-        $this->email = $data['email'] ?? '';
-        $this->telephone = $data['telephone'] ?? '';     
-        $this->contacts = $data['contacts'] ?? null;
-        $this->postid = $data['postid'] ?? 0;
-        $this->primary_contact = null;
+        $this->identifier       = (string) ($data['identifier'] ?? '');
+        $this->givenName        = (string) ($data['givenName'] ?? '');
+        $this->familyName       = (string) ($data['familyName'] ?? '');
+        $this->honorificPrefix  = isset($data['honorificPrefix']) ? (string) $data['honorificPrefix'] : '';
+        $this->honorificSuffix  = isset($data['honorificSuffix']) ? (string) $data['honorificSuffix'] : '';
+        $this->titleOfNobility  = isset($data['titleOfNobility']) ? (string) $data['titleOfNobility'] : '';
+        $this->pronoun          = isset($data['pronoun']) ? (string) $data['pronoun'] : '';
+
+        $this->email            = $data['email'] ?? null;
+        $this->telephone        = $data['telephone'] ?? null;
+        $this->fax              = $data['fax'] ?? null;
+
+        $this->contacts         = isset($data['contacts']) && is_array($data['contacts']) ? $data['contacts'] : null;
+        $this->postid           = isset($data['postid']) ? (int) $data['postid'] : 0;
+        $this->primary_contact  = null;
 
         // Everything else that comes over data move in rawdata       
         $usedKeys = [
@@ -64,70 +69,79 @@ class Person {
      * Aktualisiert die Eigenschaften der Person anhand der übergebenen Daten.
      * @param array $data Das Array mit den neuen Personendaten.
      */
-    public function populateFromData(array $data, bool $clear = true): void { 
+    public function populateFromData(array $data, bool $clear = true): void {
         if ($clear) {
-            // Setze alle bekannten Felder auf ihre Standardwerte zurück.
-            $this->identifier           = '';
-            $this->givenName            = '';
-            $this->familyName           = '';
-            $this->honorificPrefix      = '';
-            $this->honorificSuffix      = '';
-            $this->titleOfNobility      = '';
-            $this->pronoun              = '';
-            $this->email                = '';
-            $this->telephone            = '';
-            $this->postid               = 0;
-            $this->contacts             = null;
-            $this->primary_contact      = null;
-            // Leere rawdata zurücksetzen
-            $this->rawdata              = [];
-        }
-        
-        // Aktualisiere die einzelnen Eigenschaften, falls Werte vorhanden sind
-        if (isset($data['identifier'])) {
-            $this->identifier = $data['identifier'];
-        }
-        if (isset($data['givenName'])) {
-            $this->givenName = $data['givenName'];
-        }
-        if (isset($data['familyName'])) {
-            $this->familyName = $data['familyName'];
-        }
-        if (isset($data['personalTitle'])) {
-            $this->honorificPrefix = $data['personalTitle'];
-        }
-         if (isset($data['personalTitleSuffix'])) {
-            $this->honorificSuffix = $data['personalTitleSuffix'];
-        }
-        if (isset($data['honorificSuffix'])) {
-            $this->honorificSuffix = $data['honorificSuffix'];
-        }
-        if (isset($data['titleOfNobility'])) {
-            $this->titleOfNobility = $data['titleOfNobility'];
-        }
-        if (isset($data['pronoun'])) {
-            $this->pronoun = $data['pronoun'];
-        }
-        if (isset($data['email'])) {
-            $this->email = $data['email'];
-        }
-        if (isset($data['telephone'])) {
-            $this->telephone = $data['telephone'];
-        }
-        if (isset($data['contacts'])) {
-            $this->contacts = $data['contacts'];
-        }
-        if (isset($data['postid'])) {
-            $this->postid = $data['postid'];
+            $this->identifier          = '';
+            $this->givenName           = '';
+            $this->familyName          = '';
+            $this->honorificPrefix     = '';
+            $this->honorificSuffix     = '';
+            $this->titleOfNobility     = '';
+            $this->pronoun             = '';
+            $this->email               = null;
+            $this->telephone           = null;
+            $this->fax                 = null;
+            $this->postid              = 0;
+            $this->contacts            = null;
+            $this->primary_contact     = null;
+            $this->rawdata             = [];
         }
 
-        // Aktualisiere rawdata: Füge alle übrigen Schlüssel hinzu, die nicht zu den Standardfeldern gehören.
+        if (isset($data['identifier'])) {
+            $this->identifier = (string) $data['identifier'];
+        }
+        if (isset($data['givenName'])) {
+            $this->givenName = (string) $data['givenName'];
+        }
+        if (isset($data['familyName'])) {
+            $this->familyName = (string) $data['familyName'];
+        }
+
+        // Titel: bevorzugt "personalTitle", fallback "honorificPrefix"
+        if (isset($data['personalTitle'])) {
+            $this->honorificPrefix = (string) $data['personalTitle'];
+        } elseif (isset($data['honorificPrefix'])) {
+            $this->honorificPrefix = (string) $data['honorificPrefix'];
+        }
+
+        // Suffix: bevorzugt "personalTitleSuffix", fallback "honorificSuffix"
+        if (isset($data['personalTitleSuffix'])) {
+            $this->honorificSuffix = (string) $data['personalTitleSuffix'];
+        } elseif (isset($data['honorificSuffix'])) {
+            $this->honorificSuffix = (string) $data['honorificSuffix'];
+        }
+
+        if (isset($data['titleOfNobility'])) {
+            $this->titleOfNobility = (string) $data['titleOfNobility'];
+        }
+        if (isset($data['pronoun'])) {
+            $this->pronoun = (string) $data['pronoun'];
+        }
+        if (array_key_exists('email', $data)) {
+            $this->email = $this->normalizeScalarOrStringArray($data['email']);
+        }
+        if (array_key_exists('telephone', $data)) {
+            $this->telephone = $this->normalizeScalarOrStringArray($data['telephone']);
+        }
+        if (array_key_exists('fax', $data)) {
+            $this->fax = $this->normalizeScalarOrStringArray($data['fax']);
+        }
+        if (isset($data['contacts'])) {
+            $this->contacts = is_array($data['contacts']) ? $data['contacts'] : null;
+        }
+        if (isset($data['postid'])) {
+            $this->postid = (int) $data['postid'];
+        }
+
+        // rawdata: alles, was nicht in die bekannten Felder gehört
         $usedKeys = [
             'identifier',
             'givenName',
             'familyName',
             'honorificPrefix',
             'honorificSuffix',
+            'personalTitle',
+            'personalTitleSuffix',
             'titleOfNobility',
             'pronoun',
             'email',
@@ -135,31 +149,61 @@ class Person {
             'contacts',
             'postid'
         ];
+
         $remaining = array_diff_key($data, array_flip($usedKeys));
         $this->rawdata = array_merge($this->rawdata, $remaining);
     }
     
-    
+    private function normalizeScalarOrStringArray(mixed $value): string|array|null {
+        if ($value === null) {
+            return null;
+        }
+
+        if (is_string($value)) {
+            $v = trim($value);
+            return ($v === '') ? null : $v;
+        }
+
+        if (is_array($value)) {
+            $out = [];
+            foreach ($value as $v) {
+                $v = trim((string) $v);
+                if ($v !== '') {
+                    $out[] = $v;
+                }
+            }
+
+            if (empty($out)) {
+                return null;
+            }
+
+            $out = array_values(array_unique($out));
+            return $out;
+        }
+
+        // alles andere: als String versuchen
+        $v = trim((string) $value);
+        return ($v === '') ? null : $v;
+    }
     /*
      * Personendaten als Array zurückliefern
      */
     public function toArray(): array {
         $data = [
-            'identifier'            => $this->identifier,
-            'givenName'             => $this->givenName,
-            'familyName'            => $this->familyName,
-            'honorificPrefix'       => $this->honorificPrefix,
-            'honorificSuffix'       => $this->honorificSuffix,
-            'titleOfNobility'       => $this->titleOfNobility,
-            'pronoun'               => $this->pronoun,
-            'email'                 => $this->email,
-            'telephone'             => $this->telephone,
-            'contacts'              => $this->contacts,
-            'postid'                => $this->postid,
+            'identifier'       => $this->identifier,
+            'givenName'        => $this->givenName,
+            'familyName'       => $this->familyName,
+            'honorificPrefix'  => $this->honorificPrefix,
+            'honorificSuffix'  => $this->honorificSuffix,
+            'titleOfNobility'  => $this->titleOfNobility,
+            'pronoun'          => $this->pronoun,
+            'email'            => $this->email,
+            'telephone'        => $this->telephone,
+            'fax'              => $this->fax,
+            'contacts'         => $this->contacts,
+            'postid'           => $this->postid,
         ];
 
-        // Füge alle restlichen Schlüssel und Werte (rawdata) hinzu,
-        // so dass das ursprüngliche Array wiederhergestellt wird.
         return array_merge($data, $this->rawdata);
     }
     
@@ -180,6 +224,7 @@ class Person {
         }
         $api = new API($this->config);
         // Hole die Personendaten als Array über die API-Methode.
+                
         $personData = $api->getPerson($identifier);
 
         if (empty($personData) || !is_array($personData)) {
@@ -195,68 +240,103 @@ class Person {
      * Contact-Daten befüllen
      */
     public function reloadContacts(bool $loadorg = false): bool {
-        $personContacts = [];
-        
-        // Falls keine Kontakte gesetzt sind, nichts tun
         if (empty($this->contacts) || !is_array($this->contacts)) {
             return false;
         }
         if (empty($this->config)) {
             $this->setConfig();
         }
-        
+
         $api = new API($this->config);
-        
-        // Iteriere über die Kontakte
+
+        $personContacts = [];
         foreach ($this->contacts as $contact) {
-            $contactIdentifier = $contact['identifier'] ?? null;
-            if ($contactIdentifier) {        
-                
-                $contactData = $api->getContacts(0, 0, ['identifier' => $contactIdentifier]);
-                
-                if (!empty($contactData['data'])) {
-                    $contact = $contactData['data'][0];
-                    $organizationId = $contact['organization']['identifier'] ?? null;
+            if (empty($contact) || !is_array($contact)) {
+                continue;
+            }
 
-                    if (($organizationId) && ($loadorg)) {
-                        // Wozu brauchen wir die Orgdaten eigentlich?
-                        // Adresse kommt doch aus dem Workplaces...
-                        
-                        $organizationData = $api->getOrgById($organizationId);
-                        
-                        
-                        if (!empty($organizationData['address'])) {
-                             $contact['org']['address'] = $organizationData['address'];                 
-                        }
-                        if (!empty($organizationData['identifier'])) {
-                             $contact['org']['identifier'] = $organizationData['identifier'];                 
-                        }
-                        if (!empty($organizationData['longDescription'])) {
-                             $contact['org']['longDescription'] = $organizationData['longDescription'];                 
-                        }
-                        if (!empty($organizationData['name'])) {
-                             $contact['org']['name'] = $organizationData['name'];                 
-                        }
-                        if (!empty($organizationData['disambiguatingDescription'])) {
-                             $contact['org']['disambiguatingDescription'] = $organizationData['disambiguatingDescription'];                 
-                        }
-                        if (!empty($organizationData['parentOrganization'])) {
-                             $contact['org']['parentOrganization'] = $organizationData['parentOrganization'];                 
-                        }
-                        if (!empty($organizationData['subOrganization'])) {
-                             $contact['org']['subOrganization'] = $organizationData['subOrganization'];                 
-                        }
-                    
-                        
-                    }
-
-                    $personContacts[] = $contact;
+            /*
+             * Wenn Contact schon "voll" ist (z.B. workplaces vorhanden),
+             * dann nicht erneut per API laden.
+             */
+            if (!empty($contact['workplaces']) && is_array($contact['workplaces'])) {
+                if ($loadorg) {
+                    $contact = $this->enrichContactOrganization($api, $contact);
                 }
+                $personContacts[] = $contact;
+                continue;
+            }
+
+            $contactIdentifier = $contact['identifier'] ?? '';                     
+            if (!FaudirUtils::isValidContactId($contactIdentifier)) {
+                /*
+                 * Kein Identifier → wir können nicht nachladen.
+                 * Contact so übernehmen, wie er ist.
+                 */
+                if ($loadorg) {
+                    $contact = $this->enrichContactOrganization($api, $contact);
+                }
+                $personContacts[] = $contact;
+                continue;
+            }
+
+            $contactData = $api->getContact($contactIdentifier);
+            
+       //     do_action('rrze.log.info', "FAUdir\Person (reloadContacts): Getting contact data for {$contactIdentifier}: ", $contactData);
+            if (empty($contactData) || !is_array($contactData)) {
+                continue;
+            }
+            $full = $contactData;
+            if ($loadorg) {
+                $full = $this->enrichContactOrganization($api, $full);
+            }
+
+            $personContacts[] = $full;
+        }
+
+        $this->contacts = $personContacts;
+
+        return !empty($this->contacts);
+    }
+    
+    /*
+     * Helper-Funktion für die Org-Daten 
+     */
+    private function enrichContactOrganization(API $api, array $contact): array {
+        $orgId = $contact['organization']['identifier'] ?? '';
+        $orgId = is_string($orgId) ? trim($orgId) : '';
+        if ($orgId === '') {
+            return $contact;
+        }
+
+        $organizationData = $api->getOrgById($orgId);
+        if (empty($organizationData) || !is_array($organizationData)) {
+            return $contact;
+        }
+
+        if (!isset($contact['organization']) || !is_array($contact['organization'])) {
+            $contact['organization'] = [];
+        }
+
+        $keys = [
+            'address',
+            'identifier',
+            'longDescription',
+            'name',
+            'disambiguatingDescription',
+            'parentOrganization',
+            'subOrganization',
+        ];
+
+        foreach ($keys as $k) {
+            if (isset($organizationData[$k])) {
+                $contact['organization'][$k] = $organizationData[$k];
             }
         }
-        $this->contacts = $personContacts;
-        return true;
+
+        return $contact;
     }
+    
     
     /*
      * Get Workplaces of Person as Array
@@ -278,42 +358,45 @@ class Person {
      * - if its empty use the phones address from active primary contact
      * Cause a person can use more as one phone number, we result with an array
      */ 
-    public function getPhone(): ?array {
-        $resphone = [];
-        if (!empty($this->telephone)) {
-            if ((is_string($this->telephone)) && (preg_match('/^\+?[0-9\s\-\(\)]{7,20}$/', $this->telephone)) ) {
-                $resphone[] = $this->telephone;
-            } elseif (is_array($this->telephone)) {           
-                foreach ($this->telephone as $i => $val) {
-                    if (preg_match('/^\+?[0-9\s\-\(\)]{7,20}$/', $this->telephone)) {
-                        $resphone[] = $val;
-                    }
+    public function getPhone(): array {
+        $vals = FaudirUtils::normalizeScalarOrArrayToList($this->telephone);
+
+        if (!empty($vals)) {
+            $out = [];
+            foreach ($vals as $val) {
+                if (FaudirUtils::isValidPhoneNumber($val)) {
+                    $out[] = $val;
                 }
             }
-            return $resphone;
+            return array_values(array_unique($out));
         }
+
         $workplaces = $this->getWorkplaces();
-        if (empty($workplaces)) {
+        if (empty($workplaces) || !is_array($workplaces)) {
             return [];
         }
-        
-        
-        $gatherphones = [];     
-        foreach ($workplaces as $num => $wdata) {
-            if (isset($wdata['phones'])) {
-                foreach ($wdata['phones'] as $i => $val) {
-                    if (preg_match('/^\+?[0-9\s\-\(\)]{7,20}$/', $val)) {
-                        $gatherphones[] = $val;
-                    }
-                 
+
+        $out = [];
+        foreach ($workplaces as $wdata) {
+            if (!is_array($wdata) || empty($wdata['phones']) || !is_array($wdata['phones'])) {
+                continue;
+            }
+
+            foreach ($wdata['phones'] as $val) {
+                if (!is_string($val)) {
+                    continue;
+                }
+                $val = trim($val);
+                if ($val === '') {
+                    continue;
+                }
+                if (FaudirUtils::isValidPhoneNumber($val)) {
+                    $out[] = $val;
                 }
             }
         }
-        if (!empty($gatherphones)) {
-            // Entferne etwaige Dupletten und returne dann die neu indizierte Liste
-            return array_values(array_unique($gatherphones));
-        }
-        return [];
+
+        return array_values(array_unique($out));
     }
     
     /*
@@ -322,188 +405,329 @@ class Person {
      * - if its empty use the phones address from active primary contact
      * Cause a person can use more as one phone number, we result with an array
      */ 
-    public function getFax(): ?array {
-        $resphone = [];
-       
+    public function getFax(): array {
+        $vals = FaudirUtils::normalizeScalarOrArrayToList($this->fax);
+
+        if (!empty($vals)) {
+            $out = [];
+            foreach ($vals as $val) {
+                if (FaudirUtils::isValidPhoneNumber($val)) {
+                    $out[] = $val;
+                }
+            }
+            return array_values(array_unique($out));
+        }
+
         $workplaces = $this->getWorkplaces();
-        if (empty($workplaces)) {
+        if (empty($workplaces) || !is_array($workplaces)) {
             return [];
         }
-        
-        
-        $gatherphones = [];     
-        foreach ($workplaces as $num => $wdata) {
-            if (isset($wdata['fax'])) {
-                foreach ($wdata['fax'] as $i => $val) {
-                    if (preg_match('/^\+?[0-9\s\-\(\)]{7,20}$/', $val)) {
-                        $gatherphones[] = $val;
-                    }
-                 
+
+        $out = [];
+        foreach ($workplaces as $wdata) {
+            if (!is_array($wdata)) {
+                continue;
+            }
+
+            // dein bisheriges Modell: 'fax' ist ein Array
+            if (empty($wdata['fax']) || !is_array($wdata['fax'])) {
+                continue;
+            }
+
+            foreach ($wdata['fax'] as $val) {
+                if (!is_string($val)) {
+                    continue;
+                }
+                $val = trim($val);
+                if ($val === '') {
+                    continue;
+                }
+                if (FaudirUtils::isValidPhoneNumber($val)) {
+                    $out[] = $val;
                 }
             }
         }
-        if (!empty($gatherphones)) {
-            // Entferne etwaige Dupletten und returne dann die neu indizierte Liste
-            return array_values(array_unique($gatherphones));
-        }
-        return [];
+
+        return array_values(array_unique($out));
     }
-    
+
     /*
      * Get Email address for person
      * - if $person->email is set, use this.
      * - if its empty use the email address from active primary contact
      * Cause a person can use more as one mail adress, we result with an array
      */ 
-    public function getEMail(): ?array {
-        $resmail = [];
-        if (!empty($this->email)) {
-            if ((is_string($this->email)) && (filter_var($this->email, FILTER_VALIDATE_EMAIL))) {
-                $resmail[] = $this->email;
-            } elseif (is_array($this->email)) {           
-                foreach ($this->email as $i => $val) {
-                    if (filter_var($val, FILTER_VALIDATE_EMAIL)) {
-                        $resmail[] = $val;
-                    }
+    public function getEMail(): array {
+        $vals = FaudirUtils::normalizeScalarOrArrayToList($this->email);
+
+        if (!empty($vals)) {
+            $out = [];
+            foreach ($vals as $val) {
+                if (FaudirUtils::isValidEmailAddress($val)) {
+                    $out[] = $val;
                 }
             }
-            return $resmail;
+            return array_values(array_unique($out));
         }
+
         $workplaces = $this->getWorkplaces();
-        if (empty($workplaces)) {
+        if (empty($workplaces) || !is_array($workplaces)) {
             return [];
         }
-        
-        
-        $gathermails = [];     
-        foreach ($workplaces as $num => $wdata) {
-            if (isset($wdata['mails'])) {
-                foreach ($wdata['mails'] as $i => $val) {
-                    if (filter_var($val, FILTER_VALIDATE_EMAIL)) {
-                        $gathermails[] = $val;
-                    }
-                 
+
+        $out = [];
+        foreach ($workplaces as $wdata) {
+            if (!is_array($wdata) || empty($wdata['mails']) || !is_array($wdata['mails'])) {
+                continue;
+            }
+
+            foreach ($wdata['mails'] as $val) {
+                if (!is_string($val)) {
+                    continue;
+                }
+                $val = trim($val);
+                if ($val === '') {
+                    continue;
+                }
+                if (FaudirUtils::isValidEmailAddress($val)) {
+                    $out[] = $val;
                 }
             }
         }
-        if (!empty($gathermails)) {
-            // Entferne etwaige Dupletten und returne dann die neu indizierte Liste
-            return array_values(array_unique($gathermails));
-        }
-        return [];
+
+        return array_values(array_unique($out));
     }
     
     
     
+
     /**
-    * Erzeugt den Anzeigenamen (optional semantisches HTML).
-    * Optionale Eingaben:
-    *  - $html (bool): HTML mit Microdata ausgeben (Default: true).
-    *  - $normalize (bool): Akademischen Titel normalisieren (Default: false).
-    *  - $format (string): Optionales Format mit Platzhaltern
-    *    (#givenName#, #familyName#, #honorificPrefix#, #honorificSuffix#, #titleOfNobility#, #displayname#).
-    * Rückgabe: string – formatierter Name (HTML oder Plaintext).
+     * Erzeugt den vollständigen Anzeigenamen als HTML.
+     * Rückgabe immer als HTML-Konstrukt.
+     */
+    public function getDisplayName(bool $normalize = false): string {
+        if (empty($this->givenName) && empty($this->familyName)) {
+            return '';
+        }
+
+        $nameHtml = '<span class="displayname" itemprop="name">';
+
+        if (!empty($this->honorificPrefix)) {
+            $displayPrefix = $this->honorificPrefix;
+            $abbrTitleLong = '';
+
+            if ($normalize) {
+                $norm = \RRZE\FAUdir\FaudirUtils::normalizeAcademicTitle($this->honorificPrefix);
+                $displayPrefix = $norm['visible_title_no_discipline'] ?? $this->honorificPrefix;
+                $abbrTitleLong = $norm['label'] ?? '';
+            } else {
+                $abbrTitleLong = self::getAcademicTitleLongVersion($this->honorificPrefix);
+            }
+
+            if (!empty($abbrTitleLong)) {
+                $nameHtml .= '<abbr title="' . esc_attr($abbrTitleLong) . '" itemprop="honorificPrefix">' . esc_html($displayPrefix) . '</abbr> ';
+            } else {
+                $nameHtml .= '<span itemprop="honorificPrefix">' . esc_html($displayPrefix) . '</span> ';
+            }
+        }
+
+        if (!empty($this->givenName) && !empty($this->familyName)) {
+            $nameHtml .= '<span class="namepart">';
+        }
+
+        if (!empty($this->givenName)) {
+            $nameHtml .= '<span itemprop="givenName">' . esc_html($this->givenName) . '</span> ';
+        }
+
+        if (!empty($this->familyName)) {
+            $nameHtml .= '<span itemprop="familyName">';
+            if (!empty($this->titleOfNobility)) {
+                $nameHtml .= esc_html($this->titleOfNobility) . ' ';
+            }
+            $nameHtml .= esc_html($this->familyName) . '</span>';
+        }
+
+        if (!empty($this->givenName) && !empty($this->familyName)) {
+            $nameHtml .= '</span>';
+        }
+
+        if (!empty($this->honorificSuffix)) {
+            $nameHtml .= ' (<span itemprop="honorificSuffix">' . esc_html($this->honorificSuffix) . '</span>)';
+        }
+
+        $nameHtml .= '</span>';
+
+        return $nameHtml;
+    }
+    
+    /**
+    * Liefert die Namensbestandteile als Plain-Text.
     */
-   public function getDisplayName(bool $html = true, bool $normalize = false, string $format = ''): string {
-       if (empty($this->givenName) && empty($this->familyName)) {
-           return '';
-       }
-       $nameText = '';
-       $nameHtml = '';
+   private function getDisplayNameParts(bool $normalize = false): array {
+       $prefix = '';
 
-       if (empty($format)) {
-           // Wrapper für HTML-Ausgabe
-           $nameHtml .= '<span class="displayname" itemprop="name">';
-
-           // "honorificPrefix" (akademischer Titel)
-           if (!empty($this->honorificPrefix)) {
-               $displayPrefix = $this->honorificPrefix;
-               $abbrTitleLong = '';
-
-               if ($normalize) {
-                   // Normalisieren → sichtbarer Titel + Langlabel direkt aus normalizeAcademicTitle()
-                   $norm          = \RRZE\FAUdir\FaudirUtils::normalizeAcademicTitle($this->honorificPrefix);
-                   $displayPrefix = $norm['visible_title_no_discipline'] ?? $this->honorificPrefix;
-                   $abbrTitleLong = $norm['label'] ?? ''; // <-- hier statt getAcademicTitleLongVersion(...)
-               } else {
-                   // Falls bekannt: Langlabel (für title-Attribut) klassisch aus Config-Mapping
-                   $abbrTitleLong = self::getAcademicTitleLongVersion($this->honorificPrefix);
-               }
-
-               if (!empty($abbrTitleLong)) {
-                   $nameHtml .= '<abbr title="' . esc_attr($abbrTitleLong) . '" itemprop="honorificPrefix">' . esc_html($displayPrefix) . '</abbr> ';
-               } else {
-                   $nameHtml .= '<span itemprop="honorificPrefix">' . esc_html($displayPrefix) . '</span> ';
-               }
-               $nameText .= esc_html($displayPrefix) . ' ';
+       if (!empty($this->honorificPrefix)) {
+           if ($normalize) {
+               $norm = \RRZE\FAUdir\FaudirUtils::normalizeAcademicTitle($this->honorificPrefix);
+               $prefix = (string) ($norm['visible_title_no_discipline'] ?? $this->honorificPrefix);
+           } else {
+               $prefix = (string) $this->honorificPrefix;
            }
-
-           // "givenName" + "familyName"
-           if (!empty($this->givenName) && !empty($this->familyName)) {
-               $nameHtml .= '<span class="namepart">';
-           }
-
-           if (!empty($this->givenName)) {
-               $nameHtml .= '<span itemprop="givenName">' . esc_html($this->givenName) . '</span> ';
-               $nameText .= esc_html($this->givenName) . ' ';
-           }
-
-           if (!empty($this->familyName)) {
-               $nameHtml .= '<span itemprop="familyName">';
-               // "titleOfNobility" als Teil des familyName
-               if (!empty($this->titleOfNobility)) {
-                   $nameHtml .= esc_html($this->titleOfNobility) . ' ';
-                   $nameText .= esc_html($this->titleOfNobility) . ' ';
-               }
-               $nameHtml .= esc_html($this->familyName) . '</span>';
-               $nameText .= esc_html($this->familyName);
-           }
-
-           if (!empty($this->givenName) && !empty($this->familyName)) {
-               $nameHtml .= '</span>';
-           }
-
-           // "honorificSuffix"
-           if (!empty($this->honorificSuffix)) {
-               $nameHtml .= ' (<span itemprop="honorificSuffix">' . esc_html($this->honorificSuffix) . '</span>)';
-               $nameText .= ' (' . esc_html($this->honorificSuffix) . ')';
-           }
-
-           $nameHtml .= '</span>';
-           return $html ? $nameHtml : $nameText;
        }
 
-       // Format-String ist übergeben → nur Platzhalter ersetzen (ohne zusätzliche Semantik)
-       $nameHtml = '';
-       if ($html) {
-           $nameHtml = '<span class="displayname" itemprop="name">';
-       }
+       return [
+           'honorificPrefix' => $prefix,
+           'givenName' => (string) ($this->givenName ?? ''),
+           'titleOfNobility' => (string) ($this->titleOfNobility ?? ''),
+           'familyName' => (string) ($this->familyName ?? ''),
+           'honorificSuffix' => (string) ($this->honorificSuffix ?? ''),
+       ];
+   }
+    /**
+     * Liefert den vollständigen Anzeigenamen als Plain-Text.
+     */
+    private function getDisplayNameText(bool $normalize = false): string {
+        $parts = $this->getDisplayNameParts($normalize);
+        $chunks = [];
 
-       // Optional auch im Formatfall den normalisierten sichtbaren Titel verwenden
-       $formattedPrefix = $this->honorificPrefix;
-       if ($normalize && !empty($this->honorificPrefix)) {
-           $norm            = \RRZE\FAUdir\FaudirUtils::normalizeAcademicTitle($this->honorificPrefix);
-           $formattedPrefix = $norm['visible_title'] ?? $this->honorificPrefix;
-       }
+        if ($parts['honorificPrefix'] !== '') {
+            $chunks[] = $parts['honorificPrefix'];
+        }
+
+        if ($parts['givenName'] !== '') {
+            $chunks[] = $parts['givenName'];
+        }
+
+        $family = '';
+        if ($parts['titleOfNobility'] !== '') {
+            $family .= $parts['titleOfNobility'] . ' ';
+        }
+        if ($parts['familyName'] !== '') {
+            $family .= $parts['familyName'];
+        }
+        $family = trim($family);
+
+        if ($family !== '') {
+            $chunks[] = $family;
+        }
+
+        $text = trim(implode(' ', $chunks));
+
+        if ($parts['honorificSuffix'] !== '') {
+            $text .= ' (' . $parts['honorificSuffix'] . ')';
+        }
+
+        return trim($text);
+    }
+    
+    /**
+     * Erzeugt die gewünschte HTML-Ausgabe des Namens abhängig von show_fields und optionalem Format.
+     *
+     * Regeln:
+     * - Wenn "displayname" in show_fields gesetzt ist, wird der vollständige Name ausgegeben.
+     * - Wenn zusätzlich ein Format gesetzt ist, wird dieses verwendet.
+     * - Wenn "displayname" nicht gesetzt ist, werden nur die explizit angeforderten Teilfelder ausgegeben.
+     *
+     * Rückgabe immer als HTML.
+     */
+    public function getRenderedDisplayName(array $showFields = [], bool $normalize = false, string $format = ''): string {
+        if (empty($this->givenName) && empty($this->familyName)) {
+            return '';
+        }
+
+        $showFields = array_map('strtolower', array_map('trim', $showFields));
+
+        if (in_array('displayname', $showFields, true)) {
+            if ($format === '') {
+                return $this->getDisplayName($normalize);
+            }
+
+            return $this->renderFormattedDisplayName($format, $normalize);
+        }
+
+        return $this->renderPartialDisplayName($showFields, $normalize);
+    }    
+
+    /**
+    * Rendert den vollständigen Namen anhand eines Format-Strings.
+    * Rückgabe immer als HTML.
+    */
+   private function renderFormattedDisplayName(string $format, bool $normalize = false): string {
+       $parts = $this->getDisplayNameParts($normalize);
 
        $replacements = [
-           '#givenName#'       => $this->givenName ?? '',
-           '#displayname#'     => $this->getDisplayName(false, false) ?? '',
-           '#familyName#'      => $this->familyName ?? '',
-           '#honorificPrefix#' => $formattedPrefix ?? '',
-           '#honorificSuffix#' => $this->honorificSuffix ?? '',
-           '#titleOfNobility#' => $this->titleOfNobility ?? '',
+           '#givenName#' => esc_html($parts['givenName']),
+           '#displayname#' => esc_html($this->getDisplayNameText($normalize)),
+           '#familyName#' => esc_html($parts['familyName']),
+           '#honorificPrefix#' => esc_html($parts['honorificPrefix']),
+           '#honorificSuffix#' => esc_html($parts['honorificSuffix']),
+           '#titleOfNobility#' => esc_html($parts['titleOfNobility']),
        ];
 
-       $nameHtml .= str_replace(array_keys($replacements), array_values($replacements), $format);
+       $html = str_replace(array_keys($replacements), array_values($replacements), $format);
 
-       if ($html) {
-           $nameHtml .= '</span>';
-       }
-       return $nameHtml;
+       return '<span class="displayname" itemprop="name">' . $html . '</span>';
    }
 
-    
+   /**
+    * Rendert nur die in show_fields angeforderten Namensbestandteile als HTML.
+    * Rückgabe immer als HTML.
+    */
+   private function renderPartialDisplayName(array $showFields = [], bool $normalize = false): string {
+       $parts = $this->getDisplayNameParts($normalize);
+       $htmlParts = [];
+
+       if (in_array('honorificprefix', $showFields, true) && $parts['honorificPrefix'] !== '') {
+           $abbrTitleLong = '';
+
+           if (!empty($this->honorificPrefix) && !$normalize) {
+               $abbrTitleLong = self::getAcademicTitleLongVersion($this->honorificPrefix);
+           } elseif (!empty($this->honorificPrefix) && $normalize) {
+               $norm = \RRZE\FAUdir\FaudirUtils::normalizeAcademicTitle($this->honorificPrefix);
+               $abbrTitleLong = $norm['label'] ?? '';
+           }
+
+           if ($abbrTitleLong !== '') {
+               $htmlParts[] = '<abbr title="' . esc_attr($abbrTitleLong) . '" itemprop="honorificPrefix">' . esc_html($parts['honorificPrefix']) . '</abbr>';
+           } else {
+               $htmlParts[] = '<span itemprop="honorificPrefix">' . esc_html($parts['honorificPrefix']) . '</span>';
+           }
+       }
+
+       if (in_array('givenname', $showFields, true) && $parts['givenName'] !== '') {
+           $htmlParts[] = '<span itemprop="givenName">' . esc_html($parts['givenName']) . '</span>';
+       }
+
+       $familyHtml = '';
+       $hasFamilyPart = false;
+
+       if (in_array('titleofnobility', $showFields, true) && $parts['titleOfNobility'] !== '') {
+           $familyHtml .= esc_html($parts['titleOfNobility']);
+           $hasFamilyPart = true;
+       }
+
+       if (in_array('familyname', $showFields, true) && $parts['familyName'] !== '') {
+           if ($familyHtml !== '') {
+               $familyHtml .= ' ';
+           }
+           $familyHtml .= esc_html($parts['familyName']);
+           $hasFamilyPart = true;
+       }
+
+       if ($hasFamilyPart) {
+           $htmlParts[] = '<span itemprop="familyName">' . $familyHtml . '</span>';
+       }
+
+       if (in_array('honorificsuffix', $showFields, true) && $parts['honorificSuffix'] !== '') {
+           $htmlParts[] = '(<span itemprop="honorificSuffix">' . esc_html($parts['honorificSuffix']) . '</span>)';
+       }
+
+       if (empty($htmlParts)) {
+           return '';
+       }
+
+       return '<span class="displayname" itemprop="name">' . implode(' ', $htmlParts) . '</span>';
+   }
     
     /*
      * Create signature of a person
@@ -512,8 +736,10 @@ class Person {
         if (empty($this->givenName) && empty($this->familyName)) {
             return '';
         }
+        
+        $restricted_abbr = Constants::PERSON_SIGNATUR_SPERRLISTE;
         // Sperrliste (immer kleingeschrieben vergleichen)
-        $restricted_abbr = ['hj', 'kz', 'ns', 'sa', 'ss', 'sex'];
+        // $restricted_abbr = ['hj', 'kz', 'ns', 'sa', 'ss', 'sex'];
             // gemäss: https://www.bundesverkehrsamt.online/verbotene-kennzeichen/
         
         $firstLetter = $middleLetter = $lastLetter = $res = '';
@@ -559,35 +785,36 @@ class Person {
     /*
      * Get Post Id for a person
      */
-     public function getPostId(): int {
-        $config = new Config();
-        $post_type = $config->get('person_post_type'); 
-         
-        
-                
+    public function getPostId(): int {
+        if (empty($this->config)) {
+            $this->setConfig();
+        }
+
+        $post_type = (string) $this->config->get('person_post_type');
+
         $contact_posts = get_posts([
-            'post_type' => $post_type,
-            'meta_key' => 'person_id',
-            'meta_value' => $this->identifier,
-            'posts_per_page' => 1, // Only fetch one post matching the person ID
+            'post_type'      => $post_type,
+            'meta_key'       => 'person_id',
+            'meta_value'     => $this->identifier,
+            'posts_per_page' => 1,
+            'fields'         => 'ids',
         ]);
-         
-        if (!empty($contact_posts)) {        
-            $postid = $contact_posts[0]->ID;      
-         
+
+        if (!empty($contact_posts)) {
+            $postid = (int) $contact_posts[0];
+
             if (class_exists('\RRZE\Multilang\Helper')) {
-                // check for multilang plugin
-                $lookforid = \RRZE\Multilang\Helper::getPostIdTranslation($contact_posts[0]->ID);
-             //    do_action( 'rrze.log.info',"FAUdir\Person (getPostId): Looking for post id $postid with Multilang Helper, target: $lookforid");
-                 if ($lookforid) {
-                     $postid = $lookforid;
-                 }
+                $lookforid = \RRZE\Multilang\Helper::getPostIdTranslation($postid);
+                if (!empty($lookforid)) {
+                    $postid = (int) $lookforid;
+                }
             }
-            
+
             $this->postid = $postid;
             return $postid;
         }
-        return 0;               
+
+        return 0;
     }
     
     
@@ -640,17 +867,28 @@ class Person {
      * Get Content from custom post
      */
     public function getContent(): string {
-         if (empty($this->postid)) {
-            $postid = $this->getPostId();
-        } else {
-            $postid = $this->postid;
-        }
-        if ($postid !== 0) {
-            $content = get_post_field('post_content', $postid);
+        $postid = 0;
 
-            return $content;
-        }             
-        return '';  
+        if (!empty($this->postid)) {
+            $postid = (int) $this->postid;
+        } else {
+            $postid = (int) $this->getPostId();
+        }
+        if ($postid <= 0) {
+            return '';
+        }
+        
+           // Preview/Ajax/Shortcode-Kontext: wenn globaler Post gesetzt ist, den nehmen.
+        if (is_preview()) {
+            $autosave = wp_get_post_autosave($postid);
+            if ($autosave instanceof \WP_Post && $autosave->post_parent === $postid) {
+                return (string) $autosave->post_content;
+            }
+        }
+       
+        $content = (string) get_post_field('post_content', $postid);
+
+        return $content;
   
     }
     
@@ -885,142 +1123,187 @@ class Person {
     * Liefert den Contacteintrag zurück, der auf einen Role-FUnktionsstring matcht
     */
     public function getContactByRole(string $role = '', bool $fallback = true, bool $partial = true): ?Contact {
-        if (empty($this->contacts) || $role === '') {
+        if (empty($this->contacts) || !is_array($this->contacts)) {
             return null;
         }
 
-        // Wenn es nur einen einzigen Contacteintrag gibt → ggf. Fallback auf diesen
-        if (count($this->contacts) === 1 && !empty($this->contacts[0]) && $fallback) {
-            return new Contact($this->contacts[0]);
+        $role = $this->normalizeRoleString($role);
+        if ($role === '') {
+            if ($fallback) {
+                return $this->getFirstContactOrNull();
+            }
+            return null;
         }
 
-       // Komma-separierte Rollen in Reihenfolge der Eingabe auswerten
-        $needles = preg_split('/\s*,\s*/u', (string) $role, -1, PREG_SPLIT_NO_EMPTY);
-        $needles = array_values(array_filter(array_map(fn($r) => $this->normalizeRoleString($r), (array) $needles)));
+        // Wenn nur ein Contact vorhanden ist → optional Fallback
+        if (count($this->contacts) === 1) {
+            if ($fallback) {
+                return $this->getFirstContactOrNull();
+            }
+            return null;
+        }
 
+        // Komma-separierte Rollen in Eingabe-Reihenfolge auswerten
+        $needles = $this->splitAndNormalizeRoles($role);
         if (empty($needles)) {
+            if ($fallback) {
+                return $this->getFirstContactOrNull();
+            }
             return null;
         }
 
-        // In der Reihenfolge der Needles suchen (erste Übereinstimmung gewinnt)
         foreach ($needles as $needle) {
-            foreach ((array) $this->contacts as $contactData) {
+            foreach ($this->contacts as $contactData) {
                 if (empty($contactData) || !is_array($contactData)) {
                     continue;
                 }
+
                 $contact = new Contact($contactData);
-                foreach ($contact->getAllFunctionLabels() as $labelString) {
-                    $hay   = $this->normalizeRoleString($labelString);
-                    $match = $partial ? (strpos($hay, $needle) !== false) : ($hay === $needle);
-                    if ($match) {
-                        return $contact;
+
+                $labels = $contact->getAllFunctionLabels();
+                if (empty($labels) || !is_array($labels)) {
+                    continue;
+                }
+
+                foreach ($labels as $labelString) {
+                    $hay = $this->normalizeRoleString((string) $labelString);
+                    if ($hay === '') {
+                        continue;
+                    }
+
+                    if ($partial) {
+                        if (strpos($hay, $needle) !== false) {
+                            return $contact;
+                        }
+                    } else {
+                        if ($hay === $needle) {
+                            return $contact;
+                        }
                     }
                 }
             }
         }
 
-        // kein Treffer
+        if ($fallback) {
+            return $this->getFirstContactOrNull();
+        }
+
         return null;
     }
 
     /**
      * Hilfsfunktion: trim + (mb_)strtolower + Tags entfernen
      */
-    private function normalizeRoleString(string $s): string {
+   private function normalizeRoleString(string $s): string {
         $s = trim(wp_strip_all_tags($s));
         if ($s === '') {
             return '';
         }
-        return function_exists('mb_strtolower') ? mb_strtolower($s, 'UTF-8') : strtolower($s);
+
+        if (function_exists('mb_strtolower')) {
+            return mb_strtolower($s, 'UTF-8');
+        }
+
+        return strtolower($s);
     }
 
+    private function splitAndNormalizeRoles(string $csv): array {
+        $csv = trim($csv);
+        if ($csv === '') {
+            return [];
+        }
+
+        $parts = preg_split('/\s*,\s*/u', $csv, -1, PREG_SPLIT_NO_EMPTY);
+        if (empty($parts) || !is_array($parts)) {
+            return [];
+        }
+
+        $out = [];
+        foreach ($parts as $p) {
+            $p = $this->normalizeRoleString((string) $p);
+            if ($p !== '') {
+                $out[] = $p;
+            }
+        }
+
+        // Duplikate entfernen, Reihenfolge behalten
+        $uniq = [];
+        $seen = [];
+        foreach ($out as $p) {
+            if (!isset($seen[$p])) {
+                $seen[$p] = true;
+                $uniq[] = $p;
+            }
+        }
+
+        return $uniq;
+    }
+    
+    private function getFirstContactOrNull(): ?Contact {
+        $first = $this->contacts[0] ?? null;
+        if (empty($first) || !is_array($first)) {
+            return null;
+        }
+        return new Contact($first);
+    }
+    
+    
     
     /*
-     * Lieder den Contact-Eintrag zurück, der entweder im Backend definiert
+     * Liefert den Contact-Eintrag zurück, der entweder im Backend definiert
      *  wurde als Primärer, den spezifischnen zu eine Role oder als Fallback
      * den erst möglichen  
      */
-    public function getPrimaryContact(string $role = ''): ?Contact {       
-        // Wenn es keinen Contact-Array gibt, dann gibt es kein Contact
-        if (empty($this->contacts)) {
-            return false;
+    public function getPrimaryContact(string $role = ''): ?Contact {
+        if (empty($this->contacts) || !is_array($this->contacts)) {
+            return null;
         }
 
-        // Wenn es nur einen einzigen Contacteintrag gibt, dann returne diesen        
-        if ((count($this->contacts)==1) && (!empty($this->contacts[0]))) {         
-            $this->primary_contact = new Contact($this->contacts[0]);
+        // Wenn Role übergeben wurde: NICHT cachen, sondern gezielt suchen
+        $role = $this->normalizeRoleString($role);
+        if ($role !== '') {
+            $roleContact = $this->getContactByRole($role, false, true);
+            if ($roleContact instanceof Contact) {
+                return $roleContact;
+            }
+            // wenn Role gesucht aber nicht gefunden → Fallback auf "normalen" Primary
+            // (optional: hier auch null zurückgeben; ich bleibe bei fallback)
+        }
+
+        // Cache nur für "ohne role"
+        if ($this->primary_contact instanceof Contact) {
             return $this->primary_contact;
         }
-        
-        if (!empty($role)) {
-            // wenn wir eine spezifische Role/Funktionslabel übergeben bekommen haben, dann
-            // schauen wir zunächst ob diese matcht nehmen daher nicht den
-            // vordefinierten Contact.
-            $rolecontact = $this->getContactByRole($role); 
-            if ($rolecontact) {
-                $this->primary_contact = $rolecontact;
+
+        // Nur ein Contact → fertig
+        if (count($this->contacts) === 1) {
+            $this->primary_contact = $this->getFirstContactOrNull();
+            return $this->primary_contact;
+        }
+
+        // CPT: displayed_contacts Index holen
+        $postId = !empty($this->postid) ? (int) $this->postid : (int) $this->getPostId();
+        if ($postId > 0) {
+            $idx = get_post_meta($postId, 'displayed_contacts', true);
+
+            // Downward compatibility: alte Werte/Arrays → 0
+            if (is_array($idx) || $idx === '' || $idx === null) {
+                $idx = 0;
+            }
+
+            $idx = (int) $idx;
+            if (isset($this->contacts[$idx]) && is_array($this->contacts[$idx])) {
+                $this->primary_contact = new Contact($this->contacts[$idx]);
                 return $this->primary_contact;
             }
-           
-        }
-        if (!empty($this->primary_contact)) {
-            // we already calculated this, therfor we return this            
-            return $this->primary_contact;
-        }
-         
-        
-        // look for existing local cpt
-        if (empty($this->postid)) {
-            $postid = $this->getPostId();
-        } else {
-            $postid = $this->postid;
         }
 
-       
-        
-        
-        if (($postid === 0) && (!empty($this->contacts[0]))) {
-            // No custum post entry, therfor i take the first entry
-            $this->primary_contact = new Contact($this->contacts[0]);
-            return $this->primary_contact;         
-        }        
-        
-        $displayed_contacts = get_post_meta($postid, 'displayed_contacts', true);
-        
-        // downwardcompatbility
-        if ((is_array($displayed_contacts)) || (empty($displayed_contacts))) {
-            $displayed_contacts = 0;
-        }
-        
-    
-        if (isset($this->contacts[$displayed_contacts])) {
-            $this->primary_contact = new Contact($this->contacts[$displayed_contacts]);
-            return $this->primary_contact;
-        } else {              
-                          
-            $this->primary_contact = new Contact($this->contacts);
-            return $this->primary_contact;
-        }
-                            
+        // Default-Fallback: erster Contact
+        $this->primary_contact = $this->getFirstContactOrNull();
+        return $this->primary_contact;
     }
     
-    
-    public function getView(?string $template = null): string {
-        if (empty($template)) {
-            $template = "Name : #displayname#".PHP_EOL;
-        }
-        // Platzhalter mit den entsprechenden Werten ersetzen
-        $replacements = [
-            '#identifier#' => $this->identifier ?? '',
-            '#givenName#' => $this->givenName ?? '',
-            '#displayname#' => $this->getDisplayName() ?? '',
-            '#familyName#' => $this->familyName ?? '',
-            '#honorificPrefix#' => $this->honorificPrefix ?? '',
-            '#honorificSuffix#' => $this->honorificSuffix ?? '',
-            '#titleOfNobility#' => $this->titleOfNobility ?? ''
-        ]; 
-        return str_replace(array_keys($replacements), array_values($replacements), $template);
-    }
+ 
     
     /**
     * Liefert die Langform (lokalisierte Bezeichnung) eines akademischen Titels

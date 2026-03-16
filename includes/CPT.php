@@ -4,7 +4,6 @@ namespace RRZE\FAUdir;
 
 defined('ABSPATH') || exit;
 
-use RRZE\FAUdir\FaudirUtils;
 use RRZE\FAUdir\Config;
 use RRZE\FAUdir\API;
 use RRZE\FAUdir\Organization;
@@ -15,37 +14,52 @@ use RRZE\FAUdir\Contact;
  */
 
 class CPT {
-    protected $config;
+    protected Config $config;
     protected string $settings_page_slug = 'rrze-faudir';
     protected string $person_search_tab  = 'contacts'; 
     protected string $canonical_meta_key = 'canonical_url';
+    
+   
+    protected string $history_meta_key = '_faudir_change_log';
+    protected int $history_max_entries = 50;
 
-
-    public function __construct() {
-        $this->config = new Config();
+    
+    public function __construct(Config $config) {
+        $this->config = $config;
 
         // Register CPT & Taxonomies
         add_action('init', [$this, 'register_post_type'], 15);
         add_action('init', [$this, 'register_taxonomy'], 15);
-        add_action('init', [$this, 'register_legacy_taxonomy'], 15);
 
         // Meta Box
         add_action('add_meta_boxes', [$this, 'add_meta_boxes']);
 
 
         // Save Hook inkl. Migration (nur person_id + displayed_contacts)
-        add_action('save_post', [$this, 'save_meta']);
+        $post_type = $this->config->get('person_post_type');
+        add_action("save_post_{$post_type}", [$this, 'save_meta'], 10, 2);
 
+        
+        if ($this->isHistoryEnabled()) {
+            // Normale WP Rebisions mit in die eigene Log ergänzen
+            add_action('post_updated', [$this, 'log_content_changes'], 10, 3);
+
+            // Statuswechsel loggen
+            add_action('transition_post_status', [$this, 'log_status_transition'], 10, 3);         
+        }
+
+        
         // AJAX
         add_action('wp_ajax_fetch_person_attributes', [$this, 'fetch_person_attributes']);
         add_action('wp_ajax_rrze_faudir_create_custom_person', [$this, 'ajax_create_custom_person']);
 
+        
+        
         // REST-Meta
         add_action('init', [$this, 'register_person_meta_for_rest'], 15);
 
         // REST Antwort anreichern (nur Taxonomy, keine API-Felder)
-        $post_type = $this->config->get('person_post_type');
-        add_filter("rest_prepare_{$post_type}", [$this, 'add_taxonomy_to_person_rest'], 10, 3);
+   //     add_filter("rest_prepare_{$post_type}", [$this, 'add_taxonomy_to_person_rest'], 10, 3);
         
         // Umleitung bei "Add New" (post-new.php für diesen CPT)
         add_action('load-post-new.php', [$this, 'redirect_add_new_to_search']);
@@ -53,6 +67,11 @@ class CPT {
         // "Add New" Untermenü ersetzen
         add_action('admin_menu', [$this, 'replace_add_new_submenu'], 99);
         
+        // Actions zum Resetten der Personendaten
+        add_action('wp_ajax_rrze_faudir_refresh_person_data', [$this, 'ajax_refresh_person_data']);
+        
+        // Rest Endpoints nur wenn sie gebraucht werden
+        add_filter('rest_endpoints', [$this, 'filter_rest_endpoints']);
         
         // Canonical URL verwalten, wenn vorhanden
         add_filter('get_canonical_url', [$this, 'maybe_override_canonical'], 10, 2);
@@ -61,23 +80,34 @@ class CPT {
         add_filter('wpseo_canonical',                     [$this, 'maybe_override_canonical_for_seo']);
         add_filter('rank_math/frontend/canonical',        [$this, 'maybe_override_canonical_for_seo']);
         add_filter('the_seo_framework_rel_canonical',     [$this, 'maybe_override_canonical_for_seo']);
+        
+        
 
     }
 
-    /* === CPT === */
+    /*
+     * Post Type für Personen
+     */
     public function register_post_type() {
         $post_type = $this->config->get('person_post_type');
+        $taxonomy  = $this->config->get('person_taxonomy');
         $options   = get_option('rrze_faudir_options');
         $slug      = isset($options['person_slug']) && !empty($options['person_slug'])
             ? sanitize_title($options['person_slug'])
             : 'faudir';
 
+        $supports = ['title', 'editor', 'thumbnail', 'excerpt'];
+        if ($this->isHistoryEnabled()) {
+            $supports[] = 'revisions';
+        }
+
+        
         $args = [
             'labels' => [
                 'name'          => __('Persons', 'rrze-faudir'),
                 'singular_name' => __('Person', 'rrze-faudir'),
                 'menu_name'     => __('Persons', 'rrze-faudir'),
-                'add_new_item'  => __('Add New Person', 'rrze-faudir').' ('.__('via FAUdir search', 'rrze-faudir').')',
+                'add_new_item'  => __('Add New Person', 'rrze-faudir') . ' (' . __('via FAUdir search', 'rrze-faudir') . ')',
                 'edit_item'     => __('Edit Person', 'rrze-faudir'),
             ],
             'public'          => true,
@@ -86,9 +116,8 @@ class CPT {
                 'slug'       => $slug,
                 'with_front' => false,
             ],
-            // WICHTIG: excerpt aktivieren
-            'supports'        => ['title', 'editor', 'thumbnail', 'excerpt'],
-            'taxonomies'      => ['custom_taxonomy'],
+            'supports'        => $supports,
+            'taxonomies'      => [$taxonomy],
             'show_in_rest'    => true,
             'rest_base'       => $post_type,
             'menu_position'   => 5,
@@ -99,12 +128,14 @@ class CPT {
         register_post_type($post_type, $args);
     }
 
-    /* === Taxonomies === */
+    /*
+     * Taxonomien fü+r unseren Post Type
+     */
     public function register_taxonomy() {
         $post_type = $this->config->get('person_post_type');
         $taxonomy  = $this->config->get('person_taxonomy');
 
-        if (!taxonomy_exists('custom_taxonomy')) {
+        if (!taxonomy_exists($taxonomy)) {
             register_taxonomy(
                 $taxonomy,
                 $post_type,
@@ -128,23 +159,10 @@ class CPT {
         }
     }
 
-    // Ehemalige/Legacy-Variante
-    public function register_legacy_taxonomy() {
-        $post_type = $this->config->get('person_post_type');
-        $taxonomy  = $this->config->get('person_taxonomy');
-
-        register_taxonomy($taxonomy, $post_type, [
-            'hierarchical'      => true,
-            'show_ui'           => true,
-            'show_admin_column' => true,
-            'query_var'         => true,
-            'rewrite'           => ['slug' => 'person-category'],
-            'show_in_rest'      => true,
-            'rest_base'         => $taxonomy,
-        ]);
-    }
-
-    /* === Meta Boxes === */
+   
+    /* 
+     * Meta Boxes
+     */
     public function add_meta_boxes() {
         $post_type = $this->config->get('person_post_type');
         add_meta_box(
@@ -155,10 +173,30 @@ class CPT {
             'normal',
             'high'
         );
+        if ($this->isHistoryEnabled()) {
+            add_meta_box(
+                'faudir_change_history',
+                __('Change history', 'rrze-faudir'),
+                [$this, 'render_change_history'],
+                $post_type,
+                'side',
+                'low'
+            );
+        }
+        add_meta_box(
+            'faudir_person_cache_tools',
+            __('FAUdir Update', 'rrze-faudir'),
+            [$this, 'render_person_cache_tools_metabox'],
+            $post_type,
+            'side',
+            'high'
+        );
     }
 
  
-
+    /*
+     * Zeige Zusatzfelder des CPT
+     */
     public function render_person_additional_fields($post) {
         wp_nonce_field('save_person_additional_fields', 'person_additional_fields_nonce');
 
@@ -186,210 +224,434 @@ class CPT {
             echo '</p>';
         }
 
- 
-        
+         
+        /*
+         * Aktuelle Cron-Info zeigen, wenn vorhanden:
+         */
+        $last_success = (int) get_post_meta($post->ID, Constants::META_LAST_SUCCESS_AT, true);
+        $last_failure = (int) get_post_meta($post->ID, Constants::META_LAST_FAILURE_AT, true);
+        $fail_count   = (int) get_post_meta($post->ID, Constants::META_FAILURE_COUNT, true);
+
         echo '<hr>';
         echo '<p><strong>' . esc_html__('FAUdir', 'rrze-faudir') . ' ' . esc_html__('Data', 'rrze-faudir') .' (' . esc_html__('Read-only', 'rrze-faudir'). ')</strong></p>';      
         echo '<p>' . esc_html__(
             'The following data comes from the FAUdir portal. A change of data is only possible by the persons or the appointed contact persons in the FAUdir portal.',
             'rrze-faudir'
-        ) . '</p>';
+        ) . '</p>';  
+        
+
+
+        $fmt = function (int $ts): string {
+            if ($ts <= 0) {
+                return '';
+            }
+            $dt = wp_date('Y-m-d H:i:s', $ts);
+            return $dt . ' ' . wp_date('T', $ts);
+        };
+
+        $success_str = $fmt($last_success);
+        if ($success_str === '') {
+            $success_str = esc_html__('No successful check yet.', 'rrze-faudir');
+        }
+        echo '<p><strong>' . esc_html__('Last successful data fetch', 'rrze-faudir') . ':</strong> ' . esc_html($success_str) . '</p>';
+
+        if ($last_failure > 0 || $fail_count > 0) {
+            $failure_str = $fmt($last_failure);
+            if ($failure_str === '') {
+                $failure_str = esc_html__('n/a', 'rrze-faudir');
+            }
+
+            echo '<div class="notice notice-warning">';
+            echo '<p><strong>' . esc_html__('Last error', 'rrze-faudir') . ':</strong> ' . esc_html($failure_str) . '</p>';
+            echo '<p><strong>' . esc_html__('Error count', 'rrze-faudir') . ':</strong> ' . esc_html((string) $fail_count) . '</p>';
+            echo '<p><strong>'. esc_html__('This entry will be automatically unpublished and set to private if the persons profile cannot be accessed via FAUdir more than','rrze-faudir').' '.Constants::PERSON_AVAILABILITY_MAX_FAILURES.' '.esc_html__('times. In this case, it must be assumed that the person has set their own FAUdir profile to private.', 'rrze-faudir') . '</strong></p>';
+            echo '</div>';
+        }
+        
+   
         
            // ----  person_id ist nur sichtbar, aber nicht mehr bearbeitbar (ab 2.4) ----
         $person_id_value = get_post_meta($post->ID, 'person_id', true);
+        $person_id_value = (string) $person_id_value;
+        $valid_person_id = FaudirUtils::sanitizePersonId($person_id_value);
 
-        echo "<label for='person_id'>" . esc_html__('FAUdir Identifier', 'rrze-faudir') . "</label>";
-        echo "<p class='description'>" . esc_html__('Internal "API Person Identification" as used by FAUdir.','rrze-faudir') . "</p>";
-        echo "<input type='text' id='person_id' value='" . esc_attr($person_id_value) . "' style='width: 100%;' readonly /><br><br>";
+      
       
         
-        
-        // ---- Live-Daten aus API für Read-only Darstellung ----
-        $person_api = null;
-        $contacts_api = [];
-        if (!empty($person_id_value)) {
+        if ($valid_person_id === null) {
+            $person_api = null;
+            $contacts_api = [];
+            echo '<div class="alert">';
+            echo '<p>'.__('No contact found.', 'rrze-faudir').'</p>';
+            echo '</div>';
+            
+        } else {
+            $person_id_value = $valid_person_id;
+            echo "<label for='person_id'>" . esc_html__('FAUdir Identifier', 'rrze-faudir') . "</label>";
+            echo "<p class='description'>" . esc_html__('Internal "API Person Identification" as used by FAUdir.','rrze-faudir') . "</p>";
+            echo "<input type='text' id='person_id' value='" . esc_attr($person_id_value) . "' style='width: 100%;' readonly /><br><br>";
+            
+            
+            // ---- Live-Daten aus API für Read-only Darstellung ----
+            $person_api = null;
+            $contacts_api = [];
+
             $api    = new API($this->config);
             $params = ['identifier' => $person_id_value];
-            $response = $api->getPersons(60, 0, $params);
-            if (is_array($response) && isset($response['data'][0])) {
-                $person_api = $response['data'][0];
+            $person_api = $api->getPerson($person_id_value);
+            if (!is_array($person_api) || empty($person_api)) {
+                $person_api = null;
+            }
 
-                // Kontakte vorbereiten (read-only Anzeige)
-                if (isset($person_api['contacts']) && is_array($person_api['contacts'])) {
-                    $org = new Organization();
-                    $org->setConfig($this->config);
-                    foreach ($person_api['contacts'] as $contactInfo) {
-                        $cont = new Contact($contactInfo);
-                        $cont->setConfig($this->config);
-                        $cont->getContactbyAPI($contactInfo['identifier']);
 
-                        $organizationIdentifier = $contactInfo['organization']['identifier'] ?? '';
-                        $org->getOrgbyAPI($organizationIdentifier);
 
-                        $contacts_api[] = [
-                            'organization' => $contactInfo['organization']['name'] ?? '',
-                            'function_en'  => $contactInfo['functionLabel']['en'] ?? '',
-                            'function_de'  => $contactInfo['functionLabel']['de'] ?? '',
-                            'socials'      => $cont->getSocialString(),
-                            'workplace'    => $cont->getWorkplacesString(),
-                            'address'      => $org->getAdressString(),
-                        ];
-                    }
+            // Kontakte vorbereiten (read-only Anzeige)
+            if (isset($person_api['contacts']) && is_array($person_api['contacts'])) {
+                $org = new Organization();
+                $org->setConfig($this->config);
+                foreach ($person_api['contacts'] as $contactInfo) {
+                    $cont = new Contact($contactInfo);
+                    $cont->setConfig($this->config);
+                    $cont->getContactbyAPI($contactInfo['identifier']);
+
+                    $organizationIdentifier = $contactInfo['organization']['identifier'] ?? '';
+                    $org->getOrgbyAPI($organizationIdentifier);
+
+                    $contacts_api[] = [
+                        'organization' => $contactInfo['organization']['name'] ?? '',
+                        'function_en'  => $contactInfo['functionLabel']['en'] ?? '',
+                        'function_de'  => $contactInfo['functionLabel']['de'] ?? '',
+                        'socials'      => $cont->getSocialString(),
+                        'workplace'    => $cont->getWorkplacesString(),
+                        'address'      => $org->getAdressString(),
+                    ];
                 }
             }
-        }
+            
+        
+            // Hilfsfunktion zur Read-only Ausgabe
+            $ro = function($label, $value) {
+                echo "<label>" . esc_html($label) . "</label>";
+                echo "<input type='text' value='" . esc_attr($value) . "' style='width:100%;' readonly /><br><br>";
+            };
 
-        // Hilfsfunktion zur Read-only Ausgabe
-        $ro = function($label, $value) {
-            echo "<label>" . esc_html($label) . "</label>";
-            echo "<input type='text' value='" . esc_attr($value) . "' style='width:100%;' readonly /><br><br>";
-        };
+            // Read-only Felder (nur Anzeige)
+            $ro(__('Name', 'rrze-faudir'),
+                trim(($person_api['givenName'] ?? '') . ' ' . ($person_api['familyName'] ?? ''))
+            );
+            $ro(__('Email', 'rrze-faudir'), ($person_api['email'] ?? ''));
+            $ro(__('Telephone', 'rrze-faudir'), ($person_api['telephone'] ?? ''));
+            $ro(__('Given Name', 'rrze-faudir'), ($person_api['givenName'] ?? ''));
+            $ro(__('Family Name', 'rrze-faudir'), ($person_api['familyName'] ?? ''));
+            $ro(__('Title', 'rrze-faudir'), ($person_api['honorificPrefix'] ?? ''));
+            $ro(__('Suffix', 'rrze-faudir'), ($person_api['honorificSuffix'] ?? ''));
+            $ro(__('Nobility Title', 'rrze-faudir'), ($person_api['titleOfNobility'] ?? ''));
 
-        // Read-only Felder (nur Anzeige)
-        $ro(__('Name', 'rrze-faudir'),
-            trim(($person_api['givenName'] ?? '') . ' ' . ($person_api['familyName'] ?? ''))
-        );
-        $ro(__('Email', 'rrze-faudir'), ($person_api['email'] ?? ''));
-        $ro(__('Telephone', 'rrze-faudir'), ($person_api['telephone'] ?? ''));
-        $ro(__('Given Name', 'rrze-faudir'), ($person_api['givenName'] ?? ''));
-        $ro(__('Family Name', 'rrze-faudir'), ($person_api['familyName'] ?? ''));
-        $ro(__('Title', 'rrze-faudir'), ($person_api['honorificPrefix'] ?? ''));
-        $ro(__('Suffix', 'rrze-faudir'), ($person_api['honorificSuffix'] ?? ''));
-        $ro(__('Nobility Title', 'rrze-faudir'), ($person_api['titleOfNobility'] ?? ''));
+            // Kontakte-Bereich (read-only, live)
+            echo '<div class="contacts-wrapper">';
+            echo '<h3>' . esc_html__('FAUdir', 'rrze-faudir') . ' ' . esc_html__('Contacts', 'rrze-faudir') .' ('. esc_html__('Read-only', 'rrze-faudir') . ')</h3>';
 
-        // Kontakte-Bereich (read-only, live)
-        echo '<div class="contacts-wrapper">';
-        echo '<h3>' . esc_html__('FAUdir', 'rrze-faudir') . ' ' . esc_html__('Contacts', 'rrze-faudir') .' ('. esc_html__('Read-only', 'rrze-faudir') . ')</h3>';
+            // Auswahl der anzuzeigenden Kontaktkarte (persistente UI-Einstellung)
+            $displayed_contacts = intval(get_post_meta($post->ID, 'displayed_contacts', true));
+            if ($displayed_contacts < 0) $displayed_contacts = 0;
 
-        // Auswahl der anzuzeigenden Kontaktkarte (persistente UI-Einstellung)
-        $displayed_contacts = intval(get_post_meta($post->ID, 'displayed_contacts', true));
-        if ($displayed_contacts < 0) $displayed_contacts = 0;
+            foreach ($contacts_api as $index => $contact) {
+                $checked = $activeblock = '';
+                if ($index === $displayed_contacts) {
+                    $checked = 'checked="checked"';
+                    $activeblock = ' activeblock';
+                }
 
-        foreach ($contacts_api as $index => $contact) {
-            $checked = $activeblock = '';
-            if ($index === $displayed_contacts) {
-                $checked = 'checked="checked"';
-                $activeblock = ' activeblock';
+                echo '<div class="organization-block' . $activeblock . '">';
+                echo '<div class="organization-header">';
+                echo '<h3>' . esc_html__('Contact', 'rrze-faudir') . ' ' . ($index + 1) . '</h3>';
+                echo '<label>';
+                echo "<input type='radio' name='displayed_contacts' value='" . esc_attr($index) . "' $checked>";
+                echo esc_html__('Display this contact', 'rrze-faudir');
+                echo '</label>';
+                echo '</div>';
+                echo '<div class="organization-content' . $activeblock . '">';
+
+                echo '<div class="organization-wrapper">';
+                echo '<h4>' . esc_html__('Organization', 'rrze-faudir') . '</h4>';
+                echo '<input type="text" value="' . esc_attr($contact['organization'] ?? '') . '" class="widefat" readonly />';
+                echo '</div>';
+
+                echo '<div class="function-wrapper">';
+                echo '<h4>' . esc_html__('Function (English)', 'rrze-faudir') . '</h4>';
+                echo '<input type="text" value="' . esc_attr($contact['function_en'] ?? '') . '" class="widefat" readonly />';
+                echo '</div>';
+
+                echo '<div class="function-wrapper">';
+                echo '<h4>' . esc_html__('Function (German)', 'rrze-faudir') . '</h4>';
+                echo '<input type="text" value="' . esc_attr($contact['function_de'] ?? '') . '" class="widefat" readonly />';
+                echo '</div>';
+
+                echo '<div class="socials-wrapper">';
+                echo '<h4>' . esc_html__('Socials', 'rrze-faudir') . '</h4>';
+                echo '<textarea class="widefat" readonly rows="5">' . esc_textarea($contact['socials'] ?? '') . '</textarea>';
+                echo '</div>';
+
+                echo '<div class="workplace-wrapper">';
+                echo '<h4>' . esc_html__('Workplace', 'rrze-faudir') . '</h4>';
+                echo '<textarea class="widefat" readonly rows="6">' . esc_textarea($contact['workplace'] ?? '') . '</textarea>';
+                echo '</div>';
+
+                echo '</div>';
+                echo '</div>';
             }
 
-            echo '<div class="organization-block' . $activeblock . '">';
-            echo '<div class="organization-header">';
-            echo '<h3>' . esc_html__('Contact', 'rrze-faudir') . ' ' . ($index + 1) . '</h3>';
-            echo '<label>';
-            echo "<input type='radio' name='displayed_contacts' value='" . esc_attr($index) . "' $checked>";
-            echo esc_html__('Display this contact', 'rrze-faudir');
-            echo '</label>';
-            echo '</div>';
-            echo '<div class="organization-content' . $activeblock . '">';
-
-            echo '<div class="organization-wrapper">';
-            echo '<h4>' . esc_html__('Organization', 'rrze-faudir') . '</h4>';
-            echo '<input type="text" value="' . esc_attr($contact['organization'] ?? '') . '" class="widefat" readonly />';
-            echo '</div>';
-
-            echo '<div class="function-wrapper">';
-            echo '<h4>' . esc_html__('Function (English)', 'rrze-faudir') . '</h4>';
-            echo '<input type="text" value="' . esc_attr($contact['function_en'] ?? '') . '" class="widefat" readonly />';
-            echo '</div>';
-
-            echo '<div class="function-wrapper">';
-            echo '<h4>' . esc_html__('Function (German)', 'rrze-faudir') . '</h4>';
-            echo '<input type="text" value="' . esc_attr($contact['function_de'] ?? '') . '" class="widefat" readonly />';
-            echo '</div>';
-
-            echo '<div class="socials-wrapper">';
-            echo '<h4>' . esc_html__('Socials', 'rrze-faudir') . '</h4>';
-            echo '<textarea class="widefat" readonly rows="5">' . esc_textarea($contact['socials'] ?? '') . '</textarea>';
-            echo '</div>';
-
-            echo '<div class="workplace-wrapper">';
-            echo '<h4>' . esc_html__('Workplace', 'rrze-faudir') . '</h4>';
-            echo '<textarea class="widefat" readonly rows="6">' . esc_textarea($contact['workplace'] ?? '') . '</textarea>';
-            echo '</div>';
-
-            echo '</div>';
-            echo '</div>';
+            echo '</div>'; // contacts-wrapper
         }
-
-        echo '</div>'; // contacts-wrapper
     }
 
-    /* === Save + Migration === */
-    public function save_meta($post_id) {
+    /*
+     * Render für die Änderungslog
+     */
+    public function render_change_history(\WP_Post $post): void {
+        if (!$this->isHistoryEnabled()) {
+            echo '<p class="description">' . esc_html__('History is disabled in settings.', 'rrze-faudir') . '</p>';
+            return;
+        }
+        $history = get_post_meta((int) $post->ID, $this->history_meta_key, true);
+        echo '<div class="faudir-history">';
+
+        if (!is_array($history) || empty($history)) {
+            echo '<p class="description">' . esc_html__('No history entries yet.', 'rrze-faudir') . '</p>';
+            echo '</div>';
+            return;
+        }
+
+        echo '<ul class="faudir-history-list">';
+
+        $post_id = (int) $post->ID;
+
+        $rev_count = 0;
+        if (function_exists('wp_count_post_revisions')) {
+            $rev_count = (int) wp_count_post_revisions($post_id);
+        }
+
+        $rev_latest_id = 0;
+        $latest_ids = wp_get_post_revisions($post_id, [
+            'fields'         => 'ids',
+            'posts_per_page' => 1,
+            'orderby'        => 'ID',
+            'order'          => 'DESC',
+        ]);
+
+        if (is_array($latest_ids) && !empty($latest_ids)) {
+            $rev_latest_id = (int) reset($latest_ids);
+        }
+
+        foreach ($history as $entry) {
+            if (!is_array($entry)) {
+                continue;
+            }
+
+            $at = isset($entry['at']) ? (string) $entry['at'] : '';
+            $user = isset($entry['user']) ? (string) $entry['user'] : '';
+            $event = isset($entry['event']) ? (string) $entry['event'] : '';
+
+            $ctx = isset($entry['context']) && is_array($entry['context']) ? $entry['context'] : [];
+            $ctx_json = $ctx ? wp_json_encode($ctx, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : '';
+
+            echo '<li class="faudir-history-item">';
+
+            echo '<div class="faudir-history-head">';
+            echo '<strong>' . esc_html($event) . '</strong>';
+            echo '<div class="description">';
+            echo esc_html($at);
+            if ($user !== '') {
+                echo ' · ' . esc_html($user);
+            }
+            echo '</div>';
+            echo '</div>';
+
+            echo '<div class="faudir-history-meta description">';
+            echo esc_html__('Revisions', 'rrze-faudir') . ': ' . esc_html((string) $rev_count);
+
+            if ($rev_latest_id > 0) {
+                $label = sprintf(
+                    esc_html__('latest revision (#%d)', 'rrze-faudir'),
+                    max(1, $rev_count)
+                );
+                $link = admin_url('revision.php?revision=' . $rev_latest_id);
+                echo ' · <a href="' . esc_url($link) . '">' . $label . '</a>';
+            }
+
+            echo '</div>';
+
+            if ($ctx_json !== '') {
+                echo '<details style="margin-top:6px;">';
+                echo '<summary class="description">' . esc_html__('Details', 'rrze-faudir') . '</summary>';
+                echo '<pre style="white-space:pre-wrap;max-height:160px;overflow:auto;background:#f6f7f7;padding:6px;">' . esc_html($ctx_json) . '</pre>';
+                echo '</details>';
+            }
+
+            echo '</li>';
+        }
+
+        echo '</ul>';
+        echo '</div>';
+    }
+    
+    /*
+     * Helper für die Transaktionslog
+     */
+    private function getHistory(int $post_id): array {
+        $log = get_post_meta($post_id, $this->history_meta_key, true);
+        return is_array($log) ? $log : [];
+    }
+
+    
+    /*
+     * Speichern von Post Type Daten, inkl. Migration von alten Metas, wenn notwendig
+     */
+    public function save_meta(int $post_id, \WP_Post $post): void {
+        if ($post->post_type !== $this->config->get('person_post_type')) {
+            return;
+        }
         if (!isset($_POST['person_additional_fields_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['person_additional_fields_nonce'])), 'save_person_additional_fields')) {
             return;
         }
-        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
-        if (!current_user_can('edit_post', $post_id)) return;
-
-
-        // Deaktiviert, da die Änderung nicht mehr möglich sein soll. 
-        // Die FAUdir Id wird beim Anlegen mittels Ajax erstellt und bleibt fest.
-        
-    //    if (isset($_POST['person_id'])) {
-    //        update_post_meta($post_id, 'person_id', sanitize_text_field(wp_unslash($_POST['person_id'])));
-    //    }
-
-        // 'displayed_contacts' (UI-Wahl) weiterhin speichern
-        if (isset($_POST['displayed_contacts'])) {
-            update_post_meta($post_id, 'displayed_contacts', intval($_POST['displayed_contacts']));
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return;
         }
-        // Canonical URL speichern (nur http/https, sonst leer)
+        if (!current_user_can('edit_post', $post_id)) {
+            return;
+        }
+
+        $post_id = (int) $post_id;
+
+        $old_displayed = (int) get_post_meta($post_id, 'displayed_contacts', true);
+        if (isset($_POST['displayed_contacts'])) {
+            $new_displayed = (int) wp_unslash($_POST['displayed_contacts']);
+            if ($new_displayed < 0) {
+                $new_displayed = 0;
+            }
+            if ($new_displayed !== $old_displayed) {
+                update_post_meta($post_id, 'displayed_contacts', $new_displayed);
+
+                $this->addHistoryEntry((int) $post_id, __('Contact number changed', 'rrze-faudir'), [
+                    'key'  => 'displayed_contacts',
+                    'from' => $old_displayed,
+                    'to'   => $new_displayed,
+                ]);
+            }
+        }
+        
+        
+        $old_canonical = (string) get_post_meta($post_id, $this->canonical_meta_key, true);
         if (isset($_POST['canonical_url'])) {
             $raw = wp_unslash((string) $_POST['canonical_url']);
-            $value = $this->sanitize_canonical_url($raw);
-            if ($value !== '') {
-                update_post_meta($post_id, $this->canonical_meta_key, $value);
-            } else {
-                delete_post_meta($post_id, $this->canonical_meta_key);
-            }
-        }
+            $new_canonical = $this->sanitize_canonical_url($raw);
 
-        /**
-         * === MIGRATION: _teasertext_de/_teasertext_en -> post_excerpt ===
-         * - Excerpt bleibt unangetastet, wenn er schon Inhalt hat
-         * - Wenn Site-Sprache EN (en_* oder 'en'): zuerst _teasertext_en, sonst _teasertext_de
-         * - Wenn Site-Sprache NICHT EN: zuerst _teasertext_de, sonst _teasertext_en
-         * - Fallbacks wie beschrieben; am Ende beide Teaser-Metas löschen
-         * - _content_en wird IMMER entfernt (ohne Migration)
-         */
-        $old_teaser_de = get_post_meta($post_id, '_teasertext_de', true);
-        $old_teaser_en = get_post_meta($post_id, '_teasertext_en', true);
-        $current_post  = get_post($post_id);
-        $excerpt       = isset($current_post->post_excerpt) ? $current_post->post_excerpt : '';
-
-        if ('' === trim((string) $excerpt)) {
-            $locale = function_exists('get_locale') ? (string) get_locale() : '';
-            $loc    = strtolower($locale);
-            $is_en  = (strpos($loc, 'en_') === 0) || ($loc === 'en');
-
-            if ($is_en) {
-                $candidate = (string) ($old_teaser_en ?: '');
-                if ('' === trim($candidate) && !empty($old_teaser_de)) {
-                    $candidate = (string) $old_teaser_de;
+            if ($new_canonical !== $old_canonical) {
+                if ($new_canonical !== '') {
+                    update_post_meta($post_id, $this->canonical_meta_key, $new_canonical);
+                } else {
+                    delete_post_meta($post_id, $this->canonical_meta_key);
                 }
-            } else {
-                $candidate = (string) ($old_teaser_de ?: '');
-                if ('' === trim($candidate) && !empty($old_teaser_en)) {
-                    $candidate = (string) $old_teaser_en;
-                }
-            }
 
-            if ('' !== trim($candidate)) {
-                wp_update_post([
-                    'ID'           => $post_id,
-                    'post_excerpt' => sanitize_text_field($candidate),
+                $this->addHistoryEntry((int) $post_id, __('Canonical URL changed', 'rrze-faudir'), [
+                    'key'  => $this->canonical_meta_key,
+                    'from' => $old_canonical,
+                    'to'   => $new_canonical,
                 ]);
             }
         }
 
-        // Alte Metas IMMER entfernen
-        delete_post_meta($post_id, '_teasertext_de');
-        delete_post_meta($post_id, '_teasertext_en');
-        delete_post_meta($post_id, '_content_en');
 
-        // Säuberung: evtl. vorhandene frühere persistente API-Felder entfernen
-        $obsolete_api_metas = [
+        if ($this->needsCleanup((int) $post_id)) {
+
+            /**
+             * === MIGRATION: _teasertext_de/_teasertext_en -> post_excerpt ===
+             * - Excerpt bleibt unangetastet, wenn er schon Inhalt hat
+             * - Wenn Site-Sprache EN (en_* oder 'en'): zuerst _teasertext_en, sonst _teasertext_de
+             * - Wenn Site-Sprache NICHT EN: zuerst _teasertext_de, sonst _teasertext_en
+             * - Fallbacks wie beschrieben; am Ende beide Teaser-Metas löschen
+             * - _content_en wird IMMER entfernt (ohne Migration)
+             */
+            $old_teaser_de = get_post_meta($post_id, '_teasertext_de', true);
+            $old_teaser_en = get_post_meta($post_id, '_teasertext_en', true);
+            $current_post  = get_post($post_id);
+            $excerpt       = isset($current_post->post_excerpt) ? $current_post->post_excerpt : '';
+
+            if ('' === trim((string) $excerpt)) {
+                $locale = function_exists('get_locale') ? (string) get_locale() : '';
+                $loc    = strtolower($locale);
+                $is_en  = (strpos($loc, 'en_') === 0) || ($loc === 'en');
+
+                $candidate = '';
+                if ($is_en) {
+                    $candidate = (string) ($old_teaser_en ?: '');
+                    if ('' === trim($candidate) && !empty($old_teaser_de)) {
+                        $candidate = (string) $old_teaser_de;
+                    }
+                } else {
+                    $candidate = (string) ($old_teaser_de ?: '');
+                    if ('' === trim($candidate) && !empty($old_teaser_en)) {
+                        $candidate = (string) $old_teaser_en;
+                    }
+                }
+
+                if ('' !== trim($candidate)) {
+                    wp_update_post([
+                        'ID'           => $post_id,
+                        'post_excerpt' => sanitize_text_field($candidate),
+                    ]);
+                }
+            }
+
+            // Alte Metas entfernen (einmalig)
+            delete_post_meta($post_id, '_teasertext_de');
+            delete_post_meta($post_id, '_teasertext_en');
+            delete_post_meta($post_id, '_content_en');
+
+            // Säuberung: evtl. vorhandene frühere persistente API-Felder entfernen (einmalig)
+            $obsolete_api_metas = [
+                'person_name',
+                'person_email',
+                'person_telephone',
+                'person_givenName',
+                'person_familyName',
+                'person_honorificPrefix',
+                'person_honorificSuffix',
+                'person_titleOfNobility',
+                'person_contacts',
+            ];
+            foreach ($obsolete_api_metas as $meta_key) {
+                delete_post_meta($post_id, $meta_key);
+            }
+
+            // Cleanup als erledigt markieren (mit Zeitpunkt + Version)
+            $this->addHistoryEntry((int) $post_id, __('Old data entries from FAU Person migrated', 'rrze-faudir'), [
+                'cleanup_version' => '2.5.0',
+            ]);
+
+        }
+    }
+
+    /*
+     * Prüefen ob es alt-Metas gibt aus der Migration aus FAU Person
+     */
+
+    private function needsCleanup(int $post_id): bool {
+        // Legacy-Metas, die wir migrieren/löschen wollen
+        $legacy = [
+            '_teasertext_de',
+            '_teasertext_en',
+            '_content_en',
+        ];
+
+        foreach ($legacy as $k) {
+            if (metadata_exists('post', $post_id, $k)) {
+                return true;
+            }
+        }
+
+        // Obsolete API-Metas, die wir löschen wollen
+        $obsolete = [
             'person_name',
             'person_email',
             'person_telephone',
@@ -398,24 +660,43 @@ class CPT {
             'person_honorificPrefix',
             'person_honorificSuffix',
             'person_titleOfNobility',
-            'person_contacts', // falls zuvor gespeichert
+            'person_contacts',
         ];
-        foreach ($obsolete_api_metas as $meta_key) {
-            delete_post_meta($post_id, $meta_key);
-        }
-    }
 
-    /* === AJAX: Attribute laden (nur Ausgabe, kein Speichern) === */
+        foreach ($obsolete as $k) {
+            if (metadata_exists('post', $post_id, $k)) {
+                return true;
+            }
+        }
+
+        // Zusätzlich: Migration nur nötig, wenn Excerpt leer UND Teaser-Metas existieren
+        $post = get_post($post_id);
+        $excerpt = ($post instanceof \WP_Post) ? (string) $post->post_excerpt : '';
+
+        if (trim($excerpt) === '') {
+            if (metadata_exists('post', $post_id, '_teasertext_de') || metadata_exists('post', $post_id, '_teasertext_en')) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    
+    
+    /*
+     * Für AJAX Requests aus dem Block-Editor: Attribute laden (nur Ausgabe, kein Speichern)
+     */
     public function fetch_person_attributes() {
         check_ajax_referer('custom_person_nonce', 'nonce');
 
-        $person_id = isset($_POST['person_id']) ? sanitize_text_field($_POST['person_id']) : '';
-        if (empty($person_id)) {
+        $raw = isset($_POST['person_id']) ? (string) wp_unslash($_POST['person_id']) : '';
+        $person_faudir_id = FaudirUtils::sanitizePersonId($raw);
+        if ($person_faudir_id === null) {
             wp_send_json_error(__('Invalid person ID.', 'rrze-faudir'));
         }
 
         $api      = new API($this->config);
-        $params   = ['identifier' => $person_id];
+        $params   = ['identifier' => $person_faudir_id];
         $response = $api->getPersons(60, 0, $params);
 
         if (is_array($response) && isset($response['data'])) {
@@ -426,7 +707,7 @@ class CPT {
                     foreach ($person['contacts'] as $contactInfo) {
                         $contacts[] = [
                             'organization'    => $contactInfo['organization']['name'] ?? '',
-                            'organization_id' => $contactInfo['organization']['identifier'] ?? '',
+                            'organization_id' => FaudirUtils::sanitizeOrganizationId((string) ($contactInfo['organization']['identifier'] ?? '')) ?? '',
                             'function_en'     => $contactInfo['functionLabel']['en'] ?? '',
                             'function_de'     => $contactInfo['functionLabel']['de'] ?? '',
                         ];
@@ -451,17 +732,22 @@ class CPT {
         }
     }
 
-    /* === AJAX: Person anlegen ===
-       Legt nur den Beitrag an + person_id, keine API-Felder werden persistiert. */
+    /* 
+     *  AJAX: Person anlegen (wird über das Backend aufgerufen)
+     *  Legt nur den Beitrag an + person_id, keine API-Felder werden persistiert.
+     */
     public function ajax_create_custom_person() {
         check_ajax_referer('rrze_faudir_api_nonce', 'security');
 
-        $post_type         = $this->config->get('person_post_type');
-        $person_name       = isset($_POST['person_name']) ? sanitize_text_field($_POST['person_name']) : '';
-        $person_id         = isset($_POST['person_id']) ? sanitize_text_field($_POST['person_id']) : '';
-        $includeDefaultOrg = isset($_POST['include_default_org']) && $_POST['include_default_org'] === '1';
+        $post_type = $this->config->get('person_post_type');
 
-        if (empty($person_name) || empty($person_id)) {
+        $person_name_raw = isset($_POST['person_name']) ? (string) wp_unslash($_POST['person_name']) : '';
+        $person_id_raw   = isset($_POST['person_id']) ? (string) wp_unslash($_POST['person_id']) : '';
+
+        $person_name = sanitize_text_field($person_name_raw);
+        $person_faudir_id   = FaudirUtils::sanitizePersonId($person_id_raw);
+
+        if ($person_name === '' || $person_faudir_id === null) {
             wp_send_json_error('Invalid person data');
         }
 
@@ -475,15 +761,12 @@ class CPT {
             wp_send_json_error($post_id->get_error_message());
         }
 
-        // Nur person_id persistieren
-        update_post_meta($post_id, 'person_id', $person_id);
+        update_post_meta($post_id, 'person_id', $person_faudir_id);
 
-        // displayed_contacts aus Request übernehmen (optional)
         if (isset($_POST['displayed_contacts'])) {
             update_post_meta($post_id, 'displayed_contacts', intval($_POST['displayed_contacts']));
         }
 
-        // Keine weiteren API-Felder/META speichern!
         wp_send_json_success([
             'post_id'  => $post_id,
             'edit_url' => get_edit_post_link($post_id, 'url'),
@@ -526,12 +809,12 @@ class CPT {
                     do_action( 'rrze.log.error', 'FAUdir\CPT (add_taxonomy_to_person_rest): ERROR ON wp_get_object_terms: taxonomy = '.$taxonomy.' posttype = '.$post_type, $terms->get_error_message());           
                     return;
                 }
-                $term_ids = array_map(function ($term) {
-                    return $term->term_id;
-                }, $terms);
-
-                // Add taxonomy terms to response
-                $response->data['custom_taxonomy'] = $term_ids;
+                $term_ids = wp_get_object_terms($post->ID, $taxonomy, ['fields' => 'ids']);
+                if (is_wp_error($term_ids)) {
+                    do_action('rrze.log.error', 'FAUdir\\CPT: wp_get_object_terms error', $term_ids->get_error_message());
+                    return $response;
+                }
+                $response->data['custom_taxonomy'] = array_map('intval', $term_ids);
 
                 // Add other meta data
                 $person_id = get_post_meta($post->ID, 'person_id', true);
@@ -586,7 +869,6 @@ class CPT {
     public function replace_add_new_submenu(): void {
         $post_type = $this->config->get('person_post_type');
         $parent_slug = 'edit.php?post_type=' . $post_type;
-
         // Standard-"Add New" entfernen
         remove_submenu_page($parent_slug, 'post-new.php?post_type=' . $post_type);
 
@@ -676,6 +958,384 @@ class CPT {
     public function maybe_override_canonical_for_seo($canonical) {
         return $this->maybe_override_canonical($canonical, get_post());
     }
+    
+    /*
+     * Logs Status wechsel
+     */
+    public function log_status_transition(string $new_status, string $old_status, \WP_Post $post): void {
+        if (!$this->isHistoryEnabled()) {
+            return;
+        }
+        $post_type = $this->config->get('person_post_type');
+        if ($post->post_type !== $post_type) {
+            return;
+        }
 
+        if ($new_status === $old_status) {
+            return;
+        }
+
+        if (wp_is_post_revision($post->ID) || wp_is_post_autosave($post->ID)) {
+            return;
+        }
+
+        $this->addHistoryEntry((int) $post->ID, __('Post status changed', 'rrze-faudir'), [
+            'from' => $old_status,
+            'to'   => $new_status,
+        ]);
+    }
+
+    
+    /*
+     * Revisions-Snapshort holen
+     */
+    private function getRevisionSnapshot(int $post_id): array {
+        $ids = wp_get_post_revisions($post_id, ['fields' => 'ids']);
+        if (!is_array($ids)) {
+            $ids = [];
+        }
+
+        $count = count($ids);
+
+        $latest_id = 0;
+        if ($count > 0) {
+            $latest_id = (int) reset($ids);
+        }
+
+        $latest_at = '';
+        if ($latest_id > 0) {
+            $rev = get_post($latest_id);
+            if ($rev instanceof \WP_Post) {
+                $latest_at = (string) $rev->post_modified;
+            }
+        }
+
+        return [
+            'count'     => $count,
+            'latest_id' => $latest_id,
+            'latest_at' => $latest_at,
+        ];
+    }
+    
+    /*
+     * Historie-Helper_ Schreibt Snapsshorts der WP Revisions in die History, damit sie da mit angezeigt werden.
+     */
+    private function addHistoryEntry(int $post_id, string $event, array $context = []): void {
+         if (!$this->isHistoryEnabled()) {
+            return;
+        }
+        $history = get_post_meta($post_id, $this->history_meta_key, true);
+        if (!is_array($history)) {
+            $history = [];
+        }
+
+        $user_id = get_current_user_id();
+        $user_login = '';
+        if ($user_id > 0) {
+            $u = get_user_by('id', $user_id);
+            if ($u) {
+                $user_login = (string) $u->user_login;
+            }
+        }
+
+        $entry = [
+            'at'        => current_time('mysql'),
+            'user_id'   => $user_id,
+            'user'      => $user_login,
+            'event'     => trim($event),
+            'context'   => $context,
+            'revisions' => $this->getRevisionSnapshot($post_id),
+        ];
+
+        array_unshift($history, $entry);
+
+        if (count($history) > $this->history_max_entries) {
+            $history = array_slice($history, 0, $this->history_max_entries);
+        }
+
+        update_post_meta($post_id, $this->history_meta_key, $history);
+    }
+    
+    
+    /*
+     * WP Revisions ebenfalls speichern in unserer Liste
+     */
+    public function log_content_changes(int $post_id, \WP_Post $post_after, \WP_Post $post_before): void {
+        if (!$this->isHistoryEnabled()) {
+            return;
+        }
+        $post_type = $this->config->get('person_post_type');
+        if ($post_after->post_type !== $post_type) {
+            return;
+        }
+
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return;
+        }
+
+        if (wp_is_post_revision($post_id)) {
+            return;
+        }
+
+        $autosave = wp_get_post_autosave($post_id);
+        if ($autosave instanceof \WP_Post) {
+            return;
+        }
+
+        // Nur echte Änderungen loggen
+        $changes = [];
+
+        if ($post_after->post_title !== $post_before->post_title) {
+            $changes[] = [
+                'key'  => 'post_title',
+                'from' => $post_before->post_title,
+                'to'   => $post_after->post_title,
+            ];
+        }
+
+        if ($post_after->post_excerpt !== $post_before->post_excerpt) {
+            $changes[] = [
+                'key'  => 'post_excerpt',
+                'from' => $post_before->post_excerpt,
+                'to'   => $post_after->post_excerpt,
+            ];
+        }
+
+        if ($post_after->post_content !== $post_before->post_content) {
+            // Content nicht komplett in Meta wegschreiben (riesig + unnötig).
+            $changes[] = [
+                'key'        => 'post_content',
+                'from_hash'  => md5($post_before->post_content),
+                'to_hash'    => md5($post_after->post_content),
+                'from_len'   => strlen($post_before->post_content),
+                'to_len'     => strlen($post_after->post_content),
+            ];
+        }
+
+        if (empty($changes)) {
+            return;
+        }
+
+        foreach ($changes as $c) {
+            $label = __('Content changed', 'rrze-faudir');
+            if ($c['key'] === 'post_title') {
+                $label = __('Title changed', 'rrze-faudir');
+            } elseif ($c['key'] === 'post_excerpt') {
+                $label = __('Excerpt changed', 'rrze-faudir');
+            }
+
+            $this->addHistoryEntry($post_id, $label, $c);
+        }
+    }
+    
+    /*
+     * Revisions/Historie aktiv?
+     */
+    private function isHistoryEnabled(): bool {
+        return (int) $this->config->get('enable_history') === 1;
+    }
+    
+    
+    /*
+     * Autosave Routen entfernen, wenn keine History an.
+     * (Performance-Optimierung)
+     */
+    public function filter_rest_endpoints(array $endpoints): array {
+        if ($this->isHistoryEnabled()) {
+            return $endpoints;
+        }
+
+        $post_type = (string) $this->config->get('person_post_type');
+
+        // WICHTIG: Autosaves NICHT entfernen, sonst ist Preview im Block-Editor kaputt.
+        //  $autosaves_route = '/wp/v2/' . $post_type . '/(?P<id>[\\d]+)/autosaves';
+        //  if (isset($endpoints[$autosaves_route])) {
+        //     unset($endpoints[$autosaves_route]);
+        // }
+
+        $revisions_route = '/wp/v2/' . $post_type . '/(?P<id>[\\d]+)/revisions';
+        if (isset($endpoints[$revisions_route])) {
+            unset($endpoints[$revisions_route]);
+        }
+
+        return $endpoints;
+    }
+    
+    
+    /*
+     * Toolbox für das Resetten der Personendaten
+     */
+    public function render_person_cache_tools_metabox(\WP_Post $post): void {
+        $post_type = $this->config->get('person_post_type');
+        if ($post->post_type !== $post_type) {
+            return;
+        }
+
+        $person_id = (string) get_post_meta((int) $post->ID, 'person_id', true);
+        $person_id = (string) (FaudirUtils::sanitizePersonId($person_id) ?? '');
+
+        if ($person_id === '') {
+            echo '<p class="description">' . esc_html__('No valid person_id on this post.', 'rrze-faudir') . '</p>';
+            return;
+        }
+
+        $nonce = wp_create_nonce('rrze_faudir_refresh_person_data');
+
+        echo '<p class="description">'
+            . esc_html__('Deletes cached FAUdir data (transients) and fetches fresh person + contact data from the API.', 'rrze-faudir')
+            . '</p>';
+
+        echo '<input type="hidden" id="rrze-faudir-refresh-nonce" value="' . esc_attr($nonce) . '">';
+        echo '<input type="hidden" id="rrze-faudir-refresh-postid" value="' . esc_attr((string) $post->ID) . '">';
+        echo '<input type="hidden" id="rrze-faudir-refresh-personid" value="' . esc_attr($person_id) . '">';
+
+        echo '<p>';
+        echo '<button type="button" class="button button-primary" id="rrze-faudir-refresh-person-data">'
+            . esc_html__('Update Person-Data from FAUdir', 'rrze-faudir')
+            . '</button> ';
+        echo '<span class="spinner" id="rrze-faudir-refresh-spinner" style="float:none;margin:0 0 0 6px;"></span>';
+        echo '</p>';
+
+        echo '<div id="rrze-faudir-refresh-result" class="description" style="margin-top:8px;"></div>';
+    }
+    
+    /*
+     * Personendaten refreshen
+     */
+    public function ajax_refresh_person_data(): void {
+        check_ajax_referer('rrze_faudir_refresh_person_data', 'security');
+
+        $post_id = isset($_POST['post_id']) ? (int) wp_unslash($_POST['post_id']) : 0;
+        if ($post_id <= 0) {
+            wp_send_json_error(['message' => __('Invalid post_id.', 'rrze-faudir')], 400);
+        }
+
+        if (!current_user_can('edit_post', $post_id)) {
+            wp_send_json_error(['message' => __('Insufficient permissions.', 'rrze-faudir')], 403);
+        }
+
+        $post = get_post($post_id);
+        if (!$post instanceof \WP_Post) {
+            wp_send_json_error(['message' => __('Post not found.', 'rrze-faudir')], 404);
+        }
+
+        $post_type = $this->config->get('person_post_type');
+        if ($post->post_type !== $post_type) {
+            wp_send_json_error(['message' => __('Invalid post type.', 'rrze-faudir')], 400);
+        }
+
+        $person_id_raw = isset($_POST['person_id']) ? (string) wp_unslash($_POST['person_id']) : '';
+        $person_id = FaudirUtils::sanitizePersonId($person_id_raw);
+        if ($person_id === null) {
+            wp_send_json_error(['message' => __('Invalid person_id.', 'rrze-faudir')], 400);
+        }
+
+        $api = new API($this->config);
+
+        // Cache löschen und frisch holen (Person + Contacts)
+        $cache = new Cache($api->getApiBaseUrl());
+        $cache->deletePersonTransient($person_id);
+
+        $person = $api->getPerson($person_id);
+        $ok = (is_array($person) && !empty($person));
+
+        $cron = new Cron($this->config);
+        $cron->apply_availability_result($post_id, $ok, [
+            'person_id' => $person_id,
+            'source'    => 'manual_refresh',
+        ]);
+
+        if (!$ok) {
+            wp_send_json_error([
+                'message' => __('Person not found or API error. Availability failure recorded.', 'rrze-faudir'),
+            ], 500);
+        }
+
+        $refreshed = 0;
+        $failed = 0;
+
+        $contact_ids = [];
+        if (isset($person['contacts']) && is_array($person['contacts'])) {
+            foreach ($person['contacts'] as $c) {
+                $cid = (string) ($c['identifier'] ?? '');
+                $cid = FaudirUtils::sanitizePersonId($cid);
+                if ($cid !== null) {
+                    $contact_ids[] = $cid;
+                }
+            }
+        }
+
+        $contact_ids = array_values(array_unique($contact_ids));
+
+        foreach ($contact_ids as $cid) {
+            $cache->deleteContactTransient($cid);
+
+            $cdata = $api->getContact($cid);
+            if (is_array($cdata) && !empty($cdata)) {
+                $refreshed++;
+            } else {
+                $failed++;
+            }
+        }
+
+        $msg = sprintf(
+            __('Person data refreshed. Contacts refreshed: %1$d, failed: %2$d.', 'rrze-faudir'),
+            $refreshed,
+            $failed
+        );
+
+        wp_send_json_success([
+            'message' => $msg,
+            'reload'  => true,
+        ]);
+    }
+    
+    
+    /*
+     * Helper-Funktionen zum Import von Personendaten. Für die Suche nach bereits importierten CPTs.
+     */
+    public function findPostIdByPersonId(string $personId): int {
+        $personId = trim($personId);
+        if ($personId === '') {
+            return 0;
+        }
+
+        $ids = get_posts([
+            'post_type'      => $this->postType,
+            'fields'         => 'ids',
+            'posts_per_page' => 1,
+            'meta_query'     => [
+                [
+                    'key'     => 'person_id',
+                    'value'   => $personId,
+                    'compare' => '=',
+                ],
+            ],
+        ]);
+
+        return (!empty($ids) && is_array($ids)) ? (int) $ids[0] : 0;
+    }
+
+    public function findPostIdByUnivISId(string $univisid): int {
+        $univisid = FaudirUtils::sanitizeUnivISId($univisid);
+        if (!FaudirUtils::isValidUnivISId($univisid)) {
+            return 0;
+        }
+
+        $ids = get_posts([
+            'post_type'      => $this->postType,
+            'fields'         => 'ids',
+            'posts_per_page' => 1,
+            'meta_query'     => [
+                [
+                    'key'     => 'fau_person_faudir_synced',
+                    'value'   => $univisid,
+                    'compare' => '=',
+                ],
+            ],
+        ]);
+
+        return (!empty($ids) && is_array($ids)) ? (int) $ids[0] : 0;
+    }
 }
 

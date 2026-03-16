@@ -1,115 +1,177 @@
-import {SelectControl, __experimentalDivider as Divider} from "@wordpress/components";
-import {__} from "@wordpress/i18n";
-import {EditProps} from "../faudir/types";
+import { SelectControl, __experimentalDivider as Divider } from "@wordpress/components";
+import { __ } from "@wordpress/i18n";
+import { EditProps } from "../faudir/types";
 
 interface SortSelectorProps {
-  attributes: EditProps['attributes'];
-  setAttributes: EditProps['setAttributes'];
+    attributes: EditProps["attributes"];
+    setAttributes: EditProps["setAttributes"];
 }
 
-const sortLabelMap: Record<string, string> = {
-  familyName: __('Family name', 'rrze-faudir'),
-  givenName: __('Given name', 'rrze-faudir'),
-  email: __('Email', 'rrze-faudir'),
-  honorificprefix: __('Academic Title', 'rrze-faudir'),
-  role: __('Head of Department first', 'rrze-faudir'),
-  identifier_order: __('Identifier Order', 'rrze-faudir'),
+const allowedSortValues = [
+    "familyName",
+    "honorificprefix, familyName",
+    "role",
+    "role, honorificprefix",
+    "honorificprefix",
+    "email",
+    "identifier_order",
+] as const;
+
+type SortValue = (typeof allowedSortValues)[number];
+type OrderValue = "asc" | "desc";
+
+const sortLabelMap: Record<SortValue, string> = {
+    familyName: __("Family name", "rrze-faudir"),
+    "honorificprefix, familyName": __("Academic title, then family name", "rrze-faudir"),
+    role: __("Head of Department first", "rrze-faudir"),
+    "role, honorificprefix": __("Head of Department first, then academic title", "rrze-faudir"),
+    honorificprefix: __("Academic title", "rrze-faudir"),
+    email: __("Email", "rrze-faudir"),
+    identifier_order: __("Identifier order", "rrze-faudir"),
 };
 
-export default function SortSelector({attributes, setAttributes}: SortSelectorProps) {
-  const {sort = 'familyName', order = 'asc'} = attributes;
+const criterionLabelMap: Record<string, string> = {
+    familyName: __("Family name", "rrze-faudir"),
+    honorificprefix: __("Academic title", "rrze-faudir"),
+    role: __("Head of Department first", "rrze-faudir"),
+    email: __("Email", "rrze-faudir"),
+    identifier_order: __("Identifier order", "rrze-faudir"),
+};
 
-  const handleSortChange = (value: string) => {
-    setAttributes({sort: value});
-    // Falls vorher pro-Kriterium Orders gesetzt wurden und sich die Anzahl ändert,
-    // lassen wir `order` unangetastet. (Optional: hier zurück auf 'asc' setzen)
-  };
+function isSortValue(value: string): value is SortValue {
+    return (allowedSortValues as readonly string[]).includes(value);
+}
 
-  // Zerlege Sortkriterien und existierende Orders
-  const sortParts = sort.split(/\s*,\s*/).filter(Boolean);
-  const orderParts = order.split(/\s*,\s*/).filter(Boolean);
-  const isIdentifierOrder = sortParts.includes('identifier_order');
+function normalizeSort(raw: unknown): SortValue {
+    if (typeof raw === "string" && isSortValue(raw)) {
+        return raw;
+    }
 
-  // Order für Index i ermitteln (fehlende Werte als 'asc')
-  const getOrderForIndex = (i: number): 'asc' | 'desc' => {
-    const val = (orderParts[i] || orderParts[orderParts.length - 1] || 'asc').toLowerCase();
-    return (val === 'desc' ? 'desc' : 'asc');
-  };
+    return "familyName";
+}
 
-  const setOrderForIndex = (i: number, dir: 'asc' | 'desc') => {
-    const next = orderParts.slice();
-    next[i] = dir;
-    // Optional: trailing Werte kürzen, wenn sie identisch sind – wir lassen sie stehen.
-    setAttributes({order: next.join(', ')});
-  };
+function normalizeOrder(raw: unknown): OrderValue {
+    if (typeof raw === "string" && raw.toLowerCase() === "desc") {
+        return "desc";
+    }
 
-  const handleGlobalOrderChange = (value: string) => {
-    const dir = value === 'desc' ? 'desc' : 'asc';
-    // Global: nur ein Wert schreiben
-    setAttributes({order: dir});
-  };
+    return "asc";
+}
 
-  return (
-    <>
-      <SelectControl
-        label={__('Sort by', 'rrze-faudir')}
-        value={sort}
-        options={[
-          { value: 'familyName', label: sortLabelMap.familyName },
-          { value: 'honorificprefix, familyName', label: __('Academic title, then family name', 'rrze-faudir') },
-          { value: 'role', label: sortLabelMap.role },
-          { value: 'role, honorificprefix', label: __('Head of Department first, then academic title', 'rrze-faudir') },
-          { value: 'honorificprefix', label: sortLabelMap.honorificprefix },
-          { value: 'email', label: sortLabelMap.email },
-          { value: 'identifier_order', label: sortLabelMap.identifier_order },
-        ]}
-        onChange={handleSortChange}
-      />
+function getCriterionLabel(part: string): string {
+    const key = part.trim();
+    return criterionLabelMap[key] || key;
+}
 
-      <Divider />
+function getOrderOptions(): Array<{ value: OrderValue; label: string }> {
+    return [
+        { value: "asc", label: __("Ascending (A→Z)", "rrze-faudir") },
+        { value: "desc", label: __("Descending (Z→A)", "rrze-faudir") },
+    ];
+}
 
-      <SelectControl
-        label={__('Order (global)', 'rrze-faudir')}
-        value={getOrderForIndex(0)}
-        options={[
-          { value: 'asc', label: __('Ascending (A→Z)', 'rrze-faudir') },
-          { value: 'desc', label: __('Descending (Z→A)', 'rrze-faudir') },
-        ]}
-        disabled={isIdentifierOrder}
-        onChange={(val: string) => handleGlobalOrderChange(val)}
-        help={__('Applies to all criteria unless you override per-criterion below.', 'rrze-faudir')}
-      />
+function buildSortOptions(): Array<{ value: SortValue; label: string }> {
+    return allowedSortValues.map(function(value) {
+        return {
+            value: value,
+            label: sortLabelMap[value],
+        };
+    });
+}
 
-      {/* Wenn mehrere Kriterien: pro-Kriterium-Order anbieten */}
-      {sortParts.length > 1 && !isIdentifierOrder && (
-        <>
-          <Divider />
-          <p style={{marginBottom: 8}}><strong>{__('Per-criterion order (optional)', 'rrze-faudir')}</strong></p>
-          {sortParts.map((part, i) => {
-            const key = part.trim();
-            const label = sortLabelMap[key] || key;
-            return (
-              <SelectControl
-                key={`${key}-${i}`}
+export default function SortSelector({ attributes, setAttributes }: SortSelectorProps) {
+    const sort = normalizeSort(attributes.sort);
+    const rawOrder = typeof attributes.order === "string" ? attributes.order : "asc";
+
+    const sortParts = sort.split(/\s*,\s*/).filter(Boolean);
+    const orderParts = rawOrder.split(/\s*,\s*/).filter(Boolean);
+    const isIdentifierOrder = sortParts.includes("identifier_order");
+
+    function handleSortChange(value: string) {
+        if (!isSortValue(value)) {
+            return;
+        }
+
+        setAttributes({ sort: value });
+    }
+
+    function getOrderForIndex(index: number): OrderValue {
+        const current = orderParts[index] || orderParts[orderParts.length - 1] || "asc";
+        return normalizeOrder(current);
+    }
+
+    function setOrderForIndex(index: number, dir: OrderValue) {
+        const next = orderParts.slice();
+
+        while (next.length <= index) {
+            next.push(next[next.length - 1] || "asc");
+        }
+
+        next[index] = dir;
+
+        setAttributes({
+            order: next.join(", "),
+        });
+    }
+
+    function handleGlobalOrderChange(value: string) {
+        const dir = normalizeOrder(value);
+        setAttributes({ order: dir });
+    }
+
+    function renderPerCriterionControl(part: string, index: number) {
+        const label = getCriterionLabel(part);
+
+        function handlePerCriterionChange(value: string) {
+            setOrderForIndex(index, normalizeOrder(value));
+        }
+
+        return (
+            <SelectControl
+                key={`${part.trim()}-${index}`}
                 label={label}
-                value={getOrderForIndex(i)}
-                options={[
-                  { value: 'asc', label: __('Ascending (A→Z)', 'rrze-faudir') },
-                  { value: 'desc', label: __('Descending (Z→A)', 'rrze-faudir') },
-                ]}
-                onChange={(val: string) => setOrderForIndex(i, val === 'desc' ? 'desc' : 'asc')}
-              />
-            );
-          })}
-        </>
-      )}
+                value={getOrderForIndex(index)}
+                options={getOrderOptions()}
+                onChange={handlePerCriterionChange}
+            />
+        );
+    }
 
-      {/* Infohinweis, falls identifier_order gewählt ist */}
-      {isIdentifierOrder && (
-        <p style={{marginTop: 8}}>
-          {__('Order is ignored when using “Identifier Order”.', 'rrze-faudir')}
-        </p>
-      )}
-    </>
-  );
+    return (
+        <>
+            <SelectControl
+                label={__("Sort by", "rrze-faudir")}
+                value={sort}
+                options={buildSortOptions()}
+                onChange={handleSortChange}
+            />
+
+            <Divider />
+
+            <SelectControl
+                label={__("Order (global)", "rrze-faudir")}
+                value={getOrderForIndex(0)}
+                options={getOrderOptions()}
+                disabled={isIdentifierOrder}
+                onChange={handleGlobalOrderChange}
+                help={__("Applies to all criteria unless you override it per criterion below.", "rrze-faudir")}
+            />
+
+            {sortParts.length > 1 && !isIdentifierOrder && (
+                <>
+                    <Divider />
+                    <p className="rrze-faudir-sortselector__subheadline">
+                        <strong>{__("Per-criterion order", "rrze-faudir")}</strong>
+                    </p>
+                    {sortParts.map(renderPerCriterionControl)}
+                </>
+            )}
+
+            {isIdentifierOrder && (
+                <p className="rrze-faudir-sortselector__hint">
+                    {__("Order is ignored when using “Identifier order”.", "rrze-faudir")}
+                </p>
+            )}
+        </>
+    );
 }

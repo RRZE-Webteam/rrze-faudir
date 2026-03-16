@@ -5,8 +5,6 @@ namespace RRZE\FAUdir;
 defined('ABSPATH') || exit;
 
 class FaudirUtils {
-    const API_BASE_URL = 'https://api.fau.de/pub/v1/opendir/';
-
     public static function isUsingNetworkKey(): bool  {
         if (is_multisite()) {
             $settingsOptions = get_site_option('rrze_settings');
@@ -22,16 +20,12 @@ class FaudirUtils {
             $settingsOptions = get_site_option('rrze_settings');
             return $settingsOptions->plugins->faudir_public_apiKey;
         } else {
-            $options = get_option('rrze_faudir_options');
-            return isset($options['api_key']) ? $options['api_key'] : '';
+            $config = new Config();
+            return (string) $config->get('api_key');
         }
     }
 
-    public static function getApiBaseUrl() {
-        return self::API_BASE_URL;
-    }
-
-    
+   
     
     public static function getLang($full = false) {
         $locale = get_locale();          
@@ -49,12 +43,7 @@ class FaudirUtils {
             : \strtolower($s);
     }
     
-    public static function getDefaultOutputFields() {
-        $options = get_option('rrze_faudir_options');
-        $default_show_fields = isset($options['default_output_fields']) ? $options['default_output_fields'] : [];
 
-        return array_unique($default_show_fields);
-    }
 
     
     public static function filterContactsByCriteria($contacts, $includeDefaultOrg, $defaultOrgIds, $email)  {
@@ -83,28 +72,49 @@ class FaudirUtils {
     }
     
 
-    // Sanitize and format telephone number
+    /*
+     *  Sanitize and format telephone number (DIN 5008-ish: groups with spaces, extension with hyphen)
+     */
     public static function format_phone_number(string $phone): string {
-        // Entferne alle Zeichen außer Zahlen, "+", "(", ")", "-" und Leerzeichen
-        $phone = preg_replace('/[^\d\+\(\) ]+/', '', $phone);
-        $phone = preg_replace('/\s+/', ' ', trim($phone));
-
-        // Falls die Nummer mit "+49(0)" beginnt → zu "+49" umwandeln
-        $phone = preg_replace('/^\+49\s*\(0\)/', '+49', $phone);
-        $phone = preg_replace('/^0049/', '+49', $phone);
-
-        // Falls die Nummer mit "0" beginnt (deutsche Nummer ohne Ländercode)
-        if (preg_match('/^0[1-9]/', $phone)) {
-            $phone = preg_replace('/^0/', '+49 ', $phone);
+            $phone = trim($phone);
+        if ($phone === '') {
+            return '';
         }
 
-        // Standardisiere das Format mit Leerzeichen zwischen Gruppen
-        $phone = preg_replace('/(\+?\d{1,3})\s*(\d{3,4})\s*(\d{2})\s*(\d{0,5})/', '$1 $2 $3 - $4', $phone);
+        // +49(0) -> +49
+        $phone = preg_replace('/^\+49\s*\(0\)\s*/', '+49 ', $phone);
+        // 0049 -> +49
+        $phone = preg_replace('/^00\s*49\s*/', '+49 ', $phone);
 
-        return trim($phone); // Entfernt überflüssige Leerzeichen am Ende
+        // erlaubte Zeichen: Ziffern, +, Leerzeichen, Klammern, Slash, Punkt, Bindestrich
+        $phone = preg_replace('/[^\d\+\s\(\)\/\.\-]+/u', '', $phone);
+        $phone = preg_replace('/\s+/u', ' ', $phone);
+
+        // deutsche Nummer ohne Ländercode: 0... -> +49 ...
+        if (preg_match('/^0[1-9]/', $phone)) {
+            $phone = preg_replace('/^0+/', '', $phone);
+            $phone = '+49 ' . $phone;
+        }
+
+        // wenn +49 direkt an Ziffern klebt: +499131... -> +49 9131...
+        $phone = preg_replace('/^\+49\s*/', '+49 ', $phone);
+
+        // Trennzeichen normalisieren:
+        // - Slash & Punkt werden zu Leerzeichen
+        $phone = str_replace(['/', '.'], ' ', $phone);
+
+        // - Klammern raus (DIN 5008: keine "(0)" im internationalen Format)
+        $phone = str_replace(['(', ')'], '', $phone);
+
+        // - Bindestrich: keine Spaces drumrum
+        $phone = preg_replace('/\s*-\s*/', '-', $phone);
+
+        // doppelte Leerzeichen killen
+        $phone = preg_replace('/\s+/u', ' ', trim($phone));
+
+        return $phone;
     }
 
-    
 
   /**
     * Normalisiert/klassifiziert einen akademischen Titel-String (honorificPrefix).
@@ -334,6 +344,529 @@ class FaudirUtils {
        return implode(', ', $out);
    }
 
-   
+   /*
+    * Wandelt eine kommaseparierte Zeichenkette in ein bereinigtes Array um.
+    *
+    * - Trennt an Kommas
+    * - Entfernt führende und nachgestellte Leerzeichen
+    * - Entfernt leere Einträge
+    *
+    * @param string $csv Kommaseparierte Liste (z. B. "a, b, c")
+    * @return array Bereinigtes Array von Strings
+    */
+   public static function csvToArray(string $csv): array {
+        $csv = trim($csv);
+        if ($csv === '') {
+            return [];
+        }
 
+        $parts = explode(',', $csv);
+        $out = [];
+
+        foreach ($parts as $p) {
+            $p = trim($p);
+            if ($p !== '') {
+                $out[] = $p;
+            }
+        }
+
+        return $out;
+    }
+    
+    /*
+     * Normalisiert ein Array von Strings.
+     *
+     * - Castet Werte zu String
+     * - Entfernt führende und nachgestellte Leerzeichen
+     * - Entfernt leere Einträge
+     * - Entfernt doppelte Werte (Reihenfolge bleibt erhalten)
+     *
+     * @param array $values Eingabearray mit beliebigen Werten
+     * @return array Bereinigtes Array eindeutiger Strings
+     */
+    public static function normalizeStringArray(array $values): array {
+        $out = [];
+
+        foreach ($values as $v) {
+            $v = trim((string) $v);
+            if ($v !== '') {
+                $out[] = $v;
+            }
+        }
+
+        return array_values(array_unique($out));
+    }
+
+    
+    /**
+    * Normalisiert ein Feld (string|array|null) zu einem Array von Strings.
+    * Entfernt Leerwerte und trimmt Einträge.
+    */
+   public static function normalizeScalarOrArrayToList($value): array {
+       $out = [];
+
+       if (is_string($value)) {
+           $value = trim($value);
+           if ($value !== '') {
+               $out[] = $value;
+           }
+           return $out;
+       }
+
+       if (!is_array($value)) {
+           return [];
+       }
+
+       foreach ($value as $v) {
+           if (!is_string($v)) {
+               continue;
+           }
+           $v = trim($v);
+           if ($v === '') {
+               continue;
+           }
+           $out[] = $v;
+       }
+
+       return $out;
+   }
+
+   /**
+    * Prüft grob, ob eine Telefonnummer/Faxnummer valide aussieht.
+    */
+   public static function isValidPhoneNumber(string $val): bool {
+       return (bool) preg_match('/^\+?[0-9\s\-\(\)]{7,20}$/', $val);
+   }
+   /**
+    * Prüft, ob eine E-Mail-Adresse valide ist.
+    */
+   public static function isValidEmailAddress(string $val): bool {
+       return (bool) filter_var($val, FILTER_VALIDATE_EMAIL);
+   }
+
+   /*
+    * Prüfe FAUdir personId auf validität: 10 oder 11 Zeichen aus [a-z0-9].
+    */
+   public static function isValidPersonId(string $input): bool {
+        $input = strtolower(trim($input));
+        return (bool) preg_match('/^[a-z0-9]{10,11}$/', $input);
+    }
+
+    /*
+     * Nummt eine Person Id aus FAUdir entgegen und sanitized sie.
+     * Die EIngabe kann auch die komplette URL aus dem FAUdir-Personeneintrag.
+     */
+    public static function sanitizePersonId(string $input): ?string {
+        $clean = trim($input);
+        $prefix = Constants::FAUDIR_PUBLIC_PERSON_PREFIX;
+
+        if ($prefix !== '' && str_starts_with($clean, $prefix)) {
+            $clean = substr($clean, strlen($prefix));
+
+            $cutPos = strlen($clean);
+
+            $queryPos = strpos($clean, '?');
+            if ($queryPos !== false && $queryPos < $cutPos) {
+                $cutPos = $queryPos;
+            }
+
+            $fragmentPos = strpos($clean, '#');
+            if ($fragmentPos !== false && $fragmentPos < $cutPos) {
+                $cutPos = $fragmentPos;
+            }
+
+            $slashPos = strpos($clean, '/');
+            if ($slashPos !== false && $slashPos < $cutPos) {
+                $cutPos = $slashPos;
+            }
+
+            $clean = substr($clean, 0, $cutPos);
+        }
+
+        $clean = strtolower(trim($clean));
+        $clean = preg_replace('/[^a-z0-9]/', '', $clean);
+
+        if (preg_match('/^[a-z0-9]{10,11}$/', $clean)) {
+            return $clean;
+        }
+
+        return null;
+    }
+    
+    /*
+    * Prüft, ob eine UnivIS ID gültig ist.
+    * Erlaubt nur 0-9 und mindestens 4, aber maximal 10 Zeichen.
+    */
+   public static function isValidUnivISId(string $input): bool {
+       $input = trim($input);
+       return (bool) preg_match('/^[0-9]{4,10}$/', $input);
+   }
+
+   /*
+    * Sanitized eine UnivIS-ID.
+    * Entfernt alle Nicht-Ziffern und kürzt auf maximal 10 Stellen.
+    */
+   public static function sanitizeUnivISId(string $input): string {
+       $input = trim($input);
+
+       // nur Ziffern erlauben
+       $input = preg_replace('/[^0-9]/', '', $input);
+
+       // auf max. 10 Zeichen begrenzen
+       $input = substr($input, 0, 10);
+
+       return $input;
+   }
+    
+    /*
+    * Prüft, ob eine FAUdir Contact-ID gültig ist.
+    * Erlaubt nur a-z0-9 und exakt 10 Zeichen.
+    */
+   public static function isValidContactId(string $input): bool {
+       $input = strtolower(trim($input));
+       return (bool) preg_match('/^[a-z0-9]{10}$/', $input);
+   }
+
+   /*
+    * Sanitized eine Contact-ID.
+    * Entfernt ungültige Zeichen und gibt null zurück,
+    * wenn das Ergebnis nicht exakt 10 Zeichen a-z0-9 ist.
+    */
+   public static function sanitizeContactId(string $input): ?string {
+       $clean = strtolower(trim($input));
+       $clean = preg_replace('/[^a-z0-9]/', '', $clean);
+
+       if (preg_match('/^[a-z0-9]{10}$/', $clean)) {
+           return $clean;
+       }
+
+       return null;
+   }
+    
+    /*
+    * Prüft, ob eine FAUdir Organization-ID gültig ist.
+    * Erlaubt nur a-z0-9 und exakt 10 Zeichen.
+    */
+   public static function isValidOrganizationId(string $input): bool {
+       $input = strtolower(trim($input));
+       return (bool) preg_match('/^[a-z0-9]{10}$/', $input);
+   }
+
+   /*
+    * Sanitized eine Organization-ID. 
+    * Input: entweder direkte ID eingabe oder URL aus FAUdir
+    * Entfernt ungültige Zeichen und gibt null zurück,
+    * wenn das Ergebnis nicht exakt 10 Zeichen a-z0-9 ist.
+    */
+    public static function sanitizeOrganizationId(string $input): ?string {
+        $clean = trim($input);
+        $prefix = Constants::FAUDIR_PUBLIC_ORG_PREFIX;
+
+        if ($prefix !== '' && str_starts_with($clean, $prefix)) {
+            $clean = substr($clean, strlen($prefix));
+
+            $cutPos = strlen($clean);
+
+            $queryPos = strpos($clean, '?');
+            if ($queryPos !== false && $queryPos < $cutPos) {
+                $cutPos = $queryPos;
+            }
+
+            $fragmentPos = strpos($clean, '#');
+            if ($fragmentPos !== false && $fragmentPos < $cutPos) {
+                $cutPos = $fragmentPos;
+            }
+
+            $slashPos = strpos($clean, '/');
+            if ($slashPos !== false && $slashPos < $cutPos) {
+                $cutPos = $slashPos;
+            }
+
+            $clean = substr($clean, 0, $cutPos);
+        }
+
+        $clean = strtolower(trim($clean));
+        $clean = preg_replace('/[^a-z0-9]/', '', $clean);
+
+        if (preg_match('/^[a-z0-9]{10}$/', $clean)) {
+            return $clean;
+        }
+
+        return null;
+    }
+
+   /*
+    * Prüft, ob eine Orgnr (= FAU Kostenstellennummer) gültig ist. 
+    * Erlaubt exakt 10 Ziffern (0-9).
+    */
+   public static function isValidOrgnr(string $input): bool {
+       $input = trim($input);
+       return (bool) preg_match('/^\d{10}$/', $input);
+   }
+
+   /**
+    * Sanitized eine Orgnr.
+    * Entfernt alle Nicht-Ziffern und gibt null zurück,
+    * wenn das Ergebnis nicht exakt 10 Ziffern enthält.
+    */
+   public static function sanitizeOrgnr(string $input): ?string {
+       $clean = preg_replace('/\D/', '', trim($input));
+
+       if (preg_match('/^\d{10}$/', $clean)) {
+           return $clean;
+       }
+
+       return null;
+   }
+   
+    /*
+     * Prüft, ob eine Orgnr-Prefixsuche zulässig ist (6 bis 9 Ziffern).
+     */
+    public static function isValidOrgnrPrefix(string $input): bool {
+        $input = trim($input);
+        return (bool) preg_match('/^\d{6,9}$/', $input);
+    }
+
+    /*
+     * Sanitized eine Orgnr-Prefixsuche (6 bis 9 Ziffern) und gibt null zurück wenn ungültig.
+     */
+    public static function sanitizeOrgnrPrefix(string $input): ?string {
+        $clean = preg_replace('/\D+/', '', trim($input));
+
+        if (preg_match('/^\d{6,9}$/', $clean)) {
+            return $clean;
+        }
+
+        return null;
+    }   
+    
+    
+   /*
+    * Sanitizes an HTML wrapper tag name for list/fragment outputs.
+    * Allows only a small whitelist to prevent invalid markup and injection.
+    */
+   public static function sanitizeHtmlSurround(string $tag, string $default = 'div'): string {
+       $allowed = ['div', 'span', 'nav', 'p'];
+
+       $tag = strtolower(trim($tag));
+       if ($tag === '') {
+           return $default;
+       }
+
+       return in_array($tag, $allowed, true) ? $tag : $default;
+   }
+   
+   /*
+    * Normalize separators for textarea usage.
+    * Allows "\n", "\n\n", " ", and returns default otherwise.
+    */
+   public static function normalizeTextareaSeparator(string $sep, string $default): string {
+       $sep = str_replace("\r\n", "\n", $sep);
+       if ($sep === "\n" || $sep === "\n\n" || $sep === ' ') {
+           return $sep;
+       }
+       return $default;
+   }
+   
+       /**
+     * Normalize socials data into a stable list of items:
+     * [
+     *   ['platform' => 'X', 'url' => 'https://...'],
+     *   ...
+     * ]
+     * - trims values
+     * - drops empty/invalid entries
+     * - de-duplicates (platform+url)
+     * - stable sort by platform, then url
+     */
+    public static function normalizeSocialItems(array $socials): array {
+        $out = [];
+        $seen = [];
+
+        foreach ($socials as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+
+            $platform = '';
+            if (isset($item['platform'])) {
+                $platform = trim((string) $item['platform']);
+            }
+
+            $url = '';
+            if (isset($item['url'])) {
+                $url = trim((string) $item['url']);
+            }
+
+            if ($platform === '' || $url === '') {
+                continue;
+            }
+
+            $key = strtolower($platform) . '|' . strtolower($url);
+            if (isset($seen[$key])) {
+                continue;
+            }
+            $seen[$key] = true;
+
+            $out[] = [
+                'platform' => $platform,
+                'url' => $url,
+            ];
+        }
+
+        usort($out, [self::class, 'compareSocialItems']);
+
+        return $out;
+    }
+
+    private static function compareSocialItems(array $a, array $b): int {
+        $ap = isset($a['platform']) ? (string) $a['platform'] : '';
+        $bp = isset($b['platform']) ? (string) $b['platform'] : '';
+
+        $pc = strcasecmp($ap, $bp);
+        if ($pc !== 0) {
+            return $pc;
+        }
+
+        $au = isset($a['url']) ? (string) $a['url'] : '';
+        $bu = isset($b['url']) ? (string) $b['url'] : '';
+
+        return strcasecmp($au, $bu);
+    }
+
+    /**
+     * Render socials list as semantic HTML (<ul>).
+     * Input must be normalized items (see normalizeSocialItems()).
+     */
+    public static function renderSocialMediaList(array $items, string $htmlsurround = 'div', string $class = 'icon-list icon', string $arialabel = ''): string {
+        if (empty($items)) {
+            return '';
+        }
+
+        $htmlsurround = self::sanitizeHtmlSurround($htmlsurround);
+
+        $out = '<' . $htmlsurround;
+
+        $arialabel = trim($arialabel);
+        if ($arialabel !== '') {
+            $out .= ' aria-label="' . esc_attr($arialabel) . '"';
+        }
+
+        $class = trim($class);
+        if ($class !== '') {
+            $out .= ' class="' . esc_attr($class) . '"';
+        }
+
+        $out .= '>';
+        $out .= '<ul class="list-icons">';
+
+        foreach ($items as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+
+            $name = isset($item['platform']) ? (string) $item['platform'] : '';
+            $value = isset($item['url']) ? (string) $item['url'] : '';
+
+            $name = trim($name);
+            $value = trim($value);
+
+            if ($name === '' || $value === '') {
+                continue;
+            }
+
+            $label = esc_html($name);
+
+            if (preg_match('/^https?:\/\//i', $value)) {
+                $display = self::prettyUrl($value);
+                $out .= '<li>';
+                $out .= '<a href="' . esc_url($value) . '" itemprop="sameAs">';
+                $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($display) . '</span>';
+                $out .= '</a>';
+                $out .= '</li>';
+                
+                continue;
+            }
+
+            if (filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                $out .= '<li>';
+                $out .= '<a  itemprop="email" href="mailto:' . esc_attr($value) . '">';
+                $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($value) . '</span>';
+                $out .= '</a>';
+                $out .= '</li>';
+                
+                continue;
+            }
+           
+                        
+            $out .= '<li>';
+            $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($value) . '</span>';
+            $out .= '</li>';
+               
+        }
+
+        $out .= '</ul>';
+        $out .= '</' . $htmlsurround . '>';
+
+        return $out;
+    }
+
+    /**
+     * Render socials as plain text lines for textarea/log.
+     * "Platform: URL"
+     */
+    public static function renderSocialMediaText(array $items, string $lineSeparator = "\n"): string {
+        if (empty($items)) {
+            return '';
+        }
+
+        $lines = [];
+        foreach ($items as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+
+            $p = isset($item['platform']) ? trim((string) $item['platform']) : '';
+            $u = isset($item['url']) ? trim((string) $item['url']) : '';
+
+            if ($p === '' || $u === '') {
+                continue;
+            }
+
+            $lines[] = $p . ': ' . $u;
+        }
+
+        $lines = self::normalizeStringArray($lines);
+
+        return implode($lineSeparator, $lines);
+    }
+
+    private static function prettyUrl(string $url): string {
+        $p = wp_parse_url($url);
+        if (is_array($p) && !empty($p['host'])) {
+            $host = (string) $p['host'];
+            $path = !empty($p['path']) ? (string) $p['path'] : '';
+            return $host . $path;
+        }
+
+        return preg_replace('/^https?:\/\//i', '', $url);
+    }
+   
+    
+    /*
+     * Prüfung ob FAU Person aktiv ist
+     */
+    public static function isFauPersonActive(): bool {
+        if (!function_exists('is_plugin_active')) {
+            require_once ABSPATH . 'wp-admin/includes/plugin.php';
+        }
+
+        if (is_multisite() && function_exists('is_plugin_active_for_network')) {
+            if (is_plugin_active_for_network('fau-person/fau-person.php')) {
+                return true;
+            }
+        }
+
+        return is_plugin_active('fau-person/fau-person.php');
+    }
 }

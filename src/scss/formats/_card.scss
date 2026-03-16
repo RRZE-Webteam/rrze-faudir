@@ -6,9 +6,9 @@
 
 .faudir {   
     .format-card {
-	--faudir-profile-image-section-width: 150px;
-	--faudir-profile-image-width: 150px;
-	--faudir-profile-image-height: 150px;
+	--faudir-profile-image-section-width: 200px;
+	--faudir-profile-image-width: 200px;
+	--faudir-profile-image-height: 200px;
 	--faudir-profile-padding: 0;
 	--faudir-profile-card-gab: 1rem;
 	--faudir-figure-border-radius: 50%;
@@ -93,22 +93,7 @@
 	}
     
     }
-    @container faudir-card-container (min-width: 480px) {
-	.format-card-container {
-	    --faudir-profile-image-section-width: 180px;
-	    --faudir-profile-image-width: 180px;
-	    --faudir-profile-image-height: 180px;
-	    --faudir-profile-padding: 0;
-	    --faudir-profile-card-gab: 2rem;
-	}
-    }
-    @container faudir-card-container (min-width: 768px) {   
-	.format-card-container {
-	    --faudir-profile-image-section-width: 200px;
-	    --faudir-profile-image-width: 200px;
-	    --faudir-profile-image-height: 200px;
-	}
-    }
+
     @container faudir-card-container (min-width: 1024px) {   
 	.format-card-container {
 	    --faudir-profile-image-section-width: 250px;

@@ -1,0 +1,87 @@
+<?php
+
+declare(strict_types=1);
+
+namespace RRZE\FAUdir;
+
+defined('ABSPATH') || exit;
+
+/**
+ * Class Constants
+ * Zentrale Sammlung aller konstanten Werte des Plugins.
+ */
+final class Constants {
+
+    /**
+     * Default API Base URL
+     */
+    public const API_BASE_URL                       = 'https://api.fau.de/pub/v1/opendir/';
+    /**
+     * Standard-Limit für API-Requests
+     */
+    public const DEFAULT_LIMIT                      = 100;
+    
+    /**
+     * Cache-Laufzeiten (in Minuten) je Endpoint
+     */
+    public const TRANSIENT_TIMES = [
+        'persons'                                   => 120,
+        'contacts'                                  => 120,
+        'organizations'                             => 240,
+        'default'                                   => 150,
+    ];    
+    /**
+     * Prefix für Transient-Caches der API-Daten
+     */
+    public const TRANSIENT_PREFIX_BASE              = 'faudir_';
+    public const TRANSIENT_PREFIX_API               = self::TRANSIENT_PREFIX_BASE . 'api_';
+    public const TRANSIENT_PREFIX_SHORTCODE         = self::TRANSIENT_PREFIX_BASE . 'shortcode_';
+    public const TRANSIENT_KEY_PERSON_PREFIX        = 'person_'; // Note: TRANSIENT_PREFIX_API will be prefixed to this
+    public const TRANSIENT_KEY_CONTACT_PREFIX       = 'contact_'; // Note: TRANSIENT_PREFIX_API will be prefixed to this
+    public const TRANSIENT_KEY_ORG_PREFIX           = 'org_'; // Note: TRANSIENT_PREFIX_API will be prefixed to this
+    public const TRANSIENT_JITTER_MINUTES           = 5;
+    public const TRANSIENT_DEFAULT_TIMEOUT          = 900; // in Sekunden, intern verwendet
+    public const TRANSIENT_CACHE_TIMEOUT            = 15;  // In Minuten, zur IEngabe auf Settings angezeigt
+    /*
+     * Constants für Cron-Scheduler und Daten-Prüfung
+     */
+    
+    public const CRON_HOOK_PERSON_AVAILABILITY      = 'rrze-faudir_check_person_availability';
+    public const CRON_HOOK_PERSON_AVAILABILITY_OLD  = 'check_person_availability';
+    public const CRON_INTERVAL                      = 'twicedaily';
+    public const PERSON_STATUS_ON_MISSING           = 'private';
+    public const PERSON_AVAILABILITY_MAX_FAILURES   = 6;
+    public const META_LAST_SUCCESS_AT               = '_faudir_api_last_success_at';
+    public const META_LAST_FAILURE_AT               = '_faudir_api_last_failure_at';
+    public const META_FAILURE_COUNT                 = '_faudir_api_failure_count';
+    public const TRANSIENT_AVAILABILITY_RUNNING     = 'rrze_faudir_check_person_availability_running';
+        // Note: Wir nutzen hier nicht die TRANSIENT_PREFIX_BASE, da wir diese Transients nicht 
+        // durch den User ausversehen löschen wollen, während der Cron läuft
+    public const TRANSIENT_AVAILABILITY_TTL         = 1200;
+
+    public const OPTION_DASHBOARD_PRIVATE_ALERTS    = 'rrze_faudir_private_alerts';
+    public const DASHBOARD_WIDGET_ID                = 'rrze_faudir_private_alerts_widget';
+    public const DASHBOARD_DISMISS_ACTION           = 'rrze_faudir_dismiss_private_alerts';
+    public const NONCE_DASHBOARD_DISMISS            = 'rrze_faudir_private_alerts_dismiss';
+    
+    /*
+     * URL für Abfrage von Personen aus UnivIS
+     */
+    public const UNIVIS_PERSON_JSON_URL             = 'https://univis.uni-erlangen.de/prg?search=persons&id=%s&show=json';
+
+    /*
+     * Infos zur Anzeige bei der Pluginübersicht
+     */
+    public const FAUDIR_DOKU_URL                    = 'https://www.wp.rrze.fau.de/plugins/inhaltsseiten-mit-funktionen-erweitern/rrze-faudir/';
+    public const FAUDIR_DOKU_TITLE                  =  'Documentation';
+    
+    /*
+     * Werte zur Sanitizing von Ids aus FAUdir
+     */
+    public const FAUDIR_PUBLIC_ORG_PREFIX = 'https://faudir.fau.de/public/org/';
+    public const FAUDIR_PUBLIC_PERSON_PREFIX = 'https://faudir.fau.de/public/person/';
+    
+    public const PERSON_SIGNATUR_SPERRLISTE = ['hj', 'kz', 'ns', 'sa', 'ss', 'sex'];
+            // gemäss: https://www.bundesverkehrsamt.online/verbotene-kennzeichen/
+    
+}

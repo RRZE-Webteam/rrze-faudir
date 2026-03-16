@@ -8,7 +8,6 @@ use RRZE\FAUdir\Config;
 
 class EnqueueScripts {
 
-    public function __construct() {}
 
     public function register(): void {
         // Assets global REGISTRIEREN (Frontend + Backend verfügbar, aber noch NICHT geladen)
@@ -20,10 +19,10 @@ class EnqueueScripts {
         // Nur im Block-Editor laden, und nur für unseren CPT
         add_action('enqueue_block_editor_assets', [self::class, 'enqueue_block_editor']);
 
-        // Optionales Opt-in für Frontend (standardmäßig AUS)
-        if (apply_filters('rrze_faudir/enqueue_frontend_globally', false)) {
-            add_action('wp_enqueue_scripts', [self::class, 'enqueue_frontend']);
-        }
+        // Enqueue
+        add_action('wp_enqueue_scripts', [self::class, 'enqueue_frontend_conditionally'], 5);
+        
+
     }
 
     /** Assets global registrieren – Version = Plugin-Version */
@@ -45,7 +44,86 @@ class EnqueueScripts {
             true
         );
     }
+    
+    
+    /*
+     * Enqueue conditional durchführen
+     */
 
+    public static function enqueue_frontend_conditionally(): void {
+        if (apply_filters('rrze_faudir/enqueue_frontend_globally', false)) {
+            self::enqueue_frontend();
+            return;
+        }
+
+        if (is_admin()) {
+            return;
+        }
+
+        // 1) CPT-Single immer als "needs"
+        $config = new \RRZE\FAUdir\Config();
+        $postType = (string) $config->get('person_post_type');
+
+        if ($postType !== '' && is_singular($postType)) {
+            self::enqueue_frontend();
+            return;
+        }
+
+        // 2) Content-basiert (Shortcode/Block/oEmbed-URL)
+        $postId = (int) get_queried_object_id();
+        if ($postId <= 0) {
+            return;
+        }
+
+        $post = get_post($postId);
+        if (!$post || empty($post->post_content)) {
+            return;
+        }
+
+        $needs = false;
+        $content = (string) $post->post_content;
+
+        if (function_exists('has_shortcode') && has_shortcode($content, 'faudir')) {
+            $needs = true;
+        }
+
+        if (!$needs && function_exists('has_block')) {
+            if (has_block('rrze-faudir/block', $post) || has_block('rrze-faudir/service', $post)) {
+                $needs = true;
+            }
+        }
+
+        if (!$needs) {
+            $personPrefix = (string) \RRZE\FAUdir\Constants::FAUDIR_PUBLIC_PERSON_PREFIX;
+            $orgPrefix = (string) \RRZE\FAUdir\Constants::FAUDIR_PUBLIC_ORG_PREFIX;
+
+            $patterns = [];
+
+            if ($personPrefix !== '') {
+                $patterns[] = preg_quote($personPrefix, '~') . '[A-Za-z0-9]+(?:[/?#][^\s<"]*)?';
+            }
+
+            if ($orgPrefix !== '') {
+                $patterns[] = preg_quote($orgPrefix, '~') . '[A-Za-z0-9]+(?:[/?#][^\s<"]*)?';
+            }
+
+            if (!empty($patterns)) {
+                $pattern = '~(?:' . implode('|', $patterns) . ')~i';
+
+                if (preg_match($pattern, $content)) {
+                    $needs = true;
+                }
+            }
+        }
+
+        $needs = (bool) apply_filters('rrze_faudir/enqueue_frontend_on_demand', $needs, $post);
+
+        if ($needs) {
+            self::enqueue_frontend();
+        }
+    }
+    
+    
     /** FRONTEND: nur per Opt-in-Filter oder explizitem Aufruf laden */
     public static function enqueue_frontend(): void {
         wp_enqueue_style('rrze-faudir');
@@ -79,18 +157,25 @@ class EnqueueScripts {
         // Admin-Script + Daten (falls benötigt)
         wp_enqueue_script('rrze-faudir-admin-js');
         wp_localize_script('rrze-faudir-admin-js', 'rrzeFaudirAjax', [
-            'ajax_url'            => admin_url('admin-ajax.php'),
-            'api_nonce'           => wp_create_nonce('rrze_faudir_api_nonce'),
-            'api_key'             => get_option('rrze_faudir_api_key', ''),
-            'confirm_clear_cache' => __('Are you sure you want to clear the cache?', 'rrze-faudir'),
-            'confirm_import'      => __('Are you sure you want to import contacts from FAU person?', 'rrze-faudir'),
-            'edit_text'           => __('Edit', 'rrze-faudir'),
-            'add_text'            => __('Add', 'rrze-faudir'),
-            'saving_text'         => __('Saving...', 'rrze-faudir'),
-            'saved_text'          => __('Saved', 'rrze-faudir'),
-            'save_text'           => __('Save as Default Organization', 'rrze-faudir'),
-            'org_saved_text'      => __('Organization has been saved as default.', 'rrze-faudir'),
-            'error_saving_text'   => __('Error saving organization.', 'rrze-faudir'),
+            'ajax_url'              => admin_url('admin-ajax.php'),
+            'api_nonce'             => wp_create_nonce('rrze_faudir_api_nonce'),
+            'confirm_clear_cache'   => __('Are you sure you want to clear the cache?', 'rrze-faudir'),
+            'confirm_import'        => __('Are you sure you want to import contacts from FAU person?', 'rrze-faudir'),
+            'edit_text'             => __('Edit', 'rrze-faudir'),
+            'add_text'              => __('Add', 'rrze-faudir'),
+            'saving_text'           => __('Saving...', 'rrze-faudir'),
+            'saved_text'            => __('Saved', 'rrze-faudir'),
+            'save_text'             => __('Save as Default Organization', 'rrze-faudir'),
+            'org_saved_text'        => __('Organization has been saved as default.', 'rrze-faudir'),
+            'error_saving_text'     => __('Error saving organization.', 'rrze-faudir'),
+            'refresh_action'        => 'rrze_faudir_refresh_person_data',
+            'refresh_nonce'         => wp_create_nonce('rrze_faudir_refresh_person_data'),
+            'refresh_success_text'      => __('Data successfully loaded from FAUdir.', 'rrze-faudir'),
+            'refresh_reload_confirm'    => __('We need to reload this page. Please confirm.', 'rrze-faudir'),
+            'refresh_reload_ok'         => __('OK', 'rrze-faudir'),
+            'refresh_reload_cancel'     => __('Cancel', 'rrze-faudir'),            
+            'refresh_unknown_text'  => __('Unknown error while refreshing person data.', 'rrze-faudir'),
+            'refresh_failed_text'   => __('Request failed while refreshing person data.', 'rrze-faudir'),
         ]);
     }
 
@@ -118,7 +203,7 @@ class EnqueueScripts {
      * Aufruf: \RRZE\FAUdir\EnqueueScripts::enqueue_frontend_on_demand();
      */
     public static function enqueue_frontend_on_demand(): void {
-        wp_enqueue_style('rrze-faudir');
+        self::enqueue_frontend();
     }
 
     /** Plugin-Version aus dem Header der Hauptdatei (Fallback: RRZE_PLUGIN_VERSION) */
