@@ -4,7 +4,14 @@
 /* Created on : 16.10.2025, 17:12:28
 /*----------------------------------------------------------------------------*/
 .fau-elemental {
-
+	:where(.wp-block-post-content) .faudir ul:not(.wp-block-list):not(.list-icons) > li::before {
+		    background-color: inherit;
+		    height: inherit;
+		    width: inherit;
+		    position: inherit;
+		    
+	}
+		
 	.faudir {
 	    
 		--faudir-compact-color-background: var(--color-FAU);
@@ -23,7 +30,10 @@
 			font-size: var(--P-Body-Text, var(--font-size-normal, 1rem));
 			font-weight: normal;
 		}
-
+		
+		
+		
+		
 		p.organisation_name, 
 		p.jobtitle, 
 		a {

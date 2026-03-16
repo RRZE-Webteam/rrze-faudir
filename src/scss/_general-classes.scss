@@ -94,6 +94,9 @@
 	    margin: 0.5rem 0;
 	    padding-left: 0;
 	    
+	    span {
+		hyphens: inherit;
+	    }
 	    li {
 		list-style-type: none;
 		padding: 0;
@@ -105,13 +108,31 @@
 		}
 		.weekday {
 		    padding-right: 1rem;
+		    .dayname.grouped {
+			text-wrap: nowrap;
+		    }
+		
 		}
 		.sep {
-		    padding-right: 0.5rem;
+		    padding-right: 1rem;
+		}
+		
+		
+	    }
+	    @media (max-width: 479px) {
+		li {
+		    display: block;
+		    
+		    .daytime {
+			display: inline-block;
+			
+		    }
+		    .sep {
+			display: none;
+		    }
 		}
 		
 	    }
-	    
 	}
     }
     
