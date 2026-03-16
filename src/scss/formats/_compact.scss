@@ -101,35 +101,6 @@
 	    .profile-details {
 		grid-area: details;
 	
-		.fau-elemental & {
-		    display: grid;
-		    grid-template-columns: 1fr;
-		    gap: 0;
-		    grid-template-areas:
-			"profile-address profile-contact"
-			"profile-consultation profile-socialmedia";
-		    grid-template-columns: 2fr 3fr;
- 
-		}
-		.fau-elemental &:not(:has(.profile-address)) {
-		    grid-template-areas:
-		      "profile-contact      profile-contact"
-		      "profile-consultation profile-socialmedia";
-		  }
-		/* Wenn consultation fehlt → socialmedia über volle Breite */
-		.fau-elemental &:not(:has(.profile-consultation)) {
-		  grid-template-areas:
-		    "profile-address      profile-contact"
-		    "profile-socialmedia  profile-socialmedia";
-		}
-
-		/* Wenn beide links fehlen → beide rechten Reihen vollbreit */
-		.fau-elemental &:not(:has(.profile-address)):not(:has(.profile-consultation)) {
-		  grid-template-areas:
-		    "profile-contact     profile-contact"
-		    "profile-socialmedia profile-socialmedia";
-		}
-		
 		.profile-address, 
 		.profile-consultation, 
 		.profile-contact, 
@@ -163,23 +134,7 @@
 	}
 
 	
-	@container faudir-compact-container (max-width: 392px) {
-	   
-	     .fau-elemental & {
-			.profile-header {
-			    z-index: 10;
-			    display: block;
-			    width: calc(100% - 3rem);
-			    margin-top: var(--fau-elemental-image-insert);;
-			    margin-right: auto;
-			    margin-left: auto;
-			    justify-self: center;
-			    padding: var(--Spacing-4x, 1rem);
-			    background: var(--faudir-compact-color-background);   
-			}
-		    }
-	    
-	}
+	
 	
 	@container faudir-compact-container (min-width: 393px) {
 		.format-compact-container {
@@ -255,28 +210,8 @@
 			 "image header"
 			"image details";
 		   grid-template-columns: var(--faudir-profile-image-section-width) 1fr;
-		   
-		   .fau-elemental & {
-			--faudir-profile-image-section-width: 250px;
-			--faudir-profile-image-section-height: 250px;
-			--faudir-profile-image-width: 250px;
-			--faudir-profile-image-height: 250px;
 
-			grid-template-areas:
-			    "image   header " 
-			    "details details";
-			
-			
-			.profile-header {
-			    z-index: 10;
-			    background: var(--faudir-compact-color-background);
-			    margin-top: auto;
-			    margin-bottom: auto;
-			    margin-left: var(--fau-elemental-image-insert);
-			}
-		    }
-		   
-		}
+	    }
 	    .profile-image-section {
 		height: 100%; 
 	    }
@@ -292,12 +227,7 @@
 	}
 
 	
-	@media (max-width: 392px) {
-	     .fau-elemental & {
-	       margin-left: var(--faue_fullbleed_inline-margin);
-    		margin-right: var(--faue_fullbleed_inline-margin);
-	    }
-	}
+	
 
     }
     
