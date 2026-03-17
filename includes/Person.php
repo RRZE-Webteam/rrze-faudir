@@ -28,7 +28,7 @@ class Person {
     protected ?Config $config = null;
     private ?int $postid;
     private ?Contact $primary_contact;
-    
+    private ?string $currentrole;
     
     public function __construct(array $data = []) {
         $this->identifier       = (string) ($data['identifier'] ?? '');
@@ -46,7 +46,8 @@ class Person {
         $this->contacts         = isset($data['contacts']) && is_array($data['contacts']) ? $data['contacts'] : null;
         $this->postid           = isset($data['postid']) ? (int) $data['postid'] : 0;
         $this->primary_contact  = null;
-
+        $this->currentrole      = '';
+        
         // Everything else that comes over data move in rawdata       
         $usedKeys = [
             'identifier',
@@ -85,6 +86,7 @@ class Person {
             $this->contacts            = null;
             $this->primary_contact     = null;
             $this->rawdata             = [];
+            $this->currentrole          = '';
         }
 
         if (isset($data['identifier'])) {
@@ -774,7 +776,25 @@ class Person {
     }  
     
     
+    /*
+     * Get Current Role if set
+     */
+    public function getCurrentRole(): string {
+        return $this->currentrole;
+    }
     
+    /*
+     * Setze aktuelle Role
+     */
+    public function setCurrentRole(string $role): bool {
+         $role = $this->normalizeRoleString($role);
+         
+         if (!empty($role)) {
+             $this->currentrole = $role;
+             return true;
+         }
+         return false;
+    }
     /*
      * Get Raw Data, Data that is not avaible as direct attribut of the object
      */
@@ -1258,12 +1278,19 @@ class Person {
         if (empty($this->contacts) || !is_array($this->contacts)) {
             return null;
         }
-
+        $currentrole = '';
+        if (empty($role)) {
+            $currentrole = $this->getCurrentRole();
+            $role = $currentrole;
+        } 
         // Wenn Role übergeben wurde: NICHT cachen, sondern gezielt suchen
         $role = $this->normalizeRoleString($role);
         if ($role !== '') {
             $roleContact = $this->getContactByRole($role, false, true);
             if ($roleContact instanceof Contact) {
+                if (!empty($currentrole) || ($role !== $currentrole)) {
+                    $this->setCurrentRole($role); 
+                }
                 return $roleContact;
             }
             // wenn Role gesucht aber nicht gefunden → Fallback auf "normalen" Primary

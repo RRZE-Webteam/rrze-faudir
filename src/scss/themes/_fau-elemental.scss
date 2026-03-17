@@ -37,6 +37,9 @@
 		--fau-elemental-image-insert: calc(var(--FAU-Image-Insert, 2.5rem) * -1);
 		--faudir-profile-padding: var(--Spacing-4x) 0;
 		--fau-elemental-transition: var(--basic-animation, all .2s linear);
+	
+		--faudir-icon-color-hover: #fff; 
+		--faudir-icon-color: #fff; 
 		
 		max-width: var(--small-max-width);
 		margin: 0 auto;
