@@ -172,7 +172,7 @@ if (!defined('ABSPATH')) {
                         }
                         
                         if (in_array('socialmedia', $show_fields) ) {
-                            $some_escaped = $org->getSocialMedia('span');
+                            $some_escaped = $org->getSocialMedia('div');
                             if (!empty($some_escaped)) {
                                 echo '<div class="profile-socialmedia">';
                                 echo '<h2 class="screen-reader-text">'.__('Social Media and Websites', 'rrze-faudir').'</h2>';
