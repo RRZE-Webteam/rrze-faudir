@@ -48,7 +48,7 @@ if (!defined('ABSPATH')) {
                 
                 $contact = $person->getPrimaryContact($role);
                 $workplaces = [];
-                do_action( 'rrze.log.error',"FAUdir\Shortcode (Template) after role {$role}", $contact);
+               // do_action( 'rrze.log.error',"FAUdir\Shortcode (Template) after role {$role}", $contact);
 
                
                 if (!empty($contact)) { 
