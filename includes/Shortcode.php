@@ -228,7 +228,6 @@ class Shortcode {
              return $this->createErrorOut(__('No people could be found for display using the specified parameters.', 'rrze-faudir'), 'createPersonOutput');
         }
         $persons = $this->applyPostFetchFilters($persons, $args);
-do_action( 'rrze.log.error',"FAUdir\Shortcode (createPersonOutput) after applyPostFetchFilters", $persons);
 
         $persons = self::sortPersons(
             $persons,
