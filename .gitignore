@@ -19,3 +19,4 @@ package-lock.json
 *.js.map
 package-lock.json
 assets/js/rrze-log.js.map
+!/languages/rrze-faudir-de_DE_formal.mo

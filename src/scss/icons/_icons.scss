@@ -33,7 +33,7 @@
        
 	span.texticon::before,
 	a::before {
-	   background: currentColor;
+	   background: var(--faudir-icon-color, var(--color-Text, currentColor));
 	   mask-size: var(--_icon-mask-size, var(--faudir-icon-mask-size, 100%));
 	   mask-repeat: no-repeat;
 	   mask-position: calc(50% - var(--_icon-border-width, 0));
@@ -55,7 +55,7 @@
 	
 
 	&.icon-list {
-	    --_icon-border-color: var(--color-Text, currentColor);
+	    --_icon-border-color: var(--faudir-icon-color, var(--color-Text, currentColor));
 	    --_icon-border-width: 1px;
 	    --_icon-border-radius: 50%;
 	    --_icon_background-color: var(--faudir-icon_background-color, white);		;
@@ -63,7 +63,7 @@
 	    --_icon-size:  clamp(var(--faudir-min-iconwidth, 24px),  var(--faudir-icon-size, 1.6rem), 42px);
 	    --_icon-border-color-hover: var(--_icon_background-color);
 	    --_icon-color-hover: var(--faudir-icon-color-hover, var(--_icon_background-color, #fff));		
-	    --_icon-background-color-hover: var(--color-Text, currentColor);
+	    --_icon-background-color-hover: var(--faudir-icon-background-color-hover, var(--color-Text, currentColor));
 	    
 	    
 	   
@@ -91,6 +91,12 @@
 		      background: var(--_icon-background-color-hover);
 		      	
 		    }
+		    a:hover::before, 
+		    a:focus::before {
+			background: var(--faudir-icon-color-hover);
+		    }
+		    
+		    
 		    &.listcontent span.value::after {
 			margin-left: 0;
 			margin-right: 0;
