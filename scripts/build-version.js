@@ -121,7 +121,13 @@ function setPluginVersion(pluginRoot, newVersion) {
 				return p1 + newVersion;
 			}
 		);
-
+		// define('RRZE_PLUGIN_VERSION', 'x.x.x');
+		content = content.replace(
+		    /define\(\s*['"]RRZE_PLUGIN_VERSION['"]\s*,\s*['"][^'"]*['"]\s*\)\s*;/,
+		    function () {
+			return "define('RRZE_PLUGIN_VERSION', '" + newVersion + "');";
+		    }
+		);
 		return content;
 	});
 }
