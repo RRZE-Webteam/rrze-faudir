@@ -38,8 +38,8 @@
 		--faudir-profile-padding: var(--Spacing-4x) 0;
 		--fau-elemental-transition: var(--basic-animation, all .2s linear);
 	
-		--faudir-icon-color-hover: #fff; 
-		--faudir-icon-color: #fff; 
+		--faudir-icon-color-hover: #000; 
+		--faudir-icon-color: #000; 
 		
 		max-width: var(--small-max-width);
 		margin: 0 auto;
@@ -164,6 +164,8 @@
 
 		
 		.format-compact {
+		    --faudir-icon-color-hover: #fff; 
+		    --faudir-icon-color: #fff; 
 		    h1 {
 			font-size: var(--H-Heading-2);
 			a {
