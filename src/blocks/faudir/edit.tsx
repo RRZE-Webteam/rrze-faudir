@@ -267,6 +267,11 @@ export default function Edit({ attributes, setAttributes }: EditProps) {
                                 selectedPosts={selectedPosts}
                                 togglePostSelection={togglePostSelection}
                             />
+			    <hr />
+                            <PersonIdentifierDetector
+                                attributes={attributes}
+                                setAttributes={setAttributes}
+                            />
                             <hr />
                             <CategorySelector
                                 categories={categories}
@@ -282,11 +287,6 @@ export default function Edit({ attributes, setAttributes }: EditProps) {
                             />
                             <hr />
                             <OrganizationIdentifierDetector
-                                attributes={attributes}
-                                setAttributes={setAttributes}
-                            />
-                            <hr />
-                            <PersonIdentifierDetector
                                 attributes={attributes}
                                 setAttributes={setAttributes}
                             />
