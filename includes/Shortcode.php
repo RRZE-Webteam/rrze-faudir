@@ -124,68 +124,95 @@ class Shortcode {
     }
 
     /*
-     * Create Array for those fields we want to show 
+    * Create Array for those fields we want to show
+    */
+   public function resolve_visible_fields_with_format(array $atts): array {
+       // Block-Editor: Felder direkt übernehmen
+       if (isset($atts['blockeditor']) && $atts['blockeditor'] === 'true') {
+
+           $resolved_fields = FaudirUtils::normalizeStringArray(
+               FaudirUtils::csvToArray((string) ($atts['show'] ?? ''))
+           );
+
+           if (($atts['display'] ?? '') === 'person') {
+               $resolved_fields = $this->ensureDisplayNameFallback($resolved_fields);
+           }
+
+           return $resolved_fields;
+       }
+
+
+       // Felder aus Shortcode-Parametern lesen
+       if (!empty($atts['show'])) {
+           $show_fields = FaudirUtils::csvToArray((string) ($atts['show'] ?? ''));
+           $show_fields = FaudirUtils::normalizeStringArray($show_fields);
+       } else {
+           $default_show_fields = $this->config->getDefaultFieldlistByFormat($atts['format'], $atts['display']);
+           $show_fields = FaudirUtils::normalizeStringArray($default_show_fields);
+       }
+
+       $hide_fields = FaudirUtils::csvToArray((string) ($atts['hide'] ?? ''));
+       $hide_fields = FaudirUtils::normalizeStringArray($hide_fields);
+
+       // Alias-Mapping (fachlich → bleibt im Shortcode)
+       $aliases = $this->config->get('args_person_to_faudir') ?? [];
+
+       $show_fields = $this->mapFieldAliases($show_fields, $aliases);
+       $hide_fields = $this->mapFieldAliases($hide_fields, $aliases);
+
+       // Sichtbare Felder berechnen
+       $fields = array_diff($show_fields, $hide_fields);
+       $fields = array_values(array_unique($fields));
+
+       // Nur gültige Felder für Format/Display
+       $available = $this->config->getAvaibleFieldlistByFormat(
+           $atts['format'],
+           $atts['display']
+       );
+
+       $resolved_fields = array_values(array_intersect($available, $fields));
+
+       if (($atts['display'] ?? '') === 'person') {
+           $resolved_fields = $this->ensureDisplayNameFallback($resolved_fields);
+       }
+
+       // Abhängigkeiten entfernen (hide_on_parameter)
+       $hide_on_parameter = $this->config->get('hide_on_parameter') ?? [];
+
+       foreach ($hide_on_parameter as $trigger => $dependent_fields) {
+           if (in_array($trigger, $resolved_fields, true)) {
+               $resolved_fields = array_diff($resolved_fields, $dependent_fields);
+           }
+       }
+
+       return array_values($resolved_fields);
+   }
+    
+    /*
+     * Check ob bei Namen mindestens displayname, vorname und nachnamen vorliegen und ergänze ggf.
      */
-    public function resolve_visible_fields_with_format(array $atts): array {
-        // Block-Editor: Felder direkt übernehmen
-        if (isset($atts['blockeditor']) && $atts['blockeditor'] === 'true') {
-            return FaudirUtils::normalizeStringArray(
-                FaudirUtils::csvToArray((string) ($atts['show'] ?? ''))
-            );
-        }
- 
-        // Felder aus Shortcode-Parametern lesen
-        if (!empty($atts['show'])) {
-            $show_fields = FaudirUtils::csvToArray((string) ($atts['show'] ?? ''));
-            $show_fields = FaudirUtils::normalizeStringArray($show_fields);
-                         
-        } else {
-            $default_show_fields = $this->config->getDefaultFieldlistByFormat($atts['format'],$atts['display']);
-            $show_fields = FaudirUtils::normalizeStringArray($default_show_fields);
-        }
-        
-        
-        
-        $hide_fields = FaudirUtils::csvToArray((string) ($atts['hide'] ?? ''));
-        $hide_fields = FaudirUtils::normalizeStringArray($hide_fields);
-        
+    private function ensureDisplayNameFallback(array $fields): array {
+        $fieldsLower = array_map('strtolower', $fields);
 
-        // Alias-Mapping (fachlich → bleibt im Shortcode)
-        $aliases = $this->config->get('args_person_to_faudir') ?? [];
+        $hasNameField =
+            in_array('displayname', $fieldsLower, true)
+            || in_array('givenname', $fieldsLower, true)
+            || in_array('familyname', $fieldsLower, true);
 
-        $show_fields = $this->mapFieldAliases($show_fields, $aliases);
-        $hide_fields = $this->mapFieldAliases($hide_fields, $aliases);
-
-        
-         // Sichtbare Felder berechnen
-        $fields =  array_diff($show_fields, $hide_fields);
-        
-
-        $fields = array_values(array_unique($fields));
-        // Nur gültige Felder für Format/Display
-        $available = $this->config->getAvaibleFieldlistByFormat(
-            $atts['format'],
-            $atts['display']
-        );
-
-        $resolved_fields = array_values(array_intersect($available, $fields));
-
-        // Abhängigkeiten entfernen (hide_on_parameter)
-        $hide_on_parameter = $this->config->get('hide_on_parameter') ?? [];
-
-        foreach ($hide_on_parameter as $trigger => $dependent_fields) {
-            if (in_array($trigger, $resolved_fields, true)) {
-                $resolved_fields = array_diff($resolved_fields, $dependent_fields);
-            }
+        if ($hasNameField) {
+            return array_values(array_unique($fields));
         }
 
-        return array_values($resolved_fields);
+        if (!empty($this->config->get('default_fallback_displayname'))) {
+            $fields[] = 'displayname';
+        }
+
+        return array_values(array_unique($fields));
     }
-
+    
     /*
      * helperfunktion
      */
-
     private function mapFieldAliases(array $fields, array $aliases): array {
         $fields = FaudirUtils::normalizeStringArray($fields);
         $out = [];

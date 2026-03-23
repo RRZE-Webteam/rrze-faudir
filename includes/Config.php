@@ -8,7 +8,7 @@ defined('ABSPATH') || exit;
 class Config {
     private string $optionName = 'rrze_faudir_options';
     private array $config = [
-        'version'                           => 12,  // please count this up any time we change the config array
+        'version'                           => 14,  // please count this up any time we change the config array
         'person_slug'                       => 'faudir',
         'redirect_to_canonicals'            => false,
         'redirect_archivpage_uri'           => '',
@@ -24,6 +24,7 @@ class Config {
         'default_visible_copyrightmeta'     => false,
         'default_visible_bildunterschrift'  => false,
         'default_placeholder_image_with_signature'  => true,
+        'default_fallback_displayname'      => true,
         'enable_history'                    => 0,   // History & Revisions for CPT
         'button_link_title'                 => '',
         'default_display_order'     => [
@@ -115,6 +116,7 @@ class Config {
             'show_output_fields_person_page',
             'show_output_fields_org_default',
             'default_organization',
+            'default_fallback_displayname'
         ]
 
     ];
