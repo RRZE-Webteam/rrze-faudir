@@ -765,7 +765,7 @@ class FaudirUtils {
      * Render socials list as semantic HTML (<ul>).
      * Input must be normalized items (see normalizeSocialItems()).
      */
-    public static function renderSocialMediaList(array $items, string $htmlsurround = 'div', string $class = 'icon-list icon', string $arialabel = ''): string {
+    public static function renderSocialMediaList(array $items, string $htmlsurround = 'div', string $class = 'icon-list icon', string $arialabel = '', string $context = ''): string {
         if (empty($items)) {
             return '';
         }
@@ -803,12 +803,51 @@ class FaudirUtils {
             }
 
             $label = esc_html($name);
+            $aria = '';
+            /*
+            * Typ bestimmen: Portal oder Email
+            */
+           $typeLabel = __('Profile', 'rrze-faudir');
+
+           if (
+               stripos($value, 'mailto:') === 0
+               || filter_var($value, FILTER_VALIDATE_EMAIL)
+           ) {
+               $typeLabel = __('Email', 'rrze-faudir');
+           } elseif (stripos($value, 'tel:') === 0) {
+                $typeLabel = __('Phone', 'rrze-faudir');
+           }
+           
+            if ($context !== '' && $name !== '') {
+
+                $aria = sprintf(
+                    __('%1$s-%2$s of %3$s', 'rrze-faudir'),
+                    ucfirst($name),
+                    $typeLabel,
+                    $context
+                );
+
+            } elseif ($name !== '') {
+
+                $aria = sprintf(
+                    __('%1$s-%2$s', 'rrze-faudir'),
+                    ucfirst($name),
+                    $typeLabel
+                );
+            }
+            
 
             if (preg_match('/^https?:\/\//i', $value)) {
                 $display = self::prettyUrl($value);
                 $out .= '<li>';
-                $out .= '<a href="' . esc_url($value) . '" itemprop="sameAs">';
-                $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($display) . '</span>';
+                $out .= '<a href="' . esc_url($value) . '" itemprop="sameAs"';
+                if (!empty($aria)) {
+                    $out .= ' aria-label="'.esc_attr($aria).'"';
+                }
+                $out .= '>';
+                $out .= '<span class="link-text" aria-hidden="true">' . esc_html($display) . '</span>';
+                
+            //    $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($display) . '</span>';
                 $out .= '</a>';
                 $out .= '</li>';
                 
@@ -817,8 +856,13 @@ class FaudirUtils {
 
             if (filter_var($value, FILTER_VALIDATE_EMAIL)) {
                 $out .= '<li>';
-                $out .= '<a  itemprop="email" href="mailto:' . esc_attr($value) . '">';
-                $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($value) . '</span>';
+                $out .= '<a itemprop="email" href="mailto:' . esc_attr($value) . '"';
+                if (!empty($aria)) {
+                    $out .= ' aria-label="'.esc_attr($aria).'"';
+                }
+                $out .= '>';
+                $out .= '<span class="link-text" aria-hidden="true">' . esc_html($value) . '</span>';
+            //    $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($value) . '</span>';
                 $out .= '</a>';
                 $out .= '</li>';
                 
@@ -826,9 +870,9 @@ class FaudirUtils {
             }
            
                         
-            $out .= '<li>';
-            $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($value) . '</span>';
-            $out .= '</li>';
+     //       $out .= '<li>';
+     //       $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($value) . '</span>';
+     //       $out .= '</li>';
                
         }
 

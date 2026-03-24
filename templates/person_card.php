@@ -173,7 +173,11 @@ if (!empty($persons)) {
                     }
 
                     if (!empty($contact) && in_array('socialmedia', $show_fields, true)) {
-                        $some = $contact->getSocialMedia('span');
+                        $some = $contact->getSocialMedia(
+                                'span',
+                                context: $person->getDisplayNameText('false')
+                            );
+                        
                         if (!empty($some)) {
                             echo '<div class="profile-socialmedia">';
                             echo '<h2 class="screen-reader-text">' . esc_html__('Social Media and Websites', 'rrze-faudir') . '</h2>';

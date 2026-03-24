@@ -119,7 +119,12 @@ if (!defined('ABSPATH')) {
                             }
                         } elseif (($key_lower === 'socialmedia') || ($key_lower === 'socials')) { 
                             if (!empty($contact)) {
-                                $value = $contact->getSocialMedia('span');
+                                $some = $contact->getSocialMedia(
+                                    'span',
+                                    context: $person->getDisplayNameText('false')
+                                );
+                                
+                                $value = $some;
                             }
                         } elseif (($key_lower === 'room') && !in_array('address', $show_fields_lower, true)) {
                             if (!empty($workplaces)) {

@@ -588,7 +588,7 @@ class Person {
     /**
      * Liefert den vollständigen Anzeigenamen als Plain-Text.
      */
-    private function getDisplayNameText(bool $normalize = false): string {
+    public function getDisplayNameText(bool $normalize = false): string {
         $parts = $this->getDisplayNameParts($normalize);
         $chunks = [];
 

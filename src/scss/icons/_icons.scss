@@ -6,10 +6,11 @@
 @use "cp-defaults";
 @use "cp-websites";
 @use "cp-fau";
+@use '../mixins';
 
 .faudir, .faudir__service {
    .icon {
-
+       
        span.texticon,
        a {
 	   text-decoration: none;
@@ -66,6 +67,9 @@
 	    --_icon-background-color-hover: var(--faudir-icon-background-color-hover, var(--color-Text, currentColor));
 	    
 	    
+	    .link-text {
+		@include mixins.sr-only();
+	    }
 	   
 	     ul {
 		margin: 0;
