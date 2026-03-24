@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: rrze-faudir\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-faudir\n"
 "POT-Creation-Date: 2025-11-27T14:55:08+00:00\n"
-"PO-Revision-Date: 2026-03-13 17:20+0000\n"
+"PO-Revision-Date: 2026-03-24 16:16+0000\n"
 "Last-Translator: Wolfgang Wiese <wolfgang.wiese@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -23,6 +23,14 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 
+#: includes/FaudirUtils.php:833
+msgid "%1$s-%2$s"
+msgstr "%1$s-%2$s"
+
+#: includes/FaudirUtils.php:824
+msgid "%1$s-%2$s of %3$s"
+msgstr "%1$s-%2$s von %3$s"
+
 #. translators: %d = number of persons
 #: includes/Dashboard.php:53
 msgid "%d person entry was set to private due to API availability issues."
@@ -35,7 +43,7 @@ msgstr[1] ""
 "%d Personeneinträge wurden aufgrund von API-Verfügbarkeitsproblemen auf "
 "privat gestellt."
 
-#: includes/Settings.php:948
+#: includes/Settings.php:969
 #| msgid "%d person was not able to be imported from the old plugin."
 #| msgid_plural "%d persons were not able to be imported from the old plugin."
 msgid "%d person was not able to be imported from the FAU Person plugin."
@@ -45,7 +53,7 @@ msgstr[0] "%d Person konnte nicht aus dem Plugin FAU-Person importiert werden."
 msgstr[1] ""
 "%d Personen konnten nicht aus dem Plugin FAU-Person importiert werden."
 
-#: includes/Settings.php:933
+#: includes/Settings.php:954
 #| msgid "%d person was successfully imported from the old plugin."
 #| msgid_plural "%d persons were successfully imported from the old plugin."
 msgid "%d person was successfully imported from the FAU Person plugin."
@@ -55,11 +63,11 @@ msgstr[0] "%d Person wurde erfolgreich aus dem Plugin FAU-Person importiert."
 msgstr[1] ""
 "%d Personen wurden erfolgreich aus dem Plugin FAU-Person importiert."
 
-#: includes/Config.php:129 build/blocks/faudir/index.js:1
+#: includes/Config.php:131 build/blocks/faudir/index.js:1
 msgid "Academic Suffix"
 msgstr "Namenszusatz"
 
-#: includes/Config.php:128 build/blocks/faudir/index.js:1
+#: includes/Config.php:130 build/blocks/faudir/index.js:1
 msgid "Academic Title"
 msgstr "Akademischer Titel"
 
@@ -75,7 +83,7 @@ msgstr "Zuerst akademischer Titel, dann Familienname"
 msgid "Acknowledge and hide this notice"
 msgstr "Diese Benachrichtigung bestätigen und ausblenden"
 
-#: includes/EnqueueScripts.php:165 includes/Settings.php:1057
+#: includes/EnqueueScripts.php:165 includes/Settings.php:1078
 msgid "Add"
 msgstr "Hinzufügen"
 
@@ -91,23 +99,23 @@ msgstr "Neue Person hinzufügen"
 msgid "Additional Fields"
 msgstr "Zusätzliche Felder"
 
-#: includes/BlockRegistration.php:348 includes/Config.php:144
-#: includes/Config.php:176 includes/Settings.php:1126
+#: includes/BlockRegistration.php:348 includes/Config.php:146
+#: includes/Config.php:178 includes/Settings.php:1147
 #: templates/org_compact.php:70 templates/org_default.php:70
-#: templates/person_compact.php:140 templates/person_page.php:133
+#: templates/person_compact.php:141 templates/person_page.php:133
 #: build/blocks/faudir/index.js:1 build/blocks/service/index.js:151
 msgid "Address"
 msgstr "Adresse"
 
-#: includes/Config.php:188
+#: includes/Config.php:190
 msgid "Adjunct professors"
 msgstr "Entsandte Professoren"
 
-#: includes/Config.php:187
+#: includes/Config.php:189
 msgid "Administrative Employee"
 msgstr "Verwaltungsmitarbeitende"
 
-#: includes/Settings.php:355
+#: includes/Settings.php:366
 msgid "Advanced Settings"
 msgstr "Erweiterte Einstellungen"
 
@@ -119,7 +127,7 @@ msgstr "erweiterte Einstellungen"
 msgid "Affected entries:"
 msgstr "Betroffene Einträge"
 
-#: includes/Settings.php:476
+#: includes/Settings.php:487
 msgid ""
 "After a successful search, a person can be taken over for further processing."
 msgstr ""
@@ -132,7 +140,7 @@ msgstr ""
 "Danach können Sie das Importieren alter Kontakteinträge von dort aus wieder "
 "starten."
 
-#: includes/Settings.php:705
+#: includes/Settings.php:716
 msgid ""
 "All data from FAUdir (e.g. personal entries) are cached separately for up to "
 "3 hours. This function will also reset the FAUdir data."
@@ -141,7 +149,7 @@ msgstr ""
 "3 Stunden zwischengespeichert. Diese Funktion setzt außerdem die FAUdir-"
 "Daten zurück."
 
-#: includes/Settings.php:902
+#: includes/Settings.php:923
 msgid "All FAUdir cache entries cleared successfully."
 msgstr "Alle FAUdir-Cache-Einträge wurden erfolgreich gelöscht."
 
@@ -149,7 +157,7 @@ msgstr "Alle FAUdir-Cache-Einträge wurden erfolgreich gelöscht."
 msgid "already exists"
 msgstr "existiert bereits"
 
-#: includes/Config.php:152 includes/Config.php:161
+#: includes/Config.php:154 includes/Config.php:163
 #: build/blocks/faudir/index.js:1
 msgid "Alternate Name"
 msgstr "Kurzbezeichnung"
@@ -159,7 +167,7 @@ msgid "Alternatively, select persons from the checkboxes below:"
 msgstr ""
 "Alternativ können Sie Personen aus den folgenden Kontrollkästchen auswählen:"
 
-#: includes/Settings.php:261
+#: includes/Settings.php:272
 msgid "API Key"
 msgstr "API-Schlüssel"
 
@@ -169,7 +177,7 @@ msgstr ""
 "API-Schlüssel fehlt. Bitte geben Sie einen API-Schlüssel in den "
 "Einstellungen ein."
 
-#: includes/Settings.php:253
+#: includes/Settings.php:264
 msgid "API Settings"
 msgstr "API-Einstellungen"
 
@@ -177,7 +185,7 @@ msgstr "API-Einstellungen"
 msgid "API value"
 msgstr "API Wert"
 
-#: includes/Settings.php:491
+#: includes/Settings.php:502
 msgid "API-Person-Identifier"
 msgstr "API-Personenkennung"
 
@@ -196,7 +204,7 @@ msgstr ""
 msgid "Are you sure you want to clear the cache?"
 msgstr "Sind Sie sicher, dass Sie den Cache leeren möchten?"
 
-#: includes/Settings.php:542
+#: includes/Settings.php:553
 msgid "Are you sure you want to delete the default organization?"
 msgstr "Möchten Sie die Standardorganisation wirklich löschen?"
 
@@ -205,7 +213,7 @@ msgid "Are you sure you want to import contacts from FAU person?"
 msgstr ""
 "Sind Sie sich, daß Sie alle Im Kontakte von FAU Person importieren wollen?"
 
-#: includes/Settings.php:580
+#: includes/Settings.php:591
 msgid "Are you sure you want to reset all settings to their default values?"
 msgstr ""
 "Sind Sie sicher, dass Sie alle Einstellungen auf die Standardwerte "
@@ -215,7 +223,7 @@ msgstr ""
 msgid "Ascending (A→Z)"
 msgstr "Aufsteigend (A→Z)"
 
-#: includes/Config.php:199
+#: includes/Config.php:201
 msgid "Assistant professors"
 msgstr "Privatdozentinnen und Privatdozenten"
 
@@ -235,11 +243,11 @@ msgstr ""
 msgid "Back to Data selection"
 msgstr "Zurück zur Datenauswahl"
 
-#: includes/Shortcode.php:427
+#: includes/Shortcode.php:453
 msgid "Bad value for parameter orgid"
 msgstr "Falscher Wert für den Parameter Org-ID"
 
-#: includes/Shortcode.php:419
+#: includes/Shortcode.php:445
 msgid "Bad value for parameter orgnr"
 msgstr "Ungültiger Wert für den Parameter orgnr"
 
@@ -313,15 +321,15 @@ msgstr "Postfach"
 msgid "By appointment"
 msgstr "Nach Vereinbarung"
 
-#: includes/Settings.php:281
+#: includes/Settings.php:292
 msgid "Cache Settings"
 msgstr "Cache-Einstellungen"
 
-#: includes/Settings.php:298
+#: includes/Settings.php:309
 msgid "Cache Timeout (in minutes)"
 msgstr "Cache Timeout (in Minuten)"
 
-#: includes/Config.php:190
+#: includes/Config.php:192
 msgid "Campo administrator"
 msgstr "Campo Beauftragter"
 
@@ -343,7 +351,7 @@ msgstr "Kanonische URL"
 msgid "Canonical URL changed"
 msgstr "Die kanonische URL wurde geändert"
 
-#: includes/Config.php:217 build/blocks/faudir/index.js:1
+#: includes/Config.php:219 build/blocks/faudir/index.js:1
 msgid "Card"
 msgstr "Visitenkarte"
 
@@ -355,7 +363,7 @@ msgstr "Anzeigeformat ändern"
 msgid "Change history"
 msgstr "Änderungshistorie"
 
-#: includes/Settings.php:290
+#: includes/Settings.php:301
 msgid "Change history & revisions"
 msgstr "Änderungshistorie und Versionen"
 
@@ -367,34 +375,34 @@ msgstr "Ändere Darstellung"
 msgid "Change the Data"
 msgstr "Ändere Daten"
 
-#: includes/Config.php:147 includes/Contact.php:226
-#: includes/Organization.php:265 templates/person_list.php:281
-#: templates/person_table.php:265 build/blocks/faudir/index.js:1
+#: includes/Config.php:149 includes/Contact.php:226
+#: includes/Organization.php:265 templates/person_list.php:286
+#: templates/person_table.php:269 build/blocks/faudir/index.js:1
 #: build/blocks/service/index.js:151
 msgid "City"
 msgstr "Stadt"
 
-#: includes/Settings.php:306
+#: includes/Settings.php:317
 msgid "Clear All Cache"
 msgstr "Alle Caches löschen"
 
-#: includes/Settings.php:700
+#: includes/Settings.php:711
 msgid "Clear Cache Now"
 msgstr "Cache jetzt löschen"
 
-#: includes/Settings.php:572
+#: includes/Settings.php:583
 msgid "Click the button below to reset all settings to their default values."
 msgstr ""
 "Klicke auf die Schaltfläche unten, um alle Einstellungen auf die "
 "Standardwerte zurückzusetzen."
 
-#: includes/Settings.php:701
+#: includes/Settings.php:712
 msgid "Click the button to clear all cached data, including also data cache."
 msgstr ""
 "Klicken Sie auf die Schaltfläche, um alle zwischengespeicherten Daten, "
 "einschließlich des Daten-Caches, zu löschen."
 
-#: includes/Settings.php:672
+#: includes/Settings.php:683
 msgid ""
 "Click the button to restart the import of contact entries from FAU Person. "
 "Notice, that this will only import contact entries, which refer to a public "
@@ -404,24 +412,24 @@ msgstr ""
 "Person neu zu starten. Beachte, dass dadurch nur Kontakteinträge importiert "
 "werden, die sich auf eine öffentlich einsehbare Person in FAUdir beziehen."
 
-#: includes/Settings.php:679 build/blocks/faudir/index.js:1
+#: includes/Settings.php:690 build/blocks/faudir/index.js:1
 msgid "Close"
 msgstr "Schließen"
 
-#: includes/Config.php:218 includes/Config.php:220
+#: includes/Config.php:220 includes/Config.php:222
 #: build/blocks/faudir/index.js:1
 msgid "Compact"
 msgstr "Kompakt"
 
-#: includes/Settings.php:605
+#: includes/Settings.php:616
 msgid "Configure caching settings for the plugin."
 msgstr "Konfiguriere die Caching-Einstellungen für das Plugin."
 
-#: includes/Settings.php:620
+#: includes/Settings.php:631
 msgid "Configure other advanced settings."
 msgstr "Einstellungen für den Visitenkartenlink konfigurieren."
 
-#: includes/Settings.php:602
+#: includes/Settings.php:613
 msgid ""
 "Configure the API settings for accessing the FAU person and institution "
 "directory."
@@ -433,11 +441,11 @@ msgstr ""
 msgid "Configure the appearance of your Contact"
 msgstr "Konfigurieren Sie das Erscheinungsbild des Kontakts"
 
-#: includes/Settings.php:611
+#: includes/Settings.php:622
 msgid "Configure the default fields for the output formats."
 msgstr "Standard-Ausgaben für verschiedenen Formate festlegen."
 
-#: includes/Settings.php:614
+#: includes/Settings.php:625
 msgid ""
 "Configure the default output fields for the profile page of a single person."
 msgstr "Standard-Ausgaben für die Profilseite einer Person festlegen."
@@ -446,16 +454,16 @@ msgstr "Standard-Ausgaben für die Profilseite einer Person festlegen."
 msgid "Configure your contact"
 msgstr "Konfigurieren Sie die Kontaktangaben"
 
-#: includes/Config.php:150 includes/Config.php:181 includes/Contact.php:308
+#: includes/Config.php:152 includes/Config.php:183 includes/Contact.php:308
 #: includes/OpeningHours.php:175 templates/org_compact.php:186
-#: templates/org_default.php:186 templates/person_compact.php:252
-#: templates/person_page.php:241 build/blocks/faudir/index.js:1
+#: templates/org_default.php:186 templates/person_compact.php:258
+#: templates/person_page.php:244 build/blocks/faudir/index.js:1
 msgid "Consultation Hours"
 msgstr "Sprechstunden"
 
 #: includes/BlockRegistration.php:380 includes/CPT.php:367
 #: templates/org_compact.php:167 templates/org_default.php:167
-#: templates/person_card.php:168 templates/person_compact.php:213
+#: templates/person_card.php:167 templates/person_compact.php:214
 #: templates/person_page.php:205 build/blocks/service/index.js:151
 msgid "Contact"
 msgstr "Kontakt"
@@ -472,7 +480,7 @@ msgstr "Art des Kontakts"
 msgid "Contacts"
 msgstr "Kontakte"
 
-#: includes/Config.php:139 build/blocks/faudir/index.js:1
+#: includes/Config.php:141 build/blocks/faudir/index.js:1
 msgid "Content"
 msgstr "Inhaltsbereich"
 
@@ -519,7 +527,7 @@ msgstr ""
 "Die Organisations-ID konnte anhand der angegebenen Organisationsnummer nicht "
 "ermittelt werden."
 
-#: includes/Settings.php:535
+#: includes/Settings.php:546
 msgid "Current Default Organization"
 msgstr "Aktuelle Standardorganisation"
 
@@ -531,7 +539,7 @@ msgstr "Der gesamte Cache wurde erfolgreich gelöscht!"
 msgid "Data"
 msgstr "Daten"
 
-#: includes/Settings.php:199
+#: includes/Settings.php:210
 msgid "Data fields that are shown on the profil page"
 msgstr "Ausgabedaten, die auf Profilseiten gezeigt werden"
 
@@ -547,22 +555,22 @@ msgstr "Daten erfolgreich aus FAUdir geladen."
 msgid "Default"
 msgstr "Standard"
 
-#: includes/Settings.php:163 includes/Settings.php:193
-#: includes/Settings.php:208 includes/Settings.php:337
-#: includes/Settings.php:343 includes/Settings.php:349
+#: includes/Settings.php:163 includes/Settings.php:204
+#: includes/Settings.php:219 includes/Settings.php:348
+#: includes/Settings.php:354 includes/Settings.php:360
 msgid "Default output fields"
 msgstr "Standardausgabefelder"
 
-#: includes/Settings.php:640 includes/Settings.php:790
-#: includes/Settings.php:822
+#: includes/Settings.php:651 includes/Settings.php:811
+#: includes/Settings.php:843
 msgid "Default value"
 msgstr "Standardwert"
 
-#: includes/Settings.php:738
+#: includes/Settings.php:759
 msgid "Define the format of jobtitles."
 msgstr "Definieren Sie das Ausgabeformat für die Funktionen einer Person."
 
-#: includes/Settings.php:543
+#: includes/Settings.php:554
 msgid "Delete Default Organization"
 msgstr "Standardorganisation löschen"
 
@@ -574,7 +582,7 @@ msgstr ""
 "Löscht zwischengespeicherte FAUdir-Daten und ruft aktuelle Personen- und "
 "Kontaktdaten von dem FAUdir Portal ab."
 
-#: includes/Config.php:191
+#: includes/Config.php:193
 msgid "Deputy leader"
 msgstr "Stv. Leiter"
 
@@ -582,7 +590,7 @@ msgstr "Stv. Leiter"
 msgid "Descending (Z→A)"
 msgstr "Absteigend (Z→A)"
 
-#: includes/Config.php:163 build/blocks/faudir/index.js:1
+#: includes/Config.php:165 build/blocks/faudir/index.js:1
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -594,7 +602,7 @@ msgstr "Details"
 msgid "Direct Select via FAUdir"
 msgstr "Auswahl aus FAUdir"
 
-#: includes/Config.php:162 build/blocks/faudir/index.js:1
+#: includes/Config.php:164 build/blocks/faudir/index.js:1
 msgid "Disambiguating Description"
 msgstr "Erläuternde Beschreibung"
 
@@ -602,7 +610,7 @@ msgstr "Erläuternde Beschreibung"
 msgid "Display"
 msgstr "Anzeige"
 
-#: includes/Config.php:127 build/blocks/faudir/index.js:1
+#: includes/Config.php:129 build/blocks/faudir/index.js:1
 msgid "Display Name"
 msgstr "Kompletter Name"
 
@@ -616,19 +624,19 @@ msgstr ""
 "Möchten Sie einen Personeneintrag oder eine FAU-Einrichtung/einen FAUdir-"
 "Ordner ausgeben?"
 
-#: includes/Config.php:262
+#: includes/Config.php:264
 msgid "Doctor"
 msgstr "Doktor"
 
-#: includes/Config.php:292
+#: includes/Config.php:294
 msgid "Doctor (multiple)"
 msgstr "Dr. mult"
 
-#: includes/Config.php:267
+#: includes/Config.php:269
 msgid "Doctor Private lecturer"
 msgstr "PD"
 
-#: includes/Config.php:192
+#: includes/Config.php:194
 msgid "Doctoral candidate"
 msgstr "Doktorand"
 
@@ -640,7 +648,7 @@ msgstr "Dokumentation"
 msgid "documentation"
 msgstr "Dokumentation"
 
-#: includes/EnqueueScripts.php:164 includes/Settings.php:1055
+#: includes/EnqueueScripts.php:164 includes/Settings.php:1076
 msgid "Edit"
 msgstr "Bearbeiten"
 
@@ -648,13 +656,14 @@ msgstr "Bearbeiten"
 msgid "Edit Person"
 msgstr "Person bearbeiten"
 
-#: includes/Config.php:133 includes/Config.php:166 includes/CPT.php:342
-#: includes/Organization.php:261 includes/Settings.php:503
-#: includes/Settings.php:1132 templates/org_compact.php:97
-#: templates/org_default.php:97 templates/person_card.php:115
-#: templates/person_compact.php:156 templates/person_list.php:141
-#: templates/person_page.php:148 templates/person_table.php:145
-#: build/blocks/faudir/index.js:1 build/blocks/service/index.js:151
+#: includes/Config.php:135 includes/Config.php:168 includes/CPT.php:342
+#: includes/FaudirUtils.php:816 includes/Organization.php:261
+#: includes/Settings.php:514 includes/Settings.php:1153
+#: templates/org_compact.php:97 templates/org_default.php:97
+#: templates/person_card.php:115 templates/person_compact.php:157
+#: templates/person_list.php:146 templates/person_page.php:148
+#: templates/person_table.php:149 build/blocks/faudir/index.js:1
+#: build/blocks/service/index.js:151
 msgid "Email"
 msgstr "E-Mail"
 
@@ -662,11 +671,11 @@ msgstr "E-Mail"
 msgid "Emails"
 msgstr "E-Mail-Adressen"
 
-#: includes/Config.php:193
+#: includes/Config.php:195
 msgid "Employee"
 msgstr "Angestellte"
 
-#: includes/Settings.php:1279
+#: includes/Settings.php:1301
 msgid "Enable change history and WordPress revisions for persons."
 msgstr "Änderungsverlauf und WordPress-Revisionen für Personen aktivieren."
 
@@ -676,15 +685,15 @@ msgstr ""
 "Geben Sie 6–10 Ziffern oder eine durch Kommas getrennte Liste von 10-"
 "stelligen Zahlen ein."
 
-#: includes/Settings.php:555
+#: includes/Settings.php:566
 msgid "Enter organization name or identifier"
 msgstr "Gebe den Namen oder die Kennung der Organisation ein"
 
-#: includes/Settings.php:753
+#: includes/Settings.php:774
 msgid "Enter the slug for the person post type."
 msgstr "Gebe den Slug für den Personen-Posttyp ein."
 
-#: includes/Settings.php:667
+#: includes/Settings.php:678
 msgid "Enter your API key here."
 msgstr "Geben Sie hier den API Key ein."
 
@@ -700,7 +709,7 @@ msgstr "Fehler beim Abrufen der Personenattribute."
 msgid "Error Handling"
 msgstr "Fehlerbehandlung"
 
-#: includes/Shortcode.php:458
+#: includes/Shortcode.php:484
 msgid "Error on creating output"
 msgstr "Fehler beim Erstellen der Ausgabe"
 
@@ -710,7 +719,7 @@ msgstr "Fehler beim Speichern der Organisation."
 
 #. translators: 1: String for Error Message.
 #. translators: 1: Error message
-#: includes/Settings.php:1017 includes/Settings.php:1090
+#: includes/Settings.php:1038 includes/Settings.php:1111
 msgid "Error: %s"
 msgstr "Fehler: %s"
 
@@ -718,17 +727,21 @@ msgstr "Fehler: %s"
 msgid "Excerpt changed"
 msgstr "Textauszug geändert."
 
-#: includes/Settings.php:589
+#: includes/Settings.php:600
 msgid "Failed to reset settings. Please try again."
 msgstr ""
 "Einstellungen konnten nicht zurückgesetzt werden. Bitte versuchen Sie es "
 "erneut."
 
+#: includes/Settings.php:185
+msgid "Fallback display name"
+msgstr "Ausweich-Anzeigename"
+
 #: includes/Settings.php:177
 msgid "Fallback FAUdir link"
 msgstr "Fallback auf FAUdir"
 
-#: includes/Config.php:132 includes/CPT.php:345 includes/Settings.php:499
+#: includes/Config.php:134 includes/CPT.php:345 includes/Settings.php:510
 #: build/blocks/faudir/index.js:1
 msgid "Family Name"
 msgstr "Nachname"
@@ -741,15 +754,15 @@ msgstr "Nachname"
 msgid "FAU"
 msgstr "FAU"
 
-#: includes/Config.php:148 includes/Config.php:169 includes/Contact.php:230
+#: includes/Config.php:150 includes/Config.php:171 includes/Contact.php:230
 #: includes/Contact.php:476 includes/Organization.php:266
 #: includes/Organization.php:352 templates/org_compact.php:148
-#: templates/org_default.php:148 templates/person_list.php:212
-#: templates/person_table.php:275 build/blocks/faudir/index.js:1
+#: templates/org_default.php:148 templates/person_list.php:217
+#: templates/person_table.php:279 build/blocks/faudir/index.js:1
 msgid "FAU Map"
 msgstr "FAU Karte"
 
-#: includes/Migration.php:35 includes/Settings.php:915
+#: includes/Migration.php:35 includes/Settings.php:936
 msgid "FAU Person plugin is not active."
 msgstr "Das Plugin FAU Person ist nicht aktiviert."
 
@@ -773,7 +786,7 @@ msgstr "FAUdir Vorschau…"
 msgid "FAUdir Service-Block"
 msgstr "FAUdir Service-Block"
 
-#: includes/Settings.php:385
+#: includes/Settings.php:396
 msgid "FAUdir Settings"
 msgstr "FAUdir Einstellungen"
 
@@ -789,11 +802,11 @@ msgstr "FAUdir: Personen auf privat gestellt"
 msgid "FAUOrg Number"
 msgstr "FAUOrg Nummer"
 
-#: includes/Config.php:135 includes/Config.php:168 includes/Contact.php:244
+#: includes/Config.php:137 includes/Config.php:170 includes/Contact.php:244
 #: includes/Contact.php:247 templates/org_compact.php:125
 #: templates/org_default.php:125 templates/person_card.php:144
-#: templates/person_compact.php:187 templates/person_list.php:165
-#: templates/person_page.php:178 templates/person_table.php:175
+#: templates/person_compact.php:188 templates/person_list.php:170
+#: templates/person_page.php:178 templates/person_table.php:179
 #: build/blocks/faudir/index.js:1
 msgid "Fax"
 msgstr "Fax"
@@ -803,7 +816,7 @@ msgstr "Fax"
 msgid "Field"
 msgstr "Feld"
 
-#: includes/Settings.php:789 includes/Settings.php:821
+#: includes/Settings.php:810 includes/Settings.php:842
 #| msgid "Fieldname for Show/Hide-Attribut in Shortcodes"
 msgid "Fieldname for Show-Attribute in Shortcodes"
 msgstr "Feldname für Show-Parameter von Shortcodes"
@@ -829,12 +842,12 @@ msgstr "Konfiguration abschließen"
 msgid "Finish initial setup"
 msgstr "Ersteinrichtung abschließen"
 
-#: includes/Config.php:130 build/blocks/faudir/index.js:1
+#: includes/Config.php:132 build/blocks/faudir/index.js:1
 msgid "First Name"
 msgstr "Vorname"
 
-#: includes/Config.php:143 includes/Contact.php:203 includes/Contact.php:470
-#: templates/person_list.php:201 templates/person_table.php:204
+#: includes/Config.php:145 includes/Contact.php:203 includes/Contact.php:470
+#: templates/person_list.php:206 templates/person_table.php:208
 #: build/blocks/faudir/index.js:1
 msgid "Floor"
 msgstr "Geschoss"
@@ -847,7 +860,7 @@ msgstr ""
 "für Informationen, Anweisungen und häufig gestellte Fragen und Antworten zur "
 "Verwendung des Plugins."
 
-#: includes/Settings.php:184
+#: includes/Settings.php:195
 msgid "Format"
 msgstr "Format"
 
@@ -863,23 +876,23 @@ msgstr "Funktion (Englisch)"
 msgid "Function (German)"
 msgstr "Funktion (Deutsch)"
 
-#: includes/Settings.php:321
+#: includes/Settings.php:332
 msgid "General"
 msgstr "Allgemeines"
 
-#: includes/Settings.php:85 includes/Settings.php:228
+#: includes/Settings.php:85 includes/Settings.php:239
 msgid "General Settings"
 msgstr "Allgemeine Einstellungen"
 
-#: includes/CPT.php:344 includes/Settings.php:495
+#: includes/CPT.php:344 includes/Settings.php:506
 msgid "Given Name"
 msgstr "Vorname"
 
-#: includes/Settings.php:608
+#: includes/Settings.php:619
 msgid "Handle error messages for invalid contact entries."
 msgstr "Fehlermeldungen für ungültige Kontakteinträge behandeln."
 
-#: includes/Config.php:200
+#: includes/Config.php:202
 msgid "Head"
 msgstr "Leitung"
 
@@ -899,7 +912,7 @@ msgstr "Achtung:"
 msgid "History is disabled in settings."
 msgstr "Die Änderungshistorie ist deaktiviert."
 
-#: includes/Config.php:196
+#: includes/Config.php:198
 msgid "Honorary professors"
 msgstr "Honorarprofessor"
 
@@ -913,11 +926,11 @@ msgstr "https://github.com/RRZE-Webteam/rrze-faudir"
 msgid "Identifier order"
 msgstr "Reihenfolge nach Eingabeabfolge der Identifier"
 
-#: includes/Config.php:197
+#: includes/Config.php:199
 msgid "IdM coordinator"
 msgstr "IdM Beauftragter"
 
-#: includes/Settings.php:1283
+#: includes/Settings.php:1305
 msgid ""
 "If enabled, additional logging and revision handling is activated. This can "
 "slow down the block editor."
@@ -926,7 +939,16 @@ msgstr ""
 "Revisionsverwaltungsfunktionen eingeführt. Dies kann den Blockeditor "
 "verlangsamen."
 
-#: includes/Config.php:126 build/blocks/faudir/index.js:1
+#: includes/Settings.php:751
+msgid ""
+"If neither the full name nor a name component (first and last name) is "
+"selected for display in a person output, show the full name."
+msgstr ""
+"Falls bei einer Personenausgabe weder der vollständige Namen, noch ein "
+"Namensbestandtteil mit Vornamen und Nachname ausgegeben wird,  zur Anzeige "
+"ausgewählt wurde, zeige den vollständigen Namen an."
+
+#: includes/Config.php:128 build/blocks/faudir/index.js:1
 msgid "Image"
 msgstr "Bild"
 
@@ -938,19 +960,19 @@ msgstr "Sichtbarkeit Bildunterschrift"
 msgid "Image Placeholder"
 msgstr "Bild Platzhalter"
 
-#: includes/Settings.php:270
+#: includes/Settings.php:281
 msgid "Import"
 msgstr "Importieren"
 
-#: includes/Settings.php:671
+#: includes/Settings.php:682
 msgid "Import contact entries from FAU Person"
 msgstr "Kontakteinträge aus FAU Person importieren"
 
-#: includes/Settings.php:678
+#: includes/Settings.php:689
 msgid "Import result"
 msgstr "Ergebnisse des Imports"
 
-#: includes/Settings.php:243
+#: includes/Settings.php:254
 msgid "Index page"
 msgstr "Index-Seite"
 
@@ -961,7 +983,7 @@ msgstr ""
 "anzuzeigen."
 
 #: includes/CPT.php:1214 includes/Dashboard.php:35 includes/Dashboard.php:107
-#: includes/Settings.php:912
+#: includes/Settings.php:933
 msgid "Insufficient permissions."
 msgstr "Unzureichende Berechtigungen."
 
@@ -970,11 +992,11 @@ msgid "Internal \"API Person Identification\" as used by FAUdir."
 msgstr ""
 "Interne „API-Personenidentifikation“, wie sie von FAUdir verwendet wird."
 
-#: includes/Config.php:178 build/blocks/faudir/index.js:1
+#: includes/Config.php:180 build/blocks/faudir/index.js:1
 msgid "Internal Address"
 msgstr "Interne Adresse"
 
-#: includes/Shortcode.php:431
+#: includes/Shortcode.php:457
 msgid "Invalid oder missing parameter orgnr or orgid"
 msgstr "Ungültiger oder fehlender Parameter orgnr oder orgid"
 
@@ -998,16 +1020,16 @@ msgstr "Ungültiger Post Type."
 msgid "Invalid post_id."
 msgstr "Ungültige Post Id"
 
-#: includes/Settings.php:652 includes/Settings.php:802
-#: includes/Settings.php:834
+#: includes/Settings.php:663 includes/Settings.php:823
+#: includes/Settings.php:855
 msgid "Invisible"
 msgstr "Unsichtbar"
 
-#: includes/Config.php:198
+#: includes/Config.php:200
 msgid "IT support staff"
 msgstr "Mitarbeiter des IT-Supports"
 
-#: includes/Config.php:137 includes/Settings.php:184
+#: includes/Config.php:139 includes/Settings.php:195
 #: build/blocks/faudir/index.js:1
 msgid "Jobtitle"
 msgstr "Stellenbezeichnung"
@@ -1032,11 +1054,11 @@ msgstr "Neueste Revision (#%d)"
 msgid "Legacy 10 digit organization number."
 msgstr "Die zehnstellige Organisationsnummer (auch Kostenstellennummer)."
 
-#: includes/Config.php:151 build/blocks/faudir/index.js:1
+#: includes/Config.php:153 build/blocks/faudir/index.js:1
 msgid "Link to Profil"
 msgstr "Link zur Profilseite"
 
-#: includes/Config.php:215 build/blocks/faudir/index.js:1
+#: includes/Config.php:217 build/blocks/faudir/index.js:1
 msgid "List"
 msgstr "Liste"
 
@@ -1050,7 +1072,7 @@ msgstr "Datensichtbarkeit verwalten"
 
 #: includes/Contact.php:476 includes/Organization.php:351
 #: templates/org_compact.php:149 templates/org_default.php:149
-#: templates/person_list.php:213 templates/person_table.php:276
+#: templates/person_list.php:218 templates/person_table.php:280
 msgid "Map"
 msgstr "Karte"
 
@@ -1066,7 +1088,7 @@ msgstr "Montag"
 msgid "n/a"
 msgstr "k.A."
 
-#: includes/Config.php:160 includes/CPT.php:339 includes/Settings.php:537
+#: includes/Config.php:162 includes/CPT.php:339 includes/Settings.php:548
 #: build/blocks/faudir/index.js:1 build/blocks/service/index.js:151
 msgid "Name"
 msgstr "Name"
@@ -1079,9 +1101,9 @@ msgstr "Keine Adresse verfügbar"
 msgid "No API data fetched yet."
 msgstr "Es konnten keine API-Daten abgerufen werden."
 
-#: includes/Maintenance.php:127 templates/person_card.php:194
-#: templates/person_compact.php:312 templates/person_list.php:50
-#: templates/person_list.php:329 templates/person_page.php:302
+#: includes/Maintenance.php:127 templates/person_card.php:209
+#: templates/person_compact.php:318 templates/person_list.php:50
+#: templates/person_list.php:334 templates/person_page.php:305
 #: templates/person_table.php:56
 msgid "No contact entry could be found."
 msgstr "Es konnte kein Kontakteintrag gefunden werden."
@@ -1094,7 +1116,7 @@ msgstr "Kein Kontakt gefunden."
 msgid "No contacts found with the provided identifier."
 msgstr "Keine Kontakte mit der angegebenen Kennung gefunden."
 
-#: includes/Settings.php:1065
+#: includes/Settings.php:1086
 msgid "No contacts found. Please verify the IdM-Kennung or names provided."
 msgstr ""
 "Keine Kontakte gefunden. Bitte überprüfe die IdM-Kennung oder die "
@@ -1118,7 +1140,7 @@ msgid "No organization data found for the provided identifier."
 msgstr ""
 "Für die angegebene Organisations-Id wurden keine Organisationsdaten gefunden."
 
-#: includes/Settings.php:1096
+#: includes/Settings.php:1117
 msgid "No organizations found. Please try a different search term."
 msgstr ""
 "Es wurden keine Organisationen gefunden. Bitte versuche einen anderen "
@@ -1128,7 +1150,7 @@ msgstr ""
 msgid "No output avaible"
 msgstr "Keine Ausgabe verfügbar"
 
-#: includes/Shortcode.php:228
+#: includes/Shortcode.php:255
 msgid "No people could be found for display using the specified parameters."
 msgstr ""
 "Es konnten keine Personen zur Anzeige anhand der angegebenen Parameter "
@@ -1162,18 +1184,18 @@ msgstr "Adelstitel"
 msgid "Normalize Honorific Prefix"
 msgstr "Akademische Titel normalisieren"
 
-#: includes/Settings.php:397
+#: includes/Settings.php:408
 msgid "Nothing to display."
 msgstr "Nichts darzustellen."
 
-#: includes/Settings.php:480 includes/Settings.php:704
+#: includes/Settings.php:491 includes/Settings.php:715
 msgid "Notice"
 msgstr "Hinweis"
 
-#: includes/Config.php:149 includes/Config.php:180 includes/Contact.php:277
+#: includes/Config.php:151 includes/Config.php:182 includes/Contact.php:277
 #: includes/OpeningHours.php:174 templates/org_compact.php:195
-#: templates/org_default.php:195 templates/person_compact.php:264
-#: templates/person_page.php:253 build/blocks/faudir/index.js:1
+#: templates/org_default.php:195 templates/person_compact.php:270
+#: templates/person_page.php:256 build/blocks/faudir/index.js:1
 msgid "Office Hours"
 msgstr "Bürozeiten"
 
@@ -1189,7 +1211,7 @@ msgstr "Ok"
 msgid "Old data entries from FAU Person migrated"
 msgstr "Alte Datensätze vom Plugin FAU Person migriert"
 
-#: includes/Settings.php:729
+#: includes/Settings.php:740
 msgid ""
 "On using profil links, fallback to the public faudir portal, if no local "
 "custom post is avaible."
@@ -1197,7 +1219,7 @@ msgstr ""
 "Falls es keine lokale Profilseite gibt, wird hiermit auf das Profil auf dem "
 "FAUdir Portal verlinkt."
 
-#: includes/Settings.php:746
+#: includes/Settings.php:767
 msgid ""
 "Optional: Path to a local page, which is used as index for all contact "
 "entries."
@@ -1221,7 +1243,7 @@ msgstr ""
 "Bei Verwendung der \"Reihenfolge nach Eingabeabfolge der Identifier\" wird "
 "die Reihenfolge ignoriert."
 
-#: includes/Config.php:136 includes/CPT.php:376 includes/Settings.php:1041
+#: includes/Config.php:138 includes/CPT.php:376 includes/Settings.php:1062
 #: build/blocks/faudir/index.js:1 build/blocks/service/index.js:151
 msgid "Organization"
 msgstr "Organisation"
@@ -1230,11 +1252,11 @@ msgstr "Organisation"
 msgid "Organization has been saved as default."
 msgstr "Organisation wurde als Standard gespeichert."
 
-#: includes/Settings.php:1113
+#: includes/Settings.php:1134
 msgid "Organization ID"
 msgstr "Organisations-ID"
 
-#: includes/Settings.php:538 includes/Settings.php:1115
+#: includes/Settings.php:549 includes/Settings.php:1136
 msgid "Organization Number"
 msgstr "Organisationsnr"
 
@@ -1242,28 +1264,28 @@ msgstr "Organisationsnr"
 msgid "Organization or FAUdir-Folder"
 msgstr "Organisation oder FAUdir-Ordner"
 
-#: includes/Settings.php:531
+#: includes/Settings.php:542
 msgid "Organizations"
 msgstr "Organisationen"
 
-#: includes/Settings.php:208 includes/Settings.php:349
+#: includes/Settings.php:219 includes/Settings.php:360
 msgid "Organizations and folders"
 msgstr "Einrichtungen und Ordner"
 
-#: includes/Settings.php:639 includes/Settings.php:788
-#: includes/Settings.php:820
+#: includes/Settings.php:650 includes/Settings.php:809
+#: includes/Settings.php:841
 msgid "Output data"
 msgstr "Ausgabedaten"
 
-#: includes/Settings.php:169 includes/Settings.php:214
+#: includes/Settings.php:169 includes/Settings.php:225
 msgid "Output fields for formats"
 msgstr "Ausgabefelder für verschiedene Formate"
 
-#: includes/Config.php:219 build/blocks/faudir/index.js:1
+#: includes/Config.php:221 build/blocks/faudir/index.js:1
 msgid "Page"
 msgstr "Seite"
 
-#: includes/Settings.php:1119
+#: includes/Settings.php:1140
 msgid "Parent Organization"
 msgstr "Übergeordnete Organisation"
 
@@ -1286,26 +1308,26 @@ msgid "Person not found or API error. Availability failure recorded."
 msgstr ""
 "Person nicht gefunden oder API-Fehler. Verfügbarkeitsfehler festgestellt."
 
-#: includes/Settings.php:236
+#: includes/Settings.php:247
 msgid "Person Slug"
 msgstr "Personen Slug"
 
 #. translators: 1: FAUdir Identifier Key
-#: includes/Shortcode.php:975
+#: includes/Shortcode.php:1001
 msgid "Person with ID %s does not exist"
 msgstr "Person mit ID %s existiert nicht"
 
 #: includes/CPT.php:107 includes/CPT.php:109 includes/Settings.php:163
-#: includes/Settings.php:337 build/blocks/faudir/index.js:1
+#: includes/Settings.php:348 build/blocks/faudir/index.js:1
 msgid "Persons"
 msgstr "Personen"
 
-#: includes/Config.php:134 includes/Config.php:167
-#: includes/Organization.php:260 includes/Settings.php:1131
+#: includes/Config.php:136 includes/Config.php:169 includes/FaudirUtils.php:818
+#: includes/Organization.php:260 includes/Settings.php:1152
 #: templates/org_compact.php:113 templates/org_default.php:113
-#: templates/person_card.php:130 templates/person_compact.php:171
-#: templates/person_list.php:153 templates/person_page.php:163
-#: templates/person_table.php:157 build/blocks/faudir/index.js:1
+#: templates/person_card.php:130 templates/person_compact.php:172
+#: templates/person_list.php:158 templates/person_page.php:163
+#: templates/person_table.php:161 build/blocks/faudir/index.js:1
 #: build/blocks/service/index.js:151
 msgid "Phone"
 msgstr "Telefon"
@@ -1324,7 +1346,7 @@ msgstr ""
 "Portal FAUdir synchronisiert sind. Sie können die Kontaktdaten nicht über "
 "Ihre Webseite ändern."
 
-#: includes/Settings.php:1074
+#: includes/Settings.php:1095
 msgid "Please enter a search term"
 msgstr "Bitte geben Sie einen Suchbegriff ein"
 
@@ -1343,7 +1365,7 @@ msgstr ""
 "Bitte geben Sie eine gültige FAUdir-URL oder eine gültige 10-stellige FAUdir "
 "Id der Person ein."
 
-#: includes/Settings.php:474
+#: includes/Settings.php:485
 msgid ""
 "Please enter at least one search term. If more than one parameter is entered,"
 " the search results must contain all values (AND search)."
@@ -1352,19 +1374,12 @@ msgstr ""
 "müssen die Suchergebnisse alle Werte enthalten (UND-Suche)."
 
 #: build/blocks/faudir/index.js:1
-#| msgid ""
-#| "Please enter either a FAUdir-URL (\"https://faudir.fau."
-#| "de/public/person/…\"), or the Person-Identifier. This will display your "
-#| "contact, even if the contact is not created via Dashboard > Persons."
 msgid ""
 "Please enter either a FAUdir URL (\"https://faudir.fau.de/public/person/..."
-"\"), or the person identifier. This will display your contact even if the "
-"contact is not created via Dashboard > Persons."
+"\"), or the person identifier."
 msgstr ""
-"Bitte geben Sie entweder die vollständige FAUdir-URL (\"https://faudir.fau."
-"de/public/person/…\") oder die FAUdir-Id (den letzten Teil der URL nach "
-"\"org/\") ein. Durch die Angabe wird ein Personeneintrag angezeigt, auch "
-"wenn er vorher nicht über Dashboard > Personen angelegt wurde."
+"Bitte geben Sie entweder eine FAUdir-URL (\"https://faudir.fau."
+"de/public/person/...\") oder die Personenkennung ein."
 
 #: build/blocks/faudir/index.js:1 build/blocks/service/index.js:1
 #| msgid ""
@@ -1380,7 +1395,7 @@ msgstr ""
 "de/public/org/…\") oder die FAUdir-ID (den letzten Teil der URL nach "
 "\"org/\") ein."
 
-#: includes/Settings.php:481
+#: includes/Settings.php:492
 msgid ""
 "Please note that only people whose FAUdir entries are public can be found."
 msgstr ""
@@ -1412,12 +1427,12 @@ msgstr "Eintrag nicht gefunden."
 msgid "Post status changed"
 msgstr "Der Status des Eintrags wurde geändert."
 
-#: includes/Config.php:154 includes/Config.php:177 templates/org_compact.php:82
+#: includes/Config.php:156 includes/Config.php:179 templates/org_compact.php:82
 #: templates/org_default.php:82 build/blocks/faudir/index.js:1
 msgid "Postal Address"
 msgstr "Postadresse"
 
-#: templates/person_list.php:270 templates/person_table.php:256
+#: templates/person_list.php:275 templates/person_table.php:260
 msgid "Postal Code"
 msgstr "Postleitzahl"
 
@@ -1425,47 +1440,51 @@ msgstr "Postleitzahl"
 msgid "Preview"
 msgstr "Voransicht"
 
-#: includes/Config.php:189
+#: includes/Config.php:191
 msgid "Privat dozent"
 msgstr "Privatdozent"
 
-#: includes/Config.php:275
+#: includes/Config.php:277
 msgid "Private lecturer"
 msgstr "PD"
 
-#: includes/Config.php:252
+#: includes/Config.php:254
 msgid "Professor"
 msgstr "Professor"
 
-#: includes/Config.php:257
+#: includes/Config.php:259
 msgid "Professor (Emeritus)"
 msgstr "Professor (Emeritus)"
 
-#: includes/Config.php:287
+#: includes/Config.php:289
 msgid "Professor (multiple)"
 msgstr "Prof. mult."
 
-#: includes/Config.php:236
+#: includes/Config.php:238
 msgid "Professor Doctor"
 msgstr "Professor Doktor"
 
-#: includes/Config.php:244
+#: includes/Config.php:246
 msgid "Professor Doctor (Emeritus)"
 msgstr "Professor Doktor (Emeritus)"
 
-#: includes/Config.php:298
+#: includes/Config.php:300
 msgid "Professor Doctor (Emeritus, multiple)"
 msgstr "Prof. Dr. em. mult."
 
-#: includes/Config.php:282
+#: includes/Config.php:284
 msgid "Professor Doctor (multiple)"
 msgstr "Prof. Dr. mult."
 
-#: includes/Config.php:201
+#: includes/Config.php:203
 msgid "Professors"
 msgstr "Professoren"
 
-#: includes/Settings.php:193 includes/Settings.php:343
+#: includes/FaudirUtils.php:810
+msgid "Profile"
+msgstr "Profil"
+
+#: includes/Settings.php:204 includes/Settings.php:354
 msgid "Profilpages"
 msgstr "Profilseite"
 
@@ -1481,23 +1500,23 @@ msgstr "Umleitung zur FAUdir-Suche."
 msgid "Request failed while refreshing person data."
 msgstr "Fehler beim Aktualisieren der Personendaten."
 
-#: includes/Config.php:202
+#: includes/Config.php:204
 msgid "Research assistant"
 msgstr "Forschungsassistenz"
 
-#: includes/Config.php:205
+#: includes/Config.php:207
 msgid "Research associates"
 msgstr "Wissenschaftliche Mitarbeiter"
 
-#: includes/Settings.php:571
+#: includes/Settings.php:582
 msgid "Reset to Default Settings"
 msgstr "Auf Standardeinstellungen zurücksetzen"
 
-#: includes/Settings.php:574
+#: includes/Settings.php:585
 msgid "Reset to Default Values"
 msgstr "Auf Standardwerte zurücksetzen"
 
-#: includes/Config.php:203
+#: includes/Config.php:205
 msgid "Retired professors"
 msgstr "Professoren im Ruhestand"
 
@@ -1505,8 +1524,8 @@ msgstr "Professoren im Ruhestand"
 msgid "Revisions"
 msgstr "Versionen"
 
-#: includes/Config.php:142 includes/Contact.php:200 includes/Contact.php:465
-#: templates/person_list.php:130 templates/person_table.php:135
+#: includes/Config.php:144 includes/Contact.php:200 includes/Contact.php:465
+#: templates/person_list.php:135 templates/person_table.php:139
 #: build/blocks/faudir/index.js:1
 msgid "Room"
 msgstr "Zimmer"
@@ -1533,7 +1552,7 @@ msgstr "RRZE Webteam"
 msgid "Saturday"
 msgstr "Samstag"
 
-#: includes/EnqueueScripts.php:168 includes/Settings.php:1144
+#: includes/EnqueueScripts.php:168 includes/Settings.php:1165
 msgid "Save as Default Organization"
 msgstr "Als Standardorganisation speichern"
 
@@ -1545,39 +1564,39 @@ msgstr "Gespeichert"
 msgid "Saving..."
 msgstr "Sparen…"
 
-#: includes/Config.php:204
+#: includes/Config.php:206
 msgid "Scholarship holder"
 msgstr "Stipendiat"
 
-#: includes/Settings.php:511 includes/Settings.php:557
+#: includes/Settings.php:522 includes/Settings.php:568
 msgid "Search"
 msgstr "Suchen"
 
-#: includes/Settings.php:147 includes/Settings.php:331
+#: includes/Settings.php:147 includes/Settings.php:342
 msgid "Search and create persons"
 msgstr "Personen suchen und anlegen"
 
-#: includes/Settings.php:623
+#: includes/Settings.php:634
 msgid "Search for FAU contacts by ID, name or email."
 msgstr "Suchen Sie nach FAU-Kontakten nach ID, Name oder E-Mail."
 
-#: includes/Settings.php:626
+#: includes/Settings.php:637
 msgid "Search for FAU organizations by name or identifier."
 msgstr "Suche nach FAU-Organisationen nach Namen oder Kennung."
 
-#: includes/Settings.php:155 includes/Settings.php:548
+#: includes/Settings.php:155 includes/Settings.php:559
 msgid "Search Organizations"
 msgstr "Suchorganisationen"
 
-#: includes/Settings.php:553
+#: includes/Settings.php:564
 msgid "Search Term"
 msgstr "Suchbegriff"
 
-#: includes/Settings.php:487
+#: includes/Settings.php:498
 msgid "Search Terms"
 msgstr "Suchbegriffe"
 
-#: includes/Config.php:206
+#: includes/Config.php:208
 msgid "Secretary"
 msgstr "Sekretariat"
 
@@ -1621,19 +1640,19 @@ msgstr "Wählen Sie die anzuzeigende Einrichtung oder den FAUdir-Ordner aus"
 msgid "Select Persons"
 msgstr "Personen auswählen"
 
-#: includes/Settings.php:807
+#: includes/Settings.php:828
 msgid "Select the fields to display by default in shortcodes and blocks."
 msgstr ""
 "Wähle die Felder aus, die standardmäßig in Shortcodes und Blöcken angezeigt "
 "werden."
 
-#: includes/Settings.php:657
+#: includes/Settings.php:668
 #| msgid "Select the fields to display in the profil page of a single person."
 msgid "Select the fields to display in the profile page of a single person."
 msgstr ""
 "Wähle die Felder aus, die auf einer Profilseite angezeigt werden sollen."
 
-#: includes/Settings.php:839
+#: includes/Settings.php:860
 msgid ""
 "Select the organization/folder fields to display by default in shortcodes "
 "and blocks."
@@ -1641,7 +1660,7 @@ msgstr ""
 "Wählen Sie die Organisations-/Ordnerfelder aus, die standardmäßig in "
 "Shortcodes und Blöcken angezeigt werden sollen."
 
-#: includes/Settings.php:696
+#: includes/Settings.php:707
 #| msgid "Set the cache timeout in minutes (minimum 15 minutes)."
 msgid "Set the output cache timeout in minutes (minimum 15 minutes)."
 msgstr ""
@@ -1652,7 +1671,7 @@ msgstr ""
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: includes/Settings.php:586 includes/Settings.php:868
+#: includes/Settings.php:597 includes/Settings.php:889
 msgid "Settings have been reset to default values."
 msgstr "Einstellungen wurden auf die Standardwerte zurückgesetzt."
 
@@ -1660,7 +1679,7 @@ msgstr "Einstellungen wurden auf die Standardwerte zurückgesetzt."
 msgid "Setup your FAUdir Block"
 msgstr "Richten Sie Ihren FAUdir-Block ein"
 
-#: includes/Settings.php:434
+#: includes/Settings.php:445
 msgid "Show copyright information visibly (otherwise only as meta tag)"
 msgstr ""
 "Mache Copyright-Informationen sichtbar (ansonsten werden sie nur als "
@@ -1670,22 +1689,22 @@ msgstr ""
 msgid "Show Error Message for Invalid Contacts"
 msgstr "Fehlermeldung für ungültige Kontakte anzeigen"
 
-#: includes/Settings.php:717
+#: includes/Settings.php:728
 msgid "Show error messages for incorrect contact entries."
 msgstr "Fehlermeldungen für fehlerhafte Kontakteinträge anzeigen."
 
-#: includes/Settings.php:455
+#: includes/Settings.php:466
 msgid "Show image caption (Bildunterschrift)"
 msgstr "Zeige Bildunterschrift"
 
-#: includes/Settings.php:445
+#: includes/Settings.php:456
 msgid "Show image placeholder"
 msgstr "Zeige Platzhalter (Abkürzung von Personennamen)"
 
-#: includes/Config.php:141 includes/Config.php:174
+#: includes/Config.php:143 includes/Config.php:176
 #: templates/org_compact.php:178 templates/org_default.php:178
-#: templates/person_card.php:179 templates/person_compact.php:224
-#: templates/person_page.php:216 build/blocks/faudir/index.js:1
+#: templates/person_card.php:182 templates/person_compact.php:230
+#: templates/person_page.php:219 build/blocks/faudir/index.js:1
 msgid "Social Media and Websites"
 msgstr "Social Media und Webportale"
 
@@ -1709,14 +1728,14 @@ msgstr "Sortierung"
 msgid "Step 2: Change Appearance"
 msgstr "Schritt 2: Aussehen anpassen"
 
-#: includes/Config.php:145 includes/Contact.php:206
-#: includes/Organization.php:263 templates/person_list.php:259
-#: templates/person_table.php:247 build/blocks/faudir/index.js:1
+#: includes/Config.php:147 includes/Contact.php:206
+#: includes/Organization.php:263 templates/person_list.php:264
+#: templates/person_table.php:251 build/blocks/faudir/index.js:1
 #: build/blocks/service/index.js:151
 msgid "Street"
 msgstr "Straße"
 
-#: includes/Config.php:207
+#: includes/Config.php:209
 msgid "Student employee"
 msgstr "Studentische Hilfskraft"
 
@@ -1728,15 +1747,15 @@ msgstr "Suffix"
 msgid "Sunday"
 msgstr "Sonntag"
 
-#: includes/Config.php:216 build/blocks/faudir/index.js:1
+#: includes/Config.php:218 build/blocks/faudir/index.js:1
 msgid "Table"
 msgstr "Tabelle"
 
-#: includes/Config.php:140 build/blocks/faudir/index.js:1
+#: includes/Config.php:142 build/blocks/faudir/index.js:1
 msgid "Teasertext"
 msgstr "Teaser-Text"
 
-#: includes/Config.php:208
+#: includes/Config.php:210
 msgid "Technical employee"
 msgstr "Technische Angestellte"
 
@@ -1744,12 +1763,12 @@ msgstr "Technische Angestellte"
 msgid "Telephone"
 msgstr "Telefon"
 
-#: includes/Config.php:153 includes/Config.php:173
+#: includes/Config.php:155 includes/Config.php:175
 #: build/blocks/faudir/index.js:1 build/blocks/service/index.js:151
 msgid "Text"
 msgstr "Text"
 
-#: includes/Settings.php:662
+#: includes/Settings.php:673
 msgid "The API key is being used from the network installation."
 msgstr "Der API-Schlüssel wird von der Netzwerkinstallation verwendet."
 
@@ -1824,7 +1843,7 @@ msgstr ""
 "Dieser Eintrag wird automatisch auf privat gestellt, wenn das Profil der "
 "Person über FAUdir nicht mehr öffentlich abrufbar ist, für mehr als "
 
-#: includes/Settings.php:536
+#: includes/Settings.php:547
 msgid ""
 "This is the organization that will be used by default in shortcodes and "
 "blocks."
@@ -1852,7 +1871,7 @@ msgstr "Titel"
 msgid "Title changed"
 msgstr "Titel geändert"
 
-#: includes/Config.php:131 build/blocks/faudir/index.js:1
+#: includes/Config.php:133 build/blocks/faudir/index.js:1
 msgid "Title of Nobility"
 msgstr "Adelstitel"
 
@@ -1881,7 +1900,7 @@ msgstr ""
 msgid "Toggle %s"
 msgstr "%s umschalten"
 
-#: includes/Config.php:209
+#: includes/Config.php:211
 msgid "Trainee"
 msgstr "Auszubildende"
 
@@ -1889,7 +1908,7 @@ msgstr "Auszubildende"
 msgid "Tuesday"
 msgstr "Dienstag"
 
-#: includes/Settings.php:1123
+#: includes/Settings.php:1144
 msgid "Type"
 msgstr "Typ"
 
@@ -1914,23 +1933,23 @@ msgstr ""
 msgid "Update Person-Data from FAUdir"
 msgstr "Personendaten aus FAUdir aktualisieren"
 
-#: includes/Config.php:138 includes/Config.php:170 includes/Contact.php:252
+#: includes/Config.php:140 includes/Config.php:172 includes/Contact.php:252
 #: includes/Organization.php:262 templates/org_compact.php:137
 #: templates/org_default.php:137 templates/person_card.php:158
-#: templates/person_compact.php:201 templates/person_list.php:181
-#: templates/person_page.php:192 templates/person_table.php:186
+#: templates/person_compact.php:202 templates/person_list.php:186
+#: templates/person_page.php:192 templates/person_table.php:190
 #: build/blocks/faudir/index.js:1
 msgid "URL"
 msgstr "URL"
 
-#: includes/Settings.php:773
+#: includes/Settings.php:794
 msgid ""
 "Use Canonical URL as target for personal links, if set in the person data"
 msgstr ""
 "Kanonische URL als Ziel für persönliche Links verwenden, sofern in den "
 "Personendaten eingestellt"
 
-#: includes/Settings.php:762
+#: includes/Settings.php:783
 msgid "Use official short form of the academic degree"
 msgstr "Offizielle Kurzform (Passform) für akademische Grade verwenden"
 
@@ -1958,16 +1977,16 @@ msgstr "Über die FAUdir Personen ID oder die FAUdir-URL"
 msgid "via phone"
 msgstr "per Telefon"
 
-#: includes/Settings.php:652 includes/Settings.php:802
-#: includes/Settings.php:834
+#: includes/Settings.php:663 includes/Settings.php:823
+#: includes/Settings.php:855
 msgid "Visible"
 msgstr "Sichtbar"
 
-#: includes/Config.php:194 includes/Config.php:210
+#: includes/Config.php:196 includes/Config.php:212
 msgid "Visiting lecturers"
 msgstr "Lehrbeauftragte"
 
-#: includes/Config.php:195
+#: includes/Config.php:197
 msgid "Visiting researchers"
 msgstr "Gastforscher"
 
@@ -1979,7 +1998,7 @@ msgstr "wurde erfolgreich importiert."
 msgid "We need to reload this page. Please confirm."
 msgstr "Diese Seite muss neu geladen werden. Bitte bestätigen Sie."
 
-#: includes/Settings.php:1133 build/blocks/service/index.js:151
+#: includes/Settings.php:1154 build/blocks/service/index.js:151
 msgid "Website"
 msgstr "Webauftritt"
 
@@ -2008,17 +2027,17 @@ msgstr "Welche Art von Kontakt möchten Sie anzeigen?"
 msgid "Workplace"
 msgstr "Arbeitsplatz"
 
-#: includes/Config.php:211
+#: includes/Config.php:213
 msgid "Workplace manager"
 msgstr "Arbeitsplatz-Beauftragter"
 
-#: includes/Settings.php:847 includes/Settings.php:1156
+#: includes/Settings.php:868 includes/Settings.php:1177
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 "Sie verfügen nicht über die erforderlichen Berechtigungen, um auf diese "
 "Seite zuzugreifen."
 
-#: includes/Settings.php:739
+#: includes/Settings.php:760
 msgid ""
 "You might use the variables #orgname# (Name of the defined organisation), "
 "#functionlabel# (function label by FAUdir) and #alternatename# (short or "
@@ -2047,7 +2066,7 @@ msgstr ""
 "Filtereinstellungen anzupassen."
 
 #. translators: 1: PHP  version number, 2: required PHP Version.
-#: rrze-faudir.php:94
+#: rrze-faudir.php:95
 msgid ""
 "Your PHP version (%1$s) is outdated. Please upgrade to PHP %2$s or higher."
 msgstr ""
@@ -2055,7 +2074,7 @@ msgstr ""
 "oder höher."
 
 #. translators: 1: WordPress version number, 2: Required WP Version.
-#: rrze-faudir.php:101
+#: rrze-faudir.php:102
 msgid ""
 "Your WordPress version (%1$s) is outdated. Please upgrade to WordPress %2$s "
 "or higher."
@@ -2067,7 +2086,7 @@ msgstr ""
 msgid "ZIP"
 msgstr "PLZ"
 
-#: includes/Config.php:146 includes/Contact.php:216
+#: includes/Config.php:148 includes/Contact.php:216
 #: includes/Organization.php:264 build/blocks/faudir/index.js:1
 msgid "ZIP Code"
 msgstr "PLZ"

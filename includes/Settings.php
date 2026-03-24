@@ -179,6 +179,17 @@ class Settings {
             'rrze_faudir_settings_shortcode',
             'rrze_faudir_shortcode_section'
         );
+        
+        add_settings_field(
+            'rrze_faudir_default_fallback_displayname',
+            __('Fallback display name', 'rrze-faudir'),
+            [$this, 'render_displayname_fallback'],
+            'rrze_faudir_settings_shortcode',
+            'rrze_faudir_shortcode_section'
+        );
+        
+        
+        
         add_settings_field(
             'rrze_faudir_jobtitle_format',
             __('Format', 'rrze-faudir') . ' ' . __('Jobtitle', 'rrze-faudir'),
@@ -731,6 +742,16 @@ class Settings {
     }
 
 
+    public function render_displayname_fallback(): void {
+        $checked = !empty($this->config->get('default_fallback_displayname'));
+
+        echo '<label>';
+        echo '<input type="hidden" name="rrze_faudir_options[default_fallback_displayname]" value="0">';
+        echo '<input type="checkbox" name="rrze_faudir_options[default_fallback_displayname]" value="1" ' . checked(true, $checked, false) . '>';
+        echo '<span>' . esc_html__('If neither the full name nor a name component (first and last name) is selected for display in a person output, show the full name.', 'rrze-faudir') . '</span>';
+        echo '</label>';
+    }
+    
     public function render_jobtitle_format(): void {
         $value = sanitize_text_field((string) $this->config->get('jobtitle_format'));
 
@@ -1213,6 +1234,7 @@ class Settings {
 
         $checkboxes = [
             'fallback_link_faudir',
+            'default_fallback_displayname',
             'show_error_message',
             'default_normalize_honorificPrefix',
             'redirect_to_canonicals',

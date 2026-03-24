@@ -452,46 +452,73 @@ class FaudirUtils {
         return (bool) preg_match('/^[a-z0-9]{10,11}$/', $input);
     }
 
-    /*
-     * Nummt eine Person Id aus FAUdir entgegen und sanitized sie.
-     * Die EIngabe kann auch die komplette URL aus dem FAUdir-Personeneintrag.
-     */
-    public static function sanitizePersonId(string $input): ?string {
-        $clean = trim($input);
-        $prefix = Constants::FAUDIR_PUBLIC_PERSON_PREFIX;
+   /*
+    * Nimmt eine Person-Id aus FAUdir entgegen und sanitized sie.
+    * Die Eingabe kann auch:
+    *  - eine komplette URL sein
+    *  - eine ID mit GET-Parametern (?...)
+    *  - eine ID mit Fragment (#...)
+    */
+   public static function sanitizePersonId(string $input): ?string {
+       $clean = trim($input);
 
-        if ($prefix !== '' && str_starts_with($clean, $prefix)) {
-            $clean = substr($clean, strlen($prefix));
+       if ($clean === '') {
+           return null;
+       }
 
-            $cutPos = strlen($clean);
+       /*
+        * Schritt 1:
+        * Query-Parameter und Fragment grundsätzlich entfernen
+        * (egal ob URL oder nackte ID)
+        */
+       $cutPos = strlen($clean);
 
-            $queryPos = strpos($clean, '?');
-            if ($queryPos !== false && $queryPos < $cutPos) {
-                $cutPos = $queryPos;
-            }
+       $queryPos = strpos($clean, '?');
+       if ($queryPos !== false && $queryPos < $cutPos) {
+           $cutPos = $queryPos;
+       }
 
-            $fragmentPos = strpos($clean, '#');
-            if ($fragmentPos !== false && $fragmentPos < $cutPos) {
-                $cutPos = $fragmentPos;
-            }
+       $fragmentPos = strpos($clean, '#');
+       if ($fragmentPos !== false && $fragmentPos < $cutPos) {
+           $cutPos = $fragmentPos;
+       }
 
-            $slashPos = strpos($clean, '/');
-            if ($slashPos !== false && $slashPos < $cutPos) {
-                $cutPos = $slashPos;
-            }
+       $clean = substr($clean, 0, $cutPos);
 
-            $clean = substr($clean, 0, $cutPos);
-        }
 
-        $clean = strtolower(trim($clean));
-        $clean = preg_replace('/[^a-z0-9]/', '', $clean);
+       /*
+        * Schritt 2:
+        * Prefix entfernen (falls vorhanden)
+        */
+       $prefix = Constants::FAUDIR_PUBLIC_PERSON_PREFIX;
 
-        if (preg_match('/^[a-z0-9]{10,11}$/', $clean)) {
-            return $clean;
-        }
+       if ($prefix !== '' && str_starts_with($clean, $prefix)) {
+           $clean = substr($clean, strlen($prefix));
 
-        return null;
-    }
+           /*
+            * Falls danach noch ein Slash folgt:
+            * https://.../person/ID/extra
+            */
+           $slashPos = strpos($clean, '/');
+           if ($slashPos !== false) {
+               $clean = substr($clean, 0, $slashPos);
+           }
+       }
+
+
+       /*
+        * Schritt 3:
+        * Final sanitizen
+        */
+       $clean = strtolower(trim($clean));
+       $clean = preg_replace('/[^a-z0-9]/', '', $clean);
+
+       if (preg_match('/^[a-z0-9]{10,11}$/', $clean)) {
+           return $clean;
+       }
+
+       return null;
+   }
     
     /*
     * Prüft, ob eine UnivIS ID gültig ist.
@@ -738,7 +765,7 @@ class FaudirUtils {
      * Render socials list as semantic HTML (<ul>).
      * Input must be normalized items (see normalizeSocialItems()).
      */
-    public static function renderSocialMediaList(array $items, string $htmlsurround = 'div', string $class = 'icon-list icon', string $arialabel = ''): string {
+    public static function renderSocialMediaList(array $items, string $htmlsurround = 'div', string $class = 'icon-list icon', string $arialabel = '', string $context = ''): string {
         if (empty($items)) {
             return '';
         }
@@ -776,12 +803,51 @@ class FaudirUtils {
             }
 
             $label = esc_html($name);
+            $aria = '';
+            /*
+            * Typ bestimmen: Portal oder Email
+            */
+           $typeLabel = __('Profile', 'rrze-faudir');
+
+           if (
+               stripos($value, 'mailto:') === 0
+               || filter_var($value, FILTER_VALIDATE_EMAIL)
+           ) {
+               $typeLabel = __('Email', 'rrze-faudir');
+           } elseif (stripos($value, 'tel:') === 0) {
+                $typeLabel = __('Phone', 'rrze-faudir');
+           }
+           
+            if ($context !== '' && $name !== '') {
+
+                $aria = sprintf(
+                    __('%1$s-%2$s of %3$s', 'rrze-faudir'),
+                    ucfirst($name),
+                    $typeLabel,
+                    $context
+                );
+
+            } elseif ($name !== '') {
+
+                $aria = sprintf(
+                    __('%1$s-%2$s', 'rrze-faudir'),
+                    ucfirst($name),
+                    $typeLabel
+                );
+            }
+            
 
             if (preg_match('/^https?:\/\//i', $value)) {
                 $display = self::prettyUrl($value);
                 $out .= '<li>';
-                $out .= '<a href="' . esc_url($value) . '" itemprop="sameAs">';
-                $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($display) . '</span>';
+                $out .= '<a href="' . esc_url($value) . '" itemprop="sameAs"';
+                if (!empty($aria)) {
+                    $out .= ' aria-label="'.esc_attr($aria).'"';
+                }
+                $out .= '>';
+                $out .= '<span class="link-text" aria-hidden="true">' . esc_html($display) . '</span>';
+                
+            //    $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($display) . '</span>';
                 $out .= '</a>';
                 $out .= '</li>';
                 
@@ -790,8 +856,13 @@ class FaudirUtils {
 
             if (filter_var($value, FILTER_VALIDATE_EMAIL)) {
                 $out .= '<li>';
-                $out .= '<a  itemprop="email" href="mailto:' . esc_attr($value) . '">';
-                $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($value) . '</span>';
+                $out .= '<a itemprop="email" href="mailto:' . esc_attr($value) . '"';
+                if (!empty($aria)) {
+                    $out .= ' aria-label="'.esc_attr($aria).'"';
+                }
+                $out .= '>';
+                $out .= '<span class="link-text" aria-hidden="true">' . esc_html($value) . '</span>';
+            //    $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($value) . '</span>';
                 $out .= '</a>';
                 $out .= '</li>';
                 
@@ -799,9 +870,9 @@ class FaudirUtils {
             }
            
                         
-            $out .= '<li>';
-            $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($value) . '</span>';
-            $out .= '</li>';
+     //       $out .= '<li>';
+     //       $out .= '<span class="screen-reader-text"><span class="website title">' . $label . ': </span>' . esc_html($value) . '</span>';
+     //       $out .= '</li>';
                
         }
 

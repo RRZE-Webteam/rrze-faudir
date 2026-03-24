@@ -510,9 +510,9 @@ class Contact {
     /*
      * Get Social Website Liste as semantic HTML
      */
-    public function getSocialMedia(string $htmlsurround = 'div', string $class = 'icon-list icon', string $arialabel = ''): string {
+    public function getSocialMedia(string $htmlsurround = 'div', string $class = 'icon-list icon', string $arialabel = '', string $context = ''): string {
         $items = FaudirUtils::normalizeSocialItems($this->socials);
-        return FaudirUtils::renderSocialMediaList($items, $htmlsurround, $class, $arialabel);
+        return FaudirUtils::renderSocialMediaList($items, $htmlsurround, $class, $arialabel, $context);
     }
     
     

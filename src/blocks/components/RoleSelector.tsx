@@ -12,8 +12,13 @@ export default function RoleSelector({ attributes, setAttributes }: RoleSelector
 
     function handlePersonRoleChange(value: string) {
         setAttributes({
-            role: value.trim(),
+            role: value,
         });
+    }
+    function handleBlur() {
+	setAttributes({
+	    role: attributes.role?.trim() ?? "",
+	});
     }
 
     return (
@@ -26,6 +31,7 @@ export default function RoleSelector({ attributes, setAttributes }: RoleSelector
             type="text"
             value={role}
             onChange={handlePersonRoleChange}
+	    onBlur={handleBlur}
         />
     );
 }

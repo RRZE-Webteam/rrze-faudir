@@ -162,7 +162,6 @@ if (!empty($persons)) {
                             $contactlist .= '<li class="url listcontent">' . implode('<br>', $items) . '</li>';
                         }
                     }
-
                     if (!empty($contactlist)) {
                         echo '<div class="profile-contact icon icon-list">';
                         echo '<h2 class="screen-reader-text">' . esc_html__('Contact', 'rrze-faudir') . '</h2>';
@@ -173,7 +172,11 @@ if (!empty($persons)) {
                     }
 
                     if (!empty($contact) && in_array('socialmedia', $show_fields, true)) {
-                        $some = $contact->getSocialMedia('span');
+                        $some = $contact->getSocialMedia(
+                                'span',
+                                context: $person->getDisplayNameText('false')
+                            );
+                        
                         if (!empty($some)) {
                             echo '<div class="profile-socialmedia">';
                             echo '<h2 class="screen-reader-text">' . esc_html__('Social Media and Websites', 'rrze-faudir') . '</h2>';
@@ -181,7 +184,19 @@ if (!empty($persons)) {
                             echo '</div>';
                         }
                     }
+                    
+                     if (in_array('teasertext', $show_fields, true)) {
+
+                        $wval = $person->getTeasertext();
+                        if (!empty($wval)) {
+                            echo '<div class="teasertext">';
+                            echo wp_kses_post($wval);
+                            echo '</div>';
+                        }
+                    }
+                    
                     ?>
+                    
                 </div>
             </section>
             <?php

@@ -588,7 +588,7 @@ class Person {
     /**
      * Liefert den vollständigen Anzeigenamen als Plain-Text.
      */
-    private function getDisplayNameText(bool $normalize = false): string {
+    public function getDisplayNameText(bool $normalize = false): string {
         $parts = $this->getDisplayNameParts($normalize);
         $chunks = [];
 
@@ -741,8 +741,7 @@ class Person {
         
         $restricted_abbr = Constants::PERSON_SIGNATUR_SPERRLISTE;
         // Sperrliste (immer kleingeschrieben vergleichen)
-        // $restricted_abbr = ['hj', 'kz', 'ns', 'sa', 'ss', 'sex'];
-            // gemäss: https://www.bundesverkehrsamt.online/verbotene-kennzeichen/
+        // gemäss: https://www.bundesverkehrsamt.online/verbotene-kennzeichen/
         
         $firstLetter = $middleLetter = $lastLetter = $res = '';
         
