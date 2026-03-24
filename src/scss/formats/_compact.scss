@@ -113,10 +113,7 @@
 		    grid-area: profile-address;
 		}
 		.profile-consultation {
-		     grid-area: profile-consultation;
-		    h2 {
-			margin-top: 1rem;
-		    }
+		    grid-area: profile-consultation;
 
 		}
 		.profile-contact {
@@ -163,7 +160,20 @@
 		
 		
 	    }    
-
+	@container faudir-compact-container (max-width: 399px) {
+	    .workplace-hours ul.hour-list {
+		li {
+		    display: block;	
+		    margin-bottom: 0.2rem;
+		    .daytime {
+			display: inline;
+			
+		    }
+		   
+		}
+	    }
+	    
+	}
 	@container faudir-compact-container (min-width: 480px) {
 		.format-compact-container {
 		    --faudir-profile-image-section-width: 150px;

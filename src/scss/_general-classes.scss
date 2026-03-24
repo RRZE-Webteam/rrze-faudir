@@ -114,25 +114,12 @@
 		
 		}
 		.sep {
-		    padding-right: 1rem;
+		    padding-right: 0.3rem;
 		}
 		
 		
 	    }
-	    @media (max-width: 479px) {
-		li {
-		    display: block;
-		    
-		    .daytime {
-			display: inline-block;
-			
-		    }
-		    .sep {
-			display: none;
-		    }
-		}
-		
-	    }
+
 	}
     }
     

@@ -185,10 +185,14 @@
 			    color: var(--faudir-compact-color-text, #000);
 			    line-height: 1.5;
 		    }
-	   
+		    .profile-consultation {
+			h2 {
+			    margin-top: 0;
+			}
+		    }
 			
 		   .format-compact-container  {
-			--faudir-profile-padding: var(--Spacing-4x) 0 var(--Spacing-4x) var(--Spacing-6x);
+			--faudir-profile-padding: var(--Spacing-4x);
 			border: none;
 			padding: 0;
 
@@ -196,15 +200,48 @@
 			    --_icon-size: 2.2rem;
 			    --_icon-mask-size: 1.8rem;
 			}
-
+		    }
+		    @container faudir-compact-container (max-width: 399px) {
+			margin-left: var(--faue_fullbleed_inline-margin);
+			margin-right: var(--faue_fullbleed_inline-margin);
+		       
+			.format-compact-container {
+			    .profile-header {
+				z-index: 10;
+				display: block;
+				width: calc(100% - 3rem);
+				margin-top: var(--fau-elemental-image-insert);;
+				margin-right: auto;
+				margin-left: auto;
+				justify-self: center;
+				padding: var(--Spacing-4x, 1rem);
+				background: var(--faudir-compact-color-background);   
+			    }
+			     .profile-details {
+				 display: block;
+			     }
+			     .contact-title, 
+			     .address-title,
+			     .consultation-title,
+			     .workplace-address {
+				 margin: 0;
+			     }
+			     
 			
+			 }
+		    			
+			  		    
+		   }
+		    @container faudir-compact-container (min-width: 400px) {
 			.profile-details {
 			    display: grid;
-			    grid-template-columns: 1fr;
+			    grid-template-columns: 1fr minmax(320px, 1fr);
 			    gap: 0;
 			    grid-template-areas:
 				"profile-address profile-contact"
-				"profile-consultation profile-socialmedia";
+				"profile-socialmedia profile-socialmedia"
+				"profile-consultation profile-consultation";
+				
 			    grid-template-columns: auto;
 
 			}
@@ -238,38 +275,21 @@
 			    "profile-contact     profile-contact"
 			    "profile-socialmedia profile-socialmedia";
 			}
-			    
-			    
-			
-			
-
-
 		    }
-		    
-		   @container faudir-compact-container (max-width: 480px) {
-		       .format-compact-container {
+		    @container faudir-compact-container (min-width: 400px) and (max-width: 767px) {
+			.format-compact-container:has(.profile-image-section) {
+			    --faudir-profile-image-section-width: 180px;
+			    --faudir-profile-image-section-height: 180px;
+			    --faudir-profile-image-width: 180px;
+			    --faudir-profile-image-height: 180px;
+			    
 			    .profile-header {
-				z-index: 10;
-				display: block;
-				width: calc(100% - 3rem);
-				margin-top: var(--fau-elemental-image-insert);;
-				margin-right: auto;
-				margin-left: auto;
-				justify-self: center;
-				padding: var(--Spacing-4x, 1rem);
-				background: var(--faudir-compact-color-background);   
+				padding-left: 0;
 			    }
-			     .profile-details {
-				 display: block;
-			     }
-			     .contact-title, 
-			     .address-title,
-			     .consultation-title,
-			     .workplace-address {
-				 margin: 0;
-			     }
-			 }
+			    
+			}
 		    }
+		   
 		    @container faudir-compact-container (min-width: 768px) {   
 			.format-compact-container:has(.profile-image-section) {
 			    --faudir-profile-image-section-width: 250px;
@@ -289,15 +309,46 @@
 				margin-bottom: auto;
 				margin-left: var(--fau-elemental-image-insert);
 			    }
+			    .profile-details {
+
+				 grid-template-areas:
+				    "profile-address profile-contact"
+    				"profile-consultation profile-socialmedia";
+			    }
+			    .profile-details:not(:has(.profile-address)) {
+				grid-template-areas:
+				  "profile-contact      profile-contact"
+				  "profile-consultation profile-socialmedia";
+			      }
+			    /* Wenn consultation fehlt → socialmedia über volle Breite */
+			    .profile-details:not(:has(.profile-consultation)) {
+			      grid-template-areas:
+				"profile-address      profile-contact"
+				"profile-socialmedia  profile-socialmedia";
+			    }
+
+			     /* Wenn some fehlt → consultation über volle Breite */
+			    .profile-details:not(:has(.profile-socialmedia)) {
+			      grid-template-areas:
+				"profile-address      profile-contact"
+				"profile-consultation  profile-consultation";
+			    }
+			    /* Wenn Adresse und SoMe   fehlen */
+			    .profile-details:not(:has(.profile-address)):not(:has(.profile-socialmedia)) {
+			      grid-template-areas:
+				"profile-contact     profile-contact"
+				"profile-consultation profile-consultation";
+			    }
+			    /* Wenn Adresse und Consultation  links fehlen → beide rechten Reihen vollbreit */
+			    .profile-details:not(:has(.profile-address)):not(:has(.profile-consultation)) {
+			      grid-template-areas:
+				"profile-contact     profile-contact"
+				"profile-socialmedia profile-socialmedia";
+			    }
 			}
 
 		    }
-		    @media (max-width: 392px) {
-			
-			  margin-left: var(--faue_fullbleed_inline-margin);
-			  margin-right: var(--faue_fullbleed_inline-margin);
-		    
-		   }
+
 		    
 		}
 		
