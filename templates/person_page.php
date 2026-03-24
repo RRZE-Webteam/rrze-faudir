@@ -71,17 +71,17 @@ if (!defined('ABSPATH')) {
                 } ?>
                 <header class="profile-header">
                    <?php 
-
-                    $value = '';
-                    if (!empty($final_url) && in_array('link', $show_fields, true)) {
-                        $value .= '<a itemprop="url" href="'.esc_url($final_url).'">';     
+                    if (!empty($displayname)) {
+                        $value = '';
+                        if (!empty($final_url) && in_array('link', $show_fields, true)) {
+                            $value .= '<a itemprop="url" href="'.esc_url($final_url).'">';     
+                        }
+                        $value .= $displayname;
+                        if (!empty($final_url) && in_array('link', $show_fields, true)) {
+                            $value .= '</a>';
+                        }                        
+                        echo '<h1 id="'.esc_attr($aria_id).'">'.$value.'</h1>';
                     }
-                    $value .= $displayname;
-                    if (!empty($final_url) && in_array('link', $show_fields, true)) {
-                        $value .= '</a>';
-                    }                        
-                    echo '<h1 id="'.esc_attr($aria_id).'">'.$value.'</h1>';
-
                     if (!empty($contact) && in_array('organization', $show_fields, true)) {
                         echo '<p class="organisation_name">'. $contact->getOrganizationName($lang).'</p>';
                     }
