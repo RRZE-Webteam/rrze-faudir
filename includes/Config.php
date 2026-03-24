@@ -8,7 +8,7 @@ defined('ABSPATH') || exit;
 class Config {
     private string $optionName = 'rrze_faudir_options';
     private array $config = [
-        'version'                           => 14,  // please count this up any time we change the config array
+        'version'                           => 15,  // please count this up any time we change the config array
         'person_slug'                       => 'faudir',
         'redirect_to_canonicals'            => false,
         'redirect_archivpage_uri'           => '',
@@ -36,7 +36,7 @@ class Config {
             'list'          => ['displayname', 'honorificPrefix','honorificSuffix', 'givenName', 'titleOfNobility', 'familyName', 'jobTitle', 'phone', 'fax',  'url', 'email', 'socialmedia', 'organization','address', 'room', 'floor', 'city', 'faumap', 'link', 'format_displayname'],
             'compact'       => ['image', 'displayname', 'honorificPrefix','honorificSuffix', 'givenName', 'titleOfNobility', 'familyName', 'jobTitle', 'phone', 'fax', 'email', 'url', 'socialmedia', 'organization', 'address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],
             'page'          => ['image', 'displayname', 'honorificPrefix','honorificSuffix', 'givenName', 'titleOfNobility', 'familyName', 'jobTitle', 'phone', 'fax', 'email', 'url', 'socialmedia', 'organization', 'address', 'room', 'floor', 'faumap', 'teasertext', 'content', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'format_displayname'],            
-            'card'          => ['image', 'displayname', 'honorificPrefix','honorificSuffix', 'givenName',  'familyName', 'jobTitle', 'phone', 'fax', 'organization', 'url', 'email', 'socialmedia', 'link', 'format_displayname'],
+            'card'          => ['image', 'displayname', 'honorificPrefix','honorificSuffix', 'givenName',  'familyName', 'jobTitle', 'phone', 'fax', 'organization', 'url', 'email', 'socialmedia', 'link', 'format_displayname', 'teasertext'],
             'org-compact'   => [ 'name', 'alternateName', 'phone', 'fax', 'email', 'url', 'socialmedia','address', 'postalAddress', 'faumap', 'officehours', 'consultationhours', 'text'],
             'org-default'   => [ 'name', 'alternateName', 'phone', 'fax', 'email', 'url', 'socialmedia','address', 'postalAddress', 'faumap', 'officehours', 'consultationhours', 'text'],
         ],

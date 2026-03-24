@@ -126,12 +126,16 @@
 		// Anpassungen für Formate
 		.format-card {
 		    h1 {
-			font-size: var(--H-Heading-2);
+			font-size: var(--H-Heading-3);
 		    }
 		    h2 {
 			font-size: var(--P-Body-Text, var(--font-size-normal, 1rem));
 			font-weight: bold;
 		    }
+		    .teasertext {
+			font-size: var(--P-Body-Text-Small, var(--font-size-normal, 1rem));
+		    }
+		    
 		    .format-card-container .profile-image-section {
 			
 			figure {
