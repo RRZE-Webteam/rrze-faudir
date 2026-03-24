@@ -2,14 +2,14 @@
 # This file is distributed under the GNU General Public License v3.
 msgid ""
 msgstr ""
-"Project-Id-Version: RRZE FAUdir 2.6.9\n"
+"Project-Id-Version: RRZE FAUdir 2.6.15\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-faudir\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-03-23T16:44:11+00:00\n"
+"POT-Creation-Date: 2026-03-24T16:14:34+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: rrze-faudir\n"
@@ -69,7 +69,7 @@ msgstr ""
 #: includes/CPT.php:367
 #: templates/org_compact.php:167
 #: templates/org_default.php:167
-#: templates/person_card.php:168
+#: templates/person_card.php:167
 #: templates/person_compact.php:214
 #: templates/person_page.php:205
 #: build/blocks/service/index.js:151
@@ -116,6 +116,7 @@ msgstr ""
 #: includes/Config.php:135
 #: includes/Config.php:168
 #: includes/CPT.php:342
+#: includes/FaudirUtils.php:816
 #: includes/Organization.php:261
 #: includes/Settings.php:514
 #: includes/Settings.php:1153
@@ -123,9 +124,9 @@ msgstr ""
 #: templates/org_default.php:97
 #: templates/person_card.php:115
 #: templates/person_compact.php:157
-#: templates/person_list.php:141
+#: templates/person_list.php:146
 #: templates/person_page.php:148
-#: templates/person_table.php:145
+#: templates/person_table.php:149
 #: build/blocks/faudir/index.js:1
 #: build/blocks/service/index.js:151
 msgid "Email"
@@ -133,15 +134,16 @@ msgstr ""
 
 #: includes/Config.php:136
 #: includes/Config.php:169
+#: includes/FaudirUtils.php:818
 #: includes/Organization.php:260
 #: includes/Settings.php:1152
 #: templates/org_compact.php:113
 #: templates/org_default.php:113
 #: templates/person_card.php:130
 #: templates/person_compact.php:172
-#: templates/person_list.php:153
+#: templates/person_list.php:158
 #: templates/person_page.php:163
-#: templates/person_table.php:157
+#: templates/person_table.php:161
 #: build/blocks/faudir/index.js:1
 #: build/blocks/service/index.js:151
 msgid "Phone"
@@ -155,9 +157,9 @@ msgstr ""
 #: templates/org_default.php:125
 #: templates/person_card.php:144
 #: templates/person_compact.php:188
-#: templates/person_list.php:165
+#: templates/person_list.php:170
 #: templates/person_page.php:178
-#: templates/person_table.php:175
+#: templates/person_table.php:179
 #: build/blocks/faudir/index.js:1
 msgid "Fax"
 msgstr ""
@@ -184,9 +186,9 @@ msgstr ""
 #: templates/org_default.php:137
 #: templates/person_card.php:158
 #: templates/person_compact.php:202
-#: templates/person_list.php:181
+#: templates/person_list.php:186
 #: templates/person_page.php:192
-#: templates/person_table.php:186
+#: templates/person_table.php:190
 #: build/blocks/faudir/index.js:1
 msgid "URL"
 msgstr ""
@@ -205,9 +207,9 @@ msgstr ""
 #: includes/Config.php:176
 #: templates/org_compact.php:178
 #: templates/org_default.php:178
-#: templates/person_card.php:179
-#: templates/person_compact.php:225
-#: templates/person_page.php:216
+#: templates/person_card.php:182
+#: templates/person_compact.php:230
+#: templates/person_page.php:219
 #: build/blocks/faudir/index.js:1
 msgid "Social Media and Websites"
 msgstr ""
@@ -215,8 +217,8 @@ msgstr ""
 #: includes/Config.php:144
 #: includes/Contact.php:200
 #: includes/Contact.php:465
-#: templates/person_list.php:130
-#: templates/person_table.php:135
+#: templates/person_list.php:135
+#: templates/person_table.php:139
 #: build/blocks/faudir/index.js:1
 msgid "Room"
 msgstr ""
@@ -224,8 +226,8 @@ msgstr ""
 #: includes/Config.php:145
 #: includes/Contact.php:203
 #: includes/Contact.php:470
-#: templates/person_list.php:201
-#: templates/person_table.php:204
+#: templates/person_list.php:206
+#: templates/person_table.php:208
 #: build/blocks/faudir/index.js:1
 msgid "Floor"
 msgstr ""
@@ -233,8 +235,8 @@ msgstr ""
 #: includes/Config.php:147
 #: includes/Contact.php:206
 #: includes/Organization.php:263
-#: templates/person_list.php:259
-#: templates/person_table.php:247
+#: templates/person_list.php:264
+#: templates/person_table.php:251
 #: build/blocks/faudir/index.js:1
 #: build/blocks/service/index.js:151
 msgid "Street"
@@ -250,8 +252,8 @@ msgstr ""
 #: includes/Config.php:149
 #: includes/Contact.php:226
 #: includes/Organization.php:265
-#: templates/person_list.php:281
-#: templates/person_table.php:265
+#: templates/person_list.php:286
+#: templates/person_table.php:269
 #: build/blocks/faudir/index.js:1
 #: build/blocks/service/index.js:151
 msgid "City"
@@ -265,8 +267,8 @@ msgstr ""
 #: includes/Organization.php:352
 #: templates/org_compact.php:148
 #: templates/org_default.php:148
-#: templates/person_list.php:212
-#: templates/person_table.php:275
+#: templates/person_list.php:217
+#: templates/person_table.php:279
 #: build/blocks/faudir/index.js:1
 msgid "FAU Map"
 msgstr ""
@@ -277,8 +279,8 @@ msgstr ""
 #: includes/OpeningHours.php:174
 #: templates/org_compact.php:195
 #: templates/org_default.php:195
-#: templates/person_compact.php:265
-#: templates/person_page.php:253
+#: templates/person_compact.php:270
+#: templates/person_page.php:256
 #: build/blocks/faudir/index.js:1
 msgid "Office Hours"
 msgstr ""
@@ -289,8 +291,8 @@ msgstr ""
 #: includes/OpeningHours.php:175
 #: templates/org_compact.php:186
 #: templates/org_default.php:186
-#: templates/person_compact.php:253
-#: templates/person_page.php:241
+#: templates/person_compact.php:258
+#: templates/person_page.php:244
 #: build/blocks/faudir/index.js:1
 msgid "Consultation Hours"
 msgstr ""
@@ -538,8 +540,8 @@ msgstr ""
 #: includes/Organization.php:351
 #: templates/org_compact.php:149
 #: templates/org_default.php:149
-#: templates/person_list.php:213
-#: templates/person_table.php:276
+#: templates/person_list.php:218
+#: templates/person_table.php:280
 msgid "Map"
 msgstr ""
 
@@ -907,12 +909,24 @@ msgstr ""
 msgid "Request failed while refreshing person data."
 msgstr ""
 
+#: includes/FaudirUtils.php:810
+msgid "Profile"
+msgstr ""
+
+#: includes/FaudirUtils.php:824
+msgid "%1$s-%2$s of %3$s"
+msgstr ""
+
+#: includes/FaudirUtils.php:833
+msgid "%1$s-%2$s"
+msgstr ""
+
 #: includes/Maintenance.php:127
-#: templates/person_card.php:194
-#: templates/person_compact.php:313
+#: templates/person_card.php:209
+#: templates/person_compact.php:318
 #: templates/person_list.php:50
-#: templates/person_list.php:329
-#: templates/person_page.php:302
+#: templates/person_list.php:334
+#: templates/person_page.php:305
 #: templates/person_table.php:56
 msgid "No contact entry could be found."
 msgstr ""
@@ -1568,8 +1582,8 @@ msgstr ""
 msgid "No org entry could be found."
 msgstr ""
 
-#: templates/person_list.php:270
-#: templates/person_table.php:256
+#: templates/person_list.php:275
+#: templates/person_table.php:260
 msgid "Postal Code"
 msgstr ""
 

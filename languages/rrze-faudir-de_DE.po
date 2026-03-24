@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: rrze-faudir\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-faudir\n"
 "POT-Creation-Date: 2025-11-27T14:55:08+00:00\n"
-"PO-Revision-Date: 2026-03-23 16:45+0000\n"
+"PO-Revision-Date: 2026-03-24 16:16+0000\n"
 "Last-Translator: Wolfgang Wiese <wolfgang.wiese@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -22,6 +22,14 @@ msgstr ""
 "X-Loco-Version: 2.8.2; wp-6.9.1; php-8.4.15\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
+
+#: includes/FaudirUtils.php:833
+msgid "%1$s-%2$s"
+msgstr "%1$s-%2$s"
+
+#: includes/FaudirUtils.php:824
+msgid "%1$s-%2$s of %3$s"
+msgstr "%1$s-%2$s von %3$s"
 
 #. translators: %d = number of persons
 #: includes/Dashboard.php:53
@@ -368,8 +376,8 @@ msgid "Change the Data"
 msgstr "Ändere Daten"
 
 #: includes/Config.php:149 includes/Contact.php:226
-#: includes/Organization.php:265 templates/person_list.php:281
-#: templates/person_table.php:265 build/blocks/faudir/index.js:1
+#: includes/Organization.php:265 templates/person_list.php:286
+#: templates/person_table.php:269 build/blocks/faudir/index.js:1
 #: build/blocks/service/index.js:151
 msgid "City"
 msgstr "Stadt"
@@ -448,14 +456,14 @@ msgstr "Konfigurieren Sie die Kontaktangaben"
 
 #: includes/Config.php:152 includes/Config.php:183 includes/Contact.php:308
 #: includes/OpeningHours.php:175 templates/org_compact.php:186
-#: templates/org_default.php:186 templates/person_compact.php:253
-#: templates/person_page.php:241 build/blocks/faudir/index.js:1
+#: templates/org_default.php:186 templates/person_compact.php:258
+#: templates/person_page.php:244 build/blocks/faudir/index.js:1
 msgid "Consultation Hours"
 msgstr "Sprechstunden"
 
 #: includes/BlockRegistration.php:380 includes/CPT.php:367
 #: templates/org_compact.php:167 templates/org_default.php:167
-#: templates/person_card.php:168 templates/person_compact.php:214
+#: templates/person_card.php:167 templates/person_compact.php:214
 #: templates/person_page.php:205 build/blocks/service/index.js:151
 msgid "Contact"
 msgstr "Kontakt"
@@ -649,12 +657,13 @@ msgid "Edit Person"
 msgstr "Person bearbeiten"
 
 #: includes/Config.php:135 includes/Config.php:168 includes/CPT.php:342
-#: includes/Organization.php:261 includes/Settings.php:514
-#: includes/Settings.php:1153 templates/org_compact.php:97
-#: templates/org_default.php:97 templates/person_card.php:115
-#: templates/person_compact.php:157 templates/person_list.php:141
-#: templates/person_page.php:148 templates/person_table.php:145
-#: build/blocks/faudir/index.js:1 build/blocks/service/index.js:151
+#: includes/FaudirUtils.php:816 includes/Organization.php:261
+#: includes/Settings.php:514 includes/Settings.php:1153
+#: templates/org_compact.php:97 templates/org_default.php:97
+#: templates/person_card.php:115 templates/person_compact.php:157
+#: templates/person_list.php:146 templates/person_page.php:148
+#: templates/person_table.php:149 build/blocks/faudir/index.js:1
+#: build/blocks/service/index.js:151
 msgid "Email"
 msgstr "E-Mail"
 
@@ -748,8 +757,8 @@ msgstr "FAU"
 #: includes/Config.php:150 includes/Config.php:171 includes/Contact.php:230
 #: includes/Contact.php:476 includes/Organization.php:266
 #: includes/Organization.php:352 templates/org_compact.php:148
-#: templates/org_default.php:148 templates/person_list.php:212
-#: templates/person_table.php:275 build/blocks/faudir/index.js:1
+#: templates/org_default.php:148 templates/person_list.php:217
+#: templates/person_table.php:279 build/blocks/faudir/index.js:1
 msgid "FAU Map"
 msgstr "FAU Karte"
 
@@ -796,8 +805,8 @@ msgstr "FAUOrg Nummer"
 #: includes/Config.php:137 includes/Config.php:170 includes/Contact.php:244
 #: includes/Contact.php:247 templates/org_compact.php:125
 #: templates/org_default.php:125 templates/person_card.php:144
-#: templates/person_compact.php:188 templates/person_list.php:165
-#: templates/person_page.php:178 templates/person_table.php:175
+#: templates/person_compact.php:188 templates/person_list.php:170
+#: templates/person_page.php:178 templates/person_table.php:179
 #: build/blocks/faudir/index.js:1
 msgid "Fax"
 msgstr "Fax"
@@ -838,7 +847,7 @@ msgid "First Name"
 msgstr "Vorname"
 
 #: includes/Config.php:145 includes/Contact.php:203 includes/Contact.php:470
-#: templates/person_list.php:201 templates/person_table.php:204
+#: templates/person_list.php:206 templates/person_table.php:208
 #: build/blocks/faudir/index.js:1
 msgid "Floor"
 msgstr "Geschoss"
@@ -1063,7 +1072,7 @@ msgstr "Datensichtbarkeit verwalten"
 
 #: includes/Contact.php:476 includes/Organization.php:351
 #: templates/org_compact.php:149 templates/org_default.php:149
-#: templates/person_list.php:213 templates/person_table.php:276
+#: templates/person_list.php:218 templates/person_table.php:280
 msgid "Map"
 msgstr "Karte"
 
@@ -1092,9 +1101,9 @@ msgstr "Keine Adresse verfügbar"
 msgid "No API data fetched yet."
 msgstr "Es konnten keine API-Daten abgerufen werden."
 
-#: includes/Maintenance.php:127 templates/person_card.php:194
-#: templates/person_compact.php:313 templates/person_list.php:50
-#: templates/person_list.php:329 templates/person_page.php:302
+#: includes/Maintenance.php:127 templates/person_card.php:209
+#: templates/person_compact.php:318 templates/person_list.php:50
+#: templates/person_list.php:334 templates/person_page.php:305
 #: templates/person_table.php:56
 msgid "No contact entry could be found."
 msgstr "Es konnte kein Kontakteintrag gefunden werden."
@@ -1185,8 +1194,8 @@ msgstr "Hinweis"
 
 #: includes/Config.php:151 includes/Config.php:182 includes/Contact.php:277
 #: includes/OpeningHours.php:174 templates/org_compact.php:195
-#: templates/org_default.php:195 templates/person_compact.php:265
-#: templates/person_page.php:253 build/blocks/faudir/index.js:1
+#: templates/org_default.php:195 templates/person_compact.php:270
+#: templates/person_page.php:256 build/blocks/faudir/index.js:1
 msgid "Office Hours"
 msgstr "Bürozeiten"
 
@@ -1313,12 +1322,12 @@ msgstr "Person mit ID %s existiert nicht"
 msgid "Persons"
 msgstr "Personen"
 
-#: includes/Config.php:136 includes/Config.php:169
+#: includes/Config.php:136 includes/Config.php:169 includes/FaudirUtils.php:818
 #: includes/Organization.php:260 includes/Settings.php:1152
 #: templates/org_compact.php:113 templates/org_default.php:113
 #: templates/person_card.php:130 templates/person_compact.php:172
-#: templates/person_list.php:153 templates/person_page.php:163
-#: templates/person_table.php:157 build/blocks/faudir/index.js:1
+#: templates/person_list.php:158 templates/person_page.php:163
+#: templates/person_table.php:161 build/blocks/faudir/index.js:1
 #: build/blocks/service/index.js:151
 msgid "Phone"
 msgstr "Telefon"
@@ -1423,7 +1432,7 @@ msgstr "Der Status des Eintrags wurde geändert."
 msgid "Postal Address"
 msgstr "Postadresse"
 
-#: templates/person_list.php:270 templates/person_table.php:256
+#: templates/person_list.php:275 templates/person_table.php:260
 msgid "Postal Code"
 msgstr "Postleitzahl"
 
@@ -1471,6 +1480,10 @@ msgstr "Prof. Dr. mult."
 msgid "Professors"
 msgstr "Professoren"
 
+#: includes/FaudirUtils.php:810
+msgid "Profile"
+msgstr "Profil"
+
 #: includes/Settings.php:204 includes/Settings.php:354
 msgid "Profilpages"
 msgstr "Profilseite"
@@ -1512,7 +1525,7 @@ msgid "Revisions"
 msgstr "Versionen"
 
 #: includes/Config.php:144 includes/Contact.php:200 includes/Contact.php:465
-#: templates/person_list.php:130 templates/person_table.php:135
+#: templates/person_list.php:135 templates/person_table.php:139
 #: build/blocks/faudir/index.js:1
 msgid "Room"
 msgstr "Zimmer"
@@ -1690,8 +1703,8 @@ msgstr "Zeige Platzhalter (Abkürzung von Personennamen)"
 
 #: includes/Config.php:143 includes/Config.php:176
 #: templates/org_compact.php:178 templates/org_default.php:178
-#: templates/person_card.php:179 templates/person_compact.php:225
-#: templates/person_page.php:216 build/blocks/faudir/index.js:1
+#: templates/person_card.php:182 templates/person_compact.php:230
+#: templates/person_page.php:219 build/blocks/faudir/index.js:1
 msgid "Social Media and Websites"
 msgstr "Social Media und Webportale"
 
@@ -1716,8 +1729,8 @@ msgid "Step 2: Change Appearance"
 msgstr "Schritt 2: Aussehen anpassen"
 
 #: includes/Config.php:147 includes/Contact.php:206
-#: includes/Organization.php:263 templates/person_list.php:259
-#: templates/person_table.php:247 build/blocks/faudir/index.js:1
+#: includes/Organization.php:263 templates/person_list.php:264
+#: templates/person_table.php:251 build/blocks/faudir/index.js:1
 #: build/blocks/service/index.js:151
 msgid "Street"
 msgstr "Straße"
@@ -1923,8 +1936,8 @@ msgstr "Personendaten aus FAUdir aktualisieren"
 #: includes/Config.php:140 includes/Config.php:172 includes/Contact.php:252
 #: includes/Organization.php:262 templates/org_compact.php:137
 #: templates/org_default.php:137 templates/person_card.php:158
-#: templates/person_compact.php:202 templates/person_list.php:181
-#: templates/person_page.php:192 templates/person_table.php:186
+#: templates/person_compact.php:202 templates/person_list.php:186
+#: templates/person_page.php:192 templates/person_table.php:190
 #: build/blocks/faudir/index.js:1
 msgid "URL"
 msgstr "URL"
