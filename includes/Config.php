@@ -8,7 +8,7 @@ defined('ABSPATH') || exit;
 class Config {
     private string $optionName = 'rrze_faudir_options';
     private array $config = [
-        'version'                           => 15,  // please count this up any time we change the config array
+        'version'                           => 16,  // please count this up any time we change the config array
         'person_slug'                       => 'faudir',
         'redirect_to_canonicals'            => false,
         'redirect_archivpage_uri'           => '',
@@ -28,8 +28,8 @@ class Config {
         'enable_history'                    => 0,   // History & Revisions for CPT
         'button_link_title'                 => '',
         'default_display_order'     => [
-            'table' => ['image', 'displayname', 'familyName', 'givenName', 'jobTitle', 'organization', 'phone', 'email', 'url', 'socialmedia','address', 'room', 'floor', 'faumap', 'teasertext', 'link'],
-            'list'  => ['displayname', 'familyName', 'givenName', 'jobTitle', 'url', 'email', 'socialmedia', 'room', 'floor', 'address','faumap', 'link']
+            'table' => ['image', 'displayname', 'familyName', 'givenName', 'jobTitle', 'organization', 'phone', 'email', 'url', 'socialmedia','address', 'room', 'floor', 'faumap', 'teasertext'],
+            'list'  => ['displayname', 'familyName', 'givenName', 'jobTitle', 'url', 'email', 'socialmedia', 'room', 'floor', 'address','faumap']
         ],
         'avaible_fields_byformat'   => [
             'table'         => ['image', 'displayname','honorificPrefix','honorificSuffix', 'givenName',  'titleOfNobility', 'familyName', 'jobTitle', 'phone', 'fax', 'email', 'url', 'socialmedia', 'organization', 'address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],

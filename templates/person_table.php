@@ -93,7 +93,9 @@ if (!defined('ABSPATH')) {
                             if (!in_array($key_lower, $show_fields_lower, true)) {
                                 continue;
                             }
-                                
+                            if ($key_lower === 'link') {
+                                continue;
+                            }    
                             $value = '';
                             if ($key_lower === 'displayname')  {
                                 if ($displayname) {
@@ -131,7 +133,7 @@ if (!defined('ABSPATH')) {
                                     );
                                     $value = $some;
                                 }
-                            } elseif (!empty($workplaces) && ($key_lower === 'room') && !in_array('address', $show_fields_lower, true)) {
+                            } elseif (!empty($workplaces) && ($key_lower === 'room')) {
                                 $room = '';
                                 foreach ($workplaces as $w => $wdata) {
                                     if (!empty($wdata['room'])) {
@@ -200,7 +202,7 @@ if (!defined('ABSPATH')) {
                                 if (!empty($wval)) {
                                     $value = wp_kses_post($wval);
                                 }
-                            } elseif (!empty($workplaces) && ($key_lower === 'floor') && (!in_array('address', $show_fields) )) {
+                            } elseif (!empty($workplaces) && ($key_lower === 'floor')) {
                                     $wval = '';
                                     foreach ($workplaces as $w => $wdata) {
                                         if (!empty($wdata['floor'])) {
@@ -319,10 +321,12 @@ if (!defined('ABSPATH')) {
                                         $value = $hours;
 
                             }
+                            
+                            
                             $output .= '<td class="faudir-'.esc_attr($key_lower).'">';
                             $output .= $value;
                             $output .= '</td>';
-
+                            
                     }
                     $output .= '</tr>'; 
                     echo $output;

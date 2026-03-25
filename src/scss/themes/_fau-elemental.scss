@@ -368,6 +368,19 @@
 			
 		    }
 		}
+		.format-table {
+		    td.faudir-image {
+			max-width: var(--faudir-figure-tablesize, 150px);	
+			min-width: inherit;
+			width: inherit;
+			
+		    }
+		    td.faudir-displayname {
+			font-size: var(--P-Body-Text, var(--font-size-normal, 1rem));
+			padding: 0.5rem;
+		    }
+		   
+		}
 		.format-page {
 
 			

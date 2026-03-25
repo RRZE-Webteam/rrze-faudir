@@ -9,13 +9,16 @@
 	    padding: 0.3rem;
 	    
 	    &.faudir-image {
-		min-width: var(--faudir-figure-tablesize,150px);
-		min-height: var(--faudir-figure-tablesize,150px);
-		
-		height: auto;
+	//	min-width: var(--faudir-figure-tablesize,150px);
+//		min-height: var(--faudir-figure-tablesize,150px);
+//		max-width: var(--faudir-figure-tablesize, 150px);		
+//		height: auto;
 		
 		figure {
 		    margin: 0;
+		    padding: 0;
+		    height: var(--faudir-figure-tablesize,150px);
+		    width: var(--faudir-figure-tablesize,150px);
 		    
 		    img {
 			height: var(--faudir-figure-tablesize,150px);
@@ -53,7 +56,12 @@
 	    &.faudir-displayname {
 		min-width: max-content;
 		white-space: nowrap;
+		
 		font-weight: bold;
+		
+		a {
+		    font-weight: bold;
+		}
 	    }
 	    &.faudir-email {
 	       span.email {
