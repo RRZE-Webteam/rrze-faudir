@@ -19,7 +19,7 @@ Settings for FAU Einrichtungen theme
 	--faudir-icon-color-hover: #fff;
 	--faudir-icon-color: #000;
 	--faudir-icon-background-color-hover: #000;
-	
+	--faudir-table-border: 1px solid var(--color-StandardHellgrau);
 	
 	.address-title, 
 	.contact-title {
@@ -43,6 +43,11 @@ Settings for FAU Einrichtungen theme
 		   filter: drop-shadow(0px 0px 5px rgba(0,0,0,0.4));
 		}
  	    }
+	}
+	.format-table {
+	    tr:nth-child(2n+1) td {
+		background: none;
+	    }
 	}
 	
 	

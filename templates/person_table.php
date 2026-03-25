@@ -31,6 +31,7 @@ if (!defined('ABSPATH')) {
      
 
     ?>    
+    <div class="faudir-table-container">
     <table class="format-table">
         <tbody>
             <?php
@@ -334,4 +335,5 @@ if (!defined('ABSPATH')) {
             ?>
         </tbody>
     </table>
+    </div>
 </div>
