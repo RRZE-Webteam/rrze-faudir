@@ -1051,6 +1051,7 @@ class Shortcode {
 
     public function kontakt_to_faudir($atts, $content = null): string {
         $atts_string = $this->atts_to_string($atts);
+        EnqueueScripts::enqueue_frontend();
         return do_shortcode(shortcode_unautop('[faudir ' . $atts_string . ']' . $content . '[/faudir]'));
     }
 
@@ -1059,6 +1060,7 @@ class Shortcode {
             $atts['format'] = 'list';
         }
         $atts_string = $this->atts_to_string($atts);
+         EnqueueScripts::enqueue_frontend();
         return do_shortcode(shortcode_unautop('[faudir ' . $atts_string . ']' . $content . '[/faudir]'));
     }
 
