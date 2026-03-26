@@ -1060,7 +1060,7 @@ class Shortcode {
             $atts['format'] = 'list';
         }
         $atts_string = $this->atts_to_string($atts);
-         EnqueueScripts::enqueue_frontend();
+        EnqueueScripts::enqueue_frontend();
         return do_shortcode(shortcode_unautop('[faudir ' . $atts_string . ']' . $content . '[/faudir]'));
     }
 
