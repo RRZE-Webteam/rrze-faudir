@@ -3,19 +3,38 @@
 /* Created on : 30.01.2025, 11:34:05
 /*----------------------------------------------------------------------------*/
 .faudir {
+    .faudir-table-container {
+        container: faudir-table / inline-size;
+    }
     .format-table {
+	width: 100%;
 	margin: var(--faudir-format-margins);
+	
+
+	tbody {
+	    border: none;
+	}
+	tr {
+	    border-bottom: var(--faudir-table-border);
+	    border-left: var(--faudir-table-border);
+	    border-right: var(--faudir-table-border);
+	}
+	tr:first-child {
+	   border-top: var(--faudir-table-border);
+	}
+
 	td {
 	    padding: 0.3rem;
 	    
 	    &.faudir-image {
-		min-width: var(--faudir-figure-tablesize,150px);
-		min-height: var(--faudir-figure-tablesize,150px);
-		
-		height: auto;
+		min-width: inherit;
+		width: var(--faudir-figure-tablesize,150px);
 		
 		figure {
 		    margin: 0;
+		    padding: 0;
+		    height: var(--faudir-figure-tablesize,150px);
+		    width: var(--faudir-figure-tablesize,150px);
 		    
 		    img {
 			height: var(--faudir-figure-tablesize,150px);
@@ -51,9 +70,11 @@
 		
 	    }
 	    &.faudir-displayname {
-		min-width: max-content;
-		white-space: nowrap;
 		font-weight: bold;
+		
+		a {
+		    font-weight: bold;
+		}
 	    }
 	    &.faudir-email {
 	       span.email {
@@ -62,7 +83,7 @@
 	    }
 	    &.faudir-email {
 	       span.icon::after {
-		    content: ", ";
+		    content: " / ";
 
 		}
 		span.icon:last-child::after {
@@ -74,5 +95,103 @@
 	}
 	
 	
+    }
+    @container faudir-table (max-width: 479px) {
+	.format-table {
+	    tbody, td {
+		border: none;
+	    } 
+	    tr {
+		display: grid;
+		gap: 0;
+		grid-template-columns: auto;
+		margin-bottom: 1rem;
+		
+	    }
+	    
+	    td,
+	    th {
+		min-width: inherit;
+		box-sizing: border-box;
+	    }
+	    td.faudir-displayname {
+		min-width: inherit;
+		white-space: normal;
+		overflow-wrap: anywhere;		
+	    }
+
+	    
+	    td.faudir-image {
+		padding: 0;		
+		max-width: inherit;
+		height: auto;
+		width: auto;
+		
+		figure {
+		    height: auto;
+		    width: auto;
+		    img {
+			width: 100%;
+			height: auto;
+			max-height: 300px;
+		    }
+		}
+	    }
+	    td.faudir-image:has(.signature) {
+		display: none;
+	    }
+	}
+	
+
+    }
+    @container faudir-table  (min-width: 480px) and (max-width: 768px) {
+	.format-table {
+	    tbody {
+		border: none;
+	    }
+	    tr {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		border-left: var(--faudir-table-border);
+		border-right: var(--faudir-table-border);
+		border-bottom: var(--faudir-table-border);
+
+	    }
+	    tr:first-child {
+	       border-top: var(--faudir-table-border);
+	    }
+	    td,
+	    th {
+		min-width: inherit;
+		box-sizing: border-box;
+		
+	    }
+	    td {
+		flex: 1 1 20ch;
+		border: none;
+	    }
+	    td.faudir-displayname {
+		white-space: normal;
+		overflow-wrap: anywhere;
+		min-width: inherit;
+		max-width: 25ch;
+	    }
+
+	    td.faudir-image {
+		flex: 0 0 160px;
+		max-width: max-content;
+		order: 1;
+		align-self: flex-start;
+	    }
+
+	    tr > td:not(.faudir-image) {
+		order: 2;
+		flex: 1 1 20ch;
+		min-width: inherit;
+	    }
+	}
+	
+
     }
 }

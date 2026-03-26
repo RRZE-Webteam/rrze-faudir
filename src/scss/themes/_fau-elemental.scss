@@ -22,8 +22,19 @@
 		    
 	}
     }
-    :where(.wp-block-post-content) .faudir  table {
+    :where(.wp-block-post-content) .faudir .format-table {
 	font-size: inherit;
+	
+	tbody tr,
+	tbody tr:nth-child(2n) {
+	    background-color: inherit;
+	    min-width: inherit;
+	    width: inherit;
+	    
+	}
+	tbody tr td {
+	    width: auto;
+	}
     }
 	  
 		
@@ -40,6 +51,8 @@
 	
 		--faudir-icon-color-hover: #000; 
 		--faudir-icon-color: #000; 
+		--faudir-table-border: .0625rem solid var(--FAU-Col-FAU-Schwarz-25);
+		
 		
 		max-width: var(--small-max-width);
 		margin: 0 auto;
@@ -367,6 +380,14 @@
 			}
 			
 		    }
+		}
+		.format-table {
+		    
+		    td.faudir-displayname {
+			font-size: var(--P-Body-Text, var(--font-size-normal, 1rem));
+			padding: 0.5rem;
+		    }
+		   
 		}
 		.format-page {
 
