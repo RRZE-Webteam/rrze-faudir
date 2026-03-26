@@ -84,7 +84,7 @@ class Shortcode {
         
         
       
-          
+        do_action( 'rrze.log.info',"FAUdir\Shortcode (render): Args.",$atts);
         // If user is logged in and no-cache option is enabled, always fetch fresh data
         if (!empty($this->config->get('no_cache_logged_in')) && is_user_logged_in()) {
             $output = $this->fetch_and_render_fau_data($atts);
@@ -92,7 +92,7 @@ class Shortcode {
             $output = do_shortcode(shortcode_unautop($output));
             return $output;
         }
-        // do_action( 'rrze.log.info',"FAUdir\Shortcode (render): Using cache.");
+        
 
         ksort($atts);
         $cache_key = Constants::TRANSIENT_PREFIX_SHORTCODE . md5(wp_json_encode($atts));
@@ -249,8 +249,12 @@ class Shortcode {
     public function createPersonOutput(array $atts, array $show_fields): string {                
         $args = $this->normalizePersonArgs($atts);
         $args = $this->applyRoleFallback($args);
-
+            
+         do_action( 'rrze.log.info',"FAUdir\Shortcode (createPersonOutput): Args",$args);
         $persons = $this->fetchPersonsForPersonDisplay($args);
+        
+        
+         do_action( 'rrze.log.info',"FAUdir\Shortcode (createPersonOutput): Persons",$persons);
         if (empty($persons)) {
              return $this->createErrorOut(__('No people could be found for display using the specified parameters.', 'rrze-faudir'), 'createPersonOutput');
         }

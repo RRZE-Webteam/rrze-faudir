@@ -27,8 +27,8 @@
 	    padding: 0.3rem;
 	    
 	    &.faudir-image {
-		min-width: var(--faudir-figure-tablesize,150px);
-		width: inherit;
+		min-width: inherit;
+		width: var(--faudir-figure-tablesize,150px);
 		
 		figure {
 		    margin: 0;
@@ -70,9 +70,6 @@
 		
 	    }
 	    &.faudir-displayname {
-	//	min-width: max-content;
-	//	white-space: nowrap;
-		min-width: 20ch;
 		font-weight: bold;
 		
 		a {
@@ -86,7 +83,7 @@
 	    }
 	    &.faudir-email {
 	       span.icon::after {
-		    content: ", ";
+		    content: " / ";
 
 		}
 		span.icon:last-child::after {
