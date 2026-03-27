@@ -220,8 +220,6 @@ class CPT {
         $post_type = $this->config->get('person_post_type');
         if ($post->post_type !== $post_type) return;
         
-$meta = get_post_meta($post->ID);
-do_action( 'rrze.log.info',"FAUdir\CPT (render_person_additional_fields): Person Meta ",$meta);
      
         // ---- Canonical URL (editierbar) ----
         $canonical_url = get_post_meta($post->ID, $this->canonical_meta_key, true);
