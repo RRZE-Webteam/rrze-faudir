@@ -2,14 +2,14 @@
 # This file is distributed under the GNU General Public License v3.
 msgid ""
 msgstr ""
-"Project-Id-Version: RRZE FAUdir 2.6.15\n"
+"Project-Id-Version: RRZE FAUdir 2.6.19-1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-faudir\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-03-24T16:14:34+00:00\n"
+"POT-Creation-Date: 2026-03-27T11:46:34+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: rrze-faudir\n"
@@ -48,6 +48,7 @@ msgid "No output avaible"
 msgstr ""
 
 #: includes/BlockRegistration.php:293
+#: includes/Config.php:151
 #: build/blocks/service/index.js:151
 msgid "Office hours"
 msgstr ""
@@ -56,8 +57,8 @@ msgstr ""
 #: includes/Config.php:146
 #: includes/Config.php:178
 #: includes/Settings.php:1147
-#: templates/org_compact.php:70
-#: templates/org_default.php:70
+#: templates/org_compact.php:73
+#: templates/org_default.php:71
 #: templates/person_compact.php:141
 #: templates/person_page.php:133
 #: build/blocks/faudir/index.js:1
@@ -66,9 +67,9 @@ msgid "Address"
 msgstr ""
 
 #: includes/BlockRegistration.php:380
-#: includes/CPT.php:367
-#: templates/org_compact.php:167
-#: templates/org_default.php:167
+#: includes/CPT.php:385
+#: templates/org_compact.php:170
+#: templates/org_default.php:168
 #: templates/person_card.php:167
 #: templates/person_compact.php:214
 #: templates/person_page.php:205
@@ -82,51 +83,45 @@ msgid "Image"
 msgstr ""
 
 #: includes/Config.php:129
-#: build/blocks/faudir/index.js:1
-msgid "Display Name"
+msgid "Display name"
 msgstr ""
 
 #: includes/Config.php:130
 #: build/blocks/faudir/index.js:1
-msgid "Academic Title"
+msgid "Academic title"
 msgstr ""
 
 #: includes/Config.php:131
-#: build/blocks/faudir/index.js:1
-msgid "Academic Suffix"
+msgid "Academic suffix"
 msgstr ""
 
 #: includes/Config.php:132
-#: build/blocks/faudir/index.js:1
-msgid "First Name"
+msgid "First name"
 msgstr ""
 
 #: includes/Config.php:133
-#: build/blocks/faudir/index.js:1
-msgid "Title of Nobility"
+msgid "Title of nobility"
 msgstr ""
 
 #: includes/Config.php:134
-#: includes/CPT.php:345
-#: includes/Settings.php:510
 #: build/blocks/faudir/index.js:1
-msgid "Family Name"
+msgid "Family name"
 msgstr ""
 
 #: includes/Config.php:135
 #: includes/Config.php:168
-#: includes/CPT.php:342
+#: includes/CPT.php:360
 #: includes/FaudirUtils.php:816
 #: includes/Organization.php:261
 #: includes/Settings.php:514
 #: includes/Settings.php:1153
-#: templates/org_compact.php:97
-#: templates/org_default.php:97
+#: templates/org_compact.php:100
+#: templates/org_default.php:98
 #: templates/person_card.php:115
 #: templates/person_compact.php:157
 #: templates/person_list.php:146
 #: templates/person_page.php:148
-#: templates/person_table.php:149
+#: templates/person_table.php:152
 #: build/blocks/faudir/index.js:1
 #: build/blocks/service/index.js:151
 msgid "Email"
@@ -137,13 +132,13 @@ msgstr ""
 #: includes/FaudirUtils.php:818
 #: includes/Organization.php:260
 #: includes/Settings.php:1152
-#: templates/org_compact.php:113
-#: templates/org_default.php:113
+#: templates/org_compact.php:116
+#: templates/org_default.php:114
 #: templates/person_card.php:130
 #: templates/person_compact.php:172
 #: templates/person_list.php:158
 #: templates/person_page.php:163
-#: templates/person_table.php:161
+#: templates/person_table.php:164
 #: build/blocks/faudir/index.js:1
 #: build/blocks/service/index.js:151
 msgid "Phone"
@@ -153,19 +148,19 @@ msgstr ""
 #: includes/Config.php:170
 #: includes/Contact.php:244
 #: includes/Contact.php:247
-#: templates/org_compact.php:125
-#: templates/org_default.php:125
+#: templates/org_compact.php:128
+#: templates/org_default.php:126
 #: templates/person_card.php:144
 #: templates/person_compact.php:188
 #: templates/person_list.php:170
 #: templates/person_page.php:178
-#: templates/person_table.php:179
+#: templates/person_table.php:182
 #: build/blocks/faudir/index.js:1
 msgid "Fax"
 msgstr ""
 
 #: includes/Config.php:138
-#: includes/CPT.php:376
+#: includes/CPT.php:394
 #: includes/Settings.php:1062
 #: build/blocks/faudir/index.js:1
 #: build/blocks/service/index.js:151
@@ -182,13 +177,13 @@ msgstr ""
 #: includes/Config.php:172
 #: includes/Contact.php:252
 #: includes/Organization.php:262
-#: templates/org_compact.php:137
-#: templates/org_default.php:137
+#: templates/org_compact.php:140
+#: templates/org_default.php:138
 #: templates/person_card.php:158
 #: templates/person_compact.php:202
 #: templates/person_list.php:186
 #: templates/person_page.php:192
-#: templates/person_table.php:190
+#: templates/person_table.php:193
 #: build/blocks/faudir/index.js:1
 msgid "URL"
 msgstr ""
@@ -204,21 +199,14 @@ msgid "Teasertext"
 msgstr ""
 
 #: includes/Config.php:143
-#: includes/Config.php:176
-#: templates/org_compact.php:178
-#: templates/org_default.php:178
-#: templates/person_card.php:182
-#: templates/person_compact.php:230
-#: templates/person_page.php:219
-#: build/blocks/faudir/index.js:1
-msgid "Social Media and Websites"
+msgid "Social media and websites"
 msgstr ""
 
 #: includes/Config.php:144
 #: includes/Contact.php:200
 #: includes/Contact.php:465
 #: templates/person_list.php:135
-#: templates/person_table.php:139
+#: templates/person_table.php:142
 #: build/blocks/faudir/index.js:1
 msgid "Room"
 msgstr ""
@@ -227,7 +215,7 @@ msgstr ""
 #: includes/Contact.php:203
 #: includes/Contact.php:470
 #: templates/person_list.php:206
-#: templates/person_table.php:208
+#: templates/person_table.php:211
 #: build/blocks/faudir/index.js:1
 msgid "Floor"
 msgstr ""
@@ -236,24 +224,23 @@ msgstr ""
 #: includes/Contact.php:206
 #: includes/Organization.php:263
 #: templates/person_list.php:264
-#: templates/person_table.php:251
+#: templates/person_table.php:254
 #: build/blocks/faudir/index.js:1
 #: build/blocks/service/index.js:151
 msgid "Street"
 msgstr ""
 
 #: includes/Config.php:148
-#: includes/Contact.php:216
 #: includes/Organization.php:264
-#: build/blocks/faudir/index.js:1
-msgid "ZIP Code"
+#: templates/person_table.php:263
+msgid "Postal code"
 msgstr ""
 
 #: includes/Config.php:149
 #: includes/Contact.php:226
 #: includes/Organization.php:265
 #: templates/person_list.php:286
-#: templates/person_table.php:269
+#: templates/person_table.php:272
 #: build/blocks/faudir/index.js:1
 #: build/blocks/service/index.js:151
 msgid "City"
@@ -265,47 +252,24 @@ msgstr ""
 #: includes/Contact.php:476
 #: includes/Organization.php:266
 #: includes/Organization.php:352
-#: templates/org_compact.php:148
-#: templates/org_default.php:148
+#: templates/org_compact.php:151
+#: templates/org_default.php:149
 #: templates/person_list.php:217
-#: templates/person_table.php:279
+#: templates/person_table.php:282
 #: build/blocks/faudir/index.js:1
 msgid "FAU Map"
 msgstr ""
 
-#: includes/Config.php:151
-#: includes/Config.php:182
-#: includes/Contact.php:277
-#: includes/OpeningHours.php:174
-#: templates/org_compact.php:195
-#: templates/org_default.php:195
-#: templates/person_compact.php:270
-#: templates/person_page.php:256
-#: build/blocks/faudir/index.js:1
-msgid "Office Hours"
-msgstr ""
-
 #: includes/Config.php:152
-#: includes/Config.php:183
-#: includes/Contact.php:308
-#: includes/OpeningHours.php:175
-#: templates/org_compact.php:186
-#: templates/org_default.php:186
-#: templates/person_compact.php:258
-#: templates/person_page.php:244
-#: build/blocks/faudir/index.js:1
-msgid "Consultation Hours"
+msgid "Consultation hours"
 msgstr ""
 
 #: includes/Config.php:153
-#: build/blocks/faudir/index.js:1
-msgid "Link to Profil"
+msgid "Link to profile"
 msgstr ""
 
 #: includes/Config.php:154
-#: includes/Config.php:163
-#: build/blocks/faudir/index.js:1
-msgid "Alternate Name"
+msgid "Alternate name"
 msgstr ""
 
 #: includes/Config.php:155
@@ -316,19 +280,20 @@ msgid "Text"
 msgstr ""
 
 #: includes/Config.php:156
-#: includes/Config.php:179
-#: templates/org_compact.php:82
-#: templates/org_default.php:82
-#: build/blocks/faudir/index.js:1
-msgid "Postal Address"
+msgid "Postal address"
 msgstr ""
 
 #: includes/Config.php:162
-#: includes/CPT.php:339
+#: includes/CPT.php:357
 #: includes/Settings.php:548
 #: build/blocks/faudir/index.js:1
 #: build/blocks/service/index.js:151
 msgid "Name"
+msgstr ""
+
+#: includes/Config.php:163
+#: build/blocks/faudir/index.js:1
+msgid "Alternate Name"
 msgstr ""
 
 #: includes/Config.php:164
@@ -341,181 +306,229 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
+#: includes/Config.php:176
+#: templates/org_compact.php:181
+#: templates/org_default.php:179
+#: templates/person_card.php:182
+#: templates/person_compact.php:230
+#: templates/person_page.php:219
+#: build/blocks/faudir/index.js:1
+msgid "Social Media and Websites"
+msgstr ""
+
+#: includes/Config.php:179
+#: templates/org_compact.php:85
+#: templates/org_default.php:83
+#: build/blocks/faudir/index.js:1
+msgid "Postal Address"
+msgstr ""
+
 #: includes/Config.php:180
 #: build/blocks/faudir/index.js:1
 msgid "Internal Address"
 msgstr ""
 
-#: includes/Config.php:189
-msgid "Administrative Employee"
+#: includes/Config.php:182
+#: includes/Contact.php:277
+#: includes/OpeningHours.php:174
+#: templates/org_compact.php:198
+#: templates/org_default.php:196
+#: templates/person_compact.php:270
+#: templates/person_page.php:256
+#: build/blocks/faudir/index.js:1
+msgid "Office Hours"
 msgstr ""
 
-#: includes/Config.php:190
-msgid "Adjunct professors"
+#: includes/Config.php:183
+#: includes/Contact.php:308
+#: includes/OpeningHours.php:175
+#: templates/org_compact.php:189
+#: templates/org_default.php:187
+#: templates/person_compact.php:258
+#: templates/person_page.php:244
+#: build/blocks/faudir/index.js:1
+msgid "Consultation Hours"
+msgstr ""
+
+#: includes/Config.php:185
+msgid "Link to Portal"
 msgstr ""
 
 #: includes/Config.php:191
-msgid "Privat dozent"
+msgid "Administrative Employee"
 msgstr ""
 
 #: includes/Config.php:192
-msgid "Campo administrator"
+msgid "Adjunct professors"
 msgstr ""
 
 #: includes/Config.php:193
-msgid "Deputy leader"
+msgid "Privat dozent"
 msgstr ""
 
 #: includes/Config.php:194
-msgid "Doctoral candidate"
+msgid "Campo administrator"
 msgstr ""
 
 #: includes/Config.php:195
-msgid "Employee"
+msgid "Deputy leader"
 msgstr ""
 
 #: includes/Config.php:196
-#: includes/Config.php:212
-msgid "Visiting lecturers"
+msgid "Doctoral candidate"
 msgstr ""
 
 #: includes/Config.php:197
-msgid "Visiting researchers"
+msgid "Employee"
 msgstr ""
 
 #: includes/Config.php:198
-msgid "Honorary professors"
+#: includes/Config.php:214
+msgid "Visiting lecturers"
 msgstr ""
 
 #: includes/Config.php:199
-msgid "IdM coordinator"
+msgid "Visiting researchers"
 msgstr ""
 
 #: includes/Config.php:200
-msgid "IT support staff"
+msgid "Honorary professors"
 msgstr ""
 
 #: includes/Config.php:201
-msgid "Assistant professors"
+msgid "IdM coordinator"
 msgstr ""
 
 #: includes/Config.php:202
-msgid "Head"
+msgid "IT support staff"
 msgstr ""
 
 #: includes/Config.php:203
-msgid "Professors"
+msgid "Assistant professors"
 msgstr ""
 
 #: includes/Config.php:204
-msgid "Research assistant"
+msgid "Head"
 msgstr ""
 
 #: includes/Config.php:205
-msgid "Retired professors"
+msgid "Professors"
 msgstr ""
 
 #: includes/Config.php:206
-msgid "Scholarship holder"
+msgid "Research assistant"
 msgstr ""
 
 #: includes/Config.php:207
-msgid "Research associates"
+msgid "Retired professors"
 msgstr ""
 
 #: includes/Config.php:208
-msgid "Secretary"
+msgid "Scholarship holder"
 msgstr ""
 
 #: includes/Config.php:209
-msgid "Student employee"
+msgid "Research associates"
 msgstr ""
 
 #: includes/Config.php:210
-msgid "Technical employee"
+msgid "Secretary"
 msgstr ""
 
 #: includes/Config.php:211
-msgid "Trainee"
+msgid "Student employee"
+msgstr ""
+
+#: includes/Config.php:212
+msgid "Technical employee"
 msgstr ""
 
 #: includes/Config.php:213
+msgid "Trainee"
+msgstr ""
+
+#: includes/Config.php:215
 msgid "Workplace manager"
-msgstr ""
-
-#: includes/Config.php:217
-#: build/blocks/faudir/index.js:1
-msgid "List"
-msgstr ""
-
-#: includes/Config.php:218
-#: build/blocks/faudir/index.js:1
-msgid "Table"
 msgstr ""
 
 #: includes/Config.php:219
 #: build/blocks/faudir/index.js:1
-msgid "Card"
+msgid "List"
 msgstr ""
 
 #: includes/Config.php:220
-#: includes/Config.php:222
 #: build/blocks/faudir/index.js:1
-msgid "Compact"
+msgid "Table"
 msgstr ""
 
 #: includes/Config.php:221
 #: build/blocks/faudir/index.js:1
+msgid "Card"
+msgstr ""
+
+#: includes/Config.php:222
+#: includes/Config.php:224
+#: build/blocks/faudir/index.js:1
+msgid "Compact"
+msgstr ""
+
+#: includes/Config.php:223
+#: build/blocks/faudir/index.js:1
 msgid "Page"
 msgstr ""
 
-#: includes/Config.php:238
+#: includes/Config.php:240
 msgid "Professor Doctor"
 msgstr ""
 
-#: includes/Config.php:246
+#: includes/Config.php:248
 msgid "Professor Doctor (Emeritus)"
 msgstr ""
 
-#: includes/Config.php:254
+#: includes/Config.php:256
 msgid "Professor"
 msgstr ""
 
-#: includes/Config.php:259
+#: includes/Config.php:261
 msgid "Professor (Emeritus)"
 msgstr ""
 
-#: includes/Config.php:264
+#: includes/Config.php:266
 msgid "Doctor"
 msgstr ""
 
-#: includes/Config.php:269
+#: includes/Config.php:271
 msgid "Doctor Private lecturer"
 msgstr ""
 
-#: includes/Config.php:277
+#: includes/Config.php:279
 msgid "Private lecturer"
 msgstr ""
 
-#: includes/Config.php:284
+#: includes/Config.php:286
 msgid "Professor Doctor (multiple)"
 msgstr ""
 
-#: includes/Config.php:289
+#: includes/Config.php:291
 msgid "Professor (multiple)"
 msgstr ""
 
-#: includes/Config.php:294
+#: includes/Config.php:296
 msgid "Doctor (multiple)"
 msgstr ""
 
-#: includes/Config.php:300
+#: includes/Config.php:302
 msgid "Professor Doctor (Emeritus, multiple)"
 msgstr ""
 
 #: includes/Contact.php:183
 #: includes/Contact.php:321
 msgid "No workplaces available"
+msgstr ""
+
+#: includes/Contact.php:216
+#: build/blocks/faudir/index.js:1
+msgid "ZIP Code"
 msgstr ""
 
 #: includes/Contact.php:236
@@ -538,10 +551,10 @@ msgstr ""
 
 #: includes/Contact.php:476
 #: includes/Organization.php:351
-#: templates/org_compact.php:149
-#: templates/org_default.php:149
+#: templates/org_compact.php:152
+#: templates/org_default.php:150
 #: templates/person_list.php:218
-#: templates/person_table.php:280
+#: templates/person_table.php:283
 msgid "Map"
 msgstr ""
 
@@ -550,268 +563,278 @@ msgstr ""
 msgid "No social media available"
 msgstr ""
 
-#: includes/CPT.php:107
-#: includes/CPT.php:109
+#: includes/CPT.php:124
+#: includes/CPT.php:126
 #: includes/Settings.php:163
 #: includes/Settings.php:348
 #: build/blocks/faudir/index.js:1
 msgid "Persons"
 msgstr ""
 
-#: includes/CPT.php:108
+#: includes/CPT.php:125
 msgid "Person"
 msgstr ""
 
-#: includes/CPT.php:110
-#: includes/CPT.php:879
+#: includes/CPT.php:127
+#: includes/CPT.php:931
 msgid "Add New Person"
 msgstr ""
 
-#: includes/CPT.php:110
+#: includes/CPT.php:127
 msgid "via FAUdir search"
 msgstr ""
 
-#: includes/CPT.php:111
+#: includes/CPT.php:128
 msgid "Edit Person"
 msgstr ""
 
-#: includes/CPT.php:170
+#: includes/CPT.php:187
 msgid "Additional Fields"
 msgstr ""
 
-#: includes/CPT.php:179
+#: includes/CPT.php:196
 msgid "Change history"
 msgstr ""
 
-#: includes/CPT.php:188
+#: includes/CPT.php:205
 msgid "FAUdir Update"
 msgstr ""
 
-#: includes/CPT.php:211
+#: includes/CPT.php:229
 #: includes/Settings.php:100
 msgid "Canonical URL"
 msgstr ""
 
-#: includes/CPT.php:213
+#: includes/CPT.php:231
 msgid "The canonical URL is the designated, most representative URL for a page like this person info, when that content is available at multiple URLs, a situation known as duplicate content. By specifying the canonical URL, search engines like Google know which page is added to its index, preventing confusion, consolidation of link equity, and improving search result presentation."
 msgstr ""
 
-#: includes/CPT.php:223
+#: includes/CPT.php:241
 msgid "Please note that this URL will be used when creating links to the person."
 msgstr ""
 
-#: includes/CPT.php:236
-#: includes/CPT.php:352
+#: includes/CPT.php:254
+#: includes/CPT.php:370
 msgid "FAUdir"
 msgstr ""
 
-#: includes/CPT.php:236
+#: includes/CPT.php:254
 msgid "Data"
 msgstr ""
 
-#: includes/CPT.php:236
-#: includes/CPT.php:352
+#: includes/CPT.php:254
+#: includes/CPT.php:370
 msgid "Read-only"
 msgstr ""
 
-#: includes/CPT.php:237
+#: includes/CPT.php:255
 msgid "The following data comes from the FAUdir portal. A change of data is only possible by the persons or the appointed contact persons in the FAUdir portal."
 msgstr ""
 
-#: includes/CPT.php:254
+#: includes/CPT.php:272
 msgid "No successful check yet."
 msgstr ""
 
-#: includes/CPT.php:256
+#: includes/CPT.php:274
 msgid "Last successful data fetch"
 msgstr ""
 
-#: includes/CPT.php:261
+#: includes/CPT.php:279
 msgid "n/a"
 msgstr ""
 
-#: includes/CPT.php:265
+#: includes/CPT.php:283
 msgid "Last error"
 msgstr ""
 
-#: includes/CPT.php:266
+#: includes/CPT.php:284
 msgid "Error count"
 msgstr ""
 
-#: includes/CPT.php:267
+#: includes/CPT.php:285
 msgid "This entry will be automatically unpublished and set to private if the persons profile cannot be accessed via FAUdir more than"
 msgstr ""
 
-#: includes/CPT.php:267
+#: includes/CPT.php:285
 msgid "times. In this case, it must be assumed that the person has set their own FAUdir profile to private."
 msgstr ""
 
-#: includes/CPT.php:285
-#: includes/CPT.php:728
+#: includes/CPT.php:303
+#: includes/CPT.php:746
 msgid "No contact found."
 msgstr ""
 
-#: includes/CPT.php:290
+#: includes/CPT.php:308
 msgid "FAUdir Identifier"
 msgstr ""
 
-#: includes/CPT.php:291
+#: includes/CPT.php:309
 msgid "Internal \"API Person Identification\" as used by FAUdir."
 msgstr ""
 
-#: includes/CPT.php:343
+#: includes/CPT.php:361
 msgid "Telephone"
 msgstr ""
 
-#: includes/CPT.php:344
+#: includes/CPT.php:362
 #: includes/Settings.php:506
 msgid "Given Name"
 msgstr ""
 
-#: includes/CPT.php:346
+#: includes/CPT.php:363
+#: includes/Settings.php:510
+#: build/blocks/faudir/index.js:1
+msgid "Family Name"
+msgstr ""
+
+#: includes/CPT.php:364
 msgid "Title"
 msgstr ""
 
-#: includes/CPT.php:347
+#: includes/CPT.php:365
 msgid "Suffix"
 msgstr ""
 
-#: includes/CPT.php:348
+#: includes/CPT.php:366
 msgid "Nobility Title"
 msgstr ""
 
-#: includes/CPT.php:352
+#: includes/CPT.php:370
 msgid "Contacts"
 msgstr ""
 
-#: includes/CPT.php:370
+#: includes/CPT.php:388
 msgid "Display this contact"
 msgstr ""
 
-#: includes/CPT.php:381
+#: includes/CPT.php:399
 msgid "Function (English)"
 msgstr ""
 
-#: includes/CPT.php:386
+#: includes/CPT.php:404
 msgid "Function (German)"
 msgstr ""
 
-#: includes/CPT.php:391
+#: includes/CPT.php:409
 msgid "Socials"
 msgstr ""
 
-#: includes/CPT.php:396
+#: includes/CPT.php:414
 msgid "Workplace"
 msgstr ""
 
-#: includes/CPT.php:413
+#: includes/CPT.php:431
 msgid "History is disabled in settings."
 msgstr ""
 
-#: includes/CPT.php:420
+#: includes/CPT.php:438
 msgid "No history entries yet."
 msgstr ""
 
-#: includes/CPT.php:471
+#: includes/CPT.php:489
 msgid "Revisions"
 msgstr ""
 
-#: includes/CPT.php:475
+#: includes/CPT.php:493
 msgid "latest revision (#%d)"
 msgstr ""
 
-#: includes/CPT.php:486
+#: includes/CPT.php:504
 msgid "Details"
 msgstr ""
 
-#: includes/CPT.php:535
+#: includes/CPT.php:553
 msgid "Contact number changed"
 msgstr ""
 
-#: includes/CPT.php:556
+#: includes/CPT.php:574
 msgid "Canonical URL changed"
 msgstr ""
 
-#: includes/CPT.php:628
+#: includes/CPT.php:646
 msgid "Old data entries from FAU Person migrated"
 msgstr ""
 
-#: includes/CPT.php:695
+#: includes/CPT.php:713
 msgid "Invalid person ID."
 msgstr ""
 
-#: includes/CPT.php:731
+#: includes/CPT.php:749
 msgid "Error fetching person attributes."
 msgstr ""
 
-#: includes/CPT.php:773
+#: includes/CPT.php:791
 msgid "Custom person created successfully!"
 msgstr ""
 
-#: includes/CPT.php:880
+#: includes/CPT.php:843
+msgid "Language of the post from RRZE Multilang."
+msgstr ""
+
+#: includes/CPT.php:932
 msgid "Add New"
 msgstr ""
 
-#: includes/CPT.php:898
+#: includes/CPT.php:950
 msgid "Redirecting to FAUdir search."
 msgstr ""
 
-#: includes/CPT.php:982
+#: includes/CPT.php:1034
 msgid "Post status changed"
 msgstr ""
 
-#: includes/CPT.php:1120
+#: includes/CPT.php:1172
 msgid "Content changed"
 msgstr ""
 
-#: includes/CPT.php:1122
+#: includes/CPT.php:1174
 msgid "Title changed"
 msgstr ""
 
-#: includes/CPT.php:1124
+#: includes/CPT.php:1176
 msgid "Excerpt changed"
 msgstr ""
 
-#: includes/CPT.php:1178
+#: includes/CPT.php:1230
 msgid "No valid person_id on this post."
 msgstr ""
 
-#: includes/CPT.php:1185
+#: includes/CPT.php:1237
 msgid "Deletes cached FAUdir data (transients) and fetches fresh person + contact data from the API."
 msgstr ""
 
-#: includes/CPT.php:1194
+#: includes/CPT.php:1246
 msgid "Update Person-Data from FAUdir"
 msgstr ""
 
-#: includes/CPT.php:1210
+#: includes/CPT.php:1262
 msgid "Invalid post_id."
 msgstr ""
 
-#: includes/CPT.php:1214
+#: includes/CPT.php:1266
 #: includes/Dashboard.php:35
 #: includes/Dashboard.php:107
 #: includes/Settings.php:933
 msgid "Insufficient permissions."
 msgstr ""
 
-#: includes/CPT.php:1219
+#: includes/CPT.php:1271
 msgid "Post not found."
 msgstr ""
 
-#: includes/CPT.php:1224
+#: includes/CPT.php:1276
 msgid "Invalid post type."
 msgstr ""
 
-#: includes/CPT.php:1230
+#: includes/CPT.php:1282
 msgid "Invalid person_id."
 msgstr ""
 
-#: includes/CPT.php:1250
+#: includes/CPT.php:1302
 msgid "Person not found or API error. Availability failure recorded."
 msgstr ""
 
-#: includes/CPT.php:1282
+#: includes/CPT.php:1334
 msgid "Person data refreshed. Contacts refreshed: %1$d, failed: %2$d."
 msgstr ""
 
@@ -927,7 +950,7 @@ msgstr ""
 #: templates/person_list.php:50
 #: templates/person_list.php:334
 #: templates/person_page.php:305
-#: templates/person_table.php:56
+#: templates/person_table.php:57
 msgid "No contact entry could be found."
 msgstr ""
 
@@ -1542,28 +1565,28 @@ msgstr ""
 msgid "If enabled, additional logging and revision handling is activated. This can slow down the block editor."
 msgstr ""
 
-#: includes/Shortcode.php:255
+#: includes/Shortcode.php:259
 msgid "No people could be found for display using the specified parameters."
 msgstr ""
 
-#: includes/Shortcode.php:445
+#: includes/Shortcode.php:449
 msgid "Bad value for parameter orgnr"
 msgstr ""
 
-#: includes/Shortcode.php:453
+#: includes/Shortcode.php:457
 msgid "Bad value for parameter orgid"
 msgstr ""
 
-#: includes/Shortcode.php:457
+#: includes/Shortcode.php:461
 msgid "Invalid oder missing parameter orgnr or orgid"
 msgstr ""
 
-#: includes/Shortcode.php:484
+#: includes/Shortcode.php:488
 msgid "Error on creating output"
 msgstr ""
 
 #. translators: 1: FAUdir Identifier Key
-#: includes/Shortcode.php:1001
+#: includes/Shortcode.php:1005
 msgid "Person with ID %s does not exist"
 msgstr ""
 
@@ -1577,13 +1600,12 @@ msgstr ""
 msgid "Your WordPress version (%1$s) is outdated. Please upgrade to WordPress %2$s or higher."
 msgstr ""
 
-#: templates/org_compact.php:233
-#: templates/org_default.php:233
+#: templates/org_compact.php:236
+#: templates/org_default.php:234
 msgid "No org entry could be found."
 msgstr ""
 
 #: templates/person_list.php:275
-#: templates/person_table.php:260
 msgid "Postal Code"
 msgstr ""
 
@@ -1780,10 +1802,6 @@ msgid "Filter contacts by FAUdir role or job title (for example: Head, Deputy, P
 msgstr ""
 
 #: build/blocks/faudir/index.js:1
-msgid "Family name"
-msgstr ""
-
-#: build/blocks/faudir/index.js:1
 msgid "Academic title, then family name"
 msgstr ""
 
@@ -1793,10 +1811,6 @@ msgstr ""
 
 #: build/blocks/faudir/index.js:1
 msgid "Head of Department first, then academic title"
-msgstr ""
-
-#: build/blocks/faudir/index.js:1
-msgid "Academic title"
 msgstr ""
 
 #: build/blocks/faudir/index.js:1
@@ -1829,6 +1843,30 @@ msgstr ""
 
 #: build/blocks/faudir/index.js:1
 msgid "Order is ignored when using “Identifier order”."
+msgstr ""
+
+#: build/blocks/faudir/index.js:1
+msgid "Display Name"
+msgstr ""
+
+#: build/blocks/faudir/index.js:1
+msgid "Academic Title"
+msgstr ""
+
+#: build/blocks/faudir/index.js:1
+msgid "Academic Suffix"
+msgstr ""
+
+#: build/blocks/faudir/index.js:1
+msgid "First Name"
+msgstr ""
+
+#: build/blocks/faudir/index.js:1
+msgid "Title of Nobility"
+msgstr ""
+
+#: build/blocks/faudir/index.js:1
+msgid "Link to Profil"
 msgstr ""
 
 #: build/blocks/faudir/index.js:1

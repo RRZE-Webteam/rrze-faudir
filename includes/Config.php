@@ -8,7 +8,7 @@ defined('ABSPATH') || exit;
 class Config {
     private string $optionName = 'rrze_faudir_options';
     private array $config = [
-        'version'                           => 16,  // please count this up any time we change the config array
+        'version'                           => 17,  // please count this up any time we change the config array
         'person_slug'                       => 'faudir',
         'redirect_to_canonicals'            => false,
         'redirect_archivpage_uri'           => '',
@@ -37,8 +37,8 @@ class Config {
             'compact'       => ['image', 'displayname', 'honorificPrefix','honorificSuffix', 'givenName', 'titleOfNobility', 'familyName', 'jobTitle', 'phone', 'fax', 'email', 'url', 'socialmedia', 'organization', 'address', 'room', 'floor', 'faumap', 'teasertext', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'link', 'format_displayname'],
             'page'          => ['image', 'displayname', 'honorificPrefix','honorificSuffix', 'givenName', 'titleOfNobility', 'familyName', 'jobTitle', 'phone', 'fax', 'email', 'url', 'socialmedia', 'organization', 'address', 'room', 'floor', 'faumap', 'teasertext', 'content', 'zip', 'street', 'city', 'officehours', 'consultationhours', 'format_displayname'],            
             'card'          => ['image', 'displayname', 'honorificPrefix','honorificSuffix', 'givenName',  'familyName', 'jobTitle', 'phone', 'fax', 'organization', 'url', 'email', 'socialmedia', 'link', 'format_displayname', 'teasertext'],
-            'org-compact'   => [ 'name', 'alternateName', 'phone', 'fax', 'email', 'url', 'socialmedia','address', 'postalAddress', 'faumap', 'officehours', 'consultationhours', 'text'],
-            'org-default'   => [ 'name', 'alternateName', 'phone', 'fax', 'email', 'url', 'socialmedia','address', 'postalAddress', 'faumap', 'officehours', 'consultationhours', 'text'],
+            'org-compact'   => [ 'name', 'alternateName', 'phone', 'fax', 'email', 'url', 'socialmedia','address', 'postalAddress', 'faumap', 'officehours', 'consultationhours', 'text', 'link'],
+            'org-default'   => [ 'name', 'alternateName', 'phone', 'fax', 'email', 'url', 'socialmedia','address', 'postalAddress', 'faumap', 'officehours', 'consultationhours', 'text', 'link'],
         ],
         'default_fields_byformat'   => [
             'default'       => ['image', 'displayname', 'jobTitle', 'email', 'phone', 'socialmedia', 'link', 'organization'],
@@ -50,8 +50,8 @@ class Config {
             'compact'       => ['image', 'displayname', 'jobTitle', 'email','url', 'phone', 'socialmedia', 'link', 'organization', 'address'],
             'table'         => ['image', 'displayname', 'jobTitle', 'email','url', 'phone', 'socialmedia', 'link', 'organization'],
             'card'          => ['image', 'displayname', 'jobTitle', 'email','url', 'phone', 'socialmedia', 'link'],
-            'org-compact'   => ['name', 'phone', 'fax', 'email', 'url', 'socialmedia', 'address', 'faumap', 'officehours', 'consultationhours', 'text'],
-            'org-default'   => ['name', 'phone', 'fax', 'email', 'url', 'socialmedia', 'address', 'faumap', 'officehours', 'consultationhours', 'text'],
+            'org-compact'   => ['name', 'phone', 'fax', 'email', 'url', 'socialmedia', 'address', 'faumap', 'officehours', 'consultationhours', 'text', 'link'],
+            'org-default'   => ['name', 'phone', 'fax', 'email', 'url', 'socialmedia', 'address', 'faumap', 'officehours', 'consultationhours', 'text', 'link'],
         ],
         
         'default_format'    => 'compact',
@@ -126,12 +126,12 @@ class Config {
     public function __construct() {
         $this->config['avaible_fields'] = [
             'image'             => __('Image', 'rrze-faudir'),
-            'displayname'       => __('Display Name', 'rrze-faudir'),
-            'honorificPrefix'   => __('Academic Title', 'rrze-faudir'),
-            'honorificSuffix'   => __('Academic Suffix', 'rrze-faudir'),
-            'givenName'         => __('First Name', 'rrze-faudir'),
-            'titleOfNobility'   => __('Title of Nobility', 'rrze-faudir'),
-            'familyName'        => __('Family Name', 'rrze-faudir'),
+            'displayname'       => __('Display name', 'rrze-faudir'),
+            'honorificPrefix'   => __('Academic title', 'rrze-faudir'),
+            'honorificSuffix'   => __('Academic suffix', 'rrze-faudir'),
+            'givenName'         => __('First name', 'rrze-faudir'),
+            'titleOfNobility'   => __('Title of nobility', 'rrze-faudir'),
+            'familyName'        => __('Family name', 'rrze-faudir'),
             'email'             => __('Email', 'rrze-faudir'),
             'phone'             => __('Phone', 'rrze-faudir'),
             'fax'               => __('Fax', 'rrze-faudir'),
@@ -140,20 +140,20 @@ class Config {
             'url'               => __('URL', 'rrze-faudir'),
             'content'           => __('Content', 'rrze-faudir'),
             'teasertext'        => __('Teasertext', 'rrze-faudir'),
-            'socialmedia'       => __('Social Media and Websites', 'rrze-faudir'),
+            'socialmedia'       => __('Social media and websites', 'rrze-faudir'),
             'room'              => __('Room', 'rrze-faudir'),
             'floor'             => __('Floor', 'rrze-faudir'),
             'address'           => __('Address', 'rrze-faudir'),
             'street'            => __('Street', 'rrze-faudir'),
-            'zip'               => __('ZIP Code', 'rrze-faudir'),
+            'zip'               => __('Postal code', 'rrze-faudir'),
             'city'              => __('City', 'rrze-faudir'),
             'faumap'            => __('FAU Map', 'rrze-faudir'),
-            'officehours'       => __('Office Hours', 'rrze-faudir'),
-            'consultationhours' => __('Consultation Hours', 'rrze-faudir'),
-            'link'              => __('Link to Profil', 'rrze-faudir'),
-            'alternateName'     => __('Alternate Name', 'rrze-faudir'),
+            'officehours'       => __('Office hours', 'rrze-faudir'),
+            'consultationhours' => __('Consultation hours', 'rrze-faudir'),
+            'link'              => __('Link to profile', 'rrze-faudir'),
+            'alternateName'     => __('Alternate name', 'rrze-faudir'),
             'text'              => __('Text', 'rrze-faudir'),
-            'postalAddress'     => __('Postal Address', 'rrze-faudir'),
+            'postalAddress'     => __('Postal address', 'rrze-faudir'),
  //           'name'              => __('Name', 'rrze-faudir'),
         ];
 
@@ -181,6 +181,8 @@ class Config {
 
             'officehours'       => __('Office Hours', 'rrze-faudir'),
             'consultationhours' => __('Consultation Hours', 'rrze-faudir'),
+            
+            'link'              => __('Link to Portal', 'rrze-faudir'),
 
         ];
 
