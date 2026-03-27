@@ -260,7 +260,7 @@ if (!defined('ABSPATH')) {
                                         $wval = '';
                                         foreach ($workplaces as $w => $wdata) {
                                             if (!empty($wdata['zip'])) {
-                                                $wval .= '<span class="zip"><span class="screen-reader-text">'.__('Postal Code','rrze-faudir').': </span>'.esc_html($wdata['zip']).'</span>';
+                                                $wval .= '<span class="zip"><span class="screen-reader-text">'.__('Postal code','rrze-faudir').': </span>'.esc_html($wdata['zip']).'</span>';
                                             }
                                         }
                                         $value = $wval;      

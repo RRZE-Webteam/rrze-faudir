@@ -39,11 +39,13 @@ if (!defined('ABSPATH')) {
                        <?php 
 
                         $value_escaped = '';
-                        if (!empty($final_url)) {
+                        
+                        if ((!empty($final_url)) && (in_array('link', $show_fields))) {
                             $value_escaped .= '<a itemprop="url" href="'.esc_url($final_url).'">';     
                         }
+
                         $value_escaped .= $displayname;
-                        if (!empty($final_url)) {
+                        if ((!empty($final_url)) && (in_array('link', $show_fields))) {
                             $value_escaped .= '</a>';
                         }                        
                         echo '<h1 id="'.esc_attr($aria_id).'">'.$value_escaped.'</h1>';

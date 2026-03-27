@@ -261,7 +261,7 @@ class Organization {
         if (!empty($address['mail']))  $addressDetails[] = __('Email', 'rrze-faudir') . ': ' . $address['mail'];
         if (!empty($address['url']))   $addressDetails[] = __('URL', 'rrze-faudir') . ': ' . $address['url'];
         if (!empty($address['street'])) $addressDetails[] = __('Street', 'rrze-faudir') . ': ' . $address['street'];
-        if (!empty($address['zip']))    $addressDetails[] = __('ZIP Code', 'rrze-faudir') . ': ' . $address['zip'];
+        if (!empty($address['zip']))    $addressDetails[] = __('Postal code', 'rrze-faudir') . ': ' . $address['zip'];
         if (!empty($address['city']))   $addressDetails[] = __('City', 'rrze-faudir') . ': ' . $address['city'];
         if (!empty($address['faumap'])) $addressDetails[] = __('FAU Map', 'rrze-faudir') . ': ' . $address['faumap'];
 
