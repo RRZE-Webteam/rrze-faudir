@@ -70,8 +70,25 @@ class CPT {
         // Actions zum Resetten der Personendaten
         add_action('wp_ajax_rrze_faudir_refresh_person_data', [$this, 'ajax_refresh_person_data']);
         
+        
+        // Falls Multilang vorhanden und aktiv ist, müssen wir bei dem Default REST Output den
+        // Filter von Multilang disablen, da wir ansonsten nur die Personeneinträge in der 
+        // SItesprache bekommen. 
+        // Wir wollebn aber ausdrücklich auch die anderen SPrachvarianten zur Auswahl anbieten.
+        $post_type = $this->config->get('person_post_type');
+        if (class_exists('\RRZE\Multilang\Helper')) {
+            add_filter(
+                "rest_{$post_type}_query",
+                [$this, 'disable_multilang_locale_filter_for_rest'],
+                10,
+                2
+            );
+        }
+        
         // Rest Endpoints nur wenn sie gebraucht werden
         add_filter('rest_endpoints', [$this, 'filter_rest_endpoints']);
+        
+        
         
         // Canonical URL verwalten, wenn vorhanden
         add_filter('get_canonical_url', [$this, 'maybe_override_canonical'], 10, 2);
@@ -202,8 +219,9 @@ class CPT {
 
         $post_type = $this->config->get('person_post_type');
         if ($post->post_type !== $post_type) return;
-
-     
+        
+$meta = get_post_meta($post->ID);
+do_action( 'rrze.log.info',"FAUdir\CPT (render_person_additional_fields): Person Meta ",$meta);
      
         // ---- Canonical URL (editierbar) ----
         $canonical_url = get_post_meta($post->ID, $this->canonical_meta_key, true);
@@ -774,7 +792,17 @@ class CPT {
         ]);
     }
 
-    /* === REST === */
+    
+    
+    public function disable_multilang_locale_filter_for_rest(array $args, \WP_REST_Request $request): array {
+            // Ergänze den Query-ARG gemäß RRZE Multilang:
+            $args['rrze_multilang_suppress_locale_query'] = true;
+            return $args;
+        }
+
+    /* 
+     * Bereitstellung von Daten von Personen über RES damit der Block Editor darauf zugreifen kannT 
+     */
     public function register_person_meta_for_rest() {
         $post_type = $this->config->get('person_post_type');
         // person_id
@@ -795,6 +823,30 @@ class CPT {
                 return $this->sanitize_canonical_url($value);
             },
         ]);
+        // post_language nur bereitstellen, wenn RRZE Multilang aktiv ist
+        if (class_exists('\RRZE\Multilang\Helper')) {
+            register_rest_field($post_type, 'post_language', [
+                'get_callback' => function(array $object) {
+                    $post_id = isset($object['id']) ? (int) $object['id'] : 0;
+                    if ($post_id <= 0) {
+                        return '';
+                    }
+
+                    $locale = get_post_meta($post_id, '_rrze_multilang_single_locale', true);
+                    if (!is_string($locale)) {
+                        return '';
+                    }
+
+                    return trim($locale);
+                },
+                'schema' => [
+                    'description' => __('Language of the post from RRZE Multilang.', 'rrze-faudir'),
+                    'type'        => 'string',
+                    'context'     => ['view', 'edit'],
+                ],
+            ]);
+        }
+
         // Keine weiteren API-Felder registrieren.
     }
 

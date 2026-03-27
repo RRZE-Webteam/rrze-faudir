@@ -29,11 +29,13 @@
 	tbody tr:nth-child(2n) {
 	    background-color: inherit;
 	    min-width: inherit;
-	    width: inherit;
+	    width: inherit;	
 	    
-	}
-	tbody tr td {
-	    width: auto;
+	    td {
+		width: auto;
+		min-width: 80px;
+		// benotigt, weil das theme sonst eine min.width von 21.25 rem setzt.
+	    }
 	}
     }
 	  

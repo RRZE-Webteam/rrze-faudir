@@ -18,6 +18,11 @@ export interface PersonSelectorProps {
     togglePostSelection: (postId: number) => void;
 }
 
+type PostOption = {
+    id: number;
+    label: string;
+};
+
 export default function PersonSelector({
     isLoadingPosts,
     posts,
@@ -26,13 +31,43 @@ export default function PersonSelector({
 }: PersonSelectorProps) {
     const [showModal, setShowModal] = useState(false);
 
-    const postOptions = useMemo(() => {
+    const postOptions = useMemo(function(): PostOption[] {
+        const titleCounts = new Map<string, number>();
+
+        posts.forEach(function(post) {
+            const title = post?.title?.rendered?.trim() ?? "";
+            const currentCount = titleCounts.get(title) ?? 0;
+            titleCounts.set(title, currentCount + 1);
+        });
+
         return posts.map(function(post) {
-            const title = post?.title?.rendered ?? "";
-            const personId = post?.meta?.person_id ? String(post.meta.person_id) : "";
-            const label = personId !== ""
-                ? `${title} [${personId}]`
-                : `${title} (#${post.id})`;
+            const title = post?.title?.rendered?.trim() ?? "";
+            const postLanguage = typeof post?.post_language === "string"
+                ? post.post_language.trim()
+                : "";
+            const personId = typeof post?.meta?.person_id === "string"
+                ? post.meta.person_id.trim()
+                : "";
+
+            const isDuplicateTitle = (titleCounts.get(title) ?? 0) > 1;
+
+            let label = title;
+
+            if (isDuplicateTitle) {
+                const additions: string[] = [];
+
+                if (postLanguage !== "") {
+                    additions.push(postLanguage);
+                }
+
+                if (personId !== "") {
+                    additions.push(personId);
+                }
+
+                if (additions.length > 0) {
+                    label = `${title} [${additions.join(" | ")}]`;
+                }
+            }
 
             return {
                 id: post.id,
@@ -41,7 +76,7 @@ export default function PersonSelector({
         });
     }, [posts]);
 
-    const suggestionMap = useMemo(() => {
+    const suggestionMap = useMemo(function() {
         const map = new Map<string, number>();
 
         postOptions.forEach(function(option) {
@@ -51,7 +86,7 @@ export default function PersonSelector({
         return map;
     }, [postOptions]);
 
-    const selectedTitles = useMemo(() => {
+    const selectedTitles = useMemo(function() {
         return postOptions
             .filter(function(option) {
                 return selectedPosts.includes(option.id);
@@ -61,7 +96,7 @@ export default function PersonSelector({
             });
     }, [postOptions, selectedPosts]);
 
-    const suggestions = useMemo(() => {
+    const suggestions = useMemo(function() {
         return postOptions.map(function(option) {
             return option.label;
         });

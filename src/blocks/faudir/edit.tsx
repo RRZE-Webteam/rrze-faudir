@@ -164,7 +164,7 @@ export default function Edit({ attributes, setAttributes }: EditProps) {
         async function loadPosts() {
             try {
                 var query: CustomPersonParams = {
-                    _fields: 'id,title,meta',
+                    _fields: 'id,title,meta,post_language',
                     orderby: 'title',
                     order: 'asc',
                 };
@@ -176,6 +176,21 @@ export default function Edit({ attributes, setAttributes }: EditProps) {
                 );
 
                 if (!ac.signal.aborted) {
+		     console.log("FAUdir loaded persons:", allPeople);
+            console.log(
+                "Languages found:",
+                allPeople.map(function(p) {
+                    return {
+                        id: p.id,
+                        title: p.title?.rendered,
+			personid: p.meta?.person_id,
+                        lang: p.post_language
+                    };
+                })
+            );
+    console.log("First person meta:", allPeople[0]?.meta);
+
+		    
                     setPosts(allPeople);
                 }
             } catch (error) {
