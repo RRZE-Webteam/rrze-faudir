@@ -1346,12 +1346,13 @@ class CPT {
      */
     public function findPostIdByPersonId(string $personId): int {
         $personId = trim($personId);
+        $post_type = $this->config->get('person_post_type');
         if ($personId === '') {
             return 0;
         }
 
         $ids = get_posts([
-            'post_type'      => $this->postType,
+            'post_type'      => $post_type,
             'fields'         => 'ids',
             'posts_per_page' => 1,
             'meta_query'     => [
@@ -1368,12 +1369,14 @@ class CPT {
 
     public function findPostIdByUnivISId(string $univisid): int {
         $univisid = FaudirUtils::sanitizeUnivISId($univisid);
+        $post_type = $this->config->get('person_post_type');
+        
         if (!FaudirUtils::isValidUnivISId($univisid)) {
             return 0;
         }
 
         $ids = get_posts([
-            'post_type'      => $this->postType,
+            'post_type'      => $post_type,
             'fields'         => 'ids',
             'posts_per_page' => 1,
             'meta_query'     => [
