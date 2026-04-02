@@ -165,19 +165,55 @@ final class Cron {
 
     private function set_post_private(int $post_id, array $context = []): void {
         $current = (string) get_post_status($post_id);
+
+        do_action('rrze.log.warning', "FAUdir\\Cron (set_post_private): entered", [
+            'post_id' => $post_id,
+            'current_status' => $current,
+            'target_status' => Constants::PERSON_STATUS_ON_MISSING,
+            'context' => $context,
+        ]);
+
         if ($current === Constants::PERSON_STATUS_ON_MISSING) {
+            do_action('rrze.log.warning', "FAUdir\\Cron (set_post_private): already private", [
+                'post_id' => $post_id,
+                'current_status' => $current,
+            ]);
             return;
         }
 
         update_post_meta($post_id, Constants::META_PREV_STATUS, $current);
 
-        wp_update_post([
+        $result = wp_update_post([
             'ID'          => $post_id,
             'post_status' => Constants::PERSON_STATUS_ON_MISSING,
+        ], true);
+
+        if (is_wp_error($result)) {
+            do_action('rrze.log.error', "FAUdir\\Cron (set_post_private): wp_update_post failed", [
+                'post_id' => $post_id,
+                'error' => $result->get_error_message(),
+                'target_status' => Constants::PERSON_STATUS_ON_MISSING,
+                'context' => $context,
+            ]);
+            return;
+        }
+
+        $new_status = (string) get_post_status($post_id);
+
+        do_action('rrze.log.warning', "FAUdir\\Cron (set_post_private): wp_update_post finished", [
+            'post_id' => $post_id,
+            'result' => $result,
+            'new_status' => $new_status,
+            'target_status' => Constants::PERSON_STATUS_ON_MISSING,
+            'context' => $context,
         ]);
-        $this->add_private_alert($post_id, (string) $current);
-        
-        do_action( 'rrze.log.warning',"FAUdir\Cron (set_post_private): Person post set to private {$post_id}", $context);
+
+        $this->add_private_alert($post_id, $current);
+
+        do_action('rrze.log.warning', "FAUdir\\Cron (set_post_private): alert added", [
+            'post_id' => $post_id,
+            'old_status' => $current,
+        ]);
     }
 
     private function maybe_restore_from_private(int $post_id, array $context = []): void {
