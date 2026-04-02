@@ -239,16 +239,7 @@ class CPT {
             echo esc_html__('Please note that this URL will be used when creating links to the person.', 'rrze-faudir');
             echo '</p>';
         }
-do_action(
-    'rrze.log.info',
-    "FAUdir\\CPT (render_person_additional_fields): checking cron meta for post {$post->ID}",
-    [
-        'last_failure_key' => Constants::META_LAST_FAILURE_AT,
-        'failure_count_key' => Constants::META_FAILURE_COUNT,
-        'last_failure_raw' => get_post_meta($post->ID, Constants::META_LAST_FAILURE_AT, true),
-        'failure_count_raw' => get_post_meta($post->ID, Constants::META_FAILURE_COUNT, true),
-    ]
-);
+
          
         /*
          * Aktuelle Cron-Info zeigen, wenn vorhanden:
@@ -280,16 +271,16 @@ do_action(
         }
         echo '<p><strong>' . esc_html__('Last successful data fetch', 'rrze-faudir') . ':</strong> ' . esc_html($success_str) . '</p>';
 
-        if ($last_failure > 0 || $fail_count > 0) {
+       if ($last_failure > 0 || $fail_count > 0) {
             $failure_str = $fmt($last_failure);
             if ($failure_str === '') {
                 $failure_str = esc_html__('n/a', 'rrze-faudir');
             }
 
-            echo '<div class="notice notice-warning">';
+            echo '<div class="faudir-meta-warning">';
             echo '<p><strong>' . esc_html__('Last error', 'rrze-faudir') . ':</strong> ' . esc_html($failure_str) . '</p>';
             echo '<p><strong>' . esc_html__('Error count', 'rrze-faudir') . ':</strong> ' . esc_html((string) $fail_count) . '</p>';
-            echo '<p><strong>'. esc_html__('This entry will be automatically unpublished and set to private if the persons profile cannot be accessed via FAUdir more than','rrze-faudir').' '.Constants::PERSON_AVAILABILITY_MAX_FAILURES.' '.esc_html__('times. In this case, it must be assumed that the person has set their own FAUdir profile to private.', 'rrze-faudir') . '</strong></p>';
+            echo '<p><strong>' . esc_html__('This entry will be automatically unpublished and set to private if the persons profile cannot be accessed via FAUdir more than', 'rrze-faudir') . ' ' . Constants::PERSON_AVAILABILITY_MAX_FAILURES . ' ' . esc_html__('times. In this case, it must be assumed that the person has set their own FAUdir profile to private.', 'rrze-faudir') . '</strong></p>';
             echo '</div>';
         }
         
