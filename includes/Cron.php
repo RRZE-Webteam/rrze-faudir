@@ -166,42 +166,17 @@ final class Cron {
     private function set_post_private(int $post_id, array $context = []): void {
         $current = (string) get_post_status($post_id);
 
-        do_action('rrze.log.warning', "FAUdir\\Cron (set_post_private): entered", [
-            'post_id' => $post_id,
-            'current_status' => $current,
-            'target_status' => Constants::PERSON_STATUS_ON_MISSING,
-            'context' => $context,
-        ]);
-
         if ($current === Constants::PERSON_STATUS_ON_MISSING) {
-            do_action('rrze.log.warning', "FAUdir\\Cron (set_post_private): already private", [
-                'post_id' => $post_id,
-                'current_status' => $current,
-            ]);
             return;
         }
-do_action('rrze.log.warning', "FAUdir\\Cron (set_post_private): before update META_PREV_STATUS", [
-        'post_id' => $post_id,
-        'current_status' => $current,
-    ]);
 
         update_post_meta($post_id, Constants::META_PREV_STATUS, $current);
-    do_action('rrze.log.warning', "FAUdir\\Cron (set_post_private): after update META_PREV_STATUS", [
-        'post_id' => $post_id,
-        'stored_prev_status' => get_post_meta($post_id, Constants::META_PREV_STATUS, true),
-    ]);
-    
-    
+   
         $result = wp_update_post([
             'ID'          => $post_id,
             'post_status' => Constants::PERSON_STATUS_ON_MISSING,
         ], true);
         
- do_action('rrze.log.warning', "FAUdir\\Cron (set_post_private): after wp_update_post", [
-        'post_id' => $post_id,
-        'result' => is_wp_error($result) ? $result->get_error_message() : $result,
-        'new_status' => get_post_status($post_id),
-    ]);
 
         if (is_wp_error($result)) {
             do_action('rrze.log.error', "FAUdir\\Cron (set_post_private): wp_update_post failed", [
@@ -213,22 +188,9 @@ do_action('rrze.log.warning', "FAUdir\\Cron (set_post_private): before update ME
             return;
         }
 
-        $new_status = (string) get_post_status($post_id);
-
-        do_action('rrze.log.warning', "FAUdir\\Cron (set_post_private): wp_update_post finished", [
-            'post_id' => $post_id,
-            'result' => $result,
-            'new_status' => $new_status,
-            'target_status' => Constants::PERSON_STATUS_ON_MISSING,
-            'context' => $context,
-        ]);
-
         $this->add_private_alert($post_id, $current);
 
-        do_action('rrze.log.warning', "FAUdir\\Cron (set_post_private): alert added", [
-            'post_id' => $post_id,
-            'old_status' => $current,
-        ]);
+
     }
 
     private function maybe_restore_from_private(int $post_id, array $context = []): void {

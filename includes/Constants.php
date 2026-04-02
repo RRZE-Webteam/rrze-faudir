@@ -55,6 +55,7 @@ final class Constants {
     public const META_LAST_FAILURE_AT               = '_faudir_api_last_failure_at';
     public const META_FAILURE_COUNT                 = '_faudir_api_failure_count';
     public const TRANSIENT_AVAILABILITY_RUNNING     = 'rrze_faudir_check_person_availability_running';
+    public const META_PREV_STATUS                   = '_faudir_prev_status';
         // Note: Wir nutzen hier nicht die TRANSIENT_PREFIX_BASE, da wir diese Transients nicht 
         // durch den User ausversehen löschen wollen, während der Cron läuft
     public const TRANSIENT_AVAILABILITY_TTL         = 1200;
