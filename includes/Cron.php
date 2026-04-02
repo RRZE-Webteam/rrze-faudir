@@ -180,13 +180,28 @@ final class Cron {
             ]);
             return;
         }
+do_action('rrze.log.warning', "FAUdir\\Cron (set_post_private): before update META_PREV_STATUS", [
+        'post_id' => $post_id,
+        'current_status' => $current,
+    ]);
 
         update_post_meta($post_id, Constants::META_PREV_STATUS, $current);
-
+    do_action('rrze.log.warning', "FAUdir\\Cron (set_post_private): after update META_PREV_STATUS", [
+        'post_id' => $post_id,
+        'stored_prev_status' => get_post_meta($post_id, Constants::META_PREV_STATUS, true),
+    ]);
+    
+    
         $result = wp_update_post([
             'ID'          => $post_id,
             'post_status' => Constants::PERSON_STATUS_ON_MISSING,
         ], true);
+        
+ do_action('rrze.log.warning', "FAUdir\\Cron (set_post_private): after wp_update_post", [
+        'post_id' => $post_id,
+        'result' => is_wp_error($result) ? $result->get_error_message() : $result,
+        'new_status' => get_post_status($post_id),
+    ]);
 
         if (is_wp_error($result)) {
             do_action('rrze.log.error', "FAUdir\\Cron (set_post_private): wp_update_post failed", [
