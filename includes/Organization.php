@@ -290,7 +290,7 @@ class Organization {
     public function getAddressOutput(bool $orgname = false, string $lang = 'de', bool $showmap = false): ?string {
         $workplace = $this->address;
         if (empty($workplace) || !is_array($workplace)) {
-            do_action('rrze.log.warn', "FAUdir\Organization (getAddressOutput): No workplace data in {$orgname}");
+            do_action('rrze.log.warning', "FAUdir\Organization (getAddressOutput): No workplace data in {$orgname}");
             return '';
         }
 

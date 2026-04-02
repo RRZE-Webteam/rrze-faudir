@@ -1286,19 +1286,37 @@ class CPT {
         $cache = new Cache($api->getApiBaseUrl());
         $cache->deletePersonTransient($person_id);
 
+        $old_status = (string) get_post_status($post_id);
+        
         $person = $api->getPerson($person_id);
-        $ok = (is_array($person) && !empty($person));
-
+    //    $ok = (is_array($person) && !empty($person));
+        $ok = !($person === false || empty($person));
+        
+        
+        
         $cron = new Cron($this->config);
         $cron->apply_availability_result($post_id, $ok, [
             'person_id' => $person_id,
             'source'    => 'manual_refresh',
         ]);
 
+        $new_status = (string) get_post_status($post_id);
+        $fail_count = (int) get_post_meta($post_id, Constants::META_FAILURE_COUNT, true);
+
         if (!$ok) {
-            wp_send_json_error([
-                'message' => __('Person not found or API error. Availability failure recorded.', 'rrze-faudir'),
-            ], 500);
+            $message = __('Person not found or API error. Availability failure recorded.', 'rrze-faudir');
+
+            if ($old_status !== Constants::PERSON_STATUS_ON_MISSING && $new_status === Constants::PERSON_STATUS_ON_MISSING) {
+                $message = __('Person not found or API error. Maximum failures reached and the post was set to private.', 'rrze-faudir');
+            }
+
+            wp_send_json_success([
+                'message'      => $message,
+                'reload'       => true,
+                'ok'           => false,
+                'post_status'  => $new_status,
+                'failure_count'=> $fail_count,
+            ]);
         }
 
         $refreshed = 0;
@@ -1335,8 +1353,11 @@ class CPT {
         );
 
         wp_send_json_success([
-            'message' => $msg,
-            'reload'  => true,
+            'message'      => $msg,
+            'reload'       => true,
+            'ok'           => true,
+            'post_status'  => $new_status,
+            'failure_count'=> $fail_count,
         ]);
     }
     

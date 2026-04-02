@@ -132,7 +132,7 @@ final class Cron {
         update_post_meta($post_id, Constants::META_LAST_FAILURE_AT, $ts);
         update_post_meta($post_id, Constants::META_FAILURE_COUNT, $count);
     
-        do_action( 'rrze.log.warn',"FAUdir\Cron (mark_failure_published): Post {$post_id} will be marked with failure",
+        do_action( 'rrze.log.warning',"FAUdir\Cron (mark_failure_published): Post {$post_id} will be marked with failure",
         [
             'last_failure_key' => Constants::META_LAST_FAILURE_AT,
             'last_failure_value' => $ts,
@@ -142,7 +142,7 @@ final class Cron {
         ]);
  
         if ($count >= $max) {
-            do_action( 'rrze.log.warn',"FAUdir\Cron (mark_failure_published): Post {$post_id} reached max failure count. Will be set to privat",
+            do_action( 'rrze.log.warning',"FAUdir\Cron (mark_failure_published): Post {$post_id} reached max failure count. Will be set to privat",
             [
                 'last_failure_key' => Constants::META_LAST_FAILURE_AT,
                 'last_failure_value' => $ts,
@@ -177,7 +177,7 @@ final class Cron {
         ]);
         $this->add_private_alert($post_id, (string) $current);
         
-        do_action( 'rrze.log.warn',"FAUdir\Cron (set_post_private): Person post set to private {$post_id}", $context);
+        do_action( 'rrze.log.warning',"FAUdir\Cron (set_post_private): Person post set to private {$post_id}", $context);
     }
 
     private function maybe_restore_from_private(int $post_id, array $context = []): void {
