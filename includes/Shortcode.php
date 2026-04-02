@@ -772,7 +772,7 @@ class Shortcode {
 
         $orgid = FaudirUtils::sanitizeOrganizationId($id);
         if ($orgid === null) {
-            do_action('rrze.log.warn', "FAUdir\Shortcode (getPersonsByFAUdirOrgId): Invalid OrgId {$id}.");
+            do_action('rrze.log.warning', "FAUdir\Shortcode (getPersonsByFAUdirOrgId): Invalid OrgId {$id}.");
             return [];
         }
         
@@ -1006,7 +1006,7 @@ class Shortcode {
                     ];
                 }
             } else {
-                do_action('rrze.log.warn', "FAUdir\Shortcode (process_persons_by_identifiers): Invalid personId {$identifier}.");
+                do_action('rrze.log.warning', "FAUdir\Shortcode (process_persons_by_identifiers): Invalid personId {$identifier}.");
             }
         }
 
