@@ -4,7 +4,7 @@
 Plugin Name: RRZE FAUdir
 Plugin URI: https://github.com/RRZE-Webteam/rrze-faudir
 Description: Plugin for displaying the FAU person and institution directory on websites.
-Version: 2.6.20
+Version: 2.6.21
 Author: RRZE Webteam
 License: GNU General Public License v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -19,12 +19,6 @@ namespace RRZE\FAUdir;
 
 defined('ABSPATH') || exit;
 
-// Define plugin constants
-define('RRZE_PLUGIN_VERSION', '2.6.20');
-define('RRZE_PLUGIN_FILE', __FILE__);
-define('RRZE_PLUGIN_PATH', plugin_dir_path(__FILE__));
-define('RRZE_PLUGIN_URL', plugin_dir_url(__FILE__));
-
 use RRZE\FAUdir\Main;
 use RRZE\FAUdir\CPT;
 
@@ -36,7 +30,7 @@ if (! function_exists('is_plugin_active')) {
 }
 
 // Constants
-const RRZE_PHP_VERSION = '8.2';
+const RRZE_PHP_VERSION = '8.3';
 const RRZE_WP_VERSION = '6.7';
 
 /**
@@ -66,6 +60,26 @@ spl_autoload_register(function ($class) {
 // Hauptladepunkt
 add_action('plugins_loaded', __NAMESPACE__ . '\\loaded');
 
+
+/*
+ * Singleton pattern for initializing and accessing the main plugin instance.
+ * This method ensures that only one instance of the Plugin class is created and returned.
+ *
+ * @return Plugin The main instance of the Plugin class.
+ */
+function plugin() {
+    // Declare a static variable to hold the instance.
+    static $instance;
+
+    if (null === $instance) {
+        // Add a new instance of the Plugin class, passing the current file (__FILE__) as a parameter.
+        $instance = new Plugin(__FILE__);
+    }
+
+    // Return the main instance of the Plugin class.
+    return $instance;
+}
+
 /**
  * Hauptinitialisierung des Plugins (wird nach plugins_loaded aufgerufen)
  */
@@ -77,8 +91,10 @@ function loaded(): void {
         return;
     }
 
+     // Trigger the 'loaded' method of the main plugin instance.
+    plugin()->loaded();
 
-    $main = new Main(RRZE_PLUGIN_FILE);
+    $main = new Main();
     $main->onLoaded();
 
   

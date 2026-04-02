@@ -239,7 +239,16 @@ class CPT {
             echo esc_html__('Please note that this URL will be used when creating links to the person.', 'rrze-faudir');
             echo '</p>';
         }
-
+do_action(
+    'rrze.log.info',
+    "FAUdir\\CPT (render_person_additional_fields): checking cron meta for post {$post->ID}",
+    [
+        'last_failure_key' => Constants::META_LAST_FAILURE_AT,
+        'failure_count_key' => Constants::META_FAILURE_COUNT,
+        'last_failure_raw' => get_post_meta($post->ID, Constants::META_LAST_FAILURE_AT, true),
+        'failure_count_raw' => get_post_meta($post->ID, Constants::META_FAILURE_COUNT, true),
+    ]
+);
          
         /*
          * Aktuelle Cron-Info zeigen, wenn vorhanden:

@@ -1,6 +1,6 @@
 {
   "name": "rrze-faudir",
-  "version": "2.6.20",
+  "version": "2.6.21",
   "description": "Plugin for displaying the FAUdir and institution directory on websites.",
   "main": "rrze-faudir.php",
   "textdomain": "rrze-faudir",
@@ -22,8 +22,8 @@
   },
   "compatibility": {
     "wprequires": "6.7",
-    "wptestedup": "7.0.5",
-    "phprequires": "8.2"
+    "wptestedup": "6.9.4",
+    "phprequires": "8.3"
   },
   "author": {
     "name": "RRZE-Webteam <webmaster@fau.de> (https://www.rrze.fau.de)",

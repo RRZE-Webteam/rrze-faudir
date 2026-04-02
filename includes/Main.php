@@ -21,15 +21,11 @@ class Main {
      * Der vollständige Pfad- und Dateiname der Plugin-Datei.
      * @var string
      */
-    protected string $pluginFile;
     public Config $config;
     public CPT $cpt;
 
-    public function __construct(string $pluginFile)  {
-        $this->pluginFile = $pluginFile;
+    public function __construct()  {
         $this->config = new Config();   
-
-        $this->config->set('pluginfile', $pluginFile);
     }
 
     public function onLoaded() {

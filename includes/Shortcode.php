@@ -267,7 +267,7 @@ class Shortcode {
             $args['order_option']
         );
 
-        $template_dir = RRZE_PLUGIN_PATH . 'templates/';
+        $template_dir = plugin()->getPath() . 'templates/';
         $template = new Template($this->config, $template_dir);
 
         $format_displayname = wp_strip_all_tags($args['format_displayname']);
@@ -463,7 +463,7 @@ class Shortcode {
         
         
            
-        $template_dir = RRZE_PLUGIN_PATH . 'templates/';
+        $template_dir = plugin()->getPath() . 'templates/';
         $template = new Template($this->config, $template_dir);
      
 

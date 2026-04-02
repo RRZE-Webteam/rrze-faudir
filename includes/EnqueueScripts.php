@@ -31,14 +31,14 @@ class EnqueueScripts {
 
         wp_register_style(
             'rrze-faudir',
-            RRZE_PLUGIN_URL . 'assets/css/rrze-faudir.css',
+            plugin()->getUrl() . 'assets/css/rrze-faudir.css',
             [],
             $version
         );
 
         wp_register_script(
             'rrze-faudir-admin-js',
-            RRZE_PLUGIN_URL . 'assets/js/rrze-faudir-admin.js',
+            plugin()->getUrl() . 'assets/js/rrze-faudir-admin.js',
             ['jquery'],
             $version,
             true
@@ -206,19 +206,13 @@ class EnqueueScripts {
         self::enqueue_frontend();
     }
 
-    /** Plugin-Version aus dem Header der Hauptdatei (Fallback: RRZE_PLUGIN_VERSION) */
+    /** Plugin-Version aus dem Header der Hauptdatei */
     private static function get_plugin_version(): ?string {
         static $cached = null;
         if ($cached !== null) {
             return $cached;
         }
-        if (defined('RRZE_PLUGIN_VERSION') && RRZE_PLUGIN_VERSION) {
-            return $cached = (string) RRZE_PLUGIN_VERSION;
-        }
-        if (!function_exists('get_plugin_data')) {
-            require_once ABSPATH . 'wp-admin/includes/plugin.php';
-        }
-        $data = get_plugin_data(RRZE_PLUGIN_FILE, false, false);
+        $data['Version'] = plugin()->getVersion();
         $ver  = isset($data['Version']) ? trim((string) $data['Version']) : '';
         return $cached = ($ver !== '' ? $ver : null);
     }
