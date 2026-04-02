@@ -55,12 +55,14 @@ final class Cron {
 
             $posts = get_posts([
                 'post_type'              => $post_type,
-                'post_status'            => ['publish', Constants::PERSON_STATUS_ON_MISSING],
+                'post_status'            => ['publish'],
                 'posts_per_page'         => -1,
                 'no_found_rows'          => true,
                 'fields'                 => 'ids',
                 'update_post_term_cache' => false,
                 'update_post_meta_cache' => false,
+                'rrze_multilang_suppress_locale_query' => true,
+                
             ]);
 
             foreach ($posts as $post_id) {
@@ -120,14 +122,34 @@ final class Cron {
     private function mark_failure_published(int $post_id, array $context = []): void {
         $max = (int) Constants::PERSON_AVAILABILITY_MAX_FAILURES;
 
+
         $count = (int) get_post_meta($post_id, Constants::META_FAILURE_COUNT, true);
         $count = max(0, $count);
         $count++;
 
-        update_post_meta($post_id, Constants::META_LAST_FAILURE_AT, time());
-        update_post_meta($post_id, Constants::META_FAILURE_COUNT, $count);
+        $ts = time();
 
+        update_post_meta($post_id, Constants::META_LAST_FAILURE_AT, $ts);
+        update_post_meta($post_id, Constants::META_FAILURE_COUNT, $count);
+    
+        do_action( 'rrze.log.warn',"FAUdir\Cron (mark_failure_published): Post {$post_id} will be marked with failure",
+        [
+            'last_failure_key' => Constants::META_LAST_FAILURE_AT,
+            'last_failure_value' => $ts,
+            'failure_count_key' => Constants::META_FAILURE_COUNT,
+            'failure_count_value' => $count,
+            'context' => $context,
+        ]);
+ 
         if ($count >= $max) {
+            do_action( 'rrze.log.warn',"FAUdir\Cron (mark_failure_published): Post {$post_id} reached max failure count. Will be set to privat",
+            [
+                'last_failure_key' => Constants::META_LAST_FAILURE_AT,
+                'last_failure_value' => $ts,
+                'failure_count_key' => Constants::META_FAILURE_COUNT,
+                'failure_count_value' => $count,
+                'context' => $context,
+            ]);
             $this->set_post_private($post_id, $context);
         }
     }

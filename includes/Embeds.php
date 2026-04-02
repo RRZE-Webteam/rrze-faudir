@@ -108,7 +108,8 @@ class Embeds {
         
         $add = '';
         if ($is_block_editor || is_admin() || self::is_block_editor_embed_request()) {
-            $css_url = plugins_url('assets/css/rrze-faudir.css', defined('RRZE_PLUGIN_FILE') ? RRZE_PLUGIN_FILE : __FILE__);
+            $file = plugin()->getFile();
+            $css_url = plugins_url('assets/css/rrze-faudir.css', $file);
             $add = '<style>@import url("' . esc_url_raw($css_url) . '");</style>';
         }
         $result = $add.$html;

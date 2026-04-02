@@ -20,15 +20,16 @@ class Maintenance {
 
     public function register_hooks(): void {
         // Aktivierungshooks
-        register_activation_hook(RRZE_PLUGIN_FILE, [$this, 'on_plugin_activation']);
-        register_activation_hook(RRZE_PLUGIN_FILE, [$this->cron, 'on_plugin_activation']);
-        register_deactivation_hook(RRZE_PLUGIN_FILE, [$this->cron, 'on_plugin_deactivation']);
+        $file = plugin()->getFile();
+        register_activation_hook($file, [$this, 'on_plugin_activation']);
+        register_activation_hook($file, [$this->cron, 'on_plugin_activation']);
+        register_deactivation_hook($file, [$this->cron, 'on_plugin_deactivation']);
 
         // Hinweistext bei Aktivierung
         add_action('admin_notices', [$this, 'maybe_show_activation_notice']);
     
         // Plugin Links
-        add_filter('plugin_action_links_' . plugin_basename(RRZE_PLUGIN_FILE), [$this, 'add_plugin_action_links']);
+        add_filter('plugin_action_links_' . plugin_basename($file), [$this, 'add_plugin_action_links']);
         add_filter('plugin_row_meta', [$this, 'add_plugin_row_meta_links'], 10, 2);
         
         // Slug-Änderung überwachen
@@ -238,7 +239,7 @@ class Maintenance {
      * Dokulink in der Pluginübersicht ergänzen
      */  
     public function add_plugin_row_meta_links(array $links, string $file): array {
-        if ($file !== plugin_basename(RRZE_PLUGIN_FILE)) {
+        if ($file !== plugin_basename(plugin()->getFile())) {
             return $links;
         }
 

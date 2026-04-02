@@ -239,7 +239,16 @@ class CPT {
             echo esc_html__('Please note that this URL will be used when creating links to the person.', 'rrze-faudir');
             echo '</p>';
         }
-
+do_action(
+    'rrze.log.info',
+    "FAUdir\\CPT (render_person_additional_fields): checking cron meta for post {$post->ID}",
+    [
+        'last_failure_key' => Constants::META_LAST_FAILURE_AT,
+        'failure_count_key' => Constants::META_FAILURE_COUNT,
+        'last_failure_raw' => get_post_meta($post->ID, Constants::META_LAST_FAILURE_AT, true),
+        'failure_count_raw' => get_post_meta($post->ID, Constants::META_FAILURE_COUNT, true),
+    ]
+);
          
         /*
          * Aktuelle Cron-Info zeigen, wenn vorhanden:
@@ -1346,12 +1355,13 @@ class CPT {
      */
     public function findPostIdByPersonId(string $personId): int {
         $personId = trim($personId);
+        $post_type = $this->config->get('person_post_type');
         if ($personId === '') {
             return 0;
         }
 
         $ids = get_posts([
-            'post_type'      => $this->postType,
+            'post_type'      => $post_type,
             'fields'         => 'ids',
             'posts_per_page' => 1,
             'meta_query'     => [
@@ -1368,12 +1378,14 @@ class CPT {
 
     public function findPostIdByUnivISId(string $univisid): int {
         $univisid = FaudirUtils::sanitizeUnivISId($univisid);
+        $post_type = $this->config->get('person_post_type');
+        
         if (!FaudirUtils::isValidUnivISId($univisid)) {
             return 0;
         }
 
         $ids = get_posts([
-            'post_type'      => $this->postType,
+            'post_type'      => $post_type,
             'fields'         => 'ids',
             'posts_per_page' => 1,
             'meta_query'     => [
