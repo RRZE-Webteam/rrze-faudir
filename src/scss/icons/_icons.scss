@@ -146,17 +146,17 @@
      }
      
      .fau-elemental & .icon-list  {
-	  --_icon-border-color: none;
-	  --_icon-border-style: none;
+	  --_icon-border-color: transparent;
+	  --_icon-border-style: none none solid none;
 	  --_icon-border-width: 0;
 	  --_icon-border-color-hover: inherit;
 	  --_icon-color-hover: var(--color-Text, currentColor);
 	  --_icon-background-color-hover: inherit;
-	  --_icon-border-width: 2px;
+	  --_icon-border-width: 0.25rem;
 	  --_icon-border-radius: 0;
 
 	  a:hover, a:focus {
-	    --_icon-border-style: none none solid none;
+	    
 	    --_icon-border-color: var(--color-Text, currentColor);
 	  }
      }
