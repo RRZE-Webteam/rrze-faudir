@@ -46,7 +46,6 @@ function bumpDev(version) {
 
 	var m = v.prerelease.match(/^(\d+)$/);
 	if (!m) {
-		// Fremde prerelease-Labels: auf 1 "umschalten"
 		v.prerelease = '1';
 		return formatSemver(v);
 	}
@@ -60,9 +59,18 @@ function bumpDev(version) {
 function bumpProd(version) {
 	var v = parseSemver(version);
 
-	// prerelease abschneiden, dann patch erhöhen
 	v.prerelease = '';
 	v.patch = v.patch + 1;
+
+	return formatSemver(v);
+}
+
+function bumpRelease(version) {
+	var v = parseSemver(version);
+
+	v.prerelease = '';
+	v.minor = v.minor + 1;
+	v.patch = 0;
 
 	return formatSemver(v);
 }
@@ -76,7 +84,6 @@ function replaceInFile(filePath, replacer) {
 	}
 }
 
-
 function setReadmeTxtVersion(pluginRoot, newVersion) {
 	var filePath = path.join(pluginRoot, 'readme.txt');
 
@@ -85,7 +92,6 @@ function setReadmeTxtVersion(pluginRoot, newVersion) {
 	}
 
 	replaceInFile(filePath, function (content) {
-		// üblich im WP-readme: Stable tag
 		content = content.replace(
 			/^(Stable tag:\s*)(.+)$/m,
 			function (match, p1) {
@@ -93,7 +99,6 @@ function setReadmeTxtVersion(pluginRoot, newVersion) {
 			}
 		);
 
-		// optional: Version: Zeile, falls du sie führst
 		content = content.replace(
 			/^(Version:\s*)(.+)$/m,
 			function (match, p1) {
@@ -105,32 +110,92 @@ function setReadmeTxtVersion(pluginRoot, newVersion) {
 	});
 }
 
-function setPluginVersion(pluginRoot, newVersion) {
-	var filePath = path.join(pluginRoot, 'rrze-faudir.php');
+function setPluginVersion(pluginRoot, pkg, newVersion) {
+	if (!pkg.main || typeof pkg.main !== 'string') {
+		throw new Error('package.json has no valid "main" entry');
+	}
+
+	var filePath = path.join(pluginRoot, pkg.main);
 
 	if (!fs.existsSync(filePath)) {
-		return;
+		throw new Error('Plugin main file not found: ' + filePath);
 	}
 
 	replaceInFile(filePath, function (content) {
-		
-		// Version suchen und aendern
+
+		// Version Header ersetzen
 		content = content.replace(
 			/^(Version:\s*)(.+)$/m,
 			function (match, p1) {
 				return p1 + newVersion;
 			}
 		);
-		
+
 		return content;
 	});
 }
 
+function setPluginCompatibility(pluginRoot, pkg) {
+	if (!pkg.main || typeof pkg.main !== 'string') {
+		throw new Error('package.json has no valid "main" entry');
+	}
+
+	var compatibility = pkg.compatibility;
+	var filePath = path.join(pluginRoot, pkg.main);
+
+	if (!compatibility || typeof compatibility !== 'object') {
+		return;
+	}
+
+	if (!fs.existsSync(filePath)) {
+		throw new Error('Plugin main file not found: ' + filePath);
+	}
+
+	replaceInFile(filePath, function (content) {
+		var updated = content;
+
+		if (typeof compatibility.phprequires === 'string' && compatibility.phprequires.trim() !== '') {
+			updated = updated.replace(
+				/const\s+RRZE_PHP_VERSION\s*=\s*['"][^'"]*['"]\s*;/,
+				function () {
+					return "const RRZE_PHP_VERSION = '" + compatibility.phprequires.trim() + "';";
+				}
+			);
+		}
+
+		if (typeof compatibility.wprequires === 'string' && compatibility.wprequires.trim() !== '') {
+			updated = updated.replace(
+				/const\s+RRZE_WP_VERSION\s*=\s*['"][^'"]*['"]\s*;/,
+				function () {
+					return "const RRZE_WP_VERSION = '" + compatibility.wprequires.trim() + "';";
+				}
+			);
+		}
+
+		return updated;
+	});
+}
+
+function getNextVersion(mode, currentVersion) {
+	if (mode === 'dev') {
+		return bumpDev(currentVersion);
+	}
+
+	if (mode === 'prod') {
+		return bumpProd(currentVersion);
+	}
+
+	if (mode === 'release') {
+		return bumpRelease(currentVersion);
+	}
+
+	throw new Error('Unsupported mode: ' + mode);
+}
 
 function main() {
 	var mode = process.argv[2];
-	if (mode !== 'dev' && mode !== 'prod') {
-		console.error('Usage: node scripts/build-version.js dev|prod');
+	if (mode !== 'dev' && mode !== 'prod' && mode !== 'release') {
+		console.error('Usage: node scripts/build-version.js dev|prod|release');
 		process.exit(1);
 	}
 
@@ -143,15 +208,16 @@ function main() {
 	}
 
 	var current = pkg.version;
-	var next = mode === 'prod' ? bumpProd(current) : bumpDev(current);
+	var next = getNextVersion(mode, current);
 
 	pkg.version = next;
 	writeJson(packagePath, pkg);
 
 	setReadmeTxtVersion(pluginRoot, next);
-	setPluginVersion(pluginRoot, next);
+	setPluginVersion(pluginRoot, pkg, next);
+	setPluginCompatibility(pluginRoot, pkg);
 
-	console.log('Version bumped: ' + current + ' -> ' + next);
+	console.log('Version bumped (' + mode + '): ' + current + ' -> ' + next);
 }
 
 main();

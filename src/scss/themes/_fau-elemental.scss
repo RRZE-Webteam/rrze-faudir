@@ -120,7 +120,7 @@
 		.icon a::before {
 			text-decoration: underline;
 			text-underline-offset: var(--Spacing-1x);
-			mask-position: inherit;
+			mask-position: center;
 		}
 		.icon.icon-list {
 		    --_icon-size: 1.5rem;
@@ -229,15 +229,22 @@
 		       
 			.format-compact-container {
 			    .profile-header {
-				z-index: 10;
+				z-index: 10; 
 				display: block;
-				width: calc(100% - 3rem);
-				margin-top: var(--fau-elemental-image-insert);;
-				margin-right: auto;
-				margin-left: auto;
+				width: calc(100% - 2rem);
+				margin: 0;
+				
 				justify-self: center;
 				padding: var(--Spacing-4x, 1rem);
 				background: var(--faudir-compact-color-background);   
+			    }
+			    &:has(.profil-image-section) {
+				.profile-header {
+				    margin-top: var(--fau-elemental-image-insert);
+				    margin-right: auto;
+				    margin-left: auto;
+				    width: calc(100% - 3rem);
+				}
 			    }
 			     .profile-details {
 				 display: block;
