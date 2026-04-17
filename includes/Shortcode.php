@@ -115,8 +115,6 @@ class Shortcode {
         $output = $this->fetch_and_render_fau_data($atts);
        
         // Cache the rendered output using Transients API
-        // Dont execute shortcodes here and safe the raw code! Cause they have to be executed on 
-        // creating the website, due the fact that they might embed js oder css.
         set_transient($cache_key, $output, $cache_timeout);
         $output = do_blocks($output);            
         return do_shortcode(shortcode_unautop($output));

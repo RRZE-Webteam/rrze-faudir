@@ -1,4 +1,5 @@
 import { __ } from "@wordpress/i18n";
+import { decodeEntities } from "@wordpress/html-entities";
 import {
     FormTokenField,
     __experimentalHeading as Heading,
@@ -17,7 +18,14 @@ export default function CategorySelector({
     selectedCategory,
     setAttributes,
 }: CategorySelectorProps) {
-    const selectedTokens = selectedCategory.trim().length > 0
+    const categoryOptions = categories.map(function(category) {
+        return {
+            label: decodeEntities(category.name),
+            slug: category.slug,
+        };
+    });
+
+    const selectedSlugs = selectedCategory.trim().length > 0
         ? selectedCategory.split(",").map(function(token) {
             return token.trim();
         }).filter(function(token) {
@@ -25,16 +33,30 @@ export default function CategorySelector({
         })
         : [];
 
-    const suggestions = categories.map(function(category) {
-        return category.name;
+    const selectedTokens = selectedSlugs.map(function(slug) {
+        const match = categoryOptions.find(function(option) {
+            return option.slug === slug;
+        });
+
+        return match ? match.label : slug;
+    });
+
+    const suggestions = categoryOptions.map(function(option) {
+        return option.label;
     });
 
     const onChangeTokenList = function(newTokens: string[]) {
-        const validatedTokens = newTokens.filter(function(token) {
-            return suggestions.includes(token);
+        const validatedSlugs = newTokens.map(function(token) {
+            const match = categoryOptions.find(function(option) {
+                return option.label === token;
+            });
+
+            return match ? match.slug : "";
+        }).filter(function(slug) {
+            return slug !== "";
         });
 
-        const newCategoryString = validatedTokens.join(", ");
+        const newCategoryString = validatedSlugs.join(", ");
 
         setAttributes({
             selectedCategory: newCategoryString,

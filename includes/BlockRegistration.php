@@ -199,7 +199,11 @@ class BlockRegistration {
                 }
             }
             $shortcode .= ' blockeditor="true"]';
+          
             
+           //  do_action('rrze.log.info', 'FAUdir\\BlockRegistration (generated shortcode from block): '. $shortcode);
+                     
+                     
             $output = do_shortcode($shortcode);
 
             if (trim($output) === '') {
