@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: rrze-faudir\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-faudir\n"
 "POT-Creation-Date: 2025-11-27T14:55:08+00:00\n"
-"PO-Revision-Date: 2026-03-27 11:50+0000\n"
+"PO-Revision-Date: 2026-04-24 08:38+0000\n"
 "Last-Translator: Wolfgang Wiese <wolfgang.wiese@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -19,7 +19,7 @@ msgstr ""
 "esc_html_x:1,2c\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Generator: Loco https://localise.biz/\n"
-"X-Loco-Version: 2.8.2; wp-6.9.1; php-8.4.15\n"
+"X-Loco-Version: 2.8.3; wp-6.9.4; php-8.4.15\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 
@@ -1059,7 +1059,7 @@ msgstr "Sprache des Eintrags aus RRZE Multilang."
 
 #: includes/Dashboard.php:57
 msgid "Last change:"
-msgstr "Letze Änderung:"
+msgstr "Letzte Änderung:"
 
 #: includes/CPT.php:283
 msgid "Last error"
