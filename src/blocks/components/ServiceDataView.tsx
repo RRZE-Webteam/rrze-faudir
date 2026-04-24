@@ -1,9 +1,6 @@
-import { useState, useMemo, useCallback } from "@wordpress/element";
-import { ToggleControl } from "@wordpress/components";
+import { useMemo, useState } from "@wordpress/element";
+import { TextControl, ToggleControl } from "@wordpress/components";
 import { __, sprintf } from "@wordpress/i18n";
-// @ts-ignore
-import { DataViews } from "@wordpress/dataviews";
-import type { View } from "@wordpress/dataviews/build-types";
 
 export type ServiceDataRow = {
   id: string;
@@ -26,84 +23,78 @@ export default function ServiceDataView({
   search = false,
   emptyMessage,
 }: ServiceDataViewProps) {
-  const [view, setView] = useState<View>({
-    type: "table",
-    fields: ["label", "value", "visibility"],
-    perPage: 10,
-    page: 1,
-    filters: [],
-    layout: {
-      enableMoving: false,
-    },
-  });
+  const [query, setQuery] = useState("");
 
-  const isFieldVisible = useCallback(
-    (fieldId: string) => visibleFields.includes(fieldId),
-    [visibleFields]
-  );
+  const normalizedQuery = query.trim().toLowerCase();
 
-  const fields = useMemo(
-    () => [
-      {
-        id: "label",
-        label: __("Field", "rrze-faudir"),
-        enableHiding: false,
-        enableSorting: false,
-        getValue: ({ item }: { item: ServiceDataRow }) => item.label,
-      },
-      {
-        id: "value",
-        label: __("API value", "rrze-faudir"),
-        enableSorting: false,
-        enableHiding: false,
-        render: ({ item }: { item: ServiceDataRow }) =>
-          item.value ? (
-            item.value
-          ) : (
-            <span className="rrze-faudir__dataviews-empty">
-              {__("No data", "rrze-faudir")}
-            </span>
-          ),
-      },
-      {
-        id: "visibility",
-        label: __("Display", "rrze-faudir"),
-        enableSorting: false,
-        enableHiding: false,
-        render: ({ item }: { item: ServiceDataRow }) => (
-          <ToggleControl
-            label={item.label}
-            aria-label={sprintf(__("Toggle %s", "rrze-faudir"), item.label)}
-            checked={isFieldVisible(item.id)}
-            onChange={() => onToggleField(item.id)}
-          />
-        ),
-      },
-    ],
-    [isFieldVisible, onToggleField]
-  );
+  const filteredData = useMemo(function() {
+    if (!search || normalizedQuery === "") {
+      return data;
+    }
 
-  const paginationInfo = useMemo(
-    () => ({
-      totalItems: data.length,
-      totalPages: 1,
-    }),
-    [data.length]
-  );
+    return data.filter(function(item) {
+      const haystack = [item.label, item.value]
+        .join(" ")
+        .toLowerCase();
+
+      return haystack.includes(normalizedQuery);
+    });
+  }, [data, normalizedQuery, search]);
 
   return (
-    <DataViews
-      data={data}
-      fields={fields}
-      view={view}
-      onChangeView={setView}
-      paginationInfo={paginationInfo}
-      defaultLayouts={{ table: { showMedia: false } }}
-      getItemId={(item: ServiceDataRow) => item.id}
-      empty={<p>{emptyMessage ?? __("No API data fetched yet.", "rrze-faudir")}</p>}
-      search={search}
-    >
-      <DataViews.Layout />
-    </DataViews>
+    <div className="rrze-faudir-service-data-view">
+      {search && (
+        <TextControl
+          __next40pxDefaultSize
+          label={__("Search fields", "rrze-faudir")}
+          value={query}
+          onChange={setQuery}
+        />
+      )}
+
+      {filteredData.length === 0 && (
+        <p>{emptyMessage ?? __("No API data fetched yet.", "rrze-faudir")}</p>
+      )}
+
+      {filteredData.length > 0 && (
+        <table className="widefat striped">
+          <thead>
+            <tr>
+              <th scope="col">{__("Field", "rrze-faudir")}</th>
+              <th scope="col">{__("API value", "rrze-faudir")}</th>
+              <th scope="col">{__("Display", "rrze-faudir")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredData.map(function(item) {
+              return (
+                <tr key={item.id}>
+                  <td>{item.label}</td>
+                  <td>
+                    {item.value ? (
+                      item.value
+                    ) : (
+                      <span className="rrze-faudir__dataviews-empty">
+                        {__("No data", "rrze-faudir")}
+                      </span>
+                    )}
+                  </td>
+                  <td>
+                    <ToggleControl
+                      label={item.label}
+                      aria-label={sprintf(__("Toggle %s", "rrze-faudir"), item.label)}
+                      checked={visibleFields.includes(item.id)}
+                      onChange={function() {
+                        onToggleField(item.id);
+                      }}
+                    />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
+    </div>
   );
 }

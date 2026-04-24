@@ -5,6 +5,8 @@ namespace RRZE\FAUdir;
 defined('ABSPATH') || exit;
 
 class Maintenance {
+    private const ACTIVATION_NOTICE_OPTION = 'rrze_faudir_show_activation_notice';
+
     protected Config $config;
     protected CPT $cpt;
     protected Cron $cron;
@@ -45,6 +47,7 @@ class Maintenance {
     }
 
     public function on_plugin_activation(): void {
+        update_option(self::ACTIVATION_NOTICE_OPTION, 1, false);
         flush_rewrite_rules();
     }
 
@@ -174,13 +177,11 @@ class Maintenance {
             return;
         }
 
-        $isActivation = (!empty($_GET['activate']) && $_GET['activate'] === 'true')
-            || (!empty($_GET['activate-multi']) && $_GET['activate-multi'] === 'true');
-
-        if (!$isActivation) {
+        if ((int) get_option(self::ACTIVATION_NOTICE_OPTION, 0) !== 1) {
             return;
         }
 
+        delete_option(self::ACTIVATION_NOTICE_OPTION);
 
         $settingsUrl = add_query_arg(
             [
