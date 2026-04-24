@@ -71,10 +71,11 @@
     }
     .texticon.telephone, 
     a[itemprop="telephone"]:before,
-    a[href*="tel:"]:before{
+    a[href*="tel:"]:before {
 	--_icon: var(--faudir-icon-phone);
     }
     .texticon.fax, 
+    a[itemprop="faxNumber"]:before, 
     a[itemprop="fax"]:before {
 	--_icon: var(--faudir-icon-fax);
     }
