@@ -26,25 +26,22 @@ export default function FormatSelector({
         const byFormat = data?.avaible_fields_byformat || {};
         const keys = Object.keys(byFormat);
 
-        let formats: string[] = [];
+        const formats =
+          display === "org"
+            ? keys
+                .filter((key) => {
+                  return key.startsWith("org-");
+                })
+                .map((key) => {
+                  return key.replace(/^org-/, "");
+                })
+            : keys.filter((key) => {
+                return !key.startsWith("org-");
+              });
 
-        if (display === "org") {
-          formats = keys
-            .filter((key) => {
-              return key.startsWith("org-");
-            })
-            .map((key) => {
-              return key.replace(/^org-/, "");
-            });
-        } else {
-          formats = keys.filter((key) => {
-            return !key.startsWith("org-");
-          });
-        }
+        const uniqueFormats = Array.from(new Set(formats));
 
-        formats = Array.from(new Set(formats));
-
-        setAvailableFormats(formats);
+        setAvailableFormats(uniqueFormats);
 
         if (data?.format_names) {
           setFormatTranslation(data.format_names);

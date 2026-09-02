@@ -85,8 +85,6 @@ interface ImageSelectorProps {
 export default function ImageSelector({
   mediaId = 0,
   mediaURL = "",
-  mediaHeight = 0,
-  mediaWidth = 0,
   setAttributes,
 }: ImageSelectorProps) {
   const onSelectMedia = (newMedia: MediaMetadata) => {

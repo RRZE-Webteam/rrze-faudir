@@ -85,12 +85,7 @@ function formatOfficeHour(entry: OfficeHour): string {
   const from = entry.from ?? "";
   const to = entry.to ?? "";
 
-  let timeLabel = "";
-  if (from && to) {
-    timeLabel = `${from} – ${to}`;
-  } else {
-    timeLabel = from || to || "";
-  }
+  const timeLabel = from && to ? `${from} – ${to}` : from || to || "";
 
   return [weekdayLabel, timeLabel].filter(Boolean).join(": ");
 }

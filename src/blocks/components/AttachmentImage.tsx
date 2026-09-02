@@ -31,10 +31,10 @@ export type AttachmentImageProps = {
  * This component is used to display an image from the media library.
  * It's meant as a JS companion to the PHP function `wp_get_attachment_image()`.
  *
- * @link https://www.briancoords.com/getting-wordpress-media-library-images-in-javascript/
+ * @see {@link https://www.briancoords.com/getting-wordpress-media-library-images-in-javascript/}
  *
- * @param {AttachmentImageProps} props
- * @returns {JSX.Element | null} React JSX
+ * @param props - Component properties.
+ * @returns The attachment image, or `null` while no image is available.
  */
 interface CoreMediaStore {
   getMedia?: (id: number) => MediaItem | null;
