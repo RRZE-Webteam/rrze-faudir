@@ -49,21 +49,21 @@
     "adminjs": "rrze-faudir-admin.js"
   },
   "devDependencies": {
-    "@types/node": "^24.10.1",
-    "@types/wordpress__block-editor": "^14.21.2",
-    "@types/wordpress__blocks": "^12.5.18",
-    "@typescript-eslint/eslint-plugin": "^8.48.1",
-    "@typescript-eslint/parser": "^8.48.1",
-    "@wordpress/scripts": "^31.6.0",
-    "@wordpress/server-side-render": "^6.17.0",
-    "eslint": "^9.39.1",
+    "@types/node": "^26.4.1",
+    "@types/wordpress__block-editor": "^15.0.6",
+    "@types/wordpress__blocks": "^15.17.0",
+    "@typescript-eslint/eslint-plugin": "^8.69.0",
+    "@typescript-eslint/parser": "^8.69.0",
+    "@wordpress/scripts": "^34.2.0",
+    "@wordpress/server-side-render": "^6.30.0",
+    "eslint": "^10.9.1",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-tsdoc": "^0.5.0",
-    "sass": "^1.94.2",
-    "typescript": "^5.9.3"
+    "eslint-plugin-tsdoc": "^0.5.2",
+    "sass": "^1.103.1",
+    "typescript": "^6.0.3"
   },
   "dependencies": {
-    "@wordpress/dataviews": "^13.0.0",
-    "esbuild": "^0.27.3"
+    "@wordpress/dataviews": "^18.1.0",
+    "esbuild": "^0.28.2"
   }
 }
