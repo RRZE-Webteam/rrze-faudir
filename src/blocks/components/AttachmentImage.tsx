@@ -1,5 +1,5 @@
-import { useSelect } from '@wordpress/data';
-import { useMemo } from '@wordpress/element';
+import { useSelect } from "@wordpress/data";
+import { useMemo } from "@wordpress/element";
 
 type MediaSizeVariant = {
   source_url?: string;
@@ -40,15 +40,20 @@ interface CoreMediaStore {
   getMedia?: (id: number) => MediaItem | null;
 }
 
-export default function AttachmentImage({ imageId, size = 'full' }: AttachmentImageProps){
-
-  const image = useSelect((selectFn) => {
-    if (!imageId) {
-      return null;
-    }
-    const coreStore = selectFn('core') as CoreMediaStore;
-    return coreStore?.getMedia ? coreStore.getMedia(imageId) : null;
-  }, [imageId]);
+export default function AttachmentImage({
+  imageId,
+  size = "full",
+}: AttachmentImageProps) {
+  const image = useSelect(
+    (selectFn) => {
+      if (!imageId) {
+        return null;
+      }
+      const coreStore = selectFn("core") as CoreMediaStore;
+      return coreStore?.getMedia ? coreStore.getMedia(imageId) : null;
+    },
+    [imageId],
+  );
 
   const imageAttributes = useMemo(() => {
     if (!image || !image.source_url) {
@@ -57,7 +62,7 @@ export default function AttachmentImage({ imageId, size = 'full' }: AttachmentIm
 
     const baseAttributes = {
       src: image.source_url,
-      alt: image.alt_text ?? '',
+      alt: image.alt_text ?? "",
       className: `attachment-${size} size-${size}`,
       width: image.media_details?.width,
       height: image.media_details?.height,

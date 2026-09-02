@@ -1,4 +1,6 @@
-export interface ServiceBlockAttributes {
+import type { BlockEditProps } from "@wordpress/blocks";
+
+export interface ServiceBlockAttributes extends Record<string, unknown> {
   orgid?: string;
   displayText?: string;
   imageURL?: string;
@@ -8,11 +10,10 @@ export interface ServiceBlockAttributes {
   visibleFields?: string[];
 }
 
-export interface EditProps {
-  attributes: ServiceBlockAttributes;
-  setAttributes: (attributes: Partial<ServiceBlockAttributes>) => void;
-  clientId: string;
-}
+export type EditProps = Pick<
+  BlockEditProps<ServiceBlockAttributes>,
+  "attributes" | "setAttributes"
+>;
 
 export interface OrganizationResponseProps {
   data: {

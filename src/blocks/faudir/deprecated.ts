@@ -1,6 +1,7 @@
-import { BlockDeprecation } from '@wordpress/blocks';
+import { BlockDeprecation } from "@wordpress/blocks";
+import type { FaudirBlockAttributes } from "./types";
 
-interface AttributesV1 {
+interface AttributesV1 extends Record<string, unknown> {
   selectedCategory: string;
   selectedPosts: string[];
   selectedPersonIds: string[];
@@ -16,78 +17,83 @@ interface AttributesV1 {
   identifier: string;
 }
 
-interface MigratedAttributes extends AttributesV1 {
-  initialSetup: boolean;
-}
-
-function migrateV2_2_11(attributes: AttributesV1): MigratedAttributes {
-  const newAttributes: MigratedAttributes = {
-    ...attributes,
+function migrateV2_2_11(
+  attributes: Record<string, unknown>,
+): FaudirBlockAttributes {
+  const previousAttributes = attributes as AttributesV1;
+  const newAttributes: FaudirBlockAttributes = {
+    ...previousAttributes,
+    selectedPosts: previousAttributes.selectedPosts
+      .map(Number)
+      .filter(Number.isFinite),
     initialSetup: false,
-    identifier: attributes.identifier || ''
+    identifier: previousAttributes.identifier || "",
+    order: "asc",
+    display: "person",
+    orgid: "",
   };
 
-  if (newAttributes.selectedFormat === 'kompakt') {
-    newAttributes.selectedFormat = 'compact';
+  if (newAttributes.selectedFormat === "kompakt") {
+    newAttributes.selectedFormat = "compact";
   }
 
   return newAttributes;
 }
 
-const deprecated: BlockDeprecation<AttributesV1>[] = [
+const deprecated: BlockDeprecation<FaudirBlockAttributes>[] = [
   {
     attributes: {
       selectedCategory: {
-        type: 'string',
-        default: '',
+        type: "string",
+        default: "",
       },
       selectedPosts: {
-        type: 'array',
+        type: "array",
         default: [],
       },
       selectedPersonIds: {
-        type: 'array',
+        type: "array",
         default: [],
       },
       selectedFormat: {
-        type: 'string',
-        default: 'kompakt',
+        type: "string",
+        default: "kompakt",
       },
       selectedFields: {
-        type: 'array',
+        type: "array",
         default: [],
       },
       role: {
-        type: 'string',
-        default: '',
+        type: "string",
+        default: "",
       },
       orgnr: {
-        type: 'string',
-        default: '',
+        type: "string",
+        default: "",
       },
       url: {
-        type: 'string',
-        default: '',
+        type: "string",
+        default: "",
       },
       showCategory: {
-        type: 'boolean',
+        type: "boolean",
         default: false,
       },
       showPosts: {
-        type: 'boolean',
+        type: "boolean",
         default: false,
       },
       sort: {
-        type: 'string',
-        default: 'familyName',
+        type: "string",
+        default: "familyName",
       },
       format_displayname: {
-        type: 'string',
-        default: '',
+        type: "string",
+        default: "",
       },
       identifier: {
-        type: 'string',
-        default: '',
+        type: "string",
+        default: "",
       },
     },
     save() {
@@ -96,8 +102,8 @@ const deprecated: BlockDeprecation<AttributesV1>[] = [
     migrate: migrateV2_2_11,
     isEligible(attributes) {
       return (
-        typeof (attributes as { initialSetup?: boolean }).initialSetup === 'undefined' ||
-        attributes.selectedFormat === 'kompakt'
+        typeof attributes.initialSetup === "undefined" ||
+        attributes.selectedFormat === "kompakt"
       );
     },
   },

@@ -1,27 +1,29 @@
-export interface EditProps {
-  attributes: {
-    selectedCategory: string;
-    selectedPosts: number[];
-    selectedPersonIds: string[];
-    selectedFormat: string;
-    selectedFields: string[];
-    role: string;
-    orgnr: string;
-    url: string;
-    showCategory: boolean;
-    showPosts: boolean;
-    sort: string;
-    order: string;
-    format_displayname: string;
-    initialSetup: boolean;
-    display: "person" | "org";
-    orgid: string;
-    identifier: string;
-  };
-  setAttributes: (attributes: Partial<EditProps["attributes"]>) => void;
-  clientId: string;
-  blockProps: any;
+import type { BlockEditProps } from "@wordpress/blocks";
+
+export interface FaudirBlockAttributes extends Record<string, unknown> {
+  selectedCategory: string;
+  selectedPosts: number[];
+  selectedPersonIds: string[];
+  selectedFormat: string;
+  selectedFields: string[];
+  role: string;
+  orgnr: string;
+  url: string;
+  showCategory: boolean;
+  showPosts: boolean;
+  sort: string;
+  order: string;
+  format_displayname: string;
+  initialSetup: boolean;
+  display: "person" | "org";
+  orgid: string;
+  identifier: string;
 }
+
+export type EditProps = Pick<
+  BlockEditProps<FaudirBlockAttributes>,
+  "attributes" | "setAttributes"
+>;
 
 export interface WPCategory {
   id: number;
@@ -58,6 +60,7 @@ export interface DefaultOrganization {
 }
 
 export interface CustomPersonParams {
+  [key: string]: string | number | boolean | undefined;
   per_page?: number;
   _fields: string;
   orderby: string;

@@ -1,5 +1,5 @@
-import apiFetch from '@wordpress/api-fetch';
-import { addQueryArgs } from '@wordpress/url';
+import apiFetch from "@wordpress/api-fetch";
+import { addQueryArgs } from "@wordpress/url";
 
 /**
  * Fetch all results from a paginated WordPress REST API endpoint.
@@ -19,28 +19,33 @@ export async function fetchAllPages<T>(
   path: string,
   query: Record<string, string | number | boolean | undefined> = {},
   signal?: AbortSignal,
-  perPage = 100
+  perPage = 100,
 ): Promise<T[]> {
-  const firstPath = addQueryArgs(path, { ...query, per_page: perPage, page: 1 });
+  const firstPath = addQueryArgs(path, {
+    ...query,
+    per_page: perPage,
+    page: 1,
+  });
 
-  const res = await apiFetch({
+  const res = (await apiFetch({
     path: firstPath,
     parse: false,
     signal,
-  }) as unknown as Response;
+  })) as unknown as Response;
 
   if (signal?.aborted) {
     return [];
   }
 
-  const header = res.headers.get('X-WP-TotalPages');
+  const header = res.headers.get("X-WP-TotalPages");
   const parsedTotalPages = header ? Number(header) : 1;
-  const totalPages = Number.isFinite(parsedTotalPages) && parsedTotalPages > 0
-    ? parsedTotalPages
-    : 1;
+  const totalPages =
+    Number.isFinite(parsedTotalPages) && parsedTotalPages > 0
+      ? parsedTotalPages
+      : 1;
 
   const firstPageRaw = await res.json();
-  const firstPage = Array.isArray(firstPageRaw) ? firstPageRaw as T[] : [];
+  const firstPage = Array.isArray(firstPageRaw) ? (firstPageRaw as T[]) : [];
   const all: T[] = [...firstPage];
 
   for (let page = 2; page <= totalPages; page += 1) {
@@ -51,20 +56,24 @@ export async function fetchAllPages<T>(
     const pagePath = addQueryArgs(path, { ...query, per_page: perPage, page });
 
     try {
-      const data = await apiFetch({
+      const data = (await apiFetch({
         path: pagePath,
         signal,
-      }) as unknown as T[];
+      })) as unknown as T[];
 
       if (Array.isArray(data) && data.length > 0) {
         all.push(...data);
       }
     } catch (e: unknown) {
-      const err = e as { status?: number; code?: string; data?: { status?: number; code?: string } };
+      const err = e as {
+        status?: number;
+        code?: string;
+        data?: { status?: number; code?: string };
+      };
       const status = err?.status ?? err?.data?.status;
       const code = err?.code ?? err?.data?.code;
 
-      if (status === 400 || code === 'invalid_page_number') {
+      if (status === 400 || code === "invalid_page_number") {
         break;
       }
 

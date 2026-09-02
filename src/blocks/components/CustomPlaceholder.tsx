@@ -7,7 +7,7 @@ import {
   __experimentalHeading as Heading,
   Button,
   Panel,
-  PanelBody
+  PanelBody,
 } from "@wordpress/components";
 import { EditProps, WPCategory } from "../faudir/types";
 import PersonSelector, { PersonSelectorProps } from "./PersonSelector";
@@ -46,7 +46,7 @@ export default function CustomPlaceholder({
   isAppearancePanelOpen,
   setIsAppearancePanelOpen,
   setHasFormatDisplayName,
-  hasFormatDisplayName
+  hasFormatDisplayName,
 }: CustomPlaceholderProps) {
   function onClickChangeAppearance() {
     setIsAppearancePanelOpen(true);
@@ -54,7 +54,7 @@ export default function CustomPlaceholder({
 
   function onClickInitialSetupConfirm() {
     setAttributes({
-      initialSetup: false
+      initialSetup: false,
     });
   }
 
@@ -68,15 +68,21 @@ export default function CustomPlaceholder({
         <div style={{ minWidth: "100%" }}>
           <Spacer paddingBottom="1.5rem" paddingTop="1rem">
             <Heading level={2}>
-              {__("Which type of contact would you like to display?", "rrze-faudir")}
+              {__(
+                "Which type of contact would you like to display?",
+                "rrze-faudir",
+              )}
             </Heading>
             <ToggleGroupControl
               __next40pxDefaultSize
               __nextHasNoMarginBottom
               isBlock
               label={__("Contact type", "rrze-faudir")}
-              help={__("Do you want to output a Person entry or a FAUdir Institution/Folder?", "rrze-faudir")}
-              onChange={function(value: string) {
+              help={__(
+                "Do you want to output a Person entry or a FAUdir Institution/Folder?",
+                "rrze-faudir",
+              )}
+              onChange={(value) => {
                 if (value === "person") {
                   setIsOrg(false);
                 } else {
@@ -101,13 +107,18 @@ export default function CustomPlaceholder({
           {!isOrg ? (
             <>
               <Spacer paddingTop="1rem">
-                <Heading level={2}>{__("Select Contacts to display", "rrze-faudir")}</Heading>
+                <Heading level={2}>
+                  {__("Select Contacts to display", "rrze-faudir")}
+                </Heading>
               </Spacer>
 
               <div style={{ minWidth: "100%" }}>
                 <Panel>
                   <PanelBody
-                    title={__("Select Contacts from your WordPress Site", "rrze-faudir")}
+                    title={__(
+                      "Select Contacts from your WordPress Site",
+                      "rrze-faudir",
+                    )}
                     initialOpen={false}
                   >
                     <Spacer paddingTop="1rem" paddingBottom="1.5rem">
@@ -126,7 +137,10 @@ export default function CustomPlaceholder({
                   </PanelBody>
 
                   <PanelBody
-                    title={__("Select Contacts directly from FAUdir", "rrze-faudir")}
+                    title={__(
+                      "Select Contacts directly from FAUdir",
+                      "rrze-faudir",
+                    )}
                     initialOpen={false}
                   >
                     <Spacer paddingTop="1rem" paddingBottom="1.5rem">
@@ -153,7 +167,10 @@ export default function CustomPlaceholder({
             <>
               <Spacer paddingTop="1rem">
                 <Heading level={2}>
-                  {__("Select Organization or FAUdir-Folder to display", "rrze-faudir")}
+                  {__(
+                    "Select Organization or FAUdir-Folder to display",
+                    "rrze-faudir",
+                  )}
                 </Heading>
               </Spacer>
 
@@ -162,7 +179,10 @@ export default function CustomPlaceholder({
                   attributes={attributes}
                   setAttributes={setAttributes}
                   label={__("Via FAUOrg Number", "rrze-faudir")}
-                  helpText={__("To display an Institution as contact, insert your FAUOrg Number (Cost center number).", "rrze-faudir")}
+                  helpText={__(
+                    "To display an Institution as contact, insert your FAUOrg Number (Cost center number).",
+                    "rrze-faudir",
+                  )}
                 />
 
                 <OrganizationIdentifierDetector
@@ -197,7 +217,10 @@ export default function CustomPlaceholder({
               {__("Configure the appearance of your Contact", "rrze-faudir")}
             </Heading>
 
-            <FormatSelector attributes={attributes} setAttributes={setAttributes} />
+            <FormatSelector
+              attributes={attributes}
+              setAttributes={setAttributes}
+            />
 
             <ShowHideSelector
               attributes={attributes}

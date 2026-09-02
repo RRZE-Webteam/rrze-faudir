@@ -9,15 +9,20 @@ interface FormatSelectorProps {
   setAttributes: EditProps["setAttributes"];
 }
 
-export default function FormatSelector({ attributes, setAttributes }: FormatSelectorProps) {
+export default function FormatSelector({
+  attributes,
+  setAttributes,
+}: FormatSelectorProps) {
   const { selectedFormat = "", display = "person" } = attributes;
 
   const [availableFormats, setAvailableFormats] = useState<string[]>([]);
-  const [formatTranslation, setFormatTranslation] = useState<Record<string, string>>({});
+  const [formatTranslation, setFormatTranslation] = useState<
+    Record<string, string>
+  >({});
 
-  useEffect(function() {
-    apiFetch({ path: "/wp/v2/settings/rrze_faudir_options" })
-      .then(function(data: SettingsRESTApi) {
+  useEffect(() => {
+    apiFetch<SettingsRESTApi>({ path: "/wp/v2/settings/rrze_faudir_options" })
+      .then((data) => {
         const byFormat = data?.avaible_fields_byformat || {};
         const keys = Object.keys(byFormat);
 
@@ -25,14 +30,14 @@ export default function FormatSelector({ attributes, setAttributes }: FormatSele
 
         if (display === "org") {
           formats = keys
-            .filter(function(key) {
+            .filter((key) => {
               return key.startsWith("org-");
             })
-            .map(function(key) {
+            .map((key) => {
               return key.replace(/^org-/, "");
             });
         } else {
-          formats = keys.filter(function(key) {
+          formats = keys.filter((key) => {
             return !key.startsWith("org-");
           });
         }
@@ -47,18 +52,18 @@ export default function FormatSelector({ attributes, setAttributes }: FormatSele
           setFormatTranslation({});
         }
       })
-      .catch(function(error) {
+      .catch((error) => {
         console.error("Fehler beim Laden der Formate:", error);
       });
   }, [display]);
 
-  const getFieldLabel = function(format: string): string {
+  const getFieldLabel = (format: string): string => {
     const key = display === "org" ? "org-" + format : format;
     return formatTranslation[key] || formatTranslation[format] || format;
   };
 
-  const formatOptions = useMemo(function() {
-    return availableFormats.map(function(format) {
+  const formatOptions = useMemo(() => {
+    return availableFormats.map((format) => {
       return {
         value: format,
         label: getFieldLabel(format),
@@ -66,7 +71,7 @@ export default function FormatSelector({ attributes, setAttributes }: FormatSele
     });
   }, [availableFormats, formatTranslation, display]);
 
-  const normalizedSelectedFormat = useMemo(function() {
+  const normalizedSelectedFormat = useMemo(() => {
     if (selectedFormat && availableFormats.includes(selectedFormat)) {
       return selectedFormat;
     }
@@ -78,13 +83,16 @@ export default function FormatSelector({ attributes, setAttributes }: FormatSele
     return availableFormats[0] || "";
   }, [selectedFormat, availableFormats]);
 
-  useEffect(function() {
-    if (normalizedSelectedFormat !== selectedFormat && normalizedSelectedFormat !== "") {
+  useEffect(() => {
+    if (
+      normalizedSelectedFormat !== selectedFormat &&
+      normalizedSelectedFormat !== ""
+    ) {
       setAttributes({ selectedFormat: normalizedSelectedFormat });
     }
   }, [normalizedSelectedFormat, selectedFormat, setAttributes]);
 
-  const handleFormatChange = function(value: string) {
+  const handleFormatChange = (value: string) => {
     setAttributes({ selectedFormat: value });
   };
 

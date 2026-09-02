@@ -1,6 +1,7 @@
 // most styles are loaded from the frontend Stylesheet. This is just used, to prevent clicking on links
 .faudir {
-  a, button {
+  a,
+  button {
     pointer-events: none;
     cursor: not-allowed;
   }

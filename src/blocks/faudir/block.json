@@ -6,14 +6,7 @@
   "category": "fau",
   "icon": "businessperson",
   "description": "Display FAUdir information",
-  "keywords": [
-    "FAUdir",
-    "UnivIS",
-    "Person",
-    "Contact",
-    "Kontakt",
-    "FAU"
-  ],
+  "keywords": ["FAUdir", "UnivIS", "Person", "Contact", "Kontakt", "FAU"],
   "supports": {
     "html": false,
     "anchor": true

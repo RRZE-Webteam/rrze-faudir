@@ -3,5 +3,5 @@
  * @return {Element} Element to render.
  */
 export default function save(): null {
-	return null;
+  return null;
 }

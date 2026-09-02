@@ -1,4 +1,4 @@
-import {__} from "@wordpress/i18n";
+import { __ } from "@wordpress/i18n";
 import { MediaReplaceFlow } from "@wordpress/block-editor";
 interface MediaMetadata {
   alt: string;
@@ -8,7 +8,7 @@ interface MediaMetadata {
   compat: {
     item: string;
     meta: string;
-  }
+  };
   context: string;
   date: Date;
   dateFormatted: string;
@@ -30,7 +30,7 @@ interface MediaMetadata {
     update: string;
     delete: string;
     edit: string;
-  }
+  };
   orientation: string;
   sizes: {
     thumbnail: {
@@ -57,11 +57,11 @@ interface MediaMetadata {
       url: string;
       width: number;
     };
-  }
+  };
   status: string;
   subtype: string;
   title: string;
-  type: "image" | "video"
+  type: "image" | "video";
   uploadedTo: number;
   uploadedToLink: string;
   uploadedToTitle: string;
@@ -70,47 +70,53 @@ interface MediaMetadata {
 }
 
 interface ImageSelectorProps {
-  mediaId: number;
-  mediaURL: string;
-  mediaHeight: number;
-  mediaWidth: number;
-  setAttributes?: (attributes: {
-    imageURL: string;
-    imageId: number;
-    imageWidth: number;
-    imageHeight: number;
+  mediaId?: number;
+  mediaURL?: string;
+  mediaHeight?: number;
+  mediaWidth?: number;
+  setAttributes: (attributes: {
+    imageURL?: string;
+    imageId?: number;
+    imageWidth?: number;
+    imageHeight?: number;
   }) => void;
 }
 
-export default function ImageSelector({mediaId, mediaURL, mediaHeight, mediaWidth, setAttributes}: ImageSelectorProps) {
-  const onSelectMedia = async ( newMedia: MediaMetadata ) => {
-    const mediaAttributes = attributesFromMedia( newMedia );
+export default function ImageSelector({
+  mediaId = 0,
+  mediaURL = "",
+  mediaHeight = 0,
+  mediaWidth = 0,
+  setAttributes,
+}: ImageSelectorProps) {
+  const onSelectMedia = (newMedia: MediaMetadata) => {
+    const mediaAttributes = attributesFromMedia(newMedia);
 
     setAttributes({
       imageURL: mediaAttributes.url,
-      imageId: mediaAttributes.id ?? null,
-      imageWidth: mediaAttributes.width,
-      imageHeight: mediaAttributes.height,
-    })
-  }
+      imageId: mediaAttributes.id ?? 0,
+      imageWidth: mediaAttributes.width ?? 0,
+      imageHeight: mediaAttributes.height ?? 0,
+    });
+  };
 
   const onResetMedia = () => clearMedia();
   const onErrorMedia = () => clearMedia();
 
   const clearMedia = () => {
     setAttributes({
-      imageURL: null,
-      imageWidth: null,
-      imageHeight: null,
-      imageId: null
-    })
-  }
+      imageURL: "",
+      imageWidth: 0,
+      imageHeight: 0,
+      imageId: 0,
+    });
+  };
 
-  const attributesFromMedia = ( media: MediaMetadata ) => {
-    if (!media || ( ! media.url ) ){
+  const attributesFromMedia = (media: MediaMetadata) => {
+    if (!media || !media.url) {
       return {
-        url: ""
-      }
+        url: "",
+      };
     }
 
     return {
@@ -119,20 +125,20 @@ export default function ImageSelector({mediaId, mediaURL, mediaHeight, mediaWidt
       alt: media?.alt,
       height: media.height,
       width: media.width,
-    }
-  }
+    };
+  };
 
   return (
     <MediaReplaceFlow
-      mediaId={ mediaId }
-      mediaURL={ mediaURL }
-      allowedTypes={ ["image"] }
+      mediaId={mediaId}
+      mediaURL={mediaURL}
+      allowedTypes={["image"]}
       accept="image/*"
-      onSelect={ onSelectMedia }
-      onToggleFeaturedImage={ () => {} }
-      name={ ! mediaURL ? __( 'Add media' ) : __( 'Replace' ) }
-      onReset={ onResetMedia }
-      onError={ onErrorMedia }
+      onSelect={onSelectMedia}
+      onToggleFeaturedImage={() => {}}
+      name={!mediaURL ? __("Add media") : __("Replace")}
+      onReset={onResetMedia}
+      onError={onErrorMedia}
     />
-  )
+  );
 }

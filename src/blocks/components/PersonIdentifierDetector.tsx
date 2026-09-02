@@ -1,6 +1,6 @@
 import {
   __experimentalHeading as Heading,
-  TextControl
+  TextControl,
 } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { useEffect, useState } from "@wordpress/element";
@@ -17,30 +17,24 @@ export default function PersonIdentifierDetector({
   attributes,
   setAttributes,
   label,
-  helpText
+  helpText,
 }: PersonIdentifierDetectorProps) {
-
   const [localValue, setLocalValue] = useState<string>(
-    attributes.identifier || ""
+    attributes.identifier || "",
   );
 
   const [errorMessage, setErrorMessage] = useState<string>("");
 
-
-  useEffect(function syncLocalValueFromAttributes() {
+  useEffect(() => {
     const next = attributes.identifier || "";
 
     if (next !== localValue) {
       setLocalValue(next);
     }
-
   }, [attributes.identifier]);
 
-
   function handlePersonIdentifierChange(value: string) {
-
     let workingValue = value.trim();
-
 
     /*
      * Schritt 1:
@@ -48,18 +42,15 @@ export default function PersonIdentifierDetector({
      */
 
     const cutPos = Math.min(
-      ...[
-        workingValue.indexOf("?"),
-        workingValue.indexOf("#")
-      ].filter(function(pos) {
-        return pos !== -1;
-      }),
-      workingValue.length
+      ...[workingValue.indexOf("?"), workingValue.indexOf("#")].filter(
+        (pos) => {
+          return pos !== -1;
+        },
+      ),
+      workingValue.length,
     );
 
     workingValue = workingValue.substring(0, cutPos);
-
-
 
     /*
      * Schritt 2:
@@ -67,14 +58,10 @@ export default function PersonIdentifierDetector({
      */
 
     const prefixMatch = workingValue.match(
-      /^https?:\/\/faudir\.fau\.de\/public\/person\/(.+)$/i
+      /^https?:\/\/faudir\.fau\.de\/public\/person\/(.+)$/i,
     );
 
-    let extractedId = prefixMatch
-      ? prefixMatch[1]
-      : workingValue;
-
-
+    let extractedId = prefixMatch ? prefixMatch[1] : workingValue;
 
     /*
      * Schritt 3:
@@ -87,8 +74,6 @@ export default function PersonIdentifierDetector({
       extractedId = extractedId.substring(0, slashPos);
     }
 
-
-
     /*
      * Schritt 4:
      * final sanitizen
@@ -99,36 +84,28 @@ export default function PersonIdentifierDetector({
       .toLowerCase()
       .replace(/[^a-z0-9]/g, "");
 
-
-
     /*
      * Schritt 5:
      * validieren
      */
 
     if (!/^[a-z0-9]{10,11}$/.test(extractedId)) {
-
       setAttributes({ identifier: "" });
 
       setErrorMessage(
         __(
           "Please enter a valid FAUdir URL or a valid 10- or 11-character person identifier.",
-          "rrze-faudir"
-        )
+          "rrze-faudir",
+        ),
       );
-
     } else {
-
       setAttributes({ identifier: extractedId });
 
       setErrorMessage("");
-
     }
-
 
     setLocalValue(value);
   }
-
 
   return (
     <>
@@ -138,22 +115,17 @@ export default function PersonIdentifierDetector({
 
       <TextControl
         label={
-          label ||
-          __("Via Person Identifier or FAUdir-URL", "rrze-faudir")
+          label || __("Via Person Identifier or FAUdir-URL", "rrze-faudir")
         }
-
         value={localValue}
-
         onChange={handlePersonIdentifierChange}
-
         type="text"
-
         help={
           errorMessage ||
           helpText ||
           __(
             'Please enter either a FAUdir URL ("https://faudir.fau.de/public/person/..."), or the person identifier.',
-            "rrze-faudir"
+            "rrze-faudir",
           )
         }
       />
