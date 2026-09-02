@@ -440,7 +440,9 @@ export default function Edit({ attributes, setAttributes }: EditProps) {
       </InspectorControls>
 
       <article
-        className="faudir rrze-elements-blocks_service_card"
+        className={`faudir__service rrze-elements-blocks_service_card${
+          imageURL ? "" : " no_image"
+        }`}
         aria-labelledby="service-title"
       >
         {attributes.imageURL && (
@@ -455,7 +457,7 @@ export default function Edit({ attributes, setAttributes }: EditProps) {
           </figure>
         )}
 
-        <div className="rrze-elements-blocks_service__info">
+        <div className="rrze-elements-blocks_service__information_card">
           {isFieldVisible("name") && organizationName && (
             <header className="rrze-elements-blocks_service__meta_headline">
               <h2 id="service-title" className="meta-headline">

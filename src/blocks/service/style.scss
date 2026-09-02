@@ -18,7 +18,8 @@
   grid-gap: var(--Spacing-2x, 1rem);
 }
 
-.fau-elemental {
+.fau-elemental,
+.editor-styles-wrapper {
   article.rrze-elements-blocks_service_card {
     container-type: inline-size;
 
