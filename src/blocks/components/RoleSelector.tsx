@@ -13,16 +13,17 @@ export default function RoleSelector({
 }: RoleSelectorProps) {
   const { role } = attributes;
 
-  function handlePersonRoleChange(value: string) {
+  const handlePersonRoleChange = (value: string) => {
     setAttributes({
       role: value,
     });
-  }
-  function handleBlur() {
+  };
+
+  const handleBlur = () => {
     setAttributes({
       role: attributes.role?.trim() ?? "",
     });
-  }
+  };
 
   return (
     <TextControl

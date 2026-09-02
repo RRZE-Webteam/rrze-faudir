@@ -15,9 +15,9 @@ export default function NameFormatSelector({
 }: NameFormatSelectorProps) {
   const { format_displayname } = attributes;
 
-  function handleFormatDisplayNameChange(value: string) {
+  const handleFormatDisplayNameChange = (value: string) => {
     setAttributes({ format_displayname: value });
-  }
+  };
 
   if (!hasFormatDisplayName) {
     return null;

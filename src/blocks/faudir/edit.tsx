@@ -60,21 +60,21 @@ export default function Edit({ attributes, setAttributes }: EditProps) {
     initialSetup,
   } = attributes;
 
-  function handleToolbarConfiguration() {
+  const handleToolbarConfiguration = () => {
     setAttributes({
       initialSetup: !initialSetup,
     });
-  }
+  };
 
-  function handleDisplayToggle(value: string | number | undefined) {
+  const handleDisplayToggle = (value: string | number | undefined) => {
     if (value === "person") {
       setIsOrg(false);
     } else {
       setIsOrg(true);
     }
-  }
+  };
 
-  function togglePostSelection(postId: number) {
+  const togglePostSelection = (postId: number) => {
     const updatedSelectedPosts = selectedPosts.includes(postId)
       ? selectedPosts.filter((id) => {
           return id !== postId;
@@ -96,7 +96,7 @@ export default function Edit({ attributes, setAttributes }: EditProps) {
       selectedPosts: updatedSelectedPosts,
       selectedPersonIds: updatedPersonIds,
     });
-  }
+  };
 
   useEffect(() => {
     setAttributes({
@@ -131,7 +131,7 @@ export default function Edit({ attributes, setAttributes }: EditProps) {
   useEffect(() => {
     const ac = new AbortController();
 
-    async function loadCategories() {
+    const loadCategories = async () => {
       try {
         const cats = await fetchAllPages<WPCategory>(
           "/wp/v2/custom_taxonomy",
@@ -147,7 +147,7 @@ export default function Edit({ attributes, setAttributes }: EditProps) {
           console.error("Error fetching categories:", error);
         }
       }
-    }
+    };
 
     loadCategories();
 
@@ -160,7 +160,7 @@ export default function Edit({ attributes, setAttributes }: EditProps) {
     const ac = new AbortController();
     setIsLoadingPosts(true);
 
-    async function loadPosts() {
+    const loadPosts = async () => {
       try {
         const query: CustomPersonParams = {
           _fields: "id,title,meta,post_language",
@@ -186,7 +186,7 @@ export default function Edit({ attributes, setAttributes }: EditProps) {
           setIsLoadingPosts(false);
         }
       }
-    }
+    };
 
     loadPosts();
 

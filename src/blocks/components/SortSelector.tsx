@@ -100,21 +100,21 @@ export default function SortSelector({
   const orderParts = rawOrder.split(/\s*,\s*/).filter(Boolean);
   const isIdentifierOrder = sortParts.includes("identifier_order");
 
-  function handleSortChange(value: string) {
+  const handleSortChange = (value: string) => {
     if (!isSortValue(value)) {
       return;
     }
 
     setAttributes({ sort: value });
-  }
+  };
 
-  function getOrderForIndex(index: number): OrderValue {
+  const getOrderForIndex = (index: number): OrderValue => {
     const current =
       orderParts[index] || orderParts[orderParts.length - 1] || "asc";
     return normalizeOrder(current);
-  }
+  };
 
-  function setOrderForIndex(index: number, dir: OrderValue) {
+  const setOrderForIndex = (index: number, dir: OrderValue) => {
     const next = orderParts.slice();
 
     while (next.length <= index) {
@@ -126,19 +126,19 @@ export default function SortSelector({
     setAttributes({
       order: next.join(", "),
     });
-  }
+  };
 
-  function handleGlobalOrderChange(value: string) {
+  const handleGlobalOrderChange = (value: string) => {
     const dir = normalizeOrder(value);
     setAttributes({ order: dir });
-  }
+  };
 
-  function renderPerCriterionControl(part: string, index: number) {
+  const renderPerCriterionControl = (part: string, index: number) => {
     const label = getCriterionLabel(part);
 
-    function handlePerCriterionChange(value: string) {
+    const handlePerCriterionChange = (value: string) => {
       setOrderForIndex(index, normalizeOrder(value));
-    }
+    };
 
     return (
       <SelectControl
@@ -149,7 +149,7 @@ export default function SortSelector({
         onChange={handlePerCriterionChange}
       />
     );
-  }
+  };
 
   return (
     <>

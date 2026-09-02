@@ -48,19 +48,19 @@ export default function CustomPlaceholder({
   setHasFormatDisplayName,
   hasFormatDisplayName,
 }: CustomPlaceholderProps) {
-  function onClickChangeAppearance() {
+  const onClickChangeAppearance = () => {
     setIsAppearancePanelOpen(true);
-  }
+  };
 
-  function onClickInitialSetupConfirm() {
+  const onClickInitialSetupConfirm = () => {
     setAttributes({
       initialSetup: false,
     });
-  }
+  };
 
-  function onClickChangeData() {
+  const onClickChangeData = () => {
     setIsAppearancePanelOpen(false);
-  }
+  };
 
   return (
     <Placeholder label={__("Setup your FAUdir Block", "rrze-faudir")}>

@@ -29,7 +29,7 @@ export default function OrganizationNumberDetector({
     }
   }, [attributes.orgnr]);
 
-  function handleOrgNrChange(value: string) {
+  const handleOrgNrChange = (value: string) => {
     let cleaned = value.replace(/[^\d,]/g, "").replace(/,{2,}/g, ",");
 
     cleaned = cleaned.replace(/^,/, "");
@@ -94,7 +94,7 @@ export default function OrganizationNumberDetector({
     }
 
     setLocalValue(cleaned);
-  }
+  };
 
   return (
     <>

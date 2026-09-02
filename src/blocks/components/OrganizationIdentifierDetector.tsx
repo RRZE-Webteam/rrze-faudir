@@ -32,7 +32,7 @@ export default function OrganizationIdentifierDetector({
     }
   }, [attributes.orgid]);
 
-  function handleOrgIdChange(value: string) {
+  const handleOrgIdChange = (value: string) => {
     const trimmedValue = value.trim();
 
     const match = trimmedValue.match(
@@ -57,7 +57,7 @@ export default function OrganizationIdentifierDetector({
     }
 
     setLocalValue(value);
-  }
+  };
 
   return (
     <>

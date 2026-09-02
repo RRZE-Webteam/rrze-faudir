@@ -33,7 +33,7 @@ export default function PersonIdentifierDetector({
     }
   }, [attributes.identifier]);
 
-  function handlePersonIdentifierChange(value: string) {
+  const handlePersonIdentifierChange = (value: string) => {
     let workingValue = value.trim();
 
     /*
@@ -105,7 +105,7 @@ export default function PersonIdentifierDetector({
     }
 
     setLocalValue(value);
-  }
+  };
 
   return (
     <>
