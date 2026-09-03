@@ -193,7 +193,6 @@
 
 .wp-theme-FAU-Elemental .is-style-dark {
   article.rrze-elements-blocks_service_card {
-    figure.rrze-elements-blocks_service__figure::before,
     div.rrze-elements-blocks_service__information_card {
       background-color: var(--FAU-Col-FAU-Blau-100, #04316a);
     }
@@ -225,6 +224,15 @@
         color: var(--FAU-Col-FAU-Weiss-100, #fff);
       }
     }
+  }
+}
+
+@media screen and (min-width: 1315px) {
+  .wp-theme-FAU-Elemental
+    .is-style-dark
+    article.rrze-elements-blocks_service_card
+    figure.rrze-elements-blocks_service__figure::before {
+    background-color: var(--FAU-Col-FAU-Blau-100, #04316a);
   }
 }
 
