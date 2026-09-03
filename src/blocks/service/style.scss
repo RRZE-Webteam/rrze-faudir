@@ -22,6 +22,7 @@
 .wp-theme-FAU-Elemental {
   article.rrze-elements-blocks_service_card {
     container-type: inline-size;
+    max-width: var(--wide-max-width);
 
     figure.rrze-elements-blocks_service__figure {
       position: relative;
@@ -184,6 +185,12 @@
   }
 }
 
+.wp-theme-FAU-Elemental
+  .wp-block-group
+  article.rrze-elements-blocks_service_card {
+  margin-inline: auto;
+}
+
 .wp-theme-FAU-Elemental .is-style-dark {
   article.rrze-elements-blocks_service_card {
     figure.rrze-elements-blocks_service__figure::before,
@@ -192,6 +199,11 @@
     }
 
     div.rrze-elements-blocks_service__information_card {
+      --faudir-icon-color: var(--FAU-Col-FAU-Weiss-100, #fff);
+      --faudir-icon-color-hover: var(--FAU-Col-FAU-Weiss-100, #fff);
+      --faudir-icon_background-color: transparent;
+      --faudir-icon-background-color-hover: transparent;
+
       color: var(--FAU-Col-FAU-Weiss-100, #fff);
 
       h2,
@@ -201,11 +213,16 @@
       h6,
       #hours-h,
       #addr-h,
-      #contact-h,
-      a,
-      a:hover,
-      a:focus {
+      #contact-h {
         color: inherit;
+      }
+
+      a,
+      a:visited,
+      a:hover,
+      a:focus,
+      a:active {
+        color: var(--FAU-Col-FAU-Weiss-100, #fff);
       }
     }
   }
