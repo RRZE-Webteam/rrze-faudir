@@ -183,6 +183,34 @@
     }
   }
 }
+
+.wp-theme-FAU-Elemental .is-style-dark {
+  article.rrze-elements-blocks_service_card {
+    figure.rrze-elements-blocks_service__figure::before,
+    div.rrze-elements-blocks_service__information_card {
+      background-color: var(--FAU-Col-FAU-Blau-100, #04316a);
+    }
+
+    div.rrze-elements-blocks_service__information_card {
+      color: var(--FAU-Col-FAU-Weiss-100, #fff);
+
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      #hours-h,
+      #addr-h,
+      #contact-h,
+      a,
+      a:hover,
+      a:focus {
+        color: inherit;
+      }
+    }
+  }
+}
+
 .fau-theme {
   .faudir__service {
     .icon a {
