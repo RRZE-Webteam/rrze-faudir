@@ -191,6 +191,14 @@
   margin-inline: auto;
 }
 
+@media screen and (max-width: 767px) {
+  .wp-theme-FAU-Elemental
+    article.rrze-elements-blocks_service_card
+    figure.rrze-elements-blocks_service__figure {
+    margin-inline: var(--faue_fullbleed_inline-margin);
+  }
+}
+
 .wp-theme-FAU-Elemental .is-style-dark {
   article.rrze-elements-blocks_service_card {
     div.rrze-elements-blocks_service__information_card {
