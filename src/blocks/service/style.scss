@@ -19,17 +19,18 @@
 }
 
 .fau-elemental,
-.editor-styles-wrapper {
+.wp-theme-FAU-Elemental {
   article.rrze-elements-blocks_service_card {
     container-type: inline-size;
 
     figure.rrze-elements-blocks_service__figure {
+      position: relative;
+      z-index: 0;
+
       img {
         width: 100%;
         height: auto;
       }
-
-      z-index: -1;
     }
   }
 
@@ -41,6 +42,9 @@
 
   article.rrze-elements-blocks_service_card
     div.rrze-elements-blocks_service__information_card {
+    position: relative;
+    z-index: 2;
+
     .contact-section ul li::before {
       content: initial;
     }
@@ -103,6 +107,8 @@
       margin-left: calc(-1 * var(--Spacing-6x, 1rem));
       margin-right: calc(-1 * var(--Spacing-6x, 1rem));
       grid-column: 2/-2;
+      padding-left: 2rem;
+      padding-right: 2rem;
 
       section {
         grid-column: span 4;
