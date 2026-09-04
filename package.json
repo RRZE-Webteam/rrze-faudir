@@ -1,6 +1,6 @@
 {
   "name": "rrze-faudir",
-  "version": "2.6.27",
+  "version": "2.6.29",
   "description": "Plugin for displaying the FAUdir and institution directory on websites.",
   "main": "rrze-faudir.php",
   "textdomain": "rrze-faudir",
@@ -8,9 +8,11 @@
   "scripts": {
     "build:block": "wp-scripts build",
     "start": "wp-scripts start",
-    "format": "wp-scripts format --cwd faudir-block",
-    "lint:css": "wp-scripts lint-style --cwd faudir-block",
-    "lint:js": "wp-scripts lint-js --cwd faudir-block",
+    "format": "prettier --write \"src/blocks/**/*.{ts,tsx,json,scss}\"",
+    "format:check": "prettier --check \"src/blocks/**/*.{ts,tsx,json,scss}\"",
+    "lint:css": "wp-scripts lint-style \"src/blocks/**/*.scss\"",
+    "lint:js": "wp-scripts lint-js \"src/blocks/**/*.{js,jsx,ts,tsx}\"",
+    "typecheck": "tsc --noEmit",
     "packages-update": "wp-scripts packages-update",
     "make-pot": "wp i18n make-pot . languages/rrze-faudir.pot --slug=rrze-faudir --domain=rrze-faudir --exclude=node_modules,src",
     "make-json": "wp i18n make-json languages/ --no-purge",
@@ -49,21 +51,32 @@
     "adminjs": "rrze-faudir-admin.js"
   },
   "devDependencies": {
-    "@types/node": "^24.10.1",
-    "@types/wordpress__block-editor": "^14.21.2",
-    "@types/wordpress__blocks": "^12.5.18",
-    "@typescript-eslint/eslint-plugin": "^8.48.1",
-    "@typescript-eslint/parser": "^8.48.1",
-    "@wordpress/scripts": "^31.6.0",
-    "@wordpress/server-side-render": "^6.17.0",
-    "eslint": "^9.39.1",
+    "@eslint/js": "^9.39.5",
+    "@types/node": "^26.4.1",
+    "@types/react": "^19.2.18",
+    "@typescript-eslint/eslint-plugin": "^8.69.0",
+    "@typescript-eslint/parser": "^8.69.0",
+    "@wordpress/api-fetch": "^7.54.0",
+    "@wordpress/block-editor": "^17.0.0",
+    "@wordpress/blocks": "^15.27.0",
+    "@wordpress/components": "^40.0.0",
+    "@wordpress/data": "^10.54.0",
+    "@wordpress/element": "^8.6.0",
+    "@wordpress/html-entities": "^4.54.0",
+    "@wordpress/i18n": "^6.27.0",
+    "@wordpress/icons": "^15.5.0",
+    "@wordpress/scripts": "^34.2.0",
+    "@wordpress/server-side-render": "^6.30.0",
+    "@wordpress/url": "^4.54.0",
+    "eslint": "^9.39.5",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-tsdoc": "^0.5.0",
-    "sass": "^1.94.2",
-    "typescript": "^5.9.3"
+    "eslint-plugin-tsdoc": "^0.5.2",
+    "globals": "^17.12.0",
+    "sass": "^1.103.1",
+    "typescript": "^6.0.3"
   },
   "dependencies": {
-    "@wordpress/dataviews": "^13.0.0",
-    "esbuild": "^0.27.3"
+    "@wordpress/dataviews": "^18.1.0",
+    "esbuild": "^0.28.2"
   }
 }

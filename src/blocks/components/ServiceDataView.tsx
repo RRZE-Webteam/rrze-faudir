@@ -27,15 +27,13 @@ export default function ServiceDataView({
 
   const normalizedQuery = query.trim().toLowerCase();
 
-  const filteredData = useMemo(function() {
+  const filteredData = useMemo(() => {
     if (!search || normalizedQuery === "") {
       return data;
     }
 
-    return data.filter(function(item) {
-      const haystack = [item.label, item.value]
-        .join(" ")
-        .toLowerCase();
+    return data.filter((item) => {
+      const haystack = [item.label, item.value].join(" ").toLowerCase();
 
       return haystack.includes(normalizedQuery);
     });
@@ -66,7 +64,7 @@ export default function ServiceDataView({
             </tr>
           </thead>
           <tbody>
-            {filteredData.map(function(item) {
+            {filteredData.map((item) => {
               return (
                 <tr key={item.id}>
                   <td>{item.label}</td>
@@ -82,9 +80,12 @@ export default function ServiceDataView({
                   <td>
                     <ToggleControl
                       label={item.label}
-                      aria-label={sprintf(__("Toggle %s", "rrze-faudir"), item.label)}
+                      aria-label={sprintf(
+                        __("Toggle %s", "rrze-faudir"),
+                        item.label,
+                      )}
                       checked={visibleFields.includes(item.id)}
-                      onChange={function() {
+                      onChange={() => {
                         onToggleField(item.id);
                       }}
                     />

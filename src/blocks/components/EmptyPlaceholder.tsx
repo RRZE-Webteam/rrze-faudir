@@ -7,7 +7,7 @@ export default function EmptyPlaceholder() {
       <p>
         {__(
           "Your current configuration does not return a contact. Try adjusting your filter settings.",
-          "rrze-faudir"
+          "rrze-faudir",
         )}
       </p>
     </Placeholder>

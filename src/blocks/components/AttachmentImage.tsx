@@ -1,5 +1,5 @@
-import { useSelect } from '@wordpress/data';
-import { useMemo } from '@wordpress/element';
+import { useSelect } from "@wordpress/data";
+import { useMemo } from "@wordpress/element";
 
 type MediaSizeVariant = {
   source_url?: string;
@@ -31,24 +31,29 @@ export type AttachmentImageProps = {
  * This component is used to display an image from the media library.
  * It's meant as a JS companion to the PHP function `wp_get_attachment_image()`.
  *
- * @link https://www.briancoords.com/getting-wordpress-media-library-images-in-javascript/
+ * @see {@link https://www.briancoords.com/getting-wordpress-media-library-images-in-javascript/}
  *
- * @param {AttachmentImageProps} props
- * @returns {JSX.Element | null} React JSX
+ * @param props - Component properties.
+ * @returns The attachment image, or `null` while no image is available.
  */
 interface CoreMediaStore {
   getMedia?: (id: number) => MediaItem | null;
 }
 
-export default function AttachmentImage({ imageId, size = 'full' }: AttachmentImageProps){
-
-  const image = useSelect((selectFn) => {
-    if (!imageId) {
-      return null;
-    }
-    const coreStore = selectFn('core') as CoreMediaStore;
-    return coreStore?.getMedia ? coreStore.getMedia(imageId) : null;
-  }, [imageId]);
+export default function AttachmentImage({
+  imageId,
+  size = "full",
+}: AttachmentImageProps) {
+  const image = useSelect(
+    (selectFn) => {
+      if (!imageId) {
+        return null;
+      }
+      const coreStore = selectFn("core") as CoreMediaStore;
+      return coreStore?.getMedia ? coreStore.getMedia(imageId) : null;
+    },
+    [imageId],
+  );
 
   const imageAttributes = useMemo(() => {
     if (!image || !image.source_url) {
@@ -57,7 +62,7 @@ export default function AttachmentImage({ imageId, size = 'full' }: AttachmentIm
 
     const baseAttributes = {
       src: image.source_url,
-      alt: image.alt_text ?? '',
+      alt: image.alt_text ?? "",
       className: `attachment-${size} size-${size}`,
       width: image.media_details?.width,
       height: image.media_details?.height,

@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { __ } from "@wordpress/i18n";
 
 export interface AvailableFieldsSet {
   [key: string]: string;
@@ -24,175 +24,185 @@ export interface FaudirSettingsPayload {
 }
 
 export const fallbackAvailableFields: AvailableFieldsSet = {
-  image: __('Image', 'rrze-faudir'),
-  displayname: __('Display name', 'rrze-faudir'),
-  honorificPrefix: __('Academic title', 'rrze-faudir'),
-  honorificSuffix: __('Academic suffix', 'rrze-faudir'),
-  givenName: __('First Name', 'rrze-faudir'),
-  titleOfNobility: __('Title of nobility', 'rrze-faudir'),
-  familyName: __('Family name', 'rrze-faudir'),
-  email: __('Email', 'rrze-faudir'),
-  phone: __('Phone', 'rrze-faudir'),
-  fax: __('Fax', 'rrze-faudir'),
-  organization: __('Organization', 'rrze-faudir'),
-  jobTitle: __('Jobtitle', 'rrze-faudir'),
-  url: __('URL', 'rrze-faudir'),
-  content: __('Content', 'rrze-faudir'),
-  teasertext: __('Teasertext', 'rrze-faudir'),
-  socialmedia: __('Social media and websites', 'rrze-faudir'),
-  room: __('Room', 'rrze-faudir'),
-  floor: __('Floor', 'rrze-faudir'),
-  address: __('Address', 'rrze-faudir'),
-  street: __('Street', 'rrze-faudir'),
-  zip: __('Postal code', 'rrze-faudir'),
-  city: __('City', 'rrze-faudir'),
-  faumap: __('FAU Map', 'rrze-faudir'),
-  officehours: __('Office hours', 'rrze-faudir'),
-  consultationhours: __('Consultation hours', 'rrze-faudir'),
-  link: __('Link to profile', 'rrze-faudir'),
-  alternateName: __('Alternate name', 'rrze-faudir'),
-  text: __('Text', 'rrze-faudir'),
-  postalAddress: __('Postal address', 'rrze-faudir'),
+  image: __("Image", "rrze-faudir"),
+  displayname: __("Display name", "rrze-faudir"),
+  honorificPrefix: __("Academic title", "rrze-faudir"),
+  honorificSuffix: __("Academic suffix", "rrze-faudir"),
+  givenName: __("First Name", "rrze-faudir"),
+  titleOfNobility: __("Title of nobility", "rrze-faudir"),
+  familyName: __("Family name", "rrze-faudir"),
+  email: __("Email", "rrze-faudir"),
+  phone: __("Phone", "rrze-faudir"),
+  fax: __("Fax", "rrze-faudir"),
+  organization: __("Organization", "rrze-faudir"),
+  jobTitle: __("Jobtitle", "rrze-faudir"),
+  url: __("URL", "rrze-faudir"),
+  content: __("Content", "rrze-faudir"),
+  teasertext: __("Teasertext", "rrze-faudir"),
+  socialmedia: __("Social media and websites", "rrze-faudir"),
+  room: __("Room", "rrze-faudir"),
+  floor: __("Floor", "rrze-faudir"),
+  address: __("Address", "rrze-faudir"),
+  street: __("Street", "rrze-faudir"),
+  zip: __("Postal code", "rrze-faudir"),
+  city: __("City", "rrze-faudir"),
+  faumap: __("FAU Map", "rrze-faudir"),
+  officehours: __("Office hours", "rrze-faudir"),
+  consultationhours: __("Consultation hours", "rrze-faudir"),
+  link: __("Link to profile", "rrze-faudir"),
+  alternateName: __("Alternate name", "rrze-faudir"),
+  text: __("Text", "rrze-faudir"),
+  postalAddress: __("Postal address", "rrze-faudir"),
 };
 
 export const fallbackAvailableFieldsOrg: AvailableFieldsSet = {
-  name: __('Name', 'rrze-faudir'),
-  alternateName: __('Alternate name', 'rrze-faudir'),
-  disambiguatingDescription: __('Disambiguating Description', 'rrze-faudir'),
-  longDescription: __('Description', 'rrze-faudir'),
-  email: __('Email', 'rrze-faudir'),
-  phone: __('Phone', 'rrze-faudir'),
-  fax: __('Fax', 'rrze-faudir'),
-  faumap: __('FAU Map', 'rrze-faudir'),
-  url: __('URL', 'rrze-faudir'),
-  text: __('Text', 'rrze-faudir'),
-  socialmedia: __('Social media and websites', 'rrze-faudir'),
-  address: __('Address', 'rrze-faudir'),
-  postalAddress: __('Postal address', 'rrze-faudir'),
-  internalAddress: __('Internal address', 'rrze-faudir'),
-  officehours: __('Office hours', 'rrze-faudir'),
-  consultationhours: __('Consultation hours', 'rrze-faudir'),
-  link: __('Link to portal', 'rrze-faudir'),
+  name: __("Name", "rrze-faudir"),
+  alternateName: __("Alternate name", "rrze-faudir"),
+  disambiguatingDescription: __("Disambiguating Description", "rrze-faudir"),
+  longDescription: __("Description", "rrze-faudir"),
+  email: __("Email", "rrze-faudir"),
+  phone: __("Phone", "rrze-faudir"),
+  fax: __("Fax", "rrze-faudir"),
+  faumap: __("FAU Map", "rrze-faudir"),
+  url: __("URL", "rrze-faudir"),
+  text: __("Text", "rrze-faudir"),
+  socialmedia: __("Social media and websites", "rrze-faudir"),
+  address: __("Address", "rrze-faudir"),
+  postalAddress: __("Postal address", "rrze-faudir"),
+  internalAddress: __("Internal address", "rrze-faudir"),
+  officehours: __("Office hours", "rrze-faudir"),
+  consultationhours: __("Consultation hours", "rrze-faudir"),
+  link: __("Link to portal", "rrze-faudir"),
 };
 
 export const fallbackFormatNames: FormatNamesSet = {
-  default: __('Default', 'rrze-faudir'),
-  compact: __('Compact', 'rrze-faudir'),
-  table: __('Table', 'rrze-faudir'),
-  list: __('List', 'rrze-faudir'),
-  page: __('Page', 'rrze-faudir'),
-  card: __('Card', 'rrze-faudir'),
-  'org-default': __('Default', 'rrze-faudir'),
-  'org-compact': __('Compact', 'rrze-faudir'),
+  default: __("Default", "rrze-faudir"),
+  compact: __("Compact", "rrze-faudir"),
+  table: __("Table", "rrze-faudir"),
+  list: __("List", "rrze-faudir"),
+  page: __("Page", "rrze-faudir"),
+  card: __("Card", "rrze-faudir"),
+  "org-default": __("Default", "rrze-faudir"),
+  "org-compact": __("Compact", "rrze-faudir"),
 };
 
 export const fieldMapping: Record<string, string> = {
-  image: 'image',
-  displayname: 'displayname',
-  honorificPrefix: 'honorificPrefix',
-  honorificSuffix: 'honorificSuffix',
-  givenName: 'givenName',
-  titleOfNobility: 'titleOfNobility',
-  familyName: 'familyName',
-  email: 'email',
-  phone: 'phone',
-  fax: 'fax',
-  organization: 'organization',
-  jobTitle: 'jobTitle',
-  url: 'url',
-  content: 'content',
-  teasertext: 'teasertext',
-  socialmedia: 'socialmedia',
-  room: 'room',
-  floor: 'floor',
-  address: 'address',
-  street: 'street',
-  zip: 'zip',
-  city: 'city',
-  faumap: 'faumap',
-  officehours: 'officehours',
-  consultationhours: 'consultationhours',
-  link: 'link',
-  alternateName: 'alternateName',
-  text: 'text',
-  postalAddress: 'postalAddress',
-  name: 'name',
-  disambiguatingDescription: 'disambiguatingDescription',
-  longDescription: 'longDescription',
-  internalAddress: 'internalAddress',
+  image: "image",
+  displayname: "displayname",
+  honorificPrefix: "honorificPrefix",
+  honorificSuffix: "honorificSuffix",
+  givenName: "givenName",
+  titleOfNobility: "titleOfNobility",
+  familyName: "familyName",
+  email: "email",
+  phone: "phone",
+  fax: "fax",
+  organization: "organization",
+  jobTitle: "jobTitle",
+  url: "url",
+  content: "content",
+  teasertext: "teasertext",
+  socialmedia: "socialmedia",
+  room: "room",
+  floor: "floor",
+  address: "address",
+  street: "street",
+  zip: "zip",
+  city: "city",
+  faumap: "faumap",
+  officehours: "officehours",
+  consultationhours: "consultationhours",
+  link: "link",
+  alternateName: "alternateName",
+  text: "text",
+  postalAddress: "postalAddress",
+  name: "name",
+  disambiguatingDescription: "disambiguatingDescription",
+  longDescription: "longDescription",
+  internalAddress: "internalAddress",
 };
 
 export function normalizeDisplay(
   settings: FaudirSettingsPayload,
-  display: string = 'person'
+  display: string = "person",
 ): string {
-  var normalizedDisplay = String(display || '').trim().toLowerCase();
-  var byFormat = settings.avaible_fields_byformat || {};
-  var detectedDisplays = getDisplaysFromAvailableFormats(byFormat);
+  const normalizedDisplay = String(display || "")
+    .trim()
+    .toLowerCase();
+  const byFormat = settings.avaible_fields_byformat || {};
+  const detectedDisplays = getDisplaysFromAvailableFormats(byFormat);
 
-  if (normalizedDisplay !== '' && detectedDisplays.indexOf(normalizedDisplay) !== -1) {
+  if (
+    normalizedDisplay !== "" &&
+    detectedDisplays.indexOf(normalizedDisplay) !== -1
+  ) {
     return normalizedDisplay;
   }
 
-  if (detectedDisplays.indexOf('person') !== -1) {
-    return 'person';
+  if (detectedDisplays.indexOf("person") !== -1) {
+    return "person";
   }
 
-  if (detectedDisplays.indexOf('org') !== -1) {
-    return 'org';
+  if (detectedDisplays.indexOf("org") !== -1) {
+    return "org";
   }
 
-  return 'person';
+  return "person";
 }
 
 export function normalizeFormatForDisplay(
   settings: FaudirSettingsPayload,
-  format: string = '',
-  display: string = 'person'
+  format: string = "",
+  display: string = "person",
 ): string {
-  var normalizedDisplay = normalizeDisplay(settings, display);
-  var normalizedFormat = String(format || '').trim().toLowerCase();
-  var availableFormats = getAvailableFormats(settings, normalizedDisplay);
+  const normalizedDisplay = normalizeDisplay(settings, display);
+  const normalizedFormat = String(format || "")
+    .trim()
+    .toLowerCase();
+  const availableFormats = getAvailableFormats(settings, normalizedDisplay);
 
-  if (normalizedFormat !== '' && availableFormats.indexOf(normalizedFormat) !== -1) {
+  if (
+    normalizedFormat !== "" &&
+    availableFormats.indexOf(normalizedFormat) !== -1
+  ) {
     return normalizedFormat;
   }
 
-  if (availableFormats.indexOf('default') !== -1) {
-    return 'default';
+  if (availableFormats.indexOf("default") !== -1) {
+    return "default";
   }
 
-  if (availableFormats.indexOf('compact') !== -1) {
-    return 'compact';
+  if (availableFormats.indexOf("compact") !== -1) {
+    return "compact";
   }
 
   if (availableFormats.length > 0) {
     return availableFormats[0];
   }
 
-  return 'default';
+  return "default";
 }
 
 export function getAvailableFormats(
   settings: FaudirSettingsPayload,
-  display: string = 'person'
+  display: string = "person",
 ): string[] {
-  var normalizedDisplay = normalizeDisplay(settings, display);
-  var byFormat = settings.avaible_fields_byformat || {};
-  var formats: string[] = [];
-  var key: string;
+  const normalizedDisplay = normalizeDisplay(settings, display);
+  const byFormat = settings.avaible_fields_byformat || {};
+  const formats: string[] = [];
+  let key: string;
 
   for (key in byFormat) {
     if (!Object.prototype.hasOwnProperty.call(byFormat, key)) {
       continue;
     }
 
-    if (normalizedDisplay === 'org') {
-      if (key.indexOf('org-') === 0) {
+    if (normalizedDisplay === "org") {
+      if (key.indexOf("org-") === 0) {
         formats.push(key.substring(4));
       }
     } else {
-      if (key.indexOf('org-') !== 0) {
+      if (key.indexOf("org-") !== 0) {
         formats.push(key);
       }
     }
@@ -203,21 +213,25 @@ export function getAvailableFormats(
 
 export function getAvailableFields(
   settings: FaudirSettingsPayload,
-  display: string = 'person',
-  format: string = 'default'
+  display: string = "person",
+  format: string = "default",
 ): string[] {
-  var normalizedDisplay = normalizeDisplay(settings, display);
-  var normalizedFormat = normalizeFormatForDisplay(settings, format, normalizedDisplay);
-  var byFormat = settings.avaible_fields_byformat || {};
-  var configKey = getFormatConfigKey(normalizedDisplay, normalizedFormat);
-  var fields = byFormat[configKey];
+  const normalizedDisplay = normalizeDisplay(settings, display);
+  const normalizedFormat = normalizeFormatForDisplay(
+    settings,
+    format,
+    normalizedDisplay,
+  );
+  const byFormat = settings.avaible_fields_byformat || {};
+  const configKey = getFormatConfigKey(normalizedDisplay, normalizedFormat);
+  const fields = byFormat[configKey];
 
   if (Array.isArray(fields)) {
     return fields.slice();
   }
 
-  if (normalizedDisplay === 'org' && Array.isArray(byFormat['org-default'])) {
-    return byFormat['org-default'].slice();
+  if (normalizedDisplay === "org" && Array.isArray(byFormat["org-default"])) {
+    return byFormat["org-default"].slice();
   }
 
   if (Array.isArray(byFormat.default)) {
@@ -229,20 +243,24 @@ export function getAvailableFields(
 
 export function getDefaultFields(
   settings: FaudirSettingsPayload,
-  display: string = 'person',
-  format: string = 'default'
+  display: string = "person",
+  format: string = "default",
 ): string[] {
-  var normalizedDisplay = normalizeDisplay(settings, display);
-  var normalizedFormat = normalizeFormatForDisplay(settings, format, normalizedDisplay);
+  const normalizedDisplay = normalizeDisplay(settings, display);
+  const normalizedFormat = normalizeFormatForDisplay(
+    settings,
+    format,
+    normalizedDisplay,
+  );
 
-  if (normalizedDisplay === 'org') {
+  if (normalizedDisplay === "org") {
     if (Array.isArray(settings.show_output_fields_org_default)) {
       return settings.show_output_fields_org_default.slice();
     }
     return [];
   }
 
-  if (normalizedFormat === 'page') {
+  if (normalizedFormat === "page") {
     if (Array.isArray(settings.show_output_fields_person_page)) {
       return settings.show_output_fields_person_page.slice();
     }
@@ -258,34 +276,42 @@ export function getDefaultFields(
 
 export function getRequiredFields(
   settings: FaudirSettingsPayload,
-  display: string = 'person',
-  format: string = 'default'
+  display: string = "person",
+  format: string = "default",
 ): string[] {
   return getDefaultFields(settings, display, format);
 }
 
 export function getAvailableFieldLabels(
   settings: FaudirSettingsPayload,
-  display: string = 'person'
+  display: string = "person",
 ): AvailableFieldsSet {
-  var normalizedDisplay = normalizeDisplay(settings, display);
+  const normalizedDisplay = normalizeDisplay(settings, display);
 
-  if (normalizedDisplay === 'org') {
-    if (settings.available_fields_org && typeof settings.available_fields_org === 'object') {
+  if (normalizedDisplay === "org") {
+    if (
+      settings.available_fields_org &&
+      typeof settings.available_fields_org === "object"
+    ) {
       return settings.available_fields_org;
     }
     return fallbackAvailableFieldsOrg;
   }
 
-  if (settings.available_fields && typeof settings.available_fields === 'object') {
+  if (
+    settings.available_fields &&
+    typeof settings.available_fields === "object"
+  ) {
     return settings.available_fields;
   }
 
   return fallbackAvailableFields;
 }
 
-export function getFormatNames(settings: FaudirSettingsPayload): FormatNamesSet {
-  if (settings.format_names && typeof settings.format_names === 'object') {
+export function getFormatNames(
+  settings: FaudirSettingsPayload,
+): FormatNamesSet {
+  if (settings.format_names && typeof settings.format_names === "object") {
     return settings.format_names;
   }
 
@@ -293,18 +319,18 @@ export function getFormatNames(settings: FaudirSettingsPayload): FormatNamesSet 
 }
 
 function getDisplaysFromAvailableFormats(byFormat: FormatFieldsSet): string[] {
-  var displays: string[] = [];
-  var key: string;
+  const displays: string[] = [];
+  let key: string;
 
   for (key in byFormat) {
     if (!Object.prototype.hasOwnProperty.call(byFormat, key)) {
       continue;
     }
 
-    if (key.indexOf('org-') === 0) {
-      displays.push('org');
+    if (key.indexOf("org-") === 0) {
+      displays.push("org");
     } else {
-      displays.push('person');
+      displays.push("person");
     }
   }
 
@@ -312,22 +338,22 @@ function getDisplaysFromAvailableFormats(byFormat: FormatFieldsSet): string[] {
 }
 
 function getFormatConfigKey(display: string, format: string): string {
-  if (display === 'org') {
-    return 'org-' + format;
+  if (display === "org") {
+    return "org-" + format;
   }
 
   return format;
 }
 
 function uniqueStrings(values: string[]): string[] {
-  var seen: Record<string, boolean> = {};
-  var result: string[] = [];
-  var i: number;
-  var value: string;
+  const seen: Record<string, boolean> = {};
+  const result: string[] = [];
+  let i: number;
+  let value: string;
 
   for (i = 0; i < values.length; i++) {
-    value = String(values[i] || '').trim();
-    if (value === '') {
+    value = String(values[i] || "").trim();
+    if (value === "") {
       continue;
     }
 

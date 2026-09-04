@@ -1,7 +1,7 @@
 /**
  * Handled within includes/BlockRender as dynamic block output
- * @return {Element} Element to render.
+ * @returns Nothing, because the block is rendered dynamically.
  */
 export default function save(): null {
-	return null;
+  return null;
 }

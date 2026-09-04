@@ -1,18 +1,20 @@
 import ServerSideRender from "@wordpress/server-side-render";
-import {useEffect, useState} from "@wordpress/element";
-import {EditProps} from "../faudir/types";
+import { useEffect, useState } from "@wordpress/element";
+import { EditProps } from "../faudir/types";
 import LoadingPlaceholder from "./LoadingPlaceholder";
 import EmptyPlaceholder from "./EmptyPlaceholder";
 
 interface CustomServerSideRenderProps {
-  attributes: EditProps['attributes'];
+  attributes: EditProps["attributes"];
 }
 
-export default function CustomServerSideRender({attributes}: CustomServerSideRenderProps) {
+export default function CustomServerSideRender({
+  attributes,
+}: CustomServerSideRenderProps) {
   const [componentKey, setComponentKey] = useState(0);
 
-  useEffect(function () {
-    setComponentKey(function (prevKey) {
+  useEffect(() => {
+    setComponentKey((prevKey) => {
       return prevKey + 1;
     });
   }, [

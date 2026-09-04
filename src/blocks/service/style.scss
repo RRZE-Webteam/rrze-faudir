@@ -1,192 +1,258 @@
 @forward "../../scss/icons/icons";
 
 @mixin mobile-service-grid {
-	display: grid;
-	grid-template-columns: repeat(4, 1fr);
-	grid-gap: var(--Spacing-2x, 1rem);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: var(--Spacing-2x, 1rem);
 }
 
 @mixin tablet-service-grid {
-	display: grid;
-	grid-template-columns: repeat(8, 1fr);
-	grid-gap: var(--Spacing-2x, 1rem);
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-gap: var(--Spacing-2x, 1rem);
 }
 
 @mixin desktop-service-grid {
-	display: grid;
-	grid-template-columns: repeat(12, 1fr);
-	grid-gap: var(--Spacing-2x, 1rem);
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-gap: var(--Spacing-2x, 1rem);
 }
 
-.fau-elemental {
+.fau-elemental,
+.wp-theme-FAU-Elemental {
+  article.rrze-elements-blocks_service_card {
+    container-type: inline-size;
+    max-width: var(--wide-max-width);
+
+    figure.rrze-elements-blocks_service__figure {
+      position: relative;
+      z-index: 0;
+
+      img {
+        width: 100%;
+        height: auto;
+      }
+    }
+  }
+
+  article.rrze-elements-blocks_service_card.no_image {
+    div.rrze-elements-blocks_service__information_card {
+      margin-top: 0;
+    }
+  }
+
+  article.rrze-elements-blocks_service_card
+    div.rrze-elements-blocks_service__information_card {
+    position: relative;
+    z-index: 2;
+
+    .contact-section ul li::before {
+      content: initial;
+    }
+
+    div.workplace-hours ul {
+      padding-left: 0;
+    }
+
+    .hoursAvailable span.weekday {
+      font-weight: bold;
+    }
+
+    .workplace-hours li {
+      padding-bottom: var(--Spacing-1, 1rem);
+    }
+
+    @include mobile-service-grid;
+    padding-inline: var(--Spacing-4x, 2rem);
+    margin-inline: var(--Spacing-3x, 0.5rem);
+    background-color: var(--FAU-Col-FAU-Weiss-100, #fff);
+    margin-top: -85px;
+    padding-top: 30px;
+
+    h2 {
+      margin-top: 0;
+    }
+
+    header,
+    section {
+      grid-column: 1/-1;
+    }
+
+    section {
+      grid-column: span 2;
+    }
+
+    #hours-h,
+    #addr-h,
+    #contact-h {
+      font-weight: 700;
+      font-size: var(--P-Body-Text);
+      color: var(--FAU-Col-FAU-Schwarz-100);
+    }
+  }
+
+  // Breakpoint for Tablet View
+  @media screen and (min-width: 768px) {
     article.rrze-elements-blocks_service_card {
-	    container-type: inline-size;
+      @include tablet-service-grid;
+      grid-column: 1/-1;
 
-	    figure.rrze-elements-blocks_service__figure {
-		    img {
-			    width: 100%;
-			    height: auto;
-		    }
-
-		    z-index: -1;
-	    }
+      .rrze-elements-blocks_service__figure {
+        grid-column: 1/-1;
+      }
     }
 
-    article.rrze-elements-blocks_service_card.no_image {
-	    div.rrze-elements-blocks_service__information_card{
-		    margin-top: 0;
-	    }
+    article.rrze-elements-blocks_service_card
+      div.rrze-elements-blocks_service__information_card {
+      @include tablet-service-grid;
+      margin-left: calc(-1 * var(--Spacing-6x, 1rem));
+      margin-right: calc(-1 * var(--Spacing-6x, 1rem));
+      grid-column: 2/-2;
+      padding-left: 2rem;
+      padding-right: 2rem;
+
+      section {
+        grid-column: span 4;
+      }
+    }
+  }
+
+  @media screen and (min-width: 1315px) {
+    article.rrze-elements-blocks_service_card {
+      @include desktop-service-grid;
+      margin-inline: var(--faue_wide-max-width_bleed_minimal_inline-margin);
+      grid-template-rows: 50px 1fr;
+
+      .meta-headline {
+        font-size: var(--H-Heading-Big-Teaser);
+      }
+
+      section h3,
+      section h4,
+      section h5,
+      section h6 {
+        font-size: var(--P-Body-Text);
+        font-weight: bold;
+        color: var(--FAU-Col-FAU-Schwarz-100);
+        margin-bottom: var(--Spacing-1);
+      }
+
+      figure.rrze-elements-blocks_service__figure {
+        grid-column: 6/-1;
+        grid-row: 1/-1;
+
+        img {
+          object-fit: cover;
+          aspect-ratio: 3/2;
+          height: auto;
+          width: 100%;
+        }
+
+        &::before {
+          position: absolute;
+          content: "";
+          background: #fff;
+          top: 80px;
+          height: 160px;
+          right: 96%;
+        }
+      }
+
+      div.rrze-elements-blocks_service__information_card {
+        grid-column: 1/6;
+        grid-row: 2/-1;
+        margin-top: 0;
+        margin-inline: 0;
+
+        ul.list-icons {
+          padding-left: 0;
+        }
+        section.contact-section {
+          grid-column: span 8;
+
+          address.contact-address {
+            columns: 2;
+          }
+        }
+      }
     }
 
-    article.rrze-elements-blocks_service_card div.rrze-elements-blocks_service__information_card {
-
-	    .contact-section ul li::before {
-		    content: initial;
-	    }
-
-	    div.workplace-hours ul {
-		    padding-left: 0;
-	    }
-
-	    .hoursAvailable span.weekday{
-		    font-weight: bold;
-	    }
-
-	    .workplace-hours li{
-		    padding-bottom: var(--Spacing-1, 1rem);
-	    }
-
-	    @include mobile-service-grid;
-	    padding-inline: var(--Spacing-4x, 2rem);
-	    margin-inline: var(--Spacing-3x, .5rem);
-	    background-color: var(--FAU-Col-FAU-Weiss-100, #fff);
-	    margin-top: -85px;
-	    padding-top: 30px;
-
-	    h2 {
-		    margin-top: 0;
-	    }
-
-	    header, section {
-		    grid-column: 1/-1;
-	    }
-
-	    section {
-		    grid-column: span 2;
-	    }
-
-	    #hours-h, #addr-h, #contact-h {
-		    font-weight: 700;
-		    font-size: var(--P-Body-Text);
-		    color: var(--FAU-Col-FAU-Schwarz-100);
-	    }
+    article.rrze-elements-blocks_service_card.has_desc {
+      .meta-headline {
+        grid-row: 1/-1;
+      }
     }
-
-    // Breakpoint for Tablet View
-    @media screen and (min-width: 768px) {
-
-	    article.rrze-elements-blocks_service_card {
-		    @include tablet-service-grid;
-		    grid-column: 1/-1;
-
-		    .rrze-elements-blocks_service__figure {
-			    grid-column: 1/-1;
-		    }
-	    }
-
-	    article.rrze-elements-blocks_service_card div.rrze-elements-blocks_service__information_card {
-		    @include tablet-service-grid;
-		    margin-left: calc(-1 * var(--Spacing-6x, 1rem));
-		    margin-right: calc(-1 * var(--Spacing-6x, 1rem));
-		    grid-column: 2/-2;
-
-		    section {
-			    grid-column: span 4;
-		    }
-
-	    }
-    }
-
-    @media screen and (min-width: 1315px) {
-
-	    article.rrze-elements-blocks_service_card {
-		    @include desktop-service-grid;
-		    margin-inline: var(--faue_wide-max-width_bleed_minimal_inline-margin);
-		    grid-template-rows: 50px 1fr;
-
-		    .meta-headline{
-			    font-size: var(--H-Heading-Big-Teaser);
-		    }
-
-		    section h3,
-		    section h4,
-		    section h5,
-		    section h6
-		    {
-			    font-size: var(--P-Body-Text);
-			    font-weight: bold;
-			    color: var(--FAU-Col-FAU-Schwarz-100);
-			    margin-bottom: var(--Spacing-1);
-		    }
-
-		    figure.rrze-elements-blocks_service__figure {
-			    grid-column: 6/-1;
-			    grid-row: 1/-1;
-
-			    img {
-				    object-fit: cover;
-				    aspect-ratio: 3/2;
-				    height: auto;
-				    width: 100%;
-			    }
-
-			    &::before {
-				    position: absolute;
-				    content: "";
-				    background: #fff;
-				    top: 80px;
-				    height: 160px;
-				    right: 96%;
-			    }
-		    }
-
-		    div.rrze-elements-blocks_service__information_card {
-			    grid-column: 1/6;
-			    grid-row: 2/-1;
-			    margin-top: 0;
-			    margin-inline: 0;
-
-			    ul.list-icons{
-				    padding-left: 0;
-			    }
-			    section.contact-section {
-				    grid-column: span 8;
-
-				    address.contact-address {
-					    columns: 2;
-				    }
-			    }
-		    }
-
-	    }
-
-	    article.rrze-elements-blocks_service_card.has_desc {
-		    .meta-headline{
-			    grid-row: 1/-1;
-		    }
-	    }
-    }
+  }
 }
-.fau-theme {
-    .faudir__service {
-	.icon a {
-	    border: none;
-	}
-	 &.rrze-elements-blocks_service_card {
-	    display: grid;
-	    grid-template-columns: 1fr 1fr;
-	    grid-gap: var(--width-gutter, 1rem);
-	}
+
+.wp-theme-FAU-Elemental
+  .wp-block-group
+  article.rrze-elements-blocks_service_card {
+  margin-inline: auto;
+}
+
+@media screen and (max-width: 767px) {
+  .wp-theme-FAU-Elemental
+    article.rrze-elements-blocks_service_card
+    figure.rrze-elements-blocks_service__figure {
+    margin-inline: var(--faue_fullbleed_inline-margin);
+  }
+}
+
+.wp-theme-FAU-Elemental .is-style-dark {
+  article.rrze-elements-blocks_service_card {
+    div.rrze-elements-blocks_service__information_card {
+      background-color: var(--FAU-Col-FAU-Blau-100, #04316a);
     }
-   
+
+    div.rrze-elements-blocks_service__information_card {
+      --faudir-icon-color: var(--FAU-Col-FAU-Weiss-100, #fff);
+      --faudir-icon-color-hover: var(--FAU-Col-FAU-Weiss-100, #fff);
+      --faudir-icon_background-color: transparent;
+      --faudir-icon-background-color-hover: transparent;
+
+      color: var(--FAU-Col-FAU-Weiss-100, #fff);
+
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      #hours-h,
+      #addr-h,
+      #contact-h {
+        color: inherit;
+      }
+
+      a,
+      a:visited,
+      a:hover,
+      a:focus,
+      a:active {
+        color: var(--FAU-Col-FAU-Weiss-100, #fff);
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 1315px) {
+  .wp-theme-FAU-Elemental
+    .is-style-dark
+    article.rrze-elements-blocks_service_card
+    figure.rrze-elements-blocks_service__figure::before {
+    background-color: var(--FAU-Col-FAU-Blau-100, #04316a);
+  }
+}
+
+.fau-theme {
+  .faudir__service {
+    .icon a {
+      border: none;
+    }
+    &.rrze-elements-blocks_service_card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: var(--width-gutter, 1rem);
+    }
+  }
 }

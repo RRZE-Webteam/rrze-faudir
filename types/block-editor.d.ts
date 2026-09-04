@@ -1,18 +1,21 @@
-import '@wordpress/block-editor';
-import { ComponentType } from 'react';
+declare module "@wordpress/block-editor" {
+  import type { ComponentType, HTMLAttributes, ReactNode } from "react";
 
-declare module '@wordpress/block-editor' {
+  interface EditorWrapperProps {
+    children?: ReactNode;
+  }
+
   export interface MediaReplaceFlowProps {
-    mediaId: number,
-    mediaURL: string,
-    allowedTypes?: string[],
-    accept?: string,
-    onSelect: (media: any) => void,
-    onError: (error: string) => void,
-    onToggleFeaturedImage?: (value: boolean) => void,
-    useFeaturedImage?: boolean,
-    name: string,
-    onReset?: () => void
+    mediaId: number;
+    mediaURL: string;
+    allowedTypes?: string[];
+    accept?: string;
+    onSelect: (media: any) => void;
+    onError: (error: string) => void;
+    onToggleFeaturedImage?: (value: boolean) => void;
+    useFeaturedImage?: boolean;
+    name: string;
+    onReset?: () => void;
   }
 
   export interface LinkControlProps {
@@ -33,6 +36,9 @@ declare module '@wordpress/block-editor' {
   }
 
   export const MediaReplaceFlow: ComponentType<MediaReplaceFlowProps>;
+  export const BlockControls: ComponentType<EditorWrapperProps>;
+  export const InspectorControls: ComponentType<EditorWrapperProps>;
+  export function useBlockProps(): HTMLAttributes<HTMLDivElement>;
   export const __experimentalLinkControl: ComponentType<LinkControlProps>;
   export const __experimentalBlockVariationPicker: ComponentType<__experimentalBlockVariationPicker>;
 }
