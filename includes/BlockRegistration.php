@@ -42,12 +42,6 @@ class BlockRegistration {
 
         $plugin_dir = plugin_dir_path(__DIR__);
 
-        load_plugin_textdomain(
-            'rrze-faudir',
-            false,
-            dirname(plugin_basename(__DIR__)) . 'languages'
-        );
-
         foreach ($blocks as $block_def) {
             register_block_type(
                 $plugin_dir . 'build/blocks/' . $block_def['build_folder'],
