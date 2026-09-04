@@ -57,7 +57,7 @@ spl_autoload_register(function ($class) {
 
 
 
-// Hauptladepunkt
+// Prepare plugin metadata after all plugins have been loaded.
 add_action('plugins_loaded', __NAMESPACE__ . '\\loaded');
 
 
@@ -81,23 +81,30 @@ function plugin() {
 }
 
 /**
- * Hauptinitialisierung des Plugins (wird nach plugins_loaded aufgerufen)
+ * Prepare plugin metadata without triggering translations.
  */
 function loaded(): void {
-    // Übersetzungen laden
-    load_plugin_textdomain('rrze-faudir', false, dirname(plugin_basename(__FILE__)) . '/languages');
+    plugin()->loaded();
+
+    add_action('init', __NAMESPACE__ . '\\initialize', 0);
+}
+
+/**
+ * Initialize translated configuration and plugin components on init.
+ */
+function initialize(): void {
+    load_plugin_textdomain(
+        'rrze-faudir',
+        false,
+        dirname(plugin_basename(__FILE__)) . '/languages'
+    );
 
     if (!rrze_faudir_system_requirements()) {
         return;
     }
 
-     // Trigger the 'loaded' method of the main plugin instance.
-    plugin()->loaded();
-
     $main = new Main();
     $main->onLoaded();
-
-  
 }
 
 
